@@ -1,0 +1,107 @@
+.inlinesearch {
+    float: right;
+    margin: 0em 3px .5em 1em;
+}
+.inlinesearch p {
+    font-size: 94%;
+    color: #aaa;
+}
+.inlinesearch input {
+    background-image:url('../../../../resources/icons/silk/magnifier.png');
+    background-repeat:no-repeat;
+    background-position:center left;
+    border: 1px solid #ccc;
+    padding: 2px 2px 2px 20px;
+    margin: 0px 2px 0px 0px;
+}
+.inlinesearch * {
+    margin: 0px;
+    padding: 0px;
+}
+div.metalist {
+    clear: both;
+    list-style: none;
+    margin: 1em 2px .5em 2px;
+    padding: 0px;
+}
+a.metaentry {
+    display: block;
+    border: 1px solid #ccc;
+    margin: 0px 0px -1px 0px;
+    padding: .2em 1em .2em 20px;
+    cursor: pointer;
+    cursor: hand;
+}
+a.metaentry.favourite {
+    background-image:url('../../../../resources/icons/silk/heart.png');
+    background-repeat:no-repeat;
+    background-position:center left;
+}
+a.metaentry:hover {
+    border: 1px solid #ccc;
+    background: #eee;
+    background-image:url('../../../../resources/icons/silk/star.png');
+    background-repeat:no-repeat;
+    background-position:center left;
+}
+a.metaentry img.entryicon {
+    display: none;
+}
+a.metaentry:hover img.entryicon {
+    display: inline;
+    top: 0px;
+    bottom: 0px;
+    clear: both;
+    float: right;
+    margin: 1em;
+    padding: 3px;
+    border: 1px solid #999;
+}
+
+div.favourite {
+    margin: 1em 0px;
+    padding: 1em;
+    border: 1px solid #ccc;
+    background-color: #eee;
+}
+
+div#content {
+    margin: .4em ! important;
+}
+
+form {
+    display: inline;
+}
+
+table#statmeta {
+    width: 100%;
+}
+
+ul.tabset_tabs {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+ul.tabset_tabs li {
+    background: none;
+    color: #222;
+    display: inline-block;
+    padding: 10px 15px;
+    cursor: pointer;
+}
+
+ul.tabset_tabs li.current {
+    background: #ededed;
+    color: #222;
+}
+
+.tabset_content {
+    display: none;
+    background: #ededed;
+    padding: 15px;
+}
+
+.tabset_content.current {
+    display: inherit;
+}

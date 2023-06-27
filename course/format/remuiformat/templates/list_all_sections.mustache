@@ -1,0 +1,189 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/list_all_sections
+
+
+    Example context (json):
+    {
+        "generalsection": "1/0",
+        "sections": "1/0",
+        "editing": "1/0",
+        "addsection": "addsection",
+        "addnewactivity": "1/0",
+        "leftnav": "1/0",
+        "rightnav": "1/0",
+        "courseid": "courseid"
+        "user_id": "user_id"
+        "defaultview": "defaultview"
+        "index": "index"
+    }
+}}
+
+{{#editing}}
+  <div id="list-editing-container" class="remui-format-list all-section-format theme-{{theme}} mt-20">
+    <ul class="sections row">
+        {{! Display General Section }}
+        {{#generalsection}}
+            {{> format_remuiformat/list_general_section_edit }}
+        {{/generalsection}}
+        {{! Display Remaining Section }}
+        {{#sections}}
+            {{> format_remuiformat/list_sections }}
+        {{/sections}}
+        {{{ addsection }}}
+    </ul>
+  </div>
+{{/editing}}
+{{^editing}}
+<div id="list-container" class="remui-format-list all-section-format theme-{{theme}} mt-20">
+    <ul class="sections row">
+        {{! Display General Section }}
+        {{#generalsection}}
+            {{> format_remuiformat/list_general_section }}
+        {{/generalsection}}
+        {{! Display Remaining Section }}
+        {{#sections}}
+            {{> format_remuiformat/list_sections }}
+        {{/sections}}
+    </ul>
+</div>
+    {{#js}}
+      require(['jquery', 'core/storagewrapper'], function(jQuery, StorageWrapper) {
+          // Moodle localstorage wrapper.
+          var edstorage = new StorageWrapper(window.localStorage);
+
+          // save the current choice by admin - expanded or collapsed
+          var formatlabel = {{{ courseid }}} + '_' + {{{ user_id }}} + '_defaultview';
+          var userformat = localStorage.getItem(formatlabel);
+          // alert(userformat);
+          if(userformat == null) {
+            localStorage.setItem(formatlabel, {{{ defaultview }}});
+          }
+          else {
+            // the user's last format and the current format do not match, reset user data
+            if(userformat != {{{ defaultview }}}) {
+            {{#sections}}
+              var namelocal  = 'section-'+ {{{ index }}} + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+              localStorage.removeItem(namelocal);
+            {{/sections}}
+            localStorage.setItem(formatlabel, {{{ defaultview }}});
+            }
+            else {
+              // current format and the user's format are the same
+              jQuery('body#page-course-view-remuiformat ul.remui-format-list a.panel-title').each(function(){
+                var section_id = jQuery(this).parent().parent().parent().attr('id');
+                var namelocal  = section_id + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+                var ed_sectionstate  = section_id + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+
+                {{#expanded}}
+                  if(localStorage.getItem(namelocal) == 'false'){
+                    // Change arrow.
+                    if (edstorage.get(ed_sectionstate) == 'collapsed' ) {
+                      jQuery(this).find('i').toggleClass('fa-angle-up');
+                      jQuery(this).find('i').toggleClass('fa-angle-down');
+                      jQuery(this).parent().parent().find('.card-footer').removeClass('show');
+                      jQuery(this).parent().parent().find('.card-footer').addClass('collapse');
+                      jQuery(this).parent().parent().find('.summary').show(500);
+                      {{! jQuery(this).parent().parent().find('.section-summary-activities').show(500); }}
+                    } else {
+                      jQuery(this).parent().parent().find('.card-footer').removeClass('collapse');
+                      jQuery(this).parent().parent().find('.card-footer').addClass('show');
+                      {{! jQuery(this).parent().parent().find('.section-summary-activities').hide(500); }}
+                      jQuery(this).parent().parent().find('.summary').show(500);
+                    }
+                  }
+                {{/expanded}}
+                {{#collapsed}}
+                  if(localStorage.getItem(namelocal) == 'true'){
+                    if (edstorage.get(ed_sectionstate) == 'expanded' ) {
+                      jQuery(this).find('i').toggleClass('fa-angle-down');
+                      jQuery(this).find('i').toggleClass('fa-angle-up');
+                      jQuery(this).parent().parent().find('.card-footer').removeClass('collapse');
+                      jQuery(this).parent().parent().find('.card-footer').addClass('show');
+                      jQuery(this).parent().parent().find('.summary').show(500);
+                      {{! jQuery(this).parent().parent().find('.section-summary-activities').hide(500); }}
+                    } else {
+                      jQuery(this).parent().parent().find('.card-footer').removeClass('show');
+                      jQuery(this).parent().parent().find('.card-footer').addClass('collapse');
+                      jQuery(this).parent().parent().find('.summary').show(500);
+                      {{! jQuery(this).parent().parent().find('.section-summary-activities').show(500); }}
+                    }
+                  }
+                {{/collapsed}}
+              });
+            }
+          }
+          
+          var section_state = {};
+          jQuery('body#page-course-view-remuiformat ul.remui-format-list a.panel-title').click(function(){
+              jQuery(this).find('i').toggleClass('fa-angle-down');
+              jQuery(this).find('i').toggleClass('fa-angle-up');
+              var section_id = jQuery(this).parent().parent().parent().attr('id');
+              
+              var namelocal  = section_id + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+              var ed_sectionstate  = section_id + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+              
+              jQuery(this).parent().parent().find('.summary').show(500);
+              if(jQuery(this).find('.float-right').hasClass('fa-angle-down')) {
+                  sectionstate = 'collapsed';
+                  localStorage.setItem(namelocal, 'false');
+                  jQuery(this).parent().parent().find('.card-footer').removeClass('show');
+                  jQuery(this).parent().parent().find('.card-footer').addClass('collapse');
+                  jQuery(this).parent().parent().find('.summary').show(500);
+                  {{! jQuery(this).parent().parent().find('.section-summary-activities').show(500); }}
+              } else {
+                  sectionstate = 'expanded';
+                  localStorage.setItem(namelocal, 'true');
+                  jQuery(this).parent().parent().find('.card-footer').removeClass('collapse');
+                  jQuery(this).parent().parent().find('.card-footer').addClass('show');
+                  jQuery(this).parent().parent().find('.summary').show(500);
+                  {{! jQuery(this).parent().parent().find('.section-summary-activities').hide(500); }}
+              }
+              edstorage.set(ed_sectionstate, sectionstate);
+          });
+      });
+    {{/js}}
+{{/editing}}
+{{#editing}}
+    {{#js}}
+      require(['jquery'], function(jQuery) {
+          jQuery('.remui-format-list .card-title .float-right').click(function(){
+              var iconparent = jQuery(this).parent();
+              console.log(iconparent);
+              jQuery(iconparent).find('.float-right').toggleClass('fa-angle-down');
+              jQuery(iconparent).find('.float-right').toggleClass('fa-angle-up');
+              var section_id = jQuery(iconparent).parent().parent().parent().attr('id');
+              var namelocal  = section_id + '_' + {{{ courseid }}} + '_' + {{{ user_id }}};
+              localStorage.setItem(namelocal, 'true');
+              jQuery(iconparent).parent().find('.summary').show(500);
+              if(jQuery(iconparent).find('.float-right').hasClass('fa-angle-down')) {
+                  jQuery(iconparent).parent().find('.card-footer').removeClass("show");
+                  jQuery(iconparent).parent().find('.card-footer').addClass("collapse");
+                  jQuery(iconparent).parent().find('.summary').show(500);
+                  {{! jQuery(iconparent).parent().find('.section-summary-activities').show(500); }}
+              } else {
+                  jQuery(iconparent).parent().find('.card-footer').removeClass('collapse');
+                  jQuery(iconparent).parent().find('.card-footer').addClass("show");
+                  jQuery(iconparent).parent().find('.summary').show(500);
+                  {{! jQuery(iconparent).parent().find('.section-summary-activities').hide(500); }}
+              }
+          });
+      });
+    {{/js}}
+{{/editing}}

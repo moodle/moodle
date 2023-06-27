@@ -1,0 +1,45 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-smartattributes",
+    "description": "The SmartAttributes module provides additional authentication processing filters to manipulate attributes.",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "smartattributes"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Andreas Åkre Solberg",
+            "email": "andreas.solberg@uninett.no"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\smartattributes\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-smartattributes/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-smartattributes"
+    }
+}

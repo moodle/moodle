@@ -1,0 +1,17 @@
+{
+	"disable_title": {
+		"en": "Turned off ability to use automatic login for this browser"
+	},
+	"disable_info_pre": {
+		"en": "<p>By accessing this page, you have turned off the ability to use automatic login for this browser.<\/p><p>To turn it on again, please visit <a href='URL'>this page<\/a>.<\/p>"
+	},
+	"enable_title": {
+		"en": "Turned on the ability to use automatic login for this browser"
+	},
+	"enable_info_pre": {
+		"en": "<p>By accessing this page, you have turned on the ability to use automatic login for this browser.<\/p><p>To turn it off again, please visit <a href='URL'>this page<\/a>.<\/p>"
+	},
+	"info_post": {
+		"en": "<h3>What is automatic login<\/h3><p>Automatic login allows you to log in without being asked for username and password:<ul><li>if the computer is in the Kerberos domain<\/li><li>using a supported browser (IE and some others depending on installation options)<\/li><li>on a supported operating system (Windows, Mac)<\/li><\/ul><\/p>"
+	}
+}

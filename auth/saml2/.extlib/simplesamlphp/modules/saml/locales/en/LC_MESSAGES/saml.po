@@ -1,0 +1,59 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: en\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{saml:proxy:invalid_idp_description}"
+msgstr ""
+"You already have a valid session with an identity provider "
+"(<em>%IDP%</em>) that is not accepted by <em>%SP%</em>. Would you like to"
+" log out from your existing session and log in again with another "
+"identity provider?"
+
+msgid "{saml:wrong_authncontextclassref:description}"
+msgstr ""
+"Your authentication context is not accepted at this service. Probably too"
+" weak or not two-factor."
+
+msgid "{saml:wrong_authncontextclassref:header}"
+msgstr "Wrong authentication context"
+
+msgid "{saml:proxy:invalid_idp}"
+msgstr "Invalid Identity Provider"
+
+msgid ""
+"Your authentication context is not accepted at this service. Probably too"
+" weak or not two-factor."
+msgstr ""
+"Your authentication context is not accepted at this service. Probably too"
+" weak or not two-factor."
+
+msgid "Invalid Identity Provider"
+msgstr "Invalid Identity Provider"
+
+msgid ""
+"You already have a valid session with an identity provider "
+"(<em>%IDP%</em>) that is not accepted by <em>%SP%</em>. Would you like to"
+" log out from your existing session and log in again with another "
+"identity provider?"
+msgstr ""
+"You already have a valid session with an identity provider "
+"(<em>%IDP%</em>) that is not accepted by <em>%SP%</em>. Would you like to"
+" log out from your existing session and log in again with another "
+"identity provider?"
+
+msgid "Wrong authentication context"
+msgstr "Wrong authentication context"
+

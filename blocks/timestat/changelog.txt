@@ -1,0 +1,35 @@
+08.09.2015
+1.2.2.1
+Fixed problem with blank page after logging in
+https://tracker.moodle.org/browse/CONTRIB-5729
+
+13.08.2015
+1.2.2
+Fixed issue "Class 'textlib' has been renamed for the autoloader and is now deprecated. Please use 'core_text' instead."
+
+04.09.2014
+1.2.1
+Time is stored in block_timestat folder now (it was stored in additional field in log table before).
+Compatiblility with PSQL and MYSQL.
+Many minor fixes.
+
+03.03.2014
+Application updated to Moodle 2.5/2.6
+
+14.04.2011
+Problem with change_password.php page, where page is automatically refreshing, fixed.
+
+31.03.2011
+Problem with blank page after loging fixed.
+Some security improvements.
+All files are now placed inside /block/timestat/ directory (some of them were placed in /moodle/lib/ earlier),
+so installation is simpler.
+
+10.03.2011
+Spanish language file, created by Jon Duenas, added.
+
+08.03.2011
+Configuration button is disabled.
+
+11.02.2011
+Php starting tags changed to '<?PHP'

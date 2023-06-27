@@ -1,0 +1,14 @@
+{
+  "link_statistics": {
+    "es": "Mostrar estadísticas",
+    "no": "Vis statistikker",
+    "nn": "Vis statistikkar",
+    "ca": "Mostra les estadístiques"
+  },
+  "link_statistics_metadata": {
+    "es": "Mostrar metadatos de las estadísticas",
+    "no": "Vis metadata om statistikker",
+    "nn": "Vis metadata om statistikkar",
+    "ca": "Mostra les estadístiques de les metadades"
+  }
+}

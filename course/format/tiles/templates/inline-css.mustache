@@ -1,0 +1,164 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/inline_css
+
+    Inline css template.
+
+    The purpose of this template is to render inline CSS to change the colour
+    of various items according to plugin or course settings
+    These can be changed by the user so have to be included dynamically rather than
+    in a status css file
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * base_colour - base colour for this course (i.e. tile top border colour)
+        * tile_light_colour - lighter version of it (for tile background)
+        * tile_hover_colour - tile hover colour
+        * button_hover_colour - button hover colour
+        * shade_heading_bar - do we add a coloured bar to left of headings? (course setting)
+
+    Example context (json):
+    {
+        "base_colour": "rgba(119,37,131, 1)",
+        "tile_light_colour": "rgba(119,37,131, 0.05)",
+        "tile_hover_colour": "#ED8B00",
+        "button_hover_colour": "rgba(119,37,131, 0.1)",
+        "shade_heading_bar": 0
+    }
+}}
+
+<style type="text/css">
+    .format-tiles .course-content ul.tiles .tile,
+    .format-tiles .course-content ul.tiles .tile_bar {
+        border-top-color: {{base_colour}};
+        background-color: {{tile_light_colour}};
+        border-radius: 0;
+    }
+    .format-tiles ul.tiles .tile {
+        border-top-color: {{base_colour}};
+        transition: border-top-color 0s;
+    }
+    .format-tiles ul.tiles .tile-clickable:hover,
+    .format-tiles ul.tiles .tile_bar.clickable:hover,
+    .format-tiles ul.tiles .tile-clickable.current:hover{
+        border-top-color: {{tile_hover_colour}};
+        transition: border-top-color 0s;
+    }
+    .format-tiles ul.tiles .tile.selected {
+        border-top-color: {{tile_hover_colour}};
+    }
+    .format-tiles ul.tiles .current .sectiontitle::after{
+        background-color: red;
+    }
+    .format-tiles ul.tiles .headerabovetiles button.selected,
+    .headerabovetiles button:active, .headerabovetiles button:focus,
+    .format-tiles .embed_cm_modal .modal-header {
+        background-color: {{base_colour}};
+    }
+    .format-tiles .embed_cm_modal .modal-header h5,
+    .format-tiles .embed_cm_modal .modal-header h4 {
+        color: #fff;
+    }
+    .format-tiles .embed_cm_modal .modal-header .close {
+        color: #fff;
+        opacity: 0.8;
+    }
+    .format-tiles .embed_cm_modal .modal-header,
+    .format-tiles .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+        background-color: {{base_colour}};
+        color: #fff;
+    }
+    .format-tiles a.nav-link {
+        color: {{base_colour}};
+    }
+    .format-tiles .sectiontitle::after,
+    .format-tiles .badge-info {
+        background-color: {{base_colour}};
+    }
+    .format-tiles ul.tiles .headerabovetiles button:hover {
+        border-color: {{tile_hover_colour}};
+    }
+
+    .format-tiles .course-content .single-section .navigation-arrows .navigation-arrow:hover,
+    .format-tiles .embed_cm_modal .embed_file_button:hover {
+        background-color: {{button_hover_colour}};
+    }
+
+    /*boost theme item selected in left hand menu*/
+    .format-tiles .filterbutton:hover,
+    .sectionbutton:hover {
+        background-color: {{button_hover_colour}};
+        transition: all 0.1s ease-in-out;
+    }
+
+    .format-tiles .filterbutton.selected{
+        background-color: {{button_hover_colour}};
+    }
+
+    .format-tiles #buttonhidesec0:hover {
+        background-color: {{button_hover_colour}};
+    }
+    {{#shade_heading_bar}}
+        .format-tiles .course-content li.activity.label h1,
+        .format-tiles .course-content .section li.activity.label h2,
+        .format-tiles .course-content li.activity.label h3,
+        .format-tiles .course-content li.activity.label h4,
+        .format-tiles .editor_atto_content_wrap h1,
+        .format-tiles .editor_atto_content_wrap h2,
+        .format-tiles .editor_atto_content_wrap h3,
+        .format-tiles .editor_atto_content_wrap h4 {
+            border-left-color: {{base_colour}};
+            border-left-style: solid;
+            padding-left: 0.4em;
+            border-left-width: 10px;
+        }
+    {{/shade_heading_bar}}
+
+    {{#allowphototiles}}
+        .format-tiles .course-content ul.tiles .tile.phototile .photo-tile-text h3 {
+            background-color: {{photo_tile_text_bg}};
+            line-height: {{phototiletextlineheight}}px;
+            padding: {{phototiletextpadding}}px 7px;
+        }
+        .format-tiles .phototile .progress-indic {
+            background-color: {{photo_tile_text_bg}};
+        }
+    {{/allowphototiles}}
+
+    {{^ismobile}}
+        {{#hidetilesinitially}}
+            {{!We will remove this opacity in JS}}
+            .format-tiles.jsenabled ul.tiles {
+                opacity: 0;
+            }
+        {{/hidetilesinitially}}
+
+        {{#defaultscreenwidthsession}}
+            .format-tiles.jsenabled ul.tiles {
+                max-width: {{defaultscreenwidthsession}}px;
+            }
+        {{/defaultscreenwidthsession}}
+    {{/ismobile}}
+</style>
+{{#custom_css}}<style type="text/css">{{{custom_css}}}</style>{{/custom_css}}

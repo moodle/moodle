@@ -1,0 +1,23 @@
+{
+	"selectidp": {
+		"en": "Select your identity provider"
+	},
+	"selectidp_full": {
+		"en": "Please select the identity provider where you want to authenticate:"
+	},
+	"select": {
+		"en": "Select"
+	},
+	"remember": {
+		"en": "Remember my choice"
+	},
+	"icon_prefered_idp": {
+		"en": "[Preferred choice]"
+	},
+	"previous_auth": {
+		"en": "You have previously chosen to authenticate at"
+	},
+	"login_at": {
+		"en": "Login at"
+	}
+}

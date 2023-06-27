@@ -1,0 +1,12 @@
+{% set pagetitle = 'SimpleSAMLphp'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <h2>{{ '{saml:proxy:invalid_idp}'|trans }}</h2>
+    <p>{{ '{saml:proxy:invalid_idp_description}'|trans({"%IDP%": idp_name, "%SP%": sp_name}, "app")|raw</p>
+    <form method="post" action="?">
+        <input type="hidden" name="AuthState" value="{{ AuthState|escape('html') }}" />
+        <input type="submit" name="continue" value="{{ '{general:yes_continue}'|trans }}" />
+        <input type="submit" name="cancel" value="{{ '{general:no_cancel}'|trans }}" />
+    </form>
+{% endblock %}

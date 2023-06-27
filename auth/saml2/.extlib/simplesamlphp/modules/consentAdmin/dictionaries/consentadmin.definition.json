@@ -1,0 +1,65 @@
+{
+	"sp_empty_description": {
+		"en": "(no description)"
+	},
+	"attribute_org": {
+		"en": "Organisation"
+	},
+	"added": {
+		"en": "Consent Added"
+	},
+	"removed": {
+		"en": "Consent Removed"
+	},
+	"updated": {
+		"en": "Consent Updated"
+	},
+	"unknown": {
+		"en": "Unknown ..."
+	},
+	"attribute_id": {
+		"en": "Identity"
+	},
+	"attribute_injected": {
+		"en": "Injected attribut"
+	},
+	"show": {
+		"en": "Show"
+	},
+	"hide": {
+		"en": "Hide"
+	},
+	"attributes_text": {
+		"en": "attributes"
+	},
+	"consentadmin_header": {
+		"en": "Consent Administration"
+	},
+	"consentadmin_description1": {
+		"en": "Here you can view and edit your consent for the Service Providers."
+	},
+	"consentadmin_description2": {
+		"en": "\n<h3>How to delete your consent<\/h3>\nUncheck the box corresponding to the service provider\n\n<h3>Links<\/h3>\n<ul>\n<li><a href=\"https:\/\/www.wayf.dk\">Start<\/a> <\/li>\n\n<li><a href=\"https:\/\/www.wayf.dk\/FAQ\">FAQ<\/a> <\/li>\n<\/ul>\n"
+	},
+	"login": {
+		"en": "login"
+	},
+	"service_providers_for": {
+		"en": "Service Providers for"
+	},
+	"service_provider_header": {
+		"en": "Service Provider"
+	},
+	"status_header": {
+		"en": "Consent status"
+	},
+	"show_hide_attributes": {
+		"en": "show\/hide attributes"
+	},
+	"consentadmin_purpose": {
+		"en": "The purpose of the service is"
+	},
+	"link_consentAdmin": {
+		"en": "Consent administration"
+	}
+}

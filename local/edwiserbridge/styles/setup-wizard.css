@@ -1,0 +1,1314 @@
+
+/* Css to solve conflict in remui as this is page specific css applying 1 important  */
+
+#page{
+    margin-top: 60px !important;
+}
+
+#page-wrapper{
+    padding-top: 0px !important;
+}
+/**/
+
+.eb-setup-sidebar{
+    height: 100%;
+    /* padding: 15px; */
+    width: 27%;
+    position: fixed;
+    z-index: 1;
+    top: 90px;
+    left: 0;
+    background: #F7F7F7;
+    overflow-x: hidden;
+    padding-top: 10px;
+}
+
+.eb_setup_popup a:hover{
+    color: white;
+}
+
+.eb_setup_check_permalink a:hover{
+    color: initial;
+}
+
+.es-w-80{
+    width: 80%;
+    margin: auto;
+}
+
+.es-p-t-b-30{
+    padding: 30px 0px;
+}
+
+.es-p-t-20{
+    padding-top: 20px;
+}
+
+.es-p-b-10{
+    padding-bottom: 10px;
+}
+
+
+
+
+.eb_setup_popup fieldset{
+    display: block;
+    margin-inline-start: 2px;
+    margin-inline-end: 2px;
+    padding-block-start: 0.35em;
+    padding-inline-start: 0.75em;
+    padding-inline-end: 0.75em;
+    padding-block-end: 0.625em;
+    min-inline-size: min-content;
+    border-width: 2px;
+    border-style: groove;
+    border-color: threedface;
+    border-image: initial;
+}
+
+.eb_setup_pupup_warning_icon{
+    color: #FFD21E;
+    font-size: 40px;
+}
+
+
+.eb_setup_wp_redirection_popup .eb_setup_popup_content{
+    width: 80%;
+}
+
+
+/* ---- Animated arrows ---- */
+.animated {
+    position: relative;
+    margin-right: 20px;
+    margin-left: 20px;
+    max-width: 200px;
+    overflow: hidden;
+    line-height: 3rem;
+    height: 3rem;
+}
+
+
+.animated__text .fa-solid.fa-angle-right{
+    width: 7px;
+    vertical-align: top;
+}
+
+
+.animated__text {
+    font-size: 21px;
+    color: #00A1A8;
+    position: absolute;
+    animation: 1s bounce ease-in-out infinite paused;
+    white-space: nowrap;
+    top: 0;
+    padding: 0 0.5rem;
+    animation-play-state: running;
+}
+
+
+@keyframes bounce {
+    0%, 5%, 95%, 100% {
+        left: 0%;
+        transform: translate(0, 0);
+    }
+    45%, 55% {
+        left: 100%;
+        transform: translate(-100%, 0);
+    }
+}
+
+/* ----------------------------- */
+
+
+
+.eb_setup_product_sync_progress_images{
+    display: flex;
+    padding: 22px 30px;
+}
+
+/*.eb_setup_users_sync_progress_images > div{
+    width: 33%;
+}*/
+
+.eb_setup_product_sync_progress_images > div{
+    width: 30%;
+}
+
+.eb_setup_product_sync_progress_images > div:first-child{
+    width: 40%;
+}
+
+.eb_setup_wp_redirection_popup{
+
+}
+
+
+
+
+.eb_setup_popup legend{
+    width: auto;
+    text-align: left;
+    background: #C5F3F5;
+    border-radius: 4px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 22px;
+    padding: 2px 8px;
+    text-transform: uppercase;
+    color: #444444;
+}
+
+.eb_setup_popup{
+    /* display: none; */
+    position: fixed;
+    z-index: 1000;
+    padding-top: 150px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    /* background-color: rgb(82 82 82); */
+    background-color: rgb(0 0 0 / 64%);
+    border-radius: 4px;
+}
+
+.eb_setup_popup_content{
+    text-align: center;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 45%;
+    border-radius: 5px;
+}
+
+.eb_setup_check_permalink a{
+    color: #f98012;
+}
+
+.eb_setup_h3 .eb-tooltip{
+    color: #f98012;
+}
+
+/* Tooltip */
+.eb-tooltip {
+    position: relative;
+    display: inline-block;
+    line-height: unset;
+    font-size: 15px;
+    color: #f98012;
+    cursor: pointer;
+}
+  
+.eb-tooltiptext{
+    font-family: sans-serif;
+    padding: 7px;
+}
+
+.eb-tooltip .eb-tooltiptext {
+    visibility: hidden;
+    width: 160px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    font-family: sans-serif;
+    font-weight: 400;
+
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 105%;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-size: 11px;
+    color: #FFF;
+    padding: 0.5em;
+    background: none repeat scroll 0% 0% #3C3C3C;
+    border-radius: 3px;
+    text-align: left;
+    max-width: 200px;
+    line-height: normal;
+}
+  
+.eb-tooltip:hover .eb-tooltiptext {
+    visibility: visible;
+}
+
+.eb-setup-content a{
+    text-decoration: none;
+}
+
+.eb-setup-content{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    color: #444444;
+    width: 73%;
+    margin-left: 27%;
+    top: 90px;
+    padding-top: 22px;
+}
+
+.eb-setup-content.eb_setup_full_width{
+    margin-left: 0 ;
+    width: 100%;
+}
+/*****/
+ 
+
+/* ****  Checkbox styling.    **** */
+
+.esw-cb-container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 0px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+  
+
+  /* Hide the browser's default checkbox */
+  .esw-cb-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+  
+  /* Create a custom checkbox */
+  .esw-cb-checkmark {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    height: 20px;
+    width: 20px;
+    /* background-color: #eee; */
+    background-color: #FFFFFF;
+    border: 1px solid #C4C4C4;
+    box-shadow: 0px 2px 2px rgb(0 0 0 / 30%);
+    border-radius: 4px;
+  }
+  
+  /* On mouse-over, add a grey background color */
+  .esw-cb-container:hover input ~ .esw-cb-checkmark {
+    background-color: #ccc;
+  }
+  
+  /* When the checkbox is checked, add a blue background */
+  .esw-cb-container input:checked ~ .esw-cb-checkmark {
+    /* background-color: #2196F3; */
+    background-color: #f98012;
+  }
+  
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .esw-cb-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+  
+  /* Show the checkmark when checked */
+  .esw-cb-container input:checked ~ .esw-cb-checkmark:after {
+    display: block;
+  }
+  
+  /* Style the checkmark/indicator */
+  .esw-cb-container .esw-cb-checkmark:after {
+    left: 7px;
+    top: 2px;
+    width: 4px;
+    height: 11px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+
+/* *****   END Checkbox styling  ***** */
+
+
+.eb-setup-header-logo{
+    background: #F7F7F7;
+    width: 27%;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.1);
+}
+
+.es-info-icon{
+    border: 2px solid #fa9336;
+    width: 16px;
+    height: 16px;
+    padding: 5px 5px 5px 5px !important;
+    border-radius: 20px;
+    font-size: 8px !important;
+    line-height: 3px !important;
+}
+
+.eb-setup-header-logo-img-wrap{
+    height: 100%;
+    display: inline-grid;
+    justify-content: center;
+}
+
+.eb-setup-header-logo-img-wrap img{
+    margin-top: auto;
+    margin-left: 20px;
+    margin-bottom: auto;
+    /* height: 100%; */
+    /* vertical-align: middle; */
+    /* justify-content: center; */
+    /* display: block; */
+}
+
+.eb_setup_pupup_success_icon{
+    font-size: 40px;
+    color: #1AB900;
+}
+
+
+.eb-completion-succ-h{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 27px;
+    text-align: center;
+    color: #444444;
+}
+
+.eb-setup-header-title-wrap{
+    width: 73%;
+    display: flex;
+    text-align: center;
+    background: white;
+
+    /*background: linear-gradient(0deg, #133F3F, #133F3F), #F7F7F7;*/
+}
+
+.eb-setup-header-title{
+    width: 95%;
+    padding: 22px 30px;
+    /*color: white;*/
+    color: #00a1a8;
+    padding: 30px;
+    font-weight: 400;
+    font-size: 30px;
+    line-height: 41px;
+    /* text-align: center; */
+    backdrop-filter: blur(4px);
+    /* flex: none; */
+    order: 0;
+    flex-grow: 0;
+
+    font-style: normal;
+    font-weight: 700;
+    font-size: 30px;
+    line-height: 41px;
+    /* identical to box height */
+
+    text-align: center;
+
+    color: #00A1A8;
+
+    /* margin: 0px 10px;*/
+
+}
+.eb-setup-wizard-header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+}
+
+a.es_text_links{
+    font-weight: 500;
+    text-decoration: revert;
+}
+
+.eb-setup-wizard-footer{
+    position: fixed;
+    bottom: 0;
+    z-index: 10000;
+    left: 0;
+    right: 0;
+    padding: 10px 20px;
+    color: white;
+    background: #133F3F;
+    display: flex;
+}
+
+.eb-setup-footer-copyright{
+    width: 70%;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+
+    color: #FFFFFF;
+}
+
+.eb-setup-footer-button{
+    width: 30%;
+    text-align: right;
+}
+
+
+.eb-setup-wizard-footer .eb-setup-footer-button a{
+    padding: 7px 20px;
+    background: #FFFFFF;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+    text-align: center;
+    color: #F98012;
+    cursor: pointer;
+}
+
+.eb-setup-footer-button a:hover{
+    background: linear-gradient(0deg, #F98012, #F98012), #FFFFFF;
+    color: #FFFFFF;
+}
+
+
+.eb_setup_free_initialize{
+    text-align: center;
+    width: 80%;
+    margin: auto;
+}
+
+.eb_setup_free_initialize > div{
+    text-align: left;
+}
+
+.eb_setup_free_initialize div p{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 27px;
+    color: #444444;
+}
+
+
+.eb_setup_free_initialize_inp_wrap{
+
+}
+
+.eb_setup_free_initialize_inp_wrap input{
+    background: #FFFFFF;
+    border: 1px solid #C4C4C4;
+    box-sizing: border-box;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+}
+
+.eb_setup_free_initialize_inp_wrap label{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 26px;
+    /* identical to box height, or 162% */
+    align-items: center;
+    color: #F98012;
+}
+
+.eb_setup_free_initialize legend{
+    background: #C5F3F5;
+    border-radius: 4px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 22px;
+    /* identical to box height, or 157% */
+    padding: 3px;
+    text-transform: uppercase;
+
+    color: #444444;
+}
+
+.eb_setup_free_initialize fieldset{
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    border-radius: 4px;
+}
+
+.eb_setup_free_initialize fieldset p{
+    font-style: italic;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    /* or 138% */
+    color: #666666;
+}
+
+.eb_setup_free_initialize div{
+    padding-bottom: 10px;
+}
+
+.eb_setup_btn_wrap{
+    text-align: center;
+    /*padding: 20px 10px;*/
+    padding: 5px 20px 10px 10px;
+
+}
+
+.eb-setup-close-icon{
+    padding-top: 10px;
+    padding-right: 5px;
+    width: 5%;
+    color: #F98012;
+    cursor: pointer;
+}
+
+
+.eb_setup_btn{
+    padding: 10px 25px;
+    left: calc(50% - 147px/2 - 6px);
+    top: calc(50% - 39px/2 - 62.5px);
+    background: #F98012;
+    border-radius: 4px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+    border: 0px;
+    text-align: center;
+    color: #FFFFFF;
+    cursor: pointer;
+    margin: 10px;
+    margin-left: 0px;
+}
+
+.eb_setup_btn:hover{
+    background: #133F3F;
+    color: white;
+}
+
+.eb_setup_h2{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 26px;
+    color: #666666;
+}
+
+.eb_setup_h3{
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 19px;
+    color: #444444;
+}
+
+
+.eb_setup_h2 i{
+    font-size: 16px;
+    line-height: 20px;
+    color: #00A1A8;
+    padding: 0px;
+    border-radius: 100%;
+    margin: auto;
+}
+
+.eb_setup_h3 i{
+    font-size: 16px;
+    line-height: 20px;
+    color: #E5E5E5;
+    padding: 0px;
+    border-radius: 100%;
+    margin: auto;
+}
+
+
+.eb_setup_sec_btn{
+    padding: 10px 25px;
+    background: #FFFFFF;
+    border: 1px solid #F98012;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+
+    text-align: center;
+    margin-right: 10px;
+    color: #F98012;
+
+}
+
+.eb_setup_sec_btn:hover{
+    border: 1px solid #133F3F;
+    color: #133F3F !important;
+    /*text-decoration: none;*/
+}
+
+.eb_setup_installation_guide .eb_setup_sec_btn{
+    margin-top: 20px;
+    text-align: center;
+}
+
+
+ .eb_setup_installation_guide, .eb_setup_conn_url, .eb_setup_test_connection, .eb_setup_user_sync{
+    /*padding: 30px;*/
+    padding: 25px 30px 30px 30px;
+}
+
+.eb_setup_conn_url{
+    padding-top: 20px;
+    padding-bottom: 60px;
+    text-align: center;
+}
+
+.eb_setup_inp{
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    box-shadow: 0px 3px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    width: 100%;
+    padding: 10px 15px;
+}
+
+.eb_setup_conn_url div{
+    padding-top: 20px;
+}
+
+
+.eb_setup_course_sync div, .eb_setup_user_sync div{
+    padding-top: 20px;
+}
+
+.eb_setup_license_inp_wrap{
+    display: flex;
+}
+
+.eb_setup_license_inp_wrap div{
+    padding-right: 20px;
+}
+
+
+.eb_setup_conn_url_inp_wrap, .eb_setup_user_and_course_sync {
+    /* text-align: center; */
+    width: 50%;
+    text-align: left;
+    margin: auto;
+    padding-top: 20px;
+}
+
+.eb_setup_user_and_course_sync{
+    width: 45%;
+}
+
+.eb_setup_inp_wrap{
+    text-align: left;
+    margin: auto;
+    padding-top: 10px;
+}
+
+.eb_setup_conn_url_inp_wrap p{
+    padding: 0px;
+    margin: 0px;
+    padding-bottom: 4px;
+    padding-top: 10px;
+}
+
+.eb_setup_conn_url_inp_wrap p .eb_setup_h2{
+    padding-left: 0px;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+    color: #444444;
+}
+
+.eb_setup_separator{
+    display: flex;
+    padding-bottom: 8px;
+    padding-top: 8px;
+}
+
+.eb_setup_hr{
+    width: 49%;
+}
+
+.eb_setup_hr hr{
+    width: 90%;
+    border: 1px solid #E5E5E5;
+}
+
+.eb_setup_separator div span {
+    font-style: normal;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 26px;
+    /* identical to box height, or 130% */
+    text-align: center;
+    color: #00A1A8;
+    border: 8px solid #FFFFFF;
+}
+
+
+.eb_setup_course_sync_note, .eb_setup_user_sync_note{
+    width: 80%;
+    margin: auto;
+}
+
+.eb_setup_course_sync_inp_wrap, .eb_setup_user_sync_inp_wrap{
+    padding-left: 30px;
+}
+
+.eb_setup_course_sync_btn_wrap, .eb_setup_user_sync_btn_wrap{
+    text-align: center;
+}
+
+.eb_setup_course_sync fieldset, .eb_setup_user_sync fieldset{
+    margin-top: 30px;
+}
+
+
+/*  */
+
+
+
+/* ---- accordion */
+/* Style the buttons that are used to open and close the accordion panel */
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #F7F7F7;
+    color: #444;
+    cursor: pointer;
+    padding: 18px;
+    /* width: 100%; */
+    text-align: left;
+    border: 1px solid #E5E5E5;
+    outline: none;
+    transition: 0.4s;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active {
+    /* background-color: #ccc; */
+    border-bottom: none;
+}
+
+/**/
+
+.accordion .fa-solid.fa-circle-question{
+    color: #00A1A8;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.accordion i.fa-solid.fa-chevron-down,
+.accordion i.fa-solid.fa-chevron-up {
+    color: #F98012 !important;
+    float: right;
+    font-size: 20px !important;
+    vertical-align: middle;
+    line-height: 32px;
+}
+
+.accordion:hover i.fa-solid.fa-chevron-down,
+.accordion:hover i.fa-solid.fa-chevron-up {
+    /* background: #F98012; */
+    /* color: white !important; */
+}
+.accordion i.fa-solid.fa-chevron-up{
+    display: none;
+}
+
+.accordion.active i.fa-solid.fa-chevron-up {
+    display: block;
+    float: right;
+}
+
+.accordion.active i.fa-solid.fa-chevron-down {
+    display: none;
+}
+
+.es-p-b-10{
+    padding-bottom: 10px;
+}
+
+.es-p-t-10{
+    padding-top: 10px;
+}
+
+
+/**/
+.accordion .fa-solid.fa-circle-question{
+    color: #00A1A8;
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.accordion i.fa-solid.fa-chevron-down,
+.accordion i.fa-solid.fa-chevron-up {
+    color: #F98012 !important;
+    float: right;
+    font-size: 20px !important;
+    vertical-align: middle;
+    line-height: 20px;
+}
+
+.accordion:hover i.fa-solid.fa-chevron-down,
+.accordion:hover i.fa-solid.fa-chevron-up {
+    /* background: #F98012; */
+    /* color: white !important; */
+}
+
+/*.accordion span.dashicons.dashicons-arrow-up-alt2{*/
+.accordion i.fa-solid.fa-chevron-up{
+
+    display: none;
+}
+
+.accordion.active i.fa-solid.fa-chevron-up {
+    display: block;
+    float: right;
+}
+
+.accordion.active i.fa-solid.fa-chevron-down {
+    display: none;
+}
+
+.accordion.active{
+    color: #133F3F;
+    font-weight: 700;
+    font-size: 16px;
+    background: linear-gradient(0deg, #FFFFFF, #FFFFFF), #F7F7F7;
+}
+
+.accordion:hover {
+    /* background-color: #ccc; */
+}
+
+/* Style the accordion panel. Note: hidden by default */
+.panel {
+    padding: 20px 60px;
+    background-color: white;
+    display: none;
+    overflow: hidden;
+    border: 1px solid #E5E5E5;
+    border-top: none;
+    text-align: left;
+}
+
+
+/* ----- */
+
+
+/*  */
+
+
+/* ------------- */
+
+.eb-loader-progsessing-anim {
+  border: 5px solid #ffffff;
+  border-top: 5px solid #07a3c3;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+  display: inline-block;
+  position: fixed;
+  z-index: 999;
+  height: 2em;
+  width: 2em;
+  margin: auto;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.eb-lading-parent-wrap {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0 auto;
+  background: rgba(0, 0, 0, 0.73);
+  z-index: 99999;
+}
+
+
+
+.eb-setup-steps li { 
+    display: flex; 
+    color: #999;
+}
+  
+.eb-setup-steps .eb-setup-step-circle { 
+    position: relative;
+    /* padding: 0 1.5em; */
+}
+  
+
+.eb-setup-step .eb-setup-step-circle  {
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 10px;
+    border-radius: 100%;
+    color: #fff;
+    text-align: center;
+    left: 5px;
+    background: #C4C4C4;
+    flex: none;
+    width: 9px;
+    height: 9px;
+    z-index: 10;
+}
+
+.eb-setup-step.eb-setup-step-active,
+.eb-setup-step .eb-setup-step-completed {
+/*cursor: pointer;*/
+}
+
+.eb-setup-step  {
+/* cursor: not-allowed; */
+}
+
+
+.eb-setup-steps .eb-setup-step-circle {
+/* .eb-setup-steps .eb-setup-step-circle::after { */
+     /* content: "";
+     position: absolute;
+     z-index: 2;
+     right: 0;
+     top: 0;
+     transform: translateX(50%);
+     border-radius: 50%;
+     background: #fff;
+     border: 1px #ccc solid;
+     width: .8em;
+     height: .8em;
+    width: 9px;
+    height: 9px;
+    z-index: 10;
+    background: #C4C4C4; */
+}
+  
+
+.eb-setup-step-active .eb-setup-steps-title{
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 19px;
+    color: #00A1A8;
+}
+
+.eb-setup-step-active {
+    background: #FFFFFF;
+    border-radius: 30px 0px 0px 30px;
+}
+
+.eb-setup-step-circle-wrap{
+    width: 20%;
+}
+
+
+.eb_setup_web_service_name_wrap{
+    display: none;
+}
+
+
+
+.eb_setup_btn.disabled{
+    background: #F7F7F7;
+    border: 1px solid #E5E5E5;
+    background: #C4C4C4;
+    cursor: not-allowed ;
+}
+
+
+
+.eb-setup-steps .eb-setup-steps-title {
+    /* padding: 0 1.5em 1.5em 1.5em; */
+    padding: 10px 5px 10px 20px;
+    position: relative;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    color: #133F3F;
+    opacity: 0.4;
+}
+  
+.eb-setup-steps .eb-setup-steps-title::before {
+    content: "";
+    position: absolute;
+    top: 25px;
+    z-index: 1;
+    left: 0;
+    height: 100%;
+    border-left: 1px #ccc solid;
+}
+  
+
+.eb-setup-step .eb-setup-step-active {
+    cursor: pointer;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 19px;
+    color: #00A1A8;
+    opacity: 1;
+}
+
+.eb-setup-step .eb-setup-step-completed{
+    /*cursor: pointer;*/
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    color: #133F3F;
+}
+
+.eb_setup_sidebar_progress_icons{
+    position: relative;
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-left: 0px;
+    border-radius: 100%;
+    text-align: center;
+    left: 11px;
+    flex: none;
+    z-index: 10;
+}
+
+
+.eb_setup_site_name, .eb_setup_site_url{
+    background: #eeeeee;
+}
+
+
+.eb-setup-step-completed-wrap .eb_setup_sidebar_progress_icons{
+    color: #1AB900;
+}
+
+.eb-setup-step-active-wrap .eb_setup_sidebar_progress_icons{
+    /*font-size: 12px;
+    line-height: 20px;
+    background: #00A1A8;*/
+    color: #00A1A8;
+    /* padding: 0px; 
+    border-radius: 100%;*/
+}
+
+.eb-setup-step-active-wrap{
+    background: #FFFFFF;
+    border-radius: 30px 0px 0px 30px;
+}
+
+.eb-setup-steps .eb-setup-step-active-wrap .eb-setup-step-active{
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 19px;
+    color: #00A1A8;
+    opacity: 1;
+    left: 4px;
+}
+
+.eb-setup-step-active {
+    background: #FFFFFF;
+    border-radius: 30px 0px 0px 30px;
+}
+
+.eb-setup-step-circle-wrap{
+    width: 20%;
+}
+
+.eb-setup-steps .eb-setup-step-completed-wrap .eb-setup-step-completed{
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    /* identical to box height */
+    color: #133F3F;
+    opacity: 1;
+    left: 4px;
+}
+
+
+
+.eb-setup-steps strong {
+    display: block;
+    font-weight: bolder;
+}
+  
+.eb-setup-steps {
+    /* margin: 1em; width: 50%; */
+    padding: 5px 5px 5px 20px;
+}
+
+
+.eb-setup-steps, 
+.eb-setup-steps *::before, 
+.eb-setup-steps *::after {
+    /*box-sizing: border-box;
+    font-family: arial;*/
+}
+
+.eb-setup-step:last-child .eb-setup-steps-title::before {
+    display: none
+  }
+
+
+/* --------------- */
+
+.eb_plugin_configuration_checks{
+    width: 55%;
+    margin: auto;
+}
+
+.eb_setup_web_service, .eb_plugin_configuration, .eb_plugin_configuration, .eb_setup_check_permalink, .eb_setup_complete_details{
+    padding: 20px 30px 50px 30px;
+}
+
+.eb_setup_complete_cards{
+    display: flex;
+    padding: 15px 0px;
+    font-size: 14px !important;
+    line-height: 19px;
+    /*margin-bottom: 15px;*/
+}
+
+.eb_setup_complete_card{
+    width: 33%;
+    margin-right: 10px;
+    padding: 10px;
+    /* border: 1px solid grey; */
+    background: #FFFFFF;
+    border: 1px solid #E5E5E5;
+    box-sizing: border-box;
+    box-shadow: 0px 8px 12px rgb(0 0 0 / 18%);
+    border-radius: 4px;
+}
+
+.eb_setup_complete_cards .eb_setup_h2{
+    font-size: 14px !important;
+}
+
+
+.eb_setup_complete_card_wrap{
+    /*padding: 10px;*/
+    margin: 20px 10px 20px 20px;
+}
+
+.eb_setup_p_wrap{
+    padding-left: 20px
+}
+
+.eb_setup_settings_success_msg{
+    margin-top: 10px;
+    background: linear-gradient(0deg, rgba(26, 185, 0, 0.1), rgba(26, 185, 0, 0.1)), #FFFFFF;
+    border: 1px solid rgba(26, 185, 0, 0.3);
+    box-sizing: border-box;
+    border-radius: 4px;
+    background: linear-gradient(0deg, rgba(26, 185, 0, 0.1), rgba(26, 185, 0, 0.1)), linear-gradient(0deg, #FFFFFF, #FFFFFF);
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: #1AB900;
+    flex: none;
+    font-style: italic;
+    padding: 5px 10px;
+    display: none;
+}
+
+.eb_setup_error_msg_box{
+    margin-top: 10px;
+    background: linear-gradient(0deg, rgb(185 0 0 / 10%), rgb(185 0 0 / 10%)), #FFFFFF;
+    border: 1px solid rgb(185 0 0 / 30%);
+    box-sizing: border-box;
+    border-radius: 4px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+    color: red;
+    flex: none;
+    font-style: italic;
+    padding: 5px 10px;
+    display: none;
+}
+
+
+/*****  Css to Hide elements temporarily   ****/
+
+.eb_plugin_configuration .eb_setup_save_and_continue, .eb_setup_wp_site_details_wrap, .eb_setup_test_connection_continue_btn{
+    display: none;
+}
+
+.eb_setup_complete_card .eb_setup_copy_icon{
+    color: #666666;
+    padding-top: 5px;
+    width: 5%;
+    /*cursor: pointer;*/
+    color: #F98012;
+}
+
+.eb_setup_copy{
+    cursor: pointer;
+}
+
+.eb_setup_copy_success{
+    position: absolute;
+    width: auto;
+    bottom: -30px;
+    /* left: 50%; */
+    /* transform: translate(-50%, 0); */
+    font-style: italic;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 19px;
+    color: #1AB900;
+    font-weight: bold;
+    margin: 0;
+}
+
+.eb_setup_complete_card{
+    display: flex;
+    position: relative;
+}
+
+
+.eb_setup_complete_card > div{
+    width: 95%;
+}
+
+
+
+
+
+

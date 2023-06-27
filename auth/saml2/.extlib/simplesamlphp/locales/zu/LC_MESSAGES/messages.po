@@ -1,0 +1,537 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2018-11-15 15:07+0200\n"
+"PO-Revision-Date: 2018-11-15 15:07+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "{login:next}"
+msgstr "Okulandelayo"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Imethadatha ayitholakalanga"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Ngenkathi lo mhlinzeki kamazisi ezama ukwakha impendulo yokuqinisekisa, "
+"kuvele iphutha."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Kukhona umiso olungafanele kukufaka kwakho kwe-SimpleSAMLphp. Uma "
+"ungumlawuli wale sevisi, kufanele wenze isiqiniseko sokuthi umiso lwakho "
+"lwemethadatha lumiswe ngendlela efanele."
+
+msgid "{errors:descr_NOSTATE}"
+msgstr ""
+"Ulwazi lwesifunda lulahlekile, futhi ayikho indlela yokuqala kabusha "
+"isicelo"
+
+msgid "No SAML request provided"
+msgstr "Asikho isicelo se-SAML esinikeziwe"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Iphutha ngenkathi kuxhunyanwa neseva ye-CAS."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Awukho umlayezo we-SAML onikeziwe"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Uthumele okuthile ekhasini lokungena, kodwa ngasizathu simbe iphasiwedi "
+"ayizange ithunyelwe. Sicela uzame futhi."
+
+msgid "{status:intro}"
+msgstr ""
+"Sawubona, leli ikhasi lesimo se-SimpleSAMLphp. Lapha ungakwazi ukubona "
+"ukuthi iseshini yakho iphelelwe isikhathi yini, ukuthi ihlala isikhathi "
+"eside kangakanani ngaphambi kokuthi iphelelwe isikhathi kanye nazo zonke "
+"izici ezihambisana neseshini yakho."
+
+msgid "{status:authData_header}"
+msgstr "I-AuthData"
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Kutholwe umlayezo ongalungile"
+
+msgid "{login:login_button}"
+msgstr "Ngena"
+
+msgid "{status:header_shib}"
+msgstr "Idemo ye-Shibboleth"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Ukukhetha okuncanyelwayo]"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Kukhona iphutha kusicelo saleli khasi. Isizathu besithi: %REASON%"
+
+msgid "{login:help_header}"
+msgstr "Siza! Angiyikhumbuli iphasiwedi yami."
+
+msgid "{logout:return}"
+msgstr "Buyela kusevisi"
+
+msgid "{errors:title_METADATA}"
+msgstr "Iphutha lokulayisha imethadatha"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Iphutha lokucubungula Isicelo Sokuphuma"
+
+msgid "{logout:hold}"
+msgstr "Imisiwe"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "Iphutha le-LDAP"
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr ""
+"Iphutha lokuqinisekisa kumthombo othi %AUTHSOURCE%. Isizathu besithi: "
+"%REASON%"
+
+msgid "{logout:logout_all}"
+msgstr "Yebo, wonke amasevisi"
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Kuvele iphutha ngenkathi izama ukwakha isicelo se-SAML."
+
+msgid "{login:help_desk_link}"
+msgstr "Ikhasi lasekhaya ledeski losizo"
+
+msgid "{errors:debuginfo_header}"
+msgstr "Ulwazi lokususwa kwephutha"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Akukho ukufinyelela"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Isifiketi esingalungile"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Igama lomsebenzisi elingalungile noma iphasiwedi"
+
+msgid "{status:authData_summary}"
+msgstr "Qhafaza ukuze ubuke i-AuthData"
+
+msgid "{errors:howto_header}"
+msgstr "Indlela yokuthola usizo"
+
+msgid "{disco:login_at}"
+msgstr "Ngena kokuthi"
+
+msgid "{disco:select}"
+msgstr "Khetha"
+
+msgid "{disco:remember}"
+msgstr "Khumbula ukukhetha kwami"
+
+msgid "{general:remember}"
+msgstr "Khumbula"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Iphutha lokucubungula impendulo esuka Kumhlinzeki Kamazisi"
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Ikhasi elinikeziwe alitholakalanga. I-URL ibithi: %URL%"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Lesi siphetho asivunyelwe. Hlola izinketho zokuvumela kumiso lwakho lwe-"
+"SimpleSAMLphp."
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Umqalisi walesi sicelo akazange ahlinzeke ngepharamitha ye-RelayState "
+"ebonisa ukuthi kufanele uye kuphi ngokulandelayo."
+
+msgid "{status:subject_format}"
+msgstr "Ifomethi"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Awuzange wethule isitifiketi esilungile."
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Ikhasi alitholakali"
+
+msgid "{logout:completed}"
+msgstr "Kuqedile"
+
+msgid "{status:subject_header}"
+msgstr "Isihloko Se-SAML"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Ulwazi olumayelana nomsebenzi wokuphuma wamanje lulahlekile. Kufanele "
+"ubuyele kusevisi obuzama ukuphuma kuyo futhi uzame ukuphuma futhi. Leli "
+"phutha lingabangelwa ukuphelelwa isikhathi kolwazi lokuphuma. Ulwazi "
+"lokuphuma lugcinwa isikhathi esilinganiselwe - ngokuvamile amahora "
+"ambalwa. Lokhu kude kunanoma yimuphi umsebenzi wokuphuma ovamile, ngakho "
+"leli phutha lingase libonise elinye iphutha ngomiso. Uma inkinga "
+"iphikelela, thinta umhlinzeki wakho wesevisi."
+
+msgid "{status:subject_notset}"
+msgstr "akusethiwe"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Iphutha litholwe ukusuka Kumhlinzeki Kamazisi"
+
+msgid "{disco:selectidp}"
+msgstr "Khetha umhlinzeki wakho kamazisi"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Iphasiwedi ayisethiwe"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Isevisi icele ukuthi uziqinisekise. Sicela ufake igama lakho lomsebenzisi"
+" nephasiwedi ngohlobo olungezansi."
+
+msgid "{logout:logout_only}"
+msgstr "Cha, ku-%SP% kuphela"
+
+msgid "{login:username}"
+msgstr "Igama lomsebenzisi"
+
+msgid "{errors:error_header}"
+msgstr "Iphutha le-SimpleSAMLphp"
+
+msgid "{general:no_cancel}"
+msgstr "Cha, khansela"
+
+msgid "{status:header_diagnostics}"
+msgstr "Ukuhlonzwa Kwe-SimpleSAMLphp"
+
+msgid ""
+"You accessed the Single Sign On Service interface, but did not provide a "
+"SAML Authentication Request. Please note that this endpoint is not "
+"intended to be accessed directly."
+msgstr ""
+"Ufinyelele ukusebenzisana Kwesevisi Yokubhalisa Okukodwa, kodwa awuzange "
+"uhlinzeke Ngempendulo Yokuqinisekisa ye-SAML. Sicela uphawule ukuthi "
+"isiphetho asihloselwe ukufinyelelwa ngokuqondile."
+
+msgid "{login:contact_info}"
+msgstr "Ulwazi lokuxhumana:"
+
+msgid "{errors:errorreport_header}"
+msgstr "Umbiko wephutha uthunyelwe"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Ukuqinisekisa kuyekisiwe"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Lo Mhlinzeki Kamazisi uthole Isicelo Sokuqinisekisa ukusuka Kumhlinzeki "
+"Wesevisi, kodw,a kuvele iphutha ngenkathi ezama ukucubungula isicelo."
+
+msgid "{login:remember_me}"
+msgstr "Ngikhumbule"
+
+msgid "{disco:previous_auth}"
+msgstr "Ngaphambilini ukhethe ukuqinisekisa kokuthi"
+
+msgid "{general:yes_continue}"
+msgstr "Yebo, qhubeka"
+
+msgid "{login:remember_username}"
+msgstr "Khumbula igama lami lomsebenzisi"
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Ayikho impendulo ye-SAML enikeziwe"
+
+msgid "{login:user_pass_header}"
+msgstr "Faka igama lakho lomsebenzisi nephasiwedi"
+
+msgid "{logout:logging_out_from}"
+msgstr "Iyaphuma kumasevisi alandelayo:"
+
+msgid "{general:yes}"
+msgstr "Yebo"
+
+msgid "{errors:title_CASERROR}"
+msgstr "Iphutha Le-CAS"
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"I-LDAP iyidathabheyisi yomsebenzisi, futhi lapho uzama ukungena, sidinga "
+"ukuthinta idathabheyisi ye-LDAP. Kuvele iphutha ngesikhathi siyizama "
+"ngalesi sikhathi."
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Ulwazi lokususwa kwephutha olungezansi lungase lukhange kumlawuli / "
+"ideski losizo:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Ikhasi elinikeziwe alitholakalanga. Isizathu besithi: %REASON%  I-URL "
+"ibithi: %URL%"
+
+msgid "{logout:success}"
+msgstr "Uphume ngempumelelo kuwo wonke amasevisi abhalwe ngenhla."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Igama lomsebenzisi noma iphasiwedi engalungile."
+
+msgid "{login:error_header}"
+msgstr "Iphutha"
+
+msgid "{logout:logged_out_text}"
+msgstr "Usuphumile."
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Ayikwazanga ukwakha impendulo yokuqinisekisa"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr ""
+"Ukuqinisekisa kuhlulekile: isitifiketi esithunyelwe isiphequluli sakho "
+"asaziwa"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Umhlinzeki Womazisi uphendule ngephutha. (Ikhodi yesimo Sempendulo ye-"
+"SAML ayizange iphumelele)"
+
+msgid "{general:service_provider}"
+msgstr "Umhlinzeki Wesevisi"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Amapharamitha athunyelwe kusevisi yokuthola abengavumelani nezici."
+
+msgid "{status:header_saml20_sp}"
+msgstr "Isampula Ledemo Ye-SAML 2.0 SP"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Ukuqinisekisa kuhlulekile: isitifiketi esithunyelwe isiphequluli sakho "
+"asivumelekile noma asikwazi ukufundwa"
+
+msgid "{login:change_home_org_button}"
+msgstr "Khetha inhlangano yasekhaya"
+
+msgid "{status:logout}"
+msgstr "Phuma"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Iphasiwedi kumiso (auth.adminpassword) ayishintshiwe kunani "
+"elizenzakalelayo. Sicela uhlele ifayela lomiso."
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Iphutha lomthombo wokuqinisekisa"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Okuhlukile okungasingathiwe"
+
+msgid "{errors:report_header}"
+msgstr "Amaphutha ombiko"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Kuvele iphutha ngenkathi izama ukucubungula Isicelo Sokuphuma."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Isitifiketi esingalungile"
+
+msgid "{errors:descr_MEMCACHEDOWN}"
+msgstr ""
+"Idatha yeseshini yakho ayikwazi ukubuyiswa njengamanje ngenxa yezinkinga "
+"zobuchwepheshe. Sicela uzame futhi emizuzwini embalwa."
+
+msgid "{errors:report_submit}"
+msgstr "Thumela umbiko wephutha"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Isevisi eyodwa noma ngaphezulu ongene kuyo <i>ayikusekeli ukuphuma</i>. "
+"Ukuze wenze isiqiniseko sokuthi wonke amaseshini akho avaliwe, ukhuthazwa"
+" ukuthi <i>uvale isiphequluli sakho sewebhu</i>."
+
+msgid "{errors:title_CONFIG}"
+msgstr "Iphutha lomiso"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Uma ubika leli phutha, sicela futhi ubike le nombolo yokulandelela eyenza"
+" kube nokwenzeka ukuthola iseshini yakho kumalogi atholakalayo kumlawuli "
+"wesistimu:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Shintsha inhlangano yakho yasekhaya"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Isitifiketi esingaziwa"
+
+msgid "{general:no}"
+msgstr "Cha"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Asikho isitifiketi"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Okuhlukile okungasingathiwe kulahliwe."
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Iphutha lokwakha isicelo"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Ufinyelele ukusebenzisana kwe-SingleLogoutService, kodwa awuzange "
+"uhlinzeke nge-SAML LogoutRequest noma i-LogoutResponse. Sicela uphawule "
+"ukuthi isiphetho asihloselwe ukufinyelelwa ngokuqondile."
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Asizange samukele impendulo ethunyelwe ukusuka Kumhlinzeki Kamazisi."
+
+msgid "{disco:selectidp_full}"
+msgstr "Sicela ukhethe umhlinzeki kamazisi lapho ofuna ukuqinisekisa khona:"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Ayikwazi ukuphuma kusevisi eyodwa noma ngaphezulu. Ukuze wenze "
+"isiqiniseko sokuthi wonke amaseshini akho avaliwe, ukhuthazwa ukuthi "
+"<i>uvale isiphequluli sakho sewebhu</i>."
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Ukhethe okuthi <b>%HOMEORG%</b> njengenhlangano yakho yasekhaya. Uma "
+"lokhu kungalungile ungase ukhethe enye."
+
+msgid "{logout:default_link_text}"
+msgstr "Buyela emuva ekhasini lokufaka le-SimpleSAMLphp"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "I-SimpleSAMLphp ibonakala ingamisiwe ngendlela efanele."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Isicelo esingalungile sesevisi yokuthola"
+
+msgid "{status:attributes_header}"
+msgstr "Izici zakho"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Kungenzeka ukuthi akekho umsebenzisi onegama lomsebenzisi otholiwe, noma "
+"iphasiwedi oyinikezile ayilungile. Sicela uhlole igama lomsebenzisi bese "
+"uzame futhi."
+
+msgid "{status:sessionsize}"
+msgstr "Usayizi weseshini: %SIZE%"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Ulwazi lokuphuma lulahlekile"
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Ayikho I-RelayState"
+
+msgid "{logout:also_from}"
+msgstr "Ungenile futhi kulawa masevisi:"
+
+msgid "{logout:logout_all_question}"
+msgstr "Ingabe ufuna ukuphuma kuwo wonke amasevisi angenhla?"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Usuphume ngempumelelo kokuthi %SP%."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Ikhasi alitholakali"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Ukuqinisekisa kuyekiswe umsebenzisi"
+
+msgid "{errors:report_email}"
+msgstr "Ikheli le-imeyili:"
+
+msgid "{login:organization}"
+msgstr "Inhlangano"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Ufinyelele ukusebenzisana Kwesevisi Yomthengi Yesimemezelo, kodwa "
+"awuzange uhlinzeke Ngempendulo Yokuqinisekisa ye-SAML. Sicela uphawule "
+"ukuthi isiphetho asihloselwe ukufinyelelwa ngokuqondile."
+
+msgid "{errors:descr_NOCERT}"
+msgstr ""
+"Ukuqinisekisa kuhlulekile: isiphequluli sakho asizange sithumele noma "
+"yisiphi isitifiketi"
+
+msgid ""
+"You accessed the Artifact Resolution Service interface, but did not "
+"provide a SAML ArtifactResolve message. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Ufinyelele ukusebenzisana Kwesevisi Yokucaciswa Kobuciko, kodwa awuzange "
+"uhlinzeke umlayezo we-SAML ArtifactResolve. Sicela uphawule ukuthi "
+"isiphetho asihloselwe ukufinyelelwa ngokuqondile."
+
+msgid "Cannot retrieve session data"
+msgstr "Ayikwazi ukubuyisela idatha yeseshini"
+
+msgid "{status:some_error_occurred}"
+msgstr "Kuvele iphutha elithile"
+
+msgid "{errors:errorreport_text}"
+msgstr "Umbiko wephutha uthunyelwe kubalawuli."
+
+msgid "No SAML message provided"
+msgstr "Awukho umlayezo we-SAML onikeziwe"
+
+msgid "{login:help_desk_email}"
+msgstr "Thumela i-imeyili edeskini losizo"
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Iphutha lokucubungula isicelo esisuka Kumhlinzeki Wesevisi"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Ayikwazi ukuthola imethadatha yokuthi %ENTITYID%"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Ulwazi lwesifunda lulahlekile"
+
+msgid "{logout:title}"
+msgstr "Uphume ngemvume"
+
+msgid "{errors:report_explain}"
+msgstr "Chaza ukuthi yini oyenzile ngenkathi kuvela leli phutha..."
+
+msgid "{logout:failed}"
+msgstr "Ukuphuma kuhlulekile"
+
+msgid "{login:password}"
+msgstr "Iphasiwedi"
+
+msgid "{login:help_text}"
+msgstr ""
+"Ngaphandle kwegama lakho lomsebenzisi nephasiwedi awukwazi "
+"ukuziqinisekisa ukuze ufinyelele isevisi. Kungase kube khona ozokusiza. "
+"Thinta ideski losizo enhlanganweni yakho!"
+
+msgid "{logout:no}"
+msgstr "Cha"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Leli phutha kungenzeka ukuthi libangelwa indlela yokuziphatha "
+"engalindelwe noma umiso olungafanele lwe-SimpleSAMLphp. Thinta umlawuli "
+"wale sevisi yokungena, bese umthumela umlayezo wephutha ongenhla."
+
+msgid "{errors:report_text}"
+msgstr ""
+"Faka ngokuzithandela ikheli lakho le-imeyili, ukuze abalawuli bakwazi "
+"ukukuthinta ngemibuzo eyengeziwe mayelana nenkinga yakho:"
+
+msgid "{logout:progress}"
+msgstr "Iyaphuma..."
+
+msgid "{login:select_home_org}"
+msgstr "Khetha inhlangano yakho yasekhaya"
+

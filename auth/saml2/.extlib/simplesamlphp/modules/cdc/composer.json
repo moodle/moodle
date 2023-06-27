@@ -1,0 +1,49 @@
+{
+  "name": "simplesamlphp/simplesamlphp-module-cdc",
+  "description": "A SimpleSAMLphp module that allows integration with CDC",
+  "type": "simplesamlphp-module",
+  "keywords": [ "SimpleSAMLphp", "CDC"],
+  "homepage": "https://simplesamlphp.org/",
+  "license": "LGPL-2.1-or-later",
+  "authors": [
+    {
+      "name": "Olav Morken",
+      "email": "olav.morken@uninett.no"
+    },
+    {
+      "name": "Jaime Perez Crespo",
+      "email": "jaime.perez@uninett.no"
+    }
+  ],
+  "config": {
+    "preferred-install": {
+      "simplesamlphp/simplesamlphp": "source",
+      "*": "dist"
+    },
+    "allow-plugins": {
+      "composer/package-versions-deprecated": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "SimpleSAML\\Module\\cdc\\": "lib/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+    }
+  },
+  "require": {
+    "simplesamlphp/composer-module-installer": ">=1.1.6"
+  },
+  "require-dev": {
+    "simplesamlphp/simplesamlphp": "^1.17",
+    "phpunit/phpunit": "~5.7",
+    "webmozart/assert": "<1.7"
+  },
+  "support": {
+    "issues": "https://github.com/simplesamlphp/simplesamlphp-module-cdc/issues",
+    "source": "https://github.com/simplesamlphp/simplesamlphp-module-cdc/"
+  }
+}

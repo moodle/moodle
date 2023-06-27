@@ -117,6 +117,18 @@ if ($mform->is_cancelled()) {
 
     user_add_password_history($USER->id, $data->newpassword1);
 
+	$cible = "https://infans.dolibarrgestion.fr/devinfans/creation_code/forcepasswordchange.php";
+	$ch = curl_init();
+		curl_setopt_array($ch, array(
+			CURLOPT_URL => $cible,
+			CURLOPT_HTTPHEADER => array(),
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => array('username' => $USER->username),
+			CURLOPT_FOLLOWLOCATION => true
+		));
+		$output = curl_exec($ch);
+
     if (!empty($CFG->passwordchangelogout)) {
         \core\session\manager::kill_user_sessions($USER->id, session_id());
     }

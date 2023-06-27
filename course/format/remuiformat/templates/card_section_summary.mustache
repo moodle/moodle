@@ -1,0 +1,129 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/card_section_summary
+
+
+    Example context (json):
+    {
+        "editing: "1/0",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "sections": [
+                {
+                    "index": "1",
+                    "title": "Section Title",
+                    "singlepageurl": "Single Page URL",
+                    "hiddenmessage": "Hidden message",
+                    "hidden": "1/0",
+                    "summary": "Summary",
+                    "activityinfostring": "2 Files, 2 Quizzes"
+                    "sectionactivities" [
+                        {
+                        }
+                    ]
+                }
+            ]
+         }
+        ],
+    }
+}}
+
+{{#addsection}}
+<li id="{{divid}}" class="col-lg-4 col-md-6 col-sm-6 d-inline-flex single-card-container">
+    <div class="single-card d-flex align-items-center">
+        {{#numsections}}
+            <a href="{{{addurl}}}" class="{{addurlclass}}">{{{addicon}}} {{{straddsection}}}</a>
+
+            {{#strremovesection}}
+            <a href="{{{removeurl}}}" class="{{removeurlclass}}">{{{removeicon}}} {{{strremovesection}}}</a>
+            {{/strremovesection}}
+        {{/numsections}}
+
+        {{^numsections}}
+            <a href="{{{url}}}" data-add-sections="{{{straddsections}}}">{{{icon}}} {{{straddsections}}}</a>
+        {{/numsections}}
+    </div>
+</li>
+{{/addsection}}
+
+{{^addsection}}
+<li class="col-lg-4 col-md-6 col-sm-6 d-inline-flex section" id="section-{{{index}}}" aria-labelledby="section-{{{index}}} .content .sectionname">
+    <div class="single-card {{{remuinewthemecolor}}} {{#sectionfirstimage}}sectionfirstimage{{/sectionfirstimage}}"
+        style="background: linear-gradient({{remuidefaultsectionoverlay}}, {{remuidefaultsectionoverlay}}), {{sectionfirstimage}};
+                background-repeat: no-repeat;
+                background-size: cover;";>
+        {{#highlighted}}<div class="highlight text-primary"></div>{{/highlighted}}
+        <div class="left side float-left mt-0">
+            {{{ leftside }}}
+        </div>
+        <div class='right side float-right mt-0'>
+            {{{ addnewsection }}}
+            {{{ optionmenu }}}
+        </div>
+        <div class="content pb-10 pb-2">
+            <div class="summary">
+            </div>
+            {{#addnewsection}}
+                <h2 class="sectionname">{{{ title }}}</h2>
+            {{/addnewsection}}
+            {{^addnewsection}}
+                <div class="section-header">
+                    {{^hidden}}
+                        <a href="{{{ singlepageurl }}}">
+                    {{/hidden}}
+                        <h2 class="sectionname">{{{ title }}}</h2>
+                    {{^hidden}}
+                        </a>
+                    {{/hidden}}
+                </div>
+            {{/addnewsection}}
+            <div class="wdm-section-summary {{#hidden}}summary-muted{{/hidden}}">
+                {{{ summary }}}
+            </div>
+            <div class="section-activities-summary">
+                {{#activityinfo}}
+                    <span class="item {{#hidden}}text-muted{{/hidden}}">{{ . }}</span>
+                {{/activityinfo}}
+            </div>
+            {{{ hiddenmessage }}}
+            {{#editsectionurl}}
+                <a class="text-muted" href="{{ editsectionurl }}"><span><i class="fa fa-cog font-size-20 mb-5" aria-hidden="true"></i></span></a>
+            {{/editsectionurl}}
+        </div>
+        <div class="section-action-container card-bottom d-flex {{^hidden}}text-primary{{/hidden}}{{#hidden}}text-muted{{/hidden}}">
+            {{#progressinfo}}
+                <div class="progress progress-xs bg-grey-300 m-b-1">
+                    <div class="progress-bar bg-green-600" style="width: {{ percentage }}%;" role="progressbar">
+                    </div>
+                </div>
+            {{/progressinfo}}
+            <div class="text-right progress-text">
+                {{#progressinfo}}
+                    {{{ progress }}}
+                {{/progressinfo}}
+            </div>
+        </div>
+    </div>
+</li>
+{{/addsection}}

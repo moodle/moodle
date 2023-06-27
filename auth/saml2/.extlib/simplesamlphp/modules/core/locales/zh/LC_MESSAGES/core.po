@@ -1,0 +1,470 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP信息"
+
+msgid "{core:no_state:report_text}"
+msgstr "如果这个错误再次出现，你可以向你的系统管理员报告"
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "使用浏览器中的前进后退按钮"
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "我们无法为这个实体定位元信息"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3SP样例-测试从你的Shib idP登录"
+
+msgid "{core:no_state:suggestions}"
+msgstr "关于解决该问题的建议"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "作为管理员登录"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr "我们检测到从你上一次连接到该服务提供者到本次连接中间间隔仅仅数秒的时间，我们猜测该SP可能有问题"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "正在使用SimpleSAMLphp作为服务提供者"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "存储的 SAML 2.0 Service Provider Metadata（自动生成）"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID 提供站点 - Alpha 版本 （测试代码）"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "正在安装SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "诊断主机名/端口/协议"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "返回上一页并重新尝试"
+
+msgid "{core:no_state:causes}"
+msgstr "该错误可能是以下原因导致的："
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "存储的 Hosted SAML 2.0 Identity Provider Metadata（自动生成）"
+
+msgid "{core:frontpage:optional}"
+msgstr "可选的"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr "存储的 Shibboleth 1.3 Service Provider Metadata（自动生成）"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "文档"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp高级功能"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "对LDAP的需求"
+
+msgid "{core:frontpage:authtest}"
+msgstr "测试已经配置的认证源"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "元信息概览，诊断你的元信息文件"
+
+msgid "{core:frontpage:configuration}"
+msgstr "配置"
+
+msgid "{core:frontpage:welcome}"
+msgstr "欢迎"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "配置Shibboleth 1.3 SP以便和SimpleSAMLphp IdP协同工作"
+
+msgid "{core:no_state:header}"
+msgstr "状态信息丢失"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "元信息"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp维护和配置"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "检查SimpleSAMLphp配置"
+
+msgid "{core:frontpage:page_title}"
+msgstr "SimpleSAMLphp安装页面"
+
+msgid "{core:no_cookie:header}"
+msgstr "cookie丢失"
+
+msgid "{core:frontpage:warnings}"
+msgstr "警告"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "将XML转化为SimpleSAMLphp元信息的转换器"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "在IdP搜索服务中删除我的关于IdP的选择"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "你已经作为管理员登录了"
+
+msgid "{core:frontpage:auth}"
+msgstr "认证"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr "如果你是点击一个网站上的链接后收到该错误的用户，你应该报告这个错误给站点所有人"
+
+msgid "{core:no_state:description}"
+msgstr "我们无法定位当前请求的状态信息"
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "显示元信息"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "关闭浏览器并重试"
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "单点登录事件之间间隔太短了"
+
+msgid "{core:frontpage:intro}"
+msgstr "<strong>恭喜你！</strong>,你已成功安装SimpleSAMLphp。这是你的开始页面,你在这里可以发现测试样例/诊断工具/元信息/甚至是相关文档的链接"
+
+msgid "{core:no_metadata:header}"
+msgstr "没有找到元信息"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr "存储的 Shibboleth 1.3 Identity Provider Metadata（自动生成）"
+
+msgid "{core:frontpage:required}"
+msgstr "需求"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr "这可能是服务提供者或者身份提供者的配置问题"
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr "请求参数的长度被PHP Suhosin扩展限制了，请增大suhosin.get.max_value_length选项至最少2048字节"
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>你没有使用HTTPS</strong> - 和用户加密的通信。HTTP在测试目的下很好,但生产环境请使用HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">获取更多SimpleSAMLphp维护的信息</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "联盟"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "对Radius的需求"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "从先前的session保存的选项卡打开Web浏览器"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "正检测你的PHP"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "正在使用SimpleSAMLphp作为身份提供者"
+
+msgid "{core:no_state:report_header}"
+msgstr "报告这个错误"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP样例-测试从你的idP登录"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "该浏览器上的cookie可能遭禁止"
+
+msgid "{core:frontpage:about_header}"
+msgstr "关于SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"是不是觉得SimpleSAMLphp很酷？我在哪里能找到更多资料呢？你可以在下列网址找到更多信息： <a "
+"href=\"http://uninett.no\">UNINETT</a> 的 <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp at the Feide RnD"
+" 开发者博客</a>"
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr "如果你是部署这个单点登录系统的开发人员，那么你的配置文件存在问题，验证服务提供者和身份提供者是否配置正确"
+
+msgid "{core:no_cookie:retry}"
+msgstr "重试"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "对你有用的一些链接"
+
+msgid "{core:frontpage:metadata}"
+msgstr "元信息"
+
+msgid "{core:frontpage:recommended}"
+msgstr "推荐的"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp作为Google Apps for Education的IdP"
+
+msgid "{core:frontpage:tools}"
+msgstr "工具"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "重新尝试登陆"
+
+msgid "{core:no_cookie:description}"
+msgstr "你似乎禁止了你浏览器的cookie功能，请检查设置，然后重新尝试"
+
+msgid "{core:frontpage:deprecated}"
+msgstr "已经超时"
+
+msgid "You are logged in as administrator"
+msgstr "你已经作为管理员登录了"
+
+msgid "Go back to the previous page and try again."
+msgstr "返回上一页并重新尝试"
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr "如果这个错误再次出现，你可以向你的系统管理员报告"
+
+msgid "Welcome"
+msgstr "欢迎"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "检查SimpleSAMLphp配置"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "元信息概览，诊断你的元信息文件"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "将XML转化为SimpleSAMLphp元信息的转换器"
+
+msgid "Required"
+msgstr "需求"
+
+msgid "Warnings"
+msgstr "警告"
+
+msgid "Documentation"
+msgstr "文档"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr "存储的 Shibboleth 1.3 Service Provider Metadata（自动生成）"
+
+msgid "PHP info"
+msgstr "PHP信息"
+
+msgid "About SimpleSAMLphp"
+msgstr "关于SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "存储的 SAML 2.0 Service Provider Metadata（自动生成）"
+
+msgid "Retry login"
+msgstr "重新尝试登陆"
+
+msgid "Required for LDAP"
+msgstr "对LDAP的需求"
+
+msgid "Close the web browser, and try again."
+msgstr "关闭浏览器并重试"
+
+msgid "Federation"
+msgstr "联盟"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "我们无法定位当前请求的状态信息"
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "在IdP搜索服务中删除我的关于IdP的选择"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr "这可能是服务提供者或者身份提供者的配置问题"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "配置Shibboleth 1.3 SP以便和SimpleSAMLphp IdP协同工作"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "使用浏览器中的前进后退按钮"
+
+msgid "Metadata not found"
+msgstr "没有找到元信息"
+
+msgid "Missing cookie"
+msgstr "cookie丢失"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "该浏览器上的cookie可能遭禁止"
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "从先前的session保存的选项卡打开Web浏览器"
+
+msgid "Tools"
+msgstr "工具"
+
+msgid "Test configured authentication sources "
+msgstr "测试已经配置的认证源"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr "你似乎禁止了你浏览器的cookie功能，请检查设置，然后重新尝试"
+
+msgid "Installing SimpleSAMLphp"
+msgstr "正在安装SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "已经超时"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr "<strong>恭喜你！</strong>,你已成功安装SimpleSAMLphp。这是你的开始页面,你在这里可以发现测试样例/诊断工具/元信息/甚至是相关文档的链接"
+
+msgid "This error may be caused by:"
+msgstr "该错误可能是以下原因导致的："
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>你没有使用HTTPS</strong> - 和用户加密的通信。HTTP在测试目的下很好,但生产环境请使用HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">获取更多SimpleSAMLphp维护的信息</a> ]"
+
+msgid "Metadata"
+msgstr "元信息"
+
+msgid "Retry"
+msgstr "重试"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp维护和配置"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "诊断主机名/端口/协议"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr "如果你是点击一个网站上的链接后收到该错误的用户，你应该报告这个错误给站点所有人"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "正在使用SimpleSAMLphp作为身份提供者"
+
+msgid "Optional"
+msgstr "可选的"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "关于解决该问题的建议"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"是不是觉得SimpleSAMLphp很酷？我在哪里能找到更多资料呢？你可以在下列网址找到更多信息： <a "
+"href=\"http://uninett.no\">UNINETT</a> 的 <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp at the Feide RnD"
+" 开发者博客</a>"
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3SP样例-测试从你的Shib idP登录"
+
+msgid "Authentication"
+msgstr "认证"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp安装页面"
+
+msgid "Show metadata"
+msgstr "显示元信息"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp作为Google Apps for Education的IdP"
+
+msgid "State information lost"
+msgstr "状态信息丢失"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "存储的 Hosted SAML 2.0 Identity Provider Metadata（自动生成）"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID 提供站点 - Alpha 版本 （测试代码）"
+
+msgid "Required for Radius"
+msgstr "对Radius的需求"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "我们无法为这个实体定位元信息"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP样例-测试从你的idP登录"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "正在使用SimpleSAMLphp作为服务提供者"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr "我们检测到从你上一次连接到该服务提供者到本次连接中间间隔仅仅数秒的时间，我们猜测该SP可能有问题"
+
+msgid "Recommended"
+msgstr "推荐的"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr "如果你是部署这个单点登录系统的开发人员，那么你的配置文件存在问题，验证服务提供者和身份提供者是否配置正确"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp高级功能"
+
+msgid "Too short interval between single sign on events."
+msgstr "单点登录事件之间间隔太短了"
+
+msgid "Checking your PHP installation"
+msgstr "正检测你的PHP"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr "请求参数的长度被PHP Suhosin扩展限制了，请增大suhosin.get.max_value_length选项至最少2048字节"
+
+msgid "Useful links for your installation"
+msgstr "对你有用的一些链接"
+
+msgid "Configuration"
+msgstr "配置"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr "存储的 Shibboleth 1.3 Identity Provider Metadata（自动生成）"
+
+msgid "Login as administrator"
+msgstr "作为管理员登录"
+
+msgid "Report this error"
+msgstr "报告这个错误"
+

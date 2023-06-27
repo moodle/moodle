@@ -1,0 +1,11 @@
+{
+	"warning": {
+		"en": "We have detected that there is only a few seconds since you last authenticated with this service provider, and therefore assume that there is a problem with this SP."
+	},
+	"warning_header": {
+		"en": "Too short interval between single sign on events."
+	},
+	"retry": {
+		"en": "Retry login"
+	}
+}

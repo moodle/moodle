@@ -1,0 +1,34 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lv\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 :"
+" 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{authX509:X509error:certificate_text}"
+msgstr ""
+"x509 sertifikāta autentifikācija ir nepieciešama, lai piekļūtu šim "
+"servisam"
+
+msgid "{authX509:X509error:certificate_header}"
+msgstr "x509 sertifikāta autentifikācija"
+
+msgid "X509 certificate authentication"
+msgstr "x509 sertifikāta autentifikācija"
+
+msgid "X509 certificate authentication is required to access this service."
+msgstr ""
+"x509 sertifikāta autentifikācija ir nepieciešama, lai piekļūtu šim "
+"servisam"
+

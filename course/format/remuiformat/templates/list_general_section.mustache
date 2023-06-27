@@ -1,0 +1,111 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/list_general_section
+
+
+    Example context (json):
+    {
+        "editing: "0",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "generalsectiontitle": "General Section Title",
+            "activities": [
+                {
+                    "index": "index",
+                    "id": "id",
+                    "completion": "completion",
+                    "viewurl": "viewurl",
+                    "title": "title",
+                    "modulename": "modulename",
+                    "summary": "summary",
+                    "completed": "completed",
+                    "hidden": "hidden",
+                    "availstatus": "availstatus",
+                    "modicons": "modicons",
+                }
+            ],
+            "generalsectionsummary": "General Section Summary",
+         }
+        ]
+    }
+}}
+<style>
+    div {
+        --remuicourseimage: url({{{remuicourseimage}}});
+    }
+</style>
+<li id="section-0" class="section clearfix mb-25 mb-4 m-b-2" role="region" aria-label="{{{generalsectiontitle}}}">
+    <div class="general-section">
+        <div class="px-15 py-10 px-3 py-2 p-x-1 p-y-1 course-cover-image" style="background-image: linear-gradient(to right, rgba(14, 35, 53, 0.68), rgba(14, 35, 53, 0.68)), url({{{remuicourseimage}}});">
+            <div class="text-white">
+                <div class="font-size-24 mb-15 mb-3 wdm-generalsectiontitle">{{{generalsectiontitle}}}</div>
+                <div class="font-size-14 summary">{{{ generalsectionsummary }}}</div>
+            </div>
+
+            <div class="text-white mb-10 m-b-1 d-flex" style="justify-content: flex-end;">
+                {{#teachers}}
+                    {{{teacherimg}}}
+                {{/teachers}}
+            </div>
+            {{#percentage}}
+                <div class="progress progress-square mb-0">
+                    <div class="progress-bar bg-green-600" style="width: {{{percentage}}}%; height: 100%;" role="progressbar">
+                        <span class="sr-only">{{{percentage}}}% Complete</span>
+                    </div>
+                </div>
+            {{/percentage}}
+        </div>
+
+        <span class="hidden sectionname">{{{generalsectiontitle}}}</span>
+
+        <div class="content">
+            <div class="section_availability badge badge-pill badge-info mb-10"></div>
+            <ul class="general-section-activities img-text row p-0 py-10 py-2 p-y-1 d-flex justify-content-start text-center">
+                {{#activities}}
+                    <li class="activity {{{modulename}}} modtype_{{{modulename}}} justify-content-center p-0 pt-10 pt-3" id="module-{{id}}">
+                        <div>
+                            {{#editing}}
+                                {{{leftside}}}
+                            {{/editing}}
+                            <div>
+                                <div class="activityinstance p-0 d-inline-block">
+                                    {{{title}}}
+                                </div>
+                                <div class="actions">
+                                    {{{completion}}}
+                                </div>
+                                {{{availstatus}}}
+                            </div>
+                        </div>
+                    </li>
+                {{/activities}}
+            </ul>
+        </div>
+        <div class="text-center showactivitywrapper">
+            <span class="showactivity text-primary show">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </div>
+    </div>
+</li>

@@ -1,0 +1,42 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-riak",
+    "description": "A module that is able to store key/value pairs in a Riak store",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "riak"],
+    "license": "LGPL-3.0-or-later",
+    "authors": [
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\riak\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "phpfastcache/riak-client": "^3.4"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-riak/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-riak"
+    }
+}

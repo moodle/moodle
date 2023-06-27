@@ -1,0 +1,47 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authcrypt",
+    "description": "This module provides authentication against password hashes or .htpasswd files",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "authcrypt"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olavmrk@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authcrypt\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "webmozart/assert": "~1.4",
+        "whitehat101/apr1-md5": "~1.0"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-authcrypt/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-authcrypt"
+    }
+}

@@ -1,0 +1,46 @@
+{% extends "base.twig" %}
+{% set pagetitle = 'Sanity check' %}
+{% block content %}
+
+<h2>{{ pagetitle }}</h2>
+
+{% if errors %}
+
+<div class="message-box error">
+    <div class="pure-g">
+        <div class="pure-u-1-12">
+            <span class="fa fa-times-circle fa-2x"></span>
+        </div>
+        <div class="pure-u-11-12">
+            <p>{{ 'These checks failed:'|trans }}</p>
+
+            <ul class="error-list">
+            {% for err in errors %}
+                <li>{{ err }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if info %}
+<div class="message-box success">
+    <div class="pure-g">
+        <div class="pure-u-1-12">
+            <span class="fa fa-check fa-2x"> </span>
+        </div>
+        <div class="pure-u-11-12">
+            <p>{{ 'These checks succeeded:'|trans }}</p>
+
+            <ul>
+            {% for i in info %}
+                <li>{{ i }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

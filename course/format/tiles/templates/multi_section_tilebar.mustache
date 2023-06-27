@@ -1,0 +1,144 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/multi_section_tilebar
+
+    Tile bar template.
+
+    The purpose of this template is to render a single tile bar
+    which is a stretched tile displayed to represent a tile when
+    the user is in editing mode
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    *
+
+    Example context (json):
+    {
+        "courseid": "3",
+        "tileid": "1",
+        "title": "This is the tile title",
+        "hidden": "0",
+        "isactive": "1",
+        "restricted": "0",
+        "rightcontent": "",
+        "section_edit_control": "",
+        "hastilephoto": "0",
+        "allowphototiles": "1",
+        "isediting": "0",
+        "is_expanded": "0",
+        "titleclass": "",
+        "activity_summary": "Files: 1",
+        "hideaddcmcontrol": "0",
+        "single_sec_add_cm_control_html": ""
+    }
+}}
+
+<li id="section-{{tileid}}" class="section main {{#hidden}}hidden {{/hidden}}{{#isactive}}current {{/isactive}}clearfix{{#restricted}} tile_bar_restricted{{/restricted}}{{#hastilephoto}} phototilebar{{/hastilephoto}} collapsed"
+    role="region" data-section="{{tileid}}" data-true-sectionid="{{secid}}"
+    {{! Issue #39 we put data-sectionid = {course section number} here, because that is the pattern adopted by core in Moodle 3.9 in the course renderer course_section_add_cm_control()}}
+    {{! We also include "data-true-sectionid" which represents the id of the section in the course_sections table (we used to call this data-sectionid, but that conflicts with the core approach in 3.9)}}
+    data-sectionid="{{tileid}}" aria-label="{{{title}}}">
+    {{!hidden section requried for drag and drop to work, left side and right side for edit controls}}
+    <span class="hidden sectionname">{{{title}}}</span>
+    <div class="left side">{{{leftcontent}}}</div>
+    <div class="right side">
+        {{{rightcontent}}}
+        {{#isediting}}{{{section_edit_control}}}{{/isediting}}
+    </div>
+
+    <div class="content">
+        <div class="tile_bar narrow" data-section="{{tileid}}">
+            {{^hastilephoto}}
+                <div class="tileiconcontainer" id="tileicon_{{tileid}}"
+                    {{#isediting}}data-toggle="tooltip" data-placement="left"
+                        data-original-title="{{^allowphototiles}}{{#str}}picknewicon, format_tiles{{/str}}{{/allowphototiles}}{{#allowphototiles}}{{#str}}picknewiconphoto, format_tiles{{/str}}{{/allowphototiles}}"
+                     {{/isediting}}>
+                        {{>format_tiles/tileicon}}
+                </div>
+            {{/hastilephoto}}
+            {{#hastilephoto}}
+                <span class="tileiconcontainer hasphoto" id="tileicon_{{tileid}}"
+                {{#isediting}}data-toggle="tooltip" data-placement="left"
+                      data-original-title="{{^allowphototiles}}{{#str}}picknewicon, format_tiles{{/str}}{{/allowphototiles}}{{#allowphototiles}}{{#str}}picknewiconphoto, format_tiles{{/str}}{{/allowphototiles}}"
+                {{/isediting}}>
+                    {{>format_tiles/tilebarphoto}}
+                </span>
+            {{/hastilephoto}}
+            {{^isediting}}
+                <span class="tile_bar_text">
+                  <span class="tile-textinner{{titleclass}}" id="tileTextin-{{tileid}}">
+                    {{#title}}<h3 id="tileText-{{tileid}}">{{{title}}}</h3>{{/title}}
+                  </span>
+              </span>
+            {{/isediting}}
+            {{#isediting}}
+                <span class="tile_bar_text" tabindex="3">
+                    {{{inplace_editable_title}}}
+                </span>
+
+                <div class="icon20 pull-right" id="hiddeneye{{tileid}}" title="{{#str}}hidden, format_tiles{{/str}}"></div>
+                {{#is_expanded}}
+                    <a class="expand-collapse-sec collapse-section pull-right" data-toggle="tooltip" data-placement="right" data-original-title="{{#str}}collapse, format_tiles{{/str}}"
+                       data-section="{{tileid}}" href="{{{config.wwwroot}}}/course/view.php?id={{courseid}}&expand=-1#section-{{tileid}}" id="collapse{{tileid}}">
+                      </span>
+                    </a>
+                {{/is_expanded}}
+                {{^is_expanded}}
+                    <a class="expand-collapse-sec expand-section pull-right" data-toggle="tooltip" data-placement="right" data-original-title="{{#str}}expand, format_tiles{{/str}}"
+                       data-true-sectionid="{{secid}}" data-section="{{tileid}}" id="expand{{tileid}}"
+                       href="{{{config.wwwroot}}}/course/view.php?id={{courseid}}&expand={{tileid}}#section-{{tileid}}">
+                    </a>
+                {{/is_expanded}}
+                <div class="section-summary-activities pull-right"><small>{{{activity_summary}}}</small></div>
+            {{/isediting}}
+        </div>
+        {{#isediting}}
+            {{#numberisoutofsequence}}
+                <div class="alert alert-danger" class="sequence-warning">
+                    {{#str}}tileoutofsequence, format_tiles{{/str}}
+                    <a class="btn btn-secondary" title="{{#str}}fixproblems, format_tiles{{/str}}"
+                       href="{{{config.wwwroot}}}/course/format/tiles/teachertools.php?courseid={{courseid}}&action=reordersections&sesskey={{sesskey}}">
+                        {{#str}}fixproblems, format_tiles{{/str}}
+                    </a>
+                </div>
+            {{/numberisoutofsequence}}
+            <div class="summary">{{{section_summary}}}</div>
+            <div class="section_availability">
+                {{{availabilitymessage}}}
+            </div>
+            <div id="section-{{tileid}}-content">
+                <ul class="section img-text {{^useSubtiles}}no{{/useSubtiles}}subtiles">
+                    {{#is_expanded}}
+                            {{#course_modules}}
+                                {{>format_tiles/course_module}}
+                            {{/course_modules}}
+                    {{/is_expanded}}
+                </ul>
+                <div class="mod-chooser-outer"{{#hideaddcmcontrol}} style="display: none;"{{/hideaddcmcontrol}}>{{{single_sec_add_cm_control_html}}}</div>
+            </div>
+
+        {{/isediting}}
+
+    </div>
+</li>

@@ -1,0 +1,69 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: af\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{cron:cron:cron_report_title}"
+msgstr "Cron verslag"
+
+msgid "{cron:cron:ran_text}"
+msgstr "Cron was aktief om"
+
+msgid "{cron:cron:cron_suggestion}"
+msgstr "Hier is 'n voorbeeld vir 'n crontab lêer:"
+
+msgid "{cron:cron:run_text}"
+msgstr "Begin cron:"
+
+msgid "{cron:cron:cron_execution}"
+msgstr "Kliek hier om 'n cron proses the begin:"
+
+msgid "{cron:cron:cron_info}"
+msgstr ""
+"Cron is 'n manier om prosesse op 'n gereëlde basis te hardloop op unix "
+"sisteme."
+
+msgid "{cron:cron:cron_result_title}"
+msgstr "Hier is die resultaat vir die cron uitvoeringsproses:"
+
+msgid "{cron:cron:cron_header}"
+msgstr "Cron resultaat bladsy"
+
+msgid "Cron is a way to run things regularly on unix systems."
+msgstr ""
+"Cron is 'n manier om prosesse op 'n gereëlde basis te hardloop op unix "
+"sisteme."
+
+msgid "Run cron:"
+msgstr "Begin cron:"
+
+msgid "Cron ran at"
+msgstr "Cron was aktief om"
+
+msgid "Cron report"
+msgstr "Cron verslag"
+
+msgid "Here is a suggestion for a crontab file:"
+msgstr "Hier is 'n voorbeeld vir 'n crontab lêer:"
+
+msgid "Click here to run the cron jobs:"
+msgstr "Kliek hier om 'n cron proses the begin:"
+
+msgid "Here are the result for the cron job execution:"
+msgstr "Hier is die resultaat vir die cron uitvoeringsproses:"
+
+msgid "Cron result page"
+msgstr "Cron resultaat bladsy"
+

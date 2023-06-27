@@ -1,0 +1,99 @@
+#Change log
+
+7/2/17
+
+Removed known "gotchas" from previous build of the block.
+
+Full refactor and couple of class renames
+
+constants properly defined
+
+Images can be either CSS backgrounds or img tagged
+
+lassed out the images returned regardless of the embedded situation
+
+8/2/17
+
+Added functionality for course descriptions and truncation
+
+Began adding base for course grades or completion state. build_progress still needs a tidy
+
+9/2/17
+
+Working on the course completion enabled status case. Bootstrap progress bar currently within method. to abstract
+
+Working proof of grades case with progress bar that is same but diff variables to completion case
+
+10/2/17
+
+Fixed issue with grade instance fetching
+
+14/2/17
+
+Added core grid and list view functionality
+
+Added settings for max courses in row of grid format and fixed JS issue
+
+15/2/17
+
+Removed max grid row limit as conflicts with other calculations
+
+6/3/17
+
+Fixing Travis issues
+
+Removed behat till I can learn it
+
+Added JQuery to make all divs as tall as tallest item
+
+8/3/17
+
+Embedded course image fix
+
+Responsiveness of both Grid and List layouts
+
+24/3/17
+Added new Styles
+Add new config setting for course col width on grid
+
+27/3/17
+Updated Styles and Cleaned code
+Added checks for progress completion to be an Int in PHP so NAN does not appear when JS process the value.
+
+Update h2.title overflow working.
+Added cursor style to grid blocks
+
+28/03/17
+Updated to support list view only when a student has only one course or if full width is selected
+Update JS and CSS and PHP for linter
+
+29/03/17
+Updated CSS for Linter
+
+01/09/17
+Tidy up CSS lint issues from Moodle plugins bot
+
+17/10/17
+Tidy up more prechecker issues.
+Moved to v2 of the MoodleRooms travis file.
+Behat tests are now run again in the travis file
+New feature: Show teachers (editing-teacher) of a course to a user.
+New feature: Added a display name to help users when adding the block
+
+17/04/18
+Remove limitation on where block can be placed.
+Tested with 3.4 fully.
+Moved Progress bar on list view.
+
+16/07/18
+Added Privacy API
+
+23/08/18
+Moved to completion lib for getting course progress which requires alot less work from our end.
+Move progress from :before content to a rendered item
+
+24/08/18
+Added multilang filter support
+
+07/01/19
+Tested with 3.6 and Remote course check via issue #35

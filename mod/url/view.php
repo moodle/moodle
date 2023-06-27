@@ -24,6 +24,7 @@
  */
 
 require('../../config.php');
+// if($USER->username == "infansadminuser") exit(var_dump(__LINE__));
 require_once("$CFG->dirroot/mod/url/lib.php");
 require_once("$CFG->dirroot/mod/url/locallib.php");
 require_once($CFG->libdir . '/completionlib.php');
@@ -63,7 +64,22 @@ if (empty($exturl) or $exturl === 'http://') {
     notice(get_string('invalidstoredurl', 'url'), new moodle_url('/course/view.php', array('id'=>$cm->course)));
     die;
 }
+
 unset($exturl);
+
+
+//Detect special conditions devices
+$iPod    = stripos($_SERVER['HTTP_USER_AGENT'],"iPod");
+$iPhone  = stripos($_SERVER['HTTP_USER_AGENT'],"iPhone");
+$iPad    = stripos($_SERVER['HTTP_USER_AGENT'],"iPad");
+$Android = stripos($_SERVER['HTTP_USER_AGENT'],"Android");
+$webOS   = stripos($_SERVER['HTTP_USER_AGENT'],"webOS");
+
+//do something with this information
+if( $iPod || $iPhone || $iPad || $Android || $webOS ){
+    header('Location: '.$url->externalurl.'?username='.$USER->username);
+    exit;
+}
 
 $displaytype = url_get_final_display_type($url);
 if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
@@ -73,8 +89,13 @@ if ($displaytype == RESOURCELIB_DISPLAY_OPEN) {
 if ($redirect && !$forceview) {
     // coming from course page or url index page,
     // the redirection is needed for completion tracking and logging
+   
     $fullurl = str_replace('&amp;', '&', url_get_full_url($url, $cm, $course));
-
+    //  if ( $USER->username == "infansadminuser" )
+    // {
+    //     echo $fullurl;
+    //     exit;
+    // }
     if (!course_get_format($course)->has_view_page()) {
         // If course format does not have a view page, add redirection delay with a link to the edit page.
         // Otherwise teacher is redirected to the external URL without any possibility to edit activity or course settings.

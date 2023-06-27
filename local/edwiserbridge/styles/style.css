@@ -1,0 +1,336 @@
+/*
+* Enter template details
+*/
+
+.eb_settings_btn {
+    padding: 7px 18px;
+    border-radius: 4px;
+    color: white;
+    background-color: #2578dd;
+    margin-left: 5px;
+}
+
+.eb_settings_btn_cont {
+    padding: 30px;
+}
+
+
+.eb_admin_templ_dismiss_notice_message {
+      text-align: right;
+      width: 15%;
+      font-weight: 700;
+   }
+/*#admin-ebnewserviceinp, #admin-ebnewserviceuserselect, #eb_service_form .eb_service_field{
+    display: none;
+}
+*/
+
+.eb_service_field {
+    display: none;
+}
+
+.eb-tabs-cont {
+    display: flex;
+    background: #ecf0f1;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.eb-tabs {
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 10px;
+    text-decoration: none;
+    border-bottom: 2px solid #2578dd;
+    flex-grow: 1;
+    color: black;
+    opacity: 0.7;
+}
+
+.eb-tabs:hover {
+    color: white;
+    text-decoration: none;
+    background-color: #2578dd;
+}
+
+.active-tab {
+    background-color: #2578dd;
+    color: white;
+    font-weight: 600;
+    opacity: 1;
+}
+
+.eb-error-msg {
+    padding-bottom: 30px;
+}
+
+.eb_test_connection_log_open, .eb_test_connection_log_close{
+    cursor: pointer;
+    color: #0f6fc5;
+    text-decoration: underline;
+}
+
+
+.eb_connection_short_msg{
+    color: red;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+.eb_test_connection_log{
+    display: none;
+    border: 1px solid #d6d6d6;
+    padding: 10px 10px 10px 20px;
+    background: #fafafa;
+}
+
+.eb_connection_err_response{
+    border-bottom: 1px solid #d8d8d8;
+}
+
+.eb_connection_err_response h4, .eb_connection_err_recommended_sec h4{
+    font-weight: 400;
+}
+
+.eb_connection_err_response div{
+    padding-left: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.eb_connection_err_recommended_sec{
+    padding-top: 10px;
+}
+
+.eb_connection_err_recommended_sec div{
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-bottom: 6px;
+}
+
+.eb_connection_err_recommended_sec ol li{
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.eb-error-msg {
+    /*box-shadow: 1px 0px 2px #ff000021;
+    border-radius: 0px;
+    border: 1px solid #ff000036;
+    border-left: 3px solid red;
+    margin-bottom: 0px;
+    margin-left: 10px;
+    margin: 5px;
+    color: grey;*/
+    padding: 5px 5px 5px 10px;
+}
+
+.eb-success-msg {
+    margin: 5px;
+    /*background: #00800030;*/
+    box-shadow: 1px 0px 2px #00800052;
+    border-radius: 0px;
+    border: 1px solid #0080003d;
+    border-left: 3px solid green;
+    /* display: none; */
+    margin-bottom: 0px;
+    margin-left: 10px;
+    padding: 5px 5px 5px 10px;
+    color: grey;
+}
+
+#id_eb_option_add_fields {
+    margin-top: 10px;
+}
+
+.eb_setting_btn {
+    border-radius: 4px;
+    margin-left: 5px;
+    padding: 7px 18px;
+}
+
+.eb_connection_btns {
+    text-align: right;
+    padding-top: 30px;
+}
+
+#id_eb_mform_create_service {
+    padding: 7px 18px;
+    border-radius: 4px;
+}
+
+#eb_connection_form button {
+    padding: 7px 18px;
+    border-radius: 4px;
+}
+
+#admin-eb_setup_wizard_field {
+    display: none;
+}
+
+.eb_copy_txt_wrap {
+    display: flex;
+}
+
+.eb_copy_div div:first-child {
+    border: 1px solid #cecece;
+    border-right: 0px;
+    padding: 4px;
+}
+
+#id_eb_token {
+    width: 100%;
+    padding: 4px;
+}
+
+#fitem_id_eb_mform_token_wrap .form-control-static,
+#fitem_id_eb_mform_site_url_wrap .form-control-static,
+#fitem_id_eb_mform_lang_wrap .form-control-static {
+    width: 100%;
+}
+
+.eb_primary_copy_btn {
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+
+/***********  POP UP CSS   **************/
+
+
+/* Popup box BEGIN */
+
+.eb_service_pop_up {
+    cursor: pointer;
+    display: none;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10000;
+    display: none;
+    position: fixed;
+    z-index: 1;
+    padding-top: 100px;
+    left: 30%;
+}
+
+.eb_service_pop_up .helper {
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+.eb_service_pop_up > div {
+    background-color: #fff;
+    box-shadow: 10px 10px 60px #555;
+    display: inline-block;
+    height: auto;
+    max-width: 551px;
+    min-height: 100px;
+    vertical-align: middle;
+    width: 100%;
+    position: relative;
+    border-radius: 8px;
+    padding: 30px 30px;
+}
+
+.eb_service_pop_up_close {
+    background-color: #fff;
+    cursor: pointer;
+    display: inline-block;
+    font-family: arial;
+    font-weight: bold;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    font-size: 25px;
+    line-height: 30px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+}
+
+.eb_service_pop_up_close:hover {
+    background-color: #ccc;
+}
+
+
+/*********** END **************/
+
+
+/*********  Summary Page issue  *********/
+
+.summary_section_tbl {
+    width: 100%;
+}
+
+.summary_section_title {
+    padding-bottom: 10px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #8080802e;
+}
+
+.summary_section {
+    margin-bottom: 20px;
+    padding: 30px;
+    padding-top: 10px;
+    border: 1px solid #80808033;
+    background-color: #80808014;
+}
+
+.sum_label {
+    width: 50%;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-right: 30px;
+}
+
+.sum_success {
+    font-weight: bolder;
+    color: #7ad03a;
+    font-size: 22px;
+}
+
+.summ_error {
+    color: red;
+}
+
+.eb_summary_tab {
+    flex-grow: 1;
+}
+
+.summary_tab_sucess {
+    cursor: pointer;
+    padding: 10px;
+    color: white;
+    background-color: green;
+    opacity: 0.8;
+}
+
+.summary_tab_warning {
+    background-color: #eba036;
+    opacity: 0.8;
+}
+
+.summary_tab_error {
+    color: white;
+    background-color: #d70202;
+    opacity: 0.8;
+}
+
+.summary_tab_sucess:hover {
+    background-color: #045904;
+    color: white;
+}
+
+.summary_tab_warning:hover {
+    background-color: #eba036;
+}
+
+.summary_tab_error:hover {
+    background-color: #bc0505;
+}
+
+
+/*****************/

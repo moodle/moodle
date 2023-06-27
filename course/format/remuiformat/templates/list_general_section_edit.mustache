@@ -1,0 +1,116 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/list_general_section_edit
+
+
+    Example context (json):
+    {
+        "editing: "1",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "generalsectiontitle": "General Section Title",
+            "activities": [
+                {
+                    "index": "index",
+                    "id": "id",
+                    "completion": "completion",
+                    "viewurl": "viewurl",
+                    "title": "title",
+                    "modulename": "modulename",
+                    "summary": "summary",
+                    "completed": "completed",
+                    "hidden": "hidden",
+                    "availstatus": "availstatus",
+                    "modicons": "modicons",
+                }
+            ],
+            "generalsectionsummary": "General Section Summary",
+         }
+        ]
+    }
+}}
+<li id="section-0" class="first-section-li section main clearfix mb-25 mb-4" role="region" aria-label="{{{generalsectiontitlename}}}">
+   <div class="px-15 py-10 px-3 p-x-1 py-2 p-y-1 course-cover-image" style="background-image: linear-gradient(to right, rgba(14, 35, 53, 0.68), rgba(14, 35, 53, 0.68)), url({{{remuicourseimage}}});">
+    {{#rightside}}
+    <div class="right side">
+        {{{rightside}}}
+    </div>
+    {{/rightside}}
+        <div class="text-white">
+            <h2 class="section-title">
+                {{{generalsectiontitle}}}
+            </h2>
+            <div class="font-size-14 summary">{{{ generalsectionsummary }}}</div>
+        </div>
+        <div class="text-white mb-10 m-b-1 d-flex" style="justify-content: flex-end;">
+            {{#teachers}}
+                {{{teacherimg}}}
+            {{/teachers}}
+        </div>
+        {{#percentage}}
+            <div class="progress progress-square mb-0">
+                <div class="progress-bar bg-green-600" style="width: {{{percentage}}}%; height: 100%;" role="progressbar">
+                    <span class="sr-only">{{{percentage}}}% Complete</span>
+                </div>
+            </div>
+        {{/percentage}}
+   </div>
+
+   <span class="hidden sectionname">{{{generalsectiontitlename}}}</span>
+
+   <div class="content" aria-label="{{{generalsectiontitlename}}}">
+        <div class="section_availability badge badge-pill badge-info mb-10"></div>
+            <div class="summary hide"></div>
+            <ul class="section general-section-activities img-text row justify-content-start text-center">
+                {{#activities}}
+                    <li class="activity first-section-activity modtype_{{{modulename}}} yui3-dd-drop" id="module-{{id}}">
+                        <div>
+                            <span class="editing_move moodle-core-dragdrop-draghandle" title="{{#str}} moveresource, format_remuiformat {{/str}}" tabindex="0" data-draggroups="resource" role="button" data-sectionreturn="0"><i class="icon fa fa-arrows fa-fw  iconsmall" aria-hidden="true" aria-label="" style="cursor: move;"></i></span>
+                            <div class="mod-indent-outer w-100">
+                                {{#indent}}
+                                    <div class="{{{indent}}}"></div>
+                                {{/indent}}
+                                <div>
+                                    <div class="activityinstance p-0 d-inline-block">
+                                        {{{title}}}
+                                    </div>
+                                    <div class="actions">
+                                        {{{completion}}}
+                                        {{{modicons}}}
+                                    </div>
+                                </div>
+                                {{{availstatus}}}
+                            </div>
+                        </div>
+                    </li>
+                {{/activities}}
+            </ul>
+        <div class="text-center showactivitywrapper">
+            <span class="showactivity text-primary show">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </div>
+        {{{addnewactivity}}}
+    </div>
+</li>

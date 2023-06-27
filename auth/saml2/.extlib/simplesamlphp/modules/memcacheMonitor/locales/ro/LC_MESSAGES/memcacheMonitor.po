@@ -1,0 +1,132 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ro\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100"
+" < 20)) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "Număr total de conexiuni"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "Versiune"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "Număr total de comenzi GET (efectuate cu succes)"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "Numărul curent de elemente"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "Timp de funcționare"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "Spațiu de stocare disponibil"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "Conexiuni deschise acum"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "Secunde CPU (sistem)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "Secunde CPU (utilizator)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "ID proces"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "Număr total de comenzi GET"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "Octeți înspre server"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "Ora curentă"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "Număr total de comenzi GET (eșuate)"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "Octeți scriși de server"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "Structuri de conectare"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "Număr total de comenzi SET"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "Număr total de elemente"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "Număr de octeți utilizați acum"
+
+msgid "Current time"
+msgstr "Ora curentă"
+
+msgid "Total items ever"
+msgstr "Număr total de elemente"
+
+msgid "Bytes written by the server"
+msgstr "Octeți scriși de server"
+
+msgid "Uptime"
+msgstr "Timp de funcționare"
+
+msgid "Current open connections"
+msgstr "Conexiuni deschise acum"
+
+msgid "Total storage avail"
+msgstr "Spațiu de stocare disponibil"
+
+msgid "Version"
+msgstr "Versiune"
+
+msgid "Total GET commands (failed)"
+msgstr "Număr total de comenzi GET (eșuate)"
+
+msgid "Total SET commands"
+msgstr "Număr total de comenzi SET"
+
+msgid "Connection structures"
+msgstr "Structuri de conectare"
+
+msgid "Total GET commands (success)"
+msgstr "Număr total de comenzi GET (efectuate cu succes)"
+
+msgid "Total bytes in use currently"
+msgstr "Număr de octeți utilizați acum"
+
+msgid "Total GET commands"
+msgstr "Număr total de comenzi GET"
+
+msgid "Bytes in to the server"
+msgstr "Octeți înspre server"
+
+msgid "Process ID"
+msgstr "ID proces"
+
+msgid "Currently number of items"
+msgstr "Numărul curent de elemente"
+
+msgid "CPU Seconds (User)"
+msgstr "Secunde CPU (utilizator)"
+
+msgid "CPU Seconds (System)"
+msgstr "Secunde CPU (sistem)"
+
+msgid "Total connections"
+msgstr "Număr total de conexiuni"
+

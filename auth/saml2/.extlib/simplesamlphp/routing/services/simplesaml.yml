@@ -1,0 +1,16 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        public: false
+
+    SimpleSAML\Configuration:
+        factory: ['SimpleSAML\Configuration', 'getInstance']
+
+    SimpleSAML\Session:
+        factory: ['SimpleSAML\Session', 'getSessionFromRequest']
+
+    SimpleSAML\Auth\AuthenticationFactory:
+        class: SimpleSAML\Auth\AuthenticationFactory
+        arguments:
+            - '@SimpleSAML\Configuration'
+            - '@SimpleSAML\Session'

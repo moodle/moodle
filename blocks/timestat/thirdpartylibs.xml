@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/screentime.js</location>
+        <name>Screentime.js</name>
+        <version>0.2.0</version>
+        <license>MIT</license>
+        <licenseversion>1.0</licenseversion>
+    </library>
+</libraries>

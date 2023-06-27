@@ -1,0 +1,1461 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: da\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 identitetsudbyders metadata"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Enten kunne brugeren ikke findes eller også var kodeordet forkert. Prøv "
+"igen."
+
+msgid "{logout:failed}"
+msgstr "Logout fejlede"
+
+msgid "{status:attributes_header}"
+msgstr "Dine oplysninger"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 tjenesteudbyder (remote)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Login fejlede - din browser sendte ikke noget certifikat"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Fejl i behandlingen af svar fra Identitetsudbyder"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "State information tabt"
+
+msgid "{login:username}"
+msgstr "Brugernavn"
+
+msgid "{errors:title_METADATA}"
+msgstr "Fejl i læsning af metadata"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadata parser"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Ingen fejl"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Oplysningerne om logout er tabt. Du bør gå tilbage til tjenesten du "
+"ønskede at logge ud af og prøve igen. Fejlen kan skyldes at oplysningerne"
+" blev forældet, da de kun gemmes i kort tid, typisk et par timer. Dette "
+"er dog længere end hvad det burde tage at logge ud, så denne fejl kan "
+"indikere en konfigurationsfejl. Hvis fejlen genopstår, bedes du kontakte "
+"tjenesteudbyderen."
+
+msgid "{disco:previous_auth}"
+msgstr "Du har tidligere valgt at logge ind hos"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Tilbage til listen over filer"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Hvis du vil rapportere denne fejl, så medsend venligst dette sporings-ID."
+" Den gør det muligt for teknikerne at finde fejlen."
+
+msgid "{login:change_home_org_title}"
+msgstr "Skift hjemmeinstitution"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Kan ikke finde metadata for %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadata"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Hvis du vil kunne kontaktes i forbindelse med fejlmeldingen, bedes du "
+"indtaste din emailadresse herunder"
+
+msgid "{errors:report_header}"
+msgstr "Rapportér fejl"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Du har valgt <b>%HOMEORG%</b> som din hjemmeinstitution. Hvis dette ikke "
+"er korrekt, kan du vælge en anden."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Fejl i behandlingen forespørgsel fra Tjeneste Udbyder"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Svaret fra Identitetsudbydere kunne ikke accepteres"
+
+msgid "{errors:debuginfo_header}"
+msgstr "Detaljer til fejlsøgning"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "Fordi du er i debug-mode kan du se indholdet af de beskeder du sender:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Institutionen har sendt en fejl. (Status koden i SAML responset var ikke "
+"succes)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shibboleth 1.3 identitetsudbyders metadata"
+
+msgid "{login:help_text}"
+msgstr ""
+"Desværre, uden korrekt brugernavn og kodeord kan du ikke få adgang til "
+"tjenesten. Måske kan help-desk på din hjemmeinstitution hjælpe dig!"
+
+msgid "{logout:default_link_text}"
+msgstr "Tilbage til SimpleSAMLphp installationssiden"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp fejl"
+
+msgid "{login:help_header}"
+msgstr "Hjælp! Jeg har glemt mit kodeord."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr "Der opstod en fejl i kommunikationen med LDAP databasen under login."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Der er en fejl i konfigurationen af din SimpleSAMLphp installation. Hvis "
+"du er administrator for denne server, check at din metadata konfiguration"
+" er korrekt."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Fejlagtig forespørgsel"
+
+msgid "{status:sessionsize}"
+msgstr "Sessionsstørrelse: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Du er logget ud"
+
+msgid "{admin:metaover_group_metadata.adfs-sp-remote}"
+msgstr "ADFS tjenesteudbyder (remote)"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML metadata"
+
+msgid "{status:subject_format}"
+msgstr "Format"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Følgende felter kunne ikke tolkes"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Authentication source fejl"
+
+msgid "{login:select_home_org}"
+msgstr "Vælg din hjemmeinstitution"
+
+msgid "{logout:hold}"
+msgstr "I kø"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Undersøgelse af konfiguration"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Send besked"
+
+msgid "{status:logout}"
+msgstr "Log ud"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "De afsendte værdier overholder ikke Discovery Servicens' krav"
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Fejl ved generering af SAML-forespørgsel"
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Valgfrie felter"
+
+msgid "{logout:return}"
+msgstr "Tilbage til service"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "Du kan få metadata-xml <a href=\"%METAURL%\">her</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Ja, alle services"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Du kan slå debug-mode fra i den globale SimpleSAMLphp-konfigurationsfil "
+"<tt>config/config.php</tt>"
+
+msgid "{disco:select}"
+msgstr "Vælg"
+
+msgid "{logout:also_from}"
+msgstr "Du er også logget ud fra disse services:"
+
+msgid "{login:login_button}"
+msgstr "Login"
+
+msgid "{logout:progress}"
+msgstr "Logger ud..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Forkert brugernavn eller kodeord."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shibboleth 1.3 tjenesteudbyder (remote)"
+
+msgid "{login:remember_username}"
+msgstr "Husk mit brugernavn"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Denne IdP har modtaget en anmodning om single sign-on fra en tjeneste "
+"udbyder, men der opstod en fejl under behandlingen af denne anmodning."
+
+msgid "{logout:logout_all_question}"
+msgstr "Vil du logge ud fra alle ovenstående services?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Ingen Adgang"
+
+msgid "{login:error_nopassword}"
+msgstr "Dit kodeord blev ikke sendt - prøv igen."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "RelayState mangler"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "State information er tabt og der er ikke muligt at gentage forspørgelsen"
+
+msgid "{login:password}"
+msgstr "Kodeord"
+
+msgid "{errors:debuginfo_text}"
+msgstr "Detaljerne herunder kan være af interesse for teknikerne / help-desken"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Valg kan ikke behandles - se konfigurationsfil"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "An unhandled exception was thrown"
+
+msgid "{general:yes}"
+msgstr "Ja"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Konfigurationsfejl"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Fejl i Logout Request"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Fejl i denne sektion af metadata"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadata ikke fundet"
+
+msgid "{login:contact_info}"
+msgstr "Kontaktoplysninger"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Unhandled exception"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 tjenesteudbyder-demo"
+
+msgid "{login:error_header}"
+msgstr "Fejl"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Autentificering aubrudt"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"En eller flere services som du er logget ind hos <i>understøtter ikke log"
+" ou</i>. For at sikre at alle dine forbindelser er lukket, bedes du "
+"<i>lukke din browser</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "I SAML 2.0 metadata xml-format:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 identitetsudbyder (remote)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 identitetsudbyder (hosted)"
+
+msgid "{status:subject_notset}"
+msgstr "ikke angivet"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Obligatoriske felter"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Vælg den konfiguration som skal undersøges"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Authentifikation fejlede: Certifikatet som din browser har send er ukendt"
+
+msgid "{logout:logging_out_from}"
+msgstr "Du logger ud af følgende services:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Du er nu logget ud fra %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Fejlrapporten er nu sendt til system-administrator"
+
+msgid "{status:subject_header}"
+msgstr "SAML emne"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Der opstod en fejl under behandlingen af Logout forespørgelsen"
+
+msgid "{logout:success}"
+msgstr "Du har logget ud fra alle overnævnte services. "
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Beskeder"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Autentificering blev afbrudt af brugeren"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Der opstod en fejl ved kommunikationen med CAS serveren"
+
+msgid "{general:no}"
+msgstr "Nej"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 tjenesteudbyders metadata"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Konverteret metadata"
+
+msgid "{logout:completed}"
+msgstr "Færdig"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Der er ikke konfigureret et password til administrationsgrænsefladen "
+"(auth.adminpassword). Opdater konfigurationen med et nyt password, der er"
+" forskelligt fra stadardpasswordet."
+
+msgid "{general:service_provider}"
+msgstr "Tjenesteudbyder"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Der er en fejl i forespørgslen til siden. Grunden er: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Nej"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "Foretrukket valg"
+
+msgid "{general:no_cancel}"
+msgstr "Nej, jeg accepterer ikke"
+
+msgid "{login:user_pass_header}"
+msgstr "Indtast brugernavn og kodeord"
+
+msgid "{errors:report_explain}"
+msgstr "Forklar hvad du gjorde og hvordan fejlen opstod"
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "SAML response mangler"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Du forsøger at tilgå Single Logout grænsefladen, uden at sendet et SAML "
+"LogoutRequest eller LogoutResponse"
+
+msgid "{login:organization}"
+msgstr "Organisationsnavn"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Forkert brugernavn eller kodeord"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Følgende obligatoriske felter kunne ikke findes "
+
+msgid "{errors:descr_NOACCESS}"
+msgstr "Denne tjeneste er ikke tilsluttet. Check konfigurationen."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Ingen SAML besked"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Du forsøger at tilgå Assertion Consumer Service grænsefladen uden at "
+"sende et SAML Authentication Response"
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "Du er ved at sende en besked. Tryk på 'send' for fortsætte"
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Autentificeringsfejl i %AUTHSOURCE%. Årsagen var: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "En fejl opstod."
+
+msgid "{login:change_home_org_button}"
+msgstr "Vælg hjemmeinstitution"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Overflødigt valg i konfigurationsfil"
+
+msgid "{errors:report_email}"
+msgstr "E-mailadresse:"
+
+msgid "{errors:howto_header}"
+msgstr "Hvordan kan jeg få hjælp"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Password er ikke sat"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Afsenderen af denne forespørgelse har ikke angivet en RelayStay "
+"parameter, der hvilket hvor der skal fortsættes"
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp diagnostik"
+
+msgid "{status:intro}"
+msgstr ""
+"Dette er statussiden for SimpleSAMLphp. Du kan se om din session er "
+"udløbet, hvor lang tid der er til at den udløber, samt alle øvrige "
+"oplysninger om din session."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Siden kunne ikke findes"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Sender besked"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Fejl modtaget fra institution"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shibboleth 1.3 tjenesteudbyders metadata"
+
+msgid "{admin:metaover_intro}"
+msgstr "For at se detaljer vedrørende SAML-entiteten, klik på entitets-headeren"
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Ugyldigt Certifikat"
+
+msgid "{general:remember}"
+msgstr "Husk samtykke"
+
+msgid "{disco:selectidp}"
+msgstr "Vælg institution (identitetsudbyder)"
+
+msgid "{login:help_desk_email}"
+msgstr "Send en e-mail til servicedesk"
+
+msgid "{login:help_desk_link}"
+msgstr "Servicedesk"
+
+msgid "{login:remember_me}"
+msgstr "Husk mig"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS fejl"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"En web-tjeneste har bedt om at tilkendegive dig. Det betyder, at du skal "
+"indtaste dit brugernavn og kodeord herunder."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Fejlagtig forespørgsel til Discovery Service"
+
+msgid "{general:yes_continue}"
+msgstr "Ja, jeg accepterer"
+
+msgid "{disco:remember}"
+msgstr "Husk valget"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 tjenesteudbyder (hosted)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"I SimpleSAMLphp flat-file format - brug dette hvis du også bruger "
+"SimpleSAMLphp i den anden ende;"
+
+msgid "{admin:metadata_adfs-sp}"
+msgstr "ADFS tjenesteudbyder metadata"
+
+msgid "{disco:login_at}"
+msgstr "Login hos"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Kunne ikke generere single sign-on svar"
+
+msgid "{errors:errorreport_header}"
+msgstr "Fejlrapportering sendt"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Fejl ved forespørgsel"
+
+msgid "{admin:metaover_header}"
+msgstr "Metadataoversigt"
+
+msgid "{errors:report_submit}"
+msgstr "Send fejlrapport"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Ugyldigt certifikat"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Siden kunne ikke findes"
+
+msgid "{logout:logged_out_text}"
+msgstr "Du er blevet logget ud. Tak for fordi du brugte denne tjeneste."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shibboleth 1.3 tjenesteudbyder (hosted)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Download X509 certifikaterne som PEM-indkodet filer."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Besked"
+
+msgid "{admin:metaover_group_metadata.adfs-idp-hosted}"
+msgstr "ADFS identitetsudbyder (hosted)"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Ukendt certifikat"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP fejl"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Kan ikke logge ud af en eller flere services. For at sikre at alle dine "
+"sessioner er lukket <i>skal du lukke din browser</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Siden kunne ikke findes. Sidens URL var: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Denne fejl skyldes formentlig en fejlkonfiguration af SimpleSAMLphp - "
+"alternativt en ukendt fejl. Kontakt administratoren af denne tjeneste og "
+"rapportér så mange detaljer som muligt om fejlen"
+
+msgid "{admin:metadata_adfs-idp}"
+msgstr "ADFS identitetsudbyder metadata"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shibboleth 1.3 identitetsudbyder (hosted)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Du har ikke valgt et gyldigt certifikat"
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "Tryk på 'send' for at fortsætte med at sende beskeden"
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Følgende valgfrie felter kunne ikke findes"
+
+msgid "{logout:logout_only}"
+msgstr "Nej, kun %SP%"
+
+msgid "{login:next}"
+msgstr "Næste"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr "En fejl opstod da denne identitetsudbyder forsøgte at sende svar"
+
+msgid "{disco:selectidp_full}"
+msgstr "Vælg institutionen (identitetsudbyderen) hvor du vil logge ind"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Siden kunne ikke findes på grund af %REASON%. Url'en var %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Intet certifikat"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Manglende logout-oplysninger"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shibboleth 1.3 identitetsudbyder (remote)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp er tilsyneladende ikke Konfigureret korrekt"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Her er det metadata, som SimpleSAMLphp har genereret. Du kan sende det "
+"til dem du stoler i forbindelse med oprettelsen af en føderation."
+
+msgid "{admin:metadata_cert}"
+msgstr "Certifikater"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Authentifikation fejlede: Certifikatet som din browser har sendt er "
+"ugyldigt og kan ikke læses"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth-demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Parse"
+
+msgid "Person's principal name at home organization"
+msgstr "Bruger-ID hos hjemmeorganisationen"
+
+msgid "Superfluous options in config file"
+msgstr "Overflødigt valg i konfigurationsfil"
+
+msgid "Mobile"
+msgstr "Telefonnummer (mobil)"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shibboleth 1.3 tjenesteudbyder (hosted)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr "Der opstod en fejl i kommunikationen med LDAP databasen under login."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Hvis du vil kunne kontaktes i forbindelse med fejlmeldingen, bedes du "
+"indtaste din emailadresse herunder"
+
+msgid "Display name"
+msgstr "Visningsnavn"
+
+msgid "Remember my choice"
+msgstr "Husk valget"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 tjenesteudbyders metadata"
+
+msgid "ADFS IdP Metadata"
+msgstr "ADFS identitetsudbyder metadata"
+
+msgid "Notices"
+msgstr "Beskeder"
+
+msgid "Home telephone"
+msgstr "Telefonnummer (privat)"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Dette er statussiden for SimpleSAMLphp. Du kan se om din session er "
+"udløbet, hvor lang tid der er til at den udløber, samt alle øvrige "
+"oplysninger om din session."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Forklar hvad du gjorde og hvordan fejlen opstod"
+
+msgid "An unhandled exception was thrown."
+msgstr "An unhandled exception was thrown"
+
+msgid "Invalid certificate"
+msgstr "Ugyldigt Certifikat"
+
+msgid "Service Provider"
+msgstr "Tjenesteudbyder"
+
+msgid "Incorrect username or password."
+msgstr "Forkert brugernavn eller kodeord."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Der er en fejl i forespørgslen til siden. Grunden er: %REASON%"
+
+msgid "E-mail address:"
+msgstr "E-mailadresse:"
+
+msgid "Submit message"
+msgstr "Send besked"
+
+msgid "No RelayState"
+msgstr "RelayState mangler"
+
+msgid "Error creating request"
+msgstr "Fejl ved forespørgsel"
+
+msgid "Locality"
+msgstr "Sted"
+
+msgid "Unhandled exception"
+msgstr "Unhandled exception"
+
+msgid "The following required fields was not found"
+msgstr "Følgende obligatoriske felter kunne ikke findes "
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Download X509 certifikaterne som PEM-indkodet filer."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Kan ikke finde metadata for %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "CVR-nummer"
+
+msgid "Password not set"
+msgstr "Password er ikke sat"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 identitetsudbyders metadata"
+
+msgid "Post office box"
+msgstr "Postboks"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"En web-tjeneste har bedt om at tilkendegive dig. Det betyder, at du skal "
+"indtaste dit brugernavn og kodeord herunder."
+
+msgid "CAS Error"
+msgstr "CAS fejl"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "Detaljerne herunder kan være af interesse for teknikerne / help-desken"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Enten kunne brugeren ikke findes eller også var kodeordet forkert. Prøv "
+"igen."
+
+msgid "Error"
+msgstr "Fejl"
+
+msgid "Next"
+msgstr "Næste"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Din organisatoriske enheds 'distinguished name' (DN)"
+
+msgid "State information lost"
+msgstr "State information tabt"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Der er ikke konfigureret et password til administrationsgrænsefladen "
+"(auth.adminpassword). Opdater konfigurationen med et nyt password, der er"
+" forskelligt fra stadardpasswordet."
+
+msgid "Converted metadata"
+msgstr "Konverteret metadata"
+
+msgid "Mail"
+msgstr "Emailadresse"
+
+msgid "No, cancel"
+msgstr "Nej"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Du har valgt <b>%HOMEORG%</b> som din hjemmeinstitution. Hvis dette ikke "
+"er korrekt, kan du vælge en anden."
+
+msgid "Error processing request from Service Provider"
+msgstr "Fejl i behandlingen forespørgsel fra Tjeneste Udbyder"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Primær enhed/institution"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "For at se detaljer vedrørende SAML-entiteten, klik på entitets-headeren"
+
+msgid "Enter your username and password"
+msgstr "Indtast brugernavn og kodeord"
+
+msgid "Login at"
+msgstr "Login hos"
+
+msgid "No"
+msgstr "Nej"
+
+msgid "Home postal address"
+msgstr "Privatadresse"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Federation tjenesteudbyder-demo"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 identitetsudbyder (remote)"
+
+msgid "Error processing the Logout Request"
+msgstr "Fejl i Logout Request"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Vil du logge ud fra alle ovenstående services?"
+
+msgid "Select"
+msgstr "Vælg"
+
+msgid "The authentication was aborted by the user"
+msgstr "Autentificering blev afbrudt af brugeren"
+
+msgid "Your attributes"
+msgstr "Dine oplysninger"
+
+msgid "Given name"
+msgstr "Fornavn(e)"
+
+msgid "Identity assurance profile"
+msgstr "Tillidsniveau for autentificering"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 tjenesteudbyder-demo"
+
+msgid "Logout information lost"
+msgstr "Manglende logout-oplysninger"
+
+msgid "Organization name"
+msgstr "Hjemmeorganisationens kaldenavn"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Authentifikation fejlede: Certifikatet som din browser har send er ukendt"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "Tryk på 'send' for at fortsætte med at sende beskeden"
+
+msgid "Home organization domain name"
+msgstr "Hjemmeorganisationens entydige ID (domænenavn)"
+
+msgid "Go back to the file list"
+msgstr "Tilbage til listen over filer"
+
+msgid "SAML Subject"
+msgstr "SAML emne"
+
+msgid "Error report sent"
+msgstr "Fejlrapportering sendt"
+
+msgid "Common name"
+msgstr "Kaldenavn"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Vælg institutionen (identitetsudbyderen) hvor du vil logge ind"
+
+msgid "Logout failed"
+msgstr "Logout fejlede"
+
+msgid "Identity number assigned by public authorities"
+msgstr "CPR-nummer"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation identitetsudbyder (remote)"
+
+msgid "Error received from Identity Provider"
+msgstr "Fejl modtaget fra institution"
+
+msgid "LDAP Error"
+msgstr "LDAP fejl"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Oplysningerne om logout er tabt. Du bør gå tilbage til tjenesten du "
+"ønskede at logge ud af og prøve igen. Fejlen kan skyldes at oplysningerne"
+" blev forældet, da de kun gemmes i kort tid, typisk et par timer. Dette "
+"er dog længere end hvad det burde tage at logge ud, så denne fejl kan "
+"indikere en konfigurationsfejl. Hvis fejlen genopstår, bedes du kontakte "
+"tjenesteudbyderen."
+
+msgid "Some error occurred"
+msgstr "En fejl opstod."
+
+msgid "Organization"
+msgstr "Organisationsnavn"
+
+msgid "No certificate"
+msgstr "Intet certifikat"
+
+msgid "Choose home organization"
+msgstr "Vælg hjemmeinstitution"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Pseudonymt bruger-ID"
+
+msgid "No SAML response provided"
+msgstr "SAML response mangler"
+
+msgid "No errors found."
+msgstr "Ingen fejl"
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 tjenesteudbyder (hosted)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Siden kunne ikke findes. Sidens URL var: %URL%"
+
+msgid "Configuration error"
+msgstr "Konfigurationsfejl"
+
+msgid "Required fields"
+msgstr "Obligatoriske felter"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Fejl ved generering af SAML-forespørgsel"
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Denne fejl skyldes formentlig en fejlkonfiguration af SimpleSAMLphp - "
+"alternativt en ukendt fejl. Kontakt administratoren af denne tjeneste og "
+"rapportér så mange detaljer som muligt om fejlen"
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Du har %remaining% tilbage af din session"
+
+msgid "Domain component (DC)"
+msgstr "Domænekomponent"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shibboleth 1.3 tjenesteudbyder (remote)"
+
+msgid "Password"
+msgstr "Kodeord"
+
+msgid "Nickname"
+msgstr "Kaldenavn"
+
+msgid "Send error report"
+msgstr "Send fejlrapport"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Authentifikation fejlede: Certifikatet som din browser har sendt er "
+"ugyldigt og kan ikke læses"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Fejlrapporten er nu sendt til system-administrator"
+
+msgid "Date of birth"
+msgstr "Fødselsdato"
+
+msgid "Private information elements"
+msgstr "Private informationselementer"
+
+msgid "You are also logged in on these services:"
+msgstr "Du er også logget ud fra disse services:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp diagnostik"
+
+msgid "Debug information"
+msgstr "Detaljer til fejlsøgning"
+
+msgid "No, only %SP%"
+msgstr "Nej, kun %SP%"
+
+msgid "Username"
+msgstr "Brugernavn"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Tilbage til SimpleSAMLphp installationssiden"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Du har logget ud fra alle overnævnte services. "
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Du er nu logget ud fra %SP%."
+
+msgid "Affiliation"
+msgstr "Brugerens tilknytning til hjemmeorganisationen"
+
+msgid "You have been logged out."
+msgstr "Du er blevet logget ud. Tak for fordi du brugte denne tjeneste."
+
+msgid "Return to service"
+msgstr "Tilbage til service"
+
+msgid "Logout"
+msgstr "Log ud"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "State information er tabt og der er ikke muligt at gentage forspørgelsen"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Fejl i behandlingen af svar fra Identitetsudbyder"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation tjenesteudbyder (hosted)"
+
+msgid "Remember my username"
+msgstr "Husk mit brugernavn"
+
+msgid "Preferred language"
+msgstr "Foretrukket sprog (evt. flere)"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 tjenesteudbyder (remote)"
+
+msgid "Surname"
+msgstr "Efternavn"
+
+msgid "No access"
+msgstr "Ingen Adgang"
+
+msgid "The following fields was not recognized"
+msgstr "Følgende felter kunne ikke tolkes"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Autentificeringsfejl i %AUTHSOURCE%. Årsagen var: %REASON%"
+
+msgid "Bad request received"
+msgstr "Fejlagtig forespørgsel"
+
+msgid "User ID"
+msgstr "Brugernavn"
+
+msgid "JPEG Photo"
+msgstr "JPEG-foto"
+
+msgid "Postal address"
+msgstr "Adresse"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Der opstod en fejl under behandlingen af Logout forespørgelsen"
+
+msgid "ADFS SP Metadata"
+msgstr "ADFS tjenesteudbyder metadata"
+
+msgid "Sending message"
+msgstr "Sender besked"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "I SAML 2.0 metadata xml-format:"
+
+msgid "Logging out of the following services:"
+msgstr "Du logger ud af følgende services:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr "En fejl opstod da denne identitetsudbyder forsøgte at sende svar"
+
+msgid "Could not create authentication response"
+msgstr "Kunne ikke generere single sign-on svar"
+
+msgid "Labeled URI"
+msgstr "Labeled URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp er tilsyneladende ikke Konfigureret korrekt"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shibboleth 1.3 identitetsudbyder (hosted)"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Login"
+msgstr "Login"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Denne IdP har modtaget en anmodning om single sign-on fra en tjeneste "
+"udbyder, men der opstod en fejl under behandlingen af denne anmodning."
+
+msgid "Yes, all services"
+msgstr "Ja, alle services"
+
+msgid "Logged out"
+msgstr "Du er logget ud"
+
+msgid "Postal code"
+msgstr "Postnummer"
+
+msgid "Logging out..."
+msgstr "Logger ud..."
+
+msgid "not set"
+msgstr "ikke angivet"
+
+msgid "Metadata not found"
+msgstr "Metadata ikke fundet"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 identitetsudbyder (hosted)"
+
+msgid "Primary affiliation"
+msgstr "Primær tilknytning"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Hvis du vil rapportere denne fejl, så medsend venligst dette sporings-ID."
+" Den gør det muligt for teknikerne at finde fejlen."
+
+msgid "XML metadata"
+msgstr "XML metadata"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "De afsendte værdier overholder ikke Discovery Servicens' krav"
+
+msgid "Telephone number"
+msgstr "Telefonnummer"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Kan ikke logge ud af en eller flere services. For at sikre at alle dine "
+"sessioner er lukket <i>skal du lukke din browser</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Fejlagtig forespørgsel til Discovery Service"
+
+msgid "Select your identity provider"
+msgstr "Vælg institution (identitetsudbyder)"
+
+msgid "Group membership"
+msgstr "Gruppemedlemsskab"
+
+msgid "Entitlement regarding the service"
+msgstr "Specifik rolle i forhold til tjenesten"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shibboleth 1.3 tjenesteudbyders metadata"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "Fordi du er i debug-mode kan du se indholdet af de beskeder du sender:"
+
+msgid "Certificates"
+msgstr "Certifikater"
+
+msgid "Remember"
+msgstr "Husk samtykke"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Din hjemmeorganisations 'distinguished name' (DN)"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "Du er ved at sende en besked. Tryk på 'send' for fortsætte"
+
+msgid "Organizational unit"
+msgstr "Organisatorisk enhed"
+
+msgid "Authentication aborted"
+msgstr "Autentificering aubrudt"
+
+msgid "Local identity number"
+msgstr "Lokalt identifikationsnummer"
+
+msgid "Report errors"
+msgstr "Rapportér fejl"
+
+msgid "Page not found"
+msgstr "Siden kunne ikke findes"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shibboleth 1.3 identitetsudbyders metadata"
+
+msgid "Change your home organization"
+msgstr "Skift hjemmeinstitution"
+
+msgid "User's password hash"
+msgstr "Hash-værdi af brugerens kodeord"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"I SimpleSAMLphp flat-file format - brug dette hvis du også bruger "
+"SimpleSAMLphp i den anden ende;"
+
+msgid "Yes, continue"
+msgstr "Ja, jeg accepterer"
+
+msgid "Completed"
+msgstr "Færdig"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Institutionen har sendt en fejl. (Status koden i SAML responset var ikke "
+"succes)"
+
+msgid "Error loading metadata"
+msgstr "Fejl i læsning af metadata"
+
+msgid "Select configuration file to check:"
+msgstr "Vælg den konfiguration som skal undersøges"
+
+msgid "On hold"
+msgstr "I kø"
+
+msgid "ADFS Identity Provider (Hosted)"
+msgstr "ADFS identitetsudbyder (hosted)"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Der opstod en fejl ved kommunikationen med CAS serveren"
+
+msgid "No SAML message provided"
+msgstr "Ingen SAML besked"
+
+msgid "Help! I don't remember my password."
+msgstr "Hjælp! Jeg har glemt mit kodeord."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Du kan slå debug-mode fra i den globale SimpleSAMLphp-konfigurationsfil "
+"<tt>config/config.php</tt>"
+
+msgid "How to get help"
+msgstr "Hvordan kan jeg få hjælp"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Du forsøger at tilgå Single Logout grænsefladen, uden at sendet et SAML "
+"LogoutRequest eller LogoutResponse"
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp fejl"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"En eller flere services som du er logget ind hos <i>understøtter ikke log"
+" ou</i>. For at sikre at alle dine forbindelser er lukket, bedes du "
+"<i>lukke din browser</i>."
+
+msgid "Remember me"
+msgstr "Husk mig"
+
+msgid "Organization's legal name"
+msgstr "Organisationens officielle navn"
+
+msgid "Options missing from config file"
+msgstr "Valg kan ikke behandles - se konfigurationsfil"
+
+msgid "The following optional fields was not found"
+msgstr "Følgende valgfrie felter kunne ikke findes"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Login fejlede - din browser sendte ikke noget certifikat"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr "Denne tjeneste er ikke tilsluttet. Check konfigurationen."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "Du kan få metadata-xml <a href=\"%METAURL%\">her</a>:"
+
+msgid "Street"
+msgstr "Gade"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Der er en fejl i konfigurationen af din SimpleSAMLphp installation. Hvis "
+"du er administrator for denne server, check at din metadata konfiguration"
+" er korrekt."
+
+msgid "Incorrect username or password"
+msgstr "Forkert brugernavn eller kodeord"
+
+msgid "Message"
+msgstr "Besked"
+
+msgid "Contact information:"
+msgstr "Kontaktoplysninger"
+
+msgid "Unknown certificate"
+msgstr "Ukendt certifikat"
+
+msgid "Legal name"
+msgstr "Officielt navn"
+
+msgid "Optional fields"
+msgstr "Valgfrie felter"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Afsenderen af denne forespørgelse har ikke angivet en RelayStay "
+"parameter, der hvilket hvor der skal fortsættes"
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Du har tidligere valgt at logge ind hos"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr "Dit kodeord blev ikke sendt - prøv igen."
+
+msgid "Fax number"
+msgstr "Faxnummer"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth-demo"
+
+msgid "Error in this metadata entry"
+msgstr "Fejl i denne sektion af metadata"
+
+msgid "Session size: %SIZE%"
+msgstr "Sessionsstørrelse: %SIZE%"
+
+msgid "Parse"
+msgstr "Parse"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Desværre, uden korrekt brugernavn og kodeord kan du ikke få adgang til "
+"tjenesten. Måske kan help-desk på din hjemmeinstitution hjælpe dig!"
+
+msgid "Metadata parser"
+msgstr "Metadata parser"
+
+msgid "ADFS Service Provider (Remote)"
+msgstr "ADFS tjenesteudbyder (remote)"
+
+msgid "Choose your home organization"
+msgstr "Vælg din hjemmeinstitution"
+
+msgid "Send e-mail to help desk"
+msgstr "Send en e-mail til servicedesk"
+
+msgid "Metadata overview"
+msgstr "Metadataoversigt"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "Du har ikke valgt et gyldigt certifikat"
+
+msgid "Authentication source error"
+msgstr "Authentication source fejl"
+
+msgid "Affiliation at home organization"
+msgstr "Gruppemedlemskab"
+
+msgid "Help desk homepage"
+msgstr "Servicedesk"
+
+msgid "Configuration check"
+msgstr "Undersøgelse af konfiguration"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Svaret fra Identitetsudbydere kunne ikke accepteres"
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Siden kunne ikke findes på grund af %REASON%. Url'en var %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shibboleth 1.3 identitetsudbyder (remote)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Her er det metadata, som SimpleSAMLphp har genereret. Du kan sende det "
+"til dem du stoler i forbindelse med oprettelsen af en føderation."
+
+msgid "[Preferred choice]"
+msgstr "Foretrukket valg"
+
+msgid "Organizational homepage"
+msgstr "Hjemmeside"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Du forsøger at tilgå Assertion Consumer Service grænsefladen uden at "
+"sende et SAML Authentication Response"
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Du tilgår nu et pre-produktions-system. Dette autentificeringssetup er "
+"kun til test og pre-produktion verifikation. Hvis nogen har sendt et "
+"link, som peger her og du ikke er en <i>tester</i>, så har du sikekrt "
+"fået et forkert lin og burde <b>ikke være her.</b> "

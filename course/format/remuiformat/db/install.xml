@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="course/format/remuiformat/db" VERSION="20200618" COMMENT="XMLDB file for core Moodle tables"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="format_remuiformat" COMMENT="Edwiser Course Format">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the course"/>
+            <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Null if this is a course option, otherwise id of the section this option is for"/>
+            <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Null if this is a course option, otherwise id of the section this option is for"/>
+            <FIELD NAME="layouttype" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the layout type option"/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+        </KEYS>
+        <INDEXES>
+            <INDEX NAME="formatoption" UNIQUE="true" FIELDS="courseid, sectionid, activityid, layouttype"/>
+        </INDEXES>
+        </TABLE>
+
+        <TABLE NAME="remuiformat_course_visits" COMMENT="Record activity visit of course">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the course"/>
+                <FIELD NAME="user" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the user"/>
+                <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Id of the activity"/>
+                <FIELD NAME="timevisited" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time visited"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="remuiformatvisits" UNIQUE="true" FIELDS="course, user"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

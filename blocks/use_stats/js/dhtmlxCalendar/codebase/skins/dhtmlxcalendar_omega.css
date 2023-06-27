@@ -1,0 +1,39 @@
+/* Omega skin */
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega {
+	background-image: url("../imgs/dhtmlxcalendar_omega/bg_main.png");
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell_first,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr div.dhtmlxcalendar_time_label,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_selector_obj_arrow,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell {
+	background-image: url("../imgs/dhtmlxcalendar_omega/bg_days.png");
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_left,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left {
+	background-image: url("../imgs/dhtmlxcalendar_omega/arrow_left.png");
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_left_hover,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left.dhtmlxcalendar_selector_cell_left_hover {
+	background-image: url("../imgs/dhtmlxcalendar_omega/arrow_left_hover.png");
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_right,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right {
+	background-image: url("../imgs/dhtmlxcalendar_omega/arrow_right.png");
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_right_hover,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right.dhtmlxcalendar_selector_cell_right_hover {
+	background-image: url("../imgs/dhtmlxcalendar_omega/arrow_right_hover.png");
+}
+
+
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_day_weekday_cell,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_hover,
+.dhtmlxcalendar_container.dhtmlxcalendar_skin_omega div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_hover {
+	color: #d06700;
+}

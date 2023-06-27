@@ -1,0 +1,154 @@
+table,
+table * td {
+   border-collapse:separate;
+   padding:0px;
+   spacing:0px;
+}
+
+.sessionlevel1 td {
+   border: solid 1px #888888;
+   font-size:1.2em;
+}
+
+.sessionlevel2 td {
+   border-bottom: solid 1px #EEEEEE;
+   font-size:1.1em;
+}
+
+.sessionlevel3 td {
+   font-size:1em;
+}
+
+.sessionlevel4 td {
+   font-size:0.9em;
+}
+
+.donebar{
+    background-color : #579F4A;
+    height:18px;
+}
+
+.remainingbar{
+    background-color: #4B41A9;
+    height: 18px;
+}
+
+.completionbar{
+    margin-top: 5px;
+}
+
+.reportdetails{
+    font-size: 0.85em;
+}
+
+.trainingreport.subs,
+.sessionreport{
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.sessionitem.rangedate{
+    background-color: #d0d0d0;
+    border:1px solid  #a0a0a0;
+    font-size: 0.9em;
+}
+
+.report-trainingsession.userinfobox{
+    background-color: white;
+    border-radius: 10px;
+    border: 1px #d0d0d0 solid;
+    font-size: 1.2em;
+    margin: 10px;
+    padding: 10px;
+    text-align: left;
+    width: 80%;
+}
+
+.report-trainingsessions.session-duration {
+    text-align: right;
+}
+
+.trainingsessions-buttons-wrapper{
+    display: table-row;
+}
+
+.trainingsessions-inline-buttons {
+    display: table-cell;
+    height: 18px;
+}
+
+.trainingsessions-inline-buttons form {
+    margin-bottom:2px;
+}
+
+.trainingsessions-inline-buttons form,
+.trainingsessions-inline-buttons form * {
+    display: inline;
+    margin: 0;
+}
+
+.month-placeholder {
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: 1px #e0e0e0 solid;
+    display: table-cell;
+    height: 18px;
+    margin: 0 5px;
+    width: 60px;
+}
+
+.trainingsessions-green {
+    background-color:#c4fbac !important;
+}
+
+.trainingsessions-inline * {
+    display: inline
+}
+
+.trainingsessions-fieldset {
+    -moz-border-radius: 8px;
+    border: 1px solid #CDCDCD;
+    border-radius: 8px;
+    padding: 5px;
+    margin-bottom: 15px;
+}
+
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+#report-trainingsessions-totalisers {
+    line-height: 2.0em;
+}
+
+.report-col-right {
+    text-align: right;
+    padding-right: 20px;
+}
+
+.userreport-col0 {
+    width: 55%;
+}
+
+.userreport-col1 {
+    width: 15%;
+    text-align: center;
+}
+
+.userreport-col2 {
+    width: 15%;
+    text-align: center;
+}
+
+.userreport-col3 {
+    width: 15%;
+    text-align: right;
+}
+
+.trainingsessions-main-total {
+    font-size: 1.3em;
+}

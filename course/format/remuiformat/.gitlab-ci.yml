@@ -1,0 +1,10 @@
+deploy_dev:
+  stage: deploy
+  only:
+    - dev
+  script:
+    - rsync -alzt --delete --chmod=D2755,F644 --ignore-missing-args --exclude 'qaconfig' --exclude '.gitlab-ci.yml' --exclude 'git_to_sftp.xml' --exclude '/node_modules' --exclude '/.git' --rsh='ssh ubuntu@staging.edwiser.org -i /var/lib/gitlab-runner/edwiser-products-staging-lightsail-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' . :/var/www/html/v34/course/format/remuiformat
+    - rsync -alzt --delete --chmod=D2755,F644 --ignore-missing-args --exclude 'qaconfig' --exclude '.gitlab-ci.yml' --exclude 'git_to_sftp.xml' --exclude '/node_modules' --exclude '/.git' --rsh='ssh ubuntu@staging.edwiser.org -i /var/lib/gitlab-runner/edwiser-products-staging-lightsail-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' . :/var/www/html/v35/course/format/remuiformat
+    - rsync -alzt --delete --chmod=D2755,F644 --ignore-missing-args --exclude 'qaconfig' --exclude '.gitlab-ci.yml' --exclude 'git_to_sftp.xml' --exclude '/node_modules' --exclude '/.git' --rsh='ssh ubuntu@staging.edwiser.org -i /var/lib/gitlab-runner/edwiser-products-staging-lightsail-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' . :/var/www/html/v36/course/format/remuiformat
+    - rsync -alzt --delete --chmod=D2755,F644 --ignore-missing-args --exclude 'qaconfig' --exclude '.gitlab-ci.yml' --exclude 'git_to_sftp.xml' --exclude '/node_modules' --exclude '/.git' --rsh='ssh ubuntu@staging.edwiser.org -i /var/lib/gitlab-runner/edwiser-products-staging-lightsail-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' . :/var/www/html/v37/course/format/remuiformat
+    - rsync -alzt --delete --chmod=D2755,F644 --ignore-missing-args --exclude 'qaconfig' --exclude '.gitlab-ci.yml' --exclude 'git_to_sftp.xml' --exclude '/node_modules' --exclude '/.git' --rsh='ssh ubuntu@staging.edwiser.org -i /var/lib/gitlab-runner/edwiser-products-staging-lightsail-key.pem -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null' . :/var/www/html/v38/course/format/remuiformat

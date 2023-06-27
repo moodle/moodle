@@ -1,0 +1,667 @@
+.block_lw_courses .coursechildren {
+    font-style: italic;
+    font-weight: 400;
+}
+.block_lw_courses .categorypath {
+    text-align: right;
+    margin-top: auto;
+}
+.block_lw_courses .content {
+    margin: 0 20px;
+}
+.block_lw_courses .content .notice {
+    margin: 5px 0;
+}
+.block_lw_courses .lw_courses_list .coursebox {
+    background-clip: content-box;
+    border: solid;
+    padding: 15px;
+}
+/*Progress text to be rendered on top of background image*/
+.block_lw_courses .lw_courses_list .coursebox > p {
+    position: relative;
+}
+.block_lw_courses .lw_courses_list .coursebox.p-y-1 > p {
+    margin-top: -1rem;
+}
+.progressunavail {
+    display: none;
+}
+/*Only if JS is enabled.*/
+.jsenabled .block_lw_courses .lw_courses_list .coursebox.list {
+    cursor: pointer;
+}
+.block_lw_courses .lw_courses_list .coursebox.list {
+    margin-left: 0;
+}
+.block_lw_courses .profilepicture {
+    float: left;
+}
+.block_lw_courses .welcome_area {
+    padding-bottom: 5px;
+    width: 100%;
+}
+.block_lw_courses .welcome_message {
+    border-collapse: separate;
+    clear: none;
+    float: left;
+    padding: 10px;
+}
+.block_lw_courses .content .title {
+    float: left;
+    margin: 0 0 .5em;
+    position: relative;
+    width: 100%;
+}
+.block_lw_courses .content .title a {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.block_lw_courses .course_title {
+    position: relative;
+}
+.editing .block_lw_courses .coursebox .cursor {
+    cursor: move;
+    margin-bottom: 2px;
+}
+.editing .block_lw_courses .move {
+    float: left;
+    padding: 2px 10px 0 0;
+}
+.block_lw_courses .activity_overview {
+    padding: 2px;
+}
+.block_lw_courses .activity_overview .iconlarge {
+    margin-right: 6px;
+    vertical-align: text-bottom;
+}
+.block_lw_courses .singleselect {
+    margin: 0;
+    text-align: left;
+}
+.block_lw_courses .content .lw_courses_list .movehere {
+    margin-bottom: 15px;
+}
+
+[dir="ltr"] .block_lw_courses #box-or-lines,
+[dir="ltl"] [data-block='lw_courses'] #box-or-lines {
+    background: url([[pix:block_lw_courses|block_lines]]) no-repeat left top;
+    float: right;
+    height: 29px;
+    overflow: hidden;
+    text-indent: -999em;
+    transition: all .5s ease;
+    width: 30px;
+}
+.block_lw_courses #box-or-lines.grid,
+[data-block='lw_courses'] #box-or-lines.grid {
+    background-position: right top;
+    transition: all .5s ease;
+}
+.block_lw_courses .lw_courses_list,
+.block_lw_courses .coursebox .course_image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+.block_lw_courses .coursebox.span12 .image_wrap {
+    width: 300px;
+    margin-right: 15px;
+    float: left;
+    height: 100%;
+}
+.block_lw_courses .coursebox:not(.span12) .image_wrap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+}
+.block_lw_courses .coursebox:not(.span12) .course_image_embed {
+    background-position: center top;
+    max-height: 300px;
+    max-width: 300px;
+    width: 100%;
+    height: 300px;
+}
+.block_lw_courses .coursebox {
+    display: flex;
+    flex-direction: column;
+    float: left;
+    overflow: auto;
+}
+.block_lw_courses .coursebox.grid .activity_info {
+    display: none;
+}
+.block_lw_courses .coursebox.list {
+    display: block;
+}
+.block_lw_courses div.flush {
+    clear: both;
+}
+.block_lw_courses .coursebox.list .course_image_embed {
+    float: left;
+    margin-right: 15px;
+    width: 300px;
+    min-height: 185px;
+}
+.block_lw_courses .coursebox.list .progress,
+.block_lw_courses .coursebox.list .course_title,
+.block_lw_courses .coursebox.list .categorypath,
+.block_lw_courses .coursebox.list .course_description,
+.block_lw_courses .coursebox.list .teacher_names,
+.block_lw_courses .coursebox.list .activity_info {
+    float: left;
+    width: calc(100% - 315px);
+}
+
+.block_lw_courses .coursebox .teacher_name {
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 0;
+}
+
+.block_lw_courses .coursebox.list .box.flush {
+    display: none;
+}
+.block_lw_courses .lw_courses_course_wraper {
+    clear: both;
+}
+/* START STYLE UPDATES */
+.block_lw_courses {
+    position: relative;
+    z-index: 0;
+}
+.block_lw_courses .content {
+    margin: 0;
+}
+.block_lw_courses .lw_courses_list {
+    padding-top: 10px;
+}
+.block_lw_courses .lw_courses_list:after {
+    content: '';
+    clear: both;
+    width: 100%;
+    display: block;
+    height: 1px;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) {
+    margin-top: 0;
+    padding: 0;
+    margin-bottom: 24px;
+    border-radius: 3px;
+    border: 3px solid #e2e2e2;
+    min-height: 250px;
+    max-height: 250px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_image_embed {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+    max-width: 100%;
+    min-width: 100%;
+    max-height: 100%;
+    min-height: 100%;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .title {
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0.5px 0.5px 2px rgba(0, 0, 0, 0.5);
+    float: none;
+    display: block;
+    padding: 10px;
+    margin-top: -40px;
+    z-index: 1;
+    position: absolute;
+    left: 0;
+    right: 5px;
+    top: 0;
+    width: auto;
+    transition: top 0.5s ease;
+    text-transform: uppercase;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .title a {
+    color: #fff;
+    font-size: 12px;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description {
+    top: 100%;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    overflow: hidden;
+    color: #fff;
+    transition: top 0.5s ease;
+    width: auto;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .teacher_names {
+    top: 100%;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    overflow: hidden;
+    color: #fff;
+    transition: top 0.5s ease;
+    width: auto;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description p {
+    color: #fff;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description p a {
+    color: inherit;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description ul {
+    color: #fff;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description li {
+    color: #fff;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_description span {
+    color: #fff;
+    font-size: 12px;
+    line-height: normal;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_title {
+    top: 100%;
+    bottom: 0;
+    overflow: visible;
+    transition: top 0.5s ease;
+    position: absolute;
+    left: 0;
+    right: 0;
+    background: url([[pix:block_lw_courses|bg_grid]]) no-repeat top left;
+    background-size: cover;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_title .course_title {
+
+    padding: 10px;
+    margin-top: -55px;
+    z-index: 1;
+    position: absolute;
+    padding-left: 35px;
+    transition: top 0.5s ease;
+    transition-delay: 0.5s;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_title .course_title a {
+    margin: 0;
+    color: #fff;
+    font-size: 16px;
+    padding-left: 10px;
+    font-weight: 300;
+    font-family: "Maven Pro", Helvetica, Arial, sans-serif;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_title:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 100%;
+    margin-top: -44px;
+    height: 55px;
+    background: #000;
+    transition: top 0.5s ease;
+    box-shadow: 0 0 2px 1px rgba(255, 255, 255, 0.2);
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_title .course_link {
+    display: block;
+    top: 220px;
+    float: none;
+    left: 12px;
+    background: transparent;
+    position: relative;
+    z-index: 1;
+    min-width: 180px;
+    width: 50%;
+    border: 2px solid #fff;
+    border-radius: 0;
+    padding-right: 27px;
+    overflow: hidden;
+    cursor: pointer;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12) .course_image {
+    background-position: center center;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .course_title,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .course_title {
+    top: 0;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .course_title .move,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .course_title .move {
+    position: absolute;
+    top: 6px;
+    z-index: 999;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .course_title:after,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .course_title:after {
+    transform: skewX(0deg);
+    margin-top: -15px;
+    left: 0;
+    transition: top 0.5s ease;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .course_title:before,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .course_title:before {
+    margin-top: -65px;
+    transition: top 0.5s ease;
+}
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .course_description,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .course_description {
+    top: 55px;
+    transition: top 0.5s ease;
+    color: #fff;
+}
+
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .teacher_names,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .teacher_names {
+    top: 195px;
+    transition: top 0.5s ease;
+    color: #fff;
+}
+
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):hover .title,
+.block_lw_courses .lw_courses_list .coursebox:not(.span12):focus .title {
+    margin-top: 2px;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 {
+    border: none;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    margin-bottom: 9px;
+    background: #fff;
+    padding: 15px;
+    min-height: 150px;
+    height: 215px;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .course_content a.btn {
+    width: auto;
+    display: block;
+    text-shadow: none;
+    border: none;
+    text-transform: uppercase;
+    font: 14px "Maven Pro";
+    font-weight: 900;
+    color: #e2e2e2;
+    padding: 10px 20px;
+    background: #fff;
+    border-radius: 0;
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 5px;
+    transition: top 0.5s ease;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .course_content a.btn:hover {
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3) inset;
+    transition: top 0.5s ease;
+    background: #eaeaea;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .course_content .course_link {
+    display: block;
+    position: relative;
+    background: transparent;
+    z-index: 1;
+    border: 2px solid #e2e2e2;
+    border-radius: 0;
+    overflow: hidden;
+    cursor: pointer;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .title {
+    border-bottom: 1px solid #000;
+    padding-bottom: 5px;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .title a {
+    color: #000;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .course_image {
+    width: 100%;
+    background-position: center center;
+}
+.block_lw_courses .lw_courses_list .coursebox.span12 .course_content.span9 {
+    width: 100%;
+    padding: 10px;
+}
+.block_lw_courses .lw_courses_list .coursebox a {
+    text-decoration: none;
+}
+
+
+.lw_courses_list .coursebox:not(.span12) .categorypath {
+    position: absolute;
+    color: #fff;
+    background: #333;
+    background: rgba(0, 0, 0, 0.5);
+    left: 0;
+    top: auto;
+    bottom: 0;
+    right: 0;
+    padding: 5px;
+    text-transform: uppercase;
+    font-size: 12px;
+    box-shadow: 0.5px 0.5px 2px rgba(0, 0, 0, 0.2);
+    transition: top 0.5s ease;
+    opacity: 0;
+}
+
+.lw_courses_list .coursebox:not(.span12):hover .categorypath {
+    opacity: 1;
+}
+
+.lw_courses_list .coursebox:not(.span12):hover .course_content .summary .autolink {
+    display: inline;
+    padding: 0;
+    color: #fff;
+}
+.editing #box-or-lines {
+    margin-top: 0;
+    margin-right: 0;
+}
+.editing .block_lw_courses .coursebox .cursor {
+    filter: grayscale(100%) sepia(100%) hue-rotate(55deg) brightness(0.9) saturate(1.5);
+}
+.editing .block_lw_courses .coursebox:not(.span12) .move {
+    position: static;
+    top: -194px;
+    right: 5px;
+}
+.block_lw_courses.block_docked .coursebox:not(.span12) {
+    margin-left: 0;
+    max-width: 100%;
+}
+.lw_courses_list .coursebox.span6:nth-child(2n+1) {
+    margin-left: 0;
+}
+.lw_courses_list .coursebox.span4:nth-child(3n+1) {
+    margin-left: 0;
+}
+.lw_courses_list .coursebox.span3:nth-child(4n+1) {
+    margin-left: 0;
+}
+
+.lw_courses_list .coursebox:not(.span12) .teacher_image_wrap {
+    height: 55px;
+    position: absolute;
+    bottom: 30px;
+    width: calc(100% - 20px);
+    left: 10px;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+    overflow: hidden;
+    z-index: 1;
+}
+.lw_courses_list .coursebox:not(.span12):hover .teacher_image_wrap {
+    height: 0;
+    bottom: 250px;
+    transition: opacity 0.5s ease;
+    opacity: 0;
+}
+
+.teacher_image {
+    width: 45px;
+    float: left;
+    margin-right: 5px;
+}
+
+.teacher_image img {
+    border-radius: 50%;
+    width: 100%;
+    height: 100%;
+}
+
+.block_lw_courses .coursebox.list .teacher_image_wrap {
+    display: none;
+}
+
+
+@media screen and (max-width: 1400px) {
+    .block_lw_courses .coursebox.list .image_wrap,
+    .block_lw_courses .coursebox .course_image_embed {
+        max-width: 200px;
+    }
+    .block_lw_courses .coursebox .course_image_embed {
+        max-height: 200px;
+    }
+    .block_lw_courses .coursebox.list .progress,
+    .block_lw_courses .coursebox.list .course_title,
+    .block_lw_courses .coursebox.list .categorypath,
+    .block_lw_courses .coursebox.list .course_description,
+    .block_lw_courses .coursebox.list .teacher_names,
+    .block_lw_courses .coursebox.list .activity_info {
+        float: left;
+        width: calc(100% - 215px);
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .block_lw_courses .coursebox.list .image_wrap,
+    .block_lw_courses .coursebox .course_image_embed {
+        max-width: 150px;
+    }
+    .block_lw_courses .coursebox .course_image_embed {
+        max-height: 150px;
+    }
+    .block_lw_courses .coursebox.list .progress,
+    .block_lw_courses .coursebox.list .course_title,
+    .block_lw_courses .coursebox.list .categorypath,
+    .block_lw_courses .coursebox.list .course_description,
+    .block_lw_courses .coursebox.list .teacher_names,
+    .block_lw_courses .coursebox.list .activity_info {
+        float: left;
+        width: calc(100% - 165px);
+    }
+    .block_lw_courses .coursebox .title {
+        font-size: 1.5rem;
+    }
+    .block_lw_courses .coursebox .categorypath {
+        font-size: .75rem;
+    }
+}
+
+@media screen and (max-width: 1100px) {
+    .block_lw_courses .coursebox.list .image_wrap,
+    .block_lw_courses .coursebox .course_image_embed {
+        max-width: 100px;
+    }
+    .block_lw_courses .coursebox .course_image_embed {
+        max-height: 100px;
+    }
+    .block_lw_courses .coursebox.list .progress,
+    .block_lw_courses .coursebox.list .no-progress,
+    .block_lw_courses .coursebox.list .course_title,
+    .block_lw_courses .coursebox.list .categorypath,
+    .block_lw_courses .coursebox.list .course_description,
+    .block_lw_courses .coursebox.list .teacher_names,
+    .block_lw_courses .coursebox.list .activity_info {
+        float: left;
+        width: calc(100% - 115px);
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .block_lw_courses .coursebox.list .image_wrap {
+        height: 100px;
+    }
+    .block_lw_courses .coursebox:not(.list) .course_image_embed {
+        float: none;
+        max-width: 300px;
+        max-height: 300px;
+        margin: 0 auto;
+    }
+    .block_lw_courses .coursebox:not(.list) .progress,
+    .block_lw_courses .coursebox:not(.list) .no-progress,
+    .block_lw_courses .coursebox:not(.list) .course_title,
+    .block_lw_courses .coursebox:not(.list) .categorypath,
+    .block_lw_courses .coursebox:not(.list) .course_description,
+    .block_lw_courses .coursebox.list .teacher_names,
+    .block_lw_courses .coursebox:not(.list) .activity_info {
+        width: 100%;
+    }
+}
+.lw_courses_list .coursebox:not(.span12):hover .progress {
+    transition: opacity 0.5s ease;
+    opacity: 0;
+}
+
+.lw_courses_list .lw_courses_list .progress {
+    height: 1.5em;
+    width: 100%;
+    background-color: #c9c9c9;
+    position: relative;
+}
+.lw_courses_list .progress:before {
+    color: #ffffff;
+    content: attr(data-label);
+    position: absolute;
+    text-align: left;
+    text-indent: 10px;
+    top: 5px;
+    left: 0;
+    right: 0;
+}
+.lw_courses_list .progress .value {
+    background-color: #337AB7;
+    display: inline-block;
+    height: 100%;
+}
+
+.lw_courses_list .coursebox:not(.span12) .progress {
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    text-align: left;
+    opacity: 0.8;
+    bottom: 0;
+    top: -15px;
+    z-index: 999;
+    background: #ccc;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.lw_courses_list .coursebox .progress {
+    height: 25px;
+    border-radius: 0;
+    position: relative;
+}

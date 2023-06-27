@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>js/dhtmlxCalendar</location>
+    <name>DhtmlX components</name>
+    <license></license>
+    <version></version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>cli</location>
+    <name>Moodle command line</name>
+    <license>GPL</license>
+    <version></version>
+    <licenseversion>3.0</licenseversion>
+  </library>
+</libraries>

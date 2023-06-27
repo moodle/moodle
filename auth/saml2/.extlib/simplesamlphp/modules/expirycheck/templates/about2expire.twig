@@ -1,0 +1,13 @@
+{% set pagetitle = 'SimpleSAMLphp'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <form style="display: inline; margin: 0px; padding: 0px" action="{{ yesTarget|escape('html') }}">
+        {% for name, value in yesData %}
+        <input type="hidden" name="{{ name|escape('html') }}" value="{{ value|escape('html') }}">
+        {% endfor %}
+        <h3>{{ warning }}</h3>
+        <p>{{ '{expirycheck:expwarning:expiry_date_text}'|trans }} {{ expireOnDate }}</p>
+        <input type="submit" name="yes" id="yesbutton" value="{{ '{expirycheck:expwarning:btn_continue}'|trans }}" autofocus>
+    </form>
+{% endblock %}

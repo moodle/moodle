@@ -275,6 +275,8 @@
         echo html_writer::end_tag('form');
     }
 
+    echo getparcours($course->shortname);
+
     // Course wrapper start.
     echo html_writer::start_tag('div', array('class'=>'course-content'));
 

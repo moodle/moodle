@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>amd/src/jquery.dragsort.js</location>
+        <name>jQuery List DragSort</name>
+        <version>v0.5.2</version>
+        <license>MIT</license>
+        <licenseversion></licenseversion>
+    </library>
+    <library>
+        <location>amd/src/jquery.touch-punch.js</location>
+        <name>jQuery UI Touch Punch</name>
+        <version>v0.2.3</version>
+        <license>GPL</license>
+        <licenseversion>2.0+</licenseversion>
+    </library>
+</libraries>

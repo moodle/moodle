@@ -1,0 +1,62 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/embed_module_modal_header
+
+    The purpose of this template is to render the buttons for the header in a modal window
+    which can be used to display an embedded file (i.e. a PDF)
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * id - id of the course module
+        * showDownload - whether to show the download button or not
+        * showNewWindow - whether to show the new window button or not
+        * pluginfileUrl - the url to get the resource directly e.g. "http://mydomain.com/moodle/pluginfile.php/12345/mod_resource/content/1/lecture1.PDF"
+        * completion - array of info for the completion_icon template
+        * completionInUseForCm - whether we are using completion
+
+    Example context (json):
+    {
+        "id": 123,
+        "showDownload": "1",
+        "showNewWindow": "1",
+        "pluginfileUrl": "http://mydomain.com/moodle/pluginfile.php/12345/mod_resource/content/1/lecture1.PDF",
+        "completion": [],
+        "completionInUseForCm": 1
+    }
+}}
+<div class="embed-module-buttons">
+    {{#showNewWindow}}
+        <a href="{{pluginfileUrl}}?redirect=1" class="embed_file_button button_expand" id="expandbutton_{{id}}" data-cmid="{{id}}" data-command="expand" target="_blank">
+            {{#pix}}clone, format_tiles, {{#str}}showseparatewin, format_tiles{{/str}}{{/pix}}
+        </a>
+    {{/showNewWindow}}
+    {{#showDownload}}
+        <a href="{{{pluginfileUrl}}}?forcedownload=1" class="embed_file_button button_download" id="downloadbutton_{{id}}" data-cmid="{{id}}" data-command="download">
+            {{#pix}}cloud-download, format_tiles, {{#str}}download, format_tiles{{/str}}{{/pix}}
+        </a>
+    {{/showDownload}}
+    {{#completionInUseForCm}}
+        {{>format_tiles/completion_icon}}
+    {{/completionInUseForCm}}
+</div>

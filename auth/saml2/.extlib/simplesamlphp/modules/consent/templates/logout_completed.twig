@@ -1,0 +1,7 @@
+{% set pagetitle = '{logout:title}'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+<h2>{{ header }}</h2>
+<p>{{ '{logout:logged_out_text}'|trans }}</p>
+{% endblock %}

@@ -1,0 +1,104 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @package     auth_ticket
+ * @category    auth
+ * @author      Valery Fremaux <valery.fremaux@gmail.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL
+ * @copyright   (C) 2010 ValEISTI (http://www.valeisti.fr)
+ * @copyright   (C) 2012 onwards Valery Fremaux (http://www.mylearningfactory.com)
+ */
+
+defined('MOODLE_INTERNAL') || die;
+global $USER;
+
+require_once($CFG->dirroot.'/auth/ticket/lib.php');
+
+// Set to defaults if undefined.
+
+$config = get_config('auth_ticket');
+
+if (!isset($config->tickettimeguard)) {
+    $config->tickettimeguard = HOURSECS * 24;
+}
+
+if (!isset($config->longtermtickettimeguard)) {
+    $config->longtermtickettimeguard = DAYSECS * 90;
+}
+
+if (!isset($config->usessl)) {
+    $config->usessl = 0;
+}
+
+?>
+<div id="authconfig">
+<script src="<?php echo $CFG->wwwroot ?>/auth/ticket/js/clipboard/clipboard.js"></script>
+<table cellspacing="0" cellpadding="5">
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('tickettimeguard', 'auth_ticket'); ?>: </td>
+    <td>
+        <input name="tickettimeguard" type="text" size="10" value="<?php echo $config->tickettimeguard / HOURSECS ?>" />
+    </td>
+    <td>
+        <?php print_string('configtickettimeguard', 'auth_ticket'); ?>
+    </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('longtermtickettimeguard', 'auth_ticket'); ?>: </td>
+    <td>
+        <input name="longtermtickettimeguard" type="text" size="10" value="<?php echo $config->longtermtickettimeguard / DAYSECS ?>" />
+    </td>
+    <td>
+        <?php print_string('configlongtermtickettimeguard', 'auth_ticket'); ?>
+    </td>
+</tr>
+
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('usessl', 'auth_ticket'); ?>: </td>
+    <td>
+        <?php
+        $encryptoptions = array(
+            '0' => get_string('no', 'auth_ticket'),
+            '1' => get_string('yes', 'auth_ticket')
+        );
+        echo html_writer::select($encryptoptions, 'usessl', $config->usessl);
+        ?>
+    </td>
+    <td>
+        <?php print_string('configticketusessl', 'auth_ticket'); ?>
+    </td>
+</tr>
+<tr valign="top" class="required">
+    <td align="right"><?php print_string('testurl', 'auth_ticket'); ?>: </td>
+    <td>
+        <?php
+        $method = (empty($config->usessl)) ? 'des' : 'rsa';
+        $url = new moodle_url('/admin/auth_config.php', array('auth' => 'ticket'));
+        $ticket = ticket_generate($USER, 'Self Test', $url, $method, 'short');
+        $ticketcheckurl = new moodle_url('/login/index.php', array('ticket' => $ticket));
+        echo '<div style=" position: absolute;clip: rect(0px 0px 0px 0px);" id="ticket-check-url">'.$ticketcheckurl.'</div>';
+        ?>
+        <input type="button" onclick="push_to_clipboard('ticket-check-url', this)" class="btn" value="<?php print_string('copytoclipboard', 'auth_ticket') ?>" />
+    </td>
+    <td>
+        <?php print_string('configtesturl', 'auth_ticket'); ?>
+    </td>
+</tr>
+</table>
+</div>

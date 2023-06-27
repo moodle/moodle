@@ -1,0 +1,50 @@
+
+Version 1.0.0
+* Plugin Launched
+
+Version 1.4.0
+Feature
+* Enrolling users in Moodle Course will automatically enroll user in the WordPress course.
+* Un-Enrolling users from course Moodle un-enroll user from the course on WordPress site.
+* Creating user in Moodle will create same user with basic information like first name, last name and email on WordPress site.
+* Deleting user in Moodle will delete same user on WordPress site.
+
+Version 1.4.2
+Tweak
+* Added compatibility with Edwiser Bridge WordPress plugin.
+
+Version 1.4.3
+Feature
+* Added functionality to show a set-up wizard on Moodle plugin installation to create web service automatically with authorized user.
+* Added functionality to add missing functions on linking the existing web-service.
+* Added functionality to show all non added Moodle web service functions on test connection functionality.
+ 
+Version 1.4.5
+Feature
+* Functionality to configure all required Moodle settings for Edwiser Bridge on Edwiser Bridge settings page itself.
+* Settings and connection summary page will be shown on the Moodle.
+
+Version 2.0.0
+Tweak
+* Added compatibility to WordPress plugin Edwiser Bridge 2.0.0
+
+Version 2.1.2
+Tweak
+* Made plugin compatible with the Moodle Coding standards.
+
+Version 2.1.3
+Feature
+* Added functionality to update password through user preference option.
+
+Version 2.1.5
+Feature
+* Added functionality to enable Manual Enrollment method for course when it is disabled.
+
+Version 2.1.9
+Feature
+* Added setup wizard functionality.
+* Added setup wizard reueun link in plugins -> Edwiser Bridge section.  
+
+Version 2.2.0
+Feature
+* Added webservice to check and enable mandatory settings for test enrollment.

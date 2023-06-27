@@ -1,0 +1,48 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authyubikey",
+    "description": "A module that is able to authenticate against YubiKey",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "authyubikey"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "extra": {
+        "ssp-mixedcase-module-name": "authYubiKey"
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\modules\\yubikey\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "webmozart/assert": "~1.4"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-authyubikey/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-authyubikey"
+    }
+}

@@ -1,0 +1,509 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lv\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 :"
+" 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:no_state:report_text}"
+msgstr "Ja problēma atkārtojas, varat ziņot sistēmas administratoriem."
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Interneta pārlūka pogu Uz priekšu un Atpakaļ lietošana."
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Metadati šai entītijai nav atrasti:"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP piemērs - testa pieslēgšanās caur Jūsu Shib IDP"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Ieteikumi problēmas atrisināšanai:"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Pieslēgties kā administrators"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Pēc pēdējās autentifikācijas ir pagājušas tikai dažas sekundes, tādēļ, "
+"iespējams, ir problēma ar servisa piegādātāju."
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "Izmanto SimpleSAMLphp kā servisa piegādātāju"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "Hostēta SAML 2.0 servisa piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID piegādātāja vietne - Alfa versija (testa kods)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "Instalē SimpleSAMLphp"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Saimniekdatora vārda, porta un protokola diagnostika"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Ejiet atpakaļ uz iepriekšējo lapu un mēģiniet vēlreiz."
+
+msgid "{core:no_state:causes}"
+msgstr "Kļūdu radījis:"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "Hostēta SAML 2.0 identitātes piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Neobligāts"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr "Hostēta Shibboleth 1.3 servisa piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentācija"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp advancētās iespējas"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "Obligāts priekš LDAP"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Testēt konfigurētos autentifikācijas avotus"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr "Metadatu pārskats Jūsu instalācijā. Diagnosticēt metadatu failus"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Konfigurācija"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Laipni lūdzam"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Konfigurēt Shibboleth 1.3 SP strādāt ar SimpleSAMLphp IdP"
+
+msgid "{core:no_state:header}"
+msgstr "Stāvokļa informācija ir pazaudēta"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadati"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp uzturēšana un konfigurēšana"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp konfigurācijas pārbaude"
+
+msgid "{core:frontpage:page_title}"
+msgstr "SimpleSAMLphp instalācijas lapa"
+
+msgid "{core:no_cookie:header}"
+msgstr "Trūkst sīkdatnes"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Brīdinājumi"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML uz SimpleSAMLphp metadatu konvertors"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Dzēst manas IdP izvēles IdP discovery servisos"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Jūs esat pieslēdzies kā administrators"
+
+msgid "{core:frontpage:auth}"
+msgstr "Autentifikācija"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Ja Jūs esat lietotājs un saņemat šo kļūdu, sekojot saitei kādā interneta "
+"lapā, Jums jāziņo par šo kļūdu lapas īpašniekam."
+
+msgid "{core:no_state:description}"
+msgstr "Nav iespējams atrast stāvokļa informāciju šim pieprasījumam."
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Rādīt metadatus"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Aizveriet interneta pārlūku un mēģiniet vēlreiz."
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Pārāk mazs intervāls starp pieslēgšanās notikumiem."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Apsveicu</strong>, Jūs esat veiksmīgi uzinstalējis "
+"SimpleSAMLphp.Šī ir Jūsu instalācijas sākuma lapa, kur varat atrast "
+"saites uz testu piemēriem, diagnostiku, metadatiem un dokumentāciju."
+
+msgid "{core:no_metadata:header}"
+msgstr "Metadati nav atrasti"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Hostēta Shibboleth 1.3 identitātes piegādātāja metadati (ģenerēti "
+"automātiski)"
+
+msgid "{core:frontpage:required}"
+msgstr "Obligāts"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Visticamāk šī ir konfigurācijas problēma pie servisa piegādātāja vai "
+"identitātes piegādātāja."
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"Pieprasījuma parametru garumu ierobežo PHP Suhosin paplašinājums. Lūdzu "
+"palieliniet suhosin.get.max_value_length opciju līdz vismaz 2048 baitiem."
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Jūs neizmantojat HTTPS</strong> - šifrētu komunikāciju ar "
+"lietotāju. HTTP ir labs testa nolūkiem, bet ražošanā jāizmanto HTTPS. [ "
+"<a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Lasiet vairāk par SimpleSAMLphp uzturēšanu</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federācija"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Obligāts priekš Radius"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "Interneta pārlūka atvēršana ar saglabātām cilnēm no iepriekšējās sesijas."
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Pārbauda Jūsu PHP instalāciju"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "Izmanto SimpleSAMLphp kā identitātes piegādātāju"
+
+msgid "{core:no_state:report_header}"
+msgstr "Ziņojiet par šo kļūdu"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP piemērs - testa pieslēgšanās caur Jūsu IDP"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Iespējams, interneta pārlūkā ir aizliegtas sīkdatnes."
+
+msgid "{core:frontpage:about_header}"
+msgstr "Par SimpleSAMLphp"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"SimpleSAMLphp ir baigi foršs, kur par to var palasīt vairāk? Vairāk "
+"informācijas ir <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp Feide RnD "
+"blogā</a> pie <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Ja Jūs esat vienotas pieslēgšanās risinājuma izstrādātājs, Jūsu metadatu "
+"konfigurācijā ir kļūda. Pārbaudiet tos gan pie identitātes piegādātāja, "
+"gan pie servisa piegādātāja."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Mēģināt vēlreiz"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Derīgas saites instalācijai"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metadati"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Ieteicams"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp kā IdP priekš Google Apps for Education"
+
+msgid "{core:frontpage:tools}"
+msgstr "Rīki"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Mēģināt pieslēgties vēlreiz"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Izskatās, ka Jūsu interneta pārlūkā ir aizliegtas sīkdatnes. Lūdzu "
+"pārbaudiet sava pārlūka uzstādījumus un mēģiniet vēlreiz."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Atcelts"
+
+msgid "You are logged in as administrator"
+msgstr "Jūs esat pieslēdzies kā administrators"
+
+msgid "Go back to the previous page and try again."
+msgstr "Ejiet atpakaļ uz iepriekšējo lapu un mēģiniet vēlreiz."
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr "Ja problēma atkārtojas, varat ziņot sistēmas administratoriem."
+
+msgid "Welcome"
+msgstr "Laipni lūdzam"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp konfigurācijas pārbaude"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr "Metadatu pārskats Jūsu instalācijā. Diagnosticēt metadatu failus"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML uz SimpleSAMLphp metadatu konvertors"
+
+msgid "Required"
+msgstr "Obligāts"
+
+msgid "Warnings"
+msgstr "Brīdinājumi"
+
+msgid "Documentation"
+msgstr "Dokumentācija"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr "Hostēta Shibboleth 1.3 servisa piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "Par SimpleSAMLphp"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "Hostēta SAML 2.0 servisa piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "Retry login"
+msgstr "Mēģināt pieslēgties vēlreiz"
+
+msgid "Required for LDAP"
+msgstr "Obligāts priekš LDAP"
+
+msgid "Close the web browser, and try again."
+msgstr "Aizveriet interneta pārlūku un mēģiniet vēlreiz."
+
+msgid "Federation"
+msgstr "Federācija"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "Nav iespējams atrast stāvokļa informāciju šim pieprasījumam."
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Dzēst manas IdP izvēles IdP discovery servisos"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Visticamāk šī ir konfigurācijas problēma pie servisa piegādātāja vai "
+"identitātes piegādātāja."
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Konfigurēt Shibboleth 1.3 SP strādāt ar SimpleSAMLphp IdP"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Interneta pārlūka pogu Uz priekšu un Atpakaļ lietošana."
+
+msgid "Metadata not found"
+msgstr "Metadati nav atrasti"
+
+msgid "Missing cookie"
+msgstr "Trūkst sīkdatnes"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Iespējams, interneta pārlūkā ir aizliegtas sīkdatnes."
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "Interneta pārlūka atvēršana ar saglabātām cilnēm no iepriekšējās sesijas."
+
+msgid "Tools"
+msgstr "Rīki"
+
+msgid "Test configured authentication sources "
+msgstr "Testēt konfigurētos autentifikācijas avotus"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Izskatās, ka Jūsu interneta pārlūkā ir aizliegtas sīkdatnes. Lūdzu "
+"pārbaudiet sava pārlūka uzstādījumus un mēģiniet vēlreiz."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "Instalē SimpleSAMLphp"
+
+msgid "Deprecated"
+msgstr "Atcelts"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Apsveicu</strong>, Jūs esat veiksmīgi uzinstalējis "
+"SimpleSAMLphp.Šī ir Jūsu instalācijas sākuma lapa, kur varat atrast "
+"saites uz testu piemēriem, diagnostiku, metadatiem un dokumentāciju."
+
+msgid "This error may be caused by:"
+msgstr "Kļūdu radījis:"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Jūs neizmantojat HTTPS</strong> - šifrētu komunikāciju ar "
+"lietotāju. HTTP ir labs testa nolūkiem, bet ražošanā jāizmanto HTTPS. [ "
+"<a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Lasiet vairāk par SimpleSAMLphp uzturēšanu</a> ]"
+
+msgid "Metadata"
+msgstr "Metadati"
+
+msgid "Retry"
+msgstr "Mēģināt vēlreiz"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp uzturēšana un konfigurēšana"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Saimniekdatora vārda, porta un protokola diagnostika"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Ja Jūs esat lietotājs un saņemat šo kļūdu, sekojot saitei kādā interneta "
+"lapā, Jums jāziņo par šo kļūdu lapas īpašniekam."
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "Izmanto SimpleSAMLphp kā identitātes piegādātāju"
+
+msgid "Optional"
+msgstr "Neobligāts"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Ieteikumi problēmas atrisināšanai:"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"SimpleSAMLphp ir baigi foršs, kur par to var palasīt vairāk? Vairāk "
+"informācijas ir <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp Feide RnD "
+"blogā</a> pie <a href=\"http://uninett.no\">UNINETT</a>."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP piemērs - testa pieslēgšanās caur Jūsu Shib IDP"
+
+msgid "Authentication"
+msgstr "Autentifikācija"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp instalācijas lapa"
+
+msgid "Show metadata"
+msgstr "Rādīt metadatus"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp kā IdP priekš Google Apps for Education"
+
+msgid "State information lost"
+msgstr "Stāvokļa informācija ir pazaudēta"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "Hostēta SAML 2.0 identitātes piegādātāja metadati (ģenerēti automātiski)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID piegādātāja vietne - Alfa versija (testa kods)"
+
+msgid "Required for Radius"
+msgstr "Obligāts priekš Radius"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Metadati šai entītijai nav atrasti:"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP piemērs - testa pieslēgšanās caur Jūsu IDP"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "Izmanto SimpleSAMLphp kā servisa piegādātāju"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Pēc pēdējās autentifikācijas ir pagājušas tikai dažas sekundes, tādēļ, "
+"iespējams, ir problēma ar servisa piegādātāju."
+
+msgid "Recommended"
+msgstr "Ieteicams"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Ja Jūs esat vienotas pieslēgšanās risinājuma izstrādātājs, Jūsu metadatu "
+"konfigurācijā ir kļūda. Pārbaudiet tos gan pie identitātes piegādātāja, "
+"gan pie servisa piegādātāja."
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp advancētās iespējas"
+
+msgid "Too short interval between single sign on events."
+msgstr "Pārāk mazs intervāls starp pieslēgšanās notikumiem."
+
+msgid "Checking your PHP installation"
+msgstr "Pārbauda Jūsu PHP instalāciju"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"Pieprasījuma parametru garumu ierobežo PHP Suhosin paplašinājums. Lūdzu "
+"palieliniet suhosin.get.max_value_length opciju līdz vismaz 2048 baitiem."
+
+msgid "Useful links for your installation"
+msgstr "Derīgas saites instalācijai"
+
+msgid "Configuration"
+msgstr "Konfigurācija"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Hostēta Shibboleth 1.3 identitātes piegādātāja metadati (ģenerēti "
+"automātiski)"
+
+msgid "Login as administrator"
+msgstr "Pieslēgties kā administrators"
+
+msgid "Report this error"
+msgstr "Ziņojiet par šo kļūdu"
+

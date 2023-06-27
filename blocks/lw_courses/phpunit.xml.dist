@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit>
+    <logging>
+
+        <log type="coverage-clover" target="build/logs/clover.xml"/>
+
+    </logging>
+</phpunit>

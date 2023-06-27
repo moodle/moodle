@@ -1,0 +1,155 @@
+{
+	"attribute_edupersonaffiliation": {
+		"en": "Affiliation"
+	},
+	"attribute_title": {
+		"en": "Title"
+	},
+	"attribute_uid": {
+		"en": "User ID"
+	},
+	"attribute_sn": {
+		"en": "Surname"
+	},
+	"attribute_givenname": {
+		"en": "Given name"
+	},
+	"attribute_cn": {
+		"en": "Common name"
+	},
+	"attribute_mail": {
+		"en": "Mail"
+	},
+	"attribute_ismemberof": {
+		"en": "Group membership"
+	},
+	"attribute_mobile": {
+		"en": "Mobile"
+	},
+	"attribute_preferredlanguage": {
+		"en": "Preferred language"
+	},
+	"attribute_noredupersonnin": {
+		"en": "Identity number assigned by public authorities"
+	},
+	"attribute_schachomeorganization": {
+		"en": "Home organization domain name"
+	},
+	"attribute_organisationname": {
+		"en": "Organization name"
+	},
+	"attribute_edupersonentitlement": {
+		"en": "Entitlement regarding the service"
+	},
+	"attribute_edupersonscopedaffiliation": {
+		"en": "Affiliation at home organization"
+	},
+	"attribute_edupersontargetedid": {
+		"en": "Persistent pseudonymous ID"
+	},
+	"attribute_pairwise_id": {
+		"en": "Service-specific pseudonymous ID at home organization"
+	},
+	"attribute_edupersonprincipalname": {
+		"en": "Person's principal name at home organization"
+	},
+	"attribute_edupersonuniqueid": {
+		"en": "Person's non-reassignable, persistent pseudonymous ID at home organization"
+	},
+	"attribute_subject_id": {
+		"en": "Pseudonymous ID at home organization"
+	},
+	"attribute_edupersonorcid": {
+		"en": "ORCID researcher identifiers"
+	},
+	"attribute_o": {
+		"en": "Organization name"
+	},
+	"attribute_dc": {
+		"en": "Domain component (DC)"
+	},
+	"attribute_displayname": {
+		"en": "Display name"
+	},
+	"attribute_facsimiletelephonenumber": {
+		"en": "Fax number"
+	},
+	"attribute_homephone": {
+		"en": "Home telephone"
+	},
+	"attribute_homepostaladdress": {
+		"en": "Home postal address"
+	},
+	"attribute_jpegphoto": {
+		"en": "JPEG Photo"
+	},
+	"attribute_l": {
+		"en": "Locality"
+	},
+	"attribute_labeleduri": {
+		"en": "Labeled URI"
+	},
+	"attribute_manager": {
+		"en": "Manager"
+	},
+	"attribute_ou": {
+		"en": "Organizational unit"
+	},
+	"attribute_postaladdress": {
+		"en": "Postal address"
+	},
+	"attribute_postalcode": {
+		"en": "Postal code"
+	},
+	"attribute_postofficebox": {
+		"en": "Post office box"
+	},
+	"attribute_street": {
+		"en": "Street"
+	},
+	"attribute_telephonenumber": {
+		"en": "Telephone number"
+	},
+	"attribute_eduorghomepageuri": {
+		"en": "Organizational homepage"
+	},
+	"attribute_eduorglegalname": {
+		"en": "Organization's legal name"
+	},
+	"attribute_edupersonassurance": {
+		"en": "Identity assurance profile"
+	},
+	"attribute_edupersonnickname": {
+		"en": "Nickname"
+	},
+	"attribute_edupersonorgdn": {
+		"en": "Distinguished name (DN) of person's home organization"
+	},
+	"attribute_edupersonorgunitdn": {
+		"en": "Distinguished name (DN) of the person's home organizational unit"
+	},
+	"attribute_edupersonprimaryaffiliation": {
+		"en": "Primary affiliation"
+	},
+	"attribute_noreduorgnin": {
+		"en": "Organizational number"
+	},
+	"attribute_noredupersonbirthdate": {
+		"en": "Date of birth"
+	},
+	"attribute_noredupersonlegalname": {
+		"en": "Legal name"
+	},
+	"attribute_noredupersonlin": {
+		"en": "Local identity number"
+	},
+	"attribute_edupersonprimaryorgunitdn": {
+		"en": "Distinguished name (DN) of person's primary Organizational Unit"
+	},
+	"attribute_userpassword": {
+		"en": "User's password hash"
+	},
+	"attribute_schacuserprivateattribute": {
+		"en": "Private information elements"
+	}
+}

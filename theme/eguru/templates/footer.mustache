@@ -1,0 +1,184 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_eguru/footer.
+    Eguru footer layout template.
+}}
+
+
+<div class="et_pb_bottom_inside_divider" style=""></div>
+<footer id="footer" class="py-3 bg-dark text-light">
+
+{{#blockarrange}}
+    <div class="footer-main">
+        <div class="container">
+            <div class="row">
+               
+                {{#block2}}
+                <div class="{{colclass}}">
+                    <div class="footer-nav">
+                        <h4>{{footerbtitle2}}</h4>
+                         
+                        <ul>
+                           {{{footerlinks}}}
+                        </ul>
+                    </div>
+                </div>
+
+                {{/block2}}
+                {{# block3}}
+                <div class="{{colclass}}">
+                    <div class="social-media">
+                        <h4>{{footerbtitle3}}</h4>
+                        <ul>
+                            {{# fburl}}
+                            <li class="smedia-01">
+                                <a href="{{fburl}}" target="_blank">
+                                    <span class="media-icon">
+                                    <i class="fa fa-facebook"></i>
+                                    </span>
+                                </a>
+                            </li>
+                            {{/ fburl}}
+                            {{# twurl}}
+                            <li class="smedia-02">
+                                <a href="{{twurl}}" target="_blank">
+                                    <span class="media-icon">
+                               <i class="fa fa-linkedin" aria-hidden="true"></i>
+                                    </span> 
+                                </a>
+                            </li>
+                            {{/ twurl}}
+
+                            {{# gpurl}}
+                            <li class="smedia-03">
+                                <a href="{{gpurl}}" target="_blank">
+                                    <span class="media-icon">
+                             <i class="fa fa-youtube-play" style="font-size:24px;color:red"></i>
+                                    </span>
+                                   
+                                </a>
+                            </li>
+                            {{/ gpurl}}
+
+                            {{# pinurl}}
+                            <li class="smedia-04">
+                                <a href="{{pinurl}}" target="_blank">
+                                   <span class="media-icon">
+                               <i class="fa fa-instagram" aria-hidden="true"></i>
+                                   </span>
+                                 
+                                </a>
+                            </li>
+                            {{/ pinurl}}
+                        </ul>
+                    </div>
+                </div>
+                {{/ block3}}
+                {{#block4}}
+                <div class="{{colclass}}">
+                    <div class="footer-contact">
+                        <h4>{{footerbtitle4}}</h4>
+
+                        <p>{{address}}</p>
+                        {{# phoneno}}
+                            <p><i class="fa fa-phone-square" aria-hidden="true"></i> {{phoneno}}</p>
+                        {{/ phoneno}}
+
+                        {{# emailid}}
+                            <p>	
+                            	{{mail}} <a class="mail-link" href="mailto:{{emailid}}">{{emailid}}</a>
+                            </p>
+                        {{/ emailid}}
+ 			
+                            <p>	
+                             <a href="https://infans.fr/assistance"><i class="fa-solid fa-user-headset"></i></a>
+                            </p>
+                     
+                    </div>
+                </div>
+                {{/block4}}
+            </div>
+        </div>
+    </div>
+{{/blockarrange}}
+
+
+</footer>
+
+<style>
+.footer-main{
+	    background:#272727!important;
+ 	    position:-webkit-sticky; 
+	    position:sticky; 
+	    bottom:0; 
+}
+
+.social-media ul{
+		display:flex;
+		justifay-content:column;
+}
+
+.social-media span:hover  {
+			background:#64c4d8 !important;
+}
+footer a {
+	font-family: Louis George Cafe Bold,Helvetica,Arial,Lucida,sans-serif !important;
+	font-size: 100%;
+    	-ms-text-size-adjust: 100%;
+    	-webkit-text-size-adjust: 100%;
+    	vertical-align: baseline;
+}
+footer h4  {
+	    font-family: Louis George Cafe Bold,Helvetica,Arial,Lucida,sans-serif !important;
+}
+
+.social-media a:hover{
+		     color:#64c4d8 !important;
+		     background:#64c4d8 !important;
+}
+@media only screen and (max-width:767px){
+	.social-media ul {
+         display:inline-block !important;
+	justify-content:center !important;
+
+
+
+	
+	}
+}
+
+
+</style>
+
+<footer>
+{{{output.standard_footer_html}}}
+
+{{# output.page_doc_link }}
+    <p class="helplink">{{{ output.page_doc_link }}}</p>
+{{/ output.page_doc_link }}
+
+{{{ output.standard_end_of_body_html }}}
+
+</footer>
+
+{{#js}}
+require(['theme_boost/loader']);
+require(['theme_boost/drawer'], function(mod) {
+    mod.init();
+});
+{{/js}}

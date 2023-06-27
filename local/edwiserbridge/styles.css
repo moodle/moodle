@@ -1,0 +1,78 @@
+#edwsier-bridge {
+    display: none;
+}
+
+
+/*#admin-ebnewserviceinp, #admin-ebnewserviceuserselect, #eb_service_form .eb_service_field{
+	display: none;
+}*/
+
+.eb_toke_detail_tbl {
+    margin: 15px 10px 15px 30px;
+    line-height: 35px;
+}
+
+
+/*************************************/
+
+#local_edwiserbridge_copy {
+    /*visibility: hidden;*/
+    min-width: 250px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1000000;
+    left: 50%;
+    top: 120px;
+    margin-left: -150px;
+    opacity: 0.8;
+}
+
+.eb_copy_btn {
+    text-align: right;
+    color: #157acb;
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: 12px;
+    visibility: hidden;
+}
+
+.eb_copy_text {
+    cursor: pointer;
+}
+
+#eb_create_service {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+#admin-ebnewserviceinp .form-defaultinfo,
+#admin-ebexistingserviceselect .form-defaultinfo,
+#admin-ebnewserviceuserselect .form-defaultinfo {
+    display: none;
+}
+
+.eb_settings_err,
+#eb_common_err {
+    color: red;
+    display: none;
+    border: 1px solid #ff00001f;
+    padding: 12px;
+    background-color: #ff000008;
+}
+
+#eb_common_success {
+    color: green;
+    display: none;
+    /*padding: 5px;*/
+    border: 1px solid #b3ffb3;
+    padding: 12px;
+    background-color: #f1f6f1;
+}
+
+#admin-ebexistingserviceselect {
+    display: none;
+}

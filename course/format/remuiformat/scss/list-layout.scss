@@ -1,0 +1,384 @@
+// List Layout
+// Desktops, large screens
+&.editing {
+	.remui-format-list {
+		.sections {
+			.section {
+				.side {
+					margin: 0;
+					&.left {
+						padding: 10px 0!important;
+					}
+				}
+				.card-title {
+					.fa-angle-up, .fa-angle-down {
+					    margin-right: 2%;
+					    &:hover {
+					    	cursor: pointer;
+					    }
+					}
+				}
+				// Was added in RemUI theme
+				.sectionname {
+				    padding: 10px 0!important;
+				    clear: none!important;
+				}
+			}
+			#changenumsections {
+				width: 100%;
+			}
+
+		}
+	}
+	.general-section-activities {
+		margin-bottom: 2rem;
+	}
+}
+&:not(.editing) {
+	.remui-format-list {
+		.sections {
+			.section {
+				.right.side {
+					margin-top: 0;
+				}
+				.sectionname {
+					.panel-title {
+						.float-right {
+							padding-right: 10px;
+						}
+					}
+				}
+			}
+		}
+		&.one-section-format {
+			.sections {
+				.section {
+					.sectionname {
+						.panel-title {
+							.float-right {
+								padding-right: 0;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+// Styling for list format
+.remui-format-list {
+	// General section
+	#section-0 {
+		// Show and hide activity in general section.
+		&.showhideactivity {
+			.general-section-activities .activity {
+				@media (min-width: 992px) {
+				    &:nth-child(n+5) {
+				        display: none;
+				    }
+				}
+
+				// Small screens, laptops
+				@media (min-width: 768px) and (max-width: 991px) {
+				    &:nth-child(n+4) {
+				        display: none;
+				    }
+				}
+
+				// iPads, Tablets
+				@media (max-width: 767px) {
+				    &:nth-child(n+3) {
+				        display: none;
+				    }
+				}
+
+			}
+		}
+		.general-section-activities {
+			padding: 0;
+			margin-left: 0;
+			margin-right: 0;
+			.activity {
+
+				// Show 4 activities in row
+				@media (min-width: 992px) {
+			        width: 25%;
+				}
+
+				// Small screens, laptops
+				// Show 3 activities in row
+				@media (min-width: 768px) and (max-width: 991px) {
+			        width: 33%;
+				}
+
+				// iPads, Tablets
+				// Show 2 activities in row
+				@media (max-width: 767px) {
+			        width: 50%;
+				}
+				padding: 1rem 0 0 0;
+
+				// Remove padding of mod indent
+				& > div, .mod-indent-outer, .mod-indent {
+					padding: 0 !important;
+				}
+				.mod-indent {
+					width: 0 !important;
+				}
+
+				// Styling for general section activity card
+				.activityinstance {
+				    min-width: auto;
+				    min-height: auto;
+				    padding: 0 !important;
+					& > a {
+					    padding-left: 0;
+					    text-indent: 0;
+					}
+					.iconlarge.activityicon {
+					    width: 75px;
+					    height: 75px;
+					}
+				}
+
+				// Removeing absolute postion of activity actions
+				.actions {
+				    position: inherit !important;
+				    padding: 5px 0;
+				    display: flex;
+				    justify-content: center;
+					.filler {
+					    display: none;
+					}
+				}
+			}
+			.instancename {
+			    display: block;
+			}
+		}
+		.section-title {
+			color: white;
+			a {
+				color: white;
+			}
+		}
+		.teacher-label {
+		    display: flex;
+		    justify-content: flex-end;
+		    align-items: center;
+		    margin-right: 0.5rem;
+		}
+		.course-cover-image {
+		    min-height: 200px;
+		    height: auto;
+		    -webkit-background-size: cover;
+		    background-size: cover;
+		    background-position: center;
+		}
+		& > .content {
+		    padding: 10px 0;
+		}
+
+		.summary {
+		    min-height: 6.5rem;
+		}
+
+		// Teacher carousel
+		.carousel-inner {
+		    width: 155px;
+		}
+		.carousel-control-next,
+		.carousel-control-prev {
+		    position: absolute;
+		    top: 0;
+		    bottom: 0;
+		    line-height: 35px;
+		    color: #fff;
+		    text-align: center;
+		}
+
+		.carousel-control-next {
+		    right: 0;
+		}
+
+		.carousel-control.left,
+		.carousel-control.right,
+		.carousel-control-prev,
+		.carousel-control-next {
+		    opacity: 1 !important;
+		    min-width: 25px !important;
+		}
+
+		#teachers-carousel {
+		    max-width: 175px;
+		    height: 35px;
+		}
+		.text-white {
+			@for $i from 1 through 6 {
+				.h#{$i},
+				h#{$i} {
+					color: white;
+				}
+			}
+		}
+	}
+	.sections {
+		list-style: none;
+		.section {
+			&:not(#section-0) {
+				.content {
+					background: white;
+				}
+			}
+			&.main {
+				background: transparent;
+				border: 0;
+				box-shadow: none;
+				padding: 0;
+			}
+			// Highliging current section
+			.highlight {
+				position: absolute;
+				top: 0;
+				width: 3px;
+				bottom: 0;
+				left: 0;
+			}
+			width: 100%;
+			.sectionname {
+			    margin: 0;
+			    font-size: 18px;
+			    font-weight: 500;
+			}
+			// Section contents.
+			.card-footer {
+				background: transparent;
+			}
+			// Indent classes for activities
+			ul.section {
+				padding: 0;
+				.mod-indent-1 {
+				    width: 35px;
+				}
+				.mod-indent-2 {
+				    width: 70px;
+				}
+				.mod-indent-3 {
+				    width: 105px;
+				}
+				.mod-indent-4 {
+				    width: 140px;
+				}
+				.mod-indent-5 {
+				    width: 175px;
+				}
+				.mod-indent-6 {
+				    width: 210px;
+				}
+				.mod-indent-7 {
+				    width: 245px;
+				}
+				.mod-indent-8 {
+				    width: 280px;
+				}
+				.mod-indent-9 {
+				    width: 315px;
+				}
+				.mod-indent-10 {
+				    width: 350px;
+				}
+				.mod-indent-11 {
+				    width: 385px;
+				}
+				.mod-indent-12 {
+				    width: 420px;
+				}
+				.mod-indent-13 {
+				    width: 455px;
+				}
+				.mod-indent-14 {
+				    width: 490px;
+				}
+				.mod-indent-15 {
+				    width: 525px;
+				}
+				.mod-indent-16 {
+				    width: 560px;
+				}
+			}
+		}
+	}
+	// Styling for main course page where all sections are listed.
+	&.all-section-format {
+		ul.sections {
+			li.section {
+				// Apply box shadow to section except general section
+				&:not(#section-0) {
+					& > div {
+						box-shadow: 0 0 8px 0 #ddd;
+					}
+				}
+				// Custom section content toggle icon.
+				.toggle-icon {
+					margin: 0 1rem 0 0;
+					cursor: pointer;
+					transform: rotate(-90deg);
+					border: 0 !important;
+					background: transparent !important;
+					box-shadow: none !important;
+					outline: 0 !important;
+					&::before {
+						display: flex;
+						transition: all 0.5s ease;
+						font-size: 1.2rem;
+					}
+				}
+				// Rotating toggle icon when section is collapsed
+				&.collapsed {
+					.toggle-icon {
+						&::before {
+							transform: rotate(180deg);
+						}
+					}
+				}
+			}
+		}
+	}
+	// Styling for section when single section is opened.
+	&.one-section-format {
+		&.all-section {
+			.sections {
+				.section:not(#section-0) {
+					& > div {
+						box-shadow: 0 0 8px 0 #ddd;
+					}
+					ul.section {
+						display: none;
+					}
+				}
+			}
+		}
+		// Single section activity list styling.
+		.activities-list {
+			border: none;
+		    -webkit-box-shadow: 0 0 8px #ddd;
+		    box-shadow: 0 0 8px #ddd;
+		    background-color: #fff;
+		    padding: 15px;
+		    ul.section {
+		    	margin: 0;
+		    	.activity {
+				    clear: both;
+				    padding: 8px 0 !important;
+				    border-bottom: 1px solid #f3f3f3;
+				    &:last-child {
+				    	border-bottom: 0 !important;
+				    }
+				}
+		    }
+		    .section-modchooser {
+		    	padding-top: 10px;
+		    }
+		}
+	}
+}

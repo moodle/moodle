@@ -1,0 +1,201 @@
+name: CI
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ master, release-* ]
+
+jobs:
+  basic-tests:
+    name: Syntax and unit tests, PHP ${{ matrix.php-versions }}, ${{ matrix.operating-system }}
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-latest, windows-latest]
+        php-versions: ['7.1', '7.2', '7.3', '7.4']
+
+    steps:
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: ${{ matrix.php-versions }}
+          extensions: mbstring, xml
+          coverage: pcov
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - uses: actions/checkout@v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Syntax check PHP
+        run: bash vendor/bin/check-syntax-php.sh
+
+      - name: Decide whether to run code coverage or not
+        if: ${{ matrix.php-versions != '7.4' || matrix.operating-system != 'ubuntu-latest' }}
+        run: |
+          echo "NO_COVERAGE=--no-coverage" >> $GITHUB_ENV
+
+      - name: Run unit tests
+        run: |
+          echo $NO_COVERAGE
+          ./vendor/bin/phpunit $NO_COVERAGE
+
+      - name: Save coverage data
+        if: ${{ matrix.php-versions == '7.4' && matrix.operating-system == 'ubuntu-latest' }}
+        uses: actions/upload-artifact@v1
+        with:
+            name: build-data
+            path: ${{ github.workspace }}/build
+
+  security:
+    name: Security checks
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+            php-version: '7.4'
+            extensions: mbstring, xml
+            coverage: none
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - uses: actions/checkout@v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+            path: ${{ steps.composer-cache.outputs.dir }}
+            key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+            restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Security check for locked dependencies
+        uses: symfonycorp/security-checker-action@v2
+
+      - name: Update Composer dependencies
+        run: composer update --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Security check for locked dependencies
+        uses: symfonycorp/security-checker-action@v2
+  sanity-check:
+    name: Sanity checks
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: '7.4'
+          extensions: mbstring, xml
+          coverage: none
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - uses: actions/checkout@v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+            path: ${{ steps.composer-cache.outputs.dir }}
+            key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+            restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - name: Syntax check YAML / XML / JSON
+        run: |
+          bash vendor/bin/check-syntax-yaml.sh
+          bash vendor/bin/check-syntax-xml.sh
+          bash vendor/bin/check-syntax-json.sh
+
+  quality:
+    name: Quality control
+    runs-on: [ubuntu-latest]
+    needs: [basic-tests]
+
+    steps:
+      - name: Setup PHP, with composer and extensions
+        uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+        with:
+          php-version: '7.4'
+          extensions: mbstring, xml
+
+      - name: Setup problem matchers for PHP
+        run: echo "::add-matcher::${{ runner.tool_cache }}/php.json"
+
+      - uses: actions/checkout@v2
+
+      - name: Get composer cache directory
+        id: composer-cache
+        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      - name: Cache composer dependencies
+        uses: actions/cache@v1
+        with:
+            path: ${{ steps.composer-cache.outputs.dir }}
+            key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+            restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist --optimize-autoloader
+
+      - uses: actions/download-artifact@v1
+        with:
+          name: build-data
+          path: ${{ github.workspace }}/build
+
+      - name: Codecov
+        uses: codecov/codecov-action@v1
+
+      - name: PHP Code Sniffer
+        continue-on-error: true
+        run: php vendor/bin/phpcs
+
+      - name: Psalm
+        continue-on-error: true
+        run: php vendor/bin/psalm --show-info=true
+
+      - name: Psalter
+        continue-on-error: true
+        run: php vendor/bin/psalter --issues=UnnecessaryVarAnnotation --dry-run

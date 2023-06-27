@@ -1,0 +1,94 @@
+This files describes API changes in /enrol/* - plugins,
+information provided here is intended especially for developers.
+
+=== 3.5 ===
+
+* Default sorting in enrol_get_my_courses(), enrol_get_all_users_courses() and enrol_get_users_courses() now respects
+  the site setting "navsortmycoursessort" and should be consistently used when displaying the courses in the UI.
+
+=== 3.4 ===
+
+* render_course_enrolment_users_table method has been removed from the renderer. The enrolled users page is now
+  combined with the participants page. /enrol/users.php no longer exists.
+
+=== 3.3 ===
+
+* External function core_enrol_external::get_users_courses now return the user progress, start and the end course dates.
+
+=== 3.2 ===
+
+* External function core_enrol_external::get_users_courses now return the category id as an additional optional field.
+
+=== 3.1 ===
+
+* core_enrol_external::get_enrolled_users now supports two additional parameters for ordering: sortby and sortdirection.
+* Enrolment plugins UI have been consolidated. Plugins can implement use_standard_editing_ui() function
+  and add edit_instance_form() and edit_instance_validation() methods instead of providing their own edit.php and form.
+  They can then rely on the default implementation of get_action_icons and get_course_navigation. In future this will
+  mean they can be called by webservices/user upload tools because they can validate their data.
+
+=== 3.0 ===
+
+* Added new events enrol_instance_created, enrol_instance_updated and
+  enrol_instance_deleted . Always trigger them when changing records in the
+  DB table 'enrol'.
+* Constant CACHE_COURSE_CONTACTS_TTL was deleted.
+* External function core_enrol_external::get_enrolled_users now returns only the viewable participants if the course has groups enabled and no groupid is passed.
+
+=== 2.9 ===
+
+* External function core_enrol_external::get_users_courses now returns additional optional fields:
+   - summary: Course summary.
+   - summaryformat: Course summary format.
+   - format: Course format.
+   - showgrades: True if grades are shown, otherwise false.
+   - lang: Forced course language.
+   - enablecompletion: Control or not via completion and activity settings.
+
+=== 2.8 ===
+
+* enrol_plugin::instance_deleteable() is deprecated and has been replaced by enrol_plugin::can_delete_instance()
+* enrol_plugin::can_hide_show_instance() is a new function to control who can hide/show enrolment instances.
+  Returns true by default but plugins must implement their own logic.
+
+=== 2.6 ===
+
+* Enrolment plugin which supports self enrolment should implement can_self_enrol()
+* Enrolment plugin should implement get_enrol_info() to expose instance information
+  with webservice or external interface.
+* Webservice core_enrol_get_enrolled_users_with_capability was incorrectly specifing
+  float as the return type for user id. int is the actual returned type and is now
+  reported as such.
+
+=== 2.5 ===
+
+* plugins may use general enrol/editenrolment.php page to let users edit
+  enrolments manually
+* new support for grade recovery in enrol_plugin::enrol_user() method
+
+=== 2.4 ===
+
+required changes in code:
+* use role_get_name() or role_fix_names() if you need any role names, using role.name
+  directly from database is not correct any more
+* new restore support: ENROL_RESTORE_EXACT, ENROL_RESTORE_NOUSERS
+  and ENROL_RESTORE_CLASS were removed, implement new restore_* plugin methods instead
+
+other changes and new features:
+* course enrolment manager now works with disabled plugins too
+* new support for protected group membership linked to enrol instance
+* new support for expiry notifications - see enrol_plugin::send_expiry_notifications() method
+
+
+=== 2.2 ===
+
+required changes in code:
+* load_temp_role() is deprecated, use load_temp_course_role() instead, temp role not loaded
+* remove_temp_role() is deprecated, use remove_temp_course_roles() instead
+* 'user_unenrol_modified' event was renamed to 'user_enrol_modified'
+
+
+=== 2.0 ===
+
+required changes in code:
+* enrolment plugins need to be rewritten to use new API - see inline phpdocs and official plugins

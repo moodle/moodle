@@ -1,0 +1,43 @@
+#
+# module: Use Stats Block
+# type: bloc
+# utilisation: enseignants, administrateurs, éventuellement étudiants
+# développeur: Valery Fremaux (valery.Fremaux@gmail.com)
+
+Ce bloc permet d'afficher les statistiques d'usage de l'utilisateur courant.
+
+Les affichages du bloc "Use stats" permettent de répondre à la question "Combien j'ai passé de temps sur ce
+Moodle". Ceci peut être utile pour une estimation de sa productivité personnelle, afin d'améliorer son
+efficacité d'usage. 
+
+Dans d'autres situations que nous espérons arriver le plus rarement possible, on peut utiliser ce bloc pour
+effectuer des mesures formelles de temps de travail, opposables dans une gestion conflictuelle de la charge
+de travail.
+
+## Résumé des fonctionnalités ##
+
+Ce bloc échantillone les journaux d'actions de Moodle et seuille les intervales entre deux événements successifs
+de la trace de l'utilisateur courant. L'hypothèse fondamentale est qu'une activité permanente de préparation et
+de constitution de matériel et procédures pédagogiques, réalisées sur l"outil, et en dehors des activités hors
+ligne ou en présentiel sous-tendent la génération d'une trame continue d'enregistrement d'activité. 
+
+Ce bloc compile tous les événements et additionne tous les intervalles supérieurs à un seuil réglable. La compilation
+des temps est également calculée cours par cours.
+
+Plus Moodle est utilisé comme un outil auteur quotidien, plus les résultats de ce rapport devraient être précis.
+
+## Installation du bloc ##
+
+Dézippez cette distribution dans le répertoire <MOODLE_INSTALL>/blocks.
+Naviguez dans la page d'administration pour faire enregistrer le bloc par Moodle.
+
+## Utiliser le bloc ##
+
+Ajoutez un bloc "Mesure d'activité" dans n'importe lequel de vos espaces de travail. La compilation sera donnée pour
+l'utilisateur courant, sans restrictions s'il s'agit d'un enseignant.
+
+Il existe des situations où l'on pourra communiquer aux étudiants leur propre rapport. Dans le contexte d'un cours,
+l'enseignant peut activer cette possibilité dans les paramètres d'instance (en éditant le bloc). Dans les espaces généraux
+(MyMoodle, pages générales hors cours), c'est ladministrateur central de Moodle qui peut autoriser cette visibilité. 
+
+## Version pro ##

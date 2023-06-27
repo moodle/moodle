@@ -1,0 +1,140 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/card_general_section_edit
+
+
+    Example context (json):
+    {
+        "editing: "1",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "generalsectiontitle": "General Section Title",
+            "activities": [
+                {
+                    "index": "index",
+                    "id": "id",
+                    "completion": "completion",
+                    "viewurl": "viewurl",
+                    "title": "title",
+                    "modulename": "modulename",
+                    "summary": "summary",
+                    "completed": "completed",
+                    "hidden": "hidden",
+                    "availstatus": "availstatus",
+                    "modicons": "modicons",
+                }
+            ],
+            "generalsectionsummary": "General Section Summary",
+         }
+        ],
+        "sections": [
+            {
+                "index": "1",
+                "title": "Section Title",
+                "singlepageurl": "Single Page URL",
+                "hiddenmessage": "Hidden message",
+                "summary": "Summary",
+                "hidden": "1/0",
+                "activityinfostring": "2 Files, 2 Quizzes"
+                "sectionactivities" [
+                    {
+                    }
+                ]
+            }
+        ]
+    }
+}}
+<li id="section-{{{index}}}" class="section main cards col-lg-12 col-sm-12 mb-25 mb-4 p-10">
+    <div class="general-section">
+        <div class="section-details">
+            <div class="coursedetails">
+                <div class="details">
+                    {{#coursemainimage}}
+                        <div class="col-12 coursemainimagediv text-right d-md-block mb-4">
+                            <div class="coursemainimage" style="background-image: url('{{coursemainimage}}');"></div>
+                        </div>
+                    {{/coursemainimage}}
+                    {{> format_remuiformat/course_progress }}
+                    {{#resumeactivityurl}}
+                        <div class="col-12 text-center mt-4">
+                            <a class="btn btn-primary btn-block bold" href="{{{ resumeactivityurl }}}" role="button">{{#str}} resumetoactivity, format_remuiformat{{/str}}</a>
+                        </div>
+                    {{/resumeactivityurl}}
+                </div>
+            </div>
+            <div class="generaldetails content">
+                <div class="left side">
+                    {{{ leftsection }}}
+                </div>
+                <div class="right side">
+                    {{{ optionmenu }}}
+                </div>
+                <h2 class="section-title">{{{ title }}}</h2>
+                <div class='generalsectioninfo'>
+                    {{{ availability }}}
+                    {{#fullsummary}}
+                        <input type="checkbox" class="read-more-state" id="read-more-summary" />
+                        <div class="read-more-target">{{{ fullsummary }}}</div>
+                        <div class="fadeout-summary"></div>
+                        <label for="read-more-summary" class=" text-primary small read-more-trigger"></label>
+                    {{/fullsummary}}
+                </div>
+                <a class="text-muted" href="{{ editsetionurl }}"><span><i class="fa fa-cog font-size-20" aria-hidden="true"></i></span></a>
+            </div>
+        </div>
+        {{#activityexists}}
+            <h4 class="activitieshead">{{#str}} generalactivities, format_remuiformat{{/str}}</h4>
+        {{/activityexists}}
+        <div class="content">
+            <div class="summary"></div>
+            <ul class="img-text section general-section-activities justify-content-start text-center yui3-dd-drop" data-draggroups="resource">
+                {{#activities}}
+                    <li class="activity {{{modulename}}} modtype_{{{modulename}}} justify-content-center list-unstyled yui3-dd-drop" id="module-{{id}}" data-draggroups="resource">
+                        <div>
+                            <div class="activityinstance p-0 d-inline-block">
+                                {{{title}}}
+                                <span class="pl-10"><span class="editing_move moodle-core-dragdrop-draghandle" title="{{#str}} moveresource, format_remuiformat {{/str}}" tabindex="0" data-draggroups="resource" role="button" data-sectionreturn="0"><i class="icon fa fa-arrows fa-fw  iconsmall" aria-hidden="true" aria-label="" style="cursor: move;"></i></span></span>
+                            </div>
+                            <div class="actions">
+                                {{{completion}}}
+                                {{{modicons}}}
+                            </div>
+                            <div class="contentafterlink">
+                                {{{summary}}}
+                            </div>
+                            {{{availstatus}}}
+                        </div>
+                    </li>
+                {{/activities}}
+            </ul>
+        </div>
+
+        <div class="text-center showactivitywrapper">
+            <span class="showactivity text-primary show">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </div>
+        {{{addnewactivity}}}
+    </div>
+</li>

@@ -1,0 +1,81 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_tiles/completion_icon
+
+    Course module completion icon template
+
+    The purpose of this template is to render a check box
+    for the user to check which will be used to toggle completion
+    via AJAX
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * cmid - course module id
+        * tileid - which tile for
+        * completionstate is completion complete or not
+        * completionstateInverse inverse of previous
+        * isediting - is user editing
+        * sesskey - sesskey
+        * modtitle - title of this module (i.e. activity name)
+        * completionIsManual - is completion set to manual or not
+        * completionstring - string to display on hover
+
+    Example context (json):
+    {
+        "cmid": 123,
+        "tileid": 1,
+        "completionstate": "0",
+        "completionstateInverse": "1",
+        "isediting": 0,
+        "sesskey": 1234567890,
+        "modtitle": "Lecture 1 slides",
+        "completionIsManual": 1,
+        "completionstring": "Click to toggle completion status"
+    }
+}}
+{{^isediting}}
+    {{!complete-y-xxx is a class not an id as there will be two on the page if a modal is open}}
+    <span class="completionchangenotify complete-y-{{cmid}}">{{#str}}complete, format_tiles{{/str}}</span>
+    <span class="completionchangenotify complete-n-{{cmid}}">{{#str}}notcomplete, format_tiles{{/str}}</span>
+    {{#completionIsManual}}
+        <button class="completioncheckbox" data-action="change-completion-status" data-cmid="{{cmid}}" data-state="{{completionstate}}"
+              data-activityname="{{modtitle}}" title="{{#completionstring}}{{completionstring}}{{/completionstring}}{{^completionstring}}{{#str}}togglecompletion, format_tiles{{/str}}{{/completionstring}}">
+            <span class="completion-icon completion_img_{{cmid}} completion-icon-{{completionicon}}"></span>
+        </button>
+    {{/completionIsManual}}
+    {{^completionIsManual}}
+        <span class="completioncheckbox completion-auto completion-check-{{cmid}}"
+              title="{{#completionstring}}{{completionstring}}{{/completionstring}}{{^completionstring}}{{#str}}togglecompletion, format_tiles{{/str}}{{/completionstring}}"
+              data-ismanual="0" data-completionstate="{{completionstate}}">
+            <span class="completion-icon completion_img_{{cmid}} completion-icon-{{completionicon}}"></span>
+        </span>
+    {{/completionIsManual}}
+{{/isediting}}
+
+{{#isediting}}
+    <div class="completioncheckbox completion-check-{{cmid}}" data-action="change-completion-status" data-cmid="{{cmid}}" data-state="{{completionstate}}"
+    title="{{#completionstring}}{{completionstring}}{{/completionstring}}{{^completionstring}}{{#str}}togglecompletion, format_tiles{{/str}}{{/completionstring}}" data-ismanual="0">
+        <span class="completion-icon completion_img_{{cmid}} completion-icon-{{completionicon}}"></span>
+    </div>
+{{/isediting}}

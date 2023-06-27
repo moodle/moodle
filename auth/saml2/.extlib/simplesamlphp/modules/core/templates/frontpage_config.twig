@@ -1,0 +1,56 @@
+{% set pagetitle = '{core:frontpage:page_title}'|trans %}
+{% set frontpage_section = 'config' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {% include "@core/_frontpage_menu.twig" %}
+
+    <div>
+        <code class="simplesaml_version">{{ directory }} ({{ version }})</code>
+    </div>
+
+    {% set icon_enabled = '<i class="fa fa-check"></i>' %}
+    {% set icon_disabled = '<i class="fa fa-ban"></i>' %}
+
+    <div class="enablebox mini">
+        <table>
+	    <tr class="{%- if enablematrix.saml20idp %}enabled{% else %}disabled{% endif -%}">
+                <td>SAML 2.0 IdP</td>
+                <td>{%- if enablematrix.saml20idp %}{{ icon_enabled|raw }}{% else %}{{ icon_disabled|raw }}{% endif -%}</td>
+            </tr>
+	    <tr class="{%- if enablematrix.shib13idp %}enabled{% else %}disabled{% endif -%}">
+                <td>Shib 1.3 IdP</td>
+                <td>{%- if enablematrix.shib13idp %}{{ icon_enabled|raw }}{% else %}{{ icon_disabled|raw }}{% endif -%}</td>
+            </tr>
+        </table>
+    </div>
+
+    <h2>{{ '{core:frontpage:configuration}'|trans }}</h2>
+    <ul>
+        {% for key, link in links_config %}
+        <li><a href="{{ link.href|escape('html') }}">{{ link.text|trans|escape('html') }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% if warnings is defined and warnings is not empty %}
+    <h2>{{ '{core:frontpage:warnings}'|trans|escape('html') }}</h2>
+    {% for key, warning in warnings %}
+    <div class="caution">{{ warning|trans|raw }}</div>
+    {% endfor %}
+    {% endif %}
+
+    {% if isadmin %}
+    <h2>{{ '{core:frontpage:checkphp}'|trans }}</h2>
+    <div class="enablebox">
+        <table>
+        {% for key, func in funcmatrix %}
+	    <tr class="{%- if func.enabled %}enabled{% else %}disabled{% endif -%}">
+                <td>{%- if func.enabled %}{{ icon_enabled|raw }}{% else %}{{ icon_disabled|raw }}{% endif -%}</td>
+                <td>{{ requiredmap[func.required]|trans }}</td>
+                <td>{{ func.descr }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+    </div>
+    {% endif %}
+{% endblock %}

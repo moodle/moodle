@@ -1,0 +1,403 @@
+body#page-course-view-remuiformat {
+	@import './card-layout.scss';
+	@import './list-layout.scss';
+
+	.remui-format-card, .remui-format-list {
+		.hide {
+			display: none;
+		}
+	}
+
+	&.editing {
+		.general-section-activities {
+			.activity {
+				&:nth-last-child(2) {
+					margin-right: auto;
+				}
+				&.modtype_folder {
+					.contentwithoutlink {
+						padding-left: 2.142rem;
+						padding-top: 0.714rem;
+					}
+				}
+			}
+		}
+	}
+
+	.general-section-activities {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 0 1rem;
+        .activity {
+			&.modtype_folder {
+				.activityinstance,
+				.activityinstance div {
+					display: block;
+				}
+			}
+        	display: flex;
+            padding: 2rem 1rem 0rem;
+            text-align: center;
+            // margin: 0 auto;
+            &:first-of-type {
+            	margin-left: auto;
+            }
+            &:last-of-type {
+            	margin-right: auto;
+            }
+            & > div {
+                width: 100%;
+            }
+            .actions {
+                display: flex;
+                position: relative;
+                justify-content: center;
+                .spinner {
+                    position: relative;
+                    left: 0;
+                }
+            }
+            .activityinstance {
+                padding: 0;
+                width: 100%;
+            }
+            .contentafterlink {
+                margin: 0 !important;
+            }
+            .editing_move {
+                left: 1rem;
+                top: 1rem;
+            }
+        }
+        @media (max-width: 992px) {
+            &.onshowmore {
+                position: static;
+            }
+        }
+
+        &.onshowmore {
+            height: 350px;
+        }
+
+        .activityinstance img {
+            width: 65px !important;
+            height: 65px !important;
+        }
+
+        .activityinstance .instancename {
+            display: block;
+        }
+
+        .moodle-actionmenu {
+        	.dropdown-menu-right {
+          		.editing_moveright, .editing_moveleft {
+          			display: none;
+          		}
+        	}
+        }
+    }
+
+	.course-content {
+		.sections {
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			.wdm-add-new-section {
+	            margin-right: 5px;
+	            border: 1px solid #e4eaec;
+	        }
+		}
+	}
+
+	.content .summary .no-overflow {
+		width: 100%;
+	}
+	// /* Global */
+
+	/* hide borders from region main */
+	.container-fluid #region-main .card,
+	.container-fluid #region-main {
+	    border: none;
+	}
+
+	/* Boost 3.4 */
+	.container-fluid #region-main .card.card-block:first-of-type {
+	    background: transparent;
+	    padding: 0;
+	    overflow: visible;
+	}
+	/* Boost 3.5 */
+	.container-fluid #region-main .card > .card-body:first-of-type {
+	    background: #f2f2f2;
+	    overflow: visible;
+	}
+	/* Boost 3.6 */
+	.container-fluid #region-main {
+	    background: #f2f2f2;
+	    overflow: visible;
+	}
+
+	/* Fordson 3.7 */
+	.container-fluid #region-main {
+	    background: #f2f2f2 !important;
+	    overflow: visible;
+	}
+
+	/* RemUI 3.4, 3.5, 3.6 */
+	.container #region-main .card.card-block:first-of-type {
+	    background: transparent;
+	    padding: 0;
+	    overflow: visible;
+	}
+
+	.wdm-card-section {
+	    display: flex;
+	    justify-content: space-between;
+	    margin-top: 30px;
+	}
+
+	.format-remuiformat div.actions form.togglecompletion button.btn.btn-link {
+	    font-size: 15px;
+	}
+
+	.wdm-completion-container form.togglecompletion,
+	.wdm-completion-container form.togglecompletion > div {
+	    display: inline !important;
+	}
+
+	.wdm-completion-container form.togglecompletion .btn.btn-link,
+	.wdm-completion-container .autocompletion {
+	    padding: 0 0 0 10px;
+	    background: transparent;
+	}
+
+	.wdm-completion-container form.togglecompletion .btn.btn-link:hover {
+	    background: transparent !important;
+	}
+
+	.wdm-completion-container form.togglecompletion .btn.btn-link img,
+	.wdm-completion-container .autocompletion img {
+	    width: 18px;
+	    height: 18px;
+	    margin: 4px 0;
+	}
+
+	.section-summary-activities {
+	    padding: 2px 0 8px 0;
+	}
+
+	.flex-1 {
+	    flex: 1;
+	}
+
+	.w-p100 {
+	    width: 100% !important;
+	}
+
+	.text-right {
+	    text-align: right !important;
+	}
+
+	.text-center {
+	    text-align: center !important;
+	}
+
+	.progress-xs {
+	    width: 92%;
+	    margin: 0 auto;
+	    border-bottom: 0 !important;
+	    border-radius: 5px;
+	    position: relative;
+	    bottom: 0;
+	}
+
+	.progress-xs,
+	.progress-xs .progress-bar {
+	    height: 6px !important;
+	    border-radius: 5px;
+	}
+
+	.progress-xs .progress-bar {
+	    line-height: 4px !important;
+	}
+
+	.bg-green-600 {
+	    background-color: #11c26d !important;
+	}
+
+	.progress-xs.dark {
+	    background-color: #e0e0e09e !important;
+	}
+
+	.progress-xs.light {
+	    background-color: #b7b4b4a3 !important;
+	}
+
+	#section-0 .sno {
+	    display: inline-block;
+	    font-size: 18px;
+	    font-weight: 900;
+	    color: rgba(0, 0, 0, 0.8);
+	    padding: 5px 0;
+	}
+
+	.remui-format-card .current::before {
+	    left: -.1rem !important;
+	}
+
+	/* Hover effect only if Section is available. */
+	div#card-container a .section-title:hover {
+	    text-decoration: underline;
+	}
+
+	input.ignoredirty.form-control {
+	    width: 100% !important;
+	}
+
+	#section-0 .progress {
+	    margin-bottom: 5px;
+	    border-radius: 15px;
+	    background-color: #ddd;
+	    height: 12px;
+	    border-bottom: unset; /* Fordson */
+	    margin-left: 0px; /* Moove */
+	}
+
+	div#card-editing-container #section-0 li.activity img.activityicon {
+	    vertical-align: middle;
+	    height: 28px;
+	    width: 28px;
+	}
+
+	&.theme_adaptable {
+		.section-modchooser {
+			.section-modchooser-link {
+				*, a:hover {
+					color: #51666C;
+				}
+			}
+		}
+	}
+
+	.section-modchooser {
+		.section-modchooser-link {
+			*, a:hover {
+		    	color: white;
+			}
+		}
+	}
+
+	div#card-editing-container div.availabilityinfo.ishidden,
+	div#card-container div.availabilityinfo.ishidden,
+	li.wdm-card-single-section div.availabilityinfo {
+	    padding: 10px 0;
+	    font-weight: bold;
+	}
+
+	.wdm-section-summary.summary-muted * {
+	    color: #526069 !important;
+	    display: none;
+	}
+
+	.wdm-card-completion button.btn-link {
+	    padding: 0;
+	}
+
+	.wdm-card-completion button.btn-link img {
+	    margin: 0 2px 0 0;
+	}
+
+	#changenumsections {
+		& > div {
+			width: 100%;
+		}
+		.single-card,
+		.card-block {
+		    justify-content: center;
+		    box-shadow: none;
+		    background: #e5e5e5;
+		}
+		a {
+		    color: #526069 !important;
+		}
+
+		i.fa {
+		    margin: 0 auto;
+		}
+	}
+
+	.w-full {
+	    width: 100%;
+	}
+
+	.d-flex {
+	    display: flex;
+	}
+
+	.d-block {
+	    display: block;
+	}
+
+	.mdl-right {
+	    text-align: right;
+	}
+
+	.float-right {
+	    float: right;
+	}
+
+	.align-items-center {
+	    align-items: center;
+	}
+
+	// Show More / Show Less Button
+	.showactivitywrapper {
+	    text-align: center !important;
+		.showactivity {
+		    font-size: 24px;
+		    line-height: 24px;
+		    cursor: pointer;
+		}
+	}
+
+	/* General section summary show/hide. */
+	.read-more-state {
+	    display: none;
+	}
+
+	.read-more-target {
+	    height: 110px;
+	    overflow: hidden;
+	}
+
+	.read-more-target:after {
+	    content: ".";
+	    display: block;
+	    clear: both;
+	    visibility: hidden;
+	    line-height: 0;
+	    height: 0;
+	}
+
+	.fadeout-summary {
+	    position: absolute;
+	    margin-top: -60px;
+	    width: 95%;
+	    height: 60px;
+	    background-image: linear-gradient(rgba(255, 255, 255, 0.3) 0, rgba(255, 255, 255, 1) 100%);
+	}
+
+	.read-more-state:checked ~ .read-more-target {
+	    height: auto;
+	    overflow: inherit;
+	}
+
+	.read-more-state:checked ~ .fadeout-summary {
+	    display: none;
+	}
+
+	.read-more-trigger {
+	    cursor: pointer !important;
+	}
+}

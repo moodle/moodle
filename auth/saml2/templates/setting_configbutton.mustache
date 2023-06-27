@@ -1,0 +1,36 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template auth_saml2/setting_configbutton
+
+    Admin text setting template.
+
+    Context variables required for this template:
+    * label - form element name
+    * href - element id
+    * forceltr - always display as ltr
+
+    Example context (json):
+    {
+        "label": "button label",
+        "href": "http://google.com",
+        "forceltr": false
+    }
+}}
+<div class="form-text defaultsnext">
+    <input value="{{label}}" onclick="location.href='{{href}}'" class="{{#forceltr}}text-ltr{{/forceltr}} btn btn-primary" type="button">
+</div>

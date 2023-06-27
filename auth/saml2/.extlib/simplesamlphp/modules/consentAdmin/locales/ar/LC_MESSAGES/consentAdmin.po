@@ -1,0 +1,157 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ar\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 "
+"&& n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "حالة الموافقة"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "السمات"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "مقدم الخدمة"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "تم حذف الموافقة"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "ادارة الموافقة"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "اظهار"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "المنظمة"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "السمات التي تم تقديمها"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "اظهر/ اخفي السمات"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "غرض الخدمة هو"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "اخفاء"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "لا يوجد وصف"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "مشغلي الخدمة ل"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"لحذف موافقتك</h3>الغي  صندوق مشغل الخدمة<h3>روابط</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">أبدا>/a></li><li><ahref=\"https://www.wayf.dk/index.php/en"
+"/about-wayf/faq-frequently-asked-questions</a> </a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "تسجيل الدخول"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "يمكنك رؤية وتعديل موافقتك علي مشغلي الخدمات هنا "
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "تحديث الموافقة"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "غير معروف"
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "تمت اضافة الموافقة"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "الهوية"
+
+msgid "Injected attribut"
+msgstr "السمات التي تم تقديمها"
+
+msgid "Show"
+msgstr "اظهار"
+
+msgid "Consent Added"
+msgstr "تمت اضافة الموافقة"
+
+msgid "Consent Administration"
+msgstr "ادارة الموافقة"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "يمكنك رؤية وتعديل موافقتك علي مشغلي الخدمات هنا "
+
+msgid "Unknown ..."
+msgstr "غير معروف"
+
+msgid "Identity"
+msgstr "الهوية"
+
+msgid "The purpose of the service is"
+msgstr "غرض الخدمة هو"
+
+msgid "Hide"
+msgstr "اخفاء"
+
+msgid "Service Provider"
+msgstr "مقدم الخدمة"
+
+msgid "Service Providers for"
+msgstr "مشغلي الخدمة ل"
+
+msgid "login"
+msgstr "تسجيل الدخول"
+
+msgid "(name not specified)"
+msgstr "الاسم غير محدد"
+
+msgid "Consent Updated"
+msgstr "تحديث الموافقة"
+
+msgid "Consent status"
+msgstr "حالة الموافقة"
+
+msgid "(no description)"
+msgstr "لا يوجد وصف"
+
+msgid "attributes"
+msgstr "السمات"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"لحذف موافقتك</h3>الغي  صندوق مشغل الخدمة<h3>روابط</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">أبدا>/a></li><li><ahref=\"https://www.wayf.dk/index.php/en"
+"/about-wayf/faq-frequently-asked-questions</a> </a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "تم حذف الموافقة"
+
+msgid "show/hide attributes"
+msgstr "اظهر/ اخفي السمات"
+
+msgid "Organisation"
+msgstr "المنظمة"
+

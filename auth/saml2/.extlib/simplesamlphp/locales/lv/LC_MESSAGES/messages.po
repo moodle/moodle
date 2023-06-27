@@ -1,0 +1,1420 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lv\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 :"
+" 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP metadati"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Vai nu nav lietotāja ar norādīto lietotāja vārdu, vai parole norādīta "
+"kļūdaini. Lūdzu mēģiniet vēlreiz."
+
+msgid "{logout:failed}"
+msgstr "Atslēgšanās neizdevās"
+
+msgid "{status:attributes_header}"
+msgstr "Atribūti"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 servisa piegādātājs (attālināts)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks nav atsūtījis "
+"nevienu sertifikātu"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Identitātes piegādātāja atbildes apstrādes kļūda"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Stāvokļa informācija pazaudēta"
+
+msgid "{login:username}"
+msgstr "Lietotāja vārds"
+
+msgid "{errors:title_METADATA}"
+msgstr "Metadatu ielādes kļūda"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadatu parsētājs"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Kļūdas nav atrastas."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Informācija par atslēgšanās operāciju ir pazaudēta. Jums jāatgriežas pie "
+"servisa, no kura mēģinājāt atslēgties, un jāmēģina atslēgties vēlreiz. "
+"Kļūda var rasties, ja atslēgšanās norit pārāk ilgi. Informācija par "
+"atslēgšanos tiek glabāta vairākas stundas. Tas ir ilgāk nekā parasti "
+"norit atslēgšanās procedūra, tādēļ šī kļūda var norādīt uz kļūdu "
+"konfigurācijā. Ja problēma turpinās, sazinieties ar servisa piegādātāju."
+
+msgid "{disco:previous_auth}"
+msgstr "Iepriekš Jūs autentificējāties pie"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Iet atpakaļ uz sarakstu"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Kad ziņojat par kļūdu, lūdzu norādiet šo atsekošanas numuru, kas "
+"administratoram palīdz atrast šo sesiju sistēmas ierakstos."
+
+msgid "{login:change_home_org_title}"
+msgstr "Mainīt organizāciju"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Nav iespējams atrast metadatus priekš %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadati"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Norādiet savu e-pastu, lai administrators var ar Jums sazināties un "
+"precizēt notikušo:"
+
+msgid "{errors:report_header}"
+msgstr "Ziņot par kļūdām"
+
+msgid "{login:change_home_org_text}"
+msgstr "Jūs izvēlējāties <b>%HOMEORG%</b>. ja tas nav pareizi, izvēlieties citu."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Servisa piegādātāja pieprasījuma apstrādes kļūda"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Netiek akceptēta atbilde no identitātes piegādātāja."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Atkļūdošanas infomācija"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "Tā kā šis ir atkļūdošanas režīms, Jūs varat redzēt sūtāmās ziņas saturu:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Identitātes piegādātājs atbildējis ar kļūdu. Statusa kods SAML atbildē "
+"atšķiras no veiksmīga"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP metadati"
+
+msgid "{login:help_text}"
+msgstr ""
+"Bez lietotāja vārda un paroles Jūs nevarat autentificēties un nevarat "
+"izmantot servisu. Iespējams, ir kāds, kas var Jums palīdzēt. Vaicājiet "
+"savas universitātes palīdzības dienestam."
+
+msgid "{logout:default_link_text}"
+msgstr "Iet atpakaļ uz SimpleSAMLphp instalācijas lapu"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp kļūda"
+
+msgid "{login:help_header}"
+msgstr "Palīdziet! Es neatceros paroli."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP ir lietotāju datu bāze. Pieslēdzoties pie tās ir jāspēj piekļūt. "
+"Šoreiz tas neizdevās un radās kļūda."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Jūsu SimpleSAMLphp instalācijas konfigurācijā ir kļūda. Pārliecinieties, "
+"lai metadatu konfigurācija būtu korekta."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Saņemts nepareizs pieprasījums"
+
+msgid "{status:sessionsize}"
+msgstr "Sesijas izmērs: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Atslēdzies"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML metadati"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Nav atpazīti šādi ievadlauki"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Autentifikācijas avota kļūda"
+
+msgid "{login:select_home_org}"
+msgstr "Izvēlieties organizāciju"
+
+msgid "{logout:hold}"
+msgstr "Apturēts"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Konfigurācijas pārbaude"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Sūtīt ziņu"
+
+msgid "{status:logout}"
+msgstr "Atslēgties"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Discovery servisam nosūtītie parametri neatbilst specifikācijām."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Veidojot SAML pieprasījumu radās kļūda."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Neobligātie lauki"
+
+msgid "{logout:return}"
+msgstr "Atgriezties pie servisa"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "Jūs varat <a href=\"%METAURL%\">saņemt metadatu xml šajā URL</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Jā, no visiem"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Jūs varat izslēgt atkļūdošanas režīmu globālajā SimpleSAMLphp "
+"konfigurācijas failā <tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Izvēlēties"
+
+msgid "{logout:also_from}"
+msgstr "Jūs esat pieslēdzies arī pie šiem servisiem:"
+
+msgid "{login:login_button}"
+msgstr "Pieslēgties"
+
+msgid "{logout:progress}"
+msgstr "Atslēgšanās..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Nekorekts lietotāja vārds vai parole."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 servisa piegādātājs (attālināts)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Identitātes piegādātājs ir saņēmis autentifikācijas pieprasījumu no "
+"servisa piegādātāja, bet to apstrādājot radās kļūda."
+
+msgid "{logout:logout_all_question}"
+msgstr "Vai vēlaties atslēgties no visiem uzskaitītajiem servisiem?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Nav pieejas"
+
+msgid "{login:error_nopassword}"
+msgstr "Kaut kādu iemeslu dēļ parole nav nosūtīta. Lūdzu mēģiniet vēlreiz."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Nav RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Stāvokļa informācija pazaudēta un nav iespējams atkārtot pieprasījumu"
+
+msgid "{login:password}"
+msgstr "Parole"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Zemāk esošā atkļūdošanas informācija var interesēt administratoru un "
+"palīdzības dienestu:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Konfigurācijas failā trūkst opciju"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Noticis nezināms izņēmuma gadījums."
+
+msgid "{general:yes}"
+msgstr "Jā"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Konfigurācijas kļūda"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Atslēgšanās pieprasījuma apstrādes kļūda"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Kļūda šajā metadatu ierakstā"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadati nav atrasti"
+
+msgid "{login:contact_info}"
+msgstr "Kontaktinformācija"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Nezināma kļūda"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP demonstrācijas piemērs"
+
+msgid "{login:error_header}"
+msgstr "Kļūda"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Autentifikācija pārtraukta"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Viens vai vairāki Jūsu izmantotie servisi <i>neatbalsta atslēgšanos</i>. "
+"Lai aizvērtu visas sesijas, <i>aizveriet savu interneta pārlūku</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "SAML 2.0 metadatos XML formātā:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 identitātes piegādātājs (attālināts)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 identitātes piegādātājs (hostēts)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Obligātie lauki"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Izvēlieties pārbaudāmos konfigurācijas failus:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks atsūtījis "
+"nepazīstamu sertifikātu"
+
+msgid "{logout:logging_out_from}"
+msgstr "Atslēgšanās no šiem servisiem:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Jūs esat sekmīgi atslēdzies no %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Kļūdas ziņojums administratoriem ir nosūtīts."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Apstrādājot atslēgšanās pieprasījumu, radās kļūda."
+
+msgid "{logout:success}"
+msgstr "Jūs esat sekmīgi atslēdzies un augstāk uzskaitītajiem servisiem."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Brīdinājumi"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Autentifikāciju pārtraucis lietotājs"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Kļūda komunicējot ar CAS serveri."
+
+msgid "{general:no}"
+msgstr "Nē"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP metadati"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Konvertētie metadati"
+
+msgid "{logout:completed}"
+msgstr "Pabeigts"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Konfigurācijā auth.adminpassword parolei ir noklusētā vērtība, tā nav "
+"mainīta. Lūdzu nomainiet to, labojot failu."
+
+msgid "{general:service_provider}"
+msgstr "Servisa piegādātājs"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Kļūdains pieprasījums šai lapai. Iemesls: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Nē"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "(Mana labākā izvēle)"
+
+msgid "{general:no_cancel}"
+msgstr "Nē, atcelt"
+
+msgid "{login:user_pass_header}"
+msgstr "Ievadiet savu lietotāja vārdu un paroli"
+
+msgid "{errors:report_explain}"
+msgstr "Aprakstiet, ko Jūs darījāt, kad notika kļūda."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nav SAML atbildes"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Jūs izmantojat SingleLogoutService interfeisu, bet neesat devis SAML "
+"atslēgšanās pieprasījumu vai atslēgšanās atbildi."
+
+msgid "{login:organization}"
+msgstr "Organizācija"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Nekorekts lietotāja vārds vai parole"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Nav atrasti obligātie lauki"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Šis beigu punkts nav iespējots. Pārbaudiet iespējošanas opcijas "
+"SimpleSAMLphp konfigurācijā."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Nav SAML ziņojuma"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Jūs izmantojat Assertion Consumer Service interfeisu, bet neesat devis "
+"SAML autentifikācijas atbildi."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "Jūs gatavojaties sūtīt ziņu. Spiediet saiti Sūtīt ziņu."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Autentifikācijas kļūda avotā %AUTHSOURCE%. Iemesls: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Notikusi kļūda"
+
+msgid "{login:change_home_org_button}"
+msgstr "Izvēlēties organizāciju"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Sīkas (superfluous) opcijas konfigurācijas failā"
+
+msgid "{errors:report_email}"
+msgstr "E-pasta adrese:"
+
+msgid "{errors:howto_header}"
+msgstr "Kā atrast palīdzību"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Parole nav uzstādīta"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Pieprasījuma veidotājs nav norādījis RelayState parametru, kas parādītu, "
+"kurp iet tālāk."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp diagnostika"
+
+msgid "{status:intro}"
+msgstr ""
+"Šī ir SimpleSAMLphp statusa lapa. Te Jūs varat redzēt vai Jūsu sesija ir "
+"pārtraukta, cik ilgi tā bijusi aktīva un visus ar to saistītos atribūtus."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Lapa nav atrasta"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Ziņas sūtīšana"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Kļūda no identitātes piegādātāja"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP metadati"
+
+msgid "{admin:metaover_intro}"
+msgstr "Lai aplūkotu SAML vienuma detaļas, klikšķiniet uz vienuma galvenes."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Nederīgs sertifikāts"
+
+msgid "{general:remember}"
+msgstr "Atcerēties"
+
+msgid "{disco:selectidp}"
+msgstr "Izvēlieties identitātes piegādātāju"
+
+msgid "{login:help_desk_email}"
+msgstr "Sūtīt e-pastu palīdzības dienestam"
+
+msgid "{login:help_desk_link}"
+msgstr "Palīdzības dienesta interneta lapa"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS kļūda"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Serviss pieprasa autentifikāciju. Lūdzu ievadiet savu lietotāja vārdu un "
+"paroli."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Nepareizs pieprasījums discovery servisam"
+
+msgid "{general:yes_continue}"
+msgstr "Jā, turpināt"
+
+msgid "{disco:remember}"
+msgstr "Atcerēties manu izvēli"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 servisa piegādātājs (hostēts)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"SimpleSAMLphp parasta faila formātā - lietojiet šo, ja izmantojat "
+"SimpleSAMLphp entītiju otrā galā:"
+
+msgid "{disco:login_at}"
+msgstr "Pieslēgties pie"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Neizdevās izveidot autentifikācijas atbildi"
+
+msgid "{errors:errorreport_header}"
+msgstr "Kļūdas ziņojums nosūtīts"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Pieprasījuma veidošanas kļūda"
+
+msgid "{admin:metaover_header}"
+msgstr "Metadatu pārskats"
+
+msgid "{errors:report_submit}"
+msgstr "Sūtīt ziņojumu par kļūdu"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Nederīgs sertifikāts"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Lapa nav atrasta"
+
+msgid "{logout:logged_out_text}"
+msgstr "Jūs esat izgājis no sistēmas."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 servisa piegādātājs (hostēts)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Lejupielādēt X509 sertifikātus kā PEM-kodētus failus."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Ziņa"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Nepazīstams sertifikāts"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP kļūda"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Nav iespējams atslēgties no viena vai vairākiem servisiem. Lai aizvērtu "
+"visas sesijas, <i>aizveriet savu interneta pārlūku</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Norādītā lapa nav atrasta. Saite: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Iespējams, kļūda radusies no neparedzētas darbības vai nepareizas "
+"SimpleSAMLphp konfigurācijas. Nosūtiet administratoram kļūdas ziņojumu."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 identitātes piegādātājs (hostēts)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Jūs neesat norādījis derīgu sertifikātu."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "Jūs gatavojaties sūtīt ziņu. Spiediet pogu Sūtīt ziņu."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Nav atrasti neobligātie lauki"
+
+msgid "{logout:logout_only}"
+msgstr "Nē, tikai %SP%"
+
+msgid "{login:next}"
+msgstr "Tālāk"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Kad identitātes piegādātājs mēģināja izveigot autentifikācijas atbildi, "
+"radās kļūda."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Lūdzu izvēlieties identitātes piegādātāju, pie kura vēlaties "
+"autentificēties:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Norādītā lapa nav atrasta. Iemesls: %REASON% Saite: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Nav sertifikāta"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Atslēgšanās informācija zaudēta"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 identitātes piegādātājs (attālināts)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp nav pareizi nokonfigurēts."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Šeit ir SimpleSAMLphp ģenerētie metadati. Jūs varat tos sūtīt partneriem,"
+" lai izveidotu uzticamu federāciju."
+
+msgid "{admin:metadata_cert}"
+msgstr "Sertifikāti"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks atsūtījis nederīgu "
+"vai nelasāmu sertifikātu"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Parsēt"
+
+msgid "Person's principal name at home organization"
+msgstr "Priekšnieka vārds"
+
+msgid "Superfluous options in config file"
+msgstr "Sīkas (superfluous) opcijas konfigurācijas failā"
+
+msgid "Mobile"
+msgstr "Mobilais telefons"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 servisa piegādātājs (hostēts)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP ir lietotāju datu bāze. Pieslēdzoties pie tās ir jāspēj piekļūt. "
+"Šoreiz tas neizdevās un radās kļūda."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Norādiet savu e-pastu, lai administrators var ar Jums sazināties un "
+"precizēt notikušo:"
+
+msgid "Display name"
+msgstr "Parādāmais vārds"
+
+msgid "Remember my choice"
+msgstr "Atcerēties manu izvēli"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP metadati"
+
+msgid "Notices"
+msgstr "Brīdinājumi"
+
+msgid "Home telephone"
+msgstr "Telefons"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Šī ir SimpleSAMLphp statusa lapa. Te Jūs varat redzēt vai Jūsu sesija ir "
+"pārtraukta, cik ilgi tā bijusi aktīva un visus ar to saistītos atribūtus."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Aprakstiet, ko Jūs darījāt, kad notika kļūda."
+
+msgid "An unhandled exception was thrown."
+msgstr "Noticis nezināms izņēmuma gadījums."
+
+msgid "Invalid certificate"
+msgstr "Nederīgs sertifikāts"
+
+msgid "Service Provider"
+msgstr "Servisa piegādātājs"
+
+msgid "Incorrect username or password."
+msgstr "Nekorekts lietotāja vārds vai parole."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Kļūdains pieprasījums šai lapai. Iemesls: %REASON%"
+
+msgid "E-mail address:"
+msgstr "E-pasta adrese:"
+
+msgid "Submit message"
+msgstr "Sūtīt ziņu"
+
+msgid "No RelayState"
+msgstr "Nav RelayState"
+
+msgid "Error creating request"
+msgstr "Pieprasījuma veidošanas kļūda"
+
+msgid "Locality"
+msgstr "Atrašanās vieta"
+
+msgid "Unhandled exception"
+msgstr "Nezināma kļūda"
+
+msgid "The following required fields was not found"
+msgstr "Nav atrasti obligātie lauki"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Lejupielādēt X509 sertifikātus kā PEM-kodētus failus."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Nav iespējams atrast metadatus priekš %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Organizācijas reģistrācijas numurs"
+
+msgid "Password not set"
+msgstr "Parole nav uzstādīta"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP metadati"
+
+msgid "Post office box"
+msgstr "Pasta kaste"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Serviss pieprasa autentifikāciju. Lūdzu ievadiet savu lietotāja vārdu un "
+"paroli."
+
+msgid "CAS Error"
+msgstr "CAS kļūda"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Zemāk esošā atkļūdošanas informācija var interesēt administratoru un "
+"palīdzības dienestu:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Vai nu nav lietotāja ar norādīto lietotāja vārdu, vai parole norādīta "
+"kļūdaini. Lūdzu mēģiniet vēlreiz."
+
+msgid "Error"
+msgstr "Kļūda"
+
+msgid "Next"
+msgstr "Tālāk"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Organizācijas vienības vārds (DN)"
+
+msgid "State information lost"
+msgstr "Stāvokļa informācija pazaudēta"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Konfigurācijā auth.adminpassword parolei ir noklusētā vērtība, tā nav "
+"mainīta. Lūdzu nomainiet to, labojot failu."
+
+msgid "Converted metadata"
+msgstr "Konvertētie metadati"
+
+msgid "Mail"
+msgstr "Pasts"
+
+msgid "No, cancel"
+msgstr "Nē"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr "Jūs izvēlējāties <b>%HOMEORG%</b>. ja tas nav pareizi, izvēlieties citu."
+
+msgid "Error processing request from Service Provider"
+msgstr "Servisa piegādātāja pieprasījuma apstrādes kļūda"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Personas pamata organizācijas vienības vārds (DN)"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Lai aplūkotu SAML vienuma detaļas, klikšķiniet uz vienuma galvenes."
+
+msgid "Enter your username and password"
+msgstr "Ievadiet savu lietotāja vārdu un paroli"
+
+msgid "Login at"
+msgstr "Pieslēgties pie"
+
+msgid "No"
+msgstr "Nē"
+
+msgid "Home postal address"
+msgstr "Pasta adrese"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP demonstrācijas piemērs"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 identitātes piegādātājs (attālināts)"
+
+msgid "Error processing the Logout Request"
+msgstr "Atslēgšanās pieprasījuma apstrādes kļūda"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Vai vēlaties atslēgties no visiem uzskaitītajiem servisiem?"
+
+msgid "Select"
+msgstr "Izvēlēties"
+
+msgid "The authentication was aborted by the user"
+msgstr "Autentifikāciju pārtraucis lietotājs"
+
+msgid "Your attributes"
+msgstr "Atribūti"
+
+msgid "Given name"
+msgstr "Vārds"
+
+msgid "Identity assurance profile"
+msgstr "Apraksts, kā atšķirt cilvēku no robota"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP demonstrācijas piemērs"
+
+msgid "Logout information lost"
+msgstr "Atslēgšanās informācija zaudēta"
+
+msgid "Organization name"
+msgstr "Organizācijas nosaukums"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks atsūtījis "
+"nepazīstamu sertifikātu"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "Jūs gatavojaties sūtīt ziņu. Spiediet pogu Sūtīt ziņu."
+
+msgid "Home organization domain name"
+msgstr "Organizācijas domeins"
+
+msgid "Go back to the file list"
+msgstr "Iet atpakaļ uz sarakstu"
+
+msgid "Error report sent"
+msgstr "Kļūdas ziņojums nosūtīts"
+
+msgid "Common name"
+msgstr "Vārds"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Lūdzu izvēlieties identitātes piegādātāju, pie kura vēlaties "
+"autentificēties:"
+
+msgid "Logout failed"
+msgstr "Atslēgšanās neizdevās"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Publisko autoritāšu piešķirtais identitātes numurs"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation servisa piegādātājs (attālināts)"
+
+msgid "Error received from Identity Provider"
+msgstr "Kļūda no identitātes piegādātāja"
+
+msgid "LDAP Error"
+msgstr "LDAP kļūda"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Informācija par atslēgšanās operāciju ir pazaudēta. Jums jāatgriežas pie "
+"servisa, no kura mēģinājāt atslēgties, un jāmēģina atslēgties vēlreiz. "
+"Kļūda var rasties, ja atslēgšanās norit pārāk ilgi. Informācija par "
+"atslēgšanos tiek glabāta vairākas stundas. Tas ir ilgāk nekā parasti "
+"norit atslēgšanās procedūra, tādēļ šī kļūda var norādīt uz kļūdu "
+"konfigurācijā. Ja problēma turpinās, sazinieties ar servisa piegādātāju."
+
+msgid "Some error occurred"
+msgstr "Notikusi kļūda"
+
+msgid "Organization"
+msgstr "Organizācija"
+
+msgid "No certificate"
+msgstr "Nav sertifikāta"
+
+msgid "Choose home organization"
+msgstr "Izvēlēties organizāciju"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Pastāvīgs pseidonīma ID"
+
+msgid "No SAML response provided"
+msgstr "Nav SAML atbildes"
+
+msgid "No errors found."
+msgstr "Kļūdas nav atrastas."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 servisa piegādātājs (hostēts)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Norādītā lapa nav atrasta. Saite: %URL%"
+
+msgid "Configuration error"
+msgstr "Konfigurācijas kļūda"
+
+msgid "Required fields"
+msgstr "Obligātie lauki"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Veidojot SAML pieprasījumu radās kļūda."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Iespējams, kļūda radusies no neparedzētas darbības vai nepareizas "
+"SimpleSAMLphp konfigurācijas. Nosūtiet administratoram kļūdas ziņojumu."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Sesija ir derīga %remaining% sekundes no šī brīža."
+
+msgid "Domain component (DC)"
+msgstr "Domēns (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 servisa piegādātājs (attālināts)"
+
+msgid "Password"
+msgstr "Parole"
+
+msgid "Nickname"
+msgstr "Niks"
+
+msgid "Send error report"
+msgstr "Sūtīt ziņojumu par kļūdu"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks atsūtījis nederīgu "
+"vai nelasāmu sertifikātu"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Kļūdas ziņojums administratoriem ir nosūtīts."
+
+msgid "Date of birth"
+msgstr "Dzimšanas datums"
+
+msgid "Private information elements"
+msgstr "Privātās informācijas elementi"
+
+msgid "You are also logged in on these services:"
+msgstr "Jūs esat pieslēdzies arī pie šiem servisiem:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp diagnostika"
+
+msgid "Debug information"
+msgstr "Atkļūdošanas infomācija"
+
+msgid "No, only %SP%"
+msgstr "Nē, tikai %SP%"
+
+msgid "Username"
+msgstr "Lietotāja vārds"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Iet atpakaļ uz SimpleSAMLphp instalācijas lapu"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Jūs esat sekmīgi atslēdzies un augstāk uzskaitītajiem servisiem."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Jūs esat sekmīgi atslēdzies no %SP%."
+
+msgid "Affiliation"
+msgstr "Piederība"
+
+msgid "You have been logged out."
+msgstr "Jūs esat izgājis no sistēmas."
+
+msgid "Return to service"
+msgstr "Atgriezties pie servisa"
+
+msgid "Logout"
+msgstr "Atslēgties"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Stāvokļa informācija pazaudēta un nav iespējams atkārtot pieprasījumu"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Identitātes piegādātāja atbildes apstrādes kļūda"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation servisa piegādātājs (hostēts)"
+
+msgid "Preferred language"
+msgstr "Vēlamā valoda"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 servisa piegādātājs (attālināts)"
+
+msgid "Surname"
+msgstr "Uzvārds"
+
+msgid "No access"
+msgstr "Nav pieejas"
+
+msgid "The following fields was not recognized"
+msgstr "Nav atpazīti šādi ievadlauki"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Autentifikācijas kļūda avotā %AUTHSOURCE%. Iemesls: %REASON%"
+
+msgid "Bad request received"
+msgstr "Saņemts nepareizs pieprasījums"
+
+msgid "User ID"
+msgstr "Lietotāja ID"
+
+msgid "JPEG Photo"
+msgstr "JPEG fotogrāfija"
+
+msgid "Postal address"
+msgstr "Pasta adrese"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Apstrādājot atslēgšanās pieprasījumu, radās kļūda."
+
+msgid "Sending message"
+msgstr "Ziņas sūtīšana"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "SAML 2.0 metadatos XML formātā:"
+
+msgid "Logging out of the following services:"
+msgstr "Atslēgšanās no šiem servisiem:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Kad identitātes piegādātājs mēģināja izveigot autentifikācijas atbildi, "
+"radās kļūda."
+
+msgid "Could not create authentication response"
+msgstr "Neizdevās izveidot autentifikācijas atbildi"
+
+msgid "Labeled URI"
+msgstr "URI nosaukums"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp nav pareizi nokonfigurēts."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 identitātes piegādātājs (hostēts)"
+
+msgid "Metadata"
+msgstr "Metadati"
+
+msgid "Login"
+msgstr "Pieslēgties"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Identitātes piegādātājs ir saņēmis autentifikācijas pieprasījumu no "
+"servisa piegādātāja, bet to apstrādājot radās kļūda."
+
+msgid "Yes, all services"
+msgstr "Jā, no visiem"
+
+msgid "Logged out"
+msgstr "Atslēdzies"
+
+msgid "Postal code"
+msgstr "Pasta kods"
+
+msgid "Logging out..."
+msgstr "Atslēgšanās..."
+
+msgid "Metadata not found"
+msgstr "Metadati nav atrasti"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 identitātes piegādātājs (hostēts)"
+
+msgid "Primary affiliation"
+msgstr "Pamatdarba amats"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Kad ziņojat par kļūdu, lūdzu norādiet šo atsekošanas numuru, kas "
+"administratoram palīdz atrast šo sesiju sistēmas ierakstos."
+
+msgid "XML metadata"
+msgstr "XML metadati"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Discovery servisam nosūtītie parametri neatbilst specifikācijām."
+
+msgid "Telephone number"
+msgstr "Telefons"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Nav iespējams atslēgties no viena vai vairākiem servisiem. Lai aizvērtu "
+"visas sesijas, <i>aizveriet savu interneta pārlūku</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Nepareizs pieprasījums discovery servisam"
+
+msgid "Select your identity provider"
+msgstr "Izvēlieties identitātes piegādātāju"
+
+msgid "Entitlement regarding the service"
+msgstr "Pilnvaras attiecībā uz servisu"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP metadati"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "Tā kā šis ir atkļūdošanas režīms, Jūs varat redzēt sūtāmās ziņas saturu:"
+
+msgid "Certificates"
+msgstr "Sertifikāti"
+
+msgid "Remember"
+msgstr "Atcerēties"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Organizācijas vārds (DN)"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "Jūs gatavojaties sūtīt ziņu. Spiediet saiti Sūtīt ziņu."
+
+msgid "Organizational unit"
+msgstr "Organizācijas vienība"
+
+msgid "Authentication aborted"
+msgstr "Autentifikācija pārtraukta"
+
+msgid "Local identity number"
+msgstr "Personas kods"
+
+msgid "Report errors"
+msgstr "Ziņot par kļūdām"
+
+msgid "Page not found"
+msgstr "Lapa nav atrasta"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP metadati"
+
+msgid "Change your home organization"
+msgstr "Mainīt organizāciju"
+
+msgid "User's password hash"
+msgstr "Paroles jaucējsumma (hash)"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"SimpleSAMLphp parasta faila formātā - lietojiet šo, ja izmantojat "
+"SimpleSAMLphp entītiju otrā galā:"
+
+msgid "Yes, continue"
+msgstr "Jā, turpināt"
+
+msgid "Completed"
+msgstr "Pabeigts"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Identitātes piegādātājs atbildējis ar kļūdu. Statusa kods SAML atbildē "
+"atšķiras no veiksmīga"
+
+msgid "Error loading metadata"
+msgstr "Metadatu ielādes kļūda"
+
+msgid "Select configuration file to check:"
+msgstr "Izvēlieties pārbaudāmos konfigurācijas failus:"
+
+msgid "On hold"
+msgstr "Apturēts"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Kļūda komunicējot ar CAS serveri."
+
+msgid "No SAML message provided"
+msgstr "Nav SAML ziņojuma"
+
+msgid "Help! I don't remember my password."
+msgstr "Palīdziet! Es neatceros paroli."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Jūs varat izslēgt atkļūdošanas režīmu globālajā SimpleSAMLphp "
+"konfigurācijas failā <tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "Kā atrast palīdzību"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Jūs izmantojat SingleLogoutService interfeisu, bet neesat devis SAML "
+"atslēgšanās pieprasījumu vai atslēgšanās atbildi."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp kļūda"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Viens vai vairāki Jūsu izmantotie servisi <i>neatbalsta atslēgšanos</i>. "
+"Lai aizvērtu visas sesijas, <i>aizveriet savu interneta pārlūku</i>."
+
+msgid "Organization's legal name"
+msgstr "Organizācijas juridiskais nosaukums"
+
+msgid "Options missing from config file"
+msgstr "Konfigurācijas failā trūkst opciju"
+
+msgid "The following optional fields was not found"
+msgstr "Nav atrasti neobligātie lauki"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr ""
+"Autentifikācija neizdevās, jo Jūsu interneta pārlūks nav atsūtījis "
+"nevienu sertifikātu"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Šis beigu punkts nav iespējots. Pārbaudiet iespējošanas opcijas "
+"SimpleSAMLphp konfigurācijā."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "Jūs varat <a href=\"%METAURL%\">saņemt metadatu xml šajā URL</a>:"
+
+msgid "Street"
+msgstr "Iela"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Jūsu SimpleSAMLphp instalācijas konfigurācijā ir kļūda. Pārliecinieties, "
+"lai metadatu konfigurācija būtu korekta."
+
+msgid "Incorrect username or password"
+msgstr "Nekorekts lietotāja vārds vai parole"
+
+msgid "Message"
+msgstr "Ziņa"
+
+msgid "Contact information:"
+msgstr "Kontaktinformācija"
+
+msgid "Unknown certificate"
+msgstr "Nepazīstams sertifikāts"
+
+msgid "Legal name"
+msgstr "Juridiskais nosaukums"
+
+msgid "Optional fields"
+msgstr "Neobligātie lauki"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Pieprasījuma veidotājs nav norādījis RelayState parametru, kas parādītu, "
+"kurp iet tālāk."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Iepriekš Jūs autentificējāties pie"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr "Kaut kādu iemeslu dēļ parole nav nosūtīta. Lūdzu mēģiniet vēlreiz."
+
+msgid "Fax number"
+msgstr "Fakss"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth demo"
+
+msgid "Error in this metadata entry"
+msgstr "Kļūda šajā metadatu ierakstā"
+
+msgid "Session size: %SIZE%"
+msgstr "Sesijas izmērs: %SIZE%"
+
+msgid "Parse"
+msgstr "Parsēt"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Bez lietotāja vārda un paroles Jūs nevarat autentificēties un nevarat "
+"izmantot servisu. Iespējams, ir kāds, kas var Jums palīdzēt. Vaicājiet "
+"savas universitātes palīdzības dienestam."
+
+msgid "Metadata parser"
+msgstr "Metadatu parsētājs"
+
+msgid "Choose your home organization"
+msgstr "Izvēlieties organizāciju"
+
+msgid "Send e-mail to help desk"
+msgstr "Sūtīt e-pastu palīdzības dienestam"
+
+msgid "Metadata overview"
+msgstr "Metadatu pārskats"
+
+msgid "Title"
+msgstr "Amats"
+
+msgid "Manager"
+msgstr "Priekšnieks"
+
+msgid "You did not present a valid certificate."
+msgstr "Jūs neesat norādījis derīgu sertifikātu."
+
+msgid "Authentication source error"
+msgstr "Autentifikācijas avota kļūda"
+
+msgid "Affiliation at home organization"
+msgstr "Amats organizācijā"
+
+msgid "Help desk homepage"
+msgstr "Palīdzības dienesta interneta lapa"
+
+msgid "Configuration check"
+msgstr "Konfigurācijas pārbaude"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Netiek akceptēta atbilde no identitātes piegādātāja."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Norādītā lapa nav atrasta. Iemesls: %REASON% Saite: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 identitātes piegādātājs (attālināts)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Šeit ir SimpleSAMLphp ģenerētie metadati. Jūs varat tos sūtīt partneriem,"
+" lai izveidotu uzticamu federāciju."
+
+msgid "[Preferred choice]"
+msgstr "(Mana labākā izvēle)"
+
+msgid "Organizational homepage"
+msgstr "Organizācijas mājas lapa"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Jūs izmantojat Assertion Consumer Service interfeisu, bet neesat devis "
+"SAML autentifikācijas atbildi."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Jūs izmantojat testa (pirmsprodukcijas) sistēmu. Šī autentifikācija ir "
+"tikai testēšanas vajadzībām. Ja kāds Jums atsūtījis saiti uz šejieni un "
+"Jūs neesat <i>testētājs</i>, Jums te <b>nav jāatrodas</b>."

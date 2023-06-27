@@ -1,0 +1,1941 @@
+.format-tiles ul.tiles {
+    transition: 0.3s ease-in-out;
+    overflow: visible;
+    width: 100%;
+    /*was hidden but want to allow drop down edit menu for last item on page to be displayed in full*/
+    margin: auto;
+    padding: 0;
+}
+.format-tiles ul.tiles.expanded {
+    max-height: unset;
+    overflow: visible;
+}
+.format-tiles li.section {
+    margin-top: 10px;
+    list-style: none;
+}
+.format-tiles .course-content li.section ul {
+    list-style: none;
+}
+
+.format-tiles ul.tiles#multi_section_tiles li.tile.section.main {
+    /*tile contents when displayed in the multi tile screen via JS*/
+    background-color: #fff;
+    margin: 10px;
+    padding: 30px 0 30px 0;
+    width: 100%;
+}
+.format-tiles ul.tiles#multi_section_tiles li.section#section-0 {
+    padding: 0;
+}
+
+.format-tiles .modal-backdrop.fade.in {
+    opacity: 0.2;
+}
+.format-tiles .header-overlay {
+    opacity: 0.3;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1040;
+    background-color: #aaa;
+    height: 60px;
+}
+
+.format-tiles ul.tiles li.section .content {
+    margin: 0 10px 0 0;
+}
+
+.format-tiles li.section .content.dimmed {
+    opacity: 0.6;
+}
+.format-tiles ul.tiles li.section .left {
+    float: left;
+}
+
+.format-tiles ul.tiles li.section .right {
+    float: right;
+}
+
+.format-tiles ul.tiles li.section .right img.icon {
+    padding: 0 0 4px 0;
+}
+
+.format-tiles ul.tiles li.section .left .section-handle img.icon {
+    padding: 0;
+    vertical-align: baseline;
+}
+
+.format-tiles ul.tiles li.section .activity-count {
+    margin-right: 3px;
+}
+
+.format-tiles li#section-0.section.main.clearfix {
+    border-bottom: 0;
+}
+
+.format-tiles .tile a {
+    text-decoration: none;
+    padding: 7px 10px 5px 10px;
+}
+.format-tiles .progress-indic {
+    display: inline-block;
+    color: #999;
+}
+
+.format-tiles .progress-indic svg {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+}
+.format-tiles .progress-indic i.fa {
+    opacity: 0.5;
+    height: 30px;
+}
+
+.format-tiles .progress-indic i.fa-check {
+    color: darkgreen;
+}
+.format-tiles .progress-indic svg circle.partial {
+    stroke: #888;
+    fill: none;
+}
+
+.format-tiles .progress-indic svg circle.whole {
+    stroke: rgba(0, 0, 0, 0.15);
+    fill: none;
+}
+
+.format-tiles .progress-indic svg text {
+    font-size: 18px;
+    font-weight: normal;
+    transition: all 0.2s ease-in-out;
+    fill: #666;
+}
+.format-tiles .tiletopright i.icon.fa {
+    font-size: 30px;
+    width: 30px;
+    height: 30px;
+    vertical-align: top;
+}
+
+.format-tiles .progress-indic .progress-indic-label {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 40px;
+    margin-right: 3px;
+    color: #999;
+    font-size: 0.9em;
+}
+
+.format-tiles .overall-progress {
+    text-align: center;
+    color: gray;
+    transition: all 0.5s;
+}
+
+.format-tiles .overall-progress.hidden {
+    display: none;
+}
+
+.format-tiles .navigation-arrows {
+    min-width: 130px;
+    display: inline-block;
+    float: right;
+    margin-right: 40px;
+    z-index: 2;
+    /*z-index needs to be on top of pagesechead*/
+}
+
+.format-tiles #page .course-content  ul li.section.main.current {
+    background-color: inherit;
+}
+.format-tiles ul.tiles .tile_bar {
+    width: 100%;
+    min-height: 65px;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    background-color: #fff;
+    border-top: 0.45em solid transparent;
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    overflow: hidden;
+    padding: 10px 20px 10px 20px;
+    color: #555;
+    height: auto;
+}
+
+.format-tiles ul.tiles .tile_bar_text {
+    position: relative;
+    left: 20px;
+    top: 10px;
+    display: inline-block;
+    line-height: unset;
+    font-weight: 600;
+    max-width: calc(100% - 65px);
+    font-size: 1.75rem;
+}
+
+
+.format-tiles ul.tiles .tile_bar_restricted {
+    opacity: 0.6;
+}
+
+.format-tiles ul.tiles .sectiondraggable .tile_bar {
+    margin-left: 40px;
+}
+
+.format-tiles ul.tiles .sectiondraggable {
+    width: 100%;
+}
+
+.format-tiles ul.tiles .sectiondraggable .summary,
+.format-tiles .section.main .summary {
+    margin-left: 1.5em;
+}
+.format-tiles ul.tiles .sectiondraggable .alert.alert-warning {
+    margin-left: 70px;
+    width: 100%; /*fallback*/
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+    width: calc(100% - 11em);
+}
+
+.format-tiles #warning_large_sec0 {
+    margin: 10px;
+}
+
+.format-tiles ul.tiles .sectiondraggable .alert.alert-danger {
+    margin-left: 40px;
+    width: 100%; /*fallback*/
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+    width: calc(100% - 9em);
+}
+
+.format-tiles ul.tiles .sectiondraggable .tile_bar.narrow {
+    width: 100%; /*fallback*/
+    /* stylelint-disable-next-line declaration-block-no-duplicate-properties */
+    width: calc(100% - 8em);
+}
+
+.format-tiles .icon20 {
+    max-width: 20px;
+    max-height: 20px;
+    opacity: 0.5;
+}
+
+.format-tiles .tiletopright img {
+    width: 30px;
+    height: 30px;
+    opacity: 0.5;
+}
+
+.format-tiles .icon40 {
+    max-width: 40px;
+    max-height: 40px;
+    opacity: 0.5;
+}
+
+.format-tiles .icon50 {
+    max-width: 50px;
+    max-height: 50px;
+    opacity: 0.5;
+}
+
+.format-tiles .tile_bar .inplaceeditable .quickediticon img {
+    opacity: 0.6;
+}
+
+.format-tiles .tile_bar .inplaceeditable a {
+    color: #777;
+}
+
+.format-tiles ul.tiles#multi_section_tiles {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+.format-tiles #single_section_tiles {
+    display: block;
+    padding-left: 0;
+    margin-left: 0;
+}
+.format-tiles ul.tiles#multi_section_tiles li.section {
+    display: block;
+}
+.format-tiles.editing ul.tiles#multi_section_tiles li.section {
+    padding: 0;
+}
+
+.format-tiles .editing ul.tiles#multi_section_tiles li.section,
+.format-tiles ul.tiles#multi_section_tiles li#section-0.section {
+    display: block;
+    width: 100%;
+}
+.format-tiles #section-0 .addresourcemodchooser {
+    position: relative;
+}
+.format-tiles .course-content ul li.section.main {
+    width: calc(100% - 15px);
+    background-color: white;
+    /* stop 'dot' background image in essential theme*/
+    background-image: none;
+    margin-top: 10px;
+    padding-top: 12px;
+}
+.format-tiles .course-content ul li.section.main:target {
+    padding-top: 0;
+    margin-top: 30px;
+}
+.format-tiles .activity:target {
+    /* stylelint-disable-next-line declaration-no-important */
+    margin-top: 0 !important;
+    /* stylelint-disable-next-line declaration-no-important */
+    padding-top: 0 !important;
+}
+.format-tiles .subtile a.menu-action {
+    /*essential for clean and other themes to ensure that the link is on top to avoid non responsive menu*/
+    z-index: 1;
+}
+.format-tiles #page .course-content ul li.section.main {
+    /*adaptable theme*/
+    background-color: #fff;
+    border: 0;
+}
+.format-tiles .course-content ul li.section.main.moveablesection {
+    padding: 30px 10px 10px 10px;
+    margin-left: 7px;
+    /* For snap theme*/
+    visibility: visible;
+}
+.format-tiles .course-content ul.tiles .tile {
+    display: flex;
+    flex-basis: 225px;
+    max-width: 260px;
+    flex-grow: 1;
+    margin: 7px;
+    max-height: 175px;
+    vertical-align: top;
+    background-color: #fff;
+    border-top: 0.45em solid transparent;
+    -webkit-transition: background-color 0.2s ease-in-out, all 0.5s ease-in-out;
+    -moz-transition: background-color 0.2s ease-in-out, all 0.5s ease-in-out;
+    -o-transition: background-color 0.2s ease-in-out, all 0.5s ease-in-out;
+    transition: background-color 0.2s ease-in-out, all 0.5s ease-in-out;
+    color: #777;
+    box-shadow: 2px 4px 5px 0 #bdbdbd;
+    position: relative;
+}
+.format-tiles .course-content ul.tiles .tile.spacer,
+.format-tiles.pagelayout-course .course-content li.section ul li.activity.spacer /* Remui theme */ {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 0;
+    max-height: 0;
+}
+.format-tiles.jsenabled .course-content ul.tiles .tile.tile-collapsed {
+    display: none;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.format-tiles.jsenabled .course-content ul.tiles .tile.tile-collapsing {
+    opacity: 0;
+    display: flex;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+}
+
+.format-tiles ul.tiles li:empty {
+    height: 0;
+    min-height: 0;
+    border: none;
+    box-shadow: none;
+    visibility: hidden;
+}
+
+.format-tiles .tile a,
+.format-tiles #page-content a.quickeditlink {
+    color: #777;
+    width: 100%;
+}
+
+.format-tiles .section li.activity.label h1,
+.format-tiles .section li.activity.label h2,
+.format-tiles .section li.activity.label h3,
+.format-tiles .section li.activity.label h4 {
+    color: #555;
+}
+
+.format-tiles .section li.activity.label .dimmed_text h1,
+.format-tiles .section li.activity.label .dimmed_text h2,
+.format-tiles .section li.activity.label .dimmed_text h3,
+.format-tiles .section li.activity.label .dimmed_text h4 {
+    color: #818a91;
+}
+
+.format-tiles .hidden .sectiontitle h2,
+.format-tiles #page-content .hidden .sectiontitle h2 a.quickeditlink {
+    color: #818a91;
+}
+
+.format-tiles .course-content ul.tiles .tile-clickable:hover {
+    transform: translateY(-6px);
+    transition: transform 0.2s ease-in-out;
+    -moz-transition: transform 0.2s ease-in-out;
+    -o-transition: transform 0.2s ease-in-out;
+}
+.format-tiles ul.tiles .tile:focus {
+    outline: 1px dotted;
+}
+
+.format-tiles ul.tiles .tile-top {
+    height: 55px;
+    width: 100%;
+}
+
+.format-tiles ul.tiles .current .tile_bar,
+.format-tiles ul.tiles .current .tile_bar.narrow,
+.format-tiles .course-content ul.tiles .tile.current {
+    border-top-color: red;
+}
+
+.format-tiles ul.tiles .tile.tile-restricted,
+.format-tiles ul.tiles .tile.tile-hidden .format-tiles li .section .hidden .tile_bar {
+    opacity: 0.5;
+}
+.format-tiles ul.tiles .tile:not(.tile-restricted) .tiletopright .fa-lock {
+    display: none;
+}
+.format-tiles ul.tiles .tile.tile-hidden:hover,
+.format-tiles ul.tiles .tile-restricted.tile-clickable:hover {
+    opacity: 0.3;
+}
+
+.format-tiles ul.tiles .tile.tile-hidden,
+.format-tiles ul.tiles .hidden .tile_bar {
+    opacity: 0.5;
+}
+
+.format-tiles .expandcontrol {
+    margin: 0 30px 0 30px;
+}
+
+.format-tiles ul.tiles li.section .warningtext {
+    color: red;
+}
+
+.format-tiles ul.tiles li.section .warningbar {
+    background-color: red;
+    color: #fff;
+    padding: 5px;
+    margin-left: 40px;
+    width: 90%;
+}
+
+.format-tiles ul.tiles li#spacersection {
+    height: 130px;
+}
+
+.format-tiles li.activity.subtile.spacer {
+    height: 0;
+    min-height: 0;
+    border: 0;
+    opacity: 0;
+    display: flex;
+    flex-basis: 225px;
+    max-width: 240px;
+    flex-grow: 1;
+    margin: 5px;
+}
+.format-tiles ul.tiles .tile .topic-number {
+    display: inline-block;
+    float: right;
+    font-size: 1.5em;
+    padding-right: 0.5em;
+    vertical-align: top;
+}
+.format-tiles .moveablesection .tileiconcontainer {
+    margin-left: 0.5rem;
+}
+.format-tiles .tileiconcontainer,
+.format-tiles .tileiconcontainer img {
+    display: inline-block;
+    text-align: left;
+    vertical-align: top;
+    width: 55px;
+    height: 55px;
+    font-size: 1em;
+}
+.format-tiles .tileiconcontainer.hasphoto {
+    width: 85px;
+}
+.format-tiles .tileiconcontainer .icon {
+    width: 55px;
+    height: 55px;
+}
+.format-tiles .tileiconcontainer .icon.fa {
+    font-size: 55px;
+}
+.format-tiles .course-content .icon,
+.format-tiles .iconpickericons .icon,
+.format-site .iconpickericons .icon {
+    color: #979797;
+    opacity: 1;
+}
+.format-tiles .sectionbutton .icon {
+    font-size: 1.4em;
+    margin: 10px 0 0 0;
+}
+.format-tiles .sectionbutton img.icon {
+    width: 18px;
+    height: 18px;
+}
+.format-tiles .pagesechead {
+    min-height: 60px;
+    z-index: 1;
+    position: relative;
+    display: inline-block;
+    /*z-index needs to be behind navigation-arrows as they may overlap*/
+}
+
+.format-tiles .sectionbuttons {
+    position: relative;
+    right: 30px;
+    top: 0;
+    z-index: 2;
+}
+.format-tiles .sectionbutton {
+    background-color: rgba(100, 100, 100, 0.05);
+    margin-left: 5px;
+    opacity: 1;
+    width: 45px;
+    height: 45px;
+    text-align: center;
+}
+.format-tiles .expand-section,
+.format-tiles .collapse-section {
+    width: 30px;
+    height: 30px;
+    background-size: contain;
+    margin-top: 10px;
+}
+.format-tiles .expand-section {
+    background-image: url([[pix:format_tiles|expand]]);
+}
+.format-tiles .collapse-section {
+    background-image: url([[pix:format_tiles|collapse]]);
+}
+.format-tiles ul.tiles .tile .tile-text {
+    text-align: left;
+    width: 100%;
+    height: 110px;
+    line-height: 100px;
+    padding-top: 5px;
+    position: relative;
+}
+.format-tiles ul.tiles .tile.phototile .tile-text {
+    line-height: 1.5em;
+}
+/* centralise text vertically on tile */
+.format-tiles ul.tiles .tile .tile-textinner {
+    display: inline-block;
+    line-height: normal;
+    top: 45%;
+    transform: translate(0, -40%);
+    position: absolute;
+    word-wrap: break-word;
+    max-width: 220px;
+}
+
+.format-tiles ul.tiles .tile .tile-textinner.longtitle h3 {
+    font-size: 1.2em;
+}
+
+.format-tiles ul.tiles .tile_bar .icon20 {
+    width: 20px;
+    margin-right: 10px;
+}
+
+.format-tiles a img {
+    outline: none;
+    -moz-outline-radius: 0;
+}
+
+.format-tiles .single-section  .navigation-arrow:hover {
+    -webkit-transition: all 0.2s ease-in-out;
+    -moz-transition: all 0.2s ease-in-out;
+    -o-transition: all 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
+    transform: scale(1.05, 1.05);
+    -webkit-transform: scale(1.05, 1.05);
+}
+
+.format-tiles .single-section .navigation-arrow,
+.format-tiles  .single-section .navigation-arrow img {
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+    display: inline-block;
+    text-align: center;
+}
+.format-tiles .single-section .navigation-arrow .icon {
+    font-size: 35px;
+}
+.format-tiles .single-section .navigation-arrow.dimmed {
+    opacity: 0.5;
+}
+.format-tiles .navigation-arrows .navigation-arrow.dimmed:hover {
+    background-color: inherit;
+}
+
+/* the following items are to avoid lots of padding under section 0 in single section view */
+.format-tiles .single-section {
+    /* stylelint-disable-next-line declaration-no-important */
+    margin-top: 0 !important;
+}
+
+.format-tiles #section-0 ul.section {
+    margin: 1rem 1rem 0 1rem;
+}
+
+/*dealing with left border to current section in boost theme*/
+.format-tiles .course-content .current::before {
+    /* stylelint-disable-next-line declaration-no-important */
+    border-left: none !important;
+}
+
+.format-tiles  #section-0 .content .summary .no-overflow,
+.format-tiles #section-0 .content .summary .no-overflow p {
+    margin-bottom: 0;
+}
+
+.format-tile .ul.tiles .single-section .section-navigation {
+    margin-bottom: 0;
+}
+
+.format-tiles ul.tiles li.section .content .modtype_label .no-overflow,
+.format-tiles #section-0 .content .summary .no-overflow {
+    margin-bottom: 5px;
+}
+.format-tiles ul.tiles li.section .content {
+    /*For snap theme*/
+    display: block;
+}
+
+.format-tiles.theme-snap .course-content {
+    max-width: inherit;
+}
+.format-tiles .label_content {
+    overflow: hidden;
+}
+.format-tiles .label.dimmed {
+    opacity: 0.7;
+}
+.format-tiles .label-collapse-btn {
+    float: left;
+}
+.format-tiles .expand-collapse-all-btns {
+    width: 100%;
+    text-align: right;
+}
+.format-tiles .expand-collapse-all-btns .btn-secondary {
+    /*Adatpable theme*/
+    min-height: unset;
+}
+.format-tiles .buttonhidesec0 {
+    cursor: pointer;
+    height: 40px;
+    width: 40px;
+    z-index: 100;
+    text-align: left;
+    background: no-repeat center;
+    padding: 0;
+}
+
+.format-tiles .buttonhidesec0 {
+    right: 0;
+    top: 10px;
+    position: absolute;
+    display: none;
+    opacity: 0.5;
+    background-size: 20px 20px;
+}
+
+.format-tiles .tiles#single_section_tiles .buttonhidesec0 {
+    margin-top: 10px;
+}
+
+
+body.jsenabled.format-tiles .buttonhidesec0 {
+    display: inline;
+    background-color: white;
+    top: -7px;
+}
+
+.format-tiles #collapsiblesec0 {
+    display: block;
+}
+.format-tiles #section-0 {
+    min-height: 50px;
+}
+body.jsenabled.format-tiles #collapsiblesec0 {
+    display: none;
+}
+
+/*allows buttons to be displayed at top of this section without going under alert boxes e.g. 'All caches were purged.'*/
+.format-tiles .course-content {
+    position: relative;
+}
+
+.format-tiles #collapsiblesec0 {
+    display: none;
+}
+
+.format-tiles .collapsiblesec0 ul.section {
+    padding-bottom: 20px;
+}
+
+.format-tiles .collapsiblesec0 li#section-0 {
+    display: block;
+    width: 100%;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.format-tiles .collapsiblesec0.collapsed li#section-0 {
+    /* stylelint-disable-next-line declaration-no-important */
+    opacity: 0 !important;
+}
+
+.format-tiles .collapsiblesec0.expanded li#section-0 {
+    opacity: 1;
+}
+
+.format-tiles #navicons {
+    float: right;
+    opacity: 0.3;
+}
+
+.format-tiles #navicons img {
+    width: 40px;
+    height: 40px;
+}
+
+.format-tiles #editactivities:hover {
+    opacity: 1;
+}
+
+.format-tiles #hiddeneye {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background-size: 20px 20px;
+    opacity: 0.5;
+}
+
+.format-tiles .course-content #filterbuttons {
+    margin-right: 6px;
+    display: inline-block;
+    margin-bottom: 3px;
+    min-height: 45px;
+    position: absolute;
+    left: 0;
+}
+
+.format-tiles .overall-prog-radial {
+    font-size: 1.2em;
+    height: 40px;
+    margin-left: 10px;
+    float: right;
+}
+.format-tiles .overall-prog-radial i {
+    font-size: 30px;
+    height: 30px;
+    width: 30px;
+    color: green;
+}
+
+.format-tiles .overall-prog-radial svg {
+    width: 33px;
+    height: 33px;
+}
+
+.format-tiles .completion-icon {
+    width: 25px;
+    height: 25px;
+    opacity: 0.7;
+    background-image: url([[pix:format_tiles|completion-n]]);
+    font-size: 1.3em;
+    display: block;
+    background-size: contain;
+}
+.format-tiles .completion-icon.completion-icon-y {
+    background-image: url([[pix:format_tiles|completion-y]]);
+}
+.format-tiles li.activity .completion-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+.format-tiles .completion-icon.completion-icon-fail {
+    background-image: url([[pix:format_tiles|completion-fail]]);
+}
+.format-tiles .completionchangenotify {
+    position: absolute;
+    top: 2px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #333;
+    padding: 3px 5px 3px 5px;
+    border-radius: 3px;
+    display: none;
+    text-transform: capitalize;
+    left: -90px;
+    border: 2px solid #666;
+    font-size: 0.9em;
+}
+.format-tiles .allcomplete .icon {
+    font-size: 2em;
+    width: 30px;
+    height: 30px;
+    color: #ffaa30;
+}
+.format-tiles .course-content #filterintro {
+    display: inline-block;
+    padding: 10px;
+    margin-left: 3px;
+    margin-right: 3px;
+    color: #aaa;
+    overflow: hidden;
+}
+
+.format-tiles #abovetiles {
+    width: 100%;
+    min-height: 30px;
+}
+
+.format-tiles .headerabovetiles {
+    margin: 5px 0 2px 0;
+    display: none;
+    width: calc(100% - 70px);
+    text-align: right;
+}
+
+body.format-tiles.jsenabled .course-content .headerabovetiles {
+    display: block;
+}
+.format-tiles .headerabovetiles .progress-indic {
+    height: 42px;
+}
+.format-tiles .phototile .progress-indic {
+    color: rgba(255, 255, 255, 0.85);
+    padding: 2px 7px 2px 7px;
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    font-size: 0.9em;
+}
+.format-tiles .phototile.altstyle .progress-indic {
+    top: 5px;
+    right: 0;
+    bottom: unset;
+    left: unset;
+}
+.format-tiles .phototile .progress-complete-alt img {
+    height: 30px;
+    width: 30px;
+    margin-top: 4px;
+}
+.format-tiles .filterbutton {
+    cursor: pointer;
+    min-width: 50px;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
+    padding: 8px;
+    color: #555;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.format-tiles .course-content li.activity.label h1,
+.format-tiles .section li.activity.label h2,
+.format-tiles .course-content li.activity.label h3,
+.format-tiles .course-content li.activity.label h4,
+.format-tiles .editor_atto_content_wrap h1,
+.format-tiles .editor_atto_content_wrap h2,
+.format-tiles .editor_atto_content_wrap h3,
+.format-tiles .editor_atto_content_wrap h4 {
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding-top: 0.3em;
+    padding-bottom: 0.3em;
+    overflow: hidden;
+}
+
+.format-tiles ul.tiles .tile h3 {
+    font-size: 1.4em;
+    line-height: 1.2em;
+    font-weight: normal;
+    color: #666;
+}
+.format-tiles.theme-snap ul.tiles .tile h3,
+.format-tiles.theme-snap ul.tiles .subtile h4,
+.format-tiles.theme-snap ul.tiles .tile .tile-textinner.longtitle h3 {
+    font-size: 1em;
+}
+.format-tiles .sectiontitlecontainer {
+    margin: 0 0 0.5em 0.5em;
+    display: inline-block;
+}
+
+.format-tiles .sectiontitle {
+    display: inline-block;
+    padding-left: 10px;
+    font-size: 2em;
+}
+
+.format-tiles .sectiontitle::after,
+.format-tiles .sectiontitle::after {
+    content: "";
+    display: block;
+    height: 4px;
+}
+
+.format-tiles .sectiontitle h2 {
+    font-weight: 600;
+    color: #666;
+    display: inline-block;
+}
+
+.format-tiles #section-0 .contentwithoutlink .no-overflow p {
+    margin: 0;
+}
+
+.format-tiles #section-0 .contentwithoutlink .no-overflow {
+    margin-bottom: 10px;
+}
+
+.format-tiles .tiles .section.main {
+    /* stylelint-disable-next-line declaration-no-important */
+    border: 0 !important;
+    /* We use important here as core-course-dragdrop is not replacing this.originalstyle correctly. */
+    /* stylelint-disable-next-line declaration-no-important */
+    opacity: 1 !important;
+}
+.format-tiles .hidden #hiddeneye {
+    background-image: url([[pix:format_tiles|eye-slash]]);
+    margin-left: 10px;
+}
+
+.format-tiles .buttonhidesec0.open {
+    background-image: url([[pix:format_tiles|remove]]);
+}
+
+.format-tiles .buttonhidesec0.closed {
+    background-image: url([[pix:format_tiles|sort]]);
+}
+
+.format-tiles #editactivitiesimage {
+    background-image: url([[pix:a/view_list_active]]);
+    display: inline-block;
+    float: right;
+    margin-right: 10px;
+    margin-top: 10px;
+    width: 20px;
+    height: 20px;
+    background-size: 20px 20px;
+    opacity: 0.6;
+}
+.format-tiles .tile-loading-icon {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 150px;
+    padding-top: 55px;
+    text-align: center;
+}
+
+.format-tiles .tile-loading-icon img {
+    width: 24px;
+    height: 30px;
+}
+
+.format-tiles .section .activity .activityinstance div.unclickable {
+    display: block;
+}
+.format-tiles .section .activity .activityinstance div.contentafterlink {
+    display: block;
+}
+.format-tiles .section .label .mod-indent-outer {
+    padding-left: 0;
+}
+.format-tiles.editing .section .mod-indent-outer {
+    max-width: calc(100% - 100px);
+}
+
+@media screen and (max-width: 680px) {
+    .format-tiles li.activity.subtile {
+        /* stylelint-disable-next-line declaration-no-important */
+        flex-basis: 160px !important;
+        min-height: 210px;
+        position: relative;
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: 0 5px 3px 0 !important;
+        /* stylelint-disable-next-line declaration-no-important */
+        max-width: 44% !important;
+    }
+    .format-tiles .clickable-region {
+        /* stylelint-disable-next-line declaration-no-important */
+        width: 100% !important;
+    }
+    .format-tiles li.subtile.spacer {
+        /* stylelint-disable-next-line declaration-no-important */
+        flex-basis: 160px !important;
+        /* stylelint-disable-next-line declaration-no-important */
+        min-width: 160px !important;
+        display: none;
+    }
+    .format-tiles .section .activity.subtile .activityinstance {
+        display: block;
+    }
+}
+/* get rid of wide margins when viewing course on narrow (mobile) device and
+allow tiles to be taller and thinner so can fit two side by side in portrait on iphone 6/7 */
+@media screen and (max-width: 600px) {
+    .format-tiles ul.tiles,
+    .format-tiles #section-0 ul.section,
+    .format-tiles .course-content .card-block {
+        /* stylelint-disable-next-line declaration-no-important */
+        padding-left: 0 !important;
+    }
+    .format-tiles .card .card-body {
+        /* Moove theme.*/
+        padding: 0;
+    }
+    .format-tiles .course-content ul.section {
+        padding: 1em;
+    }
+    .format-tiles .course-content ul.section.subtiles {
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: auto !important;
+    }
+    .format-tiles .course-content ul.section {
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: 1px !important;
+        /* stylelint-disable-next-line declaration-no-important */
+        padding: 1px !important;
+    }
+    .format-tiles #region-main {
+        padding: 0;
+    }
+    .format-tiles.path-course-view .card-block {
+        padding-left: 0.3em;
+        padding-right: 0.3em;
+    }
+    .format-tiles .course-content .section {
+        /* stylelint-disable-next-line declaration-no-important */
+        margin-left: 0 !important;
+        background-color: #fff;
+    }
+    .format-tiles ul.tiles li.section .content {
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: 0 !important;
+    }
+    .format-tiles .subtiles .course-content ul.section {
+        padding: 0.5em 0.5em 0.5em 1em;
+    }
+    .format-tiles .pagesechead {
+        margin: 0 0 0 5px;
+    }
+    .format-tiles .sectiontitlecontainer {
+        /* stylelint-disable-next-line declaration-no-important */
+        margin: 0 !important;
+    }
+    .format-tiles .sectiontitle {
+        width: 100%;
+        margin-left: 5px;
+        max-width: 98%;
+    }
+    .format-tiles .sectiontitle h2 {
+        font-size: 1em;
+    }
+    .format-tiles #page.container-fluid,
+    .path-course-view li.activity > div {
+        /* stylelint-disable-next-line declaration-no-important */
+        padding: 0 !important;
+    }
+    .format-tiles ul.tiles#multi_section_tiles {
+        justify-content: center;
+    }
+    .format-tiles .course-content ul.tiles .tile {
+        /* stylelint-disable-next-line declaration-no-important */
+        flex-basis: 160px !important;
+        position: relative;
+        /* stylelint-disable-next-line declaration-no-important */
+        max-width: 45% !important;
+        margin: 5px;
+    }
+    .format-tiles .course-content ul.tiles .tile:not(.spacer) {
+        min-height: 210px;
+        /* stylelint-disable-next-line declaration-no-important */
+        padding: 7px 2px 5px 7px !important;
+    }
+    .format-tiles .clickable-region {
+        /* stylelint-disable-next-line declaration-no-important */
+        width: 150px !important;
+    }
+    .format-tiles ul.tiles .tile .tile-text {
+        height: 130px;
+    }
+    .format-tiles .collapsiblesec0.expanded .buttonhidesec0 {
+        /* stylelint-disable-next-line declaration-no-important */
+        background-color: rgba(255, 255, 255, 1) !important;
+    }
+    .format-tiles .progress-indic.percent {
+        font-size: 0.7em;
+    }
+    .format-tiles .overall-prog-radial {
+        display: none;
+    }
+    .format-tiles ul.tiles#multi_section_tiles li.section {
+        margin: 0;
+        padding: 5px;
+    }
+    .format-tiles ul.tiles#multi_section_tiles li.section.moveablesection {
+        padding: 30px 0 30px 0;
+    }
+    .format-tiles li.activity.subtile .activitytitle {
+        font-size: 1em;
+        margin-top: 0;
+    }
+    .format-tiles .progress-indic {
+        font-size: 0.8em;
+    }
+    .format-tiles ul.tiles .tile h3 {
+        font-size: 1.1em;
+        word-break: break-word;
+    }
+}
+
+@media screen and (max-width: 330px) {
+    .format-tiles li.activity.subtile .activitytitle {
+        font-size: 0.9em;
+    }
+}
+.format-tiles textarea#id_headertextabovetiles.form-control {
+    width: 100%;
+}
+
+.format-tiles ul.tiles .tile_bar .iconeditcog {
+    margin: 0;
+    vertical-align: top;
+    font-size: 12px;
+    width: 12px;
+    height: 12px;
+    display: inline-block;
+}
+
+.format-tiles ul.tiles .tile_bar .iconeditcog img:hover {
+    opacity: 1;
+}
+
+.format-tiles .launchiconpicker {
+    cursor: pointer;
+}
+#page-course-editsection .format-tiles .icon_picker_modal button.close {
+    color: #333;
+    opacity: 0.9;
+}
+
+.format-tiles .iconpickericons .pickericondiv,
+.format-site .iconpickericons .pickericondiv {
+    padding: 10px;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#page-course-editsection .format-tiles .icon_picker_modal .modal-header,
+#page-course-edit .format-tiles .icon_picker_modal .modal-header {
+    color: #333;
+}
+
+.format-tiles .iconpickericons .pickericondiv:hover,
+.format-site .iconpickericons .pickericondiv:hover {
+    background-color: rgb(243, 243, 243);
+}
+
+.format-tiles .icon_picker_modal .modal-dialog {
+    max-width: 90%;
+}
+.format-tiles .modal-dialog {
+    margin: 5px auto;
+}
+.format-tiles .pickericon .icon,
+#page-course-edit.format-site .pickericon .icon {
+    width: 55px;
+    height: 55px;
+    font-size: 55px;
+    vertical-align: top;
+    margin: 3px;
+}
+.format-tiles .embed_cm_modal .modal {
+    margin: 10px auto;
+}
+.format-tiles .embed_cm_modal iframe {
+    border: 0;
+}
+.format-tiles .embed_cm_modal a {
+    color: #979797;
+}
+.format-tiles .embed_cm_modal .modal-body {
+    max-height: 95%;
+    overflow-y: auto;
+    min-height: 200px;
+    padding: 0;
+}
+
+.format-tiles .embed_cm_modal.mod_page .modal-body {
+    padding: 2em;
+}
+.format-tiles .modal-container.embed_cm_modal .modal-header {
+    padding: 5px 10px 5px 10px;
+    opacity: 0.8;
+    border-bottom: 0;
+    text-shadow: none;
+    background-image: none;
+    color: #fff;
+    min-height: 23px;
+}
+.format-tiles .modal-container .modal .modal-header.embed_cm_modal h3 {
+    color: #fff;
+}
+/*Different themes have these classes slightly differently so repeat some of these*/
+.format-tiles .embed_cm_modal .modal-header {
+    padding: 5px 10px 5px 10px;
+}
+.format-tiles .modal-container.embed_cm_modal .modal .modal-header h3 {
+    color: #fff;
+}
+.format-tiles .embed_cm_modal .modal-footer {
+    display: none;
+}
+.format-tiles .embed_cm_modal i {
+    width: 20px;
+    height: 20px;
+    font-size: 0.9em;
+}
+.format-tiles .embed_cm_modal button {
+    vertical-align: middle;
+    margin: 0;
+    padding: 0;
+}
+.format-tiles .embed_cm_modal .modal-header #modaltitle {
+    font-size: 1.2em;
+}
+.format-tiles li.activity.subtile {
+    display: flex;
+    flex-basis: 225px;
+    max-width: 240px;
+    flex-grow: 1;
+    height: 200px;
+    vertical-align: top;
+    padding: 0 5px 0 5px;
+    margin: 5px;
+    background-repeat: no-repeat;
+    background-position: 50% 70%;
+    -webkit-background-size: 38px auto;
+    background-size: 48px auto;
+    background-color: #f9f9f9;
+    border: 1px solid #eceeef;
+    border-top: #cfcfcf 0.3em solid;
+    transition: background-size 0.5s ease-in-out;
+    background-image: url([[pix:format_tiles|subtile/file-text-o]]);
+    position: relative;
+    /* We use important here as dragdrop is not removing its own inline opacity once dragdrop complete.*/
+    /* See moodle-core-dragdrop this.originalstyle (not replaced correctly). */
+    /* stylelint-disable-next-line declaration-no-important */
+    opacity: 1 !important;
+}
+.format-tiles li.activity.subtile:hover {
+    background-repeat: no-repeat;
+    background-position: 50% 70%;
+}
+.format-tiles .course-content .section .activity:hover {
+    background-color: #f9f9f9;
+}
+.format-tiles .subtile_inner,
+.format-tiles .fullwidth {
+    width: 100%;
+}
+.format-tiles .clickable-region {
+    height: 110px;
+    width: 230px;
+    display: block;
+}
+.format-tiles #page-content li.activity.subtile.dimmed a.dropdown-toggle {
+    color: #888;
+}
+
+.format-tiles li.activity.dimmed .inplaceeditable,
+.format-tiles li.section .summary.dimmed,
+.format-tiles li.activity.subtile.dimmed .activityinstance {
+    opacity: 0.5;
+}
+/*For subtiles, use normal opacity to avoid deep edit menus going under the tile below*/
+.format-tiles li.activity.subtile.dimmed {
+    opacity: 1;
+    /* stylelint-disable-next-line declaration-no-important */
+    border-top-color: lightgray !important;
+}
+.format-tiles .dimmed .label_content {
+    color: gray;
+}
+.format-tiles li.activity.subtile:hover {
+    background-size: 60px auto;
+    transition: background-size 0.5s ease-in-out;
+}
+
+.format-tiles li.activity.subtile.assign {
+    border-top-color: orangered;
+    background-image: url([[pix:format_tiles|subtile/assign]]);
+}
+.format-tiles li.activity.subtile.book {
+    border-top-color: lime;
+    background-image: url([[pix:format_tiles|subtile/book]]);
+}
+.format-tiles li.activity.subtile.choice {
+    border-top-color: cyan;
+    background-image: url([[pix:format_tiles|subtile/question-circle]]);
+}
+.format-tiles li.activity.subtile.data {
+    border-top-color: #dfb28c;
+    background-image: url([[pix:format_tiles|subtile/database]]);
+}
+.format-tiles li.activity.subtile.resource.doc {
+    border-top-color: #2171d4;
+    background-image: url([[pix:format_tiles|subtile/file-word-o]]);
+}
+.format-tiles li.activity.subtile.feedback {
+    border-top-color: cyan;
+    background-image: url([[pix:format_tiles|subtile/feedback]]);
+}
+.format-tiles li.activity.subtile.folder {
+    border-top-color: gold;
+    background-image: url([[pix:format_tiles|subtile/folder-o]]);
+}
+.format-tiles li.activity.subtile.forum,
+.format-tiles li.activity.subtile.chat {
+    border-top-color: #60e2b6;
+    background-image: url([[pix:format_tiles|subtile/comments-o]]);
+}
+.format-tiles li.activity.subtile.glossary {
+    border-top-color: mediumpurple;
+    background-image: url([[pix:format_tiles|subtile/glossary]]);
+}
+.format-tiles li.activity.subtile.lesson {
+    border-top-color: orange;
+    background-image: url([[pix:format_tiles|subtile/lesson]]);
+}
+.format-tiles li.activity.subtile.lti {
+    border-top-color: orange;
+    background-image: url([[pix:format_tiles|subtile/lti]]);
+}
+.format-tiles li.activity.subtile.modsecurestreaming,
+.format-tiles li.activity.subtile.resource.mp4,
+.format-tiles li.activity.subtile.url.video {
+    border-top-color: #6bc34a;
+    background-image: url([[pix:format_tiles|subtile/film]]);
+}
+.format-tiles li.activity.subtile.resource.mp3 {
+    border-top-color: mediumpurple;
+    background-image: url([[pix:format_tiles|subtile/volume-up]]);
+}
+.format-tiles li.activity.subtile.page {
+    border-top-color: #2171d4;
+    background-image: url([[pix:format_tiles|subtile/file-text-o]]);
+}
+.format-tiles li.activity.subtile.resource.pdf {
+    border-top-color: #e54e2b;
+    background-image: url([[pix:format_tiles|subtile/file-pdf-o]]);
+}
+.format-tiles li.activity.subtile.ppt {
+    border-top-color: #e54e2b;
+    background-image: url([[pix:format_tiles|subtile/file-powerpoint-o]]);
+}
+.format-tiles li.activity.subtile.quiz {
+    border-top-color: orange;
+    background-image: url([[pix:format_tiles|subtile/star-o]]);
+}
+.format-tiles li.activity.subtile.resource {
+    border-top-color: #2171d4;
+    background-image: url([[pix:format_tiles|subtile/file-text-o]]);
+}
+.format-tiles li.activity.subtile.scorm {
+    border-top-color: orange;
+    background-image: url([[pix:format_tiles|subtile/scorm]]);
+}
+.format-tiles li.activity.subtile.survey {
+    border-top-color: #60e2b6;
+    background-image: url([[pix:format_tiles|subtile/survey]]);
+}
+.format-tiles li.activity.subtile.turnitintooltwo {
+    border-top-color: #e54e2b;
+    background-image: url([[pix:format_tiles|subtile/turnitin]]);
+}
+.format-tiles li.activity.subtile.url {
+    border-top-color: #0cc;
+    background-image: url([[pix:format_tiles|subtile/globe]]);
+}
+.format-tiles li.activity.subtile.wiki {
+    background-image: url([[pix:format_tiles|subtile/wiki]]);
+}
+.format-tiles li.activity.subtile.workshop {
+    border-top-color: #86aef0;
+    background-image: url([[pix:format_tiles|subtile/workshop]]);
+}
+.format-tiles li.activity.subtile.resource.xls {
+    border-top-color: #6bc34a;
+    background-image: url([[pix:format_tiles|subtile/file-excel]]);
+}
+.format-tiles li.activity.subtile.resource.zip {
+    background-image: url([[pix:format_tiles|subtile/file-zip-o]]);
+}
+.format-tiles .subtiles {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: calc(100% - 2em);
+}
+.format-tiles .subtiles li.activity.label {
+    padding: 10px;
+    width: 100%;
+}
+.format-tiles.editing .subtiles li.activity.label {
+    border: 1px solid rgb(231, 231, 231);
+    position: relative;
+}
+
+.format-tiles li.activity.subtile .activitytitle {
+    font-size: 1.3em;
+    font-weight: normal;
+    padding-left: 10px;
+    max-height: 160px;
+    overflow: hidden;
+    margin: 0;
+    word-break: break-word;
+    max-width: 226px;
+}
+.format-tiles li.activity.subtile .activitytitle a {
+    display: block;
+    background-image: linear-gradient(to bottom, rgba(249, 249, 249, 1) 85%, rgba(249, 249, 249, 0));
+    padding-bottom: 10px;
+}
+.format-tiles li.activity:focus {
+    outline: 1px dotted;
+}
+.format-tiles li.activity.label:focus {
+    outline: none;
+}
+.format-tiles li.activity.subtile .activitytype {
+    padding: 0 5px 10px 5px;
+    display: block;
+    text-transform: uppercase;
+    color: gray;
+    font-size: 0.9em;
+}
+.format-tiles.editing li.activity.subtile .activitytype {
+    position: absolute;
+    right: 10px;
+    max-width: 90px;
+    text-align: left;
+    font-size: 0.6em;
+    top: 0;
+}
+.format-tiles li.activity.subtile a,
+.format-tiles #page-content li.activity.subtile a {
+    color: #565656;
+}
+
+.format-tiles .subtiles .instancename {
+    height: 98%;
+    width: 98%;
+    /*this is clickable so take up whole tile*/
+}
+
+.format-tiles li.activity.subtile a:hover,
+.format-tiles #page-content li.activity.subtile a:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+.format-tiles .subtiles .completioncheckbox {
+    padding: 3px;
+    display: inline-block;
+}
+.format-tiles.editing .subtiles .completioncheckbox {
+    position: absolute;
+    right: 1px;
+    top: 8px;
+}
+.format-tiles .nosubtiles .completioncheckbox .btn:hover,
+.format-tiles .nosubtiles .completioncheckbox .btn:active {
+    /* Adaptable */
+    /* stylelint-disable-next-line declaration-no-important */
+    background-color: inherit !important;
+}
+.format-tiles .subtiles .completioncheckbox.completion-auto .completion-icon {
+    margin-top: 2px;
+}
+.format-tiles li.activity button[data-action="change-completion-status"]:hover {
+    border: 3px solid orange;
+    border-radius: 50%;
+    transition: border 300ms ease-in-out;
+}
+.format-tiles button.completioncheckbox,
+.format-tiles .completioncheckbox {
+    border: 3px solid transparent;
+    border-radius: 50%;
+    transition: border 300ms ease-in-out;
+    background-color: transparent;
+    height: 30px;
+    width: 30px;
+    padding-left: 4px;
+    position: relative;
+}
+.format-tiles .completioncheckbox:focus {
+    outline: none;
+}
+.format-tiles .embed-module-buttons button.completioncheckbox,
+.format-tiles .embed-module-buttons .completioncheckbox {
+    height: 30px;
+    width: 30px;
+    padding-left: 0;
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    right: 35px;
+}
+.format-tiles .completioncheckbox.completion-auto {
+    opacity: 0.6;
+    height: 30px;
+}
+.format-tiles .embed_cm_modal .embed_file_button,
+.format-tiles .modal-container .modal .modal-header button.close {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    font-size: 1.4em;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+    opacity: 0.9;
+    text-align: center;
+    box-shadow: none;
+}
+.format-tiles .embed_cm_modal .embed_file_button.button_download {
+    position: absolute;
+    right: 70px;
+}
+.format-tiles .embed_cm_modal .embed_file_button.button_expand {
+    position: absolute;
+    right: 105px;
+}
+.format-tiles .modal-container .modal .modal-header button.close {
+    font-size: 1.8em;
+    background-repeat: no-repeat;
+    background-image: url([[pix:format_tiles|close-white]]);
+    background-size: 17px 17px;
+}
+.format-tiles .modal-container .modal .modal-header .embed-module-buttons .close {
+    /*Clean theme.*/
+    position: relative;
+    top: unset;
+    right: unset;
+}
+.format-tiles .embed-module-buttons {
+    min-width: 125px;
+    text-align: right;
+    top: 5px;
+    position: absolute;
+    right: 5px;
+    vertical-align: top;
+}
+.format-tiles .embed-module-buttons button.close {
+    width: 28px;
+    height: 28px;
+    float: none;
+    position: absolute;
+    top: 3px;
+    right: 5px;
+}
+.format-tiles .embed-module-buttons .completion-icon {
+    opacity: 1;
+}
+.format-tiles .embed-module-buttons img.icon {
+    width: 23px;
+    height: 23px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin: 2px 0 0;
+}
+.format-tiles .embed-module-buttons a:focus,
+.format-tiles .embed-module-buttons form:focus {
+    outline: 1px dotted;
+}
+.format-tiles .embed-module-buttons .icon:hover,
+.format-tiles .embed-module-buttons img.icon:hover {
+    opacity: 0.7;
+}
+.format-tiles .embed-module-buttons .btn {
+    box-shadow: none;
+    margin-top: 2px;
+}
+.format-tiles .embed-module-buttons a .icon {
+    color: #fff;
+}
+.format-tiles .embed_cm_modal .embed-module-buttons .completioncheckbox .icon {
+    padding: 0;
+}
+.format-tiles .embed_cm_modal .modal-title {
+    max-width: calc(100% - 120px);
+}
+.format-tiles .sectionerror {
+    margin-left: 30px;
+}
+.format-tiles .section.subtiles .activity .editing_move {
+    position: relative;
+}
+.format-tiles .section.subtiles .activity .actions {
+    position: absolute;
+    top: 1px;
+}
+.format-tiles.editing .section.subtiles .activity .actions {
+    left: 35px;
+}
+.format-tiles .section.subtiles .activity.label .actions {
+    top: 0;
+    right: 0;
+    left: inherit;
+    position: absolute;
+}
+.format-tiles .subtile .dropdown-menu .dropdown-item {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.format-tiles .section-cm-edit-actions .dropdown-menu {
+    margin-top: 0;
+    left: -30px;
+    position: absolute;
+}
+
+.format-tiles.editing .section .activity.subtile .activityinstance {
+    padding: 0;
+    display: block;
+    color: #565656;
+    font-size: 19px;
+    overflow: hidden;
+    height: calc(100% - 20px);
+    margin-top: 25px;
+    margin-left: 0;
+}
+.format-tiles.editing .section .activity .activityinstance {
+    margin-left: 30px;
+}
+.format-tiles.editing .section .activity.subtile .action-menu {
+    background-color: #f9f9f9;
+}
+.format-tiles li.activity .subtile-activityinstance {
+    position: absolute;
+    top: 5px;
+    height: 95%;
+    overflow: hidden;
+    width: 100%;
+}
+.format-tiles.editing li.activity .subtile-activityinstance {
+    top: 0;
+    left: 0;
+}
+
+.format-tiles li.subtile img.activityicon {
+    display: none;
+    /* when a teacher uses in place editing of mod name, the item is refreshed complete with icon which we do not want so hide it*/
+}
+.format-tiles #section-0 .activity .activityinstance .inplaceeditable img.activityicon {
+    display: inherit;
+}
+.format-tiles li.subtile .availabilityinfo {
+    margin: 0;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+}
+.format-tiles li.tile .availabilityinfo {
+    line-height: 15px;
+}
+
+.format-tiles .inplaceeditable input.form-control {
+    width: 100%;
+}
+.format-tiles #single_section_tiles .inplaceeditable input.form-control {
+    width: 100%;
+}
+.format-tiles.editing .section .activity .editing_move {
+    position: relative;
+}
+.format-tiles .course-content ul.section {
+    margin: 0;
+    padding: 1.2em;
+}
+.format-tiles .course-content ul.section.moveablesection {
+    padding: 0;
+}
+.format-tiles .course-content ul.section.nosubtiles,
+.format-tiles .course-content ul.section.nosubtiles .activity {
+    position: relative;
+}
+.format-tiles .course-content ul.section.nosubtiles li.activity {
+    width: 100%;
+}
+.format-tiles .course-content ul.section.nosubtiles .actions {
+    margin-top: 0.5em;
+    min-width: 30px;
+}
+.format-tiles #selectedicon .icon,
+#page-course-edit.format-site #selectedicon .icon {
+    font-size: 1.9em;
+    width: 25px;
+    height: 25px;
+    color: gray;
+}
+.format-tiles #selectedicon {
+    margin-right: 10px;
+}
+.format-tiles .modal-header:focus,
+.format-tiles .resourcecontent:focus,
+.format-tiles .sectiontitle:focus,
+.format-tiles :link:focus,
+.format-tiles li.activity {
+    outline: unset;
+}
+
+.format-tiles .resourceintro {
+    margin: 60px;
+}
+
+.format-tiles .subtilecontrols {
+    top: 0;
+    left: 0;
+    position: absolute;
+}
+
+.format-tiles .editingactivity {
+    margin-left: 30px;
+}
+
+/*Lambda theme*/
+.format-tiles .activity-information {
+    float: none;
+}
+.format-tiles .margin-rt .section-cm-edit-actions {
+    margin-right: 35px;
+}
+
+.format-tiles.editing .label_content {
+    padding-left: 30px;
+}
+
+.format-tiles.editing ul.section {
+    margin-left: 3em;
+    padding-right: 3em;
+}
+
+.format-tiles .tooltip-inner {
+    background-color: #fff;
+    color: #181818;
+    border: 2px solid #4a4a4a;
+    opacity: 0.98;
+}
+.format-tiles.editing .section-summary-activities {
+    width: 200px;
+    text-align: right;
+    max-height: 60px;
+    margin-right: 3px;
+}
+.format-tiles .section-summary-activities .activity-count {
+    display: block;
+}
+.format-tiles.editing .section-summary-activities .activity-count {
+    display: inline;
+}
+
+.format-tiles .dimmed .completioncheckbox {
+    opacity: 0.6;
+}
+
+.format-tiles fieldset#id_courseformathdr .colourpickercircle,
+.format-site fieldset#id_courseformathdr .colourpickercircle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 5px 0 5px;
+    border: 3px solid;
+}
+
+.format-tiles fieldset#id_courseformathdr .colourpickercircle:hover,
+.format-site fieldset#id_courseformathdr .colourpickercircle:hover {
+    border-color: orange;
+}
+.format-tiles fieldset#id_courseformathdr .colourpickercircle.selected,
+.format-site fieldset#id_courseformathdr .colourpickercircle.selected {
+    background-image: url([[pix:format_tiles|check-white]]);
+    background-size: contain;
+}
+.format-tiles fieldset#id_courseformathdr #colourselectnotify,
+.format-site fieldset#id_courseformathdr #colourselectnotify {
+    color: #212529;
+    background-color: #e9ecef;
+    border-radius: 0.2rem;
+    padding: 2px 8px;
+    height: 26px;
+    font-size: 0.9em;
+    display: none;
+    top: 0;
+    position: relative;
+}
+
+.format-tiles li.dndupload-preview {
+    width: 100%;
+}
+.format-tiles .loading-subtile {
+    width: 200px;
+    padding: 90px;
+}
+
+.format-tiles .course-content ul.tiles .tile.phototile {
+    padding: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: repeat;
+    height: 175px;
+}
+.format-tiles .course-content ul.tiles .tile.phototile  .photo-tile-text {
+    top: 10px;
+    bottom: inherit;
+    width: calc(100% - 10px);
+    text-align: left;
+    position: absolute;
+}
+
+.format-tiles .course-content ul.tiles .tile.phototile .photo-tile-text h3 {
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    display: inline;
+    line-height: 30px;
+    padding: 4px 7px;
+    font-size: 20px;
+    color: #fff;
+}
+.format-tiles ul.tiles .tile.phototile .tile-text {
+    margin-top: 35px;
+}
+.format-tiles li.tile.phototile .availabilityinfo {
+    position: absolute;
+    bottom: 10px;
+    right: 0;
+}
+
+/*Alternate styles for previous phototile items ("altstyle")*/
+.format-tiles .course-content ul.tiles .tile.phototile.altstyle .photo-tile-text {
+    bottom: 0;
+    top: inherit;
+    text-align: center;
+    width: 100%;
+}
+.format-tiles .course-content ul.tiles .tile.phototile.altstyle .photo-tile-text h3 {
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 0;
+    padding: 5px;
+    position: relative;
+    display: block;
+    line-height: 25px;
+}
+.format-tiles li.tile.phototile.altstyle  .availabilityinfo {
+    position: inherit;
+    bottom: inherit;
+}
+.format-tiles .existingtilephoto {
+    height: 160px;
+    margin: 10px;
+}
+.format-tiles .tilebarphoto {
+    width: 82px;
+    height: 55px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    float: left;
+}
+
+.format-tiles ul.tiles .phototilebar .tile_bar_text {
+    max-width: calc(100% - 150px);
+}
+
+.format-tiles .iconpickerheader {
+    height: 40px;
+}
+.format-tiles .iconpickerheader #phototilebtn {
+    color: #fff;
+}
+.format-tiles .iconpickerheader #phototilebtn:hover {
+    color: darkslategrey;
+}
+.format-tiles .tile.phototile a {
+    padding: 0;
+}
+.format-tiles .iconpickerphotos {
+    margin: 30px;
+    text-align: center;
+}
+.format-tiles .iconpickerphotos .photo {
+    height: 100px;
+    width: 150px;
+    background-color: lightgrey;
+    display: inline-block;
+    margin: 0.5em;
+}
+
+.format-tiles .iconpickerphotos .photo:hover {
+    opacity: 0.7;
+}
+
+.format-tiles #page-loading-icon img {
+    padding: 100px;
+    height: 50px;
+    width: 50px;
+    opacity: 0.8;
+}
+.format-tiles a#page-loading-icon {
+    color: #0c0c0c;
+    text-decoration: none;
+}
+
+#page-admin-setting-formatsettingtiles #docsbuttons {
+    float: right;
+    transform: translateY(-50px);
+    height: 0;
+}
+.format-tiles .course-content li.section .summary ul {
+    list-style: disc;
+}

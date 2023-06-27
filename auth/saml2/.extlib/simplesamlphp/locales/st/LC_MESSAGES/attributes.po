@@ -1,0 +1,1863 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"PO-Revision-Date: 2019-12-12 15:50+0200\n
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+msgid "aRecord"
+msgstr "aRecord"
+
+msgid "urn:mace:dir:attribute-def:aRecord"
+msgstr "urn:mace:dir:attribute-def:aRecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.26"
+msgstr "urn:oid:0.9.2342.19200300.100.1.26"
+
+msgid "aliasedEntryName"
+msgstr "aliasedEntryName"
+
+msgid "urn:mace:dir:attribute-def:aliasedEntryName"
+msgstr "urn:mace:dir:attribute-def:aliasedEntryName"
+
+msgid "urn:oid:2.5.4.1"
+msgstr "urn:oid:2.5.4.1"
+
+msgid "aliasedObjectName"
+msgstr "aliasedObjectName"
+
+msgid "urn:mace:dir:attribute-def:aliasedObjectName"
+msgstr "urn:mace:dir:attribute-def:aliasedObjectName"
+
+msgid "associatedDomain"
+msgstr "associatedDomain"
+
+msgid "urn:mace:dir:attribute-def:associatedDomain"
+msgstr "urn:mace:dir:attribute-def:associatedDomain"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.37"
+msgstr "urn:oid:0.9.2342.19200300.100.1.37"
+
+msgid "associatedName"
+msgstr "associatedName"
+
+msgid "urn:mace:dir:attribute-def:associatedName"
+msgstr "urn:mace:dir:attribute-def:associatedName"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.38"
+msgstr "urn:oid:0.9.2342.19200300.100.1.38"
+
+msgid "audio"
+msgstr "audio"
+
+msgid "urn:mace:dir:attribute-def:audio"
+msgstr "urn:mace:dir:attribute-def:audio"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.55"
+msgstr "urn:oid:0.9.2342.19200300.100.1.55"
+
+msgid "authorityRevocationList"
+msgstr "authorityRevocationList"
+
+msgid "urn:mace:dir:attribute-def:authorityRevocationList"
+msgstr "urn:mace:dir:attribute-def:authorityRevocationList"
+
+msgid "urn:oid:2.5.4.38"
+msgstr "urn:oid:2.5.4.38"
+
+msgid "buildingName"
+msgstr "buildingName"
+
+msgid "urn:mace:dir:attribute-def:buildingName"
+msgstr "urn:mace:dir:attribute-def:buildingName"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.48"
+msgstr "urn:oid:0.9.2342.19200300.100.1.48"
+
+msgid "businessCategory"
+msgstr "businessCategory"
+
+msgid "urn:mace:dir:attribute-def:businessCategory"
+msgstr "urn:mace:dir:attribute-def:businessCategory"
+
+msgid "urn:oid:2.5.4.15"
+msgstr "urn:oid:2.5.4.15"
+
+msgid "c"
+msgstr "c"
+
+msgid "urn:mace:dir:attribute-def:c"
+msgstr "urn:mace:dir:attribute-def:c"
+
+msgid "urn:oid:2.5.4.6"
+msgstr "urn:oid:2.5.4.6"
+
+msgid "cACertificate"
+msgstr "cACertificate"
+
+msgid "urn:mace:dir:attribute-def:cACertificate"
+msgstr "urn:mace:dir:attribute-def:cACertificate"
+
+msgid "urn:oid:2.5.4.37"
+msgstr "urn:oid:2.5.4.37"
+
+msgid "cNAMERecord"
+msgstr "cNAMERecord"
+
+msgid "urn:mace:dir:attribute-def:cNAMERecord"
+msgstr "urn:mace:dir:attribute-def:cNAMERecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.31"
+msgstr "urn:oid:0.9.2342.19200300.100.1.31"
+
+msgid "carLicense"
+msgstr "carLicense"
+
+msgid "urn:mace:dir:attribute-def:carLicense"
+msgstr "urn:mace:dir:attribute-def:carLicense"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.1"
+msgstr "urn:oid:2.16.840.1.113730.3.1.1"
+
+msgid "certificateRevocationList"
+msgstr "certificateRevocationList"
+
+msgid "urn:mace:dir:attribute-def:certificateRevocationList"
+msgstr "urn:mace:dir:attribute-def:certificateRevocationList"
+
+msgid "urn:oid:2.5.4.39"
+msgstr "urn:oid:2.5.4.39"
+
+msgid "cn"
+msgstr "Lebitso le tlwaelehileng"
+
+msgid "urn:mace:dir:attribute-def:cn"
+msgstr "Lebitso le tlwaelehileng"
+
+msgid "urn:oid:2.5.4.3"
+msgstr "Lebitso le tlwaelehileng"
+
+msgid "co"
+msgstr "co"
+
+msgid "urn:mace:dir:attribute-def:co"
+msgstr "urn:mace:dir:attribute-def:co"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.43"
+msgstr "urn:oid:0.9.2342.19200300.100.1.43"
+
+msgid "commonName"
+msgstr "commonName"
+
+msgid "urn:mace:dir:attribute-def:commonName"
+msgstr "urn:mace:dir:attribute-def:commonName"
+
+msgid "countryName"
+msgstr "countryName"
+
+msgid "urn:mace:dir:attribute-def:countryName"
+msgstr "urn:mace:dir:attribute-def:countryName"
+
+msgid "crossCertificatePair"
+msgstr "crossCertificatePair"
+
+msgid "urn:mace:dir:attribute-def:crossCertificatePair"
+msgstr "urn:mace:dir:attribute-def:crossCertificatePair"
+
+msgid "urn:oid:2.5.4.40"
+msgstr "urn:oid:2.5.4.40"
+
+msgid "dITRedirect"
+msgstr "dITRedirect"
+
+msgid "urn:mace:dir:attribute-def:dITRedirect"
+msgstr "urn:mace:dir:attribute-def:dITRedirect"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.54"
+msgstr "urn:oid:0.9.2342.19200300.100.1.54"
+
+msgid "dSAQuality"
+msgstr "dSAQuality"
+
+msgid "urn:mace:dir:attribute-def:dSAQuality"
+msgstr "urn:mace:dir:attribute-def:dSAQuality"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.49"
+msgstr "urn:oid:0.9.2342.19200300.100.1.49"
+
+msgid "dc"
+msgstr "Karolwana ya domeine (DC)"
+
+msgid "urn:mace:dir:attribute-def:dc"
+msgstr "Karolwana ya domeine (DC)"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.25"
+msgstr "Karolwana ya domeine (DC)"
+
+msgid "deltaRevocationList"
+msgstr "deltaRevocationList"
+
+msgid "urn:mace:dir:attribute-def:deltaRevocationList"
+msgstr "urn:mace:dir:attribute-def:deltaRevocationList"
+
+msgid "urn:oid:2.5.4.53"
+msgstr "urn:oid:2.5.4.53"
+
+msgid "departmentNumber"
+msgstr "departmentNumber"
+
+msgid "urn:mace:dir:attribute-def:departmentNumber"
+msgstr "urn:mace:dir:attribute-def:departmentNumber"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.2"
+msgstr "urn:oid:2.16.840.1.113730.3.1.2"
+
+msgid "description"
+msgstr "description"
+
+msgid "urn:mace:dir:attribute-def:description"
+msgstr "urn:mace:dir:attribute-def:description"
+
+msgid "urn:oid:2.5.4.13"
+msgstr "urn:oid:2.5.4.13"
+
+msgid "destinationIndicator"
+msgstr "destinationIndicator"
+
+msgid "urn:mace:dir:attribute-def:destinationIndicator"
+msgstr "urn:mace:dir:attribute-def:destinationIndicator"
+
+msgid "urn:oid:2.5.4.27"
+msgstr "urn:oid:2.5.4.27"
+
+msgid "displayName"
+msgstr "Lebitso le bontshwang"
+
+msgid "urn:mace:dir:attribute-def:displayName"
+msgstr "Lebitso le bontshwang"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.241"
+msgstr "Lebitso le bontshwang"
+
+msgid "distinguishedName"
+msgstr "distinguishedName"
+
+msgid "urn:mace:dir:attribute-def:distinguishedName"
+msgstr "urn:mace:dir:attribute-def:distinguishedName"
+
+msgid "urn:oid:2.5.4.49"
+msgstr "urn:oid:2.5.4.49"
+
+msgid "dmdName"
+msgstr "dmdName"
+
+msgid "urn:mace:dir:attribute-def:dmdName"
+msgstr "urn:mace:dir:attribute-def:dmdName"
+
+msgid "urn:oid:2.5.4.54"
+msgstr "urn:oid:2.5.4.54"
+
+msgid "dnQualifier"
+msgstr "dnQualifier"
+
+msgid "urn:mace:dir:attribute-def:dnQualifier"
+msgstr "urn:mace:dir:attribute-def:dnQualifier"
+
+msgid "urn:oid:2.5.4.46"
+msgstr "urn:oid:2.5.4.46"
+
+msgid "documentAuthor"
+msgstr "documentAuthor"
+
+msgid "urn:mace:dir:attribute-def:documentAuthor"
+msgstr "urn:mace:dir:attribute-def:documentAuthor"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.14"
+msgstr "urn:oid:0.9.2342.19200300.100.1.14"
+
+msgid "documentIdentifier"
+msgstr "documentIdentifier"
+
+msgid "urn:mace:dir:attribute-def:documentIdentifier"
+msgstr "urn:mace:dir:attribute-def:documentIdentifier"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.11"
+msgstr "urn:oid:0.9.2342.19200300.100.1.11"
+
+msgid "documentLocation"
+msgstr "documentLocation"
+
+msgid "urn:mace:dir:attribute-def:documentLocation"
+msgstr "urn:mace:dir:attribute-def:documentLocation"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.15"
+msgstr "urn:oid:0.9.2342.19200300.100.1.15"
+
+msgid "documentPublisher"
+msgstr "documentPublisher"
+
+msgid "urn:mace:dir:attribute-def:documentPublisher"
+msgstr "urn:mace:dir:attribute-def:documentPublisher"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.56"
+msgstr "urn:oid:0.9.2342.19200300.100.1.56"
+
+msgid "documentTitle"
+msgstr "documentTitle"
+
+msgid "urn:mace:dir:attribute-def:documentTitle"
+msgstr "urn:mace:dir:attribute-def:documentTitle"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.12"
+msgstr "urn:oid:0.9.2342.19200300.100.1.12"
+
+msgid "documentVersion"
+msgstr "documentVersion"
+
+msgid "urn:mace:dir:attribute-def:documentVersion"
+msgstr "urn:mace:dir:attribute-def:documentVersion"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.13"
+msgstr "urn:oid:0.9.2342.19200300.100.1.13"
+
+msgid "domainComponent"
+msgstr "domainComponent"
+
+msgid "urn:mace:dir:attribute-def:domainComponent"
+msgstr "urn:mace:dir:attribute-def:domainComponent"
+
+msgid "drink"
+msgstr "drink"
+
+msgid "urn:mace:dir:attribute-def:drink"
+msgstr "urn:mace:dir:attribute-def:drink"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.5"
+msgstr "urn:oid:0.9.2342.19200300.100.1.5"
+
+msgid "eduOrgHomePageURI"
+msgstr "Leqephe la lapeng la khampani"
+
+msgid "urn:mace:dir:attribute-def:eduOrgHomePageURI"
+msgstr "Leqephe la lapeng la khampani"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.2.1.2"
+msgstr "Leqephe la lapeng la khampani"
+
+msgid "eduOrgIdentityAuthNPolicyURI"
+msgstr "eduOrgIdentityAuthNPolicyURI"
+
+msgid "urn:mace:dir:attribute-def:eduOrgIdentityAuthNPolicyURI"
+msgstr "urn:mace:dir:attribute-def:eduOrgIdentityAuthNPolicyURI"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.2.1.3"
+msgstr "urn:oid:1.3.6.1.4.1.5923.1.2.1.3"
+
+msgid "eduOrgLegalName"
+msgstr "Lebitso la molao la khampani"
+
+msgid "urn:mace:dir:attribute-def:eduOrgLegalName"
+msgstr "Lebitso la molao la khampani"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.2.1.4"
+msgstr "Lebitso la molao la khampani"
+
+msgid "eduOrgSuperiorURI"
+msgstr "eduOrgSuperiorURI"
+
+msgid "urn:mace:dir:attribute-def:eduOrgSuperiorURI"
+msgstr "urn:mace:dir:attribute-def:eduOrgSuperiorURI"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.2.1.5"
+msgstr "urn:oid:1.3.6.1.4.1.5923.1.2.1.5"
+
+msgid "eduOrgWhitePagesURI"
+msgstr "eduOrgWhitePagesURI"
+
+msgid "urn:mace:dir:attribute-def:eduOrgWhitePagesURI"
+msgstr "urn:mace:dir:attribute-def:eduOrgWhitePagesURI"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.2.1.6"
+msgstr "urn:oid:1.3.6.1.4.1.5923.1.2.1.6"
+
+msgid "eduPersonAffiliation"
+msgstr "Kamano"
+
+msgid "urn:mace:dir:attribute-def:eduPersonAffiliation"
+msgstr "Kamano"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.1"
+msgstr "Kamano"
+
+msgid "eduPersonAssurance"
+msgstr "Profaele ya tiisetso ya boitsebiso"
+
+msgid "urn:mace:dir:attribute-def:eduPersonAssurance"
+msgstr "Profaele ya tiisetso ya boitsebiso"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.11"
+msgstr "Profaele ya tiisetso ya boitsebiso"
+
+msgid "eduPersonEntitlement"
+msgstr "Thuo bakeng sa tshebeletso"
+
+msgid "urn:mace:dir:attribute-def:eduPersonEntitlement"
+msgstr "Thuo bakeng sa tshebeletso"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.7"
+msgstr "Thuo bakeng sa tshebeletso"
+
+msgid "eduPersonNickname"
+msgstr "Lebitso la boswaswi"
+
+msgid "urn:mace:dir:attribute-def:eduPersonNickname"
+msgstr "Lebitso la boswaswi"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.2"
+msgstr "Lebitso la boswaswi"
+
+msgid "eduPersonOrgDN"
+msgstr "Lebitso le kgethehileng (DN) la khampani ya habo motho"
+
+msgid "urn:mace:dir:attribute-def:eduPersonOrgDN"
+msgstr "Lebitso le kgethehileng (DN) la khampani ya habo motho"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.3"
+msgstr "Lebitso le kgethehileng (DN) la khampani ya habo motho"
+
+msgid "eduPersonOrgUnitDN"
+msgstr ""Lebitso le kgethehileng (DN) la yuniti ya khampani ya habo motho"
+
+msgid "urn:mace:dir:attribute-def:eduPersonOrgUnitDN"
+msgstr ""Lebitso le kgethehileng (DN) la yuniti ya khampani ya habo motho"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.4"
+msgstr ""Lebitso le kgethehileng (DN) la yuniti ya khampani ya habo motho"
+
+msgid "eduPersonPrimaryAffiliation"
+msgstr "Kamano ya motheo"
+
+msgid "urn:mace:dir:attribute-def:eduPersonPrimaryAffiliation"
+msgstr "Kamano ya motheo"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.5"
+msgstr "Kamano ya motheo"
+
+msgid "eduPersonPrimaryOrgUnitDN"
+msgstr "Lebitso le kgethehileng (DN) la Yuniti ya Khampani ya Motheo ya habo motho"
+
+msgid "urn:mace:dir:attribute-def:eduPersonPrimaryOrgUnitDN"
+msgstr "Lebitso le kgethehileng (DN) la Yuniti ya Khampani ya Motheo ya habo motho"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.8"
+msgstr "Lebitso le kgethehileng (DN) la Yuniti ya Khampani ya Motheo ya habo motho"
+
+msgid "eduPersonPrincipalName"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "urn:mace:dir:attribute-def:eduPersonPrincipalName"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "eduPersonScopedAffiliation"
+msgstr "Kamano khampaning ya habo"
+
+msgid "urn:mace:dir:attribute-def:eduPersonScopedAffiliation"
+msgstr "Kamano khampaning ya habo"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.9"
+msgstr "Kamano khampaning ya habo"
+
+msgid "eduPersonTargetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "urn:mace:dir:attribute-def:eduPersonTargetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.10"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "eduPersonUniqueId"
+msgstr "ID ya boiqapelo le phehellang, e sa ajweng botjha ya motho ya khampani ya lapeng"
+
+msgid "urn:mace:dir:attribute-def:eduPersonUniqueId"
+msgstr "ID ya boiqapelo le phehellang, e sa ajweng botjha ya motho ya khampani ya lapeng"
+
+msgid "urn:oid:1.3.6.1.4.1.5923.1.1.1.13"
+msgstr "ID ya boiqapelo le phehellang, e sa ajweng botjha ya motho ya khampani ya lapeng"
+
+msgid "email"
+msgstr "Poso"
+
+msgid "urn:mace:dir:attribute-def:email"
+msgstr "Poso"
+
+msgid "urn:oid:1.2.840.113549.1.9.1"
+msgstr "Poso"
+
+msgid "emailAddress"
+msgstr "Poso"
+
+msgid "urn:mace:dir:attribute-def:emailAddress"
+msgstr "Poso"
+
+msgid "employeeNumber"
+msgstr "employeeNumber"
+
+msgid "urn:mace:dir:attribute-def:employeeNumber"
+msgstr "urn:mace:dir:attribute-def:employeeNumber"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.3"
+msgstr "urn:oid:2.16.840.1.113730.3.1.3"
+
+msgid "employeeType"
+msgstr "employeeType"
+
+msgid "urn:mace:dir:attribute-def:employeeType"
+msgstr "urn:mace:dir:attribute-def:employeeType"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.4"
+msgstr "urn:oid:2.16.840.1.113730.3.1.4"
+
+msgid "enhancedSearchGuide"
+msgstr "enhancedSearchGuide"
+
+msgid "urn:mace:dir:attribute-def:enhancedSearchGuide"
+msgstr "urn:mace:dir:attribute-def:enhancedSearchGuide"
+
+msgid "urn:oid:2.5.4.47"
+msgstr "urn:oid:2.5.4.47"
+
+msgid "facsimileTelephoneNumber"
+msgstr "Nomoro ya fekse"
+
+msgid "urn:mace:dir:attribute-def:facsimileTelephoneNumber"
+msgstr "Nomoro ya fekse"
+
+msgid "urn:oid:2.5.4.23"
+msgstr "Nomoro ya fekse"
+
+msgid "favouriteDrink"
+msgstr "favouriteDrink"
+
+msgid "urn:mace:dir:attribute-def:favouriteDrink"
+msgstr "urn:mace:dir:attribute-def:favouriteDrink"
+
+msgid "fax"
+msgstr "fax"
+
+msgid "urn:mace:dir:attribute-def:fax"
+msgstr "urn:mace:dir:attribute-def:fax"
+
+msgid "federationFeideSchemaVersion"
+msgstr "federationFeideSchemaVersion"
+
+msgid "urn:mace:dir:attribute-def:federationFeideSchemaVersion"
+msgstr "urn:mace:dir:attribute-def:federationFeideSchemaVersion"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.9"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.9"
+
+msgid "friendlyCountryName"
+msgstr "friendlyCountryName"
+
+msgid "urn:mace:dir:attribute-def:friendlyCountryName"
+msgstr "urn:mace:dir:attribute-def:friendlyCountryName"
+
+msgid "generationQualifier"
+msgstr "generationQualifier"
+
+msgid "urn:mace:dir:attribute-def:generationQualifier"
+msgstr "urn:mace:dir:attribute-def:generationQualifier"
+
+msgid "urn:oid:2.5.4.44"
+msgstr "urn:oid:2.5.4.44"
+
+msgid "givenName"
+msgstr "Lebitso le fanweng"
+
+msgid "urn:mace:dir:attribute-def:givenName"
+msgstr "Lebitso le fanweng"
+
+msgid "urn:oid:2.5.4.42"
+msgstr "Lebitso le fanweng"
+
+msgid "gn"
+msgstr "gn"
+
+msgid "urn:mace:dir:attribute-def:gn"
+msgstr "urn:mace:dir:attribute-def:gn"
+
+msgid "homePhone"
+msgstr "Founu ya lapeng"
+
+msgid "urn:mace:dir:attribute-def:homePhone"
+msgstr "Founu ya lapeng"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.20"
+msgstr "Founu ya lapeng"
+
+msgid "homePostalAddress"
+msgstr "Aterese ya lapeng ya poso"
+
+msgid "urn:mace:dir:attribute-def:homePostalAddress"
+msgstr "Aterese ya lapeng ya poso"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.39"
+msgstr "Aterese ya lapeng ya poso"
+
+msgid "homeTelephoneNumber"
+msgstr "homeTelephoneNumber"
+
+msgid "urn:mace:dir:attribute-def:homeTelephoneNumber"
+msgstr "urn:mace:dir:attribute-def:homeTelephoneNumber"
+
+msgid "host"
+msgstr "host"
+
+msgid "urn:mace:dir:attribute-def:host"
+msgstr "urn:mace:dir:attribute-def:host"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.9"
+msgstr "urn:oid:0.9.2342.19200300.100.1.9"
+
+msgid "houseIdentifier"
+msgstr "houseIdentifier"
+
+msgid "urn:mace:dir:attribute-def:houseIdentifier"
+msgstr "urn:mace:dir:attribute-def:houseIdentifier"
+
+msgid "urn:oid:2.5.4.51"
+msgstr "urn:oid:2.5.4.51"
+
+msgid "info"
+msgstr "info"
+
+msgid "urn:mace:dir:attribute-def:info"
+msgstr "urn:mace:dir:attribute-def:info"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.4"
+msgstr "urn:oid:0.9.2342.19200300.100.1.4"
+
+msgid "initials"
+msgstr "initials"
+
+msgid "urn:mace:dir:attribute-def:initials"
+msgstr "urn:mace:dir:attribute-def:initials"
+
+msgid "urn:oid:2.5.4.43"
+msgstr "urn:oid:2.5.4.43"
+
+msgid "internationaliSDNNumber"
+msgstr "internationaliSDNNumber"
+
+msgid "urn:mace:dir:attribute-def:internationaliSDNNumber"
+msgstr "urn:mace:dir:attribute-def:internationaliSDNNumber"
+
+msgid "urn:oid:2.5.4.25"
+msgstr "urn:oid:2.5.4.25"
+
+msgid "janetMailbox"
+msgstr "janetMailbox"
+
+msgid "urn:mace:dir:attribute-def:janetMailbox"
+msgstr "urn:mace:dir:attribute-def:janetMailbox"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.46"
+msgstr "urn:oid:0.9.2342.19200300.100.1.46"
+
+msgid "jpegPhoto"
+msgstr "Foto ya JPEG"
+
+msgid "urn:mace:dir:attribute-def:jpegPhoto"
+msgstr "Foto ya JPEG"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.60"
+msgstr "Foto ya JPEG"
+
+msgid "knowledgeInformation"
+msgstr "knowledgeInformation"
+
+msgid "urn:mace:dir:attribute-def:knowledgeInformation"
+msgstr "urn:mace:dir:attribute-def:knowledgeInformation"
+
+msgid "urn:oid:2.5.4.2"
+msgstr "urn:oid:2.5.4.2"
+
+msgid "l"
+msgstr "Tulo"
+
+msgid "urn:mace:dir:attribute-def:l"
+msgstr "Tulo"
+
+msgid "urn:oid:2.5.4.7"
+msgstr "Tulo"
+
+msgid "labeledURI"
+msgstr "Ya Leibole ya URI"
+
+msgid "urn:mace:dir:attribute-def:labeledURI"
+msgstr "Ya Leibole ya URI"
+
+msgid "urn:oid:1.3.6.1.4.1.250.1.57"
+msgstr "Ya Leibole ya URI"
+
+msgid "localityName"
+msgstr "localityName"
+
+msgid "urn:mace:dir:attribute-def:localityName"
+msgstr "urn:mace:dir:attribute-def:localityName"
+
+msgid "mDRecord"
+msgstr "mDRecord"
+
+msgid "urn:mace:dir:attribute-def:mDRecord"
+msgstr "urn:mace:dir:attribute-def:mDRecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.27"
+msgstr "urn:oid:0.9.2342.19200300.100.1.27"
+
+msgid "mXRecord"
+msgstr "mXRecord"
+
+msgid "urn:mace:dir:attribute-def:mXRecord"
+msgstr "urn:mace:dir:attribute-def:mXRecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.28"
+msgstr "urn:oid:0.9.2342.19200300.100.1.28"
+
+msgid "Poso"
+msgstr "Poso"
+
+msgid "urn:mace:dir:attribute-def:mail"
+msgstr "Poso"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.3"
+msgstr "Poso"
+
+msgid "mailPreferenceOption"
+msgstr "mailPreferenceOption"
+
+msgid "urn:mace:dir:attribute-def:mailPreferenceOption"
+msgstr "urn:mace:dir:attribute-def:mailPreferenceOption"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.47"
+msgstr "urn:oid:0.9.2342.19200300.100.1.47"
+
+msgid "Mookamedi"
+msgstr "Mookamedi"
+
+msgid "urn:mace:dir:attribute-def:manager"
+msgstr "Mookamedi"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.10"
+msgstr "Mookamedi"
+
+msgid "member"
+msgstr "member"
+
+msgid "urn:mace:dir:attribute-def:member"
+msgstr "urn:mace:dir:attribute-def:member"
+
+msgid "urn:oid:2.5.4.31"
+msgstr "urn:oid:2.5.4.31"
+
+msgid "E tsamayang"
+msgstr "E tsamayang"
+
+msgid "urn:mace:dir:attribute-def:mobile"
+msgstr "E tsamayang"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.41"
+msgstr "E tsamayang"
+
+msgid "mobileTelephoneNumber"
+msgstr "E tsamayang"
+
+msgid "urn:mace:dir:attribute-def:mobileTelephoneNumber"
+msgstr "E tsamayang"
+
+msgid "nSRecord"
+msgstr "nSRecord"
+
+msgid "urn:mace:dir:attribute-def:nSRecord"
+msgstr "urn:mace:dir:attribute-def:nSRecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.29"
+msgstr "urn:oid:0.9.2342.19200300.100.1.29"
+
+msgid "name"
+msgstr "name"
+
+msgid "urn:mace:dir:attribute-def:name"
+msgstr "urn:mace:dir:attribute-def:name"
+
+msgid "urn:oid:2.5.4.41"
+msgstr "urn:oid:2.5.4.41"
+
+msgid "norEduOrgAcronym"
+msgstr "norEduOrgAcronym"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgAcronym"
+msgstr "urn:mace:dir:attribute-def:norEduOrgAcronym"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.6"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.6"
+
+msgid "norEduOrgNIN"
+msgstr "Nomoro ya khampani"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgNIN"
+msgstr "Nomoro ya khampani"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.12"
+msgstr "Nomoro ya khampani"
+
+msgid "norEduOrgSchemaVersion"
+msgstr "norEduOrgSchemaVersion"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgSchemaVersion"
+msgstr "urn:mace:dir:attribute-def:norEduOrgSchemaVersion"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.11"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.11"
+
+msgid "norEduOrgUniqueIdentifier"
+msgstr "norEduOrgUniqueIdentifier"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgUniqueIdentifier"
+msgstr "urn:mace:dir:attribute-def:norEduOrgUniqueIdentifier"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.7"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.7"
+
+msgid "norEduOrgUniqueNumber"
+msgstr "norEduOrgUniqueNumber"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgUniqueNumber"
+msgstr "urn:mace:dir:attribute-def:norEduOrgUniqueNumber"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.1"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.1"
+
+msgid "norEduOrgUnitUniqueIdentifier"
+msgstr "norEduOrgUnitUniqueIdentifier"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgUnitUniqueIdentifier"
+msgstr "urn:mace:dir:attribute-def:norEduOrgUnitUniqueIdentifier"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.8"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.8"
+
+msgid "norEduOrgUnitUniqueNumber"
+msgstr "norEduOrgUnitUniqueNumber"
+
+msgid "urn:mace:dir:attribute-def:norEduOrgUnitUniqueNumber"
+msgstr "urn:mace:dir:attribute-def:norEduOrgUnitUniqueNumber"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.2"
+msgstr "urn:oid:1.3.6.1.4.1.2428.90.1.2"
+
+msgid "norEduPersonBirthDate"
+msgstr "Letsatsi la tswalo"
+
+msgid "urn:mace:dir:attribute-def:norEduPersonBirthDate"
+msgstr "Letsatsi la tswalo"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.3"
+msgstr "Letsatsi la tswalo"
+
+msgid "norEduPersonLIN"
+msgstr "Nomoro ya boitsebiso ya lehae"
+
+msgid "urn:mace:dir:attribute-def:norEduPersonLIN"
+msgstr "Nomoro ya boitsebiso ya lehae"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.4"
+msgstr "Nomoro ya boitsebiso ya lehae"
+
+msgid "norEduPersonNIN"
+msgstr "Nomoro ya boitsebiso e abilwe ke bolaodi ba puso"
+
+msgid "urn:mace:dir:attribute-def:norEduPersonNIN"
+msgstr "Nomoro ya boitsebiso e abilwe ke bolaodi ba puso"
+
+msgid "urn:oid:1.3.6.1.4.1.2428.90.1.5"
+msgstr "Nomoro ya boitsebiso e abilwe ke bolaodi ba puso"
+
+msgid "o"
+msgstr "Lebitso la khampani"
+
+msgid "urn:mace:dir:attribute-def:o"
+msgstr "Lebitso la khampani"
+
+msgid "urn:oid:2.5.4.10"
+msgstr "Lebitso la khampani"
+
+msgid "objectClass"
+msgstr "objectClass"
+
+msgid "urn:mace:dir:attribute-def:objectClass"
+msgstr "urn:mace:dir:attribute-def:objectClass"
+
+msgid "urn:oid:2.5.4.0"
+msgstr "urn:oid:2.5.4.0"
+
+msgid "organizationName"
+msgstr "organizationName"
+
+msgid "urn:mace:dir:attribute-def:organizationName"
+msgstr "urn:mace:dir:attribute-def:organizationName"
+
+msgid "organizationalStatus"
+msgstr "organizationalStatus"
+
+msgid "urn:mace:dir:attribute-def:organizationalStatus"
+msgstr "urn:mace:dir:attribute-def:organizationalStatus"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.45"
+msgstr "urn:oid:0.9.2342.19200300.100.1.45"
+
+msgid "organizationalUnitName"
+msgstr "organizationalUnitName"
+
+msgid "urn:mace:dir:attribute-def:organizationalUnitName"
+msgstr "urn:mace:dir:attribute-def:organizationalUnitName"
+
+msgid "urn:oid:2.5.4.11"
+msgstr "Yuniti ya khampani"
+
+msgid "otherMailbox"
+msgstr "otherMailbox"
+
+msgid "urn:mace:dir:attribute-def:otherMailbox"
+msgstr "urn:mace:dir:attribute-def:otherMailbox"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.22"
+msgstr "urn:oid:0.9.2342.19200300.100.1.22"
+
+msgid "ou"
+msgstr "Yuniti ya khampani"
+
+msgid "urn:mace:dir:attribute-def:ou"
+msgstr "Yuniti ya khampani"
+
+msgid "owner"
+msgstr "owner"
+
+msgid "urn:mace:dir:attribute-def:owner"
+msgstr "urn:mace:dir:attribute-def:owner"
+
+msgid "urn:oid:2.5.4.32"
+msgstr "urn:oid:2.5.4.32"
+
+msgid "pager"
+msgstr "pager"
+
+msgid "urn:mace:dir:attribute-def:pager"
+msgstr "urn:mace:dir:attribute-def:pager"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.42"
+msgstr "urn:oid:0.9.2342.19200300.100.1.42"
+
+msgid "pagerTelephoneNumber"
+msgstr "pagerTelephoneNumber"
+
+msgid "urn:mace:dir:attribute-def:pagerTelephoneNumber"
+msgstr "urn:mace:dir:attribute-def:pagerTelephoneNumber"
+
+msgid "pairwise-id"
+msgstr "Service-specific pseudonymous ID at home organization"
+
+msgid "urn:oasis:names:tc:SAML:attribute:pairwise-id"
+msgstr "Service-specific pseudonymous ID at home organization"
+
+msgid "personalSignature"
+msgstr "personalSignature"
+
+msgid "urn:mace:dir:attribute-def:personalSignature"
+msgstr "urn:mace:dir:attribute-def:personalSignature"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.53"
+msgstr "urn:oid:0.9.2342.19200300.100.1.53"
+
+msgid "personalTitle"
+msgstr "personalTitle"
+
+msgid "urn:mace:dir:attribute-def:personalTitle"
+msgstr "urn:mace:dir:attribute-def:personalTitle"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.40"
+msgstr "urn:oid:0.9.2342.19200300.100.1.40"
+
+msgid "photo"
+msgstr "photo"
+
+msgid "urn:mace:dir:attribute-def:photo"
+msgstr "urn:mace:dir:attribute-def:photo"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.7"
+msgstr "urn:oid:0.9.2342.19200300.100.1.7"
+
+msgid "physicalDeliveryOfficeName"
+msgstr "physicalDeliveryOfficeName"
+
+msgid "urn:mace:dir:attribute-def:physicalDeliveryOfficeName"
+msgstr "urn:mace:dir:attribute-def:physicalDeliveryOfficeName"
+
+msgid "urn:oid:2.5.4.19"
+msgstr "urn:oid:2.5.4.19"
+
+msgid "pkcs9email"
+msgstr "pkcs9email"
+
+msgid "urn:mace:dir:attribute-def:pkcs9email"
+msgstr "urn:mace:dir:attribute-def:pkcs9email"
+
+msgid "postOfficeBox"
+msgstr "Lebokose la poso"
+
+msgid "urn:mace:dir:attribute-def:postOfficeBox"
+msgstr "Lebokose la poso"
+
+msgid "urn:oid:2.5.4.18"
+msgstr "Lebokose la poso"
+
+msgid "postalAddress"
+msgstr "Aterese ya poso"
+
+msgid "urn:mace:dir:attribute-def:postalAddress"
+msgstr "Aterese ya poso"
+
+msgid "urn:oid:2.5.4.16"
+msgstr "Aterese ya poso"
+
+msgid "postalCode"
+msgstr "Khoutu ya poso"
+
+msgid "urn:mace:dir:attribute-def:postalCode"
+msgstr "Khoutu ya poso"
+
+msgid "urn:oid:2.5.4.17"
+msgstr "Khoutu ya poso"
+
+msgid "preferredDeliveryMethod"
+msgstr "preferredDeliveryMethod"
+
+msgid "urn:mace:dir:attribute-def:preferredDeliveryMethod"
+msgstr "urn:mace:dir:attribute-def:preferredDeliveryMethod"
+
+msgid "urn:oid:2.5.4.28"
+msgstr "urn:oid:2.5.4.28"
+
+msgid "preferredLanguage"
+msgstr "Puo e kgethwang"
+
+msgid "urn:mace:dir:attribute-def:preferredLanguage"
+msgstr "Puo e kgethwang"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.39"
+msgstr "Puo e kgethwang"
+
+msgid "presentationAddress"
+msgstr "presentationAddress"
+
+msgid "urn:mace:dir:attribute-def:presentationAddress"
+msgstr "urn:mace:dir:attribute-def:presentationAddress"
+
+msgid "urn:oid:2.5.4.29"
+msgstr "urn:oid:2.5.4.29"
+
+msgid "protocolInformation"
+msgstr "protocolInformation"
+
+msgid "urn:mace:dir:attribute-def:protocolInformation"
+msgstr "urn:mace:dir:attribute-def:protocolInformation"
+
+msgid "urn:oid:2.5.4.48"
+msgstr "urn:oid:2.5.4.48"
+
+msgid "pseudonym"
+msgstr "pseudonym"
+
+msgid "urn:mace:dir:attribute-def:pseudonym"
+msgstr "urn:mace:dir:attribute-def:pseudonym"
+
+msgid "urn:oid:2.5.4.65"
+msgstr "urn:oid:2.5.4.65"
+
+msgid "registeredAddress"
+msgstr "registeredAddress"
+
+msgid "urn:mace:dir:attribute-def:registeredAddress"
+msgstr "urn:mace:dir:attribute-def:registeredAddress"
+
+msgid "urn:oid:2.5.4.26"
+msgstr "urn:oid:2.5.4.26"
+
+msgid "rfc822Mailbox"
+msgstr "rfc822Mailbox"
+
+msgid "urn:mace:dir:attribute-def:rfc822Mailbox"
+msgstr "urn:mace:dir:attribute-def:rfc822Mailbox"
+
+msgid "roleOccupant"
+msgstr "roleOccupant"
+
+msgid "urn:mace:dir:attribute-def:roleOccupant"
+msgstr "urn:mace:dir:attribute-def:roleOccupant"
+
+msgid "urn:oid:2.5.4.33"
+msgstr "urn:oid:2.5.4.33"
+
+msgid "roomNumber"
+msgstr "roomNumber"
+
+msgid "urn:mace:dir:attribute-def:roomNumber"
+msgstr "urn:mace:dir:attribute-def:roomNumber"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.6"
+msgstr "urn:oid:0.9.2342.19200300.100.1.6"
+
+msgid "sOARecord"
+msgstr "sOARecord"
+
+msgid "urn:mace:dir:attribute-def:sOARecord"
+msgstr "urn:mace:dir:attribute-def:sOARecord"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.30"
+msgstr "urn:oid:0.9.2342.19200300.100.1.30"
+
+msgid "schacCountryOfCitizenship"
+msgstr "schacCountryOfCitizenship"
+
+msgid "urn:mace:terena.org:attribute-def:schacCountryOfCitizenship"
+msgstr "urn:mace:terena.org:attribute-def:schacCountryOfCitizenship"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.5"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.5"
+
+msgid "urn:schac:attribute-def:schacCountryOfCitizenship"
+msgstr "urn:schac:attribute-def:schacCountryOfCitizenship"
+
+msgid "schacCountryOfResidence"
+msgstr "schacCountryOfResidence"
+
+msgid "urn:mace:terena.org:attribute-def:schacCountryOfResidence"
+msgstr "urn:mace:terena.org:attribute-def:schacCountryOfResidence"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.11"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.11"
+
+msgid "urn:schac:attribute-def:schacCountryOfResidence"
+msgstr "urn:schac:attribute-def:schacCountryOfResidence"
+
+msgid "schacDateOfBirth"
+msgstr "schacDateOfBirth"
+
+msgid "urn:mace:terena.org:attribute-def:schacDateOfBirth"
+msgstr "urn:mace:terena.org:attribute-def:schacDateOfBirth"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.3"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.3"
+
+msgid "urn:schac:attribute-def:schacDateOfBirth"
+msgstr "urn:schac:attribute-def:schacDateOfBirth"
+
+msgid "schacExpiryDate"
+msgstr "schacExpiryDate"
+
+msgid "urn:mace:terena.org:attribute-def:schacExpiryDate"
+msgstr "urn:mace:terena.org:attribute-def:schacExpiryDate"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.17"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.17"
+
+msgid "urn:schac:attribute-def:schacExpiryDate"
+msgstr "urn:schac:attribute-def:schacExpiryDate"
+
+msgid "schacGender"
+msgstr "schacGender"
+
+msgid "urn:mace:terena.org:attribute-def:schacGender"
+msgstr "urn:mace:terena.org:attribute-def:schacGender"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.2"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.2"
+
+msgid "urn:schac:attribute-def:schacGender"
+msgstr "urn:schac:attribute-def:schacGender"
+
+msgid "schacHomeOrganization"
+msgstr "Lebitso la domeine ya khampani"
+
+msgid "urn:mace:terena.org:attribute-def:schacHomeOrganization"
+msgstr "Lebitso la domeine ya khampani"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.9"
+msgstr "Lebitso la domeine ya khampani"
+
+msgid "urn:schac:attribute-def:schacHomeOrganization"
+msgstr "Lebitso la domeine ya khampani"
+
+msgid "schacHomeOrganizationType"
+msgstr "schacHomeOrganizationType"
+
+msgid "urn:mace:terena.org:attribute-def:schacHomeOrganizationType"
+msgstr "urn:mace:terena.org:attribute-def:schacHomeOrganizationType"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.10"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.10"
+
+msgid "urn:schac:attribute-def:schacHomeOrganizationType"
+msgstr "urn:schac:attribute-def:schacHomeOrganizationType"
+
+msgid "schacMotherTongue"
+msgstr "schacMotherTongue"
+
+msgid "urn:mace:terena.org:attribute-def:schacMotherTongue"
+msgstr "urn:mace:terena.org:attribute-def:schacMotherTongue"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.1"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.1"
+
+msgid "urn:schac:attribute-def:schacMotherTongue"
+msgstr "urn:schac:attribute-def:schacMotherTongue"
+
+msgid "schacPersonalPosition"
+msgstr "schacPersonalPosition"
+
+msgid "urn:mace:terena.org:attribute-def:schacPersonalPosition"
+msgstr "urn:mace:terena.org:attribute-def:schacPersonalPosition"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.13"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.13"
+
+msgid "urn:schac:attribute-def:schacPersonalPosition"
+msgstr "urn:schac:attribute-def:schacPersonalPosition"
+
+msgid "schacPersonalTitle"
+msgstr "schacPersonalTitle"
+
+msgid "urn:mace:terena.org:attribute-def:schacPersonalTitle"
+msgstr "urn:mace:terena.org:attribute-def:schacPersonalTitle"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.8"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.8"
+
+msgid "urn:schac:attribute-def:schacPersonalTitle"
+msgstr "urn:schac:attribute-def:schacPersonalTitle"
+
+msgid "schacPersonalUniqueCode"
+msgstr "schacPersonalUniqueCode"
+
+msgid "urn:mace:terena.org:attribute-def:schacPersonalUniqueCode"
+msgstr "urn:mace:terena.org:attribute-def:schacPersonalUniqueCode"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.14"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.14"
+
+msgid "urn:schac:attribute-def:schacPersonalUniqueCode"
+msgstr "urn:schac:attribute-def:schacPersonalUniqueCode"
+
+msgid "schacPersonalUniqueID"
+msgstr "schacPersonalUniqueID"
+
+msgid "urn:mace:terena.org:attribute-def:schacPersonalUniqueID"
+msgstr "urn:mace:terena.org:attribute-def:schacPersonalUniqueID"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.15"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.15"
+
+msgid "urn:schac:attribute-def:schacPersonalUniqueID"
+msgstr "urn:schac:attribute-def:schacPersonalUniqueID"
+
+msgid "schacPlaceOfBirth"
+msgstr "schacPlaceOfBirth"
+
+msgid "urn:mace:terena.org:attribute-def:schacPlaceOfBirth"
+msgstr "urn:mace:terena.org:attribute-def:schacPlaceOfBirth"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.4"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.4"
+
+msgid "urn:schac:attribute-def:schacPlaceOfBirth"
+msgstr "urn:schac:attribute-def:schacPlaceOfBirth"
+
+msgid "schacProjectMembership"
+msgstr "schacProjectMembership"
+
+msgid "urn:mace:terena.org:attribute-def:schacProjectMembership"
+msgstr "urn:mace:terena.org:attribute-def:schacProjectMembership"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.20"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.20"
+
+msgid "urn:schac:attribute-def:schacProjectMembership"
+msgstr "urn:schac:attribute-def:schacProjectMembership"
+
+msgid "schacProjectSpecificRole"
+msgstr "schacProjectSpecificRole"
+
+msgid "urn:mace:terena.org:attribute-def:schacProjectSpecificRole"
+msgstr "urn:mace:terena.org:attribute-def:schacProjectSpecificRole"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.21"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.21"
+
+msgid "urn:schac:attribute-def:schacProjectSpecificRole"
+msgstr "urn:schac:attribute-def:schacProjectSpecificRole"
+
+msgid "schacSn1"
+msgstr "schacSn1"
+
+msgid "urn:mace:terena.org:attribute-def:schacSn1"
+msgstr "urn:mace:terena.org:attribute-def:schacSn1"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.6"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.6"
+
+msgid "urn:schac:attribute-def:schacSn1"
+msgstr "urn:schac:attribute-def:schacSn1"
+
+msgid "schacSn2"
+msgstr "schacSn2"
+
+msgid "urn:mace:terena.org:attribute-def:schacSn2"
+msgstr "urn:mace:terena.org:attribute-def:schacSn2"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.7"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.7"
+
+msgid "urn:schac:attribute-def:schacSn2"
+msgstr "urn:schac:attribute-def:schacSn2"
+
+msgid "schacUserPresenceID"
+msgstr "schacUserPresenceID"
+
+msgid "urn:mace:terena.org:attribute-def:schacUserPresenceID"
+msgstr "urn:mace:terena.org:attribute-def:schacUserPresenceID"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.12"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.12"
+
+msgid "urn:schac:attribute-def:schacUserPresenceID"
+msgstr "urn:schac:attribute-def:schacUserPresenceID"
+
+msgid "schacUserPrivateAttribute"
+msgstr "Dielemente tsa tlhahisoleseding ya poraefete"
+
+msgid "urn:mace:terena.org:attribute-def:schacUserPrivateAttribute"
+msgstr "Dielemente tsa tlhahisoleseding ya poraefete"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.18"
+msgstr "Dielemente tsa tlhahisoleseding ya poraefete"
+
+msgid "urn:schac:attribute-def:schacUserPrivateAttribute"
+msgstr "Dielemente tsa tlhahisoleseding ya poraefete"
+
+msgid "schacUserStatus"
+msgstr "schacUserStatus"
+
+msgid "urn:mace:terena.org:attribute-def:schacUserStatus"
+msgstr "urn:mace:terena.org:attribute-def:schacUserStatus"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.2.19"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.2.19"
+
+msgid "urn:schac:attribute-def:schacUserStatus"
+msgstr "urn:schac:attribute-def:schacUserStatus"
+
+msgid "schacYearOfBirth"
+msgstr "schacYearOfBirth"
+
+msgid "urn:mace:terena.org:attribute-def:schacYearOfBirth"
+msgstr "urn:mace:terena.org:attribute-def:schacYearOfBirth"
+
+msgid "urn:oid:1.3.6.1.4.1.25178.1.0.2.3"
+msgstr "urn:oid:1.3.6.1.4.1.25178.1.0.2.3"
+
+msgid "urn:schac:attribute-def:schacYearOfBirth"
+msgstr "urn:schac:attribute-def:schacYearOfBirth"
+
+msgid "searchGuide"
+msgstr "searchGuide"
+
+msgid "urn:mace:dir:attribute-def:searchGuide"
+msgstr "urn:mace:dir:attribute-def:searchGuide"
+
+msgid "urn:oid:2.5.4.14"
+msgstr "urn:oid:2.5.4.14"
+
+msgid "secretary"
+msgstr "secretary"
+
+msgid "urn:mace:dir:attribute-def:secretary"
+msgstr "urn:mace:dir:attribute-def:secretary"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.21"
+msgstr "urn:oid:0.9.2342.19200300.100.1.21"
+
+msgid "seeAlso"
+msgstr "seeAlso"
+
+msgid "urn:mace:dir:attribute-def:seeAlso"
+msgstr "urn:mace:dir:attribute-def:seeAlso"
+
+msgid "urn:oid:2.5.4.34"
+msgstr "urn:oid:2.5.4.34"
+
+msgid "serialNumber"
+msgstr "serialNumber"
+
+msgid "urn:mace:dir:attribute-def:serialNumber"
+msgstr "urn:mace:dir:attribute-def:serialNumber"
+
+msgid "urn:oid:2.5.4.5"
+msgstr "urn:oid:2.5.4.5"
+
+msgid "singleLevelQuality"
+msgstr "singleLevelQuality"
+
+msgid "urn:mace:dir:attribute-def:singleLevelQuality"
+msgstr "urn:mace:dir:attribute-def:singleLevelQuality"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.50"
+msgstr "urn:oid:0.9.2342.19200300.100.1.50"
+
+msgid "sisSchoolGrade"
+msgstr "sisSchoolGrade"
+
+msgid "urn:mace:dir:attribute-def:sisSchoolGrade"
+msgstr "urn:mace:dir:attribute-def:sisSchoolGrade"
+
+msgid "urn:oid:1.2.752.194.10.2.2"
+msgstr "urn:oid:1.2.752.194.10.2.2"
+
+msgid "sisLegalGuardianFor"
+msgstr "sisLegalGuardianFor"
+
+msgid "urn:mace:dir:attribute-def:sisLegalGuardianFor"
+msgstr "urn:mace:dir:attribute-def:sisLegalGuardianFor"
+
+msgid "urn:oid:1.2.752.194.10.2.1"
+msgstr "urn:oid:1.2.752.194.10.2.1"
+
+msgid "sn"
+msgstr "Difane"
+
+msgid "urn:mace:dir:attribute-def:sn"
+msgstr "Difane"
+
+msgid "urn:oid:2.5.4.4"
+msgstr "Difane"
+
+msgid "st"
+msgstr "st"
+
+msgid "urn:mace:dir:attribute-def:st"
+msgstr "urn:mace:dir:attribute-def:st"
+
+msgid "urn:oid:2.5.4.8"
+msgstr "urn:oid:2.5.4.8"
+
+msgid "stateOrProvinceName"
+msgstr "stateOrProvinceName"
+
+msgid "urn:mace:dir:attribute-def:stateOrProvinceName"
+msgstr "urn:mace:dir:attribute-def:stateOrProvinceName"
+
+msgid "Seterata"
+msgstr "Seterata"
+
+msgid "urn:mace:dir:attribute-def:street"
+msgstr "Seterata"
+
+msgid "urn:oid:2.5.4.9"
+msgstr "Seterata"
+
+msgid "streetAddress"
+msgstr "streetAddress"
+
+msgid "urn:mace:dir:attribute-def:streetAddress"
+msgstr "urn:mace:dir:attribute-def:streetAddress"
+
+msgid "subject-id"
+msgstr "Pseudonymous ID at home organization"
+
+msgid "urn:oasis:names:tc:SAML:attribute:subject-id"
+msgstr "Pseudonymous ID at home organization"
+
+msgid "subtreeMaximumQuality"
+msgstr "subtreeMaximumQuality"
+
+msgid "urn:mace:dir:attribute-def:subtreeMaximumQuality"
+msgstr "urn:mace:dir:attribute-def:subtreeMaximumQuality"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.52"
+msgstr "urn:oid:0.9.2342.19200300.100.1.52"
+
+msgid "subtreeMinimumQuality"
+msgstr "subtreeMinimumQuality"
+
+msgid "urn:mace:dir:attribute-def:subtreeMinimumQuality"
+msgstr "urn:mace:dir:attribute-def:subtreeMinimumQuality"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.51"
+msgstr "urn:oid:0.9.2342.19200300.100.1.51"
+
+msgid "supportedAlgorithms"
+msgstr "supportedAlgorithms"
+
+msgid "urn:mace:dir:attribute-def:supportedAlgorithms"
+msgstr "urn:mace:dir:attribute-def:supportedAlgorithms"
+
+msgid "urn:oid:2.5.4.52"
+msgstr "urn:oid:2.5.4.52"
+
+msgid "supportedApplicationContext"
+msgstr "supportedApplicationContext"
+
+msgid "urn:mace:dir:attribute-def:supportedApplicationContext"
+msgstr "urn:mace:dir:attribute-def:supportedApplicationContext"
+
+msgid "urn:oid:2.5.4.30"
+msgstr "urn:oid:2.5.4.30"
+
+msgid "Difane"
+msgstr "Difane"
+
+msgid "urn:mace:dir:attribute-def:surname"
+msgstr "urn:mace:dir:attribute-def:surname"
+
+msgid "telephoneNumber"
+msgstr "Nomoro ya founu"
+
+msgid "urn:mace:dir:attribute-def:telephoneNumber"
+msgstr "Nomoro ya founu"
+
+msgid "urn:oid:2.5.4.20"
+msgstr "Nomoro ya founu"
+
+msgid "teletexTerminalIdentifier"
+msgstr "teletexTerminalIdentifier"
+
+msgid "urn:mace:dir:attribute-def:teletexTerminalIdentifier"
+msgstr "urn:mace:dir:attribute-def:teletexTerminalIdentifier"
+
+msgid "urn:oid:2.5.4.22"
+msgstr "urn:oid:2.5.4.22"
+
+msgid "telexNumber"
+msgstr "telexNumber"
+
+msgid "urn:mace:dir:attribute-def:telexNumber"
+msgstr "urn:mace:dir:attribute-def:telexNumber"
+
+msgid "urn:oid:2.5.4.21"
+msgstr "urn:oid:2.5.4.21"
+
+msgid "textEncodedORAddress"
+msgstr "textEncodedORAddress"
+
+msgid "urn:mace:dir:attribute-def:textEncodedORAddress"
+msgstr "urn:mace:dir:attribute-def:textEncodedORAddress"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.2"
+msgstr "urn:oid:0.9.2342.19200300.100.1.2"
+
+msgid "title"
+msgstr "Thaetlele"
+
+msgid "urn:mace:dir:attribute-def:title"
+msgstr "Thaetlele"
+
+msgid "urn:oid:2.5.4.12"
+msgstr "Thaetlele"
+
+msgid "uid"
+msgstr "ID ya Mosebedisi"
+
+msgid "urn:mace:dir:attribute-def:uid"
+msgstr "ID ya Mosebedisi"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.1"
+msgstr "ID ya Mosebedisi"
+
+msgid "uniqueIdentifier"
+msgstr "uniqueIdentifier"
+
+msgid "urn:mace:dir:attribute-def:uniqueIdentifier"
+msgstr "urn:mace:dir:attribute-def:uniqueIdentifier"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.44"
+msgstr "urn:oid:0.9.2342.19200300.100.1.44"
+
+msgid "uniqueMember"
+msgstr "uniqueMember"
+
+msgid "urn:mace:dir:attribute-def:uniqueMember"
+msgstr "urn:mace:dir:attribute-def:uniqueMember"
+
+msgid "urn:oid:2.5.4.50"
+msgstr "urn:oid:2.5.4.50"
+
+msgid "userCertificate"
+msgstr "userCertificate"
+
+msgid "urn:mace:dir:attribute-def:userCertificate"
+msgstr "urn:mace:dir:attribute-def:userCertificate"
+
+msgid "urn:oid:2.5.4.36"
+msgstr "urn:oid:2.5.4.36"
+
+msgid "userClass"
+msgstr "userClass"
+
+msgid "urn:mace:dir:attribute-def:userClass"
+msgstr "urn:mace:dir:attribute-def:userClass"
+
+msgid "urn:oid:0.9.2342.19200300.100.1.8"
+msgstr "urn:oid:0.9.2342.19200300.100.1.8"
+
+msgid "userPKCS12"
+msgstr "userPKCS12"
+
+msgid "urn:mace:dir:attribute-def:userPKCS12"
+msgstr "urn:mace:dir:attribute-def:userPKCS12"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.216"
+msgstr "urn:oid:2.16.840.1.113730.3.1.216"
+
+msgid "userPassword"
+msgstr "Hesh ya phasewete ya mosebedisi"
+
+msgid "urn:mace:dir:attribute-def:userPassword"
+msgstr "Hesh ya phasewete ya mosebedisi"
+
+msgid "urn:oid:2.5.4.35"
+msgstr "Hesh ya phasewete ya mosebedisi"
+
+msgid "userSMIMECertificate"
+msgstr "userSMIMECertificate"
+
+msgid "urn:mace:dir:attribute-def:userSMIMECertificate"
+msgstr "urn:mace:dir:attribute-def:userSMIMECertificate"
+
+msgid "urn:oid:2.16.840.1.113730.3.1.40"
+msgstr "urn:oid:2.16.840.1.113730.3.1.40"
+
+msgid "userid"
+msgstr "userid"
+
+msgid "urn:mace:dir:attribute-def:userid"
+msgstr "urn:mace:dir:attribute-def:userid"
+
+msgid "x121Address"
+msgstr "x121Address"
+
+msgid "urn:mace:dir:attribute-def:x121Address"
+msgstr "urn:mace:dir:attribute-def:x121Address"
+
+msgid "urn:oid:2.5.4.24"
+msgstr "urn:oid:2.5.4.24"
+
+msgid "x500UniqueIdentifier"
+msgstr "x500UniqueIdentifier"
+
+msgid "urn:mace:dir:attribute-def:x500UniqueIdentifier"
+msgstr "urn:mace:dir:attribute-def:x500UniqueIdentifier"
+
+msgid "urn:oid:2.5.4.45"
+msgstr "urn:oid:2.5.4.45"
+
+msgid "facebook_cn"
+msgstr "Lebitso le tlwaelehileng"
+
+msgid "http://axschema.org/contact/country/home"
+msgstr "http://axschema.org/contact/country/home"
+
+msgid "openid.sreg.country"
+msgstr "openid.sreg.country"
+
+msgid "facebook.about_me"
+msgstr "facebook.about_me"
+
+msgid "linkedin.summary"
+msgstr "linkedin.summary"
+
+msgid "twitter.description"
+msgstr "twitter.description"
+
+msgid "facebook.name"
+msgstr "Lebitso le bontshwang"
+
+msgid "http://axschema.org/namePerson/friendly"
+msgstr "Lebitso le bontshwang"
+
+msgid "openid.sreg.nickname"
+msgstr "Lebitso le bontshwang"
+
+msgid "http://axschema.org/namePerson"
+msgstr "Lebitso le bontshwang"
+
+msgid "openid.sreg.fullname"
+msgstr "Lebitso le bontshwang"
+
+msgid "twitter.name"
+msgstr "Lebitso le bontshwang"
+
+msgid "windowslive.displayName"
+msgstr "Lebitso le bontshwang"
+
+msgid "facebook_user"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "linkedin_user"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "twitter_screen_n_realm"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "windowslive_user"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "windowslive.userPrincipalName"
+msgstr "Lebitso la sehlooho la motho khampaning ya habo"
+
+msgid "facebook_targetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "linkedin_targetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "twitter_targetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "windowslive_targetedID"
+msgstr "ID e phehellang ya lebitso la boiqapelo"
+
+msgid "http://axschema.org/contact/phone/fax"
+msgstr "Nomoro ya fekse"
+
+msgid "facebook.first_name"
+msgstr "Lebitso le fanweng"
+
+msgid "linkedin.firstName"
+msgstr "Lebitso le fanweng"
+
+msgid "http://axschema.org/namePerson/first"
+msgstr "Lebitso le fanweng"
+
+msgid "windowslive.FirstName"
+msgstr "Lebitso le fanweng"
+
+msgid "windowslive.givenName"
+msgstr "Lebitso le fanweng"
+
+msgid "http://axschema.org/contact/phone/home"
+msgstr "Founu ya lapeng"
+
+msgid "windowslive.Location"
+msgstr "Tulo"
+
+msgid "facebook.profile_url"
+msgstr "Ya Leibole ya URI"
+
+msgid "twitter.url"
+msgstr "Ya Leibole ya URI"
+
+msgid "facebook.email"
+msgstr "Poso"
+
+msgid "http://axschema.org/contact/email"
+msgstr "Poso"
+
+msgid "openid.sreg.email"
+msgstr "Poso"
+
+msgid "windowslive_mail"
+msgstr "Poso"
+
+msgid "windowslive.mail"
+msgstr "Poso"
+
+msgid "http://axschema.org/contact/phone/cell"
+msgstr "E tsamayang"
+
+msgid "http://axschema.org/company/name"
+msgstr "Lebitso la khampani"
+
+msgid "http://axschema.org/namePerson/prefix"
+msgstr "http://axschema.org/namePerson/prefix"
+
+msgid "http://axschema.org/contact/postalCode/home"
+msgstr "Khoutu ya poso"
+
+msgid "openid.sreg.postcode"
+msgstr "Khoutu ya poso"
+
+msgid "facebook.locale"
+msgstr "Puo e kgethwang"
+
+msgid "http://axschema.org/pref/language"
+msgstr "Puo e kgethwang"
+
+msgid "openid.sreg.language"
+msgstr "Puo e kgethwang"
+
+msgid "twitter.lang"
+msgstr "Puo e kgethwang"
+
+msgid "windowslive.preferredLanguage"
+msgstr "Puo e kgethwang"
+
+msgid "facebook.last_name"
+msgstr "Difane"
+
+msgid "linkedin.lastName"
+msgstr "Difane"
+
+msgid "http://axschema.org/namePerson/last"
+msgstr "Difane"
+
+msgid "windowslive.LastName"
+msgstr "Difane"
+
+msgid "windowslive.surname"
+msgstr "Difane"
+
+msgid "http://axschema.org/contact/phone/default"
+msgstr "Nomoro ya founu"
+
+msgid "http://axschema.org/contact/phone/business"
+msgstr "Nomoro ya founu"
+
+msgid "linkedin.headline"
+msgstr "Thaetlele"
+
+msgid "http://axschema.org/company/title"
+msgstr "Thaetlele"
+
+msgid "facebook.username"
+msgstr "ID ya Mosebedisi"
+
+msgid "linkedin.id"
+msgstr "ID ya Mosebedisi"
+
+msgid "twitter.screen_name"
+msgstr "ID ya Mosebedisi"
+
+msgid "windowslive_uid"
+msgstr "ID ya Mosebedisi"
+
+msgid "windowslive.id"
+msgstr "ID ya Mosebedisi"

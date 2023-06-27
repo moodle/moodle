@@ -1,0 +1,1470 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: sr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP metapodaci"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Korisnik s navedenim korisničkim imenom ne može biti pronađen ili je "
+"lozinka koju ste uneli neispravna. Molimo proverite korisničko ime i "
+"pokušajte ponovo."
+
+msgid "{logout:failed}"
+msgstr "Odjava nije uspela"
+
+msgid "{status:attributes_header}"
+msgstr "Vaši atributi"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 Davalac Servisa (udaljeni)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr ""
+"Neuspešna autentifikacija: vaš web pretraživač nije poslao digitalni "
+"sertifikat"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Greška pri obradi odgovora koji je poslao Davalac Identeteta"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Podaci o stanju su izgubljeni"
+
+msgid "{login:username}"
+msgstr "Korisničko ime"
+
+msgid "{errors:title_METADATA}"
+msgstr "Greška prilikom učitavanja metapodataka"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadata analizator"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Nije pronađena nijedna greška."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Informacija o aktuelnom zahtevu za odjavljivanjem se izgubila. "
+"Preporučujemo da se vratite u aplikaciju iz koje ste se hteli odjaviti i "
+"pokušate da se odjavite ponovo. Ova greška može biti uzrokovana istekom "
+"validnosti zahteva za odjavom. Zahtev se skladišti određeno vreme - po "
+"pravilu nekoliko sati. Obzirom da je to duže nego što bi bilo koja "
+"operacija odjavljivanja trebala trajati, greška koja se pojavila može "
+"upućivati na grešku u podešavanjima. Ukoliko se problem nastavi, "
+"kontaktirajte administratora aplikacije."
+
+msgid "{disco:previous_auth}"
+msgstr "Prethodno ste izabrali da se autentifikujete kroz"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Vrati se natrag na listu fajlova"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Ako prijavite ovu grešku, molimo Vas da takođe pošaljete i ovaj "
+"identifikator koji će omogućiti da se Vaša sesija locira u logovima "
+"dostupnim adminstratoru sistema:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Promenite izbor za vašu matičnu instituciju"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Metapodaci za %ENTITYID% nisu pronađeni"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metapodaci"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Opciono, unesite Vašu e-mail adresu kako bi administratori mogli da Vas "
+"kontaktiraju ukoliko im budu trebale dodantne informacije:"
+
+msgid "{errors:report_header}"
+msgstr "Prijavi grešku"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Odabrali ste <b>%HOMEORG%</b> kao vašu matičnu instituciju. Ako to nije "
+"tačno možete odabrati drugu instituciju."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Greška prilikom obrade zahteva koji je poslao Davalac Servisa"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Odgovor koji je poslao Davalac Identiteta nije prihvaćen."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Informacije o greški"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"Obzirom da ste u debug modu, imate mogućnost videti sadržaj poruke koju "
+"šaljete:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Davalac Identiteta je poslao odgovor koji sadrži informaciju o pojavi "
+"greške(Šifra statusa dostavljena u SAML odgovoru ne odgovara šifri "
+"uspešno obrađenog zahteva)."
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP metapodaci"
+
+msgid "{login:help_text}"
+msgstr ""
+"Šteta! - Bez ispravnog korisničkog imena i lozinke ne možete pristupiti "
+"servisu. Da biste saznali vaše korisničko ime i lozinku obratite se vašoj"
+" matičnoj instituciji."
+
+msgid "{logout:default_link_text}"
+msgstr "Natrag na početnu stranicu SimpleSAMLphp instalacije"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp greška"
+
+msgid "{login:help_header}"
+msgstr "Upomoć! Zaboravio/la sam svoju lozinku."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"Podaci o korisničkim nalozima čuvaju se u LDAP bazi, a kada pokušate da "
+"se ulogujete vrši se provera da li Vaše korisničko ime i lozinka postoje "
+"u LDAP bazi. Prilikom pristupa LDAP bazi, došlo je do greške."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Postoji greška u podešavanjima SimpleSAMLphp-a. Ukoliko ste administrator"
+" ovog servisa, trebalo bi da proverite da li su metapodaci ispravno "
+"podešeni."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Dobijeni zahtev nije ispravan"
+
+msgid "{status:sessionsize}"
+msgstr "Veličina sesije: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Odjavljeni ste"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "Metapodaci u XML formatu"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Sledeća polja nisu prepoznata"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Greška u autentifikacionom modulu"
+
+msgid "{login:select_home_org}"
+msgstr "Izaberite vašu matičnu instituciju"
+
+msgid "{logout:hold}"
+msgstr "Na čekanju"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Provera podešavanja"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Pošalji poruku"
+
+msgid "{status:logout}"
+msgstr "Odjava"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Parametri poslati servisu za lociranje nisu u ispravnom formatu."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Desila se greška prilikom pokušaja kreiranja SAML zahteva."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Opciona polja"
+
+msgid "{logout:return}"
+msgstr "Povratak u aplikaciju"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "Metapodaci su dostupni na <a href=\"%METAURL%\">ovoj adresi</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Da, iz svih servisa"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Debug mod možete isključiti u glavnom SimpleSAMLphp konfiguracionom fajlu"
+" <tt>config/config.php</tt>. "
+
+msgid "{disco:select}"
+msgstr "Odaberi"
+
+msgid "{logout:also_from}"
+msgstr "Takođe ste prijavljeni u sledećim servisima:"
+
+msgid "{login:login_button}"
+msgstr "Prijavi se"
+
+msgid "{logout:progress}"
+msgstr "Odjava u toku..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Neispravno korisničko ime ili lozinka."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Davalac Servisa (udaljeni)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Davalac Identiteta je primio zahtev za autentikacijom od strane Davaoca "
+"Servisa, ali se javila greška prilikom pokušaja obrade ovog zahteva."
+
+msgid "{logout:logout_all_question}"
+msgstr "Želite li se odjaviti iz svih gore navedenih servisa?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Pristup nije dozvoljen"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Iz nekog razloga autentifikacionom servisu nije prosleđena vaša lozinka. "
+"Molimo pokušajte ponovo."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Parametar RelayState nije zadan"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Podaci o stanju su izgubljeni i zahtev se ne može reprodukovati"
+
+msgid "{login:password}"
+msgstr "Lozinka"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Informacije o grešci koje se nalaze ispod mogu biti od interesa "
+"administratoru ili službi za podršku korisnicima."
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Paramentri koji nedostaju u konfiguracionom fajlu"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Pojavila se greška koja ne može do kraja biti obrađena."
+
+msgid "{general:yes}"
+msgstr "Da"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Greška u podešavanjima"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Greška pri obradi zahteva za odjavu"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Ovaj zapis metapodataka sadrži grešku"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metapodaci nisu pronađeni"
+
+msgid "{login:contact_info}"
+msgstr "Kontakt podaci:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Neobrađena greška"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP Demo Primer"
+
+msgid "{login:error_header}"
+msgstr "Greška"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Proces autentifikacije je prekinut"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Jedan ili više servisa na koje ste prijavljeni <i>ne podržava "
+"odjavljivanje</i>. Da biste bili sigurni da su sve vaše sesije završene, "
+"preporučujemo da <i>zatvorite web pretraživač</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "Metapodaci u SAML 2.0 XML formatu:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Davalac Identiteta (udaljeni)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Davalac Identiteta (lokalni)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Obavezna polja"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Odaberite konfiguracionu fajl koji želite proveriti:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr ""
+"Neuspešna autentifikacija: digitalni sertifikat koji je poslao vaš web "
+"pretraživač je nepoznat"
+
+msgid "{logout:logging_out_from}"
+msgstr "Odjavljujete se iz sledećih servisa"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Uspešno ste odjavljeni iz %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Prijava greške poslata je administratorima."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Došlo je do greške prilikom pokušaja obrade zahteva za odjavom."
+
+msgid "{logout:success}"
+msgstr "Uspešno ste se odjavili iz svih gore navedenih servisa."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Napomene"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Korisnik je prekinuo proces autentifikacie"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Greška prilikom komunikacije sa CAS serverom."
+
+msgid "{general:no}"
+msgstr "Ne"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP metapodaci"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Konvertovani metapodaci"
+
+msgid "{logout:completed}"
+msgstr "Završeno"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Administratorska lozinka u podešavanjima(parametar "
+"<i>auth.adminpassword</i>) i dalje ima izvornu vrednost. Molimo Vas "
+"izmenite konfiguracioni fajl."
+
+msgid "{general:service_provider}"
+msgstr "Davalac Servisa"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Dogodila se greška prilikom dohvatanja ove stranice. Razlog: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Ne"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Preferirani izbor]"
+
+msgid "{general:no_cancel}"
+msgstr "Ne, odustani"
+
+msgid "{login:user_pass_header}"
+msgstr "Unesite vaše korisničko ime i lozinku"
+
+msgid "{errors:report_explain}"
+msgstr "Opišite šta ste radili kada se ova greška desila..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nije dostavljen SAML odgovor"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Pristupili ste interfejsu za jedinstvenu odjavu sa sistema, ali niste "
+"poslali SAML <i>LogoutRequest</i> ili <i>LogoutResponse</i> poruku."
+
+msgid "{login:organization}"
+msgstr "Institucija"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Neispravno korisničko ime ili lozinka"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Nisu pronađena sledeća opciona polja"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Pristup ovoj odredišnoj adresa nije omogućen. Proverite podešavanja "
+"dozvola u SimpleSAMLphp-u."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Nije dostavljena SAML poruka"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Pristupili ste sistemu za obradu SAML potvrda, ali niste dostavili SAML "
+"autentikacioni odgovor."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "Kliknite na link \"Pošalji poruku\" da biste poslali poruku."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr ""
+"Došlo je do greške u autentifikacionom modulu %AUTHSOURCE%. Razlog: "
+"%REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Desila se greška"
+
+msgid "{login:change_home_org_button}"
+msgstr "Izaberite matičnu instituciju"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Suvišni parametri u konfiguracionom fajlu"
+
+msgid "{errors:report_email}"
+msgstr "e-mail adresa:"
+
+msgid "{errors:howto_header}"
+msgstr "Kome se obratiti za pomoć"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Lozinka nije postavljena"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Servis koji je inicirao ovaj zahtjev nije poslao RelayState parametar "
+"koji sadrži adresu na koju treba preusmeriti korisnikov web pretraživač "
+"nakon uspešne autentifikacije."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp Dijagnostika"
+
+msgid "{status:intro}"
+msgstr ""
+"Ovo je stranica s prikazom aktuelnog stanja vaše sesije. Na ovoj stranici"
+" možete videti je li vam je istekla sesija, koliko će još dugo vaša "
+"sesija trajati i sve atribute koji su vezani uz vašu sesiju."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Stranica nije pronađena"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Šaljem poruku"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Davalac Identiteta je prijavio grešku"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP metapodaci"
+
+msgid "{admin:metaover_intro}"
+msgstr "Da biste videli detalje o SAML entitetu, kliknite na njegovo zaglavlje."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Neispravan sertifikat"
+
+msgid "{general:remember}"
+msgstr "Zapamti moj izbor"
+
+msgid "{disco:selectidp}"
+msgstr "Odaberite vašeg davaoca identiteta"
+
+msgid "{login:help_desk_email}"
+msgstr "Pošalji e-mail službi za podršku korisnicima"
+
+msgid "{login:help_desk_link}"
+msgstr "Stranice službe za podršku korisnicima"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS greška"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Servis zahteva od vas da se autentifikujete. Unesite vaše korisničko ime "
+"i lozinku u dole navedena polja."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Servisu za lociranje poslat je neispravan zahtev"
+
+msgid "{general:yes_continue}"
+msgstr "Da, nastavi"
+
+msgid "{disco:remember}"
+msgstr "Zapamti moj izbor"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Davalac Servisa (lokalni)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"U SimpleSAMLphp formatu - koristite ovu opciju ako se na drugoj strani "
+"takođe nalazi SimpleSAMLphp entitet:"
+
+msgid "{disco:login_at}"
+msgstr "Prijavi se kroz"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Autentifikacioni odgovor nije mogao biti kreiran"
+
+msgid "{errors:errorreport_header}"
+msgstr "Prijava greške poslata"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Greška pri kreiranju zahteva"
+
+msgid "{admin:metaover_header}"
+msgstr "Pregled metapodataka"
+
+msgid "{errors:report_submit}"
+msgstr "Pošalji prijavu greške"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Neispravan digitalni sertifikat"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Stranica nije pronađena"
+
+msgid "{logout:logged_out_text}"
+msgstr "Uspešno ste se odjavili."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Davalac Servisa (lokalni)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Preuzmite X509 sertifikate u PEM formatu."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Poruka"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Nepoznat digitalni sertifikat"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP greška"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Odjavljivanje iz jednog ili više servisa nije uspelo. Da biste bili "
+"sigurni da su sve vaše sesija završene, preporučujemo da <i>zatvorite web"
+" pretraživač</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Tražena stranica nije pronađena. Adresa stranice je: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Ova greška se verovatno desila zbog neočekivanog ponašanja, ili pogrešnih"
+" podešavanja SimpleSAMLphp-a. Kontaktirajte administratora ovog servisa i"
+" pošaljite mu poruku o grešci prikazanu iznad."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Davalac Identiteta(lokalni)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Niste dostavili validan setifikat."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "Kliknite na dugme \"Pošalji poruku\" da biste poslali poruku."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Nisu pronađena sledeća opciona polja"
+
+msgid "{logout:logout_only}"
+msgstr "Ne, samo iz %SP%"
+
+msgid "{login:next}"
+msgstr "Dalje"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Desila se greška prilikom kreiranja autentifikacionog odgovora od strane "
+"ovog davaoca identiteta."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Molimo vas odaberite davaoca identiteta kod koga se želite "
+"autentifikovati:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Tražena stranica nije pronađena. Razlog: %REASON% Adresa stranice je: "
+"%URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Nema digitalnog sertifikata"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Informacija o odjavljivanju je izgubljena"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 Davalac Identiteta (udaljeni)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "Izgleda da postoji greška u podešavanjima SimpleSAMLphp-a."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Ovo su metapodaci koje je SimpleSAMLphp izgenerisao za vas. Te "
+"metapodatke možete poslati davaocima servisa ili davaocima identiteta u "
+"koje imate poverenja i sa kojima želite uspostaviti federaciju."
+
+msgid "{admin:metadata_cert}"
+msgstr "Sertifikati"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Neuspešna autentifikacija: digitalni sertifikat koji je poslao vaš web "
+"pretraživač nije ispravan ili se ne može pročitati"
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth Demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Analiziraj"
+
+msgid "Person's principal name at home organization"
+msgstr "Jedinstveni identifikator osobe"
+
+msgid "Superfluous options in config file"
+msgstr "Suvišni parametri u konfiguracionom fajlu"
+
+msgid "Mobile"
+msgstr "Broj mobilnog telefona"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Davalac Servisa (lokalni)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"Podaci o korisničkim nalozima čuvaju se u LDAP bazi, a kada pokušate da "
+"se ulogujete vrši se provera da li Vaše korisničko ime i lozinka postoje "
+"u LDAP bazi. Prilikom pristupa LDAP bazi, došlo je do greške."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Opciono, unesite Vašu e-mail adresu kako bi administratori mogli da Vas "
+"kontaktiraju ukoliko im budu trebale dodantne informacije:"
+
+msgid "Display name"
+msgstr "Ime za prikaz"
+
+msgid "Remember my choice"
+msgstr "Zapamti moj izbor"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP metapodaci"
+
+msgid "Notices"
+msgstr "Napomene"
+
+msgid "Home telephone"
+msgstr "Kućni telefonski broj"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Ovo je stranica s prikazom aktuelnog stanja vaše sesije. Na ovoj stranici"
+" možete videti je li vam je istekla sesija, koliko će još dugo vaša "
+"sesija trajati i sve atribute koji su vezani uz vašu sesiju."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Opišite šta ste radili kada se ova greška desila..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Pojavila se greška koja ne može do kraja biti obrađena."
+
+msgid "Invalid certificate"
+msgstr "Neispravan sertifikat"
+
+msgid "Service Provider"
+msgstr "Davalac Servisa"
+
+msgid "Incorrect username or password."
+msgstr "Neispravno korisničko ime ili lozinka."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Dogodila se greška prilikom dohvatanja ove stranice. Razlog: %REASON%"
+
+msgid "E-mail address:"
+msgstr "e-mail adresa:"
+
+msgid "Submit message"
+msgstr "Pošalji poruku"
+
+msgid "No RelayState"
+msgstr "Parametar RelayState nije zadan"
+
+msgid "Error creating request"
+msgstr "Greška pri kreiranju zahteva"
+
+msgid "Locality"
+msgstr "Lokacija(Mesto)"
+
+msgid "Unhandled exception"
+msgstr "Neobrađena greška"
+
+msgid "The following required fields was not found"
+msgstr "Nisu pronađena sledeća opciona polja"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Preuzmite X509 sertifikate u PEM formatu."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Metapodaci za %ENTITYID% nisu pronađeni"
+
+msgid "Organizational number"
+msgstr "Jedinstveni brojni identifikator institucije"
+
+msgid "Password not set"
+msgstr "Lozinka nije postavljena"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP metapodaci"
+
+msgid "Post office box"
+msgstr "Broj poštanskog sandučeta"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Servis zahteva od vas da se autentifikujete. Unesite vaše korisničko ime "
+"i lozinku u dole navedena polja."
+
+msgid "CAS Error"
+msgstr "CAS greška"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Informacije o grešci koje se nalaze ispod mogu biti od interesa "
+"administratoru ili službi za podršku korisnicima."
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Korisnik s navedenim korisničkim imenom ne može biti pronađen ili je "
+"lozinka koju ste uneli neispravna. Molimo proverite korisničko ime i "
+"pokušajte ponovo."
+
+msgid "Error"
+msgstr "Greška"
+
+msgid "Next"
+msgstr "Dalje"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Jedinstveni naziv (DN) korisnikove organizacione jedinice"
+
+msgid "State information lost"
+msgstr "Podaci o stanju su izgubljeni"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Administratorska lozinka u podešavanjima(parametar "
+"<i>auth.adminpassword</i>) i dalje ima izvornu vrednost. Molimo Vas "
+"izmenite konfiguracioni fajl."
+
+msgid "Converted metadata"
+msgstr "Konvertovani metapodaci"
+
+msgid "Mail"
+msgstr "Elektronska adresa"
+
+msgid "No, cancel"
+msgstr "Ne"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Odabrali ste <b>%HOMEORG%</b> kao vašu matičnu instituciju. Ako to nije "
+"tačno možete odabrati drugu instituciju."
+
+msgid "Error processing request from Service Provider"
+msgstr "Greška prilikom obrade zahteva koji je poslao Davalac Servisa"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Jedinstveni naziv (DN) korisnikove primarne organizacione jedinice"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Da biste videli detalje o SAML entitetu, kliknite na njegovo zaglavlje."
+
+msgid "Enter your username and password"
+msgstr "Unesite vaše korisničko ime i lozinku"
+
+msgid "Login at"
+msgstr "Prijavi se kroz"
+
+msgid "No"
+msgstr "Ne"
+
+msgid "Home postal address"
+msgstr "Kućna poštanska adresa"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP Demo Primer"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Davalac Identiteta (udaljeni)"
+
+msgid "Error processing the Logout Request"
+msgstr "Greška pri obradi zahteva za odjavu"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Želite li se odjaviti iz svih gore navedenih servisa?"
+
+msgid "Select"
+msgstr "Odaberi"
+
+msgid "The authentication was aborted by the user"
+msgstr "Korisnik je prekinuo proces autentifikacie"
+
+msgid "Your attributes"
+msgstr "Vaši atributi"
+
+msgid "Given name"
+msgstr "Ime"
+
+msgid "Identity assurance profile"
+msgstr "Visina pouzdanosti davaoca digitalnih identiteta"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP Demo Primer"
+
+msgid "Logout information lost"
+msgstr "Informacija o odjavljivanju je izgubljena"
+
+msgid "Organization name"
+msgstr "Naziv matične institucije"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr ""
+"Neuspešna autentifikacija: digitalni sertifikat koji je poslao vaš web "
+"pretraživač je nepoznat"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "Kliknite na dugme \"Pošalji poruku\" da biste poslali poruku."
+
+msgid "Home organization domain name"
+msgstr "Domen matične institucije"
+
+msgid "Go back to the file list"
+msgstr "Vrati se natrag na listu fajlova"
+
+msgid "Error report sent"
+msgstr "Prijava greške poslata"
+
+msgid "Common name"
+msgstr "Ime i Prezime"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Molimo vas odaberite davaoca identiteta kod koga se želite "
+"autentifikovati:"
+
+msgid "Logout failed"
+msgstr "Odjava nije uspela"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Jedinstveni brojni identifikator osobe"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation Davalac Servisa (udaljeni)"
+
+msgid "Error received from Identity Provider"
+msgstr "Davalac Identiteta je prijavio grešku"
+
+msgid "LDAP Error"
+msgstr "LDAP greška"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Informacija o aktuelnom zahtevu za odjavljivanjem se izgubila. "
+"Preporučujemo da se vratite u aplikaciju iz koje ste se hteli odjaviti i "
+"pokušate da se odjavite ponovo. Ova greška može biti uzrokovana istekom "
+"validnosti zahteva za odjavom. Zahtev se skladišti određeno vreme - po "
+"pravilu nekoliko sati. Obzirom da je to duže nego što bi bilo koja "
+"operacija odjavljivanja trebala trajati, greška koja se pojavila može "
+"upućivati na grešku u podešavanjima. Ukoliko se problem nastavi, "
+"kontaktirajte administratora aplikacije."
+
+msgid "Some error occurred"
+msgstr "Desila se greška"
+
+msgid "Organization"
+msgstr "Institucija"
+
+msgid "No certificate"
+msgstr "Nema digitalnog sertifikata"
+
+msgid "Choose home organization"
+msgstr "Izaberite matičnu instituciju"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Trajni anonimni identifikator"
+
+msgid "No SAML response provided"
+msgstr "Nije dostavljen SAML odgovor"
+
+msgid "No errors found."
+msgstr "Nije pronađena nijedna greška."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Davalac Servisa (lokalni)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Tražena stranica nije pronađena. Adresa stranice je: %URL%"
+
+msgid "Configuration error"
+msgstr "Greška u podešavanjima"
+
+msgid "Required fields"
+msgstr "Obavezna polja"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Desila se greška prilikom pokušaja kreiranja SAML zahteva."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Ova greška se verovatno desila zbog neočekivanog ponašanja, ili pogrešnih"
+" podešavanja SimpleSAMLphp-a. Kontaktirajte administratora ovog servisa i"
+" pošaljite mu poruku o grešci prikazanu iznad."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Vaša sesija će biti validna još %remaining% sekundi."
+
+msgid "Domain component (DC)"
+msgstr "Domenska komponenta (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Davalac Servisa (udaljeni)"
+
+msgid "Password"
+msgstr "Lozinka"
+
+msgid "Nickname"
+msgstr "Nadimak"
+
+msgid "Send error report"
+msgstr "Pošalji prijavu greške"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Neuspešna autentifikacija: digitalni sertifikat koji je poslao vaš web "
+"pretraživač nije ispravan ili se ne može pročitati"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Prijava greške poslata je administratorima."
+
+msgid "Date of birth"
+msgstr "Datum rođenja"
+
+msgid "Private information elements"
+msgstr "Privatni atribut"
+
+msgid "You are also logged in on these services:"
+msgstr "Takođe ste prijavljeni u sledećim servisima:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp Dijagnostika"
+
+msgid "Debug information"
+msgstr "Informacije o greški"
+
+msgid "No, only %SP%"
+msgstr "Ne, samo iz %SP%"
+
+msgid "Username"
+msgstr "Korisničko ime"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Natrag na početnu stranicu SimpleSAMLphp instalacije"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Uspešno ste se odjavili iz svih gore navedenih servisa."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Uspešno ste odjavljeni iz %SP%."
+
+msgid "Affiliation"
+msgstr "Povezanost sa institucijom"
+
+msgid "You have been logged out."
+msgstr "Uspešno ste se odjavili."
+
+msgid "Return to service"
+msgstr "Povratak u aplikaciju"
+
+msgid "Logout"
+msgstr "Odjava"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Podaci o stanju su izgubljeni i zahtev se ne može reprodukovati"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Greška pri obradi odgovora koji je poslao Davalac Identeteta"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation Davalac Servisa (lokalni)"
+
+msgid "Preferred language"
+msgstr "Preferirani jezik"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 Davalac Servisa (udaljeni)"
+
+msgid "Surname"
+msgstr "Prezime"
+
+msgid "No access"
+msgstr "Pristup nije dozvoljen"
+
+msgid "The following fields was not recognized"
+msgstr "Sledeća polja nisu prepoznata"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr ""
+"Došlo je do greške u autentifikacionom modulu %AUTHSOURCE%. Razlog: "
+"%REASON%"
+
+msgid "Bad request received"
+msgstr "Dobijeni zahtev nije ispravan"
+
+msgid "User ID"
+msgstr "Korisničko ime"
+
+msgid "JPEG Photo"
+msgstr "Slika osobe"
+
+msgid "Postal address"
+msgstr "Poštanska adresa"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Došlo je do greške prilikom pokušaja obrade zahteva za odjavom."
+
+msgid "Sending message"
+msgstr "Šaljem poruku"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "Metapodaci u SAML 2.0 XML formatu:"
+
+msgid "Logging out of the following services:"
+msgstr "Odjavljujete se iz sledećih servisa"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Desila se greška prilikom kreiranja autentifikacionog odgovora od strane "
+"ovog davaoca identiteta."
+
+msgid "Could not create authentication response"
+msgstr "Autentifikacioni odgovor nije mogao biti kreiran"
+
+msgid "Labeled URI"
+msgstr "URI adresa"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "Izgleda da postoji greška u podešavanjima SimpleSAMLphp-a."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Davalac Identiteta(lokalni)"
+
+msgid "Metadata"
+msgstr "Metapodaci"
+
+msgid "Login"
+msgstr "Prijavi se"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Davalac Identiteta je primio zahtev za autentikacijom od strane Davaoca "
+"Servisa, ali se javila greška prilikom pokušaja obrade ovog zahteva."
+
+msgid "Yes, all services"
+msgstr "Da, iz svih servisa"
+
+msgid "Logged out"
+msgstr "Odjavljeni ste"
+
+msgid "Postal code"
+msgstr "Poštanski broj"
+
+msgid "Logging out..."
+msgstr "Odjava u toku..."
+
+msgid "Metadata not found"
+msgstr "Metapodaci nisu pronađeni"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Davalac Identiteta (lokalni)"
+
+msgid "Primary affiliation"
+msgstr "Primarna povezanost sa institucijom"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Ako prijavite ovu grešku, molimo Vas da takođe pošaljete i ovaj "
+"identifikator koji će omogućiti da se Vaša sesija locira u logovima "
+"dostupnim adminstratoru sistema:"
+
+msgid "XML metadata"
+msgstr "Metapodaci u XML formatu"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Parametri poslati servisu za lociranje nisu u ispravnom formatu."
+
+msgid "Telephone number"
+msgstr "Telefonski broj"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Odjavljivanje iz jednog ili više servisa nije uspelo. Da biste bili "
+"sigurni da su sve vaše sesija završene, preporučujemo da <i>zatvorite web"
+" pretraživač</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Servisu za lociranje poslat je neispravan zahtev"
+
+msgid "Select your identity provider"
+msgstr "Odaberite vašeg davaoca identiteta"
+
+msgid "Entitlement regarding the service"
+msgstr "Prava i privilegije korisnika na sistemu"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP metapodaci"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"Obzirom da ste u debug modu, imate mogućnost videti sadržaj poruke koju "
+"šaljete:"
+
+msgid "Certificates"
+msgstr "Sertifikati"
+
+msgid "Remember"
+msgstr "Zapamti moj izbor"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Jedinstveni naziv (DN) korisnikove matične institucije"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "Kliknite na link \"Pošalji poruku\" da biste poslali poruku."
+
+msgid "Organizational unit"
+msgstr "Organizaciona jedinica"
+
+msgid "Authentication aborted"
+msgstr "Proces autentifikacije je prekinut"
+
+msgid "Local identity number"
+msgstr "Lokalni brojni identifikator osobe"
+
+msgid "Report errors"
+msgstr "Prijavi grešku"
+
+msgid "Page not found"
+msgstr "Stranica nije pronađena"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP metapodaci"
+
+msgid "Change your home organization"
+msgstr "Promenite izbor za vašu matičnu instituciju"
+
+msgid "User's password hash"
+msgstr "Heš vrednost korisnikove lozinke"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"U SimpleSAMLphp formatu - koristite ovu opciju ako se na drugoj strani "
+"takođe nalazi SimpleSAMLphp entitet:"
+
+msgid "Yes, continue"
+msgstr "Da, nastavi"
+
+msgid "Completed"
+msgstr "Završeno"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Davalac Identiteta je poslao odgovor koji sadrži informaciju o pojavi "
+"greške(Šifra statusa dostavljena u SAML odgovoru ne odgovara šifri "
+"uspešno obrađenog zahteva)."
+
+msgid "Error loading metadata"
+msgstr "Greška prilikom učitavanja metapodataka"
+
+msgid "Select configuration file to check:"
+msgstr "Odaberite konfiguracionu fajl koji želite proveriti:"
+
+msgid "On hold"
+msgstr "Na čekanju"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Greška prilikom komunikacije sa CAS serverom."
+
+msgid "No SAML message provided"
+msgstr "Nije dostavljena SAML poruka"
+
+msgid "Help! I don't remember my password."
+msgstr "Upomoć! Zaboravio/la sam svoju lozinku."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Debug mod možete isključiti u glavnom SimpleSAMLphp konfiguracionom fajlu"
+" <tt>config/config.php</tt>. "
+
+msgid "How to get help"
+msgstr "Kome se obratiti za pomoć"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Pristupili ste interfejsu za jedinstvenu odjavu sa sistema, ali niste "
+"poslali SAML <i>LogoutRequest</i> ili <i>LogoutResponse</i> poruku."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp greška"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Jedan ili više servisa na koje ste prijavljeni <i>ne podržava "
+"odjavljivanje</i>. Da biste bili sigurni da su sve vaše sesije završene, "
+"preporučujemo da <i>zatvorite web pretraživač</i>."
+
+msgid "Organization's legal name"
+msgstr "Zvanični naziv institucije"
+
+msgid "Options missing from config file"
+msgstr "Paramentri koji nedostaju u konfiguracionom fajlu"
+
+msgid "The following optional fields was not found"
+msgstr "Nisu pronađena sledeća opciona polja"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr ""
+"Neuspešna autentifikacija: vaš web pretraživač nije poslao digitalni "
+"sertifikat"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Pristup ovoj odredišnoj adresa nije omogućen. Proverite podešavanja "
+"dozvola u SimpleSAMLphp-u."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "Metapodaci su dostupni na <a href=\"%METAURL%\">ovoj adresi</a>:"
+
+msgid "Street"
+msgstr "Ulica i broj"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Postoji greška u podešavanjima SimpleSAMLphp-a. Ukoliko ste administrator"
+" ovog servisa, trebalo bi da proverite da li su metapodaci ispravno "
+"podešeni."
+
+msgid "Incorrect username or password"
+msgstr "Neispravno korisničko ime ili lozinka"
+
+msgid "Message"
+msgstr "Poruka"
+
+msgid "Contact information:"
+msgstr "Kontakt podaci:"
+
+msgid "Unknown certificate"
+msgstr "Nepoznat digitalni sertifikat"
+
+msgid "Legal name"
+msgstr "Pravno ime"
+
+msgid "Optional fields"
+msgstr "Opciona polja"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Servis koji je inicirao ovaj zahtjev nije poslao RelayState parametar "
+"koji sadrži adresu na koju treba preusmeriti korisnikov web pretraživač "
+"nakon uspešne autentifikacije."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Prethodno ste izabrali da se autentifikujete kroz"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Iz nekog razloga autentifikacionom servisu nije prosleđena vaša lozinka. "
+"Molimo pokušajte ponovo."
+
+msgid "Fax number"
+msgstr "Fax broj"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth Demo"
+
+msgid "Error in this metadata entry"
+msgstr "Ovaj zapis metapodataka sadrži grešku"
+
+msgid "Session size: %SIZE%"
+msgstr "Veličina sesije: %SIZE%"
+
+msgid "Parse"
+msgstr "Analiziraj"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Šteta! - Bez ispravnog korisničkog imena i lozinke ne možete pristupiti "
+"servisu. Da biste saznali vaše korisničko ime i lozinku obratite se vašoj"
+" matičnoj instituciji."
+
+msgid "Metadata parser"
+msgstr "Metadata analizator"
+
+msgid "Choose your home organization"
+msgstr "Izaberite vašu matičnu instituciju"
+
+msgid "Send e-mail to help desk"
+msgstr "Pošalji e-mail službi za podršku korisnicima"
+
+msgid "Metadata overview"
+msgstr "Pregled metapodataka"
+
+msgid "Title"
+msgstr "Zvanje"
+
+msgid "Manager"
+msgstr "Rukovodilac"
+
+msgid "You did not present a valid certificate."
+msgstr "Niste dostavili validan setifikat."
+
+msgid "Authentication source error"
+msgstr "Greška u autentifikacionom modulu"
+
+msgid "Affiliation at home organization"
+msgstr "Povezanost sa institucijom sa domenom"
+
+msgid "Help desk homepage"
+msgstr "Stranice službe za podršku korisnicima"
+
+msgid "Configuration check"
+msgstr "Provera podešavanja"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Odgovor koji je poslao Davalac Identiteta nije prihvaćen."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr ""
+"Tražena stranica nije pronađena. Razlog: %REASON% Adresa stranice je: "
+"%URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 Davalac Identiteta (udaljeni)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Ovo su metapodaci koje je SimpleSAMLphp izgenerisao za vas. Te "
+"metapodatke možete poslati davaocima servisa ili davaocima identiteta u "
+"koje imate poverenja i sa kojima želite uspostaviti federaciju."
+
+msgid "[Preferred choice]"
+msgstr "[Preferirani izbor]"
+
+msgid "Organizational homepage"
+msgstr "URL adresa institucije"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Pristupili ste sistemu za obradu SAML potvrda, ali niste dostavili SAML "
+"autentikacioni odgovor."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Pristupate sistemu koji se nalazi u pred-produkcionoj fazi. Ova "
+"autentifikaciona podešavanja služe za testiranje i proveru ispravnosti "
+"rada pred-produkcionog sistema. Ako vam je neko poslao adresu koja "
+"pokazuje na ovu stranicu, a vi niste <i>osoba zadužena za testiranje</i>,"
+" verovatno ste <b>na ovu stranicu došli greškom</b>."

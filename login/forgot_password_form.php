@@ -59,6 +59,8 @@ class login_forgot_password_form extends moodleform {
         $submitlabel = get_string('search');
         $mform->addElement('submit', 'submitbuttonusername', $submitlabel);
 
+        $mform->addElement('header', 'OU', 'OU', '');
+        
         $mform->addElement('header', 'searchbyemail', get_string('searchbyemail'), '');
 
         $purpose = user_edit_map_field_purpose($USER->id, 'email');

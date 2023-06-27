@@ -1,0 +1,64 @@
+table,
+table * td {
+   border-collapse:separate;
+   padding:0px;
+   spacing:0px;
+}
+
+.sessionlevel1 td {
+   font-size:1.2em;
+   border: solid 1px #888888;
+}
+
+.sessionlevel2 td {
+   font-size:1.1em;
+   border-bottom: solid 1px #EEEEEE;
+}
+
+.sessionlevel3 td {
+   font-size:1em;
+}
+
+.sessionlevel4 td {
+   font-size:0.9em;
+}
+
+.donebar{
+    height:18px;
+    background-color : #579F4A;
+}
+
+.remainingbar{
+    height:18px;
+    background-color : #4B41A9;
+}
+
+.completionbar{
+    margin-top:5px;
+}
+
+.reportdetails{
+    font-size:0.85em;
+}
+
+.trainingreport.subs,
+.sessionreport{
+    width:100%;
+}
+
+.sessionitem.rangedate{
+	background-color:#d0d0d0;
+	font-size:0.9em;
+	border:1px solid #a0a0a0;
+}
+
+.report-trainingsession.userinfobox{
+	width:80%;
+	text-align:left;
+	padding:10px;
+	background-color:white;
+	border:1px #d0d0d0 solid;
+	border-radius:10px;
+	margin:10px;
+	font-size:1.2em;
+}

@@ -1,0 +1,41 @@
+---
+plugins:
+  csslint:
+    enabled: true
+  duplication:
+    enabled: true
+    config:
+      languages:
+      - ruby
+      - javascript
+      - python
+      - php
+  eslint:
+    enabled: true
+    checks:
+          no-new:
+            enabled: false
+  fixme:
+    enabled: true
+  phpmd:
+    enabled: true
+    checks:
+      Controversial/CamelCaseClassName:
+              enabled: false
+      Controversial/CamelCaseVariableName:
+              enabled: false
+      Controversial/CamelCaseMethodName:
+              enabled: false
+      Naming/ShortVariable:
+              enabled: false
+      CleanCode/StaticAccess:
+              enabled: false
+      CleanCode/BooleanArgumentFlag:
+              enabled: false
+      CleanCode/ElseExpression:
+              enabled: false
+      Design/LongMethod:
+              enabled: false
+
+exclude_pattern:
+- db/

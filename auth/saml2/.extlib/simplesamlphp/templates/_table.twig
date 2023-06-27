@@ -1,0 +1,24 @@
+
+<table id="table_with_attributes" class="attributes pure-table pure-table-striped pure-table-attributes" summary="attribute overview">
+
+{% for name, values in items %}
+    <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+        {% block namecol -%}
+            <td class="attrname">{{ name }}</td>
+        {%- endblock %}
+
+        <td class="attrvalue">{% spaceless %}
+                {% for value in values %}
+                    {% if loop.length>1 and loop.first %}<ul>{% endif %}
+                    {% if loop.length>1 %}<li>{% endif -%}
+
+                    {% block value %}{% endblock %}
+
+                    {% if loop.length>1 %}</li>{% endif %}
+                    {% if loop.length>1 and loop.last %}</ul>{% endif %}
+                {% endfor %}
+            {% endspaceless -%}
+        </td>
+    </tr>
+{% endfor %}
+</table><br>

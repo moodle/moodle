@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<psalm
+  name="Assertions"
+  useDocblockTypes="true"
+  totallyTyped="false"
+  hideExternalErrors="true"
+>
+  <projectFiles>
+    <directory name="src/" />
+    <directory name="tests/" />
+    <ignoreFiles>
+      <directory name="vendor" />
+    </ignoreFiles>
+  </projectFiles>
+
+  <issueHandlers>
+    <LessSpecificReturnType errorLevel="info" />
+
+    <!-- level 3 issues - slightly lazy code writing, but probably low false-negatives -->
+    <DeprecatedMethod errorLevel="info" />
+
+    <MissingClosureReturnType errorLevel="info" />
+    <MissingPropertyType errorLevel="info" />
+    <InvalidDocblock errorLevel="info" />
+    <MisplacedRequiredParam errorLevel="info" />
+
+    <MissingConstructor errorLevel="info" />
+    <MissingClosureParamType errorLevel="info" />
+    <MissingParamType errorLevel="info" />
+    <UnusedClass errorLevel="info" />
+    <PossiblyUnusedMethod errorLevel="info" />
+    <PropertyNotSetInConstructor errorLevel="suppress" />
+    <MissingClosureReturnType errorLevel="suppress" />
+
+    <PropertyNotSetInConstructor>
+      <errorLevel type="suppress">
+        <directory name="tests" />
+      </errorLevel>
+    </PropertyNotSetInConstructor>
+
+    <InternalMethod>
+      <errorLevel type="suppress">
+        <directory name="tests" />
+      </errorLevel>
+    </InternalMethod>
+
+    <!-- Ignore UnresolvableInclude on CLI-scripts -->
+    <UnresolvableInclude>
+      <errorLevel type="suppress">
+        <file name="tests/bootstrap.php" />
+      </errorLevel>
+    </UnresolvableInclude>
+
+  </issueHandlers>
+</psalm>

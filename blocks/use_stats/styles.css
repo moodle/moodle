@@ -1,0 +1,30 @@
+.teacherstatsbycourse {
+    background-color:#E0E0E0;
+    font-size:9px;
+}
+
+.block_use_stats select#menuuid {
+    max-width:175px;
+    width:175px;
+}
+
+.usestats-coursetable {
+    margin-top:10px;
+}
+
+.usestats-pdf {
+    text-align:center;
+}
+
+.usestats-message.hit{
+    background-color:#ffffd0;
+}
+
+.usestats-message.missed{
+    background-color:#e0ffe0;
+}
+
+.usestats-shadow {
+    -moz-opacity:0.6;
+    opacity:0.6;
+}

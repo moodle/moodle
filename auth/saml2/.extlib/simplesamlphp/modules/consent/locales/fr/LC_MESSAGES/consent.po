@@ -1,0 +1,165 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: fr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "Fournisseurs de services pour"
+
+msgid "{consent:consent:abort}"
+msgstr "Annuler la connexion au fournisseur de service SPNAME"
+
+msgid "{consent:consent:remember}"
+msgstr "Se souvenir du consentement"
+
+msgid "{consent:consent:login}"
+msgstr "ouvrir une session"
+
+msgid "{consent:consent:consent_purpose}"
+msgstr "L'objet de SPNAME est SPDESC"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "Aller à la page d'information sur ce service"
+
+msgid "{consent:consent:consent_header}"
+msgstr "Consentement pour la divulgation d'informations personnelles"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "montrer/cacher les attributs"
+
+msgid "{consent:consent:table_caption}"
+msgstr "Information sur l'usager"
+
+msgid "{consent:consent:status_header}"
+msgstr "État des consentements"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "Aucun consentement n'a été donné"
+
+msgid "{consent:consent:consent_accept}"
+msgstr ""
+"Vous êtes sur le point de vous connecter au service SPNAME. Lors de "
+"l'ouverture de session, le fournisseur d'identité enverra des "
+"informations sur votre identité à ce service. Acceptez-vous cela ?"
+
+msgid "{consent:consent:table_summary}"
+msgstr ""
+"Liste des informations vous concernant qui seront envoyées au service "
+"auquel vous allez vous connecter"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "Fournisseur de service"
+
+msgid "{consent:consent:show_attributes}"
+msgstr "Montrer les attributs"
+
+msgid "{consent:consent:show_attribute}"
+msgstr "Montrer le contenu"
+
+msgid "{consent:consent:no}"
+msgstr "Non"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "Politique de confidentialité pour ce service"
+
+msgid "{consent:consent:noconsent_text}"
+msgstr ""
+"Vous n'avez pas donné votre consentement à la divulgation de vos "
+"attributs pour ce fournisseur de service."
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "Retour à la page de consentement"
+
+msgid "{consent:consent:yes}"
+msgstr "Oui"
+
+msgid "{consent:consent:consent_attributes_header}"
+msgstr "Informations qui seront envoyées à SPNAME"
+
+msgid "Service Providers for"
+msgstr "Fournisseurs de services pour"
+
+msgid "Yes, continue"
+msgstr "Oui"
+
+msgid "Return to consent page"
+msgstr "Retour à la page de consentement"
+
+msgid "Consent status"
+msgstr "État des consentements"
+
+msgid "Go to information page for the service"
+msgstr "Aller à la page d'information sur ce service"
+
+msgid "Service Provider"
+msgstr "Fournisseur de service"
+
+msgid "Abort login to SPNAME"
+msgstr "Annuler la connexion au fournisseur de service SPNAME"
+
+msgid "show/hide attributes"
+msgstr "montrer/cacher les attributs"
+
+msgid "The purpose of SPNAME is SPDESC"
+msgstr "L'objet de SPNAME est SPDESC"
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr ""
+"Liste des informations vous concernant qui seront envoyées au service "
+"auquel vous allez vous connecter"
+
+msgid "Consent about releasing personal information"
+msgstr "Consentement pour la divulgation d'informations personnelles"
+
+msgid "No consent given"
+msgstr "Aucun consentement n'a été donné"
+
+msgid "login"
+msgstr "ouvrir une session"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr ""
+"Vous n'avez pas donné votre consentement à la divulgation de vos "
+"attributs pour ce fournisseur de service."
+
+msgid "Remember"
+msgstr "Se souvenir du consentement"
+
+msgid "Show content"
+msgstr "Montrer le contenu"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr ""
+"Vous êtes sur le point de vous connecter au service SPNAME. Lors de "
+"l'ouverture de session, le fournisseur d'identité enverra des "
+"informations sur votre identité à ce service. Acceptez-vous cela ?"
+
+msgid "Privacypolicy for the service"
+msgstr "Politique de confidentialité pour ce service"
+
+msgid "No, cancel"
+msgstr "Non"
+
+msgid "Show attributes"
+msgstr "Montrer les attributs"
+
+msgid "User information"
+msgstr "Information sur l'usager"
+
+msgid "Information that will be sent to SPNAME"
+msgstr "Informations qui seront envoyées à SPNAME"
+

@@ -1322,6 +1322,73 @@ function course_module_bulk_update_calendar_events($modulename, $courseid = 0) {
     return true;
 }
 
+// Fonction remontant le numéro de parcours et dates de formation
+function getparcours($shortname) {
+    global $CFG, $DB, $USER;
+    include('../devINFANS/codoli.php');
+    // if ( $USER->username == 'laetitiaarnoult@neuf.fr') $config = get_config('report_trainingsessions');
+
+    // SELECTION DU ROWID DE LA STAGIAIRE DANS DOLI
+    $sql = "SELECT session.num_OPCA_file, session.dated, session.datef, opca.num_OPCA_file as opcaIPE, rm.tempsRealiseOld as tempsmoodle, rm.tempsRealise as tempsmoodle1, eval.pourcentageEval as evaluation, eval.tms as datemajtemps FROM llx_agefodd_stagiaire AS stagiaire
+                    LEFT JOIN llx_agefodd_session_stagiaire AS session_stag ON session_stag.fk_stagiaire = stagiaire.rowid
+                    LEFT JOIN llx_agefodd_session AS session ON session.rowid = session_stag.fk_session_agefodd
+                    LEFT JOIN llx_agefodd_formation_catalogue_extrafields as catextra ON catextra.fk_object = session.fk_formation_catalogue
+                    LEFT JOIN llx_agefodd_opca as opca ON (opca.fk_session_agefodd = session.rowid AND stagiaire.fk_soc = opca.fk_soc_trainee)
+                    LEFT JOIN retour_moodle as rm ON (rm.session = session.rowid AND rm.stagiaire = stagiaire.rowid)
+                    LEFT JOIN evalmoodle_session_stag as eval ON (eval.fk_session = session.rowid AND eval.fk_stagiaire = stagiaire.rowid)
+                   WHERE stagiaire.place_birth = '".$USER->username."'
+                    AND session.datef >= '".date('Ymd', time())."'
+                    AND session.dated <= '".date('Ymd', time())."'
+                    AND (session_stag.status_in_session = 15 OR session_stag.status_in_session = 16) 
+                    AND catextra.codeMoodle = '".$shortname."'";
+
+    // echo $sql.'<br>';
+    // if ( $USER->username == "olivia.martin33@gmail.com") {
+    //     echo $sql;
+    // }
+    $req = $bdd->prepare($sql);
+    $req->execute();
+    $infostag = $req->fetchAll(PDO::FETCH_ASSOC);
+    if (!empty($infostag))
+    {
+        // $opca = $infostag[0]['num_OPCA_file'];
+        $numopcafile = $infostag[0]['num_OPCA_file'];
+        $numopcafile1 = $infostag[0]['opcaIPE'];
+        $dated = date('d-m-Y', strtotime($infostag[0]['dated']));
+        $datef = date('d-m-Y', strtotime($infostag[0]['datef']));
+        $tempsmoodle = empty($infostag[0]['tempsmoodle'])?$infostag[0]['tempsmoodle1']:$infostag[0]['tempsmoodle'];
+        $evaluation = $infostag[0]['evaluation']*100;
+        $veille = date('d/m/Y', strtotime("1 day ago" ));
+        $head = '<div class="container">';
+        $head .= '<div class="row">';
+        $head .= '<div class="col text-center">';
+        // $head .= '<p><i class="fa fa-calendar iconestyle"></i> du <b>'.$dated.'</b> au <b>'.$datef.'</b><br>';
+        $head .= '<p><i class="fa fa-calendar iconestyle"></i> du <b>'.$dated.'</b> au <b>'.$datef.'</b><br>';
+        if (!empty($numopcafile) || !empty($numopcafile1) ) 
+        {
+            $head .= '<i class="fa fa-search iconestyle"></i> Votre numéro d\'action de formation : <b>'.(empty($numopcafile)?$numopcafile1:$numopcafile).'</b><br>';
+        }
+        $head .= '<i class="fa fa-home iconestyle"></i> Organisme de formation : <b>INFANS GROUP</b></p>';
+        $head .= '<p><a href="https://infans.fr/assistance/"><button type="button" class="btn btn-primary">Assistance <i class="fa fa-question-circle-o"></i></button></a></p>';
+        $head .= '</div>';
+        $head .= '<div class="col text-center">';
+        $head .= '<p><i class="fa fa-clock-o iconestyle"></i> Temps réalisé : <b>'.$tempsmoodle.'</b><br>';
+        $head .= '<i class="fa fa-graduation-cap iconestyle"></i> Pourcentage d\'évaluation réalisée : <b>'.$evaluation.'%</b><br>';
+        $head .= '<b><em style="font-size:12px;">Dernière mise à jour le '.$veille.' </b></em></p>';
+        $head .= '<p><a href="https://moodle.infans.fr/login/logout.php"><button type="button" class="btn btn-primary">Déconnexion <i class="fa fa-sign-out"></i></button></a></p>';
+        $head .= '</div>';
+        $head .= '</div>';
+        $head .= '</div>';
+
+        $head .=  '<style>';
+        $head .=  '.iconestyle {
+                        font-size: 20px;
+                        color: #64c4d8;
+                    }';
+        $head .=  '</style>';
+        return $head;
+    }
+}
 /**
  * Calendar events for a module instance are updated.
  *

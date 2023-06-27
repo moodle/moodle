@@ -1,0 +1,49 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: eu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{preprodwarning:warning:warning_header}"
+msgstr "Aurre-produkzio sistema batean sartzeari buruzko oharra"
+
+msgid "{preprodwarning:warning:warning}"
+msgstr ""
+"Aurre-produzkio batean sartzen ari zara. Konfigurazio hau aurre-"
+"produkzioko sistemaren frogak egin eta egiaztatzeko bakarrik da. Hona "
+"iristeko norbaitek bidali dizun lotura bat jarraitu baduzu eta "
+"<i>frogatzaile</i> bat ez bazara, ziurrenik errore bat izango da, eta zuk"
+" <b>ez zenuke hemen egon behar</b>."
+
+msgid "{preprodwarning:warning:yes}"
+msgstr "Bai, badakit aurre-produkzio sistema batean sartzen asi naizela."
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Aurre-produzkio batean sartzen ari zara. Konfigurazio hau aurre-"
+"produkzioko sistemaren frogak egin eta egiaztatzeko bakarrik da. Hona "
+"iristeko norbaitek bidali dizun lotura bat jarraitu baduzu eta "
+"<i>frogatzaile</i> bat ez bazara, ziurrenik errore bat izango da, eta zuk"
+" <b>ez zenuke hemen egon behar</b>."
+
+msgid "Warning about accessing a pre-production system"
+msgstr "Aurre-produkzio sistema batean sartzeari buruzko oharra"
+
+msgid "Yes, I know I am accessing a pre-production system"
+msgstr "Bai, badakit aurre-produkzio sistema batean sartzen asi naizela."
+

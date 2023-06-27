@@ -1,0 +1,46 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-authorize",
+    "description": "This module provides a user authorization filter based on attribute matching",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "authorize"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Ernesto Revilla",
+            "email": "erny@yaco.es"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\authorize\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Module\\Authorize\\Tests\\Utils\\": "tests/Utils",
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-authorize/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-authorize"
+    }
+}

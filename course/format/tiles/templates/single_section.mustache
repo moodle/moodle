@@ -1,0 +1,178 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_tiles/single_section
+
+    Single Section content template.
+
+    The purpose of this template is to render the content of a single section
+    (i.e. the contents of one "tile" represeting a course topic".
+    This is a separate template because it is called from externallib.php (i.e. from web service via JS)
+    as well as being called from other templates (i.e. single_section_page) when rendering from PHP
+
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * tileid
+        * title
+        * hidden_section
+        * from_ajax
+        * isediting
+        * secid
+        * canedit
+        * tileicon
+        * defaulttileicon
+        * sesskey
+        * courseid
+        * useSubtiles
+        * coursemodules
+        * single_sec_add_cm_control_html
+        * single_sec_content_is_long
+        * alt
+        * completion_help
+
+    Example context (json):
+    {
+        "tileid": 1,
+        "title": "Section 1",
+        "hidden_section": 0,
+        "from_ajax": 0,
+        "isediting": 0,
+        "secid": 101,
+        "canedit": 1,
+        "tileicon": "user",
+        "defaulttileicon": "pie-chart",
+        "sesskey": "12345678",
+        "courseid": 99,
+        "useSubtiles": 0,
+        "coursemodules": [],
+        "single_sec_add_cm_control_html": "",
+        "single_sec_content_is_long": 0,
+        "alt": "",
+        "completion_help": ""
+        }
+}}
+{{! this has to be an li for drag and drop sections to work properly (or at all) }}
+<li id="section-{{tileid}}" data-section="{{tileid}}" class="section main clearfix" role="region"
+    aria-label="{{title}}">
+    <div class="content">
+        {{#hidden_section}}
+            {{#str}}notavailable{{/str}}
+        {{/hidden_section}}
+        <div class="left side"></div>
+        <div class="right side"></div>
+        {{^hidden_section}}
+            {{^from_ajax}}
+                {{>format_tiles/single_section_nav}}
+            {{/from_ajax}}
+            {{#from_ajax}}
+                <div class="sectionbuttons">
+                        <span class="sectionbutton closesectionbtn pull-right" id="closesectionbtn-{{tileid}}"
+                              title="{{#str}}close, format_tiles{{/str}}" tabindex="3" data-section="{{tileid}}">
+                            {{#pix}}close, format_tiles, {{#str}}close, format_tiles{{/str}}{{/pix}}
+                        </span>
+                    {{#canedit}}
+                        {{^isediting}}
+                            <a class="sectionbutton pull-right" id="editsectiontbtn-{{tileid}}"
+                               href="{{{ config.wwwroot }}}/course/view.php?id={{courseid}}&section={{tileid}}&sesskey={{sesskey}}&edit=on">
+                            {{#pix}}pencil, format_tiles, {{#str}}edit{{/str}}{{/pix}}
+                            </a>
+                        {{/isediting}}
+                    {{/canedit}}
+                </div>
+
+            {{/from_ajax}}
+            {{^hastilephoto}}
+                <div class="tileiconcontainer" id="tileicon_single_{{tileid}}"
+                {{#isediting}}data-toggle="tooltip" data-placement="left"
+                     data-original-title="{{^allowphototiles}}{{#str}}picknewicon, format_tiles{{/str}}{{/allowphototiles}}{{#allowphototiles}}{{#str}}picknewiconphoto, format_tiles{{/str}}{{/allowphototiles}}"
+                {{/isediting}}>
+                    {{>format_tiles/tileicon}}
+                </div>
+            {{/hastilephoto}}
+
+            {{#hastilephoto}}
+                {{#isediting}}
+                    <div class="tileiconcontainer hasphoto" id="tileicon_{{tileid}}"
+                        {{#isediting}}data-toggle="tooltip" data-placement="left"
+                         data-original-title="{{^allowphototiles}}{{#str}}picknewicon, format_tiles{{/str}}{{/allowphototiles}}{{#allowphototiles}}{{#str}}picknewiconphoto, format_tiles{{/str}}{{/allowphototiles}}"
+                        {{/isediting}}>
+
+                        {{>format_tiles/tilebarphoto}}
+                    </div>
+                {{/isediting}}
+            {{/hastilephoto}}
+
+            <div class="pagesechead">
+                <div class="sectiontitlecontainer">
+                    <div class="sectiontitle" id="sectiontitle{{tileid}}" tabindex="3">
+                        <h2>{{#isediting}}{{{inplace_editable_title}}}{{/isediting}}{{^isediting}}{{{title}}}{{/isediting}}</h2>
+                        {{#hidden}}<span class="icon20" id="hiddeneye" title="Hidden"></span>{{/hidden}}
+                    </div>
+                </div>
+            </div>
+            {{{availabilitymessage}}}
+            <div class="summary{{^visible}} dimmed{{/visible}}">{{{summary}}}</div>
+            {{#isediting}}
+                <a title="{{#str}}editsummary, core{{/str}}"
+                   href="{{{config.wwwroot}}}/course/editsection.php?id={{secid}}&sr={{tileid}}">{{#pix}}
+                    i/settings, core{{/pix}}
+                </a>
+            {{/isediting}}
+            <ul class="section img-text {{^useSubtiles}}no{{/useSubtiles}}subtiles">
+                {{#course_modules}}
+                    {{>format_tiles/course_module}}
+                {{/course_modules}}
+                {{#useSubtiles}}
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                    <li class="activity subtile spacer" aria-hidden="true"></li>
+                {{/useSubtiles}}
+            </ul>
+
+            {{#isediting}}
+                {{{single_sec_add_cm_control_html}}}
+            {{/isediting}}
+            {{^from_ajax}}
+                {{#single_sec_content_is_long}}
+                {{!repeat nav arrows at bottom of page if it is long}}
+                    {{>format_tiles/single_section_nav}}
+                {{/single_sec_content_is_long}}
+            {{/from_ajax}}
+
+            {{#completion_help}}
+                <span class="completionhelp pull-right">{{#str}}yourprogress, completion{{/str}}
+                    <a id="completionhelp_{{tileid}}" class="btn btn-link p-a-0 progresshelp" role="button"
+                       data-container="body" data-toggle="popover"
+                       data-placement="left" data-content="{{#str}}completion_help, format_tiles{{/str}}"
+                       data-html="true" tabindex="-1" data-trigger="focus">
+                        {{#pix}}help, core, {{alt}}{{/pix}}
+                    </a>
+                    </span>
+            {{/completion_help}}
+        {{/hidden_section}}
+    </div>
+</li>

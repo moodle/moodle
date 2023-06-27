@@ -1,0 +1,290 @@
+#!/usr/bin/env php
+<?php
+
+use Gettext\Languages\Exporter\Exporter;
+use Gettext\Languages\Language;
+
+// Let's start by imposing that we don't accept any error or warning.
+// This is a really life-saving approach.
+error_reporting(E_ALL);
+set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+    fwrite(STDERR, "{$errstr}\nFile: {$errfile}\nLine: {$errline}\nCode: {$errno}\n");
+    exit(5);
+});
+
+require_once dirname(__DIR__) . '/src/autoloader.php';
+
+/**
+ * Helper class to handle command line options.
+ */
+class Enviro
+{
+    /**
+     * Shall the output contain only US-ASCII characters?
+     *
+     * @var bool
+     */
+    public static $outputUSAscii;
+
+    /**
+     * The output format.
+     *
+     * @var string
+     */
+    public static $outputFormat;
+
+    /**
+     * Output file name.
+     *
+     * @var string
+     */
+    public static $outputFilename;
+
+    /**
+     * List of wanted language IDs; it not set: all languages will be returned.
+     *
+     * @var array|null
+     */
+    public static $languages;
+
+    /**
+     * Reduce the language list to the minimum common denominator.
+     *
+     * @var bool
+     */
+    public static $reduce;
+
+    /**
+     * Omit extra parenthesis in plural rule formulas.
+     *
+     * @var bool
+     */
+    public static $noExtraParenthesis;
+
+    /**
+     * Parse the command line options.
+     */
+    public static function initialize()
+    {
+        global $argv;
+        self::$outputUSAscii = false;
+        self::$outputFormat = null;
+        self::$outputFilename = null;
+        self::$languages = null;
+        self::$reduce = null;
+        self::$noExtraParenthesis = false;
+        $exporters = Exporter::getExporters();
+        if (isset($argv) && is_array($argv)) {
+            foreach ($argv as $argi => $arg) {
+                if ($argi === 0) {
+                    continue;
+                }
+                if (is_string($arg)) {
+                    $argLC = trim(strtolower($arg));
+                    switch ($argLC) {
+                        case '-h':
+                        case '--help':
+                            self::showSyntax();
+                            exit(0);
+                        case '--us-ascii':
+                            self::$outputUSAscii = true;
+                            break;
+                        case '--reduce=yes':
+                            self::$reduce = true;
+                            break;
+                        case '--reduce=no':
+                            self::$reduce = false;
+                            break;
+                        case '--parenthesis=yes':
+                            self::$noExtraParenthesis = false;
+                            break;
+                        case '--parenthesis=no':
+                            self::$noExtraParenthesis = true;
+                            break;
+                        default:
+                            if (preg_match('/^--output=.+$/', $argLC)) {
+                                if (isset(self::$outputFilename)) {
+                                    fwrite(STDERR, "The output file name has been specified more than once!\n");
+                                    self::showSyntax();
+                                    exit(3);
+                                }
+                                list(, self::$outputFilename) = explode('=', $arg, 2);
+                                self::$outputFilename = trim(self::$outputFilename);
+                            } elseif (preg_match('/^--languages?=.+$/', $argLC)) {
+                                list(, $s) = explode('=', $arg, 2);
+                                $list = explode(',', $s);
+                                if (is_array(self::$languages)) {
+                                    self::$languages = array_merge(self::$languages, $list);
+                                } else {
+                                    self::$languages = $list;
+                                }
+                            } elseif (isset($exporters[$argLC])) {
+                                if (isset(self::$outputFormat)) {
+                                    fwrite(STDERR, "The output format has been specified more than once!\n");
+                                    self::showSyntax();
+                                    exit(3);
+                                }
+                                self::$outputFormat = $argLC;
+                            } else {
+                                fwrite(STDERR, "Unknown option: {$arg}\n");
+                                self::showSyntax();
+                                exit(2);
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+        if (!isset(self::$outputFormat)) {
+            self::showSyntax();
+            exit(1);
+        }
+        if (isset(self::$languages)) {
+            self::$languages = array_values(array_unique(self::$languages));
+        }
+        if (!isset(self::$reduce)) {
+            self::$reduce = isset(self::$languages) ? false : true;
+        }
+    }
+
+    /**
+     * Write out the syntax.
+     */
+    public static function showSyntax()
+    {
+        $basename = basename(__FILE__);
+        $exporters = array_keys(Exporter::getExporters(true));
+        $exporterList = implode('|', $exporters);
+        fwrite(
+            STDERR,
+            <<<EOT
+Syntax:
+    {$basename} [-h|--help] [--us-ascii] [--languages=<LanguageId>[,<LanguageId>,...]] [--reduce=yes|no] [--parenthesis=yes|no] [--output=<file name>] <{$exporterList}>
+
+Where:
+    --help
+        show this help message.
+
+    --us-ascii
+        if specified, the output will contain only US-ASCII characters.
+
+    --languages(or --language)
+        export only the specified language codes.
+        Separate languages with commas; you can also use this argument
+        more than once; it's case insensitive and accepts both '_' and
+        '-' as locale chunks separator (eg we accept 'it_IT' as well as
+        'it-it').
+    --reduce
+        if set to yes the output won't contain languages with the same
+        base language and rules.
+        For instance nl_BE ('Flemish') will be omitted because it's the
+        same as nl ('Dutch').
+        Defaults to 'no' if --languages is specified, to 'yes' otherwise.
+    --parenthesis
+        if set to no, extra parenthesis will be omitted in generated
+        plural rules formulas.
+        Those extra parenthesis are needed to create a PHP-compatible
+        formula.
+        Defaults to 'yes'
+    --output
+        if specified, the output will be saved to <file name>. If not
+        specified we'll output to standard output.
+
+Output formats
+
+EOT
+        );
+        $len = max(array_map('strlen', $exporters));
+        foreach ($exporters as $exporter) {
+            fwrite(STDERR, '    ' . str_pad($exporter, $len) . ': ' . Exporter::getExporterDescription($exporter) . "\n");
+        }
+        fwrite(STDERR, "\n");
+    }
+
+    /**
+     * Reduce a language list to the minimum common denominator.
+     *
+     * @param Language[] $languages
+     *
+     * @return Language[]
+     */
+    public static function reduce($languages)
+    {
+        for ($numChunks = 3; $numChunks >= 2; $numChunks--) {
+            $filtered = array();
+            foreach ($languages as $language) {
+                $chunks = explode('_', $language->id);
+                $compatibleFound = false;
+                if ($numChunks === count($chunks)) {
+                    $categoriesHash = serialize($language->categories);
+                    $otherIds = array();
+                    $otherIds[] = $chunks[0];
+                    for ($k = 2; $k < $numChunks; $k++) {
+                        $otherIds[] = $chunks[0] . '_' . $chunks[$numChunks - 1];
+                    }
+
+                    foreach ($languages as $check) {
+                        foreach ($otherIds as $otherId) {
+                            if ($check->id === $otherId && $check->formula === $language->formula && $categoriesHash === serialize($check->categories)) {
+                                $compatibleFound = true;
+                                break;
+                            }
+                        }
+                        if ($compatibleFound === true) {
+                            break;
+                        }
+                    }
+                }
+                if (!$compatibleFound) {
+                    $filtered[] = $language;
+                }
+            }
+            $languages = $filtered;
+        }
+
+        return $languages;
+    }
+}
+
+// Parse the command line options
+Enviro::initialize();
+
+try {
+    if (isset(Enviro::$languages)) {
+        $languages = array();
+        foreach (Enviro::$languages as $languageId) {
+            $language = Language::getById($languageId);
+            if (!isset($language)) {
+                throw new Exception("Unable to find the language with id '{$languageId}'");
+            }
+            $languages[] = $language;
+        }
+    } else {
+        $languages = Language::getAll();
+    }
+    if (Enviro::$reduce) {
+        $languages = Enviro::reduce($languages);
+    }
+    if (Enviro::$noExtraParenthesis) {
+        $languages = array_map(
+            function (Language $language) {
+                $language->formula = $language->buildFormula(true);
+
+                return $language;
+            },
+            $languages
+        );
+    }
+    if (isset(Enviro::$outputFilename)) {
+        echo call_user_func(array(Exporter::getExporterClassName(Enviro::$outputFormat), 'toFile'), $languages, Enviro::$outputFilename, array('us-ascii' => Enviro::$outputUSAscii));
+    } else {
+        echo call_user_func(array(Exporter::getExporterClassName(Enviro::$outputFormat), 'toString'), $languages, array('us-ascii' => Enviro::$outputUSAscii));
+    }
+} catch (Exception $x) {
+    fwrite(STDERR, $x->getMessage() . "\n");
+    fwrite(STDERR, "Trace:\n");
+    fwrite(STDERR, $x->getTraceAsString() . "\n");
+    exit(4);
+}
+
+exit(0);

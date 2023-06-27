@@ -1,0 +1,19 @@
+#page-auth-saml2-selectidp .mform .fitem div.fitemtitle {
+    width: 0;
+}
+
+#page-auth-saml2-selectidp .mform .fitem .felement {
+    margin-left: 0;
+}
+
+#page-auth-saml2-selectidp .idpbtn {
+    margin-bottom: 10px;
+}
+
+#page-auth-saml2-availableidps .femptylabel .fitemtitle {
+    display: none;
+}
+
+#page-auth-saml2-availableidps .femptylabel .felement {
+    margin-left: 10px;
+}

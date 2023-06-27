@@ -1,0 +1,8 @@
+{
+	"certificate_header": {
+		"en": "X509 certificate authentication"
+	},
+	"certificate_text": {
+		"en": "X509 certificate authentication is required to access this service."
+	}
+}

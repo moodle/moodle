@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/use_stats/db" VERSION="20110424" COMMENT="XMLDB file for Moodle blocks/use_stats"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_use_stats" COMMENT="Stores compiled times for users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="contextid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="elapsed" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time elapsed in context in seconds"/>
+        <FIELD NAME="events" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Events matched in context"/>
+        <FIELD NAME="compiletime" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Events matched in context"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="index_userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="index_contextid" UNIQUE="false" FIELDS="contextid"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_use_stats_session" COMMENT="Stores compiled sessions for users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" />
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="sessionstart" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="Start timestamp" />
+        <FIELD NAME="sessionend" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" COMMENT="End timestamp (guessed)"/>
+        <FIELD NAME="courses" TYPE="text" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="courses traversed by the session"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="ix_uniq_usersession" UNIQUE="true" FIELDS="userid,sessionstart"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_use_stats_log" COMMENT="Prestores log gaptimes">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true"/>
+        <FIELD NAME="logid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="gap" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="userid" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="course" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="time" TYPE="int" LENGTH="11" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag1" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag2" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag3" TYPE="char" LENGTH="20" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag4" TYPE="char" LENGTH="128" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag5" TYPE="char" LENGTH="128" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" />
+        <FIELD NAME="customtag6" TYPE="char" LENGTH="128" NOTNULL="false" UNSIGNED="true" DEFAULT="0" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

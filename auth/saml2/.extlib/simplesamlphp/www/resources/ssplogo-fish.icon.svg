@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.47pre4 r22446"
+   width="16"
+   height="16"
+   sodipodi:docname="ssplogo-fish.icon.svg">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6">
+    <linearGradient
+       id="linearGradient3607">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1;"
+         offset="0"
+         id="stop3609" />
+      <stop
+         style="stop-color:#d1d1d1;stop-opacity:1;"
+         offset="1"
+         id="stop3611" />
+    </linearGradient>
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       id="perspective10" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3607"
+       id="linearGradient3613"
+       x1="277.12003"
+       y1="52.042328"
+       x2="277.12003"
+       y2="378.57556"
+       gradientUnits="userSpaceOnUse" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient3607"
+       id="linearGradient3665"
+       gradientUnits="userSpaceOnUse"
+       x1="277.12003"
+       y1="27.166664"
+       x2="277.12003"
+       y2="404.08838"
+       gradientTransform="matrix(0.03696855,0,0,0.03696855,7.60047,8.3543873)" />
+  </defs>
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1920"
+     inkscape:window-height="1126"
+     id="namedview4"
+     showgrid="false"
+     inkscape:zoom="36.660194"
+     inkscape:cx="14.83847"
+     inkscape:cy="5.9954998"
+     inkscape:window-x="0"
+     inkscape:window-y="25"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <path
+     style="fill:url(#linearGradient3665);fill-opacity:1;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4.0999999;stroke-opacity:1;stroke-dasharray:none"
+     d="m 9.6205185,8.2105307 c 0,1.2054091 0.5026335,1.8380793 1.2095645,1.8380793 1.026799,0 0.883174,-0.8139968 2.065657,-0.6164036 -0.609954,1.7050766 -1.695369,2.2507596 -2.70683,2.6097686 0.01445,0.713465 0.696837,0.972365 0.663749,1.74271 -0.0126,0.620173 -0.540523,1.16597 -1.849053,1.199755 C 7.937029,15.01198 7.1694148,14.428558 7.1621101,13.672056 7.1538401,12.8153 7.794439,12.748742 7.7801781,11.972659 7.0121384,11.658782 5.9969211,11.120437 5.2801801,9.3917916 4.5595881,9.4316547 4.2463443,10.078721 3.5334162,10.057225 2.820488,10.03573 2.3532378,9.3650782 2.3596648,8.2105307 2.3699546,7.0612227 2.8890256,6.3083345 3.6866947,6.347702 4.7041225,6.3979148 4.5628318,7.0174937 5.2842137,6.956665 6.0080941,5.3023375 7.0082024,4.758849 7.7761444,4.44437 7.8705492,3.6923296 7.2680513,3.6072458 7.1621101,2.7490058 7.0644371,1.9577466 7.9149765,1.4581701 9.003606,1.4769589 c 1.264656,0.043103 1.758244,0.6249683 1.869222,1.1634518 0.198595,0.9636163 -0.661983,1.1126875 -0.683918,1.7386769 1.016506,0.3514412 2.051693,0.8212046 2.690696,2.5492635 C 11.505643,7.0675225 12.118475,6.3518306 10.830083,6.3522838 10.040991,6.3818947 9.6263626,7.2818233 9.6205185,8.2105307 z"
+     id="path2818"
+     sodipodi:nodetypes="cccccssccscsccscscccc"
+     inkscape:export-filename="/home/ica/olavmo/ssplogo-fish.16x16.png"
+     inkscape:export-xdpi="3.8204713"
+     inkscape:export-ydpi="3.8204713" />
+  <path
+     sodipodi:type="arc"
+     style="fill:#000000;fill-opacity:1;stroke:none"
+     id="path3595"
+     sodipodi:cx="325.25742"
+     sodipodi:cy="141.73412"
+     sodipodi:rx="7.9104872"
+     sodipodi:ry="7.9104872"
+     d="m 333.1679,141.73412 a 7.9104872,7.9104872 0 1 1 -15.82097,0 7.9104872,7.9104872 0 1 1 15.82097,0 z"
+     transform="matrix(0.03696855,0,0,0.03696855,-1.3157193,0.26343856)"
+     inkscape:export-filename="/home/ica/olavmo/ssplogo-fish.16x16.png"
+     inkscape:export-xdpi="3.8204713"
+     inkscape:export-ydpi="3.8204713" />
+</svg>

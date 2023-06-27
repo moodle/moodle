@@ -1,0 +1,603 @@
+/* main styles styles */
+.dhtmlxcalendar_container {
+	position: absolute;
+	display: block;
+	width: 188px;
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	z-index: 1999;
+	color: black;
+	font-size: 11px;
+	font-family: Tahoma;
+	background-color:white;
+	/*background-image*/
+}
+.dhtmlxcalendar_ifr {
+	position: absolute;
+	overflow: hidden;
+	background-color: white;
+}
+div.dhtmlxcalendar_skin_cont {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	top: 0px;
+	left: 0px;
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_time_hidden {
+	background-position: 0px -216px;
+}
+.dhtmlxcalendar_container ul.dhtmlxcalendar_line {
+	position: relative;
+	display: block;
+	clear: both;
+	margin: 0px;
+	padding: 0px;
+	height: 24px;
+	overflow: hidden;
+	width: 182px;
+}
+.dhtmlxcalendar_container ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell,
+.dhtmlxcalendar_container ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell_first {
+	float: left;
+	width: 26px;
+	height: 24px;
+	list-style-type: none;
+	list-style-image: none;
+	font-family: Tahoma;
+	font-size: 10px;
+	text-align: center;
+	vertical-align: middle;
+	line-height: 22px;
+	cursor: default;
+	overflow: hidden;
+	margin: 0px;
+	padding: 0px;
+}
+
+
+/* months */
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont {
+	position: relative;
+	display: block;
+	width: 182px;
+	height: 24px;
+	margin-top: 3px;
+	margin-left: 3px;
+	-moz-user-select: text;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr {
+	width: 182px;
+	background-position: 0px -24px;
+	background-repeat: no-repeat;
+	color: black;
+	font-size: 11px;
+	line-height: 24px;
+	/*background-image*/
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow {
+	position: absolute;
+	top: 1px;
+	width: 18px;
+	height: 23px;
+	text-align: center;
+	color: black;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_left {
+	left: 4px;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_left_hover {
+	left: 4px;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_right {
+	right: 4px;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr div.dhtmlxcalendar_month_arrow.dhtmlxcalendar_month_arrow_right_hover {
+	right: 4px;
+	/*background-image*/
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr span.dhtmlxcalendar_month_label_month {
+	color: black;
+	margin-right: 3px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_month_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_month_hdr span.dhtmlxcalendar_month_label_year {
+	color: black;
+	margin-left: 2px;
+}
+
+
+
+/* days (Mo...Su) */
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont {
+	position: relative;
+	display: block;
+	width: 182px;
+	height: 19px;
+	margin-left: 3px;
+	-moz-user-select: text;
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line {
+	height: 19px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell,
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell_first {
+	height: 19px;
+	line-height: 17px;
+	color: black;
+	background-repeat: no-repeat;
+	/*background-image*/
+}
+/* default day of week cell */
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell {
+	background-position: -26px -48px;
+}
+/* default day of week cell in first position */
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell_first {
+	background-position: 0px -48px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_day_weekday_cell {
+	color: #C66200;
+	background-position: -52px -48px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_days_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_day_weekday_cell_first {
+	color: #C66200;
+	background-position: -26px -105px;
+}
+
+
+/* dates (..1..31..) */
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont {
+	position: relative;
+	display: block;
+	width: 182px;
+	height: 144px;
+	margin-left: 3px;
+	margin-bottom: 0px;
+	-moz-user-select: none;
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_time_hidden div.dhtmlxcalendar_dates_cont {
+	margin-bottom: 3px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell {
+	color: #909090;
+	background-position: 0px 0px;
+	background-repeat: no-repeat;
+	/*background-image*/
+}
+
+
+/* another month */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell {
+	background-position: 0px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend {
+	background-position: 0px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date {
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend {
+	background-position: -104px 0px;
+}
+
+/* another month disabled */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_dis {
+	color: #e3e3e3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend_dis {
+	color: #e3e3e3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_dis {
+	color: #e3e3e3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend_dis {
+	color: #e3e3e3;
+}
+
+/* another month holiday */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_holiday {
+	color: red;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend_holiday {
+	color: red;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_holiday {
+	color: red;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend_holiday {
+	color: red;
+	background-position: -104px 0px;
+}
+
+/* another month holiday disabled */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_holiday_dis {
+	color: #ffc3c3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend_holiday_dis {
+	color: #ffc3c3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_holiday_dis {
+	color: #ffc3c3;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend_holiday_dis {
+	color: #ffc3c3;
+}
+
+/* another month hover */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_hover {
+	background-position: -26px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend_hover {
+	background-position: -26px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_hover {
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend_hover {
+	background-position: -104px 0px;
+}
+
+/* another month holiday hover */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_holiday_hover {
+	color: red;
+	background-position: -26px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_weekend_holiday_hover {
+	color: red;
+	background-position: -26px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_holiday_hover {
+	color: red;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_date_weekend_holiday_hover {
+	color: red;
+	background-position: -104px 0px;
+}
+
+
+
+/* this month */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month {
+	color: #000000;
+	background-position: -52px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend {
+	color: #c66200;
+	background-position: -130px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date {
+	color: #000000;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend {
+	color: #c66200;
+	background-position: -104px 0px;
+}
+
+/* this month disabled */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_dis {
+	color: #808080;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_dis {
+	color: #808080;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_dis {
+	color: #808080;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_dis {
+	color: #808080;
+	background-position: 0px -100px;
+}
+
+/* this month holiday */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_holiday {
+	color: red;
+	background-position: -52px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_holiday {
+	color: red;
+	background-position: -130px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_holiday {
+	color: red;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_holiday {
+	color: red;
+	background-position: -104px 0px;
+}
+
+/* this month holiday disabled */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_holiday_dis {
+	color: red;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_holiday_dis {
+	color: red;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_holiday_dis {
+	color: red;
+	background-position: 0px -100px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_holiday_dis {
+	color: red;
+	background-position: 0px -100px;
+}
+
+/* this month hover */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_hover {
+	color: #000000;
+	background-position: -78px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_hover {
+	color: #c66200;
+	background-position: -156px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_hover {
+	color: #000000;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_hover {
+	color: #c66200;
+	background-position: -104px 0px;
+}
+
+/* this month holiday hover */
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_holiday_hover {
+	color: red;
+	background-position: -78px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_weekend_holiday_hover {
+	color: red;
+	background-position: -156px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_holiday_hover {
+	color: red;
+	background-position: -104px 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_dates_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_cell_month_date_weekend_holiday_hover {
+	color: red;
+	background-position: -104px 0px;
+}
+
+/* time */
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont {
+	position: relative;
+	display: block;
+	width: 182px;
+	height: 24px;
+	margin-left: 3px;
+	margin-bottom: 3px;
+	-moz-user-select: none;
+}
+.dhtmlxcalendar_container.dhtmlxcalendar_time_hidden div.dhtmlxcalendar_time_cont {
+	display: none;
+	height: 0px;
+	margin-bottom: 0px;
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr {
+	width: 182px;
+	background-position: 0px -24px;
+	background-repeat: no-repeat;
+	color: black;
+	font-size: 11px;
+	line-height: 24px;
+	/*background-image*/
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr div.dhtmlxcalendar_time_label {
+	position: absolute;
+	height: 13px;
+	width: 13px;
+	left: 58px;
+	top: 5px;
+	background-position: 0px -87px;
+	background-repeat: no-repeat;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_hours,
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_minutes,
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_colon {
+	font-size: 11px;
+	font-family: Tahoma;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_time_cont ul.dhtmlxcalendar_line li.dhtmlxcalendar_cell.dhtmlxcalendar_time_hdr span.dhtmlxcalendar_label_colon {
+	margin-left: 1px;
+	margin-right: 1px;
+}
+
+
+
+/* selector cover */
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_cover {
+	position: absolute;
+	left: 3px;
+	top: 27px;
+	width: 182px;
+	height: 163px;
+	background-color: #c1c1c1;
+	opacity: 0.3;
+	-moz-opacity: 0.3;
+	filter: alpha(opacity=30);
+}
+
+
+/* selector */
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj {
+	position: absolute;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_selector_obj_arrow {
+	position: absolute;
+	bottom: auto;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 9px;
+	background-position: center -69px;
+	background-repeat: no-repeat;
+	overflow: hidden;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table {
+	border: 1px solid #c1c1c1;
+	background-color: white;
+	border-top: none;
+	margin-top: 9px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left {
+	width: 17px;
+	text-align: center;
+	border-bottom: 1px solid white;
+	border-top: white 1px solid;
+	border-left: white 1px solid;
+	background-color: #f8f7f5;
+	background-position: center center;
+	background-repeat: no-repeat;
+	cursor: default;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left.dhtmlxcalendar_selector_cell_left_hover {
+	/*background-image*/;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle {
+	border-top: white 1px solid;
+	border-left: white 1px solid;
+	cursor: default;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right {
+	width: 17px;
+	text-align: center;
+	background-color: #f8f7f5;
+	border-bottom: 1px solid white;
+	border-right: 1px solid white;
+	border-top: 1px solid white;
+	background-position: center center;
+	background-repeat: no-repeat;
+	cursor: default;
+	/*background-image*/;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right.dhtmlxcalendar_selector_cell_right_hover {
+	/*background-image*/;
+}
+
+/* month */
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_month table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_month table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right {
+	display: none;
+	width: 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line {
+	display: block;
+	clear: both;
+	margin: 0px;
+	padding: 0px;
+	width: 96px;
+	height: 21px;
+	-moz-user-select: none;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell {
+	float: left;
+	width: 32px;
+	height: 21px;
+	line-height: 19px;
+	font-family: Tahoma;
+	font-size: 10px;
+	list-style-type: none;
+	list-style-image: none;
+	text-align: center;
+	vertical-align: middle;
+	margin: 0px;
+	padding: 0px;
+	background-repeat: no-repeat;
+	background-position: -78px -48px;
+	-moz-user-select: none;
+	cursor: default;
+	color: black;
+	/*background-image*/
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_active {
+	background-position: -142px -48px;
+}
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_hover {
+	background-position: -110px -48px;
+}
+
+/* hours, minutes */
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_left,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_right {
+	display: none;
+	width: 0px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours div.dhtmlxcalendar_selector_obj_arrow,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_selector_obj_arrow {
+	top: auto;
+	bottom: 0px;
+	background-position: center -78px;
+}	
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table {
+	margin-top: 0px;
+	margin-bottom: 9px;
+	border-top: 1px solid #C1C1C1;
+	border-bottom: none;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line {
+	width: 162px;
+	height: 17px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line {
+	width: 81px;
+	height: 17px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell {
+	height: 17px;
+	line-height: 15px;
+	width: 27px;
+	background-position: -83px -52px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_active,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_active {
+	background-position: -147px -52px;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_hover,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes table.dhtmlxcalendar_selector_table td.dhtmlxcalendar_selector_cell_middle ul.dhtmlxcalendar_selector_line li.dhtmlxcalendar_selector_cell.dhtmlxcalendar_selector_cell_hover {
+	background-position: -115px -52px;
+}
+
+
+/* selectors visibility */
+
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_month,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_year,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_hours,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj div.dhtmlxcalendar_area_selector_minutes {
+	display: none;
+}
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_month div.dhtmlxcalendar_area_selector_month,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_year div.dhtmlxcalendar_area_selector_year,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_hours div.dhtmlxcalendar_area_selector_hours,
+.dhtmlxcalendar_container div.dhtmlxcalendar_selector_obj.dhtmlxcalendar_selector_minutes div.dhtmlxcalendar_area_selector_minutes {
+	display: block;
+}
+

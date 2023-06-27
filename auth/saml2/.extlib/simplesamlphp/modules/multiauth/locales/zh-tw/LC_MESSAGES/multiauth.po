@@ -1,0 +1,31 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{multiauth:multiauth:select_source_text}"
+msgstr "系統將會使用您選擇之認證來源進行驗證並建立一個有效連線。"
+
+msgid "{multiauth:multiauth:select_source_header}"
+msgstr "選擇一個認證來源"
+
+msgid "Select an authentication source"
+msgstr "選擇一個認證來源"
+
+msgid ""
+"The selected authentication source will be used to authenticate you and "
+"and to create a valid session."
+msgstr "系統將會使用您選擇之認證來源進行驗證並建立一個有效連線。"
+

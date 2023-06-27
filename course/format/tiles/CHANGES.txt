@@ -1,0 +1,309 @@
+3.3.0.0 (2018092501)
+====================
+- Fix bug where editing section name using in-place editing would reset section icon to default
+- Fix issue with collapse section zero button icon not changing when close
+- Improve keyboard navigability for screen reader users
+- Change sub-tile title to "Spreadsheet" where .xlsx file is being displayed (previously said 'Other')
+- Fix issue with sub tiles wrapping to separate lines in section zero (where used)
+- Cosmetic changes to comments such as adding full stops to please Moodle code checker
+- Increment version to 2018092501
+
+3.3.0.1 (2018092503)
+====================
+- Fix issue #1 incorrect/inconsistent camel case in lang strings
+- Fix issue #2 invalid function names in locallib.php
+- Fix issue #3 adding $plugin->maturity and $plugin->release to version.php
+- Improve keyboard navigability for users e.g. in response to TAB and ESC keys within a tile
+    (ensure that tab from last content item and ESC respond as expected)
+- Improve keyboard navigability when editing mode on (add tabindex to tile bars and JS for return click to open)
+- Improve display of message "Hidden" or "Restricted" on tile before opened
+- Ensure that modal resource object tags have correct type shown for html page i.e. text/html (was showing application/pdf)
+- Fix modal header font colour (minor CSS change)
+- Move download, new window and completion toggle to the modal header (were in body)
+- Fix bug which was excluding section zero activity completion data from the overall calculation
+- Make tooltip for completion icon toggle to say "Complete" or "Not complete" when clicked
+
+3.3.0.2 (2018092504)
+====================
+- Adjust JS/CSS so that buttons in new modal header location (above) also works with clean/essential/adaptable
+
+3.3.0.3 (2018092505)
+====================
+- CSS change to ensure icons in modal window header are white (for contrast)
+- Combine 'overall' and 'progress' language strings into one 'Overall progress' to aid with language packs
+- Fix bug where items set with automatic completion tracking were not having their completion logged
+
+3.3.0.4 (2018092506)
+====================
+- Fix bug with incorrect display of links to hidden items to students
+
+3.3.0.8 (2018123000)
+====================
+- Fix issue with non-display of images in section summary (pluginfile rewrite)
+- Fix intended response to course deleted event
+- Fixes issue #4 by ensuring that function bails out if the restored course does not use tiles format
+- Avoid missing image on pick icon button
+- Add AMOS lang string defaultthiscourse
+- Improve handling of drag and drop images into courses
+
+3.3.0.12 (2019010300)
+====================
+- Dim restricted/hidden labels for teachers
+- Show availability message to teachers on hidden labels
+- Browser stored course content to be stored by user (better for testing)
+- Whether or not section zero is collapsed stored in local storage with user id not just courseid
+- Add admin plugin setting to allow or disallow re-opening of last open section for user
+- Minor JS corrections
+- Improve position of subtile edit menu (chome)
+- Ensure admin setting to assume browser storage consent is respected
+- Do not respond to return key press by entering tile if user was inplace editing the title.
+- Add HTML titles to close and edit buttons
+- Improve title on completion icon
+- Avoid trying to unset tileicon if not set
+- ensure that page modal launch works if not using subtiles
+- Change order of brand colours in admin settings to better match boost theme
+- Remove stray {$a} from filter bar help string
+- Ensure that if admin sets zero browser stored items, this is respected
+- Fix function which enables old browser stored items to be removed, remove redundant arg
+- Make instancename class consistent for subtile and standard activities
+
+3.3.0.16 (2019011401)
+=====================
+- Automated tests - basic tests added for Behat and PHPUnit (need more work)
+- Improve selectors for both colour and tile icon on course admin page and section edit pages including language strings
+- Ensure that label (and label like e.g. unilabel) completion changes do not result in temporary changes to tile progress counters
+- Tile progress indicator to update correctly when resources with automatic progress tracking are launched
+- Improve mobile CSS
+- Overall progress indicator to show even when filter bar is hidden
+- Cooperate better with Snap theme
+- Re-initialise media player when loading content via AJAX
+- Add icons to JS and data pref menu options
+- Use formatted text for cm description
+- Dim hidden label in non subtiles mode
+- CM edit controls to be shown to non-editing teacher who has been awarded limited editing rights
+- When page modal launched, include description html as well as page content
+- Description can be shown under activity link on course page if using non subtiles and box is checked
+- When completion icon changes, change class not img url
+- Overall progress indicator to be visible even if filter bar is not
+- Dragged and dropped items to show not dimmed
+- Icon text search new feature
+- Clear browser stored content when user switches role
+- Fix issue with in tile close button not always locating at top of section
+
+3.3.1 (2019012101)
+==================
+- Graphical colour and icon pickers to be available on course edit form when course is switched into tiles for first time
+- Overall progress indicator shows when filter bar not shown
+- Add 'afterlink' html to course module display
+- Check if theme supports font awesome
+- Include tile progress indicator value in completion behat test
+- Avoid minor layout issue with clean theme icon search box
+- Remove redundant setting tile hover colour name
+- No completion tracking for user viewing course as guest
+- Minor changes to please Moodle code checker
+
+3.3.2 (2019012800)
+==================
+- Avoid issue with duplicate labels showing where database shows cm.showdescription=1 (only happens sometimes)
+- Allow teacher to set restricted tiles as being visible to students but greyed out
+- Improve dimming of hidden activities
+
+3.3.3 (2019013100)
+==================
+- Stop stealth activities showing for students
+- Add title tooltip to icon picker icons where it is missing
+- Add music icon lang string
+- Fix course mod edit menu not working in Essential theme after new item drag dropped to course
+- Fix issue with move not working after drag new item into course
+- Adapt icon picker to allow for tooltip use
+
+3.3.4 (2019030100)
+====================
+- Adaptable theme - fix issue where glossary auto link dialogues are displayed under the main overlay
+- Adaptable theme - improve non JS display
+- Improve display of stealth activities
+- Improve JS deactivated message
+- CSS - Fix header overlay height, correct PDF modal width
+- Ensure close sec button is on top
+- Resolve narrow title on mobile with animated nav disabled
+- Avoid returning empty allowed mods list
+- Ensure tiles are narrower and 2 to a row on mobile
+- Remove redundant references to modal
+- Code checker changes
+
+3.3.5 (2019031100)
+==================
+- Fix tile icon left margin
+- PDF modal - ensure nav bar is visible on right of PDF, correct height in chrome (was too short)
+- Iframe e.g. Youtube video embedded in page - ensure width no larger than window width
+- Correct header overlay height
+
+3.3.6 (2019040200)
+==================
+- Adaptable theme - Improve navbar handling and completion icon appearance
+- Completion icons - fix issue #9 icons and strings to be displayed re quiz completion depending on grade (pass/fail)
+- Editing - expanding all tiles - remember user choice for this session and keep last edited section expanded
+- Internet Explorer- disable JS navigation and modals if user is using Internet Explorer.  Do not show animated nav controls.
+- Layout - Indentation improved for labels / files
+- Layout - Support indented activities (move left/right) in non subtiles mode
+- Layout - Two sub-tiles per row not one on devices with width < 680px (was 600px)
+- Loading tile icon appears when content loading
+- Local storage - clear when teacher edits course settings, or  if item with auto complete on grade is viewed
+- Minimise height of grid spacer tiles
+- Modals - display manual check control for Pages in modal when launched
+- Modals - improve alignment of course module modal control buttons
+- Modals - labels with iframes in modals - adapt modal height and width to iframe
+- Modals - Moodle 3.3 modal header colour
+- Modals - resize modal improvements (embedded HTML file resources / Page embedded iframes (e.g. YouTube)/ Moodle video filter)
+- Modals - when dismiss modal, video stops playing automatically
+- Navbar overlay height - improvements including account for difference between firefox and chrome
+- URL activity - remove intermediate screen on launch by student (go directly to URL but log click with AJAX)
+
+3.7.0.x RC (201905210x) (Major release RC)
+==================================
+New features
+- Photo tiles, with photo picker and conversion of Grid format courses
+- Tiles fit to screen on page load
+- YouTube and Vimeo URL activities - display in modal windows if "Display: embed", and list as "Video" not "URL"
+- Other embedded URL activities can launch in modal windows, with fallback link if "Display: embed"
+- Improve administrator settings pages and add settings related to new features
+- Administrator can now reset all course tile colours after changing the palette of available colours
+- Optional ability to register plugin for updates
+- Moodle 3.7 compatibility
+Other
+- Refactor code for simplicity and to help future features
+- Bug fixes
+
+3.9.0.x Beta (2020080xxx)
+=========================
+- Add support for Moodle 3.8 and 3.9
+- Bug fixes
+- Add support for H5P filter
+- Tooltips disabled by default
+
+3.9.0.3 Beta (2020080603)
+=========================
+- Issue 45 detect if the incompatible Moodle 3.7 version of tiles has been run in Moodle 3.9
+- If it has, throw error if section error detected on import/restore to 3.9
+
+3.9.0.4 Beta (2020080604)
+=========================
+- Better handling of import/backup error avoidance for issue 45 (teacher can exclude offending section from backup/restore).
+- For courses which have a large number of sections as a result of the issue, do not display them all / show warning to editor.
+- On course sections which have too high a section number, display an error message to editors and suggest a fix.
+
+3.9.0.5 Beta (2020080605)
+=========================
+- Fix typo on backup section count check
+
+3.9.0.6 (2020080606)
+=========================
+- Align queries with index on course_format_options table
+- Minor fixes
+
+3.9.0.7 (2020080607)
+=========================
+- Bug fixes
+- Add experimental tool to enable site admin to delete empty tiles in bulk.
+- Minor improvements to 'restricted' tags incl for Moodle 3.10
+- Tests - avoid deprecation warnings for PHP9
+
+3.9.0.8 (2020080608)
+====================
+- Bug fix with empty section deletion task
+
+3.9.0.9 (2020080609)
+====================
+- Minor refactoring and tidying
+
+3.9.0.10 (2020080610)
+====================
+- Improve YouTube and Vimeo URL recognition
+- Minor CSS change for editors
+
+3.9.0.11 (2020080611)
+=====================
+- Fix issue running unit test
+
+3.9.0.12 (2020080612)
+=====================
+- Fix issue with integer section names causing backup error
+- Fix delete empty sections tool
+
+3.9.0.13 (2020080613)
+=====================
+- Fix tests for Moodle 3.10
+
+3.9.0.14 (2020080614)
+=====================
+- Fix issue #61 Restricted activities / sections respond to clicks on others
+- Fix URL on out of sequence warning.
+
+3.9.0.15 (2020080615) (RELEASE CANDIDATE)
+=========================================
+- Compatibility for Moodle 3.11 incl new completion tracking activity info.
+- Fix issue #61, issue #75, issue #78 (completion no updating or not updating restrictions).
+- Fix issue #70 escape chars in mod title.
+- Fix issue 74 typo in image upload guidance.
+- Fix issue #67 LTI to open in new window.
+- Fix issue #50 PDF view log on mobile.
+- Fix incorrect lang string.
+- Fix issue #77 page description image not displaying.
+- Fix issue #73 (allow completion for labels).
+
+3.9.0.16 (2020080616) (RELEASE CANDIDATE)
+=========================================
+- Improve wrapping of tile and sub-tile titles where long (incl new line break feature).
+- Improve section completion checks on completion change.
+
+3.11.0.1 (2020080617) (RELEASE CANDIDATE)
+=========================================
+- Add Mathjax support
+- Improve section completion checks on completion change.
+- Remove browser content storage (simplifies code, better for completion, fixes issue #31, fixes issue #69).
+- Fix minor course settings page issue re subtiles in section zero.
+
+3.11.0.2 (2020080618) (RELEASE CANDIDATE)
+=========================================
+- Fix issue #52 scrolling after video new window
+- Fix issue #53 show page contents to users with editing rights
+- Amend lang strings
+
+3.11.0.3 (2020080619) (RELEASE CANDIDATE)
+=========================================
+- Fix issue #79 remove old unnecessary core tests
+
+3.11.0.4 (2020080620) (RELEASE CANDIDATE)
+=========================================
+- Hide lock when tile becomes visible on completion change.
+- Change the line break filter character to &#8288; (word joiner character).
+- Fix minor issue with course module modal completion track button on launch.
+
+3.11.0.5 (2020080621) (RELEASE CANDIDATE)
+=========================================
+- Fix issue with H5P modal being too small sometimes
+- Fix issue 65 Add mod datalynxcoursepage to $labellikecoursemods
+
+3.11.0.6 (2020080623) (RELEASE CANDIDATE)
+=========================================
+- Fix issue #60 mathjax not loading
+- Fix issue with jpeg filter param count
+
+3.11.1.0 (2020080625)
+=====================
+- Change "Release Candidate" tag to "Stable"
+
+3.11.1.1 (2020080626)
+======================
+- Fix hidden items showing as empty elems
+- Fix missing </button> tag hiding next item
+
+3.11.1.2 (2020080628)
+======================
+- Fix issue with completion hiding sec zero content
+- Fix issue #82 special chars in mod title
+
+3.11.1.3 (2020080629)
+======================
+- Fix JS error on course edit form
+- Minor style/layout adjustments for modals, stealth activities and Lambda theme

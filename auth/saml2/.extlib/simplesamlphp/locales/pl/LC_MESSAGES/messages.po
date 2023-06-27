@@ -1,0 +1,1376 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: pl\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP - Metadane"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Nie istnieje użytkownik o tej nazwie, lub podano złe hasło. Sprawdź nazwę"
+" użytkownika i ponów próbę."
+
+msgid "{logout:failed}"
+msgstr "Wystąpił bład podczas wylogowania"
+
+msgid "{status:attributes_header}"
+msgstr "Twoje atrybuty"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 Dostawca Serwisu (Zdalny)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Nie powiodło się uwierzytelnienie: przeglądarka nie przesłała certyfikatu"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Błąd przetwarzania odpowiedzi od Dostawcy Tożsamości"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Utracono informacje o stanie"
+
+msgid "{login:username}"
+msgstr "Nazwa użytkownika"
+
+msgid "{errors:title_METADATA}"
+msgstr "Błąd ładowania metadanych"
+
+msgid "{admin:metaconv_title}"
+msgstr "Parser metadanych"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Nie znaleziono błędów."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Utracono informację o przebiegu operacji wylogowania. Powróć do usługi, z"
+" której próbowałeś się wylogować i ponów próbę. Ten błąd może być "
+"spowodowany przeterminowaniem informacji o wylogowaniu. Informacja o "
+"wylogowaniu jest przechowywana przez określony czas, zwykle kilka godzin."
+" Jest to dłużej niż może zająć operacja wylogowania, więc błąd może mieć "
+"inną przyczynę, np. może oznaczać błędną konfigurację. Jeśli problem "
+"utrzymuje się, skontaktuj się z dostawcą usługi."
+
+msgid "{disco:previous_auth}"
+msgstr "Poprzednio wybrałeś"
+
+msgid "{admin:cfg_check_back}"
+msgstr "Powrót do listy plików"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Jeśli zgłaszasz ten bląd, podaj także ID zdarzenia, który umożliwi "
+"administratorowi zlokalizować Twoją sesje w logach:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Zmień swoją domową organizację"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Nie można zlokalizować metadanych dotyczących %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadane"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Możesz podać swój adres email, jeśli chcesz umożliwić administratorowi "
+"skontaktować się z Tobą w razie dalszych pytań związanych z Twoim "
+"problemem."
+
+msgid "{errors:report_header}"
+msgstr "Raport błędów"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Wybrałeś <b>%HOMEORG%</b> jako swoją domową organizację. Jeśli "
+"nieprawidłowa możesz wybrać inną."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Błąd przetwarzania żądania od Dostawcy Serwisu"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Nie zakceptowaliśmy odpowiedzi wysłanej przez Dostawcę Tożsamości."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Informacja debugger'a"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Odpowiedź dostawcy tożsamości oznacza błąd (kod stanu w odpowiedzi SAML "
+"nie oznacza sukcesu)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP - Metadane"
+
+msgid "{login:help_text}"
+msgstr ""
+"Niedobrze! - Bez nazwy użytkownika i/lub hasła nie możesz zostać "
+"uwierzytelniony dla tego serwisu. Może jest ktoś, kto może Ci pomóc. "
+"Skonsultuj się z działem pomocy technicznej na Twojej uczelni."
+
+msgid "{logout:default_link_text}"
+msgstr "Wróc do strony \"instalacja SimpleSAMLphp\""
+
+msgid "{errors:error_header}"
+msgstr "błąd SimpleSAMLphp"
+
+msgid "{login:help_header}"
+msgstr "Pomocy! Nie pamiętam hasła."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP jest bazą uzytkowników i kiedy Ty próbujesz się zalogować, to my "
+"musimy nawiązać połączenie z bazą LDAP. I właśnie w tym momencie wystąpił"
+" błąd."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Wykryto błąd w konfiguracji SimpleSAMLphp. Jeśli jesteś administratorem "
+"tej usługi, to sprawdź, czy prawidłowo zostały skonfigurowane metadane."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Otrzymano nieprawidłowe żadanie"
+
+msgid "{status:sessionsize}"
+msgstr "Rozmiar sesji: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Wylogowano"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML Metadane"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Nastepujące pola nie zostały rozpoznane"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Błąd źródła uwierzytelnienia"
+
+msgid "{login:select_home_org}"
+msgstr "Wybierz swoją domową organizację"
+
+msgid "{logout:hold}"
+msgstr "W zawieszeniu"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Sprawdzenie konfiguracji"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Wyślij wiadomość"
+
+msgid "{status:logout}"
+msgstr "Wyloguj"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Parametry wysłane do usługi wyszukiwania nie są zgodne ze specyfikacją"
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Wystąpił błąd podczas próby budowania żądania SAML"
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Pola opcjonalne"
+
+msgid "{logout:return}"
+msgstr "Powrót do serwisu"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "Możesz <a href=\"%METAURL%\">pobrać metadane w formacie xml</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Tak, wszystkie serwisy"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Możesz wyłaczyć globalnie tryb debugowania w pliku  "
+"<tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Wybierz"
+
+msgid "{logout:also_from}"
+msgstr "Jesteś także zalogowany w nastepujących serwisach:"
+
+msgid "{login:login_button}"
+msgstr "Login"
+
+msgid "{logout:progress}"
+msgstr "Wylogowywanie..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Nieprawidłowa nazwa użytkownika lub hasło."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Dostawca Serwisu (Zdalny)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Dostawca tożsamości otrzymał od dostawcy usługi zlecenie "
+"uwierzytelnienia, ale wystąpił błąd podczas przetwarzania zlecenia."
+
+msgid "{logout:logout_all_question}"
+msgstr "Czy chcesz zostać wylogowany z powyższych serwisów?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Brak dostępu"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Wysłałeś \"coś\" do strony logowania, ale z jakiś powodów hasło nie "
+"zostało wysłane. Spróbuj jeszcze raz."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Brak RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Utracono informacje o stanie i nie ma możliwości ponowienia zlecenia"
+
+msgid "{login:password}"
+msgstr "Hasło"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Poniższa informacja debugger'a  może być przydatna dla administara / "
+"helpdesk:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Brakujące opcje z pliku konfiguracyjnego"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Został zwrócony błąd, który nie może być obsłużony"
+
+msgid "{general:yes}"
+msgstr "Tak"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Błąd konfiguracji"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Błąd przetwarzania żądania wylogowania"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Błąd w metadanych"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Nie znaleziono metadanych"
+
+msgid "{login:contact_info}"
+msgstr "Informacje kontaktowe:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Nieobsługiwany błąd"
+
+msgid "{status:header_saml20_sp}"
+msgstr "Przykładowe Demo SAML 2.0 SP"
+
+msgid "{login:error_header}"
+msgstr "Błąd"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Przerwane uwierzytelnienie"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Jeden lub więcej serwisów , w których jesteś zalogowany <i>nie obsługuje "
+"procesu wylogowania</i>. W celu upewnienia się, że wszystkie sesje są "
+"zakończone, zalecane jest abyś <i>zamknął przeglądarkę</i>"
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "W formacie SAML 2.0 Metadata XML"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Dostawca Tożsamości (Zdalny)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Dostawca Tożsamości (Lokalny)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Pola wymagane"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Wybierz plik konfiguracyjny do sprawdzenia:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr ""
+"Nie powiodło się uwierzytelnienie: certyfikat przesłany przez "
+"przeglądarkę jest nieznany"
+
+msgid "{logout:logging_out_from}"
+msgstr "Wylogowanie z następujących serwisów:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Zostałeś pomyślnie wylogowany z %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Raport o błędzie został wysłany do administratorów."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Wystąpił bład podczas próby wylogowania."
+
+msgid "{logout:success}"
+msgstr "Zostałeś pomyślnie wylogowany ze wszystkich powyższych serwisów."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Uwagi"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Uwierzytelnienie zostało przerwane przez użytkownika"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Błąd podczas komunikacji z serwerem CAS"
+
+msgid "{general:no}"
+msgstr "Nie"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP - Metadane"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Skonwertowane metadane"
+
+msgid "{logout:completed}"
+msgstr "Zakończono"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Hasło w konfiguracji (auth.adminpassword) ma domyślną wartość. Proszę "
+"poprawić konfigurację."
+
+msgid "{general:service_provider}"
+msgstr "Dostawca serwisu"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Wystąpił następujący błąd w zleceniu: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Nie"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "Preferowany wybór"
+
+msgid "{general:no_cancel}"
+msgstr "Nie, nie akceptuję"
+
+msgid "{login:user_pass_header}"
+msgstr "Wprowadź nazwę uzytkownika i hasło"
+
+msgid "{errors:report_explain}"
+msgstr "Opisz, co zrobiłeś kiedy wystąpił błąd..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Nie dostarczo odpowiedzi SAML"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Została wywołana usługa SingleLogoutService, ale nie dostarczono "
+"komunikatu SAML LogoutRequest lub LogoutResponse."
+
+msgid "{login:organization}"
+msgstr "Organizacja"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Blędna nazwa użytkownika lub hasło"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Nastepujące wymagane pola nie zostały znalezione"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr "Brak uprawnień. Sprawdź opcję enable w konfiguracji SimpleSAMLphp."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Nie dostarczono komunikatu SAML"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Została wywołana usługa Assertion Consumer Service, ale nie dostarczono "
+"komunikatu SAML 'Authentication Response'"
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Błąd uwierzytelnienia dla źródła %AUTHSOURCE%. Przyczyną jest: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Wystapił jakiś błąd"
+
+msgid "{login:change_home_org_button}"
+msgstr "Wybierz domową organizację"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Zbędne opcje w pliku konfiguracyjnym"
+
+msgid "{errors:report_email}"
+msgstr "Adres e-mail"
+
+msgid "{errors:howto_header}"
+msgstr "Jak otrzymać pomoc."
+
+msgid "{errors:title_NOTSET}"
+msgstr "Nieustawione hasło"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Inicjator zlecenia nie dostarczył parametru RelayState, wskazującego, "
+"gdzie przekazać zlecenie."
+
+msgid "{status:header_diagnostics}"
+msgstr "Diagnostyka SimpleSAMLphp"
+
+msgid "{status:intro}"
+msgstr ""
+"Hej, to jest status strony SimpleSAMLphp. Tutaj możesz zaboaczyć, czy "
+"Twoja sesja jest nadal aktywna, jak długo pozostało czasu do zakończenia "
+"sesji i wszystkie atrybuty, które zostały załączone do sesji."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Nie znaleziono strony"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Wysyłanie wiadomości"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Dostawca tożsamości przesłał błąd"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP - Metadane"
+
+msgid "{admin:metaover_intro}"
+msgstr "Kliknij na nagłówek końcówki aby wyświetlić szczegóły SAML."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Nieprawidłowy certyfikat"
+
+msgid "{general:remember}"
+msgstr "Pamiętaj moją zgodę"
+
+msgid "{disco:selectidp}"
+msgstr "wybierz swojego Dostawcę Tożsamości."
+
+msgid "{login:help_desk_email}"
+msgstr "wyślij e-mail do helpdesku"
+
+msgid "{login:help_desk_link}"
+msgstr "Strona domowa pomocy technicznej (Helpdesk)"
+
+msgid "{errors:title_CASERROR}"
+msgstr "Błąd CAS"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Serwis zażądał autentykacji. Proszę w poniższym formularzu wprowadzić "
+"nazwę uzytkownika oraz hasło."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "nieprawidłowe żadanie do listy serwisow"
+
+msgid "{general:yes_continue}"
+msgstr "Tak, akceptuję"
+
+msgid "{disco:remember}"
+msgstr "Zapamiętaj mój wybór"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Dostawca Serwisu (Lokalny)"
+
+msgid "{disco:login_at}"
+msgstr "Zaloguj w"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Wystąpił problem z utworzeniem odpowiedzi uwierzytelniania"
+
+msgid "{errors:errorreport_header}"
+msgstr "Raport o błędzie wysłany"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Błąd podczas wykonywania żądania."
+
+msgid "{admin:metaover_header}"
+msgstr "Przegląd metadanych"
+
+msgid "{errors:report_submit}"
+msgstr "Wyślij raport o błędzie"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Niepoprawny certyfikat"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Nie znaleziono strony"
+
+msgid "{logout:logged_out_text}"
+msgstr "Zostałeś wylogowany. Dziękuję za skorzystanie z serwisu."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Dostawca Serwisu (Lokalny)"
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Wiadomość"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Nieznany certyfikat"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "Bład LDAP'a"
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Podana strona nie została znaleziona. Adres URL był: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Błąd ten wystąpił w związku z nieprzewidzianą sytuacją lub błędną "
+"konfigurację SimpleSAMLphp. Skontaktuj się z administratorem tego serwisu"
+" i wyślij mu powyższy błąd."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Dostawca Tożsamości (Lokalny)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Nie przedstawiłeś prawidłowego certyfikaty"
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Nastepujące pola opcjonalne nie zostały znalezione"
+
+msgid "{logout:logout_only}"
+msgstr "Nie, tylko %SP%"
+
+msgid "{login:next}"
+msgstr "Następny"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Wystapił bład podczas próby utworzenia przez Dostawcę Tożsamości "
+"odpowiedzi uwierzytelniania ."
+
+msgid "{disco:selectidp_full}"
+msgstr ""
+"Proszę wybrać Dostawcę Tożsamości, przez którego  chcesz się "
+"uwierzytelnić:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Podana strona nie została znaleziona. Przyczyną było: %REASON% Adres "
+"strony: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Brak certyfikatu"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Utracono informację o wylogowaniu"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 Dostawca Tożsamości (Zdalny)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "wydaje się, że SimpleSAMLphp jest błędnie skonfigurowany."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Tutaj sa metadane, które SimpleSAMLphp wygenerował dla Ciebie. Możesz je "
+"wysłać zaufanym partnerom w celu stworzenia zaufanej federacji."
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Nie powiodło się uwierzytelnienie: certyfikat przesłany przez "
+"przeglądarkę jest niepoprawny lub nie może zostać przeczytany"
+
+msgid "{status:header_shib}"
+msgstr "Demo Shibboleth"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Przetwórz"
+
+msgid "Person's principal name at home organization"
+msgstr "Główna nazwa użytkownika w instytucji macierzystej"
+
+msgid "Superfluous options in config file"
+msgstr "Zbędne opcje w pliku konfiguracyjnym"
+
+msgid "Mobile"
+msgstr "Telefon komórkowy (Mobile)"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Dostawca Serwisu (Lokalny)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP jest bazą uzytkowników i kiedy Ty próbujesz się zalogować, to my "
+"musimy nawiązać połączenie z bazą LDAP. I właśnie w tym momencie wystąpił"
+" błąd."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Możesz podać swój adres email, jeśli chcesz umożliwić administratorowi "
+"skontaktować się z Tobą w razie dalszych pytań związanych z Twoim "
+"problemem."
+
+msgid "Display name"
+msgstr "Nazwa wyświetlana (Display name)"
+
+msgid "Remember my choice"
+msgstr "Zapamiętaj mój wybór"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP - Metadane"
+
+msgid "Notices"
+msgstr "Uwagi"
+
+msgid "Home telephone"
+msgstr "Telefon domowy (Home telephone)"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Hej, to jest status strony SimpleSAMLphp. Tutaj możesz zaboaczyć, czy "
+"Twoja sesja jest nadal aktywna, jak długo pozostało czasu do zakończenia "
+"sesji i wszystkie atrybuty, które zostały załączone do sesji."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Opisz, co zrobiłeś kiedy wystąpił błąd..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Został zwrócony błąd, który nie może być obsłużony"
+
+msgid "Invalid certificate"
+msgstr "Nieprawidłowy certyfikat"
+
+msgid "Service Provider"
+msgstr "Dostawca serwisu"
+
+msgid "Incorrect username or password."
+msgstr "Nieprawidłowa nazwa użytkownika lub hasło."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Wystąpił następujący błąd w zleceniu: %REASON%"
+
+msgid "E-mail address:"
+msgstr "Adres e-mail"
+
+msgid "Submit message"
+msgstr "Wyślij wiadomość"
+
+msgid "No RelayState"
+msgstr "Brak RelayState"
+
+msgid "Error creating request"
+msgstr "Błąd podczas wykonywania żądania."
+
+msgid "Locality"
+msgstr "Locality"
+
+msgid "Unhandled exception"
+msgstr "Nieobsługiwany błąd"
+
+msgid "The following required fields was not found"
+msgstr "Nastepujące wymagane pola nie zostały znalezione"
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Nie można zlokalizować metadanych dotyczących %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Numer organizacji"
+
+msgid "Password not set"
+msgstr "Nieustawione hasło"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP - Metadane"
+
+msgid "Post office box"
+msgstr "Skrzynka pocztowa (Post office box)"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Serwis zażądał autentykacji. Proszę w poniższym formularzu wprowadzić "
+"nazwę uzytkownika oraz hasło."
+
+msgid "CAS Error"
+msgstr "Błąd CAS"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Poniższa informacja debugger'a  może być przydatna dla administara / "
+"helpdesk:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Nie istnieje użytkownik o tej nazwie, lub podano złe hasło. Sprawdź nazwę"
+" użytkownika i ponów próbę."
+
+msgid "Error"
+msgstr "Błąd"
+
+msgid "Next"
+msgstr "Następny"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Distinguished name (DN) macierzystej jednostki organizacyjnej osoby"
+
+msgid "State information lost"
+msgstr "Utracono informacje o stanie"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Hasło w konfiguracji (auth.adminpassword) ma domyślną wartość. Proszę "
+"poprawić konfigurację."
+
+msgid "Converted metadata"
+msgstr "Skonwertowane metadane"
+
+msgid "Mail"
+msgstr "E-mail"
+
+msgid "No, cancel"
+msgstr "Nie"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Wybrałeś <b>%HOMEORG%</b> jako swoją domową organizację. Jeśli "
+"nieprawidłowa możesz wybrać inną."
+
+msgid "Error processing request from Service Provider"
+msgstr "Błąd przetwarzania żądania od Dostawcy Serwisu"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Nazwa osoby w jednostce organizacyjnej"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Kliknij na nagłówek końcówki aby wyświetlić szczegóły SAML."
+
+msgid "Enter your username and password"
+msgstr "Wprowadź nazwę uzytkownika i hasło"
+
+msgid "Login at"
+msgstr "Zaloguj w"
+
+msgid "No"
+msgstr "Nie"
+
+msgid "Home postal address"
+msgstr "Domowy address pocztowy"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "Przykładowe Demo WS-Fed SP"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Dostawca Tożsamości (Zdalny)"
+
+msgid "Error processing the Logout Request"
+msgstr "Błąd przetwarzania żądania wylogowania"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Czy chcesz zostać wylogowany z powyższych serwisów?"
+
+msgid "Select"
+msgstr "Wybierz"
+
+msgid "The authentication was aborted by the user"
+msgstr "Uwierzytelnienie zostało przerwane przez użytkownika"
+
+msgid "Your attributes"
+msgstr "Twoje atrybuty"
+
+msgid "Given name"
+msgstr "Imię (Given name)"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "Przykładowe Demo SAML 2.0 SP"
+
+msgid "Logout information lost"
+msgstr "Utracono informację o wylogowaniu"
+
+msgid "Organization name"
+msgstr "Nazwa organizacji (Organization name)"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr ""
+"Nie powiodło się uwierzytelnienie: certyfikat przesłany przez "
+"przeglądarkę jest nieznany"
+
+msgid "Home organization domain name"
+msgstr "Nazwa organizacji macierzystej"
+
+msgid "Go back to the file list"
+msgstr "Powrót do listy plików"
+
+msgid "Error report sent"
+msgstr "Raport o błędzie wysłany"
+
+msgid "Common name"
+msgstr "Nazwa (Common name)"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr ""
+"Proszę wybrać Dostawcę Tożsamości, przez którego  chcesz się "
+"uwierzytelnić:"
+
+msgid "Logout failed"
+msgstr "Wystąpił bład podczas wylogowania"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Numer tożsamości wydany przez administrację publiczną"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation Dostawca Tożsamości (Zdalny)"
+
+msgid "Error received from Identity Provider"
+msgstr "Dostawca tożsamości przesłał błąd"
+
+msgid "LDAP Error"
+msgstr "Bład LDAP'a"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Utracono informację o przebiegu operacji wylogowania. Powróć do usługi, z"
+" której próbowałeś się wylogować i ponów próbę. Ten błąd może być "
+"spowodowany przeterminowaniem informacji o wylogowaniu. Informacja o "
+"wylogowaniu jest przechowywana przez określony czas, zwykle kilka godzin."
+" Jest to dłużej niż może zająć operacja wylogowania, więc błąd może mieć "
+"inną przyczynę, np. może oznaczać błędną konfigurację. Jeśli problem "
+"utrzymuje się, skontaktuj się z dostawcą usługi."
+
+msgid "Some error occurred"
+msgstr "Wystapił jakiś błąd"
+
+msgid "Organization"
+msgstr "Organizacja"
+
+msgid "No certificate"
+msgstr "Brak certyfikatu"
+
+msgid "Choose home organization"
+msgstr "Wybierz domową organizację"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Trwały anonimowy identyfikator"
+
+msgid "No SAML response provided"
+msgstr "Nie dostarczo odpowiedzi SAML"
+
+msgid "No errors found."
+msgstr "Nie znaleziono błędów."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Dostawca Serwisu (Lokalny)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Podana strona nie została znaleziona. Adres URL był: %URL%"
+
+msgid "Configuration error"
+msgstr "Błąd konfiguracji"
+
+msgid "Required fields"
+msgstr "Pola wymagane"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Wystąpił błąd podczas próby budowania żądania SAML"
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Błąd ten wystąpił w związku z nieprzewidzianą sytuacją lub błędną "
+"konfigurację SimpleSAMLphp. Skontaktuj się z administratorem tego serwisu"
+" i wyślij mu powyższy błąd."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Twoja sesja jest jeszcze ważna przez %remaining% sekund"
+
+msgid "Domain component (DC)"
+msgstr "Składnik nazwy domenowej (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Dostawca Serwisu (Zdalny)"
+
+msgid "Password"
+msgstr "Hasło"
+
+msgid "Nickname"
+msgstr "Ksywka (Nickname)"
+
+msgid "Send error report"
+msgstr "Wyślij raport o błędzie"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Nie powiodło się uwierzytelnienie: certyfikat przesłany przez "
+"przeglądarkę jest niepoprawny lub nie może zostać przeczytany"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Raport o błędzie został wysłany do administratorów."
+
+msgid "Date of birth"
+msgstr "Data urodzenia (Date of birth)"
+
+msgid "Private information elements"
+msgstr "Poufne atrybuty"
+
+msgid "You are also logged in on these services:"
+msgstr "Jesteś także zalogowany w nastepujących serwisach:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "Diagnostyka SimpleSAMLphp"
+
+msgid "Debug information"
+msgstr "Informacja debugger'a"
+
+msgid "No, only %SP%"
+msgstr "Nie, tylko %SP%"
+
+msgid "Username"
+msgstr "Nazwa użytkownika"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Wróc do strony \"instalacja SimpleSAMLphp\""
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Zostałeś pomyślnie wylogowany ze wszystkich powyższych serwisów."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Zostałeś pomyślnie wylogowany z %SP%."
+
+msgid "Affiliation"
+msgstr "Przynależność (Affiliation)"
+
+msgid "You have been logged out."
+msgstr "Zostałeś wylogowany. Dziękuję za skorzystanie z serwisu."
+
+msgid "Return to service"
+msgstr "Powrót do serwisu"
+
+msgid "Logout"
+msgstr "Wyloguj"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Utracono informacje o stanie i nie ma możliwości ponowienia zlecenia"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Błąd przetwarzania odpowiedzi od Dostawcy Tożsamości"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation Dostawca Serwisu (Lokalny)"
+
+msgid "Preferred language"
+msgstr "Preferowany język (Preferred language)"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 Dostawca Serwisu (Zdalny)"
+
+msgid "Surname"
+msgstr "Nazwisko (Surname)"
+
+msgid "No access"
+msgstr "Brak dostępu"
+
+msgid "The following fields was not recognized"
+msgstr "Nastepujące pola nie zostały rozpoznane"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Błąd uwierzytelnienia dla źródła %AUTHSOURCE%. Przyczyną jest: %REASON%"
+
+msgid "Bad request received"
+msgstr "Otrzymano nieprawidłowe żadanie"
+
+msgid "User ID"
+msgstr "ID użytkownika (User ID)"
+
+msgid "JPEG Photo"
+msgstr "Fotografia JPEG"
+
+msgid "Postal address"
+msgstr "Adres pocztowy (Postal address)"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Wystąpił bład podczas próby wylogowania."
+
+msgid "Sending message"
+msgstr "Wysyłanie wiadomości"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "W formacie SAML 2.0 Metadata XML"
+
+msgid "Logging out of the following services:"
+msgstr "Wylogowanie z następujących serwisów:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Wystapił bład podczas próby utworzenia przez Dostawcę Tożsamości "
+"odpowiedzi uwierzytelniania ."
+
+msgid "Could not create authentication response"
+msgstr "Wystąpił problem z utworzeniem odpowiedzi uwierzytelniania"
+
+msgid "Labeled URI"
+msgstr "Labeled URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "wydaje się, że SimpleSAMLphp jest błędnie skonfigurowany."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Dostawca Tożsamości (Lokalny)"
+
+msgid "Metadata"
+msgstr "Metadane"
+
+msgid "Login"
+msgstr "Login"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Dostawca tożsamości otrzymał od dostawcy usługi zlecenie "
+"uwierzytelnienia, ale wystąpił błąd podczas przetwarzania zlecenia."
+
+msgid "Yes, all services"
+msgstr "Tak, wszystkie serwisy"
+
+msgid "Logged out"
+msgstr "Wylogowano"
+
+msgid "Postal code"
+msgstr "Kod pocztowy"
+
+msgid "Logging out..."
+msgstr "Wylogowywanie..."
+
+msgid "Metadata not found"
+msgstr "Nie znaleziono metadanych"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Dostawca Tożsamości (Lokalny)"
+
+msgid "Primary affiliation"
+msgstr "Główna przynależność (Primary affiliation)"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Jeśli zgłaszasz ten bląd, podaj także ID zdarzenia, który umożliwi "
+"administratorowi zlokalizować Twoją sesje w logach:"
+
+msgid "XML metadata"
+msgstr "XML Metadane"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Parametry wysłane do usługi wyszukiwania nie są zgodne ze specyfikacją"
+
+msgid "Telephone number"
+msgstr "Numer telefonu (Telephone number)"
+
+msgid "Bad request to discovery service"
+msgstr "nieprawidłowe żadanie do listy serwisow"
+
+msgid "Select your identity provider"
+msgstr "wybierz swojego Dostawcę Tożsamości."
+
+msgid "Entitlement regarding the service"
+msgstr "Uprawnienie dotyczące serwisu"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP - Metadane"
+
+msgid "Remember"
+msgstr "Pamiętaj moją zgodę"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Distinguished name (DN) macierzystej organizacji osoby"
+
+msgid "Organizational unit"
+msgstr "Jednostka organizacyjna (Organizational unit)"
+
+msgid "Authentication aborted"
+msgstr "Przerwane uwierzytelnienie"
+
+msgid "Local identity number"
+msgstr "Local identity number"
+
+msgid "Report errors"
+msgstr "Raport błędów"
+
+msgid "Page not found"
+msgstr "Nie znaleziono strony"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP - Metadane"
+
+msgid "Change your home organization"
+msgstr "Zmień swoją domową organizację"
+
+msgid "User's password hash"
+msgstr "Zakodowane hasło użytkownika"
+
+msgid "Yes, continue"
+msgstr "Tak, akceptuję"
+
+msgid "Completed"
+msgstr "Zakończono"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Odpowiedź dostawcy tożsamości oznacza błąd (kod stanu w odpowiedzi SAML "
+"nie oznacza sukcesu)"
+
+msgid "Error loading metadata"
+msgstr "Błąd ładowania metadanych"
+
+msgid "Select configuration file to check:"
+msgstr "Wybierz plik konfiguracyjny do sprawdzenia:"
+
+msgid "On hold"
+msgstr "W zawieszeniu"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Błąd podczas komunikacji z serwerem CAS"
+
+msgid "No SAML message provided"
+msgstr "Nie dostarczono komunikatu SAML"
+
+msgid "Help! I don't remember my password."
+msgstr "Pomocy! Nie pamiętam hasła."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Możesz wyłaczyć globalnie tryb debugowania w pliku  "
+"<tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "Jak otrzymać pomoc."
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Została wywołana usługa SingleLogoutService, ale nie dostarczono "
+"komunikatu SAML LogoutRequest lub LogoutResponse."
+
+msgid "SimpleSAMLphp error"
+msgstr "błąd SimpleSAMLphp"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Jeden lub więcej serwisów , w których jesteś zalogowany <i>nie obsługuje "
+"procesu wylogowania</i>. W celu upewnienia się, że wszystkie sesje są "
+"zakończone, zalecane jest abyś <i>zamknął przeglądarkę</i>"
+
+msgid "Organization's legal name"
+msgstr "Zarejestrowana nazwa organizacji"
+
+msgid "Options missing from config file"
+msgstr "Brakujące opcje z pliku konfiguracyjnego"
+
+msgid "The following optional fields was not found"
+msgstr "Nastepujące pola opcjonalne nie zostały znalezione"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Nie powiodło się uwierzytelnienie: przeglądarka nie przesłała certyfikatu"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr "Brak uprawnień. Sprawdź opcję enable w konfiguracji SimpleSAMLphp."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "Możesz <a href=\"%METAURL%\">pobrać metadane w formacie xml</a>:"
+
+msgid "Street"
+msgstr "Ulica (Street)"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Wykryto błąd w konfiguracji SimpleSAMLphp. Jeśli jesteś administratorem "
+"tej usługi, to sprawdź, czy prawidłowo zostały skonfigurowane metadane."
+
+msgid "Incorrect username or password"
+msgstr "Blędna nazwa użytkownika lub hasło"
+
+msgid "Message"
+msgstr "Wiadomość"
+
+msgid "Contact information:"
+msgstr "Informacje kontaktowe:"
+
+msgid "Unknown certificate"
+msgstr "Nieznany certyfikat"
+
+msgid "Legal name"
+msgstr "Formalna nazwa użytkownika"
+
+msgid "Optional fields"
+msgstr "Pola opcjonalne"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Inicjator zlecenia nie dostarczył parametru RelayState, wskazującego, "
+"gdzie przekazać zlecenie."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Poprzednio wybrałeś"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Wysłałeś \"coś\" do strony logowania, ale z jakiś powodów hasło nie "
+"zostało wysłane. Spróbuj jeszcze raz."
+
+msgid "Fax number"
+msgstr "Numer Faksu (Fax number)"
+
+msgid "Shibboleth demo"
+msgstr "Demo Shibboleth"
+
+msgid "Error in this metadata entry"
+msgstr "Błąd w metadanych"
+
+msgid "Session size: %SIZE%"
+msgstr "Rozmiar sesji: %SIZE%"
+
+msgid "Parse"
+msgstr "Przetwórz"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Niedobrze! - Bez nazwy użytkownika i/lub hasła nie możesz zostać "
+"uwierzytelniony dla tego serwisu. Może jest ktoś, kto może Ci pomóc. "
+"Skonsultuj się z działem pomocy technicznej na Twojej uczelni."
+
+msgid "Metadata parser"
+msgstr "Parser metadanych"
+
+msgid "Choose your home organization"
+msgstr "Wybierz swoją domową organizację"
+
+msgid "Send e-mail to help desk"
+msgstr "wyślij e-mail do helpdesku"
+
+msgid "Metadata overview"
+msgstr "Przegląd metadanych"
+
+msgid "Title"
+msgstr "Tytuł (Title)"
+
+msgid "Manager"
+msgstr "Menadżer (Manager)"
+
+msgid "You did not present a valid certificate."
+msgstr "Nie przedstawiłeś prawidłowego certyfikaty"
+
+msgid "Authentication source error"
+msgstr "Błąd źródła uwierzytelnienia"
+
+msgid "Affiliation at home organization"
+msgstr "Przynależność w macierzystej organizacji"
+
+msgid "Help desk homepage"
+msgstr "Strona domowa pomocy technicznej (Helpdesk)"
+
+msgid "Configuration check"
+msgstr "Sprawdzenie konfiguracji"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Nie zakceptowaliśmy odpowiedzi wysłanej przez Dostawcę Tożsamości."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr ""
+"Podana strona nie została znaleziona. Przyczyną było: %REASON% Adres "
+"strony: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 Dostawca Tożsamości (Zdalny)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Tutaj sa metadane, które SimpleSAMLphp wygenerował dla Ciebie. Możesz je "
+"wysłać zaufanym partnerom w celu stworzenia zaufanej federacji."
+
+msgid "[Preferred choice]"
+msgstr "Preferowany wybór"
+
+msgid "Organizational homepage"
+msgstr "Strona domowa organizacji"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Została wywołana usługa Assertion Consumer Service, ale nie dostarczono "
+"komunikatu SAML 'Authentication Response'"
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Korzystasz w tej chwili z wersji testowej systemu. To ustawienie "
+"uwierzytelniania jest tylko dla testów. Jeśli ktoś wysłał Ci link "
+"kierujący tutaj, a ty nie jesteś <i>testerem</i> to prawdopodobnie "
+"otrzymałeś błędny link i <b>nie powinieneś być tutaj</b>."

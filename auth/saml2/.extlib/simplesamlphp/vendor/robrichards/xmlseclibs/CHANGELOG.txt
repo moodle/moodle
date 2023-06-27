@@ -1,0 +1,228 @@
+xmlseclibs.php
+|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+05, Sep 2020, 3.1.1
+Features:
+- Support OAEP (iggyvolz)
+
+Bug Fixes:
+- Fix AES128 (iggyvolz)
+
+Improvements:
+- Fix tests for older PHP
+
+22, Apr 2020, 3.1.0
+Features:
+- Support AES-GCM. Requires PHP 7.1. (François Kooman)
+
+Improvements:
+- Fix Travis tests for older PHP versions.
+- Use DOMElement interface to fix some IDEs reporting documentation errors
+
+Bug Fixes:
+- FIX missing InclusiveNamespaces PrefixList from Java + Apache WSS4J. (njake)
+
+06, Nov 2019, 3.0.4
+Security Improvements:
+- Insure only a single SignedInfo element exists within a signature during 
+  verification. Refs CVE-2019-3465.
+Bug Fixes:
+- Fix variable casing.
+
+15, Nov 2018, 3.0.3
+Bug Fixes:
+- Fix casing of class name. (Willem Stuursma-Ruwen)
+- Fix Xpath casing. (Tim van Dijen)
+
+Improvements:
+- Make PCRE2 compliant. (Stefan Winter)
+- Add PHP 7.3 support. (Stefan Winter)
+
+27, Sep 2018, 3.0.2
+Security Improvements:
+- OpenSSL is now a requirement rather than suggestion. (Slaven Bacelic)
+- Filter input to avoid XPath injection. (Jaime Pérez)
+
+Bug Fixes:
+- Fix missing parentheses (Tim van Dijen)
+
+Improvements:
+- Use strict comparison operator to compare digest values. (Jaime Pérez)
+- Remove call to file_get_contents that doesn't even work. (Jaime Pérez)
+- Document potentially dangerous return value behaviour. (Thijs Kinkhorst)
+
+31, Aug 2017, 3.0.1
+Bug Fixes:
+- Fixed missing () in function call. (Dennis Væversted)
+
+Improvements:
+- Add OneLogin to supported software.
+- Add .gitattributes to remove unneeded files. (Filippo Tessarotto)
+- Fix bug in example code. (Dan Church)
+- Travis: add PHP 7.1, move hhvm to allowed failures. (Thijs Kinkhorst)
+- Drop failing extract-win-cert test (Thijs Kinkhorst). (Thijs Kinkhorst)
+- Add comments to warn about return values of verify(). (Thijs Kinkhorst)
+- Fix tests to properly check return code of verify(). (Thijs Kinkhorst)
+- Restore support for PHP >= 5.4. (Jaime Pérez)
+
+25, May 2017, 3.0.0
+Improvements:
+- Remove use of mcrypt (skymeyer)
+
+08, Sep 2016, 2.0.1
+Bug Fixes:
+- Strip whitespace characters when parsing X509Certificate. fixes #84
+  (klemen.bratec)
+- Certificate 'subject' values can be arrays. fixes #80 (Andreas Stangl)
+- HHVM signing node with ID attribute w/out namespace regenerates ID value.
+  fixes #88 (Milos Tomic)
+
+Improvements:
+- Fix typos and add some PHPDoc Blocks. (gfaust-qb)
+- Update lightSAML link. (Milos Tomic)
+- Update copyright dates.
+
+31, Jul 2015, 2.0.0
+Features:
+- Namespace support. Classes now in the RobRichards\XMLSecLibs\ namespace.
+
+Improvements:
+- Dropped support for PHP 5.2
+
+31, Jul 2015, 1.4.1
+Bug Fixes:
+- Allow for large digest values that may have line breaks. fixes #62
+
+Features:
+- Support for locating specific signature when multiple exist in 
+  document. (griga3k)
+
+Improvements:
+- Add optional argument to XMLSecurityDSig to define the prefix to be used, 
+  also allowing for null to use no prefix, for the dsig namespace. fixes #13
+- Code cleanup
+- Depreciated XMLSecurityDSig::generate_GUID for XMLSecurityDSig::generateGUID
+
+23, Jun 2015, 1.4.0
+Features:
+- Support for PSR-0 standard.
+- Support for X509SubjectName. (Milos Tomic)
+- Add HMAC-SHA1 support.
+
+Improvements:
+- Add how to install to README. (Bernardo Vieira da Silva)
+- Code cleanup. (Jaime Pérez)
+- Normalilze tests. (Hidde Wieringa)
+- Add basic usage to README. (Hidde Wieringa)
+
+21, May 2015, 1.3.2
+Bug Fixes:
+- Fix Undefined variable notice. (dpieper85)
+- Fix typo when setting MimeType attribute. (Eugene OZ)
+- Fix validateReference() with enveloping signatures
+
+Features:
+- canonicalizeData performance optimization. (Jaime Pérez)
+- Add composer support (Maks3w)
+
+19, Jun 2013, 1.3.1
+Features:
+- return encrypted node from XMLSecEnc::encryptNode() when replace is set to 
+  false. (Olav)
+- Add support for RSA SHA384 and RSA_SHA512 and SHA384 digest. (Jaime Prez)
+- Add options parameter to the add cert methods.
+- Add optional issuerSerial creation with cert
+
+Bug Fixes:
+- Fix persisted Id when namespaced. (Koen Thomeer)
+
+Improvements:
+- Add LICENSE file
+- Convert CHANGELOG.txt to UTF-8
+
+26, Sep 2011, 1.3.0
+Features:
+- Add param to append sig to node when signing. Fixes a problem when using 
+  inclusive canonicalization to append a signature within a namespaced subtree.
+  ex. $objDSig->sign($objKey, $appendToNode); 
+- Add ability to encrypt by reference
+- Add support for refences within an encrypted key
+- Add thumbprint generation capability (XMLSecurityKey->getX509Thumbprint() and 
+  XMLSecurityKey::getRawThumbprint($cert))
+- Return signature element node from XMLSecurityDSig::insertSignature() and 
+  XMLSecurityDSig::appendSignature() methods
+- Support for <ds:RetrievalMethod> with simple URI Id reference.
+- Add XMLSecurityKey::getSymmetricKeySize() method (Olav)
+- Add XMLSecEnc::getCipherValue() method (Olav)
+- Improve XMLSecurityKey:generateSessionKey() logic (Olav)
+
+Bug Fixes:
+- Change split() to explode() as split is now depreciated
+- ds:References using empty or simple URI Id reference should never include 
+  comments in canonicalized data.
+- Make sure that the elements in EncryptedData are emitted in the correct 
+  sequence.
+
+11 Jan 2010, 1.2.2
+Features:
+- Add support XPath support when creating signature. Provides support for 
+  working with EBXML documents.
+- Add reference option to force creation of URI attribute. For use
+  when adding a DOM Document where by default no URI attribute is added.
+- Add support for RSA-SHA256
+
+Bug Fixes:
+- fix bug #5: createDOMDocumentFragment() in decryptNode when data is node 
+  content (patch by Francois Wang)
+
+
+08 Jul 2008, 1.2.1
+Features:
+- Attempt to use mhash when hash extension is not present. (Alfredo Cubitos).
+- Add fallback to built-in sha1 if both hash and mhash are not available and 
+  throw error for other for other missing hashes. (patch by Olav Morken).
+- Add getX509Certificate method to retrieve the x509 cert used for Key. 
+  (patch by Olav Morken).
+- Add getValidatedNodes method to retrieve the elements signed by the 
+  signature. (patch by Olav Morken).
+- Add insertSignature method for precision signature insertion. Merge 
+  functionality from appendSignature in the process. (Olav Morken, Rob).
+- Finally add some tests
+
+Bug Fixes:
+- Fix canonicalization for Document node when using PHP < 5.2.
+- Add padding for RSA_SHA1. (patch by Olav Morken).
+
+
+27 Nov 2007, 1.2.0
+Features:
+- New addReference/List option (overwrite). Boolean flag indicating if URI
+  value should be overwritten if already existing within document.
+  Default is TRUE to maintain BC.
+
+18 Nov 2007, 1.1.2
+Bug Fixes:
+- Remove closing PHP tag to fix extra whitespace characters from being output
+
+11 Nov 2007, 1.1.1
+Features:
+- Add getRefNodeID() and getRefIDs() methods missed in previous release.
+  Provide functionality to find URIs of existing reference nodes.
+  Required by simpleSAMLphp project
+
+Bug Fixes:
+- Remove erroneous whitespace causing issues under certain circumastances.
+
+18 Oct 2007, 1.1.0
+Features:
+- Enable creation of enveloping signature. This allows the creation of
+  managed information cards.
+- Add addObject method for enveloping signatures.
+- Add staticGet509XCerts method. Chained certificates within a PEM file can
+  now be added within the X509Data node.
+- Add xpath support within transformations
+- Add InclusiveNamespaces prefix list support within exclusive transformations.
+
+Bug Fixes:
+- Initialize random number generator for mcrypt_create_iv. (Joan Cornadó).
+- Fix an interoperability issue with .NET when encrypting data in CBC mode.
+  (Joan Cornadó).

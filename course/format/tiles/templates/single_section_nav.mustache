@@ -1,0 +1,86 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template format_tiles/single_section
+
+    Single Section content template.
+
+    The purpose of this template is to render the content of a single section
+    (i.e. the contents of one "tile" represeting a course topic".
+    This is a separate template because it is called from externallib.php (i.e. from web service via JS)
+    as well as being called from other templates (i.e. single_section_page) when rendering from PHP
+
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+        * courseid
+        * previous_tile_id
+        * next_tile_id
+
+    Example context (json):
+    {
+        "tileid": 4,
+        "courseid": 66,
+        "previous_tile_id": 3,
+        "next_tile_id": 5
+        }
+}}
+<div class="navigation-arrows">
+    {{#previous_tile_id}}
+        <a class="navigation-arrow"
+           href="{{{ config.wwwroot }}}/course/view.php?id={{courseid}}&section={{previous_tile_id}}&singlesec={{previous_tile_id}}">
+            <span class="dir-rtl-hide">{{#pix}}chevron-left, format_tiles, {{#str}}previoustopic, format_tiles{{/str}}{{/pix}}</span>
+            {{#is-rtl}}
+                    <span class="dir-ltr-hide">{{#pix}}chevron-right, format_tiles, {{#str}}previoustopic, format_tiles{{/str}}{{/pix}}</span>
+            {{/is-rtl}}
+        </a>
+    {{/previous_tile_id}}
+    {{^previous_tile_id}}
+        <span class="navigation-arrow dimmed">
+            <span class="dir-rtl-hide">{{#pix}}chevron-left, format_tiles, {{#str}}previoustopic, format_tiles{{/str}}{{/pix}}</span>
+            {{#is-rtl}}
+                <span class="dir-ltr-hide">{{#pix}}chevron-right, format_tiles, {{#str}}previoustopic, format_tiles{{/str}}{{/pix}}</span>
+            {{/is-rtl}}
+        </span>
+    {{/previous_tile_id}}
+
+    {{#next_tile_id}}
+        <a class="navigation-arrow"
+           href="{{{ config.wwwroot }}}/course/view.php?id={{courseid}}&section={{next_tile_id}}&singlesec={{next_tile_id}}">
+            <span class="dir-rtl-hide">{{#pix}}chevron-right, format_tiles, {{#str}}nexttopic, format_tiles{{/str}}{{/pix}}</span>
+            {{#is-rtl}}
+                <span class="dir-ltr-hide">{{#pix}}chevron-left, format_tiles, {{#str}}nexttopic, format_tiles{{/str}}{{/pix}}</span>
+            {{/is-rtl}}
+        </a>
+    {{/next_tile_id}}
+    {{^next_tile_id}}
+        <span class="navigation-arrow dimmed">
+            <span class="dir-rtl-hide">{{#pix}}chevron-right, format_tiles, {{#str}}nexttopic, format_tiles{{/str}}{{/pix}}</span>
+            {{#is-rtl}}
+                <span class="dir-ltr-hide">{{#pix}}chevron-left, format_tiles, {{#str}}nexttopic, format_tiles{{/str}}{{/pix}}</span>
+            {{/is-rtl}}
+        </span>
+    {{/next_tile_id}}
+    <a class="navigation-arrow" href="{{{ config.wwwroot }}}/course/view.php?id={{courseid}}">
+        {{#pix}}home, format_tiles, {{#str}}home, format_tiles{{/str}}{{/pix}}
+    </a>
+</div>

@@ -1,0 +1,117 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+
+{{!
+    @template format_remuiformat/card_general_section
+
+
+    Example context (json):
+    {
+        "editing: "0",
+        "defaultview: "1/0",
+        "expanded: "1/0",
+        "collapsed: "1/0",
+        "user_id: "1",
+        "courseid: "1",
+        "generalsection": [
+         {
+            "generalsectiontitle": "General Section Title",
+            "activities": [
+                {
+                    "index": "index",
+                    "id": "id",
+                    "completion": "completion",
+                    "viewurl": "viewurl",
+                    "title": "title",
+                    "modulename": "modulename",
+                    "summary": "summary",
+                    "completed": "completed",
+                    "hidden": "hidden",
+                    "availstatus": "availstatus",
+                    "modicons": "modicons",
+                }
+            ],
+            "generalsectionsummary": "General Section Summary",
+         }
+        ],
+    }
+}}
+
+<li id="section-{{{index}}}" class="section col-12">
+    <div class="general-section">
+        <div class="section-details">
+            <div class="coursedetails">
+                <div class="details">
+                    {{#coursemainimage}}
+                        <div class="col-12 coursemainimagediv text-right d-md-block mb-4">
+                            <div class="coursemainimage" style="background-image: url('{{coursemainimage}}');"></div>
+                        </div>
+                    {{/coursemainimage}}
+                    {{> format_remuiformat/course_progress }}
+                    {{#resumeactivityurl}}
+                        <div class="col-12 text-center mt-4">
+                            <a class="btn btn-primary btn-block bold" href="{{{ resumeactivityurl }}}" role="button">{{#str}} resumetoactivity, format_remuiformat{{/str}}</a>
+                        </div>
+                    {{/resumeactivityurl}}
+                </div>
+            </div>
+            <div class="generaldetails content">
+                <h2 class="section-title pt-0 p-t-0">{{ title }}</h2>
+                <div class='generalsectioninfo'>
+                    {{{availability}}}
+                    {{#fullsummary}}
+                        <input type="checkbox" class="read-more-state" id="read-more-summary" />
+                        <div class="read-more-target">{{{ fullsummary }}}</div>
+                        <div class="fadeout-summary"></div>
+                        <label for="read-more-summary" class=" text-primary small read-more-trigger"></label>
+                    {{/fullsummary}}
+                </div>
+            </div>
+        </div>
+        {{#activityexists}}
+            <h4 class="activitieshead">{{#str}} generalactivities, format_remuiformat{{/str}}</h4>
+            <ul class="general-section-activities justify-content-start text-center">
+                {{#activities}}
+                    <li class="activity justify-content-center list-unstyled {{{modulename}}} modtype_{{{modulename}}}" id="module-{{id}}">
+                        <div class="generalsecactivitiescontent w-100">
+                            {{#editing}}
+                                {{{leftside}}}
+                            {{/editing}}
+                            {{! <div> }}
+                                <div class="activityinstance p-0 d-inline-block">
+                                    {{{title}}}
+                                </div>
+                                <div class="actions">
+                                    {{{completion}}}
+                                </div>
+                                <div class="contentafterlink">
+                                    {{{summary}}}
+                                </div>
+                                {{{availstatus}}}
+                            {{! </div> }}
+                        </div>
+                    </li>
+                {{/activities}}
+            </ul>
+        {{/activityexists}}
+        <div class="text-center showactivitywrapper">
+            <span class="showactivity text-primary show">
+                <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </span>
+        </div>  
+    </div>
+</li>

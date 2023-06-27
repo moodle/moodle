@@ -1,0 +1,25 @@
+{% set pagetitle = 'Incorrect Attributes' | trans %}
+{% extends "base.twig" %}
+{% block content %}
+
+<h1>{{ pagetitle }}</h1>
+
+<p>{% trans 'One or more of the attributes supplied by your identity provider did not contain the expected number of values.' %}</p>
+
+<h3>{% trans 'The problematic attribute(s) are:' %}</h3>
+
+<dl class="cardinalityErrorAttributes">
+{% for attr,issues in cardinalityErrorAttributes %}
+  {% set got = issues[0] %}
+  {% set want = issues[1] %}
+
+  <dt>{{ attr }}</dt>
+  <dd>{% trans %}got {{ got }} values, want {{ want }}{% endtrans %}</dd>
+{% endfor %}
+</dl>
+
+{% if LogoutURL is defined %}
+    <p><a href="{{ LogoutURL }}">{% trans 'Logout' %}</a></p>
+{% endif %}
+
+{% endblock %}

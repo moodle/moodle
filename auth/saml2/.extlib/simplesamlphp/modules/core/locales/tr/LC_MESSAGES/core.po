@@ -1,0 +1,341 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: tr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr "Shibboleth 1.3 SP örneği - Shib IdP'nizden giriş yaparak test edin"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Yönetici olarak giriş"
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp'i Servis Sağlayıcı (SP) olarak kullanmak"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr ""
+"Sunulan SAML 2.0 Servis Sağlayıcı Üstverisi (metadata) (otomatik olarak "
+"üretilmiştir)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID Provider site - Alpha sürümü (test kodu)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "SimpleSAMLphp kuruluyor"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Bilgisayar adı, port ve protokol üzerine kontroller"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr ""
+"Sunulan SAML 2.0 Kimlik Sağlayıcı Üstverisi (metadata) (otomatik olarak "
+"üretilmiştir)"
+
+msgid "{core:frontpage:optional}"
+msgstr "İsteğe bağlı"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr ""
+"Sunulan Shibboleth 1.3 Servis Sağlayıcı Üstverisi (metadata) (otomatik "
+"olarak üretilmiştir)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokümantasyon"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp Gelişmiş Özellikler"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "LDAP için gerekli"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Düzenlenmiş kimlik doğrulama kaynaklarını test et"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr ""
+"Kurulumunuz için üstveri (metadata) bilgisi. Üstveri dosyalarınızı "
+"kontrol edin."
+
+msgid "{core:frontpage:configuration}"
+msgstr "Konfigurasyon"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Hoşgeldiniz"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr "Shibboleth 1.3 SP'yi SimpleSAMLphp IdP ile çalışması için düzenle"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Üstveri (Metadata)"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp Bakım ve Düzenleme"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp konfigürasyon kontrolü"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Uyarılar"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML'den SimpleSAMLphp'e üstveri (metadata) dönüştürücü"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "IdP tanıtım servisleri arasındaki IdP seçimlerimi sil"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Yönetici olarak girdiniz"
+
+msgid "{core:frontpage:auth}"
+msgstr "Kimlik Doğrulama"
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Üstveri (Metadata) göster"
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>Tebrikler</strong>, SimpleSAMLphp'i başarıyla yüklediniz. Bu "
+"sayfa, test örneklerine, kontrollere, üstveriye (metadata) ve hatta "
+"ilgili dokümanlara bağlantılar bulabileceğiniz, kurulumun başlangıç "
+"sayfasıdır."
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr ""
+"Sunulan Shibboleth 1.3 Kimlik Sağlayıcı Üstverisi (metadata) (otomatik "
+"olarak üretilmiştir)"
+
+msgid "{core:frontpage:required}"
+msgstr "Gerekli"
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"Kullanıcıyla şifreli iletişim -<strong>HTTPS kullanmıyorsunuz</strong>. "
+"HTTP test amaçlı olarak kullanılabilir, ancak üretim ortamında, HTTPS "
+"kullanmalısınız. [ <a href=\"http://rnd.feide.no/content/simplesamlphp-"
+"maintenance-and-configuration\">SimpleSAMLphp bakımı hakkında daha "
+"fazlasını okuyun</a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federasyon"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "Radius için gerekli"
+
+msgid "{core:frontpage:checkphp}"
+msgstr "PHP kurulumunuz kontrol ediliyor"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp'i Kimlik Sağlayıcı (IdP) olarak kullanmak"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SAML 2.0 SP örneği - IdP'nizden giriş yaparak test edin"
+
+msgid "{core:frontpage:about_header}"
+msgstr "SimpleSAMLphp hakkında"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"Bu SimpleSAMLphp oldukça iyiymiş, daha fazla bilgiyi nereden "
+"okuyabilirim? <a href=\"http://uninett.no\">UNINETT</a> üzerinde <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">Feide RnD blog'unda "
+"SimpleSAMLphp </a> hakkında daha fazlasını bulabilirsiniz."
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Kurulumunuz için faydalı linkler"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Üstveri (Metadata)"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Tavsiye edilen"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr ""
+"\"Google Apps for Education\" için kimlik sağlayıcı (IdP) olarak "
+"SimpleSAMLphp "
+
+msgid "{core:frontpage:tools}"
+msgstr "Araçlar"
+
+msgid "You are logged in as administrator"
+msgstr "Yönetici olarak girdiniz"
+
+msgid "Welcome"
+msgstr "Hoşgeldiniz"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp konfigürasyon kontrolü"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr ""
+"Kurulumunuz için üstveri (metadata) bilgisi. Üstveri dosyalarınızı "
+"kontrol edin."
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML'den SimpleSAMLphp'e üstveri (metadata) dönüştürücü"
+
+msgid "Required"
+msgstr "Gerekli"
+
+msgid "Warnings"
+msgstr "Uyarılar"
+
+msgid "Documentation"
+msgstr "Dokümantasyon"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Sunulan Shibboleth 1.3 Servis Sağlayıcı Üstverisi (metadata) (otomatik "
+"olarak üretilmiştir)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "SimpleSAMLphp hakkında"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr ""
+"Sunulan SAML 2.0 Servis Sağlayıcı Üstverisi (metadata) (otomatik olarak "
+"üretilmiştir)"
+
+msgid "Required for LDAP"
+msgstr "LDAP için gerekli"
+
+msgid "Federation"
+msgstr "Federasyon"
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "IdP tanıtım servisleri arasındaki IdP seçimlerimi sil"
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr "Shibboleth 1.3 SP'yi SimpleSAMLphp IdP ile çalışması için düzenle"
+
+msgid "Tools"
+msgstr "Araçlar"
+
+msgid "Test configured authentication sources "
+msgstr "Düzenlenmiş kimlik doğrulama kaynaklarını test et"
+
+msgid "Installing SimpleSAMLphp"
+msgstr "SimpleSAMLphp kuruluyor"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>Tebrikler</strong>, SimpleSAMLphp'i başarıyla yüklediniz. Bu "
+"sayfa, test örneklerine, kontrollere, üstveriye (metadata) ve hatta "
+"ilgili dokümanlara bağlantılar bulabileceğiniz, kurulumun başlangıç "
+"sayfasıdır."
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"Kullanıcıyla şifreli iletişim -<strong>HTTPS kullanmıyorsunuz</strong>. "
+"HTTP test amaçlı olarak kullanılabilir, ancak üretim ortamında, HTTPS "
+"kullanmalısınız. [ <a href=\"http://rnd.feide.no/content/simplesamlphp-"
+"maintenance-and-configuration\">SimpleSAMLphp bakımı hakkında daha "
+"fazlasını okuyun</a> ]"
+
+msgid "Metadata"
+msgstr "Üstveri (Metadata)"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp Bakım ve Düzenleme"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Bilgisayar adı, port ve protokol üzerine kontroller"
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp'i Kimlik Sağlayıcı (IdP) olarak kullanmak"
+
+msgid "Optional"
+msgstr "İsteğe bağlı"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"Bu SimpleSAMLphp oldukça iyiymiş, daha fazla bilgiyi nereden "
+"okuyabilirim? <a href=\"http://uninett.no\">UNINETT</a> üzerinde <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">Feide RnD blog'unda "
+"SimpleSAMLphp </a> hakkında daha fazlasını bulabilirsiniz."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr "Shibboleth 1.3 SP örneği - Shib IdP'nizden giriş yaparak test edin"
+
+msgid "Authentication"
+msgstr "Kimlik Doğrulama"
+
+msgid "Show metadata"
+msgstr "Üstveri (Metadata) göster"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr ""
+"\"Google Apps for Education\" için kimlik sağlayıcı (IdP) olarak "
+"SimpleSAMLphp "
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Sunulan SAML 2.0 Kimlik Sağlayıcı Üstverisi (metadata) (otomatik olarak "
+"üretilmiştir)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID Provider site - Alpha sürümü (test kodu)"
+
+msgid "Required for Radius"
+msgstr "Radius için gerekli"
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SAML 2.0 SP örneği - IdP'nizden giriş yaparak test edin"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp'i Servis Sağlayıcı (SP) olarak kullanmak"
+
+msgid "Recommended"
+msgstr "Tavsiye edilen"
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp Gelişmiş Özellikler"
+
+msgid "Checking your PHP installation"
+msgstr "PHP kurulumunuz kontrol ediliyor"
+
+msgid "Useful links for your installation"
+msgstr "Kurulumunuz için faydalı linkler"
+
+msgid "Configuration"
+msgstr "Konfigurasyon"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr ""
+"Sunulan Shibboleth 1.3 Kimlik Sağlayıcı Üstverisi (metadata) (otomatik "
+"olarak üretilmiştir)"
+
+msgid "Login as administrator"
+msgstr "Yönetici olarak giriş"
+

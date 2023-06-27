@@ -1,0 +1,530 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: eu\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{core:frontpage:link_phpinfo}"
+msgstr "PHP info"
+
+msgid "{core:no_state:report_text}"
+msgstr ""
+"Arazoak bere horretan badirau, sistemaren administratzaileei berri eman "
+"diezaiekezu."
+
+msgid "{core:no_state:cause_backforward}"
+msgstr "Zure web nabigatzaileko atzera eta aurrera botoiak erabiltzen."
+
+msgid "{core:no_metadata:not_found_for}"
+msgstr "Ezinezkoa izan da erakunde honentzat metadaturik aurkitzea: "
+
+msgid "{core:frontpage:link_shib13example}"
+msgstr ""
+"SPren adibidea Shibboleth 1.3 erabiliz - saikera zure IdP Shibboleth "
+"erabiliz sartzen"
+
+msgid "{core:no_state:suggestions}"
+msgstr "Arazo hau konpontzeko iradokizunak:"
+
+msgid "{core:frontpage:login_as_admin}"
+msgstr "Sartu administratzaile bezala"
+
+msgid "{core:short_sso_interval:warning}"
+msgstr ""
+"Azken aldiz zerbitzu honetan kautotu zinenetik segundu gutxi batzu "
+"besterik ez direla igaro antzeman dugu, beraz ZH honekin arazoren bat "
+"dagoela hartuko dugu. "
+
+msgid "{core:frontpage:link_doc_sp}"
+msgstr "SimpleSAMLphp erabili Identificadore hornitzaile moduan"
+
+msgid "{core:frontpage:link_meta_saml2sphosted}"
+msgstr "SP SAML 2.0ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "{core:frontpage:link_openidprovider}"
+msgstr "OpenID hornitzailearen gunea - Alfa bertsioa (proba kodea)"
+
+msgid "{core:frontpage:link_doc_install}"
+msgstr "SimpleSAMLphp-en instalakuntza"
+
+msgid "{core:frontpage:link_diagnostics}"
+msgstr "Host, ataka eta protokoloen gaineko diagnostikoa"
+
+msgid "{core:no_state:suggestion_goback}"
+msgstr "Itzul zaitez aurreko orrira eta saiatu berriro"
+
+msgid "{core:no_state:causes}"
+msgstr "Errore hau honek eragin dezake:"
+
+msgid "{core:frontpage:link_meta_saml2idphosted}"
+msgstr "IdP SAML 2.0ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "{core:frontpage:optional}"
+msgstr "Hautazkoa"
+
+msgid "{core:frontpage:link_meta_shib13sphosted}"
+msgstr "SP Shibooleth 1.3ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "{core:frontpage:doc_header}"
+msgstr "Dokumentazioa"
+
+msgid "{core:frontpage:link_doc_advanced}"
+msgstr "SimpleSAMLphp-en ezaugarri aurreratuak"
+
+msgid "{core:frontpage:required_ldap}"
+msgstr "LDAPrentzat beharrezkoa"
+
+msgid "{core:frontpage:authtest}"
+msgstr "Frogatu kautotzeko jada konfiguratuak dauden iturriak"
+
+msgid "{core:frontpage:link_meta_overview}"
+msgstr ""
+"Zure instalazioko metadatuen ikuspegi orokorra. Egiaztatu zure metadatu "
+"fitxategiak"
+
+msgid "{core:frontpage:configuration}"
+msgstr "Konfigurazioa"
+
+msgid "{core:frontpage:welcome}"
+msgstr "Ongi etorri"
+
+msgid "{core:frontpage:link_doc_shibsp}"
+msgstr ""
+"Shibboleth 1.3 SP konfiguratzea IdP SimpleSAMLphp-ekin lan egin ahal "
+"izateko"
+
+msgid "{core:no_state:header}"
+msgstr "Egoeraren informazioa galdu da"
+
+msgid "{core:frontpage:metadata_header}"
+msgstr "Metadatuak"
+
+msgid "{core:frontpage:link_doc_maintenance}"
+msgstr "SimpleSAMLphp-en mantentzea eta konfigurazioa"
+
+msgid "{core:frontpage:link_configcheck}"
+msgstr "SimpleSAMLphp-en konfigurazioa egiaztatzea"
+
+msgid "{core:frontpage:page_title}"
+msgstr "SimpleSAMLphp instalatzeko orria"
+
+msgid "{core:no_cookie:header}"
+msgstr "Cookie-a falta da"
+
+msgid "{core:frontpage:warnings}"
+msgstr "Oharrak"
+
+msgid "{core:frontpage:link_xmlconvert}"
+msgstr "XML-tik SimpleSAMLphp metadatuetara bihurgailua"
+
+msgid "{core:frontpage:link_cleardiscochoices}"
+msgstr "Nire IdP aukerak ezabatu IdP aurkikuntza zerbitzuetan"
+
+msgid "{core:frontpage:loggedin_as_admin}"
+msgstr "Administratzaile bezala sartu zara"
+
+msgid "{core:frontpage:auth}"
+msgstr "Kautotzea"
+
+msgid "{core:no_metadata:suggestion_user_link}"
+msgstr ""
+"Gune bateko lotura bat jarraituz errore hau jasotzen duen erabiltzaile "
+"bat bazara,  guneko jabeari eman behar diozu errorearen berri."
+
+msgid "{core:no_state:description}"
+msgstr "Ez dugu aurkitu egoeraren informaziorik eskaera honentzat."
+
+msgid "{core:frontpage:show_metadata}"
+msgstr "Ikusi metadatuak"
+
+msgid "{core:no_state:suggestion_closebrowser}"
+msgstr "Nabigatzailea itxi eta saiatu berriro"
+
+msgid "{core:short_sso_interval:warning_header}"
+msgstr "Denbora tarte oso motza saio bakarreko gertaeren artean."
+
+msgid "{core:frontpage:intro}"
+msgstr ""
+"<strong>&iexcl;Zorionak!</strong> SimpleSAMLphp zuzen instalatu duzu. Hau"
+" instalazioaren hasiera orria da, hemen, aurkituko dituzu loturak froga, "
+"metadatu edo dokumentu garrantzitsuetan sartzeko."
+
+msgid "{core:no_metadata:header}"
+msgstr "Ez da aurkitu metadaturik"
+
+msgid "{core:frontpage:link_meta_shib13idphosted}"
+msgstr "IdP Shibooleth 1.3ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "{core:frontpage:required}"
+msgstr "Beharrezkoa"
+
+msgid "{core:no_metadata:config_problem}"
+msgstr ""
+"Hau ziurrenik konfigurazio arazo bat izango da zerbitzu hornitzailean "
+"edota identitate hornitzailean. "
+
+msgid "{core:frontpage:warnings_suhosin_url_length}"
+msgstr ""
+"Eskaeraren parametroen luzera PHP Suhosin luzapenak mugatzen du. Mesedez,"
+" luza ezazu suhosin.get.max_value_length aukeraren balioa gutxienez 2048 "
+"bytetara. "
+
+msgid "{core:frontpage:warnings_https}"
+msgstr ""
+"<strong>Ez zara erabiltzen ari HTTPSak</strong> - erabiltzailearekin "
+"zifratutako komunikazioak. HTTP zuzen ibiltzen da ebaluaketa ingurunetan,"
+" baina ustiapenean erabili behar baduzu, HTTPS erabili beharko zenuke. [ "
+"<a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Irakur ezazu gehiago SimpleSAMLphp-ren mantentze-lanei "
+"buruz </a> ]"
+
+msgid "{core:frontpage:federation}"
+msgstr "Federazioa"
+
+msgid "{core:frontpage:required_radius}"
+msgstr "RADIUSentzat beharrezkoa"
+
+msgid "{core:no_state:cause_openbrowser}"
+msgstr "Zure web nabigatzailea aurreko saiotik gordeta zeuden fitxekin ireki duzu."
+
+msgid "{core:frontpage:checkphp}"
+msgstr "Zure PHP instalaziooa egiazatzen"
+
+msgid "{core:frontpage:link_doc_idp}"
+msgstr "SimpleSAMLphp erabili Identifikadore Hornitzaile moduan"
+
+msgid "{core:no_state:report_header}"
+msgstr "Errore honen berri eman"
+
+msgid "{core:frontpage:link_saml2example}"
+msgstr "SPren adibidea SAML 2.0rekin - saiakera zure IdP erabiliz sartzen"
+
+msgid "{core:no_state:cause_nocookie}"
+msgstr "Cookie-ak desgaituta egon litezke nabigatzailean."
+
+msgid "{core:frontpage:about_header}"
+msgstr "SimpleSAMLphp-ari buruz"
+
+msgid "{core:frontpage:about_text}"
+msgstr ""
+"SimpleSAMLphp-en kontu hau interesgarria da benetan, non bila nezake "
+"informazio gehiago honen inguruan? <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp Feideren I+G "
+"blogeko <a href=\"http://uninett.no\">UNINETT</a>n."
+
+msgid "{core:no_metadata:suggestion_developer}"
+msgstr ""
+"Hasiera-bakarreko sistema bat zabaltzen ari zaren garatzaile bat bazara, "
+"arazo bat duzu zure metadatuen kongigurazioarekin. Egiazta ezazu "
+"metadatuak zuzen konfiguratuak daudela identitate hornitzailean eta "
+"zerbitzu hornitzailean."
+
+msgid "{core:no_cookie:retry}"
+msgstr "Saiatu berriro"
+
+msgid "{core:frontpage:useful_links_header}"
+msgstr "Instalaziorako lotura erabilgarriak"
+
+msgid "{core:frontpage:metadata}"
+msgstr "Metadatuak"
+
+msgid "{core:frontpage:recommended}"
+msgstr "Gomendatua"
+
+msgid "{core:frontpage:link_doc_googleapps}"
+msgstr "SimpleSAMLphp Hezkuntzarako Google Apps-entzako IdP moduan"
+
+msgid "{core:frontpage:tools}"
+msgstr "Tresnak"
+
+msgid "{core:short_sso_interval:retry}"
+msgstr "Saiatu berriro kautotzen"
+
+msgid "{core:no_cookie:description}"
+msgstr ""
+"Badirudi zure nabigatzaileko cookie-ak desgaitu dituzula. Mesedez, "
+"berrikusi zure nabigatzaileko lehentasunak eta saiatu berriro."
+
+msgid "{core:frontpage:deprecated}"
+msgstr "Zaharkitua"
+
+msgid "You are logged in as administrator"
+msgstr "Administratzaile bezala sartu zara"
+
+msgid "Go back to the previous page and try again."
+msgstr "Itzul zaitez aurreko orrira eta saiatu berriro"
+
+msgid "If this problem persists, you can report it to the system administrators."
+msgstr ""
+"Arazoak bere horretan badirau, sistemaren administratzaileei berri eman "
+"diezaiekezu."
+
+msgid "Welcome"
+msgstr "Ongi etorri"
+
+msgid "SimpleSAMLphp configuration check"
+msgstr "SimpleSAMLphp-en konfigurazioa egiaztatzea"
+
+msgid "Metadata overview for your installation. Diagnose your metadata files"
+msgstr ""
+"Zure instalazioko metadatuen ikuspegi orokorra. Egiaztatu zure metadatu "
+"fitxategiak"
+
+msgid "XML to SimpleSAMLphp metadata converter"
+msgstr "XML-tik SimpleSAMLphp metadatuetara bihurgailua"
+
+msgid "Required"
+msgstr "Beharrezkoa"
+
+msgid "Warnings"
+msgstr "Oharrak"
+
+msgid "Documentation"
+msgstr "Dokumentazioa"
+
+msgid "Hosted Shibboleth 1.3 Service Provider Metadata (automatically generated)"
+msgstr "SP Shibooleth 1.3ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "PHP info"
+msgstr "PHP info"
+
+msgid "About SimpleSAMLphp"
+msgstr "SimpleSAMLphp-ari buruz"
+
+msgid "Hosted SAML 2.0 Service Provider Metadata (automatically generated)"
+msgstr "SP SAML 2.0ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "Retry login"
+msgstr "Saiatu berriro kautotzen"
+
+msgid "Required for LDAP"
+msgstr "LDAPrentzat beharrezkoa"
+
+msgid "Close the web browser, and try again."
+msgstr "Nabigatzailea itxi eta saiatu berriro"
+
+msgid "Federation"
+msgstr "Federazioa"
+
+msgid "We were unable to locate the state information for the current request."
+msgstr "Ez dugu aurkitu egoeraren informaziorik eskaera honentzat."
+
+msgid "Delete my choices of IdP in the IdP discovery services"
+msgstr "Nire IdP aukerak ezabatu IdP aurkikuntza zerbitzuetan"
+
+msgid ""
+"This is most likely a configuration problem on either the service "
+"provider or identity provider."
+msgstr ""
+"Hau ziurrenik konfigurazio arazo bat izango da zerbitzu hornitzailean "
+"edota identitate hornitzailean. "
+
+msgid "Configure Shibboleth 1.3 SP to work with SimpleSAMLphp IdP"
+msgstr ""
+"Shibboleth 1.3 SP konfiguratzea IdP SimpleSAMLphp-ekin lan egin ahal "
+"izateko"
+
+msgid "Using the back and forward buttons in the web browser."
+msgstr "Zure web nabigatzaileko atzera eta aurrera botoiak erabiltzen."
+
+msgid "Metadata not found"
+msgstr "Ez da aurkitu metadaturik"
+
+msgid "Missing cookie"
+msgstr "Cookie-a falta da"
+
+msgid "Cookies may be disabled in the web browser."
+msgstr "Cookie-ak desgaituta egon litezke nabigatzailean."
+
+msgid "Opened the web browser with tabs saved from the previous session."
+msgstr "Zure web nabigatzailea aurreko saiotik gordeta zeuden fitxekin ireki duzu."
+
+msgid "Tools"
+msgstr "Tresnak"
+
+msgid "Test configured authentication sources "
+msgstr "Frogatu kautotzeko jada konfiguratuak dauden iturriak"
+
+msgid ""
+"You appear to have disabled cookies in your browser. Please check the "
+"settings in your browser, and try again."
+msgstr ""
+"Badirudi zure nabigatzaileko cookie-ak desgaitu dituzula. Mesedez, "
+"berrikusi zure nabigatzaileko lehentasunak eta saiatu berriro."
+
+msgid "Installing SimpleSAMLphp"
+msgstr "SimpleSAMLphp-en instalakuntza"
+
+msgid "Deprecated"
+msgstr "Zaharkitua"
+
+msgid ""
+"<strong>Congratulations</strong>, you have successfully installed "
+"SimpleSAMLphp. This is the start page of your installation, where you "
+"will find links to test examples, diagnostics, metadata and even links to"
+" relevant documentation."
+msgstr ""
+"<strong>&iexcl;Zorionak!</strong> SimpleSAMLphp zuzen instalatu duzu. Hau"
+" instalazioaren hasiera orria da, hemen, aurkituko dituzu loturak froga, "
+"metadatu edo dokumentu garrantzitsuetan sartzeko."
+
+msgid "This error may be caused by:"
+msgstr "Errore hau honek eragin dezake:"
+
+msgid ""
+"<strong>You are not using HTTPS</strong> - encrypted communication with "
+"the user. HTTP works fine for test purposes, but in a production "
+"environment, you should use HTTPS. [ <a "
+"href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-"
+"maintenance\">Read more about SimpleSAMLphp maintenance</a> ]"
+msgstr ""
+"<strong>Ez zara erabiltzen ari HTTPSak</strong> - erabiltzailearekin "
+"zifratutako komunikazioak. HTTP zuzen ibiltzen da ebaluaketa ingurunetan,"
+" baina ustiapenean erabili behar baduzu, HTTPS erabili beharko zenuke. [ "
+"<a href=\"https://simplesamlphp.org/docs/stable/simplesamlphp-maintenance"
+"\">Irakur ezazu gehiago SimpleSAMLphp-ren mantentze-lanei "
+"buruz </a> ]"
+
+msgid "Metadata"
+msgstr "Metadatuak"
+
+msgid "Retry"
+msgstr "Saiatu berriro"
+
+msgid "SimpleSAMLphp Maintenance and Configuration"
+msgstr "SimpleSAMLphp-en mantentzea eta konfigurazioa"
+
+msgid "Diagnostics on hostname, port and protocol"
+msgstr "Host, ataka eta protokoloen gaineko diagnostikoa"
+
+msgid ""
+"If you are an user who received this error after following a link on a "
+"site, you should report this error to the owner of that site."
+msgstr ""
+"Gune bateko lotura bat jarraituz errore hau jasotzen duen erabiltzaile "
+"bat bazara,  guneko jabeari eman behar diozu errorearen berri."
+
+msgid "Using SimpleSAMLphp as an Identity Provider"
+msgstr "SimpleSAMLphp erabili Identifikadore Hornitzaile moduan"
+
+msgid "Optional"
+msgstr "Hautazkoa"
+
+msgid "Suggestions for resolving this problem:"
+msgstr "Arazo hau konpontzeko iradokizunak:"
+
+msgid ""
+"This SimpleSAMLphp thing is pretty cool, where can I read more about it? "
+"You can find more information about it at the <a "
+"href=\"https://simplesamlphp.org/\">SimpleSAMLphp web page </a> over at "
+"<a href=\"http://uninett.no\">UNINETT</a>."
+msgstr ""
+"SimpleSAMLphp-en kontu hau interesgarria da benetan, non bila nezake "
+"informazio gehiago honen inguruan? <a "
+"href=\"http://rnd.feide.no/simplesamlphp\">SimpleSAMLphp Feideren I+G "
+"blogeko <a href=\"http://uninett.no\">UNINETT</a>n."
+
+msgid "Shibboleth 1.3 SP example - test logging in through your Shib IdP"
+msgstr ""
+"SPren adibidea Shibboleth 1.3 erabiliz - saikera zure IdP Shibboleth "
+"erabiliz sartzen"
+
+msgid "Authentication"
+msgstr "Kautotzea"
+
+msgid "SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp instalatzeko orria"
+
+msgid "Show metadata"
+msgstr "Ikusi metadatuak"
+
+msgid "SimpleSAMLphp as an IdP for Google Apps for Education"
+msgstr "SimpleSAMLphp Hezkuntzarako Google Apps-entzako IdP moduan"
+
+msgid "State information lost"
+msgstr "Egoeraren informazioa galdu da"
+
+msgid "Hosted SAML 2.0 Identity Provider Metadata (automatically generated)"
+msgstr "IdP SAML 2.0ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "OpenID Provider site - Alpha version (test code)"
+msgstr "OpenID hornitzailearen gunea - Alfa bertsioa (proba kodea)"
+
+msgid "Required for Radius"
+msgstr "RADIUSentzat beharrezkoa"
+
+msgid "We were unable to locate the metadata for the entity:"
+msgstr "Ezinezkoa izan da erakunde honentzat metadaturik aurkitzea: "
+
+msgid "SAML 2.0 SP example - test logging in through your IdP"
+msgstr "SPren adibidea SAML 2.0rekin - saiakera zure IdP erabiliz sartzen"
+
+msgid "Using SimpleSAMLphp as a Service Provider"
+msgstr "SimpleSAMLphp erabili Identificadore hornitzaile moduan"
+
+msgid ""
+"We have detected that there is only a few seconds since you last "
+"authenticated with this service provider, and therefore assume that there"
+" is a problem with this SP."
+msgstr ""
+"Azken aldiz zerbitzu honetan kautotu zinenetik segundu gutxi batzu "
+"besterik ez direla igaro antzeman dugu, beraz ZH honekin arazoren bat "
+"dagoela hartuko dugu. "
+
+msgid "Recommended"
+msgstr "Gomendatua"
+
+msgid ""
+"If you are a developer who is deploying a single sign-on solution, you "
+"have a problem with the metadata configuration. Verify that metadata is "
+"configured correctly on both the identity provider and service provider."
+msgstr ""
+"Hasiera-bakarreko sistema bat zabaltzen ari zaren garatzaile bat bazara, "
+"arazo bat duzu zure metadatuen kongigurazioarekin. Egiazta ezazu "
+"metadatuak zuzen konfiguratuak daudela identitate hornitzailean eta "
+"zerbitzu hornitzailean."
+
+msgid "SimpleSAMLphp Advanced Features"
+msgstr "SimpleSAMLphp-en ezaugarri aurreratuak"
+
+msgid "Too short interval between single sign on events."
+msgstr "Denbora tarte oso motza saio bakarreko gertaeren artean."
+
+msgid "Checking your PHP installation"
+msgstr "Zure PHP instalaziooa egiazatzen"
+
+msgid ""
+"The length of query parameters is limited by the PHP Suhosin extension. "
+"Please increase the suhosin.get.max_value_length option to at least 2048 "
+"bytes."
+msgstr ""
+"Eskaeraren parametroen luzera PHP Suhosin luzapenak mugatzen du. Mesedez,"
+" luza ezazu suhosin.get.max_value_length aukeraren balioa gutxienez 2048 "
+"bytetara. "
+
+msgid "Useful links for your installation"
+msgstr "Instalaziorako lotura erabilgarriak"
+
+msgid "Configuration"
+msgstr "Konfigurazioa"
+
+msgid "Hosted Shibboleth 1.3 Identity Provider Metadata (automatically generated)"
+msgstr "IdP Shibooleth 1.3ren ostatatutako metadatuak (automatikoki sortuak)"
+
+msgid "Login as administrator"
+msgstr "Sartu administratzaile bezala"
+
+msgid "Report this error"
+msgstr "Errore honen berri eman"
+

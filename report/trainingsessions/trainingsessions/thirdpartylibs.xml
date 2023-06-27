@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>__other</location>
+    <name>Quickform Extensions</name>
+    <license>GPL</license>
+    <version>v3</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>__patch</location>
+    <name>Patched core files</name>
+    <license>GPL</license>
+    <version>v3</version>
+    <licenseversion></licenseversion>
+  </library>
+  <library>
+    <location>__reference</location>
+    <name>Patch reference core files</name>
+    <license>GPL</license>
+    <version>v3</version>
+    <licenseversion></licenseversion>
+  </library>
+</libraries>

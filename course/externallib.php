@@ -147,7 +147,9 @@ class core_course_external extends external_api {
 
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
-        try {
+
+
+       try {
             self::validate_context($context);
         } catch (Exception $e) {
             $exceptionparam = new stdClass();
@@ -175,8 +177,12 @@ class core_course_external extends external_api {
 
             //for each sections (first displayed to last displayed)
             $modinfosections = $modinfo->get_sections();
-            foreach ($sections as $key => $section) {
 
+
+
+
+
+          foreach ($sections as $key => $section) {
                 // This becomes true when we are filtering and we found the value to filter with.
                 $sectionfound = false;
 
@@ -216,11 +222,15 @@ class core_course_external extends external_api {
                 }
 
                 $sectioncontents = array();
-
+				
                 // For each module of the section.
                 if (empty($filters['excludemodules']) and !empty($modinfosections[$section->section])) {
+					$limite = 0;
                     foreach ($modinfosections[$section->section] as $cmid) {
+						$limite++;
+						if($limite > 100 /* && $course->id == 30 */)	continue;
                         $cm = $modinfo->cms[$cmid];
+						
 
                         // Stop here if the module is not visible to the user on the course main page:
                         // The user can't access the module and the user can't view the module on the course page.
@@ -272,7 +282,12 @@ class core_course_external extends external_api {
                         $module['customdata'] = json_encode($cm->customdata);
                         $module['completion'] = $cm->completion;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
-
+if($cmid == $v)	{
+echo '==========<pre>'; 
+print_r( $module );
+echo '</pre>';
+exit( ); 
+}
                         // Check module completion.
                         $completion = $completioninfo->is_enabled($cm);
                         if ($completion != COMPLETION_DISABLED) {
@@ -380,7 +395,6 @@ class core_course_external extends external_api {
                     break;
                 }
             }
-
             // Now that we have iterated over all the sections and activities, check the visibility.
             // We didn't this before to be able to retrieve stealth activities.
             foreach ($coursecontents as $sectionnumber => $sectioncontents) {

@@ -1,0 +1,13 @@
+<div class="col-12 course-prgress-container" data-courseid="{{courseid}}">
+    <h6 class="courseprogress mt-0 bold">{{#str}} coursecompletionprogress, format_remuiformat{{/str}}</h6>
+    <div class="progress progress-rounded mb-4">
+        <div class="progress-bar bg-green-600" style="width: {{{percentage}}}%; height: 100%;" role="progressbar">
+            <span class="sr-only">{{{percentage}}}% Complete</span>
+        </div>
+    </div>
+    <ul class="section-activities-summary">
+        {{#activitylist}}
+            <li class="item">{{ . }}</li>
+        {{/activitylist}}
+    </ul>
+</div>

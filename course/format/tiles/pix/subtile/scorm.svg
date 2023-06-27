@@ -1,0 +1,12 @@
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<path fill="#979797" d="M1,2h22v20H1V2z"/>
+<path fill="#E2E2E2" d="M2,3h20v18H2V3z"/>
+<path fill="#FFFFFF" d="M3,4h18v16H3V4z"/>
+<path fill="#979797" d="M0,2h24v7H0V2z"/>
+<path fill="#E2E2E2" d="M1,3h22v5H1V3z"/>
+<path fill="#FFFFFF" d="M2,4h20v3H2V4z"/>
+<path fill="#979797" d="M9.5,2v13l2.5-2l2.5,2V2"/>
+<path fill="#A5A5A5" d="M10.5,3v9.9l1.5-1.2l1.5,1.2V3"/>
+<path fill="#ADADAD" d="M11.5,4v6.8l0.5-0.4l0.5,0.5V4"/>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "name": "learningworks/moodle-block_lw_courses",
+  "type": "moodle-block",
+  "require": {
+    "composer/installers": "~1.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~4.3.0",
+    "codeclimate/php-test-reporter": "dev-master"
+  },
+  "extra": {
+    "installer-name": "lw_courses"
+  }
+}

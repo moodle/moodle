@@ -1,0 +1,8 @@
+{
+	"select_source_header": {
+		"en": "Select an authentication source"
+	},
+	"select_source_text": {
+		"en": "The selected authentication source will be used to authenticate you and and to create a valid session."
+	}
+}

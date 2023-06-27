@@ -1,0 +1,162 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: nn\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Samtykkestatus"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "persondata"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Tenesteleverandør"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Samtykke trukke tilbake"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Samtykkeadministrasjon"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Vis"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organisasjon"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Persondata lagt til"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "vis/skjul personinformasjon"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Formålet med tenesta er"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Skjul"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(mangler informasjon)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Tenesteleverandør for "
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Korleis dra tilbake samtykke</h3> Fjern haka i boksen for enkelte "
+"tenester <h3>Lenker</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/da/om-wayf/faq-ofte-stillede-"
+"sporgsmal\">Ofte stilte spørsmål</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "logg inn"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Her kan du sjå og endra dine samtykke til tenestene."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Samtykke oppdatert"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Ukjent..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Samtykke lagt til"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identitet"
+
+msgid "Injected attribut"
+msgstr "Persondata lagt til"
+
+msgid "Show"
+msgstr "Vis"
+
+msgid "Consent Added"
+msgstr "Samtykke lagt til"
+
+msgid "Consent Administration"
+msgstr "Samtykkeadministrasjon"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Her kan du sjå og endra dine samtykke til tenestene."
+
+msgid "Unknown ..."
+msgstr "Ukjent..."
+
+msgid "Identity"
+msgstr "Identitet"
+
+msgid "The purpose of the service is"
+msgstr "Formålet med tenesta er"
+
+msgid "Hide"
+msgstr "Skjul"
+
+msgid "Service Provider"
+msgstr "Tenesteleverandør"
+
+msgid "Service Providers for"
+msgstr "Tenesteleverandør for "
+
+msgid "login"
+msgstr "logg inn"
+
+msgid "(name not specified)"
+msgstr "(namn ikkje spesifisert)"
+
+msgid "Consent Updated"
+msgstr "Samtykke oppdatert"
+
+msgid "Consent status"
+msgstr "Samtykkestatus"
+
+msgid "(no description)"
+msgstr "(mangler informasjon)"
+
+msgid "attributes"
+msgstr "persondata"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Korleis dra tilbake samtykke</h3> Fjern haka i boksen for enkelte "
+"tenester <h3>Lenker</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Start</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/da/om-wayf/faq-ofte-stillede-"
+"sporgsmal\">Ofte stilte spørsmål</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "Samtykke trukke tilbake"
+
+msgid "show/hide attributes"
+msgstr "vis/skjul personinformasjon"
+
+msgid "Organisation"
+msgstr "Organisasjon"
+
+msgid "Consent administration"
+msgstr "Samtykke administrasjon"

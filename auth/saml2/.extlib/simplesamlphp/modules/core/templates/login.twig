@@ -1,0 +1,28 @@
+{% set pagetitle = 'Authenticate'|trans %}
+{% extends "@core/base.twig" %}
+
+{% block content %}
+    <h1>{{ pagetitle|trans }}</h1>
+    <p>Please choose one of the following authentication methods: </p>
+
+{% if sources is empty -%}
+    <p>Please check your SimpleSAML configuration.<br>
+        Follow the link and log in with administrator credentials. <a href="{{ loginurl }}">Admin login.</a></p>
+{% else %}
+    <div class="pure-menu custom-restricted-width">
+        <ul class="pure-menu-list auth_methods">
+            {% for id, config in sources -%}
+                <li class="pure-menu-item">
+                    <a href="{{ moduleURL('core/login/' ~ id|url_encode) }}" class="pure-menu-link">
+                      {% if config.name is defined %}
+                        {{ config.name|translateFromArray|default(id) }}
+                      {% else %}
+                        {{ id }}
+                      {% endif %}
+                    </a>
+                </li>
+            {% endfor -%}
+        </ul>
+    </div>
+{% endif %}
+{% endblock %}
