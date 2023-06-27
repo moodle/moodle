@@ -404,8 +404,8 @@ function badges_get_badge_by_hash(string $hash): object|bool {
                 {user} u
             WHERE b.id = bi.badgeid
                 AND u.id = bi.userid
-                AND bi.uniquehash = :uniquehash';
-    $badge = $DB->get_record_sql($sql, ['uniquehash' => $hash]);
+                AND ' . $DB->sql_compare_text('bi.uniquehash', 40) . ' = ' . $DB->sql_compare_text(':hash', 40);
+    $badge = $DB->get_record_sql($sql, ['hash' => $hash], IGNORE_MISSING);
     return $badge;
 }
 
