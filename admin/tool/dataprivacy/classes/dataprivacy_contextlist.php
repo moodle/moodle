@@ -24,7 +24,7 @@ use core\persistent;
  * @package   tool_dataprivacy
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 4.0
+ * @since     Moodle 4.3
  */
 class dataprivacy_contextlist extends persistent {
 
@@ -35,13 +35,12 @@ class dataprivacy_contextlist extends persistent {
      * Return the definition of the properties of this model.
      *
      * @return array
-     * @since  Moodle 4.0
      */
     protected static function define_properties(): array {
         return [
             'component' => [
-                'type' => PARAM_TEXT
-            ]
+                'type' => PARAM_TEXT,
+            ],
         ];
     }
 
@@ -50,7 +49,6 @@ class dataprivacy_contextlist extends persistent {
      *
      * @param \core_privacy\local\request\contextlist $contextlist the core privacy contextlist.
      * @return dataprivacy_contextlist a dataprivacy_contextlist persistent.
-     * @since  Moodle 4.0
      */
     public static function from_contextlist(\core_privacy\local\request\contextlist $contextlist): dataprivacy_contextlist {
         $contextlistpersistent = new dataprivacy_contextlist();

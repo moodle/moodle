@@ -24,8 +24,6 @@
 use core_user\output\myprofile\tree;
 use tool_dataprivacy\form\exportfilter_form;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Add nodes to myprofile page.
  *

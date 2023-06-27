@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2023052200;
+$plugin->version   = 2023062700;
 $plugin->requires  = 2023041800;
 $plugin->component = 'tool_dataprivacy';

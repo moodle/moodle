@@ -75,12 +75,11 @@ $functions = [
     ],
     'tool_dataprivacy_submit_selected_courses_form' => [
         'classname'     => 'tool_dataprivacy\external\submit_selected_courses_form',
-        'classpath'     => '',
         'description'   => 'Save list of selected courses for export',
         'type'          => 'write',
         'capabilities'  => 'tool/dataprivacy:managedatarequests',
-        'ajax'          => 'true',
-        'loginrequired' => 'true',
+        'ajax'          => true,
+        'loginrequired' => true,
     ],
     'tool_dataprivacy_bulk_approve_data_requests' => [
         'classname'     => 'tool_dataprivacy\external',

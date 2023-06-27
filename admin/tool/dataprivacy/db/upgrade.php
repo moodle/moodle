@@ -90,7 +90,7 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2023052200) {
+    if ($oldversion < 2023062700) {
 
         // Define table tool_dataprivacy_contextlist to be created.
         $table = new xmldb_table('tool_dataprivacy_contextlist');
@@ -149,7 +149,7 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         }
 
         // Dataprivacy savepoint reached.
-        upgrade_plugin_savepoint(true, 2023052200, 'tool', 'dataprivacy');
+        upgrade_plugin_savepoint(true, 2023062700, 'tool', 'dataprivacy');
     }
 
     return true;

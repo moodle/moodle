@@ -18,7 +18,6 @@ namespace tool_dataprivacy\task;
 
 use coding_exception;
 use core\task\adhoc_task;
-use moodle_exception;
 use tool_dataprivacy\api;
 use tool_dataprivacy\contextlist_context;
 use tool_dataprivacy\data_request;
@@ -32,17 +31,14 @@ use tool_dataprivacy\data_request;
  * @package   tool_dataprivacy
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 4.0
+ * @since     Moodle 4.3
  */
 class initiate_data_request_task extends adhoc_task {
 
     /**
      * Run the task to initiate the data request process.
-     *
-     * return void
-     * @since Moodle 4.0
      */
-    public function execute():void {
+    public function execute(): void {
         if (!isset($this->get_custom_data()->requestid)) {
             throw new coding_exception('The custom data \'requestid\' is required.');
         }

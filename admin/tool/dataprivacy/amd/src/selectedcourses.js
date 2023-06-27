@@ -54,19 +54,12 @@ export default class SelectedCourses {
     requestId = 0;
 
     /**
-     * @var {Promise}
-     * @private
-     */
-    strings = null;
-
-    /**
      * Constructor
      *
      * @param {String} contextId Context ID to load the fragment.
      * @param {String} requestId ID of data export request.
      */
     constructor(contextId, requestId) {
-
         this.contextId = contextId;
         this.requestId = requestId;
         // Now create the modal.
@@ -79,20 +72,20 @@ export default class SelectedCourses {
             buttons: {
                 save: getString('approverequest', 'tool_dataprivacy'),
             },
-        }).then(modal => {
-                this.modal = modal;
+        }).then((modal) => {
+            this.modal = modal;
 
-                return modal;
-            }).then(modal => {
-                // We catch the modal save event, and use it to submit the form inside the modal.
-                // Triggering a form submission will give JS validation scripts a chance to check for errors.
-                modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
+            return modal;
+        }).then((modal) => {
+            // We catch the modal save event, and use it to submit the form inside the modal.
+            // Triggering a form submission will give JS validation scripts a chance to check for errors.
+            modal.getRoot().on(ModalEvents.save, this.submitForm.bind(this));
 
-                // We also catch the form submit event and use it to submit the form with ajax.
-                modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
-                modal.show();
-                return modal;
-            }).catch(Notification.exception);
+            // We also catch the form submit event and use it to submit the form with ajax.
+            modal.getRoot().on('submit', 'form', this.submitFormAjax.bind(this));
+            modal.show();
+            return modal;
+        }).catch(Notification.exception);
     }
 
     /**
@@ -103,15 +96,12 @@ export default class SelectedCourses {
      * @private
      * @return {Promise}
      */
-    getBody = (formdata) => {
+    getBody(formdata) {
+        const params = formdata ? {jsonformdata: JSON.stringify(formdata)} : null;
 
-        let params = null;
-        if (typeof formdata !== "undefined") {
-            params = {jsonformdata: JSON.stringify(formdata)};
-        }
         // Get the content of the modal.
         return Fragment.loadFragment('tool_dataprivacy', 'selectcourses_form', this.contextId, params);
-    };
+    }
 
     /**
      * This triggers a form submission, so that any mform elements can do final tricks before the form submission is processed.
@@ -120,10 +110,10 @@ export default class SelectedCourses {
      * @param {Event} e Form submission event.
      * @private
      */
-    submitForm = (e) => {
+    submitForm(e) {
         e.preventDefault();
         this.modal.getRoot().find('form').submit();
-    };
+    }
 
     /**
      * Submit select courses form using ajax.
@@ -132,8 +122,7 @@ export default class SelectedCourses {
      * @private
      * @param {Event} e Form submission event.
      */
-    submitFormAjax = (e) => {
-
+    submitFormAjax(e) {
         e.preventDefault();
 
         // Convert all the form elements values to a serialised string.
@@ -154,15 +143,16 @@ export default class SelectedCourses {
         Ajax.call([{
             methodname: 'tool_dataprivacy_submit_selected_courses_form',
             args: {requestid: this.requestId, jsonformdata: JSON.stringify(formData)},
-            done: (data) => {
-                if (data.warnings.length > 0) {
-                    this.modal.setBody(this.getBody(formData));
-                } else {
-                    this.modal.destroy();
-                    document.location.reload();
-                }
-            },
-            fail: Notification.exception
-        }]);
-    };
+        }])[0]
+        .then((data) => {
+            if (data.warnings.length > 0) {
+                this.modal.setBody(this.getBody(formData));
+            } else {
+                this.modal.destroy();
+                document.location.reload();
+            }
+            return data;
+        })
+        .catch((error) => Notification.exception(error));
+    }
 }

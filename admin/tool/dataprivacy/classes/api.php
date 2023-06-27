@@ -1375,11 +1375,10 @@ class api {
     /**
      * Adds the contexts from the contextlist_collection to the request with the status provided.
      *
-     * @since Moodle 4.0
+     * @since Moodle 4.3
      * @param contextlist_collection $clcollection a collection of contextlists for all components.
      * @param int $requestid the id of the request.
      * @param int $status the status to set the contexts to.
-     * return void
      */
     public static function add_request_contexts_with_status(contextlist_collection $clcollection, int $requestid, int $status) {
         global $DB;
@@ -1414,7 +1413,7 @@ class api {
     /**
      * Finds all request contextlists having at least on approved context, and returns them as in a contextlist_collection.
      *
-     * @since Moodle 3.11
+     * @since Moodle 4.3
      * @param data_request $request the data request with which the contextlists are associated.
      * @return contextlist_collection the collection of approved_contextlist objects.
      * @throws coding_exception
@@ -1464,7 +1463,7 @@ class api {
     /**
      * Sets the status of all contexts associated with the request.
      *
-     * @since Moodle 3.11
+     * @since Moodle 4.3
      * @param int $requestid the requestid to which the contexts belong.
      * @param int $status the status to set to.
      * @throws \dml_exception if the requestid is invalid.
@@ -1511,7 +1510,7 @@ class api {
     /**
      * Only approve the contexts which are children of the provided course contexts.
      *
-     * @since Moodle 3.11
+     * @since Moodle 4.3
      * @param int $requestid Request identifier
      * @param array $coursecontextids List of course context identifier.
      * @throws \dml_transaction_exception
@@ -1602,7 +1601,7 @@ class api {
     /**
      * Get list of course context for user to filter.
      *
-     * @since Moodle 3.11
+     * @since Moodle 4.3
      * @param int $requestid Request identifier.
      * @return array
      * @throws dml_exception

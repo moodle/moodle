@@ -35,8 +35,6 @@ use moodle_url;
 use tool_dataprivacy\api;
 use tool_dataprivacy\data_request;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class that processes an approved data request and prepares/deletes the user's data.
  *
@@ -107,7 +105,10 @@ class process_data_request_task extends adhoc_task {
                 $approvedclcollection = api::get_approved_contextlist_collection_for_request($requestpersistent);
             } else {
                 $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
-                    $contextlistcollection, $foruser, $request->type);
+                    $contextlistcollection,
+                    $foruser,
+                    $request->type,
+                );
             }
 
             $usercontext = \context_user::instance($foruser->id, IGNORE_MISSING);
@@ -140,7 +141,10 @@ class process_data_request_task extends adhoc_task {
                 $completestatus = api::DATAREQUEST_STATUS_REJECTED;
             } else {
                 $approvedclcollection = api::get_approved_contextlist_collection_for_collection(
-                    $contextlistcollection, $foruser, $request->type);
+                    $contextlistcollection,
+                    $foruser,
+                    $request->type,
+                );
                 $manager = new \core_privacy\manager();
                 $manager->set_observer(new \tool_dataprivacy\manager_observer());
 

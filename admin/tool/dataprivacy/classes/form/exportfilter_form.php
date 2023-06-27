@@ -20,7 +20,7 @@
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package tool_dataprivacy
- * @since   Moodle 4.0
+ * @since Moodle 4.3
  */
 
 namespace tool_dataprivacy\form;
@@ -35,14 +35,11 @@ require_once($CFG->libdir.'/formslib.php');
  * @copyright 2021 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
  * @package tool_dataprivacy
- * @since   Moodle 4.0
+ * @since   Moodle 4.3
  */
 class exportfilter_form extends \moodleform {
     /**
      * Form definition.
-     *
-     * @return void
-     * @since  Moodle 4.0
      */
     public function definition(): void {
         $requestid = $this->_customdata['requestid'];
@@ -77,8 +74,12 @@ class exportfilter_form extends \moodleform {
         }
 
         if ($contexts) {
-            $mform->addElement('selectgroups', 'coursecontextids', get_string('selectcourses', 'tool_dataprivacy'),
-                $selectitems);
+            $mform->addElement(
+                'selectgroups',
+                'coursecontextids',
+                get_string('selectcourses', 'tool_dataprivacy'),
+                $selectitems,
+            );
             $mform->getElement('coursecontextids')->setMultiple(true);
             $mform->getElement('coursecontextids')->setSize(15);
         } else {
@@ -92,7 +93,6 @@ class exportfilter_form extends \moodleform {
      * @param array $data
      * @param array $files
      * @return array
-     * @since Moodle 4.0
      */
     public function validation($data, $files) {
         $errors = [];

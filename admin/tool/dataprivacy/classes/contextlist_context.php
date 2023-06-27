@@ -24,7 +24,7 @@ use core\persistent;
  * @package    tool_dataprivacy
  * @copyright  2021 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      Moodle 4.0
+ * @since      Moodle 4.3
  */
 class contextlist_context extends persistent {
 
@@ -44,7 +44,6 @@ class contextlist_context extends persistent {
      * Return the definition of the properties of this model.
      *
      * @return array
-     * @since  Moodle 4.0
      */
     protected static function define_properties(): array {
         return [
@@ -61,8 +60,8 @@ class contextlist_context extends persistent {
                     self::STATUS_REJECTED,
                 ],
                 'default' => self::STATUS_PENDING,
-                'type' => PARAM_INT
-            ]
+                'type' => PARAM_INT,
+            ],
         ];
     }
 }

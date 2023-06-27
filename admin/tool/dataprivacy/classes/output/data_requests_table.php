@@ -35,7 +35,6 @@ use moodle_url;
 use stdClass;
 use table_sql;
 use tool_dataprivacy\api;
-use tool_dataprivacy\data_request;
 use tool_dataprivacy\external\data_request_exporter;
 
 defined('MOODLE_INTERNAL') || die;
@@ -225,8 +224,11 @@ class data_requests_table extends table_sql {
 
         // View action.
         $actionurl = new moodle_url('#');
-        $actiondata = ['data-action' => 'view', 'data-requestid' => $requestid,
-            'data-contextid' => \context_system::instance()->id];
+        $actiondata = [
+            'data-action' => 'view',
+            'data-requestid' => $requestid,
+            'data-contextid' => \context_system::instance()->id,
+        ];
         $actiontext = get_string('viewrequest', 'tool_dataprivacy');
         $actions[] = new action_menu_link_secondary($actionurl, null, $actiontext, $actiondata);
 

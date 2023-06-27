@@ -18,7 +18,6 @@
  * This is the external method for submit selected courses.
  *
  * @package    tool_dataprivacy
- * @since      Moodle 4.0
  * @copyright  2021 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -43,8 +42,6 @@ use tool_dataprivacy\api;
 class submit_selected_courses_form_test extends \externallib_advanced_testcase {
     /**
      * Test for submit_selected_courses_form().
-     *
-     * @runInSeparateProcess
      */
     public function test_submit_selected_courses_form() {
         global $DB;

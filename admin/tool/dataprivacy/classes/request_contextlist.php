@@ -24,7 +24,7 @@ use core\persistent;
  * @package   tool_dataprivacy
  * @copyright 2021 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since     Moodle 4.0
+ * @since     Moodle 4.3
  */
 class request_contextlist extends persistent {
 
@@ -39,11 +39,11 @@ class request_contextlist extends persistent {
     protected static function define_properties(): array {
         return [
             'requestid' => [
-                'type' => PARAM_INT
+                'type' => PARAM_INT,
             ],
             'contextlistid' => [
-                'type' => PARAM_INT
-            ]
+                'type' => PARAM_INT,
+            ],
         ];
     }
 
@@ -53,7 +53,6 @@ class request_contextlist extends persistent {
      * @param int $requestid ID of data request.
      * @param int $contextlistid ID of context list.
      * @return $this
-     * @since  Moodle 4.0
      */
     public static function create_relation(int $requestid, int $contextlistid): request_contextlist {
         $requestcontextlist = new request_contextlist();

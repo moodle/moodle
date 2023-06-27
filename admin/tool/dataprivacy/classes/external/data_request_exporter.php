@@ -107,7 +107,7 @@ class data_request_exporter extends persistent_exporter {
             'allowfiltering' => [
                 'type' => PARAM_BOOL,
                 'optional' => true,
-                'default' => false
+                'default' => false,
             ],
             'canmarkcomplete' => [
                 'type' => PARAM_BOOL,

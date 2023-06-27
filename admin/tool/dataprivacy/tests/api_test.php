@@ -691,8 +691,16 @@ class api_test extends \advanced_testcase {
      * @throws coding_exception
      * @throws invalid_persistent_exception
      */
-    public function test_create_data_request($asprivacyofficer, $type, $setting, $automaticapproval, $expecteddpoval,
-                                             $expectedstatus, $expectedtaskcount, $allowfiltering) {
+    public function test_create_data_request(
+        $asprivacyofficer,
+        $type,
+        $setting,
+        $automaticapproval,
+        $expecteddpoval,
+        $expectedstatus,
+        $expectedtaskcount,
+        $allowfiltering,
+    ) {
         global $USER;
 
         $this->resetAfterTest();

@@ -23,25 +23,20 @@
  */
 namespace tool_dataprivacy\external;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/externallib.php');
-
-use context_system;
-use external_api;
-use external_function_parameters;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 use core\notification;
+use context_system;
 
 /**
  * Class for submit selected courses from form.
  *
  * @copyright  2021 The Open University.
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * since Moodle 4.0
+ * @since Moodle 4.3
  */
 class submit_selected_courses_form extends external_api {
     /**
@@ -51,8 +46,8 @@ class submit_selected_courses_form extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-                'requestid' => new external_value(PARAM_INT, 'The id of data request'),
-                'jsonformdata' => new external_value(PARAM_RAW, 'The data of selected courses form, encoded as a json array')
+            'requestid' => new external_value(PARAM_INT, 'The id of data request'),
+            'jsonformdata' => new external_value(PARAM_RAW, 'The data of selected courses form, encoded as a json array'),
         ]);
     }
 
@@ -68,8 +63,8 @@ class submit_selected_courses_form extends external_api {
         $warnings = [];
         $result = false;
         $params = self::validate_parameters(self::execute_parameters(), [
-                'requestid' => $requestid,
-                'jsonformdata' => $jsonformdata
+            'requestid' => $requestid,
+            'jsonformdata' => $jsonformdata,
         ]);
 
         $context = context_system::instance();
@@ -110,15 +105,15 @@ class submit_selected_courses_form extends external_api {
                 notification::success(get_string('requestapproved', 'tool_dataprivacy'));
             } else {
                 $warnings = [
-                        'item' => $requestid,
-                        'warningcode' => 'errorrequestnotfound',
-                        'message' => get_string('errorrequestnotfound', 'tool_dataprivacy')
+                    'item' => $requestid,
+                    'warningcode' => 'errorrequestnotfound',
+                    'message' => get_string('errorrequestnotfound', 'tool_dataprivacy'),
                 ];
             }
         }
         return [
-                'result' => $result,
-                'warnings' => $warnings
+            'result' => $result,
+            'warnings' => $warnings,
         ];
     }
 
@@ -129,8 +124,8 @@ class submit_selected_courses_form extends external_api {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-                'result' => new external_value(PARAM_BOOL, 'The processing result'),
-                'warnings' => new external_warnings()
+            'result' => new external_value(PARAM_BOOL, 'The processing result'),
+            'warnings' => new external_warnings(),
         ]);
     }
 }
