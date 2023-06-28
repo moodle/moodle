@@ -49,6 +49,7 @@ class statistics_bulk_loader_test extends advanced_testcase {
      * @covers ::get_all_places_where_questions_were_attempted
      */
     public function test_get_all_places_where_questions_were_attempted(): void {
+        global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -122,6 +123,19 @@ class statistics_bulk_loader_test extends advanced_testcase {
             $newplace = end($q2places);
         }
         $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz3context->id], $newplace);
+
+        // Simulate the situation where the context for quiz3 is gone from the database, without
+        // the corresponding attempt data being properly cleaned up. Ensure this does not cause errors.
+        $DB->delete_records('context', ['id' => context_module::instance($quiz3->cmid)->id]);
+        accesslib_clear_all_caches_for_unit_testing();
+        // Same asserts as above, before we added quiz3.
+        $q1places = $rcm->invoke(null, [$question1->id]);
+        $this->assertCount(2, $q1places);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz1context->id], $q1places[0]);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz2context->id], $q1places[1]);
+        $q2places = $rcm->invoke(null, [$question2->id]);
+        $this->assertCount(1, $q2places);
+        $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz2context->id], $q2places[0]);
     }
 
     /**

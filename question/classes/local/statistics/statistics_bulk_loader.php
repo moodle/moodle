@@ -103,6 +103,7 @@ class statistics_bulk_loader {
                 SELECT MIN(qu.id) AS somethingunique, qu.component, qu.contextid
                   FROM {question_usages} qu
                   JOIN {question_attempts} qatt ON qatt.questionusageid = qu.id
+                  JOIN {context} ctx ON ctx.id = qu.contextid
                  WHERE qatt.questionid $questionidcondition
               GROUP BY qu.component, qu.contextid
               ORDER BY qu.contextid ASC
