@@ -373,6 +373,11 @@ define([
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
             var currentPlace = this.getClassnameNumericSuffix(oldDrag, 'inplace');
+            // When infinite group and there is already a drag in a drop, reject the exact clone in the same drop.
+            if (this.hasDropSameDrag(currentPlace, drop, oldDrag, drag)) {
+                this.sendDragHome(drag);
+                return;
+            }
             var hiddenDrop = this.getDrop(oldDrag, currentPlace);
             hiddenDrop.addClass('active');
             oldDrag.addClass('beingdragged');
@@ -397,6 +402,25 @@ define([
             drag.attr('tabindex', 0);
             this.animateTo(drag, drop);
         }
+    };
+
+    /**
+     * When infinite group and there is already a drag in a drop, reject the exact clone in the same drop.
+     *
+     * @param {int} currentPlace  the position of the current drop.
+     * @param {jQuery} drop the drop containing a drag.
+     * @param {jQuery} oldDrag the drag already placed in drop.
+     * @param {jQuery} drag the new drag which is exactly the same (clone) as oldDrag .
+     * @returns {boolean}
+     */
+    DragDropToTextQuestion.prototype.hasDropSameDrag = function(currentPlace, drop, oldDrag, drag) {
+        if (drag.hasClass('infinite')) {
+            return drop.hasClass('place' + currentPlace) &&
+                this.getGroup(drag) === this.getGroup(drop) &&
+                this.getChoice(drag) === this.getChoice(oldDrag) &&
+                this.getGroup(drag) === this.getGroup(oldDrag);
+        }
+        return false;
     };
 
     /**
