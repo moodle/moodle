@@ -69,6 +69,9 @@ class cm implements named_templatable, renderable {
     /** @var string the activity availability class name */
     protected $availabilityclass;
 
+    /** @var string the activity groupmode badge class name */
+    protected $groupmodeclass;
+
     /**
      * Constructor.
      *
@@ -90,6 +93,7 @@ class cm implements named_templatable, renderable {
         $this->cmnameclass = $format->get_output_classname('content\\cm\\cmname');
         $this->controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
         $this->availabilityclass = $format->get_output_classname('content\\cm\\availability');
+        $this->groupmodeclass = $format->get_output_classname('content\\cm\\groupmode');
     }
 
     /**
@@ -314,32 +318,9 @@ class cm implements named_templatable, renderable {
      * @return bool the module has group mode information
      */
     protected function add_groupmode_data(stdClass &$data, renderer_base $output): bool {
-        if (!plugin_supports('mod', $this->mod->modname, FEATURE_GROUPS, false)) {
-            return false;
-        }
-
-        if (!has_capability('moodle/course:manageactivities', $this->mod->context)) {
-            return false;
-        }
-
-        switch ($this->mod->effectivegroupmode) {
-            case SEPARATEGROUPS:
-                $groupicon = 'i/groups';
-                $groupalt = get_string('groupsseparate', 'group');
-                break;
-            case VISIBLEGROUPS:
-                $groupicon = 'i/groupv';
-                $groupalt = get_string('groupsvisible', 'group');
-                break;
-            default:
-                return false;
-        }
-
-        $data->groupmodeinfo = (object) [
-            'groupicon' => $groupicon,
-            'groupalt' => $groupalt,
-        ];
-        return true;
+        $groupmode = new $this->groupmodeclass($this->format, $this->section, $this->mod);
+        $data->groupmodeinfo = $groupmode->export_for_template($output);
+        return !empty($data->groupmodeinfo);
     }
 
     /**
