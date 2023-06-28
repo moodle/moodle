@@ -56,6 +56,7 @@ class provider implements
             'validuntil' => 'privacy:metadata:tokens:validuntil',
             'timecreated' => 'privacy:metadata:tokens:timecreated',
             'lastaccess' => 'privacy:metadata:tokens:lastaccess',
+            'name' => 'privacy:metadata:tokens:name',
         ], 'privacy:metadata:tokens');
 
         $collection->add_database_table('external_services_users', [
@@ -293,6 +294,7 @@ class provider implements
             'valid_until' => $record->validuntil ? transform::datetime($record->validuntil) : null,
             'created_on' => transform::datetime($record->timecreated),
             'last_access' => $record->lastaccess ? transform::datetime($record->lastaccess) : null,
+            'name' => $record->name,
         ];
     }
 

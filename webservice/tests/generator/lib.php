@@ -118,6 +118,7 @@ class core_webservice_generator extends component_generator_base {
             'context' => context_system::instance(),
             'validuntil' => 0,
             'iprestriction' => '',
+            'name' => '',
         ];
 
         foreach ($optionalfields as $fieldname => $value) {
@@ -134,7 +135,8 @@ class core_webservice_generator extends component_generator_base {
             $data['userid'],
             $data['context'],
             $data['validuntil'],
-            $data['iprestriction']
+            $data['iprestriction'],
+            $data['name']
         );
     }
 }

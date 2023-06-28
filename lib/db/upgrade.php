@@ -3314,5 +3314,24 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023062200.00);
     }
 
+    if ($oldversion < 2023062700.01) {
+        // Define field name to be added to external_tokens.
+        $table = new xmldb_table('external_tokens');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'lastaccess');
+        // Conditionally launch add field name.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Update the old external tokens.
+        $sql = 'UPDATE {external_tokens}
+                   SET name = ' . $DB->sql_concat(
+                       // We only need the prefix, so leave the third param with an empty string.
+                       "'" . get_string('tokennameprefix', 'webservice', '') . "'",
+                       "id");
+        $DB->execute($sql);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023062700.01);
+    }
+
     return true;
 }

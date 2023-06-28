@@ -372,6 +372,7 @@ class webservice {
                     $newtoken->contextid = context_system::instance()->id;
                     $newtoken->creatorid = $userid;
                     $newtoken->timecreated = time();
+                    $newtoken->name = \core_external\util::generate_token_name();
                     // Generate the private token, it must be transmitted only via https.
                     $newtoken->privatetoken = random_string(64);
 
@@ -395,7 +396,8 @@ class webservice {
         global $DB;
         //here retrieve token list (including linked users firstname/lastname and linked services name)
         $sql = "SELECT
-                    t.id, t.creatorid, t.token, u.firstname, u.lastname, s.id as wsid, s.name, s.enabled, s.restrictedusers, t.validuntil
+                    t.id, t.creatorid, t.name as tokenname, u.firstname, u.lastname,
+                    s.id as wsid, s.name as servicename, s.enabled, s.restrictedusers, t.validuntil
                 FROM
                     {external_tokens} t, {user} u, {external_services} s
                 WHERE
@@ -422,7 +424,7 @@ class webservice {
     public function get_created_by_user_ws_token($userid, $tokenid) {
         global $DB;
         $sql = "SELECT
-                        t.id, t.token, u.firstname, u.lastname, s.name
+                        t.id, t.token, t.name AS tokenname, u.firstname, u.lastname, s.name
                     FROM
                         {external_tokens} t, {user} u, {external_services} s
                     WHERE
@@ -861,9 +863,10 @@ class webservice {
     public static function get_active_tokens($userid) {
         global $DB;
 
-        $sql = 'SELECT t.*, s.name as servicename FROM {external_tokens} t JOIN
-                {external_services} s ON t.externalserviceid = s.id WHERE
-                t.userid = :userid AND (COALESCE(t.validuntil, 0) = 0 OR t.validuntil > :now)';
+        $sql = 'SELECT t.id, t.creatorid, t.externalserviceid, t.name AS tokenname, t.validuntil, s.name AS servicename
+                  FROM {external_tokens} t
+                  JOIN {external_services} s ON t.externalserviceid = s.id
+                 WHERE t.userid = :userid AND (COALESCE(t.validuntil, 0) = 0 OR t.validuntil > :now)';
         $params = array('userid' => $userid, 'now' => time());
         return $DB->get_records_sql($sql, $params);
     }
