@@ -221,7 +221,7 @@ class sync_tool_grades extends adhoc_task {
                                 JOIN {enrol} e
                                   ON (e.id = t.enrolid)
                                 JOIN {course} c
-                                  ON {c.id} = e.courseid
+                                  ON (c.id = e.courseid)
                                WHERE t.id = :resourceid";
             $coursename = $DB->get_field_sql($coursenamesql, ['resourceid' => $resource->id]);
             $resourcename = format_string($coursename, true, ['context' => $context->id]);
