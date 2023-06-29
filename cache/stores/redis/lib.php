@@ -189,42 +189,60 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         if (array_key_exists('compressor', $configuration)) {
             $this->compressor = (int)$configuration['compressor'];
         }
-        $password = !empty($configuration['password']) ? $configuration['password'] : '';
-        $prefix = !empty($configuration['prefix']) ? $configuration['prefix'] : '';
         if (array_key_exists('lockwait', $configuration)) {
             $this->lockwait = (int)$configuration['lockwait'];
         }
         if (array_key_exists('locktimeout', $configuration)) {
             $this->locktimeout = (int)$configuration['locktimeout'];
         }
-        $this->redis = $this->new_redis($configuration['server'], $prefix, $password);
+        $this->redis = $this->new_redis($configuration);
     }
 
     /**
      * Create a new Redis instance and
      * connect to the server.
      *
-     * @param string $server The server connection string
-     * @param string $prefix The key prefix
-     * @param string $password The server connection password
+     * @param array $configuration The server configuration
      * @return Redis
      */
-    protected function new_redis($server, $prefix = '', $password = '') {
+    protected function new_redis(array $configuration): \Redis {
+        global $CFG;
+
         $redis = new Redis();
-        // Check for Unix socket.
+
+        $server = $configuration['server'];
+        $encrypt = (bool) ($configuration['encryption'] ?? false);
+        $password = !empty($configuration['password']) ? $configuration['password'] : '';
+        $prefix = !empty($configuration['prefix']) ? $configuration['prefix'] : '';
+        // Check if it isn't a Unix socket to set default port.
+        $port = null;
+        $opts = [];
         if ($server[0] === '/') {
             $port = 0;
         } else {
             $port = 6379; // No Unix socket so set default port.
             if (strpos($server, ':')) { // Check for custom port.
-                $serverconf = explode(':', $server);
-                $server = $serverconf[0];
-                $port = $serverconf[1];
+                list($server, $port) = explode(':', $server);
+            }
+
+            // We can encrypt if we aren't unix socket.
+            if ($encrypt) {
+                $server = 'tls://' . $server;
+                if (empty($configuration['cafile'])) {
+                    $sslopts = [
+                        'verify_peer' => false,
+                        'verify_peer_name' => false,
+                    ];
+                } else {
+                    $sslopts = ['cafile' => $configuration['cafile']];
+                }
+                $opts['stream'] = $sslopts;
             }
         }
 
         try {
-            if ($redis->connect($server, $port)) {
+            if ($redis->connect($server, $port, 1, null, 100, 1, $opts)) {
+
                 if (!empty($password)) {
                     $redis->auth($password);
                 }
@@ -235,11 +253,20 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 if (!empty($prefix)) {
                     $redis->setOption(Redis::OPT_PREFIX, $prefix);
                 }
+                if ($encrypt && !$redis->ping()) {
+                    /*
+                     * In case of a TLS connection, if phpredis client does not
+                     * communicate immediately with the server the connection hangs.
+                     * See https://github.com/phpredis/phpredis/issues/2332 .
+                     */
+                    throw new \RedisException("Ping failed");
+                }
                 $this->isready = true;
             } else {
                 $this->isready = false;
             }
         } catch (\RedisException $e) {
+            debugging("redis $server: $e", DEBUG_NORMAL);
             $this->isready = false;
         }
 
@@ -759,6 +786,8 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             'password' => $data->password,
             'serializer' => $data->serializer,
             'compressor' => $data->compressor,
+            'encryption' => $data->encryption,
+            'cafile' => $data->cafile,
         );
     }
 
@@ -779,6 +808,12 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         }
         if (!empty($config['compressor'])) {
             $data['compressor'] = $config['compressor'];
+        }
+        if (!empty($config['encryption'])) {
+            $data['encryption'] = $config['encryption'];
+        }
+        if (!empty($config['cafile'])) {
+            $data['cafile'] = $config['cafile'];
         }
         $editform->set_data($data);
     }
@@ -804,6 +839,12 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         }
         if (!empty($config->test_password)) {
             $configuration['password'] = $config->test_password;
+        }
+        if (!empty($config->test_encryption)) {
+            $configuration['encryption'] = $config->test_encryption;
+        }
+        if (!empty($config->test_cafile)) {
+            $configuration['cafile'] = $config->test_cafile;
         }
         // Make it possible to test TTL performance by hacking a copy of the cache definition.
         if (!empty($config->test_ttl)) {
@@ -832,6 +873,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
 
         return ['server' => TEST_CACHESTORE_REDIS_TESTSERVERS,
                 'prefix' => $DB->get_prefix(),
+                'encryption' => defined('TEST_CACHESTORE_REDIS_ENCRYPT') && TEST_CACHESTORE_REDIS_ENCRYPT,
         ];
     }
 

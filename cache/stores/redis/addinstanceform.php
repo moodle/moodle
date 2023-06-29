@@ -44,6 +44,14 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
         $form->addHelpButton('server', 'server', 'cachestore_redis');
         $form->addRule('server', get_string('required'), 'required');
 
+        $form->addElement('advcheckbox', 'encryption', get_string('encrypt_connection', 'cachestore_redis'));
+        $form->setType('encryption', PARAM_BOOL);
+        $form->addHelpButton('encryption', 'encrypt_connection', 'cachestore_redis');
+
+        $form->addElement('text', 'cafile', get_string('ca_file', 'cachestore_redis'));
+        $form->setType('cafile', PARAM_TEXT);
+        $form->addHelpButton('cafile', 'ca_file', 'cachestore_redis');
+
         $form->addElement('passwordunmask', 'password', get_string('password', 'cachestore_redis'));
         $form->setType('password', PARAM_RAW);
         $form->addHelpButton('password', 'password', 'cachestore_redis');
