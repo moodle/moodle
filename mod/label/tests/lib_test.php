@@ -289,7 +289,32 @@ class lib_test extends \advanced_testcase {
                 'content' => '<audio controls="controls"><source src=""></audio>',
                 'format' => FORMAT_HTML,
                 'expected' => 'Text and media area'
-            ]
+            ],
+            'markdown' => [
+                'content' => "##Simple Title\n simple markdown format",
+                'format' => FORMAT_MARKDOWN,
+                'expected' => 'Simple Title simple markdown format'
+            ],
+            'markdown with pluginfile' => [
+                'content' => "##Simple Title\n simple markdown format @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_MARKDOWN,
+                'expected' => 'Simple Title simple markdown format'
+            ],
+            'plain text' => [
+                'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_PLAIN,
+                'expected' => 'Simple plain text'
+            ],
+            'moodle format text' => [
+                'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_MOODLE,
+                'expected' => 'Simple plain text'
+            ],
+            'html format text' => [
+                'content' => "<h1>Simple plain title</h1><p> with plain text</p> @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_HTML,
+                'expected' => 'Simple plain title with plain text'
+            ],
         ];
     }
 
