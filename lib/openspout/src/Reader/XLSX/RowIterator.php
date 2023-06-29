@@ -247,8 +247,7 @@ final class RowIterator implements RowIteratorInterface
         return
             !$hasReadAtLeastOneRow
             || !$this->shouldPreserveEmptyRows
-            || $this->lastRowIndexProcessed < $this->nextRowIndexToBeProcessed
-        ;
+            || $this->lastRowIndexProcessed < $this->nextRowIndexToBeProcessed;
     }
 
     /**
@@ -297,7 +296,7 @@ final class RowIterator implements RowIteratorInterface
         // Read spans info if present
         $numberOfColumnsForRow = $this->numColumns;
         $spans = $xmlReader->getAttribute(self::XML_ATTRIBUTE_SPANS); // returns '1:5' for instance
-        if (null !== $spans) {
+        if (null !== $spans && '' !== $spans) {
             [, $numberOfColumnsForRow] = explode(':', $spans);
             $numberOfColumnsForRow = (int) $numberOfColumnsForRow;
         }
@@ -367,7 +366,7 @@ final class RowIterator implements RowIteratorInterface
      *
      * @return int Row index
      *
-     *@throws \OpenSpout\Common\Exception\InvalidArgumentException When the given cell index is invalid
+     * @throws \OpenSpout\Common\Exception\InvalidArgumentException When the given cell index is invalid
      */
     private function getRowIndex(XMLReader $xmlReader): int
     {
@@ -384,7 +383,7 @@ final class RowIterator implements RowIteratorInterface
      *
      * @return int Column index
      *
-     *@throws \OpenSpout\Common\Exception\InvalidArgumentException When the given cell index is invalid
+     * @throws \OpenSpout\Common\Exception\InvalidArgumentException When the given cell index is invalid
      */
     private function getColumnIndex(XMLReader $xmlReader): int
     {

@@ -7,7 +7,7 @@ namespace OpenSpout\Reader\XLSX\Manager\SharedStringsCaching;
 /**
  * @internal
  */
-final class CachingStrategyFactory
+final class CachingStrategyFactory implements CachingStrategyFactoryInterface
 {
     /**
      * The memory amount needed to store a string was obtained empirically from this data:.

@@ -226,8 +226,7 @@ final class CellValueFormatter
         // @NOTE: some versions of Excel don't support negative dates (e.g. Excel for Mac 2011)
         return
             $this->shouldUse1904Dates && $timestampValue >= -695055 && $timestampValue <= 2957003.9999884
-            || !$this->shouldUse1904Dates && $timestampValue >= -693593 && $timestampValue <= 2958465.9999884
-        ;
+            || !$this->shouldUse1904Dates && $timestampValue >= -693593 && $timestampValue <= 2958465.9999884;
     }
 
     /**

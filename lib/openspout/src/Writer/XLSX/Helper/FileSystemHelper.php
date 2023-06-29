@@ -21,8 +21,6 @@ use OpenSpout\Writer\XLSX\Options;
  */
 final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 {
-    public const APP_NAME = 'OpenSpout';
-
     public const RELS_FOLDER_NAME = '_rels';
     public const DRAWINGS_FOLDER_NAME = 'drawings';
     public const DOC_PROPS_FOLDER_NAME = 'docProps';
@@ -47,6 +45,9 @@ final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
 
     /** @var ZipHelper Helper to perform tasks with Zip archive */
     private ZipHelper $zipHelper;
+
+    /** @var string document creator */
+    private string $creator;
 
     /** @var XLSX Used to escape XML data */
     private XLSX $escaper;
@@ -76,13 +77,15 @@ final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
      * @param string    $baseFolderPath The path of the base folder where all the I/O can occur
      * @param ZipHelper $zipHelper      Helper to perform tasks with Zip archive
      * @param XLSX      $escaper        Used to escape XML data
+     * @param string    $creator        document creator
      */
-    public function __construct(string $baseFolderPath, ZipHelper $zipHelper, XLSX $escaper)
+    public function __construct(string $baseFolderPath, ZipHelper $zipHelper, XLSX $escaper, string $creator)
     {
         $this->baseFileSystemHelper = new CommonFileSystemHelper($baseFolderPath);
         $this->baseFolderRealPath = $this->baseFileSystemHelper->getBaseFolderRealPath();
         $this->zipHelper = $zipHelper;
         $this->escaper = $escaper;
+        $this->creator = $creator;
     }
 
     public function createFolder(string $parentFolderPath, string $folderName): string
@@ -516,11 +519,10 @@ final class FileSystemHelper implements FileSystemWithRootFolderHelperInterface
      */
     private function createAppXmlFile(): self
     {
-        $appName = self::APP_NAME;
         $appXmlFileContents = <<<EOD
             <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
             <Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties">
-                <Application>{$appName}</Application>
+                <Application>{$this->creator}</Application>
                 <TotalTime>0</TotalTime>
             </Properties>
             EOD;

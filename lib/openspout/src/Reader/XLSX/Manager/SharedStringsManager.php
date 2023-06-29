@@ -8,7 +8,7 @@ use DOMElement;
 use OpenSpout\Common\Exception\IOException;
 use OpenSpout\Reader\Exception\XMLProcessingException;
 use OpenSpout\Reader\Wrapper\XMLReader;
-use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactory;
+use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyFactoryInterface;
 use OpenSpout\Reader\XLSX\Manager\SharedStringsCaching\CachingStrategyInterface;
 use OpenSpout\Reader\XLSX\Options;
 
@@ -41,8 +41,8 @@ final class SharedStringsManager
     /** @var WorkbookRelationshipsManager Helps retrieving workbook relationships */
     private WorkbookRelationshipsManager $workbookRelationshipsManager;
 
-    /** @var CachingStrategyFactory Factory to create shared strings caching strategies */
-    private CachingStrategyFactory $cachingStrategyFactory;
+    /** @var CachingStrategyFactoryInterface Factory to create shared strings caching strategies */
+    private CachingStrategyFactoryInterface $cachingStrategyFactory;
 
     /** @var CachingStrategyInterface The best caching strategy for storing shared strings */
     private CachingStrategyInterface $cachingStrategy;
@@ -51,7 +51,7 @@ final class SharedStringsManager
         string $filePath,
         Options $options,
         WorkbookRelationshipsManager $workbookRelationshipsManager,
-        CachingStrategyFactory $cachingStrategyFactory
+        CachingStrategyFactoryInterface $cachingStrategyFactory
     ) {
         $this->filePath = $filePath;
         $this->options = $options;
@@ -199,8 +199,7 @@ final class SharedStringsManager
 
                 $sharedStringValue .= $shouldPreserveWhitespace
                     ? $textNodeValue
-                    : trim($textNodeValue)
-                ;
+                    : trim($textNodeValue);
             }
         }
 
