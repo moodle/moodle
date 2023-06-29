@@ -33,6 +33,8 @@ information provided here is intended especially for developers.
 * Addition of new 'name' field in the external_tokens table.
 * \core_external\util::generate_token() has a new optional argument "name" used as a token name.
 * Introduce a new public function \core_external\util::generate_token_name()
+* Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
+  --rerun option that provides exactly the same (execution of failed scenarios only).
 
 === 4.2 ===
 
