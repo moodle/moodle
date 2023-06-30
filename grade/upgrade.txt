@@ -2,10 +2,10 @@ This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
 === 4.3 ===
-
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
 * The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying
   `core_grades_external::create_gradecategory` methods
+* The grade_edit_tree_column_select class has been deprecated.
 
 === 4.1 ===
 * The $importactiveurl parameter in the constructor of the core_grades\output\import_action_bar class has been deprecated and is not used anymore.

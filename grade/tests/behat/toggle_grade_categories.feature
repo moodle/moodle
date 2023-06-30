@@ -126,10 +126,12 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
     And I should not see "Course total" in the "setup-grades" "table"
     # Expand the grade category 'Course'. The aggregated max grade should not be displayed within the 'Course' row anymore.
     And I click on "Expand" "link" in the "Course" "table_row"
+    And the following should exist in the "setup-grades" table:
       | Name             | Max grade |
       | Course           |           |
       | Category 1       | 140.00    |
       | Course total     | 240.00    |
+    And I should not see "Category 1 total" in the "setup-grades" "table"
 
   Scenario: A teacher can collapse and expand grade categories in the Gradebook setup when moving grade items
     Given I navigate to "Setup > Gradebook setup" in the course gradebook
