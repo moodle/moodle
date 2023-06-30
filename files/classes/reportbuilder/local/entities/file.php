@@ -232,6 +232,17 @@ class file extends base {
                 return html_writer::link($context->get_url(), $context->get_context_name());
             });
 
+        // Content hash.
+        $columns[] = (new column(
+             'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$filesalias}.contenthash")
+            ->set_is_sortable(true);
+
         // Component.
         $columns[] = (new column(
             'component',
@@ -354,6 +365,16 @@ class file extends base {
                     return $license->fullname;
                 }, $licenses);
             });
+
+        // Content hash.
+        $filters[] = (new filter(
+            text::class,
+            'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name(),
+            "{$filesalias}.contenthash"
+        ))
+            ->add_joins($this->get_joins());
 
         // Time created.
         $filters[] = (new filter(
