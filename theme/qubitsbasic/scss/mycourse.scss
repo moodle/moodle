@@ -85,6 +85,9 @@
 }
 .pagetitle-left-alignment {
   margin-left: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 1.6rem 0px;
   transition: all 0.5s ease;
   .text {
@@ -97,6 +100,9 @@
 }
 .closebar-left-alignment {
   margin-left: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 [role="button"]:focus {
   box-shadow: none !important;
@@ -775,13 +781,27 @@ button.close:focus,
   color: #585858;
   font-size: $fontsize16 !important;
 }
-.dropdown-item.active,
-.dropdown-item:active,
-.dropdown-item:hover,
-.dropdown-item:focus,
-.dropdown-item:focus-within {
-  background-color: #e2eaf2 !important;
+.sidebar {
+  .nav-links {
+    .dropdown-item {
+      &:hover() {
+        background-color: #e2eaf2 !important;
+      }
+      &:focus-within {
+        background-color: #e2eaf2 !important;
+      }
+      &:active {
+        background-color: #e2eaf2 !important;
+      }
+      &:focus() {
+        background-color: #e2eaf2 !important;
+      }
+    }
+  }
 }
+// a {
+//   // color: #1482e6 !important;
+// }
 #page.drawers.show-drawer-left {
   @include breakpoint(md) {
     margin-left: 0 !important;
@@ -911,4 +931,18 @@ ol {
     font-size: 13px !important;
     color: #9e9ea2 !important;
   }
+}
+.form-control:focus {
+  box-shadow: none !important;
+}
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+  box-shadow: none !important;
+}
+.custom-select:focus {
+  box-shadow: none !important;
+}
+.show > .btn-outline-secondary.dropdown-toggle {
+  background-color: #1169ba !important;
+  border-color: #1169ba !important;
 }
