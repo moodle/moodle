@@ -25913,6 +25913,30 @@ blockquote {
   white-space: normal;
 }
 
+/* Showmore component */
+.showmore-container.collapsed .collapsed-content {
+  display: block;
+}
+.showmore-container.collapsed .expanded-content {
+  display: none;
+}
+.showmore-container:not(.collapsed) .collapsed-content {
+  display: none;
+}
+.showmore-container:not(.collapsed) .expanded-content {
+  display: block;
+}
+.showmore-container button {
+  float: right;
+}
+.showmore-container button.btn-link {
+  text-decoration: none;
+}
+.showmore-container button .icon {
+  font-size: 0.8203125rem;
+  margin: 0;
+}
+
 .icon {
   font-size: 16px;
   width: 16px;

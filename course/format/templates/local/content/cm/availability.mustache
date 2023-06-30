@@ -41,7 +41,7 @@
             <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            <div> {{#pix}}t/unlock, core{{/pix}} {{{text}}} </div>
+            {{> core_courseformat/local/content/availability }}
         {{/isrestricted}}
         </div>
     {{/info}}

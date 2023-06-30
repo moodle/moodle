@@ -44,6 +44,7 @@ Feature: Confirm that conditions on completion no longer cause a bug
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//div[contains(concat(' ', normalize-space(@class), ' '), ' availability-item ')][preceding-sibling::div]//select[@name='cm']" to "Page2"
     And I press "Save and return to course"
+    And I click on "Show more" "button" in the "#section-1 .availabilityinfo" "css_element"
     Then I should see "Not available unless:" in the ".activity.glossary" "css_element"
     And I should see "The activity Page1 is marked complete" in the ".activity.glossary" "css_element"
     And I should see "The activity Page2 is marked complete" in the ".activity.glossary" "css_element"

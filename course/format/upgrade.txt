@@ -12,6 +12,8 @@ Some considerations about the activitybadge feature:
   - An optional URL to redirect the user when the badge is clicked.
   - An optional ID to add the element in case the module wants to add some JS to the badge events.
   - Optionally, any other extra HTML attributes to the badge element (for example, data attributes).
+* Protected function `core_courseformat\output\local\content\section\availability::availability_info()` has been deprecated,
+`core_courseformat\output\local\content\section\availability::get_availability_data()` should be used instead.
 
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.

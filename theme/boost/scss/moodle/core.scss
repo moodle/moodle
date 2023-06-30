@@ -3112,3 +3112,33 @@ blockquote {
         white-space: normal;
     }
 }
+
+/* Showmore component */
+.showmore-container {
+    &.collapsed {
+        .collapsed-content {
+            display: block;
+        }
+        .expanded-content {
+            display: none;
+        }
+    }
+    &:not(.collapsed) {
+        .collapsed-content {
+            display: none;
+        }
+        .expanded-content {
+            display: block;
+        }
+    }
+    button {
+        float: right;
+        &.btn-link {
+            text-decoration: none;
+        }
+        .icon {
+            font-size: $btn-font-size-sm;
+            margin: 0;
+        }
+    }
+}

@@ -376,6 +376,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:t/collapsedcaret' => 'fa-caret-right',
             'core:t/collapsedchevron' => 'fa-chevron-right',
             'core:t/collapsedchevron_rtl' => 'fa-chevron-left',
+            'core:t/collapsedchevron_up' => 'fa-chevron-up',
             'core:t/completion_complete' => 'fa-circle',
             'core:t/completion_fail' => 'fa-times',
             'core:t/completion_incomplete' => 'fa-circle-thin',
