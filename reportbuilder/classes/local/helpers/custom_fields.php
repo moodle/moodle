@@ -101,6 +101,40 @@ class custom_fields {
     }
 
     /**
+     * Get table alias for given custom field
+     *
+     * The entity name is used to ensure the alias differs when the entity is used multiple times within the same report, each
+     * having their own table alias/join
+     *
+     * @param field_controller $field
+     * @return string
+     */
+    private function get_table_alias(field_controller $field): string {
+        static $aliases = [];
+
+        $aliaskey = "{$this->entityname}_{$field->get('id')}";
+        if (!array_key_exists($aliaskey, $aliases)) {
+            $aliases[$aliaskey] = database::generate_alias();
+        }
+
+        return $aliases[$aliaskey];
+    }
+
+    /**
+     * Get table join for given custom field
+     *
+     * @param field_controller $field
+     * @return string
+     */
+    private function get_table_join(field_controller $field): string {
+        $customdatatablealias = $this->get_table_alias($field);
+
+        return "LEFT JOIN {customfield_data} {$customdatatablealias}
+                       ON {$customdatatablealias}.fieldid = {$field->get('id')}
+                      AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}";
+    }
+
+    /**
      * Gets the custom fields columns for the report.
      *
      * Column will be named as 'customfield_' + customfield shortname.
@@ -114,7 +148,7 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = database::generate_alias();
+                $customdatatablealias = $this->get_table_alias($field);
 
                 $datacontroller = data_controller::create(0, null, $field);
                 $datafield = $datacontroller->datafield();
@@ -135,9 +169,7 @@ class custom_fields {
                     $this->entityname
                 ))
                     ->add_joins($this->get_joins())
-                    ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
-                        "ON {$customdatatablealias}.fieldid = " . $field->get('id') . " " .
-                        "AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}")
+                    ->add_join($this->get_table_join($field))
                     ->add_fields($selectfields)
                     ->set_type($columntype)
                     ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
@@ -197,7 +229,7 @@ class custom_fields {
         foreach ($categorieswithfields as $fieldcategory) {
             $categoryfields = $fieldcategory->get_fields();
             foreach ($categoryfields as $field) {
-                $customdatatablealias = database::generate_alias();
+                $customdatatablealias = $this->get_table_alias($field);
 
                 $datacontroller = data_controller::create(0, null, $field);
                 $datafield = $datacontroller->datafield();
@@ -211,9 +243,7 @@ class custom_fields {
                     "{$customdatatablealias}.{$datafield}"
                 ))
                     ->add_joins($this->get_joins())
-                    ->add_join("LEFT JOIN {customfield_data} {$customdatatablealias} " .
-                        "ON {$customdatatablealias}.fieldid = " . $field->get('id') . " " .
-                        "AND {$customdatatablealias}.instanceid = {$this->tablefieldalias}");
+                    ->add_join($this->get_table_join($field));
 
                 // Options are stored inside configdata json string and we need to convert it to array.
                 if ($field->get('type') === 'select') {
