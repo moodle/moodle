@@ -16,7 +16,6 @@
 namespace mod_h5pactivity\output\result;
 
 use core_xapi\local\statement\item_result;
-use core_xapi\xapi_exception;
 use mod_h5pactivity\local\manager;
 
 /**
@@ -86,6 +85,7 @@ class result_test extends \advanced_testcase {
 
     /**
      * Data provider for result export_options test
+     *
      * @return array[]
      */
     public function result_data_provider(): array {
@@ -122,6 +122,54 @@ class result_test extends \advanced_testcase {
                 'useranswers' => [
                     (object) ['answer' => 'Cat', 'correct' => true],
                     (object) ['answer' => 'dog', 'correct' => true],
+                ],
+            ],
+            'sort the paragraph text' => [
+                'result' => [
+                    'interactiontype' => 'sequencing',
+                    'description' => 'SortParagraphs',
+                    'correctpattern' => '["0[,]1[,]2[,]3[,]4"]',
+                    'response' => '0[,]1[,]3[,]2[,]4',
+                    'additionals' => '{"choices":[{"id":0,"description":{"en":"First I wake up at 7.30 am\\n",'
+                        . '"en-US":"First I wake up at 7.30 am\\n"}}'
+                        . ',{"id":1,"description":{"en":"Next I get dressed\\n","en-US":"Next I get dressed\\n"}},'
+                        . '{"id":2,"description":{"en":"Afterward I have breakfast\\n","en-US":"Afterward I have breakfast\\n"}},'
+                        . '{"id":3,"description":{"en":"I brush my teeth\\n","en-US":"I brush my teeth\\n"}},'
+                        . '{"id":4,"description":{"en":"Finally I go school\\n","en-US":"Finally I go school\\n"}}],'
+                        .
+                        '"extensions":{"http:\\/\\/h5p.org\\/x-api\\/h5p-local-content-id":39,'
+                        . '"https:\\/\\/h5p.org\\/x-api\\/duplicates-interchangeable":1},"contextExtensions":{}}',
+                ],
+                'useranswers' => [
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                ],
+            ],
+            'sequencing images' => [
+                'result' => [
+                    'interactiontype' => 'sequencing',
+                    'description' => 'Order the planets from smallest to largest',
+                    'correctpattern' => '["item_3[,]item_0[,]item_7[,]item_1[,]item_5[,]item_2[,]item_4[,]item_6"]',
+                    'response' => 'item_0[,]item_1[,]item_3[,]item_2[,]item_5[,]item_4[,]item_6[,]item_7',
+                    'additionals' => '{"choices":[{"id":"item_3","description":{"en-US":"Mercury"}},'
+                        . '{"id":"item_0","description":{"en-US":"Mars"}},{"id":"item_7","description":{"en-US":"Earth"}},'
+                        . '{"id":"item_1","description":{"en-US":"Venus"}},{"id":"item_5","description":{"en-US":"Uranus"}},'
+                        . '{"id":"item_2","description":{"en-US":"Neptune"}},{"id":"item_4","description":{"en-US":"Saturn"}},'
+                        . '{"id":"item_6","description":{"en-US":"Jupiter"}}],"extensions":'
+                        . '{"http:\/\/h5p.org\/x-api\/h5p-local-content-id":43},"contextExtensions":{}}',
+                ],
+                'useranswers' => [
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Incorrect answer', 'fail' => true, ],
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
+                    (object) ['answer' => 'Correct answer', 'pass' => true, ],
                 ],
             ]
         ];
