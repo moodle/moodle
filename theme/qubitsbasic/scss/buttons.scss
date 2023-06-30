@@ -12,3 +12,11 @@
 .btn-outline-secondary:hover {
   background-color: #1482e6 !important;
 }
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+  box-shadow: none !important;
+}
+.show > .btn-outline-secondary.dropdown-toggle {
+  background-color: #1169ba !important;
+  border-color: #1169ba !important;
+}
