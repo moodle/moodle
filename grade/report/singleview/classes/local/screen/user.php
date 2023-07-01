@@ -261,6 +261,7 @@ class user extends tablelike implements selectable_items {
         $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
         $menu->set_menu_trigger($icon, $extraclasses);
         $menu->set_menu_left();
+        $menu->set_boundary('window');
 
         return $OUTPUT->render($menu);
     }
