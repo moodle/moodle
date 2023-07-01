@@ -2663,6 +2663,10 @@ class grade_structure {
             $context->divider2 = false;
         }
 
+        if ($mode == 'setup') {
+            $context->databoundary = 'window';
+        }
+
         if (!empty($USER->editing) || isset($context->gradeanalysisurl) || isset($context->gradesonlyurl)
                 || isset($context->aggregatesonlyurl) || isset($context->fullmodeurl) || isset($context->reporturl0)
                 || isset($context->ascendingfirstnameurl) || isset($context->ascendingurl)
