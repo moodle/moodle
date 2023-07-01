@@ -42,6 +42,7 @@
     <div class="dropdown">
         <button class="btn btn-link btn-icon icon-size-3 cellmenubtn"
             type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                {{#databoundary}}data-boundary="{{databoundary}}"{{/databoundary}}
                 {{#datatype}}data-type="{{datatype}}"{{/datatype}}
                 {{#dataid}}data-id="{{dataid}}"{{/dataid}}>
             <i class="icon fa fa-ellipsis-h fa-fw m-0" title="{{#str}} cellactions, gradereport_grader {{/str}}" aria-hidden="true"></i>
