@@ -57,7 +57,9 @@ class editsection_form extends moodleform {
             // interaction is all implemented in JavaScript. The field is named
             // availabilityconditionsjson for consistency with moodleform_mod.
             $mform->addElement('textarea', 'availabilityconditionsjson',
-                get_string('accessrestrictions', 'availability'));
+                get_string('accessrestrictions', 'availability'),
+                ['class' => 'd-none']
+            );
         }
 
         $mform->_registerCancelButton('cancel');
