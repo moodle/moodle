@@ -1,6 +1,9 @@
 This files describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+* New method is_manual() has been added to `core_completion/cm_completion_details`
+
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
   based on cron for completion_criteria_activity.php which is refactored to use it as well.
