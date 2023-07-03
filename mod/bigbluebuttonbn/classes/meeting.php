@@ -131,9 +131,9 @@ class meeting {
     /**
      * Get meeting attendees
      *
-     * @return mixed
+     * @return array[]
      */
-    public function get_attendees() {
+    public function get_attendees(): array {
         return $this->get_meeting_info()->attendees ?? [];
     }
 
@@ -294,7 +294,7 @@ class meeting {
         }
         $meetinginfo->attendees = [];
         if (!empty($info['attendees'])) {
-            // Make sure attendees is an array of object, not a simpleXML object.
+            // Ensure each returned attendee is cast to an array, rather than a simpleXML object.
             foreach ($info['attendees'] as $attendee) {
                 $meetinginfo->attendees[] = (array) $attendee;
             }
