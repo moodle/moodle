@@ -413,8 +413,10 @@ class webservice {
      * The returned value is a stdClass:
      * ->id token id
      * ->token
+     * ->tokenname
      * ->firstname user firstname
      * ->lastname
+     * ->externalserviceid
      * ->name service name
      *
      * @param int $userid user id
@@ -424,7 +426,7 @@ class webservice {
     public function get_created_by_user_ws_token($userid, $tokenid) {
         global $DB;
         $sql = "SELECT
-                        t.id, t.token, t.name AS tokenname, u.firstname, u.lastname, s.name
+                        t.id, t.token, t.name AS tokenname, u.firstname, u.lastname, t.externalserviceid, s.name
                     FROM
                         {external_tokens} t, {user} u, {external_services} s
                     WHERE
