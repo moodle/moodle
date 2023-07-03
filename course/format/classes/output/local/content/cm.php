@@ -119,6 +119,7 @@ class cm implements named_templatable, renderable {
         $haspartials['alternative'] = $this->add_alternative_content_data($data, $output);
         $haspartials['completion'] = $this->add_completion_data($data, $output);
         $haspartials['editor'] = $this->add_editor_data($data, $output);
+        $haspartials['groupmode'] = $this->add_groupmode_data($data, $output);
         $this->add_format_data($data, $haspartials, $output);
 
         // Calculated fields.
@@ -267,6 +268,7 @@ class cm implements named_templatable, renderable {
             $this->mod->has_custom_cmlist_item() &&
             !$haspartials['availability'] &&
             !$haspartials['completion'] &&
+            !$haspartials['groupmode'] &&
             !isset($data->modhiddenfromstudents) &&
             !isset($data->modstealth) &&
             !$this->format->show_editor()
@@ -301,6 +303,42 @@ class cm implements named_templatable, renderable {
             // Add the legacy YUI move link.
             $data->moveicon = course_get_cm_move($this->mod, $returnsection);
         }
+        return true;
+    }
+
+    /**
+     * Add group mode information to the data structure.
+     *
+     * @param stdClass $data the current cm data reference
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return bool the module has group mode information
+     */
+    protected function add_groupmode_data(stdClass &$data, renderer_base $output): bool {
+        if (!plugin_supports('mod', $this->mod->modname, FEATURE_GROUPS, false)) {
+            return false;
+        }
+
+        if (!has_capability('moodle/course:manageactivities', $this->mod->context)) {
+            return false;
+        }
+
+        switch ($this->mod->effectivegroupmode) {
+            case SEPARATEGROUPS:
+                $groupicon = 'i/groups';
+                $groupalt = get_string('groupsseparate', 'group');
+                break;
+            case VISIBLEGROUPS:
+                $groupicon = 'i/groupv';
+                $groupalt = get_string('groupsvisible', 'group');
+                break;
+            default:
+                return false;
+        }
+
+        $data->groupmodeinfo = (object) [
+            'groupicon' => $groupicon,
+            'groupalt' => $groupalt,
+        ];
         return true;
     }
 

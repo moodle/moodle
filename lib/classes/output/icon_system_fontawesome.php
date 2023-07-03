@@ -255,8 +255,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/groupevent' => 'fa-group',
             'core:i/groupn' => 'fa-user',
             'core:i/group' => 'fa-users',
-            'core:i/groups' => 'fa-user-circle',
-            'core:i/groupv' => 'fa-user-circle-o',
             'core:i/home' => 'fa-home',
             'core:i/hide' => 'fa-eye',
             'core:i/hierarchylock' => 'fa-lock',

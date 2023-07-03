@@ -1448,21 +1448,23 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     .activity-grid {
         display: grid;
         align-items: center;
-        grid-template-columns: min-content 1fr min-content min-content;
+        grid-template-columns: min-content 1fr min-content min-content min-content;
         grid-template-rows: 1fr repeat(5, min-content);
         grid-template-areas:
-            "icon          name          completion    actions"
-            "icon          visibility    completion    actions"
-            "icon          dates         completion    actions"
-            "altcontent    altcontent    altcontent    altcontent"
-            "afterlink     afterlink     afterlink     afterlink"
-            "availability  availability  availability  availability";
+            "icon          name          groupmode      completion    actions"
+            "icon          visibility    groupmode      completion    actions"
+            "icon          dates         groupmode      completion    actions"
+            "altcontent    altcontent    altcontent     altcontent    altcontent"
+            "afterlink     afterlink     afterlink      afterlink     afterlink"
+            "availability  availability  availability   availability  availability";
         @include media-breakpoint-down(xs) {
-            grid-template-columns: min-content 1fr min-content;
+            grid-template-columns: min-content 1fr min-content min-content min-content;
+            grid-template-rows: 1fr repeat(4, min-content);
             grid-template-areas:
                 "icon          name          actions"
                 "icon          visibility    actions"
                 "dates         dates         dates"
+                "groupmode     groupmode     groupmode"
                 "completion    completion    completion"
                 "altcontent    altcontent    altcontent"
                 "afterlink     afterlink     afterlink"
@@ -1471,17 +1473,18 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
     // Activity card specific grid layout for activities without name.
     .activity-grid.noname-grid {
-        grid-template-columns: min-content 1fr min-content;
+        grid-template-columns: min-content min-content 1fr min-content;
         grid-template-areas:
-            "visibility    completion    actions"
-            "altcontent    altcontent    altcontent"
-            "afterlink     afterlink     afterlink"
-            "availability  availability  availability";
+            "visibility    groupmode        completion    actions"
+            "altcontent    altcontent       altcontent    altcontent"
+            "afterlink     afterlink        afterlink     afterlink"
+            "availability  availability     availability  availability";
         @include media-breakpoint-down(xs) {
             grid-template-columns: 1fr min-content;
             grid-template-areas:
                 "visibility    actions"
                 "altcontent    altcontent"
+                "groupmode     groupmode"
                 "afterlink     afterlink"
                 "completion    completion"
                 "availability  availability";
@@ -1555,6 +1558,26 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
             margin-top: map-get($spacers, 2);
             button {
                 width: 100%;
+            }
+        }
+    }
+
+    .activity-groupmode-info {
+        grid-area: groupmode;
+        justify-self: end;
+        .groupmode-information {
+            height: ($icon-width + 15px);
+            .groupmode-icon-info {
+                display: none;
+            }
+        }
+        @include media-breakpoint-down(xs) {
+            width: 100%;
+            margin-top: map-get($spacers, 2);
+            padding-top: map-get($spacers, 2);
+            border-top: $border-width solid $border-color;
+            .groupmode-information .groupmode-icon-info {
+                display: inline;
             }
         }
     }
