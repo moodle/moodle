@@ -32,7 +32,7 @@ $sectionreturn = optional_param('sr', 0, PARAM_INT);
 $deletesection = optional_param('delete', 0, PARAM_BOOL);
 $showonly = optional_param('showonly', 0, PARAM_TAGLIST);
 
-$params = ['id'=>$id, 'sr'=> $sectionreturn];
+$params = ['id' => $id, 'sr' => $sectionreturn];
 if (!empty($showonly)) {
     $params['showonly'] = $showonly;
 }

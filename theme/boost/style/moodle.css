@@ -29002,6 +29002,18 @@ span.editinstructions .alert-link {
   background-color: #e9ecef;
   border-radius: 1rem;
 }
+.course-section .availabilityinfo .editavailability {
+  padding: 0.25rem 1rem;
+  border-radius: 1rem;
+}
+.course-section .availabilityinfo .editavailability :hover {
+  background-color: #ced4da;
+}
+.course-section .availabilityinfo .editavailability a {
+  border-radius: 0.5rem;
+  color: #1d2125;
+  text-decoration: none;
+}
 .course-section.section-summary {
   padding-left: 1rem;
   padding-right: 1rem;

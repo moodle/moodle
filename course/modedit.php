@@ -37,7 +37,7 @@ $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.ph
 $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 $sectionreturn = optional_param('sr', null, PARAM_INT);
 $beforemod = optional_param('beforemod', 0, PARAM_INT);
-$showonly = optional_param('showonly', '', PARAM_ALPHANUM); // Settings group to show expanded and hide the rest.
+$showonly = optional_param('showonly', '', PARAM_TAGLIST); // Settings group to show expanded and hide the rest.
 
 $url = new moodle_url('/course/modedit.php');
 $url->param('sr', $sectionreturn);

@@ -106,9 +106,7 @@ class availability implements named_templatable, renderable {
             return;
         }
 
-        $data = (object)[
-            'info' => $this->get_info($output),
-        ];
+        $data = (object) $this->get_info($output);
 
         $attributename = $this->hasavailabilityname;
         $data->$attributename = !empty($data->info);
@@ -139,21 +137,25 @@ class availability implements named_templatable, renderable {
 
         $canviewhidden = has_capability('moodle/course:viewhiddensections', $context, $USER);
 
-        $info = [];
+        $editurl = new \moodle_url(
+            '/course/editsection.php',
+            ['id' => $this->section->id, 'showonly' => 'availabilityconditions']
+        );
+        $info = ['editurl' => $editurl->out(false)];
         if (!$section->visible) {
-            $info = [];
+            return [];
         } else if (!$section->uservisible) {
             if ($section->availableinfo) {
                 // Note: We only get to this function if availableinfo is non-empty,
                 // so there is definitely something to print.
-                $info[] = $this->get_availability_data($output, $section->availableinfo, 'isrestricted');
+                $info['info'] = $this->get_availability_data($output, $section->availableinfo, 'isrestricted');
             }
         } else if ($canviewhidden && !empty($CFG->enableavailability)) {
             // Check if there is an availability restriction.
             $ci = new info_section($section);
             $fullinfo = $ci->get_full_information();
             if ($fullinfo) {
-                $info[] = $this->get_availability_data($output, $fullinfo, 'isrestricted isfullinfo');
+                $info['info'] = $this->get_availability_data($output, $fullinfo, 'isrestricted isfullinfo');
             }
         }
 
