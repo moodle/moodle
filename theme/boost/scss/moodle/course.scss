@@ -1575,6 +1575,17 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
                 width: 100%;
             }
         }
+        .completion-dialog {
+            color: $gray-700;
+            font-size: $font-size-sm;
+            min-width: 12rem;
+            .icon {
+                font-size: $font-size-sm;
+                width: $font-size-sm;
+                height: $font-size-sm;
+                margin-right: map-get($spacers, 1);
+            }
+        }
     }
 
     .activity-groupmode-info {

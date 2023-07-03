@@ -27,6 +27,12 @@
         "activityname": "Course announcements",
         "hascompletion": true,
         "uservisible": true,
+        "completiondialog": {
+            "buttoncontent": "To do",
+            "dialogcontent": "You must view this activity to complete it.",
+            "buttonclasses": "btn btn-sm btn-outline-secondary dropdown-toggle",
+            "classes": "completion-dropdown"
+        },
         "isautomatic": true,
         "showmanualcompletion": true,
         "completiondetails": [
@@ -44,42 +50,21 @@
 <div data-region="activity-information" data-activityname="{{activityname}}" class="activity-information">
     {{#uservisible}}
         <div data-region="completion-info">
-            {{#isautomatic}}
-                <div class="automatic-completion-conditions"
-                    data-region ="completionrequirements"
-                    aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}"
-                >
-                    <div class="dropdown">
-                        <a
-                            href="#"
-                            class="btn btn-sm btn-outline-secondary dropdown-toggle"
-                            role="button"
-                            id="completion-dropdown-button-{{cmid}}"
-                            data-toggle="dropdown"
-                            aria-haspopup="true"
-                            aria-expanded="false"
-                        >
-                            {{#str}}completionmenuitem, completion{{/str}}
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="completion-dropdown-button-{{cmid}}">
-                            <div class="p-2" role="list">
-                            {{#completiondetails}}
-                                {{$ core_course/completion_automatic }}
-                                    {{> core_course/completion_automatic }}
-                                {{/ core_course/completion_automatic }}
-                            {{/completiondetails}}
-                        </div>
-                        </div>
-                    </div>
+            {{! Completion dropdown dialog }}
+            {{#completiondialog}}
+                <div data-region="completionrequirements" aria-label="{{#str}}completionrequirements, core_course, {{activityname}}{{/str}}">
+                    {{> core/local/dropdown/dialog }}
                 </div>
-            {{/isautomatic}}
-            {{^isautomatic}}
-                {{#showmanualcompletion}}
+            {{/completiondialog}}
+
+            {{! Manual completion button }}
+            {{#showmanualcompletion}}
+                {{#istrackeduser}}
                     {{$ core_course/completion_manual }}
                         {{> core_course/completion_manual }}
                     {{/ core_course/completion_manual }}
-                {{/showmanualcompletion}}
-            {{/isautomatic}}
+                {{/istrackeduser}}
+            {{/showmanualcompletion}}
         </div>
     {{/uservisible}}
 </div>
