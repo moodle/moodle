@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>.extlib/WebAuthn</location>
+        <name>WebAuthn</name>
+        <version>2.0.1</version>
+        <license>MIT</license>
+        <repository>https://github.com/lbuchs/WebAuthn</repository>
+    </library>
+</libraries>

@@ -1,0 +1,34 @@
+From 1275e9b283c81b80b73d1c87c64449eb472cc037 Mon Sep 17 00:00:00 2001
+From: Brendan Heywood <brendan@catalyst-au.net>
+Date: Thu, 8 Aug 2019 13:26:50 +1000
+Subject: [PATCH] MDL-66340 setup: Add after_config for after setup.php is
+ loaded
+
+---
+ lib/setup.php | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/lib/setup.php b/lib/setup.php
+index 2cf12822c6d..a4e0acf0bb8 100644
+--- a/lib/setup.php
++++ b/lib/setup.php
+@@ -1041,3 +1041,16 @@ if (false) {
+     $OUTPUT = new core_renderer(null, null);
+     $PAGE = new moodle_page();
+ }
++
++// Allow plugins to callback as soon possible after setup.php is loaded.
++$pluginswithfunction = get_plugins_with_function('after_config', 'lib.php');
++foreach ($pluginswithfunction as $plugins) {
++    foreach ($plugins as $function) {
++        try {
++            $function();
++        } catch (Exception $e) {
++            debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
++        }
++    }
++}
++
+-- 
+2.17.1
+

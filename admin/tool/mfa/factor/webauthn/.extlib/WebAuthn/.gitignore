@@ -1,0 +1,8 @@
+# Netbeans project
+nbproject/
+/index.php
+
+
+# .pem files from FIDO Alliance Metadata Service (MDS)
+_test/rootCertificates/mds/*.pem
+_test/rootCertificates/mds/lastMdsFetch.txt

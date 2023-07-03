@@ -1,0 +1,87 @@
+From 51484a595701e56897b0913974c566c6a13c1f32 Mon Sep 17 00:00:00 2001
+From: Brendan Heywood <brendan@catalyst-au.net>
+Date: Wed, 18 Oct 2017 16:20:33 +1100
+Subject: [PATCH 1/2] MDL-60470 core: New hook 'after_require_login'
+
+This adds a hook towards the end of the require_login function.
+---
+ lib/moodlelib.php | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
+
+diff --git a/lib/moodlelib.php b/lib/moodlelib.php
+index e2016a8bf75..29e11632233 100644
+--- a/lib/moodlelib.php
++++ b/lib/moodlelib.php
+@@ -2769,6 +2769,8 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         $CFG->forceclean = true;
+     }
+ 
++    $afterlogins = get_plugins_with_function('after_require_login', 'lib.php');
++
+     // Do not bother admins with any formalities, except for activities pending deletion.
+     if (is_siteadmin() && !($cm && $cm->deletioninprogress)) {
+         // Set the global $COURSE.
+@@ -2783,6 +2785,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         if (!WS_SERVER && !AJAX_SCRIPT) {
+             user_accesstime_log($course->id);
+         }
++
++        foreach ($afterlogins as $plugintype => $plugins) {
++            foreach ($plugins as $pluginfunction) {
++                $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
++            }
++        }
+         return;
+     }
+ 
+@@ -2990,6 +2998,12 @@ function require_login($courseorid = null, $autologinguest = true, $cm = null, $
+         $PAGE->set_course($course);
+     }
+ 
++    foreach ($afterlogins as $plugintype => $plugins) {
++        foreach ($plugins as $pluginfunction) {
++            $pluginfunction($courseorid, $autologinguest, $cm, $setwantsurltome, $preventredirect);
++        }
++    }
++
+     // Finally access granted, update lastaccess times.
+     // Do not update access time for webservice or ajax requests.
+     if (!WS_SERVER && !AJAX_SCRIPT) {
+-- 
+2.17.1
+
+
+From 838ad593636395e4c4884e1bf47836504413b702 Mon Sep 17 00:00:00 2001
+From: Brendan Heywood <brendan@catalyst-au.net>
+Date: Thu, 8 Aug 2019 13:26:50 +1000
+Subject: [PATCH 2/2] MDL-66340 setup: Add after_config for after setup.php is
+ loaded
+
+---
+ lib/setup.php | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/lib/setup.php b/lib/setup.php
+index 2cf12822c6d..a4e0acf0bb8 100644
+--- a/lib/setup.php
++++ b/lib/setup.php
+@@ -1041,3 +1041,16 @@ if (false) {
+     $OUTPUT = new core_renderer(null, null);
+     $PAGE = new moodle_page();
+ }
++
++// Allow plugins to callback as soon possible after setup.php is loaded.
++$pluginswithfunction = get_plugins_with_function('after_config', 'lib.php');
++foreach ($pluginswithfunction as $plugins) {
++    foreach ($plugins as $function) {
++        try {
++            $function();
++        } catch (Exception $e) {
++            debugging("Exception calling '$function'", DEBUG_DEVELOPER, $e->getTrace());
++        }
++    }
++}
++
+-- 
+2.17.1
+
