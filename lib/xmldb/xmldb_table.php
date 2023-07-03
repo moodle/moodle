@@ -42,7 +42,7 @@ class xmldb_table extends xmldb_object {
      *  - Oracle has 30 chars limit for all names,
      *    2 chars are reserved for prefix.
      *
-     * @const maximum length of field names
+     * @var maximum length of field names
      */
     const NAME_MAX_LENGTH = 28;
 
