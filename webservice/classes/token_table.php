@@ -89,6 +89,8 @@ class token_table extends \table_sql {
         $columns[] = 'iprestriction';
         $headers[] = get_string('validuntil', 'webservice');
         $columns[] = 'validuntil';
+        $headers[] = get_string('lastaccess');
+        $columns[] = 'lastaccess';
         if ($this->showalltokens) {
             // Only need to show creator if you can see tokens created by other people.
             $headers[] = get_string('tokencreator', 'webservice');
@@ -135,6 +137,20 @@ class token_table extends \table_sql {
             return get_string('validuntil_empty', 'webservice');
         } else {
             return userdate($data->validuntil, get_string('strftimedatetime', 'langconfig'));
+        }
+    }
+
+    /**
+     * Generate the last access column
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_lastaccess(\stdClass $data): string {
+        if (empty($data->lastaccess)) {
+            return get_string('never');
+        } else {
+            return userdate($data->lastaccess, get_string('strftimedatetime', 'langconfig'));
         }
     }
 
@@ -282,7 +298,7 @@ class token_table extends \table_sql {
 
         $params = ['tokenmode' => EXTERNAL_TOKEN_PERMANENT];
 
-        $selectfields = "SELECT t.id, t.name, t.iprestriction, t.validuntil, t.creatorid,
+        $selectfields = "SELECT t.id, t.name, t.iprestriction, t.validuntil, t.creatorid, t.lastaccess,
                                 u.id AS userid, $usernamefields,
                                 s.id AS serviceid, s.name AS servicename, s.shortname AS serviceshortname,
                                 $creatorfields ";
