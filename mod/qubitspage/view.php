@@ -76,6 +76,7 @@ if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
     }
 }
 $PAGE->activityheader->set_attrs($activityheader);
+$PAGE->set_pagelayout('executablebook');
 echo $OUTPUT->header();
 $content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_qubitspage', 'content', $page->revision);
 $formatoptions = new stdClass;
@@ -92,67 +93,26 @@ $templatecontext = array(
 echo $OUTPUT->box($content, "generalbox center clearfix", "qubitspage");
 $pageslug = trim(strip_tags($page->intro));
 $qmurl = $CFG->wwwroot . '/mod/qubitspage';
-
+//$PAGE->requires->jquery();
 //echo $OUTPUT->render_from_template("mod_qubitspage/pythoncode-v2", $templatecontext);
 ?>
 
-
-<link rel="icon" href="<?php echo $qmurl ?>/qubits-logo.png" sizes="any" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css"
-    integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg=="
-    crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script src="https://cdn.jsdelivr.net/gh/qubits-platform/sqlite-wasm@master/sqlite3.js" async=""></script>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js" async=""></script>
-<script type="text/javascript" src="<?php echo $qmurl ?>/js/d3.v2.min.js" async=""></script>
-<script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/jQuery-Validation-Engine/2.6.4/jquery-1.8.2.min.js" async=""></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/simplemodal/1.4.4/jquery.simplemodal.min.js"
-    async=""></script>
-<script type="text/javascript" src="<?php echo $qmurl ?>/js/jquery.ba-bbq.js" async=""></script>
-<script type="text/javascript" src="<?php echo $qmurl ?>/js/jquery.jsPlumb-1.3.10-all-min.js" async=""></script>
-<script type="text/javascript" src="<?php echo $qmurl ?>/js/jquery-ui.min.js" async=""></script>
-<link type="text/css" href="<?php echo $qmurl ?>/css/jquery-ui.min.css" rel="stylesheet" />
-<link type="text/css" href="<?php echo $qmurl ?>/css/pytutor-basic.css" rel="stylesheet" />
-<script type="text/javascript" src="<?php echo $qmurl ?>/js/pytutor.js" async=""></script>
-<link rel="stylesheet" href="<?php echo $qmurl ?>/css/pytutor.css" />
-<link rel="preload" href="<?php echo $qmurl ?>/_next/static/css/0dff1a1321659000.css" as="style" />
-<link rel="stylesheet" href="<?php echo $qmurl ?>/_next/static/css/0dff1a1321659000.css" data-n-g="" />
-<noscript data-n-css=""></noscript>
-<script defer="" nomodule="" src="<?php echo $qmurl ?>/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js"></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/webpack-41e74651d3db89d3.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/framework-2c79e2a64abdb08b.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/main-164f91e3b1a225f8.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/pages/_app-ed03cc0661e73ce5.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/pages/index-44a994c9ffe51c6c.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/Vlw3PAumiBBChzCZdiNN0/_buildManifest.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/Vlw3PAumiBBChzCZdiNN0/_ssgManifest.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/8a28b14e.d29918a3616a3ec4.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/25.42ab8018a3117c3f.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/186.e9c8023acf5dbe8c.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/pages/Chapter2-f805aa114b1502b2.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/pages/Chapter3-c56d845d803f27df
-.js" defer=""></script>
-<script src="<?php echo $qmurl ?>/_next/static/chunks/pages/_error-54de1933a164a1ff.js" defer=""></script>
-
-
-
-
 <div id="__next"></div>
 <script id="__NEXT_DATA__" type="application/json">
-{
-    "props": {
-        "pageProps": {}
-    },
-    "page": "<?php echo $pageslug; ?>",
-    "query": {},
-    "buildId": "Vlw3PAumiBBChzCZdiNN0",
-    "nextExport": true,
-    "autoExport": true,
-    "isFallback": false,
-    "scriptLoader": []
-}
-</script>
+    {
+        "props": {
+            "pageProps": {}
+        },
+        "page": "<?php echo $pageslug; ?>",
 
+        "query": {},
+        "buildId": "KBNmaMY8_hUwQkFmcUMeO",
+        "nextExport": true,
+        "autoExport": true,
+        "isFallback": false,
+        "scriptLoader": []
+    }
+</script>
 <?php
 
 if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
@@ -161,3 +121,4 @@ if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'
 }
 
 echo $OUTPUT->footer();
+?>
