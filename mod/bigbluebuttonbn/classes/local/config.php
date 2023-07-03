@@ -121,6 +121,7 @@ class config {
             'hideuserlist_default' => false,
             'hideuserlist_editable' => true,
             'welcome_default' => '',
+            'welcome_editable' => true,
             'default_dpa_accepted' => false,
             'poll_interval' => bigbluebutton_proxy::DEFAULT_POLL_INTERVAL,
             'checksum_algorithm' => self::DEFAULT_CHECKSUM_ALGORITHM,
@@ -155,7 +156,7 @@ class config {
         if (isset($CFG->{'bigbluebuttonbn_' . $setting})) {
             return (string) $CFG->{'bigbluebuttonbn_' . $setting};
         }
-        return self::defaultvalue($setting);
+        return (string) self::defaultvalue($setting);
     }
 
     /**
