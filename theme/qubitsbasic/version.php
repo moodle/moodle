@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') || die;
 
 $plugin->component = 'theme_qubitsbasic'; // Full name of the plugin (used for diagnostics)
 $plugin->release   = 'v1.0';
-$plugin->version   = 2023052500; // The current module version (Date: YYYYMMDDXX)
+$plugin->version   = 2023070400; // The current module version (Date: YYYYMMDDXX)
 $plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2020061500; // Requires this Moodle version 3.9
 // This theme depends boost theme.
