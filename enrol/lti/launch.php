@@ -108,10 +108,12 @@ $auth->complete_login(
     $legacyconsumersecrets ?? []
 );
 
-require_login(null, false);
 global $USER, $CFG, $PAGE;
+// Page URL must be set before the require_login check, so that things like policies can redirect back with the launchid.
+$PAGE->set_url(new moodle_url('/enrol/lti/launch.php'), ['launchid' => $messagelaunch->getLaunchId()]);
+
+require_login(null, false);
 $PAGE->set_context(context_system::instance());
-$PAGE->set_url(new moodle_url('/enrol/lti/launch.php'));
 $PAGE->set_pagelayout('popup'); // Same layout as the tool.php page in Legacy 1.1/2.0 launches.
 $PAGE->set_title(get_string('opentool', 'enrol_lti'));
 
