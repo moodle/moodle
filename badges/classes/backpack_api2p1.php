@@ -272,8 +272,34 @@ class backpack_api2p1 {
             $msg['status'] = \core\output\notification::NOTIFY_SUCCESS;
             $msg['message'] = get_string('addedtobackpack', 'badges');
         } else {
+            if ($response) {
+                // Although the specification defines that status error is a string, some providers, like Badgr, are wrongly
+                // returning an array. It has been reported, but adding these extra checks doesn't hurt, just in case.
+                if (
+                    property_exists($response, 'status') &&
+                    is_object($response->status) &&
+                    property_exists($response->status, 'error')
+                ) {
+                    $statuserror = $response->status->error;
+                    if (is_array($statuserror)) {
+                        $statuserror = implode($statuserror);
+                    }
+                } else if (property_exists($response, 'error')) {
+                    $statuserror = $response->error;
+                    if (property_exists($response, 'message')) {
+                        $statuserror .= '. Message: ' . $response->message;
+                    }
+                }
+            } else {
+                $statuserror = 'Empty response';
+            }
+            $data = [
+                'badgename' => $data['assertion']['badge']['name'],
+                'error' => $statuserror,
+            ];
+
             $msg['status'] = \core\output\notification::NOTIFY_ERROR;
-            $msg['message'] = get_string('backpackexporterror', 'badges', $data['assertion']['badge']['name']);
+            $msg['message'] = get_string('backpackexporterrorwithinfo', 'badges', $data);
         }
         return $msg;
     }
