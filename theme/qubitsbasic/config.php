@@ -113,4 +113,9 @@ $THEME->layouts = [
         'regions' => array(),
         'options' => array('langmenu' => true)
     ),
+    'executablebook' => array(
+        'file' => 'executablebook.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    ),
 ];

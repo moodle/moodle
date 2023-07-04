@@ -1,11 +1,15 @@
 .hintstyle {
   width: 80%;
 }
+.hintstyle ul {
+  margin-top: 20px;
+}
 
 .resultTextareaStyleerror {
   background-color: #e2dfd2;
   color: #000;
 }
+
 .resultTextareaStyle,
 .resultTextareaStyleerror {
   width: "100%";
@@ -24,7 +28,7 @@
 :root {
   --sidebar-width: 300px;
   --page-padding: 15px;
-  --content-max-width: 750px;
+  --content-max-width: 100% !important;
   --menu-bar-height: 50px;
   --mono-font: Consolas, Menlo;
   /* --code-font-size: 0.875em; */
@@ -93,8 +97,8 @@ pre > .result {
 }
 
 /* :root {
-  font-size: 62.5%;
-} */
+        font-size: 62.5%;
+      } */
 
 .content html {
   font-family: Open Sans, sans-serif;
@@ -212,7 +216,7 @@ h6:target:before {
 }
 blockquote {
   margin: 20px 0;
-  padding: 0 20px;
+  padding: 0 0 0 0 !important;
   color: #000;
   background-color: #f1f6f9;
   border-top: 0.1em solid #e0ecf1;
@@ -230,7 +234,7 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(http://qubits.localhost.com/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png)
+  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png)
     no-repeat;
   background-size: contain;
   width: 118px;
@@ -386,7 +390,7 @@ code {
   z-index: 9;
 }
 .ai-help-button,
-.chatgptbtn {
+.ai-console-wrapper.resultTextareaStyleerror.chatgptbtn {
   position: absolute !important;
   top: 5px;
   right: 5px;
@@ -395,7 +399,11 @@ code {
 }
 .chatgptbtn {
   color: #000 !important;
-  font-weight: 700 !important;
+  font-weight: bold !important;
+  float: right;
+  font-size: 11px;
+  background-color: white;
+  height: 30px;
 }
 .ai-help-button span {
   margin-left: 0;
@@ -463,4 +471,12 @@ code {
 
 ::-webkit-scrollbar {
   background: var(--bg);
+}
+
+.moremenu {
+  opacity: 1 !important;
+}
+
+#page-header {
+  display: none !important;
 }

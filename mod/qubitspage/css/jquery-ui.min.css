@@ -572,9 +572,9 @@ button.ui-button::-moz-focus-inner {
     background-image: none
 }
 
-.ui-resizable {
+/* .ui-resizable {
     position: relative
-}
+} */
 
 .ui-resizable-handle {
     position: absolute;
@@ -582,6 +582,9 @@ button.ui-button::-moz-focus-inner {
     display: block;
     -ms-touch-action: none;
     touch-action: none
+}
+.ui-resizable-handle .ui-resizable-e{
+    display: none;
 }
 
 .ui-resizable-disabled .ui-resizable-handle,
@@ -597,21 +600,21 @@ button.ui-button::-moz-focus-inner {
     left: 0
 }
 
-.ui-resizable-s {
+/* .ui-resizable-s {
     cursor: s-resize;
     height: 7px;
     width: 100%;
     bottom: -5px;
     left: 0
-}
+} */
 
-.ui-resizable-e {
+/* .ui-resizable-e {
     cursor: e-resize;
     width: 7px;
     right: -5px;
     top: 0;
     height: 100%
-}
+} */
 
 .ui-resizable-w {
     cursor: w-resize;
@@ -621,13 +624,13 @@ button.ui-button::-moz-focus-inner {
     height: 100%
 }
 
-.ui-resizable-se {
+/* .ui-resizable-se {
     cursor: se-resize;
     width: 12px;
     height: 12px;
     right: 1px;
     bottom: 1px
-}
+} */
 
 .ui-resizable-sw {
     cursor: sw-resize;
