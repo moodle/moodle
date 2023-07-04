@@ -162,6 +162,10 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
 $qbankaction = new \core_question\output\qbank_action_menu($url);
+if (is_null($param->edit)) {
+    $actionurl = new moodle_url($url, ['edit' => 0]);
+    $qbankaction->set_action_button($actionurl, get_string('addcategory', 'question'));
+}
 echo $renderer->render($qbankaction);
 
 // Display the UI.
