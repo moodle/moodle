@@ -37,4 +37,13 @@ class behat_communication extends \behat_base {
     public function enable_communication_experimental_feature(): void {
         $this->setup_communication_configs();
     }
+
+    /**
+     * Disable communication experimental feature.
+     *
+     * @Given /^I disable communication experimental feature$/
+     */
+    public function disable_communication_experimental_feature(): void {
+        $this->disable_communication_configs();
+    }
 }
