@@ -80,3 +80,4 @@ selecttheme,core_admin
 themenoselected,core_admin
 unsettheme,core_admin
 showmore,core_availability
+editcoursecompletionsettings,core_completion

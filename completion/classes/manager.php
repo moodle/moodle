@@ -314,7 +314,7 @@ class manager {
 
         if (has_capability('moodle/course:update', $coursecontext)) {
             $completionlink = new moodle_url('/course/completion.php', ['id' => $courseid]);
-            $options[$completionlink->out(false)] = get_string('coursecompletion', 'completion');
+            $options[$completionlink->out(false)] = get_string('coursecompletionsettings', 'completion');
         }
 
         if (has_capability('moodle/course:manageactivities', $coursecontext)) {

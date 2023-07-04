@@ -78,6 +78,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "completionusegrade" to "1"
     And I press "Save and return to course"
     And I navigate to "Course completion" in current page administration
+    And I should see "Course completion settings" in the "tertiary-navigation" "region"
     And I expand all fieldsets
     And I set the field "Assignment - Test assignment name" to "1"
     And I set the field "Assignment - Test assignment name2" to "1"
