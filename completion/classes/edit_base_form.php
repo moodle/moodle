@@ -198,7 +198,9 @@ abstract class core_completion_edit_base_form extends moodleform {
             $mform->addElement('static', 'qwerty', '', get_string('hiddenrules', 'completion', join(', ', $conflicts)));
         }
 
-        $this->add_action_buttons();
+        // Whether to show the cancel button or not in the form.
+        $displaycancel = $this->_customdata['displaycancel'] ?? true;
+        $this->add_action_buttons($displaycancel);
     }
 
     /**
