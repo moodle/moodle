@@ -101,12 +101,24 @@ class mod_lti_generator extends testing_module_generator {
         lti_add_type((object) $type, (object) $config);
     }
 
-    public function create_course_tool_types(array $type, ?array $config = null) {
+    /**
+     * Create a course tool type.
+     *
+     * @param array $type the type info.
+     * @param array|null $config the type configuration.
+     * @return void
+     * @throws coding_exception if any required fields are missing.
+     */
+    public function create_course_tool_types(array $type, ?array $config = null): void {
+        global $SITE;
+
         if (!isset($type['baseurl'])) {
-            throw new coding_exception('Must specify baseurl when creating a LTI tool type.');
+            throw new coding_exception('Must specify baseurl when creating a course tool type.');
+        }
+        if (!isset($type['course']) || $type['course'] == $SITE->id) {
+            throw new coding_exception('Must specify a non-site course when creating a course tool type.');
         }
         $type['coursevisible'] = LTI_COURSEVISIBLE_PRECONFIGURED; // The default for course tools.
         lti_add_type((object) $type, (object) $config);
-
     }
 }

@@ -96,3 +96,23 @@ Feature: Manage course tools
     And I should see "Test tool 20" in the "reportbuilder-table" "table"
     And I click on "2" "link" in the "page" "region"
     And I should see "Test tool 1" in the "reportbuilder-table" "table"
+
+  @javascript
+  Scenario: Delete a course tool
+    Given the following "mod_lti > course tools" exist:
+      | name         | description         | baseurl                          | course |
+      | Test tool    | Example description | https://example.com/tool         | C1     |
+      | Another tool | Example 123         | https://another.example.com/tool | C1     |
+    And I am on the "Course 1" course page logged in as teacher1
+    And I navigate to "LTI External tools" in current page administration
+    When I open the action menu in "Test tool" "table_row"
+    And I choose "Delete" in the open action menu
+    Then I should see "Are you sure you want to delete this course tool?"
+    And I click on "Cancel" "button" in the "Delete a course tool" "dialogue"
+    And I should see "Test tool" in the "reportbuilder-table" "table"
+    And I open the action menu in "Test tool" "table_row"
+    And I choose "Delete" in the open action menu
+    And I should see "Are you sure you want to delete this course tool?"
+    And I click on "Delete" "button" in the "Delete a course tool" "dialogue"
+    And I should see "Course tool deleted"
+    And I should not see "Test tool" in the "reportbuilder-table" "table"

@@ -146,6 +146,14 @@ $functions = array(
         'ajax'          => true
     ),
 
+    'mod_lti_delete_course_tool_type' => array(
+        'classname'     => 'mod_lti\external\delete_course_tool_type',
+        'description'   => 'Delete a course tool type',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lti:addcoursetool',
+        'ajax'          => true
+    ),
+
     'mod_lti_is_cartridge' => array(
         'classname'     => 'mod_lti_external',
         'methodname'    => 'is_cartridge',

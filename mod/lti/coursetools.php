@@ -21,6 +21,7 @@
  * @copyright  2023 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 use mod_lti\output\course_tools_page;
 
 require_once("../../config.php");
@@ -39,7 +40,7 @@ if (!has_any_capability(['mod/lti:addpreconfiguredinstance', 'mod/lti:addcourset
 }
 
 // Page setup.
-global $PAGE;
+global $PAGE, $OUTPUT;
 $pagetitle = get_string('courseexternaltools', 'mod_lti');
 $pageurl = new moodle_url('/mod/lti/coursetools.php', ['id' => $course->id]);
 $PAGE->set_pagelayout('incourse');
@@ -59,4 +60,3 @@ echo $renderer->render($coursetoolspage);
 $PAGE->requires->js_call_amd('mod_lti/course_tools_list', 'init');
 
 echo $OUTPUT->footer();
-
