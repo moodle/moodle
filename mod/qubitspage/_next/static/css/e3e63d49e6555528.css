@@ -356,6 +356,9 @@ code {
   min-width: 40px !important;
   background-color: #fff;
 }
+.tool-button:hover{
+  background-color: #fff;
+}
 .reset-button {
   position: absolute !important;
   right: 105px;
