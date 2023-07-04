@@ -640,16 +640,62 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
     }
 
     /**
-     * Per default, return the record's text value only from the "content" field.
-     * Override this in fields class if necesarry.
+     * Per default, it is assumed that fields do not support file exporting. Override this (return true)
+     * on fields supporting file export. You will also have to implement export_file_value().
      *
-     * @param string $record
+     * @return bool true if field will export a file, false otherwise
+     */
+    public function file_export_supported(): bool {
+        return false;
+    }
+
+    /**
+     * Per default, does not return a file (just null).
+     * Override this in fields class, if you want your field to export a file content.
+     * In case you are exporting a file value, export_text_value() should return the corresponding file name.
+     *
+     * @param stdClass $record
+     * @return null|string the file content as string or null, if no file content is being provided
+     */
+    public function export_file_value(stdClass $record): null|string {
+        return null;
+    }
+
+    /**
+     * Per default, a field does not support the import of files.
+     *
+     * A field type can overwrite this function and return true. In this case it also has to implement the function
+     * import_file_value().
+     *
+     * @return false means file imports are not supported
+     */
+    public function file_import_supported(): bool {
+        return false;
+    }
+
+    /**
+     * Returns a stored_file object for exporting a file of a given record.
+     *
+     * @param int $contentid content id
+     * @param string $filecontent the content of the file as string
+     * @param string $filename the filename the file should have
+     */
+    public function import_file_value(int $contentid, string $filecontent, string $filename): void {
+        return;
+    }
+
+    /**
+     * Per default, return the record's text value only from the "content" field.
+     * Override this in fields class if necessary.
+     *
+     * @param stdClass $record
      * @return string
      */
-    function export_text_value($record) {
+    public function export_text_value(stdClass $record) {
         if ($this->text_export_supported()) {
             return $record->content;
         }
+        return '';
     }
 
     /**
@@ -2976,328 +3022,6 @@ function data_supports($feature) {
 
         default: return null;
     }
-}
-
-/**
- * Import records for a data instance from csv data.
- *
- * @param object $cm Course module of the data instance.
- * @param object $data The data instance.
- * @param string $csvdata The csv data to be imported.
- * @param string $encoding The encoding of csv data.
- * @param string $fielddelimiter The delimiter of the csv data.
- * @return int Number of records added.
- */
-function data_import_csv($cm, $data, &$csvdata, $encoding, $fielddelimiter) {
-    global $CFG, $DB;
-    // Large files are likely to take their time and memory. Let PHP know
-    // that we'll take longer, and that the process should be recycled soon
-    // to free up memory.
-    core_php_time_limit::raise();
-    raise_memory_limit(MEMORY_EXTRA);
-
-    $iid = csv_import_reader::get_new_iid('moddata');
-    $cir = new csv_import_reader($iid, 'moddata');
-
-    $context = context_module::instance($cm->id);
-
-    $readcount = $cir->load_csv_content($csvdata, $encoding, $fielddelimiter);
-    $csvdata = null; // Free memory.
-    if (empty($readcount)) {
-        throw new \moodle_exception('csvfailed', 'data', "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}");
-    } else {
-        if (!$fieldnames = $cir->get_columns()) {
-            throw new \moodle_exception('cannotreadtmpfile', 'error');
-        }
-
-        // Check the fieldnames are valid.
-        $rawfields = $DB->get_records('data_fields', array('dataid' => $data->id), '', 'name, id, type');
-        $fields = array();
-        $errorfield = '';
-        $usernamestring = get_string('username');
-        $safetoskipfields = array(get_string('user'), get_string('email'),
-            get_string('timeadded', 'data'), get_string('timemodified', 'data'),
-            get_string('approved', 'data'), get_string('tags', 'data'));
-        $userfieldid = null;
-        foreach ($fieldnames as $id => $name) {
-            if (!isset($rawfields[$name])) {
-                if ($name == $usernamestring) {
-                    $userfieldid = $id;
-                } else if (!in_array($name, $safetoskipfields)) {
-                    $errorfield .= "'$name' ";
-                }
-            } else {
-                // If this is the second time, a field with this name comes up, it must be a field not provided by the user...
-                // like the username.
-                if (isset($fields[$name])) {
-                    if ($name == $usernamestring) {
-                        $userfieldid = $id;
-                    }
-                    unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
-                } else {
-                    $field = $rawfields[$name];
-                    $filepath = "$CFG->dirroot/mod/data/field/$field->type/field.class.php";
-                    if (!file_exists($filepath)) {
-                        $errorfield .= "'$name' ";
-                        continue;
-                    }
-                    require_once($filepath);
-                    $classname = 'data_field_' . $field->type;
-                    $fields[$name] = new $classname($field, $data, $cm);
-                }
-            }
-        }
-
-        if (!empty($errorfield)) {
-            throw new \moodle_exception('fieldnotmatched', 'data',
-                "{$CFG->wwwroot}/mod/data/edit.php?d={$data->id}", $errorfield);
-        }
-
-        $fieldnames = array_flip($fieldnames);
-
-        $cir->init();
-        $recordsadded = 0;
-        while ($record = $cir->next()) {
-            $authorid = null;
-            if ($userfieldid) {
-                if (!($author = core_user::get_user_by_username($record[$userfieldid], 'id'))) {
-                    $authorid = null;
-                } else {
-                    $authorid = $author->id;
-                }
-            }
-            if ($recordid = data_add_record($data, 0, $authorid)) {  // Add instance to data_record.
-                foreach ($fields as $field) {
-                    $fieldid = $fieldnames[$field->field->name];
-                    if (isset($record[$fieldid])) {
-                        $value = $record[$fieldid];
-                    } else {
-                        $value = '';
-                    }
-
-                    if (method_exists($field, 'update_content_import')) {
-                        $field->update_content_import($recordid, $value, 'field_' . $field->field->id);
-                    } else {
-                        $content = new stdClass();
-                        $content->fieldid = $field->field->id;
-                        $content->content = $value;
-                        $content->recordid = $recordid;
-                        $DB->insert_record('data_content', $content);
-                    }
-                }
-
-                if (core_tag_tag::is_enabled('mod_data', 'data_records') &&
-                    isset($fieldnames[get_string('tags', 'data')])) {
-                    $columnindex = $fieldnames[get_string('tags', 'data')];
-                    $rawtags = $record[$columnindex];
-                    $tags = explode(',', $rawtags);
-                    foreach ($tags as $tag) {
-                        $tag = trim($tag);
-                        if (empty($tag)) {
-                            continue;
-                        }
-                        core_tag_tag::add_item_tag('mod_data', 'data_records', $recordid, $context, $tag);
-                    }
-                }
-
-                $recordsadded++;
-                print get_string('added', 'moodle', $recordsadded) . ". " . get_string('entry', 'data') . " (ID $recordid)<br />\n";
-            }
-        }
-        $cir->close();
-        $cir->cleanup(true);
-        return $recordsadded;
-    }
-    return 0;
-}
-
-/**
- * @global object
- * @param array $export
- * @param string $delimiter_name
- * @param object $database
- * @param int $count
- * @param bool $return
- * @return string|void
- */
-function data_export_csv($export, $delimiter_name, $database, $count, $return=false) {
-    global $CFG;
-    require_once($CFG->libdir . '/csvlib.class.php');
-
-    $filename = $database . '-' . $count . '-record';
-    if ($count > 1) {
-        $filename .= 's';
-    }
-    if ($return) {
-        return csv_export_writer::print_array($export, $delimiter_name, '"', true);
-    } else {
-        csv_export_writer::download_array($filename, $export, $delimiter_name);
-    }
-}
-
-/**
- * @global object
- * @param array $export
- * @param string $dataname
- * @param int $count
- * @return string
- */
-function data_export_xls($export, $dataname, $count) {
-    global $CFG;
-    require_once("$CFG->libdir/excellib.class.php");
-    $filename = clean_filename("{$dataname}-{$count}_record");
-    if ($count > 1) {
-        $filename .= 's';
-    }
-    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
-    $filename .= '.xls';
-
-    $filearg = '-';
-    $workbook = new MoodleExcelWorkbook($filearg);
-    $workbook->send($filename);
-    $worksheet = array();
-    $worksheet[0] = $workbook->add_worksheet('');
-    $rowno = 0;
-    foreach ($export as $row) {
-        $colno = 0;
-        foreach($row as $col) {
-            $worksheet[0]->write($rowno, $colno, $col);
-            $colno++;
-        }
-        $rowno++;
-    }
-    $workbook->close();
-    return $filename;
-}
-
-/**
- * @global object
- * @param array $export
- * @param string $dataname
- * @param int $count
- * @param string
- */
-function data_export_ods($export, $dataname, $count) {
-    global $CFG;
-    require_once("$CFG->libdir/odslib.class.php");
-    $filename = clean_filename("{$dataname}-{$count}_record");
-    if ($count > 1) {
-        $filename .= 's';
-    }
-    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
-    $filename .= '.ods';
-    $filearg = '-';
-    $workbook = new MoodleODSWorkbook($filearg);
-    $workbook->send($filename);
-    $worksheet = array();
-    $worksheet[0] = $workbook->add_worksheet('');
-    $rowno = 0;
-    foreach ($export as $row) {
-        $colno = 0;
-        foreach($row as $col) {
-            $worksheet[0]->write($rowno, $colno, $col);
-            $colno++;
-        }
-        $rowno++;
-    }
-    $workbook->close();
-    return $filename;
-}
-
-/**
- * @global object
- * @param int $dataid
- * @param array $fields
- * @param array $selectedfields
- * @param int $currentgroup group ID of the current group. This is used for
- * exporting data while maintaining group divisions.
- * @param object $context the context in which the operation is performed (for capability checks)
- * @param bool $userdetails whether to include the details of the record author
- * @param bool $time whether to include time created/modified
- * @param bool $approval whether to include approval status
- * @param bool $tags whether to include tags
- * @return array
- */
-function data_get_exportdata($dataid, $fields, $selectedfields, $currentgroup=0, $context=null,
-                             $userdetails=false, $time=false, $approval=false, $tags = false) {
-    global $DB;
-
-    if (is_null($context)) {
-        $context = context_system::instance();
-    }
-    // exporting user data needs special permission
-    $userdetails = $userdetails && has_capability('mod/data:exportuserinfo', $context);
-
-    $exportdata = array();
-
-    // populate the header in first row of export
-    foreach($fields as $key => $field) {
-        if (!in_array($field->field->id, $selectedfields)) {
-            // ignore values we aren't exporting
-            unset($fields[$key]);
-        } else {
-            $exportdata[0][] = $field->field->name;
-        }
-    }
-    if ($tags) {
-        $exportdata[0][] = get_string('tags', 'data');
-    }
-    if ($userdetails) {
-        $exportdata[0][] = get_string('user');
-        $exportdata[0][] = get_string('username');
-        $exportdata[0][] = get_string('email');
-    }
-    if ($time) {
-        $exportdata[0][] = get_string('timeadded', 'data');
-        $exportdata[0][] = get_string('timemodified', 'data');
-    }
-    if ($approval) {
-        $exportdata[0][] = get_string('approved', 'data');
-    }
-
-    $datarecords = $DB->get_records('data_records', array('dataid'=>$dataid));
-    ksort($datarecords);
-    $line = 1;
-    foreach($datarecords as $record) {
-        // get content indexed by fieldid
-        if ($currentgroup) {
-            $select = 'SELECT c.fieldid, c.content, c.content1, c.content2, c.content3, c.content4 FROM {data_content} c, {data_records} r WHERE c.recordid = ? AND r.id = c.recordid AND r.groupid = ?';
-            $where = array($record->id, $currentgroup);
-        } else {
-            $select = 'SELECT fieldid, content, content1, content2, content3, content4 FROM {data_content} WHERE recordid = ?';
-            $where = array($record->id);
-        }
-
-        if( $content = $DB->get_records_sql($select, $where) ) {
-            foreach($fields as $field) {
-                $contents = '';
-                if(isset($content[$field->field->id])) {
-                    $contents = $field->export_text_value($content[$field->field->id]);
-                }
-                $exportdata[$line][] = $contents;
-            }
-            if ($tags) {
-                $itemtags = \core_tag_tag::get_item_tags_array('mod_data', 'data_records', $record->id);
-                $exportdata[$line][] = implode(', ', $itemtags);
-            }
-            if ($userdetails) { // Add user details to the export data
-                $userdata = get_complete_user_data('id', $record->userid);
-                $exportdata[$line][] = fullname($userdata);
-                $exportdata[$line][] = $userdata->username;
-                $exportdata[$line][] = $userdata->email;
-            }
-            if ($time) { // Add time added / modified
-                $exportdata[$line][] = userdate($record->timecreated);
-                $exportdata[$line][] = userdate($record->timemodified);
-            }
-            if ($approval) { // Add approval status
-                $exportdata[$line][] = (int) $record->approved;
-            }
-        }
-        $line++;
-    }
-    $line--;
-    return $exportdata;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
