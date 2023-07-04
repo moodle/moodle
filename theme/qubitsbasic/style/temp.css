@@ -83,3 +83,39 @@
 .description {
   display: none !important;
 }
+.custom-switch .custom-control-label::after {
+  top: calc(4px + 2px) !important;
+  left: calc(-2rem + 0px) !important;
+  width: calc(1.25rem - 4px);
+  height: calc(1.25rem - 4px);
+  /* background-color: #9e9e9e !important; */
+  border-radius: 2.625rem;
+  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.custom-control-input:checked ~ .custom-control-label::before {
+  background-color: #1482e6 !important;
+  border-color: #1482e6 !important;
+}
+.custom-switch .custom-control-label::before {
+  width: 2.9875rem !important;
+  left: -2.5875rem !important;
+  border-radius: 1.625rem !important;
+}
+.custom-control-label::before {
+  height: 1.75rem !important;
+  background-color: #9e9e9e !important;
+}
+.custom-switch .custom-control-label::after {
+  background-color: white !important;
+}
+.custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
+  border-color: transparent !important;
+}
+.custom-control-input:focus ~ .custom-control-label::before {
+  box-shadow: none !important;
+}
+.preference-table td,
+.preference-table th {
+  border: 1px solid #dee2e6;
+}
