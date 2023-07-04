@@ -85,6 +85,9 @@
 }
 .pagetitle-left-alignment {
   margin-left: 280px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 1.6rem 0px;
   transition: all 0.5s ease;
   .text {
@@ -97,6 +100,9 @@
 }
 .closebar-left-alignment {
   margin-left: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 [role="button"]:focus {
   box-shadow: none !important;
@@ -299,11 +305,11 @@
       transition-delay: 0.1s;
     }
     .main-logo {
-      width: 70%;
+      width: 74%;
       padding: 14px 10px 14px 10px;
     }
     .compact-logo {
-      padding: 14px 10px 14px 10px;
+      padding: 15px 10px 14px 10px;
     }
   }
   .arrow-left {
@@ -775,13 +781,27 @@ button.close:focus,
   color: #585858;
   font-size: $fontsize16 !important;
 }
-.dropdown-item.active,
-.dropdown-item:active,
-.dropdown-item:hover,
-.dropdown-item:focus,
-.dropdown-item:focus-within {
-  background-color: #e2eaf2 !important;
+.sidebar {
+  .nav-links {
+    .dropdown-item {
+      &:hover() {
+        background-color: #e2eaf2 !important;
+      }
+      &:focus-within {
+        background-color: #e2eaf2 !important;
+      }
+      &:active {
+        background-color: #e2eaf2 !important;
+      }
+      &:focus() {
+        background-color: #e2eaf2 !important;
+      }
+    }
+  }
 }
+// a {
+//   // color: #1482e6 !important;
+// }
 #page.drawers.show-drawer-left {
   @include breakpoint(md) {
     margin-left: 0 !important;
@@ -888,12 +908,28 @@ button.close:focus,
 .breadcrumb-item + .breadcrumb-item.active::before {
   display: none;
 }
-.breadcrumb-item + .breadcrumb-item{
-  padding: 0 !important
+.breadcrumb-item + .breadcrumb-item {
+  padding: 0 !important;
 }
 ol {
   margin: 0px !important;
 }
-#page-header{
+#page-header {
   display: none !important;
 }
+.sectionname {
+  font-size: 16px !important;
+}
+.expanded-icon {
+  .icon {
+    font-size: 13px !important;
+    color: #9e9ea2 !important;
+  }
+}
+.collapsed-icon {
+  .icon {
+    font-size: 13px !important;
+    color: #9e9ea2 !important;
+  }
+}
+

@@ -1,0 +1,22 @@
+@import "./mixins.scss";
+.btn-primary,
+.btn-primary:focus,
+.btn-primary.focus {
+  background-color: #1482e6 !important;
+  border-color: #1482e6 !important;
+}
+.btn-secondary {
+  background-color: #ebebeb !important;
+  border: 1px solid #d6d6d6 !important;
+}
+.btn-outline-secondary:hover {
+  background-color: #1482e6 !important;
+}
+.btn-outline-secondary:focus,
+.btn-outline-secondary.focus {
+  box-shadow: none !important;
+}
+.show > .btn-outline-secondary.dropdown-toggle {
+  background-color: #1169ba !important;
+  border-color: #1169ba !important;
+}
