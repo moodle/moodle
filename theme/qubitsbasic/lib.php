@@ -72,9 +72,10 @@ function theme_qubitsbasic_get_main_scss_content($theme) {
     $mcourse = file_get_contents($CFG->dirroot . '/theme/qubitsbasic/scss/mycourse.scss');                                                         
     // Post CSS - this is loaded AFTER the main scss but before the extra scss from the setting.                                    
     $login = file_get_contents($CFG->dirroot . '/theme/qubitsbasic/scss/login.scss');                                                       
-                                                                                                                                    
+    $buttons = file_get_contents($CFG->dirroot . '/theme/qubitsbasic/scss/buttons.scss');
+    $forms = file_get_contents($CFG->dirroot . '/theme/qubitsbasic/scss/buttons.scss');                                                                                                                                
     // Combine them together.                                                                                                       
-    return $mcourse . "\n" . $scss . "\n" . $login;                                                                                      
+    return $mcourse . "\n" . $scss . "\n" . $login. "\n" .$buttons. "\n" .$forms;                                                                                      
 }
 
 /**
