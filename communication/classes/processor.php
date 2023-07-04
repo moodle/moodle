@@ -96,6 +96,7 @@ class processor {
             'roomname' => $roomname,
             'avatarfilename' => null,
             'active' => self::PROVIDER_ACTIVE,
+            'avatarsynced' => 0,
         ];
         $record->id = $DB->insert_record('communication', $record);
 
@@ -584,6 +585,46 @@ class processor {
         );
 
         return $file ? $file : null;
+    }
+
+
+    /**
+     * Set the avatar file name.
+     *
+     * @param string|null $filename
+     */
+    public function set_avatar_filename(?string $filename): void {
+        global $DB;
+        $DB->update_record('communication', ['id' => $this->instancedata->id, 'avatarfilename' => $filename]);
+    }
+
+    /**
+     * Get the avatar file name.
+     *
+     * @return string|null
+     */
+    public function get_avatar_filename(): ?string {
+        return $this->instancedata->avatarfilename;
+    }
+
+    /**
+     * Check if the avatar has been synced with the provider.
+     *
+     * @return bool
+     */
+    public function is_avatar_synced(): bool {
+        return (bool)$this->instancedata->avatarsynced;
+    }
+
+    /**
+     * Indicate if the avatar has been synced with the provider.
+     *
+     * @param boolean $synced True if avatar has been synced.
+     */
+    public function set_avatar_synced_flag(bool $synced): void {
+        global $DB;
+        $DB->update_record('communication', ['id' => $this->instancedata->id, 'avatarsynced' => (int)$synced]);
+        $this->instancedata->avatarsynced = (int)$synced;
     }
 
     /**

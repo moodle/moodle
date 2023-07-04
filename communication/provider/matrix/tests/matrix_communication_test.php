@@ -81,6 +81,7 @@ class matrix_communication_test extends \advanced_testcase {
      * @covers \core_communication\api::update_room
      * @covers \core_communication\task\update_room_task::execute
      * @covers \core_communication\task\update_room_task::queue
+     * @covers \core_communication\processor::is_avatar_synced
      */
     public function test_update_course_with_matrix_provider(): void {
         global $CFG;
@@ -101,6 +102,15 @@ class matrix_communication_test extends \advanced_testcase {
         );
         $communication->update_room($selectedcommunication, $communicationroomname, $avatarurl);
 
+        $communicationprocessor = processor::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+
+        // Pending avatar update should indicate avatar is not in sync.
+        $this->assertFalse($communicationprocessor->is_avatar_synced());
+
         // Run the task.
         $this->runAdhocTasks('\core_communication\task\update_room_task');
 
@@ -109,6 +119,9 @@ class matrix_communication_test extends \advanced_testcase {
             'coursecommunication',
             $course->id
         );
+
+        // Check that the avatar is now synced with Matrix again.
+        $this->assertTrue($communicationprocessor->is_avatar_synced());
 
         // Initialize the matrix room object.
         $matrixrooms = new matrix_rooms($communicationprocessor->get_id());

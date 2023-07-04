@@ -361,6 +361,9 @@ class processor_test extends \advanced_testcase {
      *
      * @covers ::get_avatar
      * @covers ::load_by_instance
+     * @covers ::get_avatar_filename
+     * @covers ::set_avatar_filename
+     * @covers ::set_avatar_synced_flag
      */
     public function test_get_avatar(): void {
         $this->resetAfterTest();
@@ -394,6 +397,17 @@ class processor_test extends \advanced_testcase {
         $this->assertEquals($avatar->get_itemid(), $communicationprocessor->get_id());
         $this->assertEquals($avatar->get_filepath(), '/');
         $this->assertEquals($avatar->get_filearea(), 'avatar');
+        $this->assertEquals($avatar->get_filename(), $communicationprocessor->get_avatar_filename());
+
+        // Change the avatar file name to something else and check it was set.
+        $communicationprocessor->set_avatar_filename('newname.svg');
+
+        $communicationprocessor = processor::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+        $this->assertEquals($communicationprocessor->get_avatar_filename(), 'newname.svg');
     }
 
     /**

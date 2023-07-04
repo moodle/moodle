@@ -3333,5 +3333,20 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023062700.01);
     }
 
+    if ($oldversion < 2023062900.01) {
+
+        // Define field avatarsynced to be added to communication.
+        $table = new xmldb_table('communication');
+        $field = new xmldb_field('avatarsynced', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'active');
+
+        // Conditionally launch add field avatarsynced.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023062900.01);
+    }
+
     return true;
 }
