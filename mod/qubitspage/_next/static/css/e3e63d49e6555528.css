@@ -354,6 +354,7 @@ code {
 }
 .tool-button {
   min-width: 40px !important;
+  background-color: #fff;
 }
 .reset-button {
   position: absolute !important;
