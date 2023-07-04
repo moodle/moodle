@@ -1141,6 +1141,9 @@ class stored_file {
 
         // Create a new image from the file.
         $original = @imagecreatefromstring($content);
+        if (empty($original)) {
+            return false;
+        }
 
         // Generate the resized image.
         return resize_image_from_image($original, $imageinfo, $width, $height);
