@@ -3267,7 +3267,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
         $this->_templates[$group->getName()] = $html;
         // Check if the element should be displayed in the sticky footer.
-        if ($this->_stickyfooterelement == $group->getName()) {
+        if ($group->getName() && ($this->_stickyfooterelement == $group->getName())) {
             $stickyfooter = new core\output\sticky_footer($html);
             $html = $OUTPUT->render($stickyfooter);
         }
@@ -3353,7 +3353,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
         }
 
         // Check if the element should be displayed in the sticky footer.
-        if ($this->_stickyfooterelement == $element->getName()) {
+        if ($element->getName() && ($this->_stickyfooterelement == $element->getName())) {
             $stickyfooter = new core\output\sticky_footer($html);
             $html = $OUTPUT->render($stickyfooter);
         }
