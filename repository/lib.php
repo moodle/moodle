@@ -1789,9 +1789,12 @@ abstract class repository implements cacheable_object {
      *
      * @param string $source encoded and serialized data of file
      * @return int file size in bytes
+     *
+     * @deprecated since Moodle 4.3
      */
     public function get_file_size($source) {
-        // TODO MDL-33297 remove this function completely?
+        debugging(__FUNCTION__ . ' is deprecated, please do not use it any more', DEBUG_DEVELOPER);
+
         $browser    = get_file_browser();
         $params     = unserialize(base64_decode($source));
         $contextid  = clean_param($params['contextid'], PARAM_INT);
