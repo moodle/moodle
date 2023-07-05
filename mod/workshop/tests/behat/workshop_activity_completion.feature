@@ -25,7 +25,7 @@ Feature: View activity completion information in the Workshop activity
     And I set the following fields to these values:
       | Require grade       | Submission                                        |
     And I press "Save and return to course"
-    And I edit assessment form in workshop "Music history" as:"
+    And I edit assessment form in workshop "Music history" as:
       | id_description__idx_0_editor | Aspect1 |
     And I change phase in workshop "Music history" to "Submission phase"
 
@@ -45,12 +45,12 @@ Feature: View activity completion information in the Workshop activity
     And I press "Save changes"
     And I am on the "Course 1" course page logged in as teacher1
     And I change phase in workshop "Music history" to "Assessment phase"
-    And I allocate submissions in workshop "Music history" as:"
+    And I allocate submissions in workshop "Music history" as:
       | Participant     | Reviewer      |
       | Vinnie Student1 | Rex Student2  |
     # Assess the submission.
     And I am on the "Music history" "workshop activity" page logged in as student2
-    And I assess submission "Pinch harmonics" in workshop "Music history" as:"
+    And I assess submission "Pinch harmonics" in workshop "Music history" as:
       | grade__idx_0            | 9 / 10      |
       | peercomment__idx_0      | Well done   |
     # Evaluate and close the workshop so a grade is recorded for the student.
