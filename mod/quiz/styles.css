@@ -675,8 +675,8 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
     background: white;
-    padding: 0.2em;
-    margin: 0.4em;
+    padding: 0.5em 0 0.5em 0.1em;
+    margin: 2px;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer .editicon {
@@ -1097,28 +1097,28 @@ table#categoryquestions {
     text-align: right;
 }
 #page-mod-quiz-edit .inplaceeditable .quickeditlink {
-    color: #0f6cbf;
+    color: var(--primary);
     text-decoration: none;
     background-color: transparent;
     padding-left: 1px;
     margin: 0;
 }
-#page-mod-quiz-edit .qickeditlink .aalink {
-    color: #0f6cbf;
+#page-mod-quiz-edit .quickeditlink .aalink {
+    color: var(--primary);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
-#page-mod-quiz-edit .qickedition {
-    color: #0f6cbf;
+#page-mod-quiz-edit .quickedition {
+    color: var(--primary);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
-#page-mod-quiz-edit .qickedition .visibleifjs {
+#page-mod-quiz-edit .quickedition .visibleifjs {
     text-align: right;
 }
-#page-mod-quiz-edit .qickeditlink {
+#page-mod-quiz-edit .quickeditlink {
     text-align: right;
 }
 
