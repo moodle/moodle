@@ -14,12 +14,14 @@ Feature: Limit displayed upcoming events
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And the following "blocks" exist:
+      | blockname         | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month    | Course       | C1        | course-view-*   | side-pre      |
+      | calendar_upcoming | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
 
   Scenario: I view calendar details for a future event
     Given I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I add the "Upcoming events" block
     And I follow "This month"
     And I click on "a.next" "css_element"
     And I click on "a.next" "css_element"
