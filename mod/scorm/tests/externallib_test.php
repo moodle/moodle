@@ -670,6 +670,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Test default SCORM settings.
+        $this->assertCount(1, $result['options']);
+        $this->assertEquals('scormstandard', $result['options'][0]['name']);
+        $this->assertEquals(0, $result['options'][0]['value']);
+
         $this->assertCount(1, $result['warnings']);
         // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
         $this->assertCount(8, $result['scorms'][0]);
@@ -679,8 +685,17 @@ class externallib_test extends externallib_advanced_testcase {
         $scorm1->timeclose = $scorm1->timeopen + DAYSECS;
         $DB->update_record('scorm', $scorm1);
 
+        // Set the SCORM config values.
+        set_config('scormstandard', 1, 'scorm');
+
         $result = mod_scorm_external::get_scorms_by_courses(array($course1->id));
         $result = external_api::clean_returnvalue($returndescription, $result);
+
+        // Test SCORM settings.
+        $this->assertCount(1, $result['options']);
+        $this->assertEquals('scormstandard', $result['options'][0]['name']);
+        $this->assertEquals(1, $result['options'][0]['value']);
+
         $this->assertCount(1, $result['warnings']);
         // Only 'id', 'coursemodule', 'course', 'name', 'intro', 'introformat', 'introfiles'.
         $this->assertCount(8, $result['scorms'][0]);
@@ -780,6 +795,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call for the second course we unenrolled the user from, expected warning.
         $result = mod_scorm_external::get_scorms_by_courses(array($course2->id));
+        $this->assertCount(1, $result['options']);
         $this->assertCount(1, $result['warnings']);
         $this->assertEquals('1', $result['warnings'][0]['warningcode']);
         $this->assertEquals($course2->id, $result['warnings'][0]['itemid']);
