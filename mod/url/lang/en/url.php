@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['clicktoopen'] = 'Click {$a} link to open resource.';
+$string['clicktoopen'] = 'Click on {$a} to open the resource.';
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the height (in pixels) of the top frame (which contains the navigation).';
 $string['configrolesinparams'] = 'Should customised role names (from the course settings) be available as variables for URL parameters?';
@@ -64,6 +64,12 @@ There are a number of display options for the URL, such as embedded or opening i
 Note that URLs can also be added to any other resource or activity type through the text editor.';
 $string['modulename_link'] = 'mod/url/view';
 $string['modulenameplural'] = 'URLs';
+$string['name'] = 'Name';
+$string['name_help'] = 'This will serve as the link text for the URL.
+
+Enter a meaningful text that concisely describes the URL\'s purpose.
+
+Avoid using the word "link". This will help screen reader users as screen readers announce links (e.g. "Moodle.org, link") so there\'s no need to include the word "link" in the name field.';
 $string['page-mod-url-x'] = 'Any URL module page';
 $string['parameterinfo'] = '&amp;parameter=variable';
 $string['parametersheader'] = 'URL variables';
