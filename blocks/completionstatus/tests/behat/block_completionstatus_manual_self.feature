@@ -17,18 +17,17 @@ Feature: Enable Block Completion in a course using manual self completion
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
     And I enable "selfcompletion" "block" plugin
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Course completion status" block
-    And I add the "Self completion" block
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | completionstatus | Course       | C1        | course-view-*   | side-pre      |
+      | selfcompletion   | Course       | C1        | course-view-*   | side-pre      |
+    And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_criteria_self | 1 |
     And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I should see "Status: Not yet started" in the "Course completion status" "block"
     And I should see "No" in the "Self completion" "table_row"
     And I follow "Complete course"
