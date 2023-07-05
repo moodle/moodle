@@ -33,29 +33,29 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | completionpassgrade       | 1                         |
     # teacher1 sets up assessment form and changes the phase to submission
     When I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
-    And I edit assessment form in workshop "TestWorkshop" as:"
+    And I edit assessment form in workshop "TestWorkshop" as:
       | id_description__idx_0_editor | Aspect1 |
       | id_description__idx_1_editor | Aspect2 |
       | id_description__idx_2_editor |         |
     And I change phase in workshop "TestWorkshop" to "Submission phase"
     # student1 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission1  |
       | Submission content | Some content |
     # student2 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student2
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission2  |
       | Submission content | Some content |
     # student3 submits
     And I am on the "TestWorkshop" "workshop activity" page logged in as student3
-    And I add a submission in workshop "TestWorkshop" as:"
+    And I add a submission in workshop "TestWorkshop" as:
       | Title              | Submission3  |
       | Submission content | Some content |
     # teacher1 allocates reviewers and changes the phase to assessment
     And I am on the "TestWorkshop" "workshop activity" page logged in as teacher1
-    And I allocate submissions in workshop "TestWorkshop" as:"
+    And I allocate submissions in workshop "TestWorkshop" as:
       | Participant   | Reviewer      |
       | Sam1 Student1 | Sam2 Student2 |
       | Sam2 Student2 | Sam1 Student1 |
@@ -65,14 +65,14 @@ Feature: Workshop submission and assessment with pass grade activity completion
     And I change phase in workshop "TestWorkshop" to "Assessment phase"
     # student1 assesses work of student2 and student3
     And I am on the "TestWorkshop" "workshop activity" page logged in as student1
-    And I assess submission "Sam2" in workshop "TestWorkshop" as:"
+    And I assess submission "Sam2" in workshop "TestWorkshop" as:
       | grade__idx_0            | 5 / 10            |
       | peercomment__idx_0      | You can do better |
       | grade__idx_1            | 10 / 10           |
       | peercomment__idx_1      | Amazing           |
       | Feedback for the author | Good work         |
     And I am on "Course1" course homepage
-    And I assess submission "Sam3" in workshop "TestWorkshop" as:"
+    And I assess submission "Sam3" in workshop "TestWorkshop" as:
       | grade__idx_0            | 9 / 10      |
       | peercomment__idx_0      | Well done   |
       | grade__idx_1            | 8 / 10      |
@@ -80,7 +80,7 @@ Feature: Workshop submission and assessment with pass grade activity completion
       | Feedback for the author | No comments |
     # student2 assesses work of student1
     And I am on the "TestWorkshop" "workshop activity" page logged in as student2
-    And I assess submission "Sam1" in workshop "TestWorkshop" as:"
+    And I assess submission "Sam1" in workshop "TestWorkshop" as:
       | grade__idx_0            | 6 / 10     |
       | peercomment__idx_0      |            |
       | grade__idx_1            | 7 / 10     |
