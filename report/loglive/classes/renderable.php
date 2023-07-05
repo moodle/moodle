@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die;
  */
 class report_loglive_renderable implements renderable {
 
-    /** @const int number of seconds to show logs from, by default. */
+    /** @var int number of seconds to show logs from, by default. */
     const CUTOFF = 3600;
 
     /** @var \core\log\manager log manager */

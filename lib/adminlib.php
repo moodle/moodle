@@ -2195,9 +2195,9 @@ class admin_setting_flag {
     private $shortname = '';
     /** @var string String used as the label for this flag */
     private $displayname = '';
-    /** @const Checkbox for this flag is displayed in admin page */
+    /** @var Checkbox for this flag is displayed in admin page */
     const ENABLED = true;
-    /** @const Checkbox for this flag is not displayed in admin page */
+    /** @var Checkbox for this flag is not displayed in admin page */
     const DISABLED = false;
 
     /**
