@@ -30,10 +30,10 @@ Feature: Perform basic calendar functionality
       | user | group |
       | student1 | G1 |
       | teacher1 | G1 |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Calendar" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname         | contextlevel | reference | pagetypepattern | defaultregion |
+      | calendar_month    | Course       | C1        | course-view-*   | side-pre      |
+      | calendar_upcoming | Course       | C4        | course-view-*   | side-pre      |
 
   @javascript
   Scenario: Create a site event
@@ -43,14 +43,13 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "Full calendar"
     And I should see "Really awesome event!"
     And I log out
     And I log in as "student2"
     And I follow "Full calendar"
-    And I should see "Really awesome event!"
+    Then I should see "Really awesome event!"
 
   @javascript
   Scenario: Create a course event
@@ -61,8 +60,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "Full calendar"
     And I click on "Really awesome event!" "link"
     And "Course 1" "link" should exist in the "Really awesome event!" "dialogue"
@@ -83,8 +81,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "Full calendar"
     Then I follow "Really awesome event!"
 
@@ -96,8 +93,7 @@ Feature: Perform basic calendar functionality
       | Event title | Really awesome event! |
       | Description | Come join this awesome event, sucka! |
     And I log out
-    And I log in as "student1"
-    When I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as student1
     And I follow "Full calendar"
     Then I should not see "Really awesome event!"
 
@@ -170,8 +166,7 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Attempt to create event without fill required fields should display validation errors
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as teacher1
     And I follow "Full calendar"
     And I click on "New event" "button"
     When I click on "Save" "button"
@@ -181,7 +176,7 @@ Feature: Perform basic calendar functionality
     And I click on "New event" "button"
     And I set the field "Event title" to "Really awesome event!"
     And I set the field "Type of event" to "Course"
-    When I click on "Save" "button"
+    And I click on "Save" "button"
     And I should see "Select a course" in the "Course" "form_row"
 
   @javascript
@@ -197,8 +192,7 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Admin can only see all courses if calendar_adminseesall setting is enabled.
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as admin
     And I am viewing site calendar
     And I click on "New event" "button"
     And I set the field "Type of event" to "Course"
@@ -244,8 +238,7 @@ Feature: Perform basic calendar functionality
 
   @javascript @accessibility
   Scenario: The calendar page must be accessible
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     When I follow "Full calendar"
     Then the page should meet accessibility standards
     And the page should meet "wcag131, wcag143, wcag412" accessibility standards
@@ -274,7 +267,6 @@ Feature: Perform basic calendar functionality
     And the following config values are set as admin:
       | calendar_adminseesall | 0 |
     And I am on "Course 4" course homepage with editing mode on
-    And I add the "Upcoming events" block
     And I click on "Go to calendar..." "link" in the "Upcoming events" "block"
     And I click on "New event" "button"
     And I should see "Course" in the "Type of event" "select"
@@ -289,8 +281,7 @@ Feature: Perform basic calendar functionality
 
   @javascript
   Scenario: Changing the event type should clear previous data
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as admin
     And I follow "Full calendar"
     And I set the field "course" to "C1"
     And I press "New event"

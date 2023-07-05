@@ -28,24 +28,21 @@ Feature: Users can see the H5P recent activity from the recent activity block
       | name            | Awesome H5P package                        |
       | intro           | Description                                |
       | packagefilepath | h5p/tests/fixtures/multiple-choice-2-6.h5p |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
-    And I log out
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student2
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
 
   @javascript
   Scenario: Student see only his own activity
