@@ -1652,15 +1652,24 @@ EOF;
     /**
      * Given the text of a link, download the linked file and return the contents.
      *
-     * This is a helper method used by {@link following_should_download_bytes()}
-     * and {@link following_should_download_between_and_bytes()}
+     * A helper method used by the steps in {@see behat_download}, and the legacy
+     * {@see following_should_download_bytes()} and {@see following_should_download_between_and_bytes()}.
      *
      * @param string $link the text of the link.
+     * @param string $containerlocator optional container element locator.
+     * @param string $containertype optional container element selector type.
+     *
      * @return string the content of the downloaded file.
      */
-    public function download_file_from_link($link) {
+    public function download_file_from_link(string $link, string $containerlocator = '', string $containertype = ''): string {
+
         // Find the link.
-        $linknode = $this->find_link($link);
+        if ($containerlocator !== '' && $containertype !== '') {
+            $linknode = $this->get_node_in_container('link', $link, $containertype, $containerlocator);
+        } else {
+            $linknode = $this->find_link($link);
+        }
+
         $this->ensure_node_is_visible($linknode);
 
         // Get the href and check it.
@@ -1681,6 +1690,8 @@ EOF;
 
     /**
      * Downloads the file from a link on the page and checks the size.
+     *
+     * Not recommended any more. The steps in {@see behat_download} are much better!
      *
      * Only works if the link has an href attribute. Javascript downloads are
      * not supported. Currently, the href must be an absolute URL.
@@ -1715,6 +1726,8 @@ EOF;
     /**
      * Downloads the file from a link on the page and checks the size is in a given range.
      *
+     * Not recommended any more. The steps in {@see behat_download} are much better!
+     *
      * Only works if the link has an href attribute. Javascript downloads are
      * not supported. Currently, the href must be an absolute URL.
      *
@@ -1722,10 +1735,11 @@ EOF;
      * be between "5" and "10" bytes, and between "10" and "20" bytes.
      *
      * @Then /^following "(?P<link_string>[^"]*)" should download between "(?P<min_bytes>\d+)" and "(?P<max_bytes>\d+)" bytes$/
-     * @throws ExpectationException
+     *
      * @param string $link the text of the link.
      * @param number $minexpectedsize the minimum expected file size in bytes.
      * @param number $maxexpectedsize the maximum expected file size in bytes.
+     * @throws ExpectationException
      */
     public function following_should_download_between_and_bytes($link, $minexpectedsize, $maxexpectedsize) {
         // If the minimum is greater than the maximum then swap the values.
