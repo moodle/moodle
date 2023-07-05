@@ -507,8 +507,10 @@ function install_cli_database(array $options, $interactive) {
     }
 
     // Set the support email address if specified.
-    if (isset($options['supportemail'])) {
+    if (!empty($options['supportemail'])) {
         set_config('supportemail', $options['supportemail']);
+    } else if (!empty($options['adminemail'])) {
+        set_config('supportemail', $options['adminemail']);
     }
 
     // indicate that this site is fully configured
