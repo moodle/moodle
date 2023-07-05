@@ -35,9 +35,10 @@ Feature: Users can see the relevant recent forum posts from the recent activity 
       | forum      | Standard forum         | C1      | forum3    | general | 0         | 1       |
       | forum      | Hidden forum           | C1      | forum4    | general | 0         | 0       |
       | forum      | Q&A forum              | C1      | forum5    | qanda   | 0         | 1       |
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
 
   Scenario: Recent forum activity with separate group discussion
     Given I add a new discussion to "Separate groups forum" forum with:
@@ -94,8 +95,6 @@ Feature: Users can see the relevant recent forum posts from the recent activity 
     And I am on "Course 1" course homepage
     And I should see "The egg vs the chicken" in the "Recent activity" "block"
     And I should see "Student 1's answer" in the "Recent activity" "block"
-    And I log out
-    And I log in as "admin"
     And the following config values are set as admin:
       | maxeditingtime | 1 |
     When I am on the "Course 1" course page logged in as student2

@@ -16,6 +16,14 @@ Feature: The activity results block can have administrator set defaults
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "activity" exists:
+      | activity                      | assign          |
+      | course                        | C1              |
+      | idnumber                      | 0001            |
+      | name                          | Test assignment |
+      | assignsubmission_file_enabled | 0               |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Assign some site-wide defaults to the block.
     Given the following config values are set as admin:
@@ -23,12 +31,6 @@ Feature: The activity results block can have administrator set defaults
       | config_showworst   | 0 | block_activity_results |
       | config_gradeformat | 2 | block_activity_results |
       | config_nameformat  | 2 | block_activity_results |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
     And I am on "Course 1" course homepage
     And I add the "Activity results" block
     When I configure the "Activity results" block
@@ -46,14 +48,10 @@ Feature: The activity results block can have administrator set defaults
       | config_showbest_locked  | 1 | block_activity_results |
       | config_showworst        | 0 | block_activity_results |
       | config_showworst_locked | 1 | block_activity_results |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_results | Course       | C1        | course-view-*   | side-pre      |
     And I am on "Course 1" course homepage
-    And I add the "Activity results" block
     When I configure the "Activity results" block
     And the following fields match these values:
       | id_config_showbest    | 0 |

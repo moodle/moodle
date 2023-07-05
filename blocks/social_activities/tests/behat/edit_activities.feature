@@ -35,10 +35,13 @@ Feature: Edit activities in social activities block
   Scenario: Activities in social activities block can be made available but not visible on a course page
     Given the following config values are set as admin:
       | allowstealth | 1 |
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "user1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
     And I set the field "Add an activity to section 'section 0'" to "Forum"
+    And I set the field "Forum name" to "My forum name"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
     And "My forum name" activity in social activities block should have "Hide" editing icon

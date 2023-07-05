@@ -16,17 +16,15 @@ Feature: Students can use the recent blog entries block to view recent entries o
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "blocks" exist:
+      | blockname   | contextlevel | reference | pagetypepattern | defaultregion |
+      | blog_menu   | Course       | C1        | course-view-*   | side-pre      |
+      | blog_recent | Course       | C1        | course-view-*   | side-pre      |
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Blog menu" block
-    And I add the "Recent blog entries" block
-    And I log out
 
   Scenario: Students use the recent blog entries block to view blogs
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And I follow "Add an entry about this course"
     When I set the following fields to these values:
       | Entry title | S1 First Blog <span lang="RU" class="multilang">RUSSIAN</span><span lang="EN" class="multilang">ENGLISH</span> |
@@ -40,8 +38,7 @@ Feature: Students can use the recent blog entries block to view recent entries o
     And I should see "This is my awesome blog!"
 
   Scenario: Students only see a few entries in the recent blog entries block
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as student1
     And I follow "Add an entry about this course"
     # Blog 1 of 5
     And I set the following fields to these values:

@@ -18,12 +18,13 @@ Feature: The activity results block doesn't display student scores for unsupport
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Try to configure the block to use an activity without grades
-    Given I add a "Assignment" to section "1" and I fill the form with:
-      | Assignment name | Test assignment |
-      | Description | Offline text |
-      | assignsubmission_file_enabled | 0 |
+    Given the following "activities" exist:
+      | activity   | name            | intro          | course | section | idnumber | assignsubmission_file_enabled |
+      | assign     | Test assignment | Offline text   | C1     | 1       | assign1  | 0                             |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_results | Course       | C1        | course-view-*   | side-pre      |
     And I am on "Course 1" course homepage
-    And I add the "Activity results" block
     And I configure the "Activity results" block
     And I set the following fields to these values:
       | id_config_showbest | 1 |
@@ -31,8 +32,7 @@ Feature: The activity results block doesn't display student scores for unsupport
       | id_config_gradeformat | Percentages |
       | id_config_nameformat | Display full names |
     And I press "Save changes"
-    When I follow "Test assignment"
-    And I navigate to "Edit settings" in current page administration
+    When I am on the "Test assignment" "assign activity editing" page
     And I set the following fields to these values:
       | id_grade_modgrade_type | None |
     And I press "Save and return to course"
