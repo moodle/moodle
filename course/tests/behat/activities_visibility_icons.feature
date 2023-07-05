@@ -19,6 +19,9 @@ Feature: Toggle activities visibility from the course page
     And the following "activities" exist:
       | activity | course | section | idnumber | name                 | intro                       | id_visible |
       | assign   | C1     | 1       | 1        | Test assignment name | Test assignment description | 1          |
+    And the following "blocks" exist:
+      | blockname       | contextlevel | reference | pagetypepattern | defaultregion |
+      | recent_activity | Course       | C1        | course-view-*   | side-pre      |
 
   @javascript
   Scenario: Hide/Show toggle with javascript enabled
@@ -77,7 +80,6 @@ Feature: Toggle activities visibility from the course page
       | visible  | 1                      |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
     When I hide section "2"
     Then "Test forum name" activity should be hidden
     And I open "Test forum name" actions menu
@@ -117,7 +119,6 @@ Feature: Toggle activities visibility from the course page
       | allowstealth | 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add the "Recent activity" block
     When I open "Test assignment name" actions menu
     Then "Test assignment name" actions menu should not have "Show" item
     And "Test assignment name" actions menu should have "Hide" item
