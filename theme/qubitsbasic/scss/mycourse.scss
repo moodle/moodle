@@ -939,3 +939,7 @@ ol {
 #page.drawers {
   margin-top: 90px !important;
 }
+.sidebar.close-bars .nav-links li .sub-menu {
+  height: 200px;
+  overflow-y: scroll;
+}
