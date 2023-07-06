@@ -1,0 +1,40 @@
+@mod @mod_quiz
+Feature: Setup multiple grades for a quiz
+  In order to assess multiple things in one quiz
+  As a teacher
+  I need to be able to create multiple quiz grade items.
+
+  Background:
+    Given the following "users" exist:
+      | username |
+      | teacher  |
+    And the following "courses" exist:
+      | fullname | shortname | category |
+      | Course 1 | C1        | 0        |
+    And the following "course enrolments" exist:
+      | user    | course | role           |
+      | teacher | C1     | editingteacher |
+    And the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name       | questiontext        |
+      | Test questions   | truefalse | Question A | This is question 01 |
+      | Test questions   | truefalse | Question B | This is question 02 |
+      | Test questions   | truefalse | Question C | This is question 03 |
+    And the following "activities" exist:
+      | activity | name   | course |
+      | quiz     | Quiz 1 | C1     |
+
+  Scenario: Navigation to, and display of, grading setup
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name         |
+      | Quiz 1 | Intuition    |
+      | Quiz 1 | Intelligence |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page | grade item   |
+      | Question A | 1    | Intuition    |
+      | Question B | 1    | Intelligence |
+      | Question C | 2    | Intuition    |
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    Then I should see "Grade items"

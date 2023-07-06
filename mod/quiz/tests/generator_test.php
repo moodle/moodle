@@ -116,4 +116,26 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('close', $event->eventtype);
         $this->assertEquals(strtotime('2022-10-20'), $event->timestart);
     }
+
+    public function test_generating_a_grade_item(): void {
+        $this->resetAfterTest();
+
+        // Create a quiz to use in the test.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $quiz = $generator->create_module('quiz', ['course' => $course->id]);
+
+        // Create a grade item.
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $generator->get_plugin_generator('mod_quiz');
+        $newgradeitem = $quizgenerator->create_grade_item([
+            'quizid' => $quiz->id,
+            'name' => 'Awesomeness!',
+        ]);
+
+        // Verify the grade item was created correctly.
+        $this->assertObjectHasProperty('id', $newgradeitem);
+        $this->assertEquals($quiz->id, $newgradeitem->quizid);
+        $this->assertEquals('Awesomeness!', $newgradeitem->name);
+    }
 }
