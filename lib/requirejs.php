@@ -82,7 +82,7 @@ function requirejs_fix_define(string $modulename, string $js): string {
     } else if (!preg_match('/define\s*\(/', $js)) {
         echo(
             "// JS module '{$modulename}' cannot be loaded, or does not contain a javascript" .
-            ' module in AMD format. "define()" not found.'
+            ' module in AMD format. "define()" not found.' . "\n"
         );
     }
 
