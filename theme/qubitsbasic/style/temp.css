@@ -119,3 +119,9 @@
 .preference-table th {
   border: 1px solid #dee2e6;
 }
+.page-context-header {
+  align-items: center;
+}
+#page-navbar {
+  display: none !important;
+}
