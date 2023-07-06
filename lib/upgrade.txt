@@ -41,6 +41,7 @@ information provided here is intended especially for developers.
   than the current one, to avoid updating the course visibility early.
 * New events course_started and course_ended have been created. For now, they are triggered when courses change automatically their
   visibility through the new scheduled tasks to hide/show courses based on their start/end dates.
+* The action_menu::set_constraint() method is deprecated. Please use action_menu::set_boundary() instead.
 
 === 4.2 ===
 
