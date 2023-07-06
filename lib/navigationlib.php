@@ -582,11 +582,20 @@ class navigation_node implements renderable {
 
     /**
      * Sets the title for this node and forces Moodle to utilise it.
-     * @param string $title
+     *
+     * Note that this method is named identically to the public "title" property of the class, which unfortunately confuses
+     * our Mustache renderer, because it will see the method and try and call it without any arguments (hence must be nullable)
+     * before trying to access the public property
+     *
+     * @param string|null $title
+     * @return string
      */
-    public function title($title) {
-        $this->title = $title;
-        $this->forcetitle = true;
+    public function title(?string $title = null): string {
+        if ($title !== null) {
+            $this->title = $title;
+            $this->forcetitle = true;
+        }
+        return (string) $this->title;
     }
 
     /**
