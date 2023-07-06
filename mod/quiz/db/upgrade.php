@@ -77,5 +77,60 @@ function xmldb_quiz_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023112300, 'quiz');
     }
 
+    if ($oldversion < 2023112400) {
+
+        // Define table quiz_grade_items to be created.
+        $table = new xmldb_table('quiz_grade_items');
+
+        // Adding fields to table quiz_grade_items.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('quizid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('sortorder', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table quiz_grade_items.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('quizid', XMLDB_KEY_FOREIGN, ['quizid'], 'quiz', ['id']);
+
+        // Adding indexes to table quiz_grade_items.
+        $table->add_index('quizid-sortorder', XMLDB_INDEX_UNIQUE, ['quizid', 'sortorder']);
+
+        // Conditionally launch create table for quiz_grade_items.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023112400, 'quiz');
+    }
+
+    if ($oldversion < 2023112401) {
+
+        // Define field quizgradeitemid to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $field = new xmldb_field('quizgradeitemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'maxmark');
+
+        // Conditionally launch add field quizgradeitemid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023112401, 'quiz');
+    }
+
+    if ($oldversion < 2023112402) {
+
+        // Define key quizgradeitemid (foreign) to be added to quiz_slots.
+        $table = new xmldb_table('quiz_slots');
+        $key = new xmldb_key('quizgradeitemid', XMLDB_KEY_FOREIGN, ['quizgradeitemid'], 'quiz_grade_items', ['id']);
+
+        // Launch add key quizgradeitemid.
+        $dbman->add_key($table, $key);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023112402, 'quiz');
+    }
+
     return true;
 }
