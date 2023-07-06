@@ -404,12 +404,6 @@
     border-radius: 4px;
 }
 
-img.coursetoolicon {
-    height: 24px;
-    width: 24px;
-    vertical-align: middle;
-}
-
 /* Strip the caret from the action menu toggle, as the ... ellipsis icon is used. */
 #page-mod-lti-coursetools a.dropdown-toggle::after {
     display: none;
