@@ -331,7 +331,7 @@ abstract class backup_helper {
         // enabled are sent to user's "user_backup"
         // file area. Maintenance of such area is responsibility of
         // the user via corresponding file manager frontend
-        if ($backupmode == backup::MODE_GENERAL && (!$hasusers || $isannon)) {
+        if (($backupmode == backup::MODE_GENERAL  || $backupmode == backup::MODE_ASYNC) && (!$hasusers || $isannon)) {
             $ctxid     = context_user::instance($userid)->id;
             $component = 'user';
             $filearea  = 'backup';
