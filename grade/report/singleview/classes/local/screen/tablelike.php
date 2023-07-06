@@ -213,7 +213,7 @@ abstract class tablelike extends screen implements be_readonly {
             ['method' => 'POST']
         );
 
-        return html_writer::div($html, 'reporttable');
+        return html_writer::div($html, 'reporttable position-relative');
     }
 
     /**
