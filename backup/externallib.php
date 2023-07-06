@@ -128,6 +128,7 @@ class core_backup_external extends external_api {
                 array(
                     'filename' => new external_value(PARAM_FILE, 'Backup filename', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
                     'contextid' => new external_value(PARAM_INT, 'Context id', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
+                    'backupid' => new external_value(PARAM_ALPHANUMEXT, 'Backup id', VALUE_REQUIRED, null, NULL_NOT_ALLOWED),
                 )
          );
     }
@@ -138,9 +139,10 @@ class core_backup_external extends external_api {
      *
      * @param string $filename The file name of the backup file.
      * @param int $contextid The context the backup relates to.
+     * @param string $backupid The backup ID to get the backup settings.
      * @since Moodle 3.7
      */
-    public static function get_async_backup_links_backup($filename, $contextid) {
+    public static function get_async_backup_links_backup($filename, $contextid, $backupid) {
         // Release session lock.
         \core\session\manager::write_close();
 
@@ -149,7 +151,8 @@ class core_backup_external extends external_api {
                 self::get_async_backup_links_backup_parameters(),
                     array(
                         'filename' => $filename,
-                        'contextid' => $contextid
+                        'contextid' => $contextid,
+                        'backupid' => $backupid,
                     )
                 );
 
@@ -158,10 +161,18 @@ class core_backup_external extends external_api {
         self::validate_context($context);
         require_capability('moodle/backup:backupcourse', $context);
 
-        if ($cm) {
-            $filearea = 'activity';
-        } else {
-            $filearea = 'course';
+        // Backups without user info or with the anonymise functionality enabled are sent
+        // to user's "user_backup" file area.
+        $filearea = 'backup';
+        // Get useful info to render async status in correct area.
+        $bc = \backup_controller::load_controller($backupid);
+        list($hasusers, $isannon) = \async_helper::get_userdata_backup_settings($bc);
+        if ($hasusers && !$isannon) {
+            if ($cm) {
+                $filearea = 'activity';
+            } else {
+                $filearea = 'course';
+            }
         }
 
         $results = \async_helper::get_backup_file_info($filename, $filearea, $contextid);
