@@ -1,12 +1,10 @@
 @import "./mixins.scss";
-.form-control:focus {
-  box-shadow: none !important;
-}
+
 .custom-select:focus {
   box-shadow: none !important;
 }
 .custom-switch .custom-control-label::after {
-  top: calc(4px + 2px) !important;
+  top: calc(0px + 2px) !important;
   left: 0 !important;
   width: calc(1.25rem - 4px);
   height: calc(1.25rem - 4px);
@@ -21,6 +19,10 @@
 }
 .custom-switch .custom-control-label::before {
   width: 3.1875rem !important;
+  top: -3px !important;
+}
+.form-control:focus {
+  box-shadow: none !important;
 }
 
 

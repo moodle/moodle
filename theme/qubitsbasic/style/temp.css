@@ -84,7 +84,7 @@
   display: none !important;
 }
 .custom-switch .custom-control-label::after {
-  top: calc(4px + 2px) !important;
+  top: calc(0px + 2px) !important;
   left: calc(-2rem + 0px) !important;
   width: calc(1.25rem - 4px);
   height: calc(1.25rem - 4px);
@@ -103,7 +103,8 @@
   border-radius: 1.625rem !important;
 }
 .custom-control-label::before {
-  height: 1.75rem !important;
+  height: 26px !important;
+  top: -3px !important;
   background-color: #9e9e9e !important;
 }
 .custom-switch .custom-control-label::after {
@@ -122,8 +123,16 @@
 .page-context-header {
   align-items: center;
 }
-#page-navbar {
-  display: none !important;
+
+.form-control:focus,
+.btn-primary:focus,
+.btn-secondary:focus,
+.custom-select:focus {
+  box-shadow: none !important;
+}
+td,
+th {
+  border: 1px solid #dee2e6 !important;
 }
 input[type="checkbox"] {
   accent-color: #1482e6 !important;
