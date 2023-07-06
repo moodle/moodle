@@ -332,11 +332,27 @@ class qtype_calculated extends question_type {
         }
     }
 
+    /**
+     * Initializes calculated answers for a given question.
+     *
+     * @param question_definition $question The question definition object.
+     * @param stdClass $questiondata The question data object.
+     */
+    protected function initialise_calculated_answers(question_definition $question, stdClass $questiondata) {
+        $question->answers = array();
+        if (empty($questiondata->options->answers)) {
+            return;
+        }
+        foreach ($questiondata->options->answers as $a) {
+            $question->answers[$a->id] = new \qtype_calculated\qtype_calculated_answer($a->id, $a->answer,
+                    $a->fraction, $a->feedback, $a->feedbackformat, $a->tolerance);
+        }
+    }
+
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
+        $this->initialise_calculated_answers($question, $questiondata);
 
-        question_bank::get_qtype('numerical')->initialise_numerical_answers(
-                $question, $questiondata);
         foreach ($questiondata->options->answers as $a) {
             $question->answers[$a->id]->tolerancetype = $a->tolerancetype;
             $question->answers[$a->id]->correctanswerlength = $a->correctanswerlength;
