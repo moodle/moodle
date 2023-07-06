@@ -125,3 +125,12 @@
 #page-navbar {
   display: none !important;
 }
+input[type="checkbox"] {
+  accent-color: #1482e6 !important;
+border-radius: 4px !important;
+width: 18px;
+height: 18px;
+}
+#page-header {
+  display: none !important;
+}
