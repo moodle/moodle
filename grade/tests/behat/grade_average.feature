@@ -51,15 +51,11 @@ Feature: Average grades are displayed in the gradebook
 
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
     # Check the admin grade table
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Course 1" "grades > Grader report > View" page logged in as "admin"
     Then I should see "50.00" in the ".avg.r0.lastrow .c1" "css_element"
     Then I should see "50.00" in the ".avg.r0.lastrow .c2" "css_element"
-    And I log out
 
     # Check the user grade table
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "User report" in the course gradebook
+    When I am on the "Course 1" "grades > user > View" page logged in as "student1"
     Then I should see "50.00" in the ".level2.column-grade" "css_element"
     Then I should see "50.00" in the ".level2.column-average" "css_element"
-    And I log out
