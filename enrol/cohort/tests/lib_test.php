@@ -211,6 +211,41 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test the behaviour of validate_plugin_data_context().
+     *
+     * @covers ::validate_plugin_data_context
+     */
+    public function test_validate_plugin_data_context() {
+        $this->resetAfterTest();
+
+        $cohortplugin = enrol_get_plugin('cohort');
+
+        $cat = $this->getDataGenerator()->create_category();
+        $cat1 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+
+        $course = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'shortname' => 'ANON']);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat1->id)->id]);
+        $cohort2 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat2->id)->id]);
+
+        $enrolmentdata = [
+            'customint1' => $cohort2->id,
+            'cohortname' => $cohort2->name,
+        ];
+        $error = $cohortplugin->validate_plugin_data_context($enrolmentdata, $course->id);
+        $this->assertInstanceOf('lang_string', $error);
+        $this->assertEquals('contextcohortnotallowed', $error->get_identifier());
+
+        $enrolmentdata = [
+            'customint1' => $cohort1->id,
+            'cohortname' => $cohort1->name,
+        ];
+        $error = $cohortplugin->validate_plugin_data_context($enrolmentdata, $course->id);
+        $this->assertNull($error);
+    }
+
+    /**
      * Test the behaviour of fill_enrol_custom_fields().
      *
      * @covers ::fill_enrol_custom_fields
@@ -272,9 +307,14 @@ class lib_test extends \advanced_testcase {
 
         $cat = $this->getDataGenerator()->create_category();
         $cat1 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
 
         $course = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'shortname' => 'ANON']);
+
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Group 1']);
+
         $cohort1 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat1->id)->id]);
+        $cohort2 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat2->id)->id]);
 
         enrol::enable_plugin('cohort', false);
 
@@ -305,10 +345,34 @@ class lib_test extends \advanced_testcase {
         $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
         $this->assertArrayHasKey('erroraddtogroupgroupname', $errors);
 
+        // Cohort is not allowed on a given category context.
+        $enrolmentdata['cohortname'] = $cohort2->name;
+        $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
+        $this->assertArrayHasKey('contextnotallowed', $errors);
+
         // Group does not exist.
         unset($enrolmentdata['addtogroup']);
         $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
         $this->assertArrayHasKey('errorinvalidgroup', $errors);
+
+        // Valid data when trying to create a group.
+        $enrolmentdata['cohortname'] = $cohort1->name;
+        $enrolmentdata['addtogroup'] = 1;
+        unset($enrolmentdata['groupname']);
+        $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
+        $this->assertEmpty($errors);
+
+        // Valid data when trying to add to existing group.
+        $enrolmentdata['groupname'] = $group1->name;
+        unset($enrolmentdata['addtogroup']);
+        $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
+        $this->assertEmpty($errors);
+
+        // Valid data when trying without group mode.
+        $enrolmentdata['addtogroup'] = 0;
+        unset($enrolmentdata['groupname']);
+        $errors = $cohortplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
+        $this->assertEmpty($errors);
     }
 
 }

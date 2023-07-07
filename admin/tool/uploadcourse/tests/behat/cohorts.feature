@@ -34,6 +34,28 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     Then I should see "Cohort sync plugin is disabled"
 
   @javascript
+  Scenario: Validation of cohorts for uploaded courses
+    Given I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    And I should see "Unknown cohort (Not exist)!"
+    And I should see "Cohort Cohort 3 not allowed in this context."
+    When I click on "Upload courses" "button"
+    And I should see "Unknown cohort (Not exist)!"
+    And I should see "Cohort Cohort 3 not allowed in this context."
+    And I should see "Cohort Cohort 4 not allowed in this context."
+    And I should see "Courses created: 2"
+    And I should see "Courses updated: 0"
+    And I should see "Courses errors: 3"
+    And I am on the "Course 1" "enrolment methods" page
+    Then I should not see "Cohort sync (Cohort 3 - Student)"
+    And I am on the "Course 2" "enrolment methods" page
+    And I should not see "Cohort sync (Cohort 4 - Student)"
+    And I am on the "Course 3" "enrolment methods" page
+    And I should see "Cohort sync (Cohort 5 - Student)"
+    And I click on "Edit" "link" in the "Cohort 5" "table_row"
+    And the field "Add to group" matches value "None"
+
+  @javascript
   Scenario: Validation of groups for uploaded courses with cohort enrolments
     Given the following "groups" exist:
       | name    | course | idnumber |
