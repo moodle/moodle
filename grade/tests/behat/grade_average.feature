@@ -20,34 +20,22 @@ Feature: Average grades are displayed in the gradebook
       | student1 | C1     | student        |
       | student2 | C1     | student        |
       | student3 | C1     | student        |
+    And the following "grade item" exists:
+      | course   | C1            |
+      | itemname | Manual item 1 |
+    And the following "grade grades" exist:
+      | gradeitem     | user     | grade |
+      | Manual item 1 | student1 | 50.00 |
+      | Manual item 1 | student2 | 50.00 |
+      | Manual item 1 | student3 | 50.00 |
+    And the following "course enrolments" exist:
+      | user     | course | role    | status    |
+      | student2 | C1     | student | suspended |
+
     # Enable averages
     And I am on the "Course 1" "grades > course grade settings" page logged in as "admin"
     And I set the following fields to these values:
       | Show average | Show |
-    And I press "Save changes"
-
-    # Add a manual grade item
-    And I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 1 |
-    And I press "Save changes"
-
-    # Give all student the same grade for the manual grade item
-    And I am on the "Course 1" "grades > grader > View" page
-    And I turn editing mode on
-    And I give the grade "50.00" to the user "Student 1" for the grade item "Manual item 1"
-    And I give the grade "50.00" to the user "Student 2" for the grade item "Manual item 1"
-    And I give the grade "50.00" to the user "Student 3" for the grade item "Manual item 1"
-    And I press "Save changes"
-    And I turn editing mode off
-
-    # Suspend a user
-    And I am on "Course 1" course homepage
-    And I navigate to "Users > Enrolled users" in current page administration
-    And I click on "Edit enrolment" "link" in the "Student 2" "table_row"
-    And I set the following fields to these values:
-      | Status | Suspended |
     And I press "Save changes"
 
   Scenario: Grade a grade item and ensure the results display correctly in the gradebook
