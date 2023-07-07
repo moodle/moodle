@@ -18,12 +18,12 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
-    And I press "Add category"
+    And I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Test locked category |
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Hidden item |
       | Hidden | 1 |
@@ -56,12 +56,12 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
 
   Scenario: Hidden grade items in overridden category should show
     Given I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add category"
+    And I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Test overridden category B|
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Cat b item |
       | Grade category | Test overridden category B |

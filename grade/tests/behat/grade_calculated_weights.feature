@@ -40,7 +40,7 @@ Feature: We can understand the gradebook user report
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add category"
+    And I choose the "Add category" item in the "Add" action menu
     And I set the field "Category name" to "Sub category"
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready

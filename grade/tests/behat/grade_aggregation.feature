@@ -382,24 +382,24 @@ Feature: We can use calculated grade totals
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add category"
+    And I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Sub category 3 |
       | Aggregation | Natural |
       | Drop the lowest | 1 |
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Grade category | Sub category 3 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 2 |
       | Grade category | Sub category 3 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 3 |
       | Grade category | Sub category 3 |
@@ -443,7 +443,7 @@ Feature: We can use calculated grade totals
     And I turn editing mode off
     And I should see "250.00 (25.25 %)" in the ".course" "css_element"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add category"
+    And I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Sub sub category 1 |
       | Parent category | Sub category 3 |
