@@ -27,23 +27,33 @@ import ModalFactory from 'core/modal_factory';
 import Notification from 'core/notification';
 import * as Str from 'core/str';
 
+let modal = null;
+
 /**
  * Event listeners for the module.
  *
  * @method clickEvent
  * @param {int} questionId
  * @param {int} contextId
+ * @param {boolean} specificVersion Is the view listing specific question versions?
  */
-const usageEvent = (questionId, contextId) => {
+const usageEvent = async(questionId, contextId, specificVersion) => {
     let args = {
-        questionid: questionId
+        questionid: questionId,
+        specificversion: specificVersion,
     };
-    ModalFactory.create({
-        type: ModalFactory.types.CANCEL,
-        title: Str.get_string('usageheader', 'qbank_usage'),
-        body: Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args),
-        large: true,
-    }).then((modal) => {
+    if (modal === null) {
+        try {
+            modal = await ModalFactory.create({
+                type: ModalFactory.types.CANCEL,
+                title: Str.get_string('usageheader', 'qbank_usage'),
+                body: Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args),
+                large: true,
+            });
+        } catch (e) {
+            Notification.exception(e);
+        }
+
         modal.show();
         modal.getRoot().on('click', 'a[href].page-link', function(e) {
             e.preventDefault();
@@ -58,8 +68,11 @@ const usageEvent = (questionId, contextId) => {
             args.questionid = e.target.value;
             modal.setBody(Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args));
         });
-        return modal;
-    }).fail(Notification.exception);
+    } else {
+        modal.setBody(Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args));
+        modal.show();
+    }
+
 };
 
 /**
@@ -68,12 +81,13 @@ const usageEvent = (questionId, contextId) => {
  * @method init
  * @param {string} questionSelector the question usage identifier.
  * @param {int} contextId the question context id.
+ * @param {boolean} specificVersion Is the view listing specific question versions?
  */
-export const init = (questionSelector, contextId) => {
+export const init = (questionSelector, contextId, specificVersion = false) => {
     let target = document.querySelector(questionSelector);
     let questionId = target.getAttribute('data-questionid');
     target.addEventListener('click', () => {
         // Call for the event listener to listed for clicks in any usage count row.
-        usageEvent(questionId, contextId);
+        usageEvent(questionId, contextId, specificVersion);
     });
 };
