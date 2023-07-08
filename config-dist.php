@@ -1213,6 +1213,20 @@ $CFG->admin = 'admin';
 //      $CFG->showservicesandsupportcontent = false;
 //
 //=========================================================================
+// 20. NON HTTP ONLY COOKIES
+//=========================================================================
+//
+//  Cookies in Moodle now default to HTTP only cookies. This means that they cannot be accessed by JavaScript.
+//  Upgraded sites will keep the behaviour they had before the upgrade. New sites will have HTTP only cookies enabled.
+//  To enable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = true;
+//
+//  To disable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = false;
+//
+//=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser
 //=========================================================================
 
