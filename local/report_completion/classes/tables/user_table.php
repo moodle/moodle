@@ -393,7 +393,7 @@ class user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_status($row) {
-        global $DB;
+        global $DB, $CFG;
 
         $tooltip = "";
         $course = $DB->get_record('course', array('id' => $row->courseid));
@@ -412,8 +412,11 @@ class user_table extends table_sql {
             $totalcount++;
             $criteria = $completion->get_criteria();
             $complete = $completion->is_complete();
-            if ($complete || !empty($row->timecompleted)) {
-                $completestring = " - " . get_string('yes');
+            if ($complete) {
+                $completestring = " - " . date($CFG->iomad_date_format, $completion->timecompleted);
+                $completed++;
+            } else if (!empty($row->timecompleted)) {
+                $completestring = " - " . date($CFG->iomad_date_format, $row->timecompleted);
                 $completed++;
             } else {
                 $completestring = " - " . get_string('no');
@@ -421,9 +424,9 @@ class user_table extends table_sql {
 
             if (!empty($criteria->moduleinstance)) {
                 $modinfo = get_coursemodule_from_id('', $criteria->moduleinstance);
-                $tooltip .= $criteria->get_title() . " " . format_string($modinfo->name) . "$completestring &#013;&#010;";
+                $tooltip .= $criteria->get_title() . " " . format_string($modinfo->name) . "$completestring \r\n";
             } else {
-                $tooltip = $criteria->get_title() . "$completestring &#013;&#010;" . $tooltip;
+                $tooltip = $criteria->get_title() . "$completestring \r\n" . $tooltip;
             }
         }
 
@@ -448,7 +451,7 @@ class user_table extends table_sql {
                                               'licensecourseid' => $row->courseid,
                                               'issuedate' => $row->licenseallocated))) {
                         if (!$this->is_downloading()) {
-                            return '<div class="progress" style="height:20px" data-html="true" title="'.$tooltip.'">
+                            return '<div class="progress" style="height:20px" data-html="true" title="'.nl2br($tooltip).'">
                                     <div class="progress-bar" style="width:0%;height:20px">0%</div>
                                     </div>';
                         } else {
@@ -483,7 +486,7 @@ class user_table extends table_sql {
                         <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>
                         </div>';
             } else {
-                return "$progress%";
+                return "$progress%\r\n$tooltip";
             }
         }
     }
