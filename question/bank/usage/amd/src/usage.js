@@ -38,7 +38,7 @@ let modal = null;
  * @param {boolean} specificVersion Is the view listing specific question versions?
  */
 const usageEvent = async(questionId, contextId, specificVersion) => {
-    let args = {
+    const args = {
         questionid: questionId,
         specificversion: specificVersion,
     };
@@ -52,6 +52,7 @@ const usageEvent = async(questionId, contextId, specificVersion) => {
             });
         } catch (e) {
             Notification.exception(e);
+            return;
         }
 
         modal.show();

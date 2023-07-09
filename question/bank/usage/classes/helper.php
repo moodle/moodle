@@ -54,8 +54,8 @@ class helper {
      */
     public static function question_usage_sql(bool $specificversion = false): string {
         $sqlset = "(". self::get_question_attempt_usage_sql($specificversion) .")".
-                "UNION".
-                "(". self::get_question_bank_usage_sql($specificversion) .")";
+            "UNION".
+            "(". self::get_question_bank_usage_sql($specificversion) .")";
         return $sqlset;
     }
 
@@ -122,15 +122,15 @@ class helper {
             // or the question ID that's requested is the latest version, and the reference is set to null (always latest version).
             $sql .= " AND qv.questionid = ?
                       AND (
-                            qv.version = qr.version
-                            OR (
-                                qr.version IS NULL
-                                AND qv.version = (
-                                    SELECT MAX(qv1.version)
-                                      FROM {question_versions} qv1
-                                     WHERE qv1.questionbankentryid = qbe.id
-                                )
-                            )
+                          qv.version = qr.version
+                          OR (
+                              qr.version IS NULL
+                              AND qv.version = (
+                                  SELECT MAX(qv1.version)
+                                    FROM {question_versions} qv1
+                                   WHERE qv1.questionbankentryid = qbe.id
+                              )
+                          )
                       )";
         }
         return $sql;
@@ -158,13 +158,13 @@ class helper {
             $sql .= "
                   JOIN {question} q ON q.id = qatt.questionid
                  WHERE qa.preview = 0
-                       AND q.id = ?";
+                   AND q.id = ?";
         } else {
             $sql .= "
                   JOIN {question_versions} qv ON qv.questionid = qatt.questionid
                   JOIN {question_versions} qv2 ON qv.questionbankentryid = qv2.questionbankentryid
                  WHERE qa.preview = 0
-                       AND qv2.questionid = ?";
+                   AND qv2.questionid = ?";
         }
         return $sql;
     }

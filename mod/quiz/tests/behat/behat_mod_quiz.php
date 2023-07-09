@@ -28,10 +28,9 @@
 require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 require_once(__DIR__ . '/../../../../question/tests/behat/behat_question_base.php');
 
-use Behat\Gherkin\Node\TableNode as TableNode;
-
-use Behat\Mink\Exception\ExpectationException as ExpectationException;
-use Behat\Mink\Exception\DriverException as DriverException;
+use Behat\Gherkin\Node\TableNode;
+use Behat\Mink\Exception\DriverException;
+use Behat\Mink\Exception\ExpectationException;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 

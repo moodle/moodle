@@ -47,8 +47,11 @@ class question_usage_column extends column_base {
         if (question_has_capability_on($question, 'view')) {
             $target = 'questionusagepreview_' . $question->id;
             $datatarget = '[data-target="' . $target . '"]';
-            $PAGE->requires->js_call_amd('qbank_usage/usage', 'init',
-                    [$datatarget, $question->contextid, $this->qbank->is_listing_specific_versions()]);
+            $PAGE->requires->js_call_amd('qbank_usage/usage', 'init', [
+                $datatarget,
+                $question->contextid,
+                $this->qbank->is_listing_specific_versions(),
+            ]);
             $attributes = [
                 'href' => '#',
                 'data-target' => $target,
