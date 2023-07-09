@@ -162,9 +162,11 @@ class external_backpack extends \moodleform {
         $mform = $this->_form;
         $emailstring = get_string('email');
         $passwordstring = get_string('password');
+        $showpasswordhelp = false;
         if (!isset($this->_customdata['userbackpack'])) {
             $emailstring = get_string('defaultissuercontact', 'core_badges');
             $passwordstring = get_string('defaultissuerpassword', 'core_badges');
+            $showpasswordhelp = true;
         }
 
         $mform->addElement('text', 'backpackemail', $emailstring);
@@ -174,7 +176,9 @@ class external_backpack extends \moodleform {
         if ($includepassword) {
             $mform->addElement('passwordunmask', 'password', $passwordstring);
             $mform->setType('password', PARAM_RAW);
-            $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
+            if ($showpasswordhelp) {
+                $mform->addHelpButton('password', 'defaultissuerpassword', 'badges');
+            }
         }
     }
 }
