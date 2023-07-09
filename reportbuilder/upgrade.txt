@@ -3,6 +3,7 @@ Information provided here is intended especially for developers.
 
 === 4.3 ===
 
+* New `get_tag_joins_for_entity` helper in base entity class, for returning SQL joins necessary for retrieving tags
 * New `set_is_deprecated` method in base `local\report\[column|filter]` classes to deprecate report entity columns and filters
 * The following report entity columns have been deprecated, with replacements as follows:
   - `enrolment:method` => `enrol:name` (plus enrolment formatter `enrolment_name` method)

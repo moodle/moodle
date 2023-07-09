@@ -18,10 +18,12 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\datasource;
 
+use lang_string;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\{course, user};
 use core_reportbuilder\local\helpers\database;
 use core_badges\reportbuilder\local\entities\{badge, badge_issued};
+use core_tag\reportbuilder\local\entities\tag;
 
 /**
  * User badges datasource
@@ -48,16 +50,15 @@ class users extends datasource {
         global $CFG;
 
         $userentity = new user();
-
         $useralias = $userentity->get_table_alias('user');
+
         $this->set_main_table('user', $useralias);
+        $this->add_entity($userentity);
 
         $paramguest = database::generate_param_name();
         $this->add_base_condition_sql("{$useralias}.id != :{$paramguest} AND {$useralias}.deleted = 0", [
             $paramguest => $CFG->siteguest,
         ]);
-
-        $this->add_entity($userentity);
 
         // Join the badge issued entity to the user entity.
         $badgeissuedentity = new badge_issued();
@@ -71,6 +72,14 @@ class users extends datasource {
             ->add_joins($badgeissuedentity->get_joins())
             ->add_join("LEFT JOIN {badge} {$badgealias} ON {$badgealias}.id = {$badgeissuedalias}.badgeid"));
 
+        // Join the tag entity.
+        $tagentity = (new tag())
+            ->set_table_alias('tag', $badgeentity->get_table_alias('tag'))
+            ->set_entity_title(new lang_string('badgetags', 'core_badges'));
+        $this->add_entity($tagentity
+            ->add_joins($badgeentity->get_joins())
+            ->add_joins($badgeentity->get_tag_joins()));
+
         // Join the course entity to the badge entity, coalescing courseid with the siteid for site badges.
         $courseentity = new course();
         $coursealias = $courseentity->get_table_alias('course');
@@ -80,7 +89,16 @@ class users extends datasource {
                 CASE WHEN {$badgealias}.id IS NULL THEN 0 ELSE COALESCE({$badgealias}.courseid, 1) END"));
 
         // Add report elements from each of the entities we added to the report.
-        $this->add_all_from_entities();
+        $this->add_all_from_entity($userentity->get_entity_name());
+        $this->add_all_from_entity($badgeissuedentity->get_entity_name());
+        $this->add_all_from_entity($badgeentity->get_entity_name());
+
+        // Add specific tag entity elements.
+        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
+        $this->add_filter($tagentity->get_filter('name'));
+        $this->add_condition($tagentity->get_condition('name'));
+
+        $this->add_all_from_entity($courseentity->get_entity_name());
     }
 
     /**

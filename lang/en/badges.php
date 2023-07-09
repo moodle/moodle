@@ -167,6 +167,7 @@ $string['badgestatus_3'] = 'Available (criteria locked)';
 $string['badgestatus_4'] = 'Archived';
 $string['badgestoearn'] = 'Number of badges available: {$a}';
 $string['badgesview'] = 'Course badges';
+$string['badgetags'] = 'Badge tags';
 $string['badgeurl'] = 'Issued badge link';
 $string['bawards'] = 'Recipients ({$a})';
 $string['bcriteria'] = 'Criteria';

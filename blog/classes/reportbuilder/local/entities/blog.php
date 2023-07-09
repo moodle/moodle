@@ -305,17 +305,6 @@ class blog extends base {
      * @return string[]
      */
     public function get_tag_joins(): array {
-        $postalias = $this->get_table_alias('post');
-        $taginstancealias = $this->get_table_alias('tag_instance');
-        $tagalias = $this->get_table_alias('tag');
-
-        return [
-            "LEFT JOIN {tag_instance} {$taginstancealias}
-                    ON {$taginstancealias}.component = 'core'
-                   AND {$taginstancealias}.itemtype = 'post'
-                   AND {$taginstancealias}.itemid = {$postalias}.id",
-            "LEFT JOIN {tag} {$tagalias}
-                    ON {$tagalias}.id = {$taginstancealias}.tagid",
-        ];
+        return $this->get_tag_joins_for_entity('core', 'post', $this->get_table_alias('post') . '.id');
     }
 }

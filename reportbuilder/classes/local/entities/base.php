@@ -216,6 +216,30 @@ abstract class base {
     }
 
     /**
+     * Helper method for returning joins necessary for retrieving tags related to the current entity
+     *
+     * Both 'tag' and 'tag_instance' aliases must be returned by the entity {@see get_default_table_aliases} method
+     *
+     * @param string $component
+     * @param string $itemtype
+     * @param string $itemidfield
+     * @return string[]
+     */
+    final protected function get_tag_joins_for_entity(string $component, string $itemtype, string $itemidfield): array {
+        $taginstancealias = $this->get_table_alias('tag_instance');
+        $tagalias = $this->get_table_alias('tag');
+
+        return [
+            "LEFT JOIN {tag_instance} {$taginstancealias}
+                    ON {$taginstancealias}.component = '{$component}'
+                   AND {$taginstancealias}.itemtype = '{$itemtype}'
+                   AND {$taginstancealias}.itemid = {$itemidfield}",
+            "LEFT JOIN {tag} {$tagalias}
+                    ON {$tagalias}.id = {$taginstancealias}.tagid",
+        ];
+    }
+
+    /**
      * Add a column to the entity
      *
      * @param column $column
