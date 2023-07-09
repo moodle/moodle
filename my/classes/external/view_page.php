@@ -15,15 +15,12 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace core_my\external;
+
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
 
 /**
  * External service to log viewed Dashboard and My pages.
@@ -97,7 +94,7 @@ class view_page extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'status'   => new external_value(PARAM_BOOL, 'status: true if success'),
-            'warnings' => new external_warnings()
+            'warnings' => new external_warnings(),
         ]);
     }
 }

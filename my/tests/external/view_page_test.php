@@ -32,6 +32,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright 2023 Rodrigo Mady <rodrigo.mady@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 4.3
+ * @covers \core_my\external\view_page
  */
 class view_page_test extends externallib_advanced_testcase {
 
@@ -55,7 +56,6 @@ class view_page_test extends externallib_advanced_testcase {
 
     /**
      * Test for webservice my view page.
-     * @covers ::core_my_view_page
      */
     public function test_view_page(): void {
         $user = $this->getDataGenerator()->create_user();
