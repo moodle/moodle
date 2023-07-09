@@ -42,7 +42,7 @@ function core_customfield_inplace_editable($itemtype, $itemid, $newvalue) {
         if (!$handler->can_configure()) {
             throw new moodle_exception('nopermissionconfigure', 'core_customfield');
         }
-        $newvalue = clean_param($newvalue, PARAM_NOTAGS);
+        $newvalue = clean_param($newvalue, PARAM_TEXT);
         $handler->rename_category($category, $newvalue);
         return \core_customfield\api::get_category_inplace_editable($category, true);
     }
