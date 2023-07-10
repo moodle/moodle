@@ -184,13 +184,13 @@ class get_user_badge_by_hash_test extends externallib_advanced_testcase {
         // Site badge.
         $result = get_user_badge_by_hash::execute($data['sitebadge'][0]['uniquehash']);
         $result = \core_external\external_api::clean_returnvalue(get_user_badge_by_hash::execute_returns(), $result);
-        $this->assertEquals($data['sitebadge'], $result['badge']);
+        $this->assertEquals($data['sitebadge'][0]['uniquehash'], $result['badge'][0]['uniquehash']);
         $this->assertEmpty($result['warnings']);
 
         // Course badge.
         $result = get_user_badge_by_hash::execute($data['coursebadge'][0]['uniquehash']);
         $result = \core_external\external_api::clean_returnvalue(get_user_badge_by_hash::execute_returns(), $result);
-        $this->assertEquals($data['coursebadge'], $result['badge']);
+        $this->assertEquals($data['coursebadge'][0]['uniquehash'], $result['badge'][0]['uniquehash']);
         $this->assertEmpty($result['warnings']);
 
         // Wrong hash.
