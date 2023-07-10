@@ -975,6 +975,8 @@ class core_renderer extends renderer_base {
     /**
      * Returns information about an activity.
      *
+     * @deprecated since Moodle 4.3 MDL-78744
+     * @todo MDL-78926 This method will be deleted in Moodle 4.7
      * @param cm_info $cminfo The course module information.
      * @param cm_completion_details $completiondetails The completion details for this activity module.
      * @param array $activitydates The dates for this activity module.
@@ -982,6 +984,7 @@ class core_renderer extends renderer_base {
      * @throws coding_exception
      */
     public function activity_information(cm_info $cminfo, cm_completion_details $completiondetails, array $activitydates): string {
+        debugging('activity_information method is deprecated.', DEBUG_DEVELOPER);
         if (!$completiondetails->has_completion() && empty($activitydates)) {
             // No need to render the activity information when there's no completion info and activity dates to show.
             return '';

@@ -17,14 +17,13 @@
 namespace core_courseformat\output\local\content\cm;
 
 use cm_info;
+use core_course\output\activity_completion;
 use section_info;
 use renderable;
 use stdClass;
-use core\activity_dates;
 use core\output\named_templatable;
 use core\output\local\dropdown\dialog as dropdown_dialog;
 use core_completion\cm_completion_details;
-use core_course\output\activity_information;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
 
@@ -67,31 +66,20 @@ class completion implements named_templatable, renderable {
         $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
         $completiondetails = cm_completion_details::get_instance($this->mod, $USER->id, $showcompletionconditions);
 
-        $activitydates = [];
-        if ($course->showactivitydates) {
-            $activitydates = activity_dates::get_dates_for_module($this->mod, $USER->id);
-        }
-
-        // There are activity dates to be shown; or
-        // Completion info needs to be displayed
-        // * The activity tracks completion; AND
-        // * The showcompletionconditions setting is enabled OR an activity that tracks manual
-        // completion needs the manual completion button to be displayed on the course homepage.
-        $showcompletioninfo = $completiondetails->has_completion() && ($showcompletionconditions ||
-            (!$completiondetails->is_automatic() && $completiondetails->show_manual_completion()));
-        if (!$showcompletioninfo && empty($activitydates)) {
+        $showcompletioninfo = $completiondetails->has_completion() &&
+            ($showcompletionconditions || $completiondetails->show_manual_completion());
+        if (!$showcompletioninfo) {
             return null;
         }
 
-        $activityinfodata = (object) [ 'hasdates' => false, 'hascompletion' => false ];
-        $activityinfo = new activity_information($this->mod, $completiondetails, $activitydates);
-        $activityinfodata = $activityinfo->export_for_template($output);
+        $completion = new activity_completion($this->mod, $completiondetails);
+        $completiondata = $completion->export_for_template($output);
 
-        if ($activityinfodata->isautomatic || ($activityinfodata->ismanual && !$activityinfodata->istrackeduser)) {
-            $activityinfodata->completiondialog = $this->get_completion_dialog($output, $activityinfodata);
+        if ($completiondata->isautomatic || ($completiondata->ismanual && !$completiondata->istrackeduser)) {
+            $completiondata->completiondialog = $this->get_completion_dialog($output, $completiondata);
         }
 
-        return $activityinfodata;
+        return $completiondata;
     }
 
     /**
