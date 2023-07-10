@@ -364,7 +364,7 @@ class add_item extends dynamic_form {
 
         $url = new moodle_url('/grade/edit/tree/item.php', ['id' => $id, 'courseid' => $courseid]);
         $url = $this->gpr->add_url_params($url);
-        $url = '<a href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
+        $url = '<a class="showadvancedform" href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
         $mform->addElement('static', 'advancedform', $url);
 
         // Add return tracking info.
