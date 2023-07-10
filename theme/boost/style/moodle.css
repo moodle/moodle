@@ -25432,6 +25432,22 @@ input[disabled] {
   visibility: hidden;
 }
 
+.dialog-big {
+  max-width: 500px;
+}
+
+.dialog-small {
+  max-width: 300px;
+}
+
+@media (min-width: 576px) {
+  .dialog-big {
+    width: 500px;
+  }
+  .dialog-small {
+    width: 300px;
+  }
+}
 .emoji-picker {
   width: 350px;
   height: 400px;
