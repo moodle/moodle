@@ -25,9 +25,11 @@
 
 namespace mod_quiz\event;
 
+use core\event\base;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 use context_module;
+use moodle_url;
 
 /**
  * Unit tests for quiz events.
@@ -40,7 +42,9 @@ use context_module;
 class events_test extends \advanced_testcase {
 
     /**
-     * Setup a quiz.
+     * Set up a quiz.
+     *
+     * The quiz contains two questions, a short-answer one and a numerical one.
      *
      * @return quiz_settings the generated quiz.
      */
@@ -57,7 +61,7 @@ class events_test extends \advanced_testcase {
         $quiz = $quizgenerator->create_instance(['course' => $course->id, 'questionsperpage' => 0,
                 'grade' => 100.0, 'sumgrades' => 2]);
 
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
+        get_coursemodule_from_instance('quiz', $quiz->id, $course->id);
 
         // Create a couple of questions.
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -1196,8 +1200,49 @@ class events_test extends \advanced_testcase {
 
         // Check that the event data is valid.
         $this->assertInstanceOf('\mod_quiz\event\slot_mark_updated', $event);
-        $this->assertEquals(context_module::instance($quizobj->get_cmid()), $event->get_context());
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Test slot_grade_item_updated.
+     *
+     * @covers \mod_quiz\event\slot_grade_item_updated
+     */
+    public function test_slot_grade_item_updated() {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+        $slot = $stucture->get_slot_by_number(1);
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->update_slot_grade_item($slot, $gradeitem->id);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(slot_grade_item_updated::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' updated the slot with id '{$slot->id}' " .
+            "belonging to the quiz with course module id '{$quizobj->get_cmid()}'. " .
+            "The grade item this slot contributes to was changed from '' to '$gradeitem->id'.",
+            $event->get_description());
+
+        // Check nothing logged if the value is not changed.
+        $sink = $this->redirectEvents();
+        $stucture->update_slot_grade_item($slot, $gradeitem->id);
+        $events = $sink->get_events();
+        $this->assertCount(0, $events);
     }
 
     /**

@@ -16,8 +16,11 @@
 
 namespace mod_quiz;
 
+use coding_exception;
 use context_module;
 use core\output\inplace_editable;
+use mod_quiz\event\slot_grade_item_updated;
+use mod_quiz\event\slot_mark_updated;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\qubaids_for_quiz;
 use stdClass;
@@ -523,7 +526,8 @@ class structure {
             }
         }
 
-        throw new \coding_exception('The \'slotid\' could not be found.');
+        throw new coding_exception('The slot with id ' . $slotid .
+                ' could not be found in the quiz with id ' . $this->get_quizid() . '.');
     }
 
     /**
@@ -531,11 +535,11 @@ class structure {
      *
      * @param int $slotnumber The slot number
      * @return stdClass
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function get_slot_by_number($slotnumber) {
         if (!array_key_exists($slotnumber, $this->slotsinorder)) {
-            throw new \coding_exception('The \'slotnumber\' could not be found.');
+            throw new coding_exception('The \'slotnumber\' could not be found.');
         }
         return $this->slotsinorder[$slotnumber];
     }
@@ -858,10 +862,10 @@ class structure {
         }
         if (($moveafterslotnumber > 0 && $page < $this->get_page_number_for_slot($moveafterslotnumber)) ||
                 $page < 1) {
-            throw new \coding_exception('The target page number is too small.');
+            throw new coding_exception('The target page number is too small.');
         } else if (!$this->is_last_slot_in_quiz($moveafterslotnumber) &&
                 $page > $this->get_page_number_for_slot($followingslotnumber)) {
-            throw new \coding_exception('The target page number is too large.');
+            throw new coding_exception('The target page number is too large.');
         }
 
         // Work out how things are being moved.
@@ -916,7 +920,7 @@ class structure {
         }
 
         if ($this->is_only_slot_in_section($movingslotnumber)) {
-            throw new \coding_exception('You cannot remove the last slot in a section.');
+            throw new coding_exception('You cannot remove the last slot in a section.');
         }
 
         $trans = $DB->start_delegated_transaction();
@@ -1026,7 +1030,7 @@ class structure {
      * Remove a slot from a quiz.
      *
      * @param int $slotnumber The number of the slot to be deleted.
-     * @throws \coding_exception
+     * @throws coding_exception
      */
     public function remove_slot($slotnumber) {
         global $DB;
@@ -1034,7 +1038,7 @@ class structure {
         $this->check_can_be_edited();
 
         if ($this->is_only_slot_in_section($slotnumber) && $this->get_section_count() > 1) {
-            throw new \coding_exception('You cannot remove the last slot in a section.');
+            throw new coding_exception('You cannot remove the last slot in a section.');
         }
 
         $slot = $DB->get_record('quiz_slots', ['quizid' => $this->get_quizid(), 'slot' => $slotnumber]);
@@ -1125,27 +1129,75 @@ class structure {
             return false;
         }
 
-        $trans = $DB->start_delegated_transaction();
-        $previousmaxmark = $slot->maxmark;
-        $slot->maxmark = $maxmark;
-        $DB->update_record('quiz_slots', $slot);
+        $transaction = $DB->start_delegated_transaction();
+        $DB->set_field('quiz_slots', 'maxmark', $maxmark, ['id' => $slot->id]);
         \question_engine::set_max_mark_in_attempts(new qubaids_for_quiz($slot->quizid),
                 $slot->slot, $maxmark);
-        $trans->allow_commit();
 
         // Log slot mark updated event.
         // We use $num + 0 as a trick to remove the useless 0 digits from decimals.
-        $event = \mod_quiz\event\slot_mark_updated::create([
+        $event = slot_mark_updated::create([
             'context' => $this->quizobj->get_context(),
             'objectid' => $slot->id,
             'other' => [
                 'quizid' => $this->get_quizid(),
-                'previousmaxmark' => $previousmaxmark + 0,
+                'previousmaxmark' => $slot->maxmark + 0,
                 'newmaxmark' => $maxmark + 0
             ]
         ]);
         $event->trigger();
 
+        $this->slotsinorder[$slot->slot]->maxmark = $maxmark;
+
+        $transaction->allow_commit();
+        return true;
+    }
+
+    /**
+     * Change which grade this slot contributes to, for quizzes with multiple grades.
+     *
+     * It does not update 'sumgrades' in the quiz table. If this method returns true,
+     * it will be necessary to recompute all the quiz grades.
+     *
+     * @param stdClass $slot row from the quiz_slots table.
+     * @param int|null $gradeitemid id of the grade item this slot should contribute to. 0 or null means none.
+     * @return bool true if the new $gradeitemid is different from the previous one.
+     */
+    public function update_slot_grade_item(stdClass $slot, ?int $gradeitemid): bool {
+        global $DB;
+
+        if ($gradeitemid === 0) {
+            $gradeitemid = null;
+        }
+
+        if ($slot->quizgradeitemid !== null) {
+            // Object $slot likely comes from the database, which means int may be
+            // represented as a string, which breaks the next test, so fix up.
+            $slot->quizgradeitemid = (int) $slot->quizgradeitemid;
+        }
+
+        if ($gradeitemid === $slot->quizgradeitemid) {
+            // Grade has not changed. Nothing to do.
+            return false;
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $previousmaxmark = $slot->quizgradeitemid;
+        $slot->quizgradeitemid = $gradeitemid;
+        $DB->update_record('quiz_slots', $slot);
+
+        // Log slot mark updated event.
+        slot_grade_item_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $slot->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+                'previousgradeitem' => $previousmaxmark,
+                'newgradeitem' => $gradeitemid,
+            ],
+        ])->trigger();
+
+        $transaction->allow_commit();
         return true;
     }
 
@@ -1180,6 +1232,7 @@ class structure {
      */
     public function update_slot_display_number(int $slotid, string $displaynumber): void {
         global $DB;
+
         $DB->set_field('quiz_slots', 'displaynumber', $displaynumber, ['id' => $slotid]);
         $this->populate_structure();
 
@@ -1336,7 +1389,7 @@ class structure {
         global $DB;
         $section = $DB->get_record('quiz_sections', ['id' => $sectionid], '*', MUST_EXIST);
         if ($section->firstslot == 1) {
-            throw new \coding_exception('Cannot remove the first section in a quiz.');
+            throw new coding_exception('Cannot remove the first section in a quiz.');
         }
         $DB->delete_records('quiz_sections', ['id' => $sectionid]);
 

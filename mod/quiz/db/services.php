@@ -255,4 +255,12 @@ $functions = [
         'capabilities'  => 'mod/quiz:manageoverrides',
         'ajax'          => true,
     ],
+
+    'mod_quiz_update_slots' => [
+        'classname' => 'mod_quiz\external\update_slots',
+        'description' => 'Update the properties of slots in a quiz. All slots must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
 ];

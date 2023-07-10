@@ -16,22 +16,24 @@
 
 namespace mod_quiz\event;
 
+use core\event\base;
+
 /**
- * The mark a slot is graded out of has changed.
+ * The quiz sub-grade that this slot contributes to has changed.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
  *      - int quizid: the id of the quiz.
- *      - int previousmaxmark: the previous max mark value.
- *      - int newmaxmark: the new max mark value.
+ *      - int previousgradeitem: the previous max mark value.
+ *      - int newgradeitem: the new max mark value.
  * }
  *
  * @package   mod_quiz
- * @copyright 2021 The Open University
+ * @copyright 2023 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class slot_mark_updated extends \core\event\base {
+class slot_grade_item_updated extends base {
     protected function init() {
         $this->data['objecttable'] = 'quiz_slots';
         $this->data['crud'] = 'u';
@@ -39,18 +41,19 @@ class slot_mark_updated extends \core\event\base {
     }
 
     public static function get_name() {
-        return get_string('eventslotmarkupdated', 'mod_quiz');
+        return get_string('eventslotgradeitemupdated', 'mod_quiz');
     }
 
     public function get_description() {
         return "The user with id '$this->userid' updated the slot with id '{$this->objectid}' " .
             "belonging to the quiz with course module id '$this->contextinstanceid'. " .
-            "Its max mark was changed from '{$this->other['previousmaxmark']}' to '{$this->other['newmaxmark']}'.";
+            "The grade item this slot contributes to was changed from '{$this->other['previousgradeitem']}' " .
+            "to '{$this->other['newgradeitem']}'.";
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/quiz/edit.php', [
-            'cmid' => $this->contextinstanceid
+        return new \moodle_url('/mod/quiz/editgrading.php', [
+            'cmid' => $this->contextinstanceid,
         ]);
     }
 
@@ -69,12 +72,12 @@ class slot_mark_updated extends \core\event\base {
             throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
 
-        if (!isset($this->other['previousmaxmark'])) {
-            throw new \coding_exception('The \'previousmaxmark\' value must be set in other.');
+        if (!array_key_exists('previousgradeitem', $this->other)) {
+            throw new \coding_exception('The \'previousgradeitem\' value must be set in other.');
         }
 
-        if (!isset($this->other['newmaxmark'])) {
-            throw new \coding_exception('The \'newmaxmark\' value must be set in other.');
+        if (!array_key_exists('newgradeitem', $this->other)) {
+            throw new \coding_exception('The \'newgradeitem\' value must be set in other.');
         }
     }
 
@@ -83,9 +86,8 @@ class slot_mark_updated extends \core\event\base {
     }
 
     public static function get_other_mapping() {
-        $othermapped = [];
-        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
-
-        return $othermapped;
+        return [
+            'quizid' => ['db' => 'quiz', 'restore' => 'quiz'],
+        ];
     }
 }
