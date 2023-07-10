@@ -90,6 +90,9 @@ abstract class base {
     /** @var array $attributes */
     private $attributes = [];
 
+    /** @var lang_string $noresultsnotice */
+    private $noresultsnotice;
+
     /**
      * Base report constructor
      *
@@ -97,6 +100,7 @@ abstract class base {
      */
     public function __construct(report $report) {
         $this->report = $report;
+        $this->noresultsnotice = new lang_string('nothingtodisplay');
 
         // Initialise and validate the report.
         $this->initialise();
@@ -765,6 +769,25 @@ abstract class base {
      */
     public function set_default_per_page(int $defaultperpage): void {
         $this->defaultperpage = $defaultperpage;
+    }
+
+    /**
+     * Set the default lang string for the notice used when no results are found.
+     *
+     * @param lang_string|null $notice string, or null to tell the report to omit the notice entirely.
+     * @return void
+     */
+    public function set_default_no_results_notice(?lang_string $notice): void {
+        $this->noresultsnotice = $notice;
+    }
+
+    /**
+     * Get the default lang string for the notice used when no results are found.
+     *
+     * @return lang_string|null the lang_string instance or null if the report prefers not to use one.
+     */
+    public function get_default_no_results_notice(): ?lang_string {
+        return $this->noresultsnotice;
     }
 
     /**
