@@ -76,6 +76,7 @@ if (!$iid) {
         $csvimporterror = $csvimport->get_error();
         if (!empty($csvimporterror)) {
             echo $renderer->errors(array($csvimport->get_error()));
+            echo $OUTPUT->continue_button(new moodle_url('/grade/import/csv/index.php', ['id' => $course->id]));
             echo $OUTPUT->footer();
             die();
         }
@@ -122,6 +123,7 @@ if ($formdata = $mform2->get_data()) {
         $errors = $gradeimport->get_gradebookerrors();
         $errors[] = get_string('importfailed', 'grades');
         echo $renderer->errors($errors);
+        echo $OUTPUT->continue_button(new moodle_url('/grade/import/csv/index.php', ['id' => $course->id]));
     }
     echo $OUTPUT->footer();
 } else {
