@@ -371,7 +371,7 @@ class iomad {
     public static function iomad_filter_profile_categories( $categories, $userid = 0 ) {
         global $DB, $USER;
 
-        if (empty($userid)) {
+        if (empty($userid) || $userid == -1) {
             $user = $USER;
         } else {
             $user = $DB->get_record('user', array('id' => $userid));
