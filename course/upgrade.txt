@@ -5,6 +5,7 @@ information provided here is intended especially for developers.
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
 * External function core_course_external::get_course_contents() now returns a new field activitybadge with the data to display
   the activity badge when the module implements it.
+* prepare_new_moduleinfo_data() now accepts a parameter "suffix" that will be added to the name of the completion rules.
 
 === 4.2 ===
 * course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
