@@ -130,6 +130,7 @@ $string['coursecompletedmessage'] = '<p>Congratulations!</p><p>You have complete
 $string['coursecompletion'] = 'Course completion';
 $string['coursecompletioncondition'] = 'Condition: {$a}';
 $string['coursecompletionnavigation'] = 'Course completion tertiary navigation';
+$string['coursecompletionsettings'] = 'Course completion settings';
 $string['coursegrade'] = 'Course grade';
 $string['coursesavailable'] = 'Courses available';
 $string['coursesavailableexplaination'] = 'Note: Course completion conditions must be set for a course to appear in the above list.';
@@ -153,7 +154,6 @@ $string['detail_desc:receivepassgrade'] = 'Receive a passing grade';
 $string['detail_desc:view'] = 'View';
 $string['done'] = 'Done';
 $string['hiddenrules'] = 'Some settings specific to <b>{$a}</b> have been hidden. To view unselect other activities';
-$string['editcoursecompletionsettings'] = 'Edit course completion settings';
 $string['enablecompletion'] = 'Enable completion tracking';
 $string['enablecompletion_help'] = 'If enabled, activity completion conditions may be set in the activity settings and/or course completion conditions may be set. It is recommended to have this enabled so that meaningful data is displayed in the course overview on the Dashboard.';
 $string['enrolmentduration'] = 'Enrolment duration';
@@ -253,3 +253,4 @@ $string['xdays'] = '{$a} days';
 
 // Deprecated since Moodle 4.0.
 $string['yourprogress'] = 'Your progress';
+$string['editcoursecompletionsettings'] = 'Edit course completion settings';

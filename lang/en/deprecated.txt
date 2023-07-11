@@ -82,3 +82,4 @@ unsettheme,core_admin
 showmore,core_availability
 backpackemail,core_badges
 backpackemail_help,core_badges
+editcoursecompletionsettings,core_completion
