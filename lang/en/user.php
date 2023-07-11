@@ -140,6 +140,7 @@ $string['target:upcomingactivitiesdue'] = 'Upcoming activities due';
 $string['target:upcomingactivitiesdue_help'] = 'This target generates reminders for upcoming activities due.';
 $string['target:upcomingactivitiesdueinfo'] = 'All upcoming activities due insights are listed here. These students have received these insights directly.';
 $string['usergroupselectorcount'] = '{$a->fullname} ({$a->groupcount})';
+$string['userprofile'] = 'User profile';
 
 // Deprecated since Moodle 4.1.
 $string['addcondition'] = 'Add condition';
