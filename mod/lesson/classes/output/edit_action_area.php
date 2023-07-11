@@ -60,6 +60,7 @@ class edit_action_area implements templatable, renderable {
      * @return array Said data.
      */
     public function export_for_template(\renderer_base $output): array {
+        global $PAGE;
 
         $viewurl = new moodle_url('/mod/lesson/edit.php', ['id' => $this->cmid, 'mode' => 'collapsed']);
         $fullviewurl = new moodle_url('/mod/lesson/edit.php', ['id' => $this->cmid, 'mode' => 'full']);
@@ -69,14 +70,18 @@ class edit_action_area implements templatable, renderable {
         ];
 
         $selectmenu = new \url_select($menu, $this->currenturl->out(false), null, 'mod_lesson_navigation_select');
+        $selectmenu->label = get_string('displaymode', 'mod_lesson');
+        $selectmenu->labelattributes = ['class' => 'sr-only'];
 
+        $headinglevel = $PAGE->activityheader->get_heading_level();
         return [
             'back' => [
                 'text' => get_string('back', 'core'),
                 'link' => (new moodle_url('/mod/lesson/view.php', ['id' => $this->cmid]))->out(false)
             ],
             'viewselect' => $selectmenu->export_for_template($output),
-            'heading' => get_string('editinglesson', 'mod_lesson')
+            'heading' => get_string('editinglesson', 'mod_lesson'),
+            'headinglevel' => $headinglevel,
         ];
     }
 }
