@@ -197,4 +197,22 @@ class activity_header implements \renderable, \templatable {
             'additional_items' => $this->hideoverflow ? '' : $this->additionalnavitems,
         ];
     }
+
+    /**
+     * Get the heading level for a given heading depending on whether the theme's activity header displays a heading
+     * (usually the activity name).
+     *
+     * @param int $defaultlevel The default heading level when the activity header does not display a heading.
+     * @return int
+     */
+    public function get_heading_level(int $defaultlevel = 2): int {
+        // The heading level depends on whether the theme's activity header displays a heading (usually the activity name).
+        $headinglevel = $defaultlevel;
+        if ($this->is_title_allowed() && !empty(trim($this->title))) {
+            // A heading for the activity name is displayed on this page with a heading level 2.
+            // Increment the default level for this heading by 1.
+            $headinglevel++;
+        }
+        return $headinglevel;
+    }
 }
