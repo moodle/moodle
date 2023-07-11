@@ -143,10 +143,14 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
 
+        $suffix = $this->get_suffix();
+        $completionattendanceenabledel = 'completionattendanceenabled' . $suffix;
+        $completionattendanceel = 'completionattendance' . $suffix;
+
         // Completion: tick by default if completion attendance settings is set to 1 or more.
-        $defaultvalues['completionattendanceenabled'] = 0;
-        if (!empty($defaultvalues['completionattendance'])) {
-            $defaultvalues['completionattendanceenabled'] = 1;
+        $defaultvalues[$completionattendanceenabledel] = 0;
+        if (!empty($defaultvalues[$completionattendanceel])) {
+            $defaultvalues[$completionattendanceenabledel] = 1;
         }
         // Check if we are Editing an existing instance.
         if ($this->current->instance) {
@@ -162,9 +166,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
                 return;
             }
             // Completion: tick if completion attendance settings is set to 1 or more.
-            $defaultvalues['completionattendanceenabled'] = 0;
-            if (!empty($this->current->completionattendance)) {
-                $defaultvalues['completionattendanceenabled'] = 1;
+            $defaultvalues[$completionattendanceenabledel] = 0;
+            if (!empty($this->current->{$completionattendanceel})) {
+                $defaultvalues[$completionattendanceenabledel] = 1;
             }
         }
     }
@@ -204,19 +208,26 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             return [];
         }
 
+        $suffix = $this->get_suffix();
+
         // Elements for completion by Attendance.
         $attendance['grouplabel'] = get_string('completionattendancegroup', 'bigbluebuttonbn');
         $attendance['rulelabel'] = get_string('completionattendance', 'bigbluebuttonbn');
+        $completionattendanceenabledel = 'completionattendanceenabled' . $suffix;
+        $completionattendanceel = 'completionattendance' . $suffix;
+        $completionattendanceunitel = 'completionattendanceunit' . $suffix;
         $attendance['group'] = [
-            $mform->createElement('advcheckbox', 'completionattendanceenabled', '', $attendance['rulelabel'] . '&nbsp;'),
-            $mform->createElement('text', 'completionattendance', '', ['size' => 3]),
-            $mform->createElement('static', 'completionattendanceunit', ' ', get_string('minutes', 'bigbluebuttonbn'))
+            $mform->createElement('advcheckbox', $completionattendanceenabledel, '', $attendance['rulelabel'] . '&nbsp;'),
+            $mform->createElement('text', $completionattendanceel, '', ['size' => 3]),
+            $mform->createElement('static', $completionattendanceunitel, ' ', get_string('minutes', 'bigbluebuttonbn'))
         ];
-        $mform->setType('completionattendance', PARAM_INT);
-        $mform->addGroup($attendance['group'], 'completionattendancegroup', $attendance['grouplabel'], [' '], false);
-        $mform->addHelpButton('completionattendancegroup', 'completionattendancegroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionattendancegroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
-        $mform->disabledIf('completionattendance', 'completionattendanceenabled', 'notchecked');
+        $mform->setType($completionattendanceel, PARAM_INT);
+        $completionattendancegroupel = 'completionattendancegroup' . $suffix;
+        $mform->addGroup($attendance['group'], $completionattendancegroupel, $attendance['grouplabel'], ' ', false);
+        $mform->addHelpButton($completionattendancegroupel, 'completionattendancegroup', 'bigbluebuttonbn');
+        $completionel = 'completion' . $suffix;
+        $mform->disabledIf($completionattendancegroupel, $completionel, 'neq', COMPLETION_AGGREGATION_ANY);
+        $mform->disabledIf($completionattendanceel, $completionattendanceenabledel, 'notchecked');
 
         // Elements for completion by Engagement.
         $engagement['grouplabel'] = get_string('completionengagementgroup', 'bigbluebuttonbn');
@@ -225,23 +236,30 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $engagement['raisehand'] = get_string('completionengagementraisehand', 'bigbluebuttonbn');
         $engagement['pollvotes'] = get_string('completionengagementpollvotes', 'bigbluebuttonbn');
         $engagement['emojis'] = get_string('completionengagementemojis', 'bigbluebuttonbn');
+
+        $completionengagementchatsel = 'completionengagementchats' . $suffix;
+        $completionengagementtalksel = 'completionengagementtalks' . $suffix;
+        $completionengagementraisehandel = 'completionengagementraisehand' . $suffix;
+        $completionengagementpollvotesel = 'completionengagementpollvotes' . $suffix;
+        $completionengagementemojisel = 'completionengagementemojis' . $suffix;
         $engagement['group'] = [
-            $mform->createElement('advcheckbox', 'completionengagementchats', '', $engagement['chatlabel'] . '&nbsp;&nbsp;'),
-            $mform->createElement('advcheckbox', 'completionengagementtalks', '', $engagement['talklabel'] . '&nbsp;&nbsp;'),
-            $mform->createElement('advcheckbox', 'completionengagementraisehand', '', $engagement['raisehand'] . '&nbsp;&nbsp;'),
-            $mform->createElement('advcheckbox', 'completionengagementpollvotes', '', $engagement['pollvotes'] . '&nbsp;&nbsp;'),
-            $mform->createElement('advcheckbox', 'completionengagementemojis', '', $engagement['emojis'] . '&nbsp;&nbsp;'),
+            $mform->createElement('advcheckbox', $completionengagementchatsel, '', $engagement['chatlabel'] . '&nbsp;&nbsp;'),
+            $mform->createElement('advcheckbox', $completionengagementtalksel, '', $engagement['talklabel'] . '&nbsp;&nbsp;'),
+            $mform->createElement('advcheckbox', $completionengagementraisehandel, '', $engagement['raisehand'] . '&nbsp;&nbsp;'),
+            $mform->createElement('advcheckbox', $completionengagementpollvotesel, '', $engagement['pollvotes'] . '&nbsp;&nbsp;'),
+            $mform->createElement('advcheckbox', $completionengagementemojisel, '', $engagement['emojis'] . '&nbsp;&nbsp;'),
         ];
-        $mform->addGroup($engagement['group'], 'completionengagementgroup', $engagement['grouplabel'], [' '], false);
-        $mform->addGroupRule('completionattendancegroup', [
-            'completionattendance' => [
+        $completionengagementgroupel = 'completionengagementgroup' . $suffix;
+        $mform->addGroup($engagement['group'], $completionengagementgroupel, $engagement['grouplabel'], ' ', false);
+        $mform->addGroupRule($completionattendancegroupel, [
+            $completionattendanceel => [
                 [null, 'numeric', null, 'client']
             ]
         ]);
-        $mform->addHelpButton('completionengagementgroup', 'completionengagementgroup', 'bigbluebuttonbn');
-        $mform->disabledIf('completionengagementgroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
+        $mform->addHelpButton($completionengagementgroupel, 'completionengagementgroup', 'bigbluebuttonbn');
+        $mform->disabledIf($completionengagementgroupel, $completionel, 'neq', COMPLETION_AGGREGATION_ANY);
 
-        return ['completionattendancegroup', 'completionengagementgroup'];
+        return [$completionattendancegroupel, $completionengagementgroupel];
     }
 
     /**
@@ -251,12 +269,13 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return (!empty($data['completionattendanceenabled']) && $data['completionattendance'] != 0)
-            || !empty($data['completionengagementchats'])
-            || !empty($data['completionengagementtalks'])
-            || !empty($data['completionengagementraisehand'])
-            || !empty($data['completionengagementpollvotes'])
-            || !empty($data['completionengagementemojis']);
+        $suffix = $this->get_suffix();
+        return (!empty($data['completionattendanceenabled' . $suffix]) && $data['completionattendance' . $suffix] != 0)
+            || !empty($data['completionengagementchats' . $suffix])
+            || !empty($data['completionengagementtalks' . $suffix])
+            || !empty($data['completionengagementraisehand' . $suffix])
+            || !empty($data['completionengagementpollvotes' . $suffix])
+            || !empty($data['completionengagementemojis' . $suffix]);
     }
 
     /**
@@ -271,9 +290,11 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         // Turn off completion settings if the checkboxes aren't ticked.
         if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionattendanceenabled) || !$autocompletion) {
-                $data->completionattendance = 0;
+            $suffix = $this->get_suffix();
+            $completion = $data->{'completion' . $suffix};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{'completionattendanceenabled' . $suffix}) || !$autocompletion) {
+                $data->{'completionattendance' . $suffix} = 0;
             }
         }
     }
@@ -703,7 +724,10 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $completion = new completion_info($COURSE);
         if ($completion->is_enabled()) {
             $mform = $this->_form;
-            foreach (['completionattendancegroup', 'completionengagementgroup'] as $groupname) {
+            $suffix = $this->get_suffix();
+            $completionattendancegroupel = 'completionattendancegroup' . $suffix;
+            $completionengagementgroupel = 'completionengagementgroup' . $suffix;
+            foreach ([$completionattendancegroupel, $completionengagementgroupel] as $groupname) {
                 if ($mform->elementExists($groupname)) {
                     $element = $mform->getElement($groupname);
                     if ($element->isFrozen()) {
