@@ -34,6 +34,7 @@ $string['activities'] = 'Activities';
 $string['activities_help'] = 'Activities, such as forums, quizzes and wikis, enable interactive content to be added to the course.';
 $string['activity'] = 'Activity';
 $string['activityclipboard'] = 'Moving this activity: {$a}';
+$string['activityicon'] = '{$a} icon';
 $string['activityiscurrentlyhidden'] = 'Sorry, this activity is currently hidden';
 $string['activityheader'] = 'Activity menu';
 $string['activitymodule'] = 'Activity module';
