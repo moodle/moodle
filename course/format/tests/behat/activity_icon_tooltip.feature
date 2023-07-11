@@ -25,19 +25,19 @@ Feature: Activity type tooltip.
 
   Scenario: Teacher can see the activity type tooltip only while editing.
     Given I am on the "C1" "Course" page logged in as "teacher1"
-    And I hover over the "assign icon" "link" in the "Activity sample 1" "activity"
+    And I hover over the "Assignment icon" "link" in the "Activity sample 1" "activity"
     And "body>.tooltip" "css_element" should not exist
-    And I hover over the "page icon" "link" in the "Activity sample 2" "activity"
+    And I hover over the "Page icon" "link" in the "Activity sample 2" "activity"
     And "body>.tooltip" "css_element" should not exist
     And I turn editing mode on
-    When I hover over the "assign icon" "link" in the "Activity sample 1" "activity"
+    When I hover over the "Assignment icon" "link" in the "Activity sample 1" "activity"
     Then I should see "Assignment" in the "body>.tooltip" "css_element"
-    And I hover over the "page icon" "link" in the "Activity sample 2" "activity"
+    And I hover over the "Page icon" "link" in the "Activity sample 2" "activity"
     And I should see "Page" in the "body>.tooltip" "css_element"
 
   Scenario: Student cannot see the activity type tooltip.
     Given I am on the "C1" "Course" page logged in as "student1"
-    When I hover over the "assign icon" "link" in the "Activity sample 1" "activity"
+    When I hover over the "Assignment icon" "link" in the "Activity sample 1" "activity"
     Then "body>.tooltip" "css_element" should not exist
 
   Scenario: Student cannot see the activity icon link if does not have access.
@@ -51,4 +51,4 @@ Feature: Activity type tooltip.
     And I press "Save and return to course"
     And I log out
     And I am on the "C1" "Course" page logged in as "student1"
-    Then "page icon" "link" should not exist in the "Activity sample 2" "activity"
+    Then "Page icon" "link" should not exist in the "Activity sample 2" "activity"
