@@ -76,17 +76,27 @@ class defaultuserrole extends check {
         }
 
         // Risky caps - usually very dangerous.
-        $sql = "SELECT COUNT(DISTINCT rc.contextid)
+        $sql = "SELECT rc.contextid, rc.capability
                   FROM {role_capabilities} rc
                   JOIN {capabilities} cap ON cap.name = rc.capability
                  WHERE " . $DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS)) . " <> 0
                    AND rc.permission = :capallow
                    AND rc.roleid = :roleid";
 
-        $riskycount = $DB->count_records_sql($sql, [
+        $riskyresults = $DB->get_records_sql($sql, [
             'capallow' => CAP_ALLOW,
             'roleid' => $defaultrole->id,
         ]);
+
+        // If automatic approval is disabled, then the requestdelete capability is not risky.
+        if (!get_config('tool_dataprivacy', 'automaticdatadeletionapproval')) {
+            $riskyresults = array_filter($riskyresults, function ($object) {
+                return $object->capability !== 'tool/dataprivacy:requestdelete';
+            });
+        }
+
+        // Count the number of unique contexts that have risky caps.
+        $riskycount = count(array_unique(array_column($riskyresults, 'contextid')));
 
         // It may have either none or 'user' archetype - nothing else, or else it would break during upgrades badly.
         if ($defaultrole->archetype === '' or $defaultrole->archetype === 'user') {
