@@ -34,7 +34,7 @@ class setup_factor_form extends \moodleform {
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition() {
+    public function definition(): void {
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];
@@ -64,7 +64,7 @@ class setup_factor_form extends \moodleform {
     /**
      * Invokes factor setup_factor_form_definition_after_data() method after form data has been set.
      */
-    public function definition_after_data() {
+    public function definition_after_data(): void {
         $mform = $this->_form;
 
         $factorname = $this->_customdata['factorname'];
@@ -75,13 +75,12 @@ class setup_factor_form extends \moodleform {
     }
 
     /**
-     * In newer versions of Totara with consistent cleaning enabled we need to ensure to mark static elements
-     *  as "xss safe". Or in Totara's ideal world to use 'html' if form-like display is not required.
+     * Form elements clean up
      *
      * @param \HTML_QuickForm $mform
      * @return void
      */
-    private function xss_whitelist_static_form_elements($mform) {
+    private function xss_whitelist_static_form_elements($mform): void {
         if (!method_exists('MoodleQuickForm_static', 'set_allow_xss')) {
             return;
         }

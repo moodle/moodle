@@ -2050,7 +2050,7 @@ class core_plugin_manager {
                 'installaddon', 'langimport', 'licensemanager', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound',
                 'mobile', 'moodlenet', 'multilangupgrade', 'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin',
                 'replace', 'spamcleaner', 'task', 'templatelibrary', 'uploadcourse', 'uploaduser', 'unsuproles',
-                'usertours', 'xmldb'
+                'usertours', 'xmldb', 'mfa'
             ),
 
             'webservice' => array(

@@ -16,6 +16,7 @@
 
 namespace factor_grace;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -35,7 +36,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
 
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
@@ -63,7 +64,7 @@ class factor extends object_factor_base {
      * @param stdClass $user object to check against.
      * @return array the array of active factors.
      */
-    public function get_active_user_factors($user) {
+    public function get_active_user_factors(stdClass $user): array {
         return $this->get_all_user_factors($user);
     }
 
@@ -73,7 +74,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -84,7 +85,7 @@ class factor extends object_factor_base {
      * @param bool $redirectable should this state call be allowed to redirect the user?
      * @return string state constant
      */
-    public function get_state($redirectable = true) {
+    public function get_state($redirectable = true): string {
         global $FULLME, $SESSION, $USER;
         $records = ($this->get_all_user_factors($USER));
         $record = reset($records);
@@ -154,10 +155,10 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * State cannot be set. Return true.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return true;
     }
 
@@ -167,7 +168,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function post_pass_state() {
+    public function post_pass_state(): void {
         global $USER;
         parent::post_pass_state();
 
@@ -206,7 +207,7 @@ class factor extends object_factor_base {
      * @param array $combination array of factors that make up the combination
      * @return bool
      */
-    public function check_combination($combination) {
+    public function check_combination(array $combination): bool {
         // If this combination has more than 1 factor that has setup or input, not valid.
         foreach ($combination as $factor) {
             if ($factor->has_setup() || $factor->has_input()) {
@@ -220,9 +221,10 @@ class factor extends object_factor_base {
      * Grace Factor implementation.
      * Gracemode can change outcome just by waiting, or based on other factors.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
+     * @return array
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
@@ -236,7 +238,7 @@ class factor extends object_factor_base {
      *
      * @return array
      */
-    public function get_no_redirect_urls() {
+    public function get_no_redirect_urls(): array {
         $redirect = get_config('factor_grace', 'forcesetup');
 
         // First check if user has any other input or setup factors active.

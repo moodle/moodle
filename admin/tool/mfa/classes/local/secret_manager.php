@@ -88,7 +88,7 @@ class secret_manager {
      * @param string $sessionid an optional sessionID to tie this record to
      * @return void
      */
-    private function add_secret_to_db(string $secret, int $expires, string $sessionid = null) {
+    private function add_secret_to_db(string $secret, int $expires, string $sessionid = null): void {
         global $DB, $USER;
         $expirytime = time() + $expires;
 
@@ -178,7 +178,7 @@ class secret_manager {
      * @param int $userid the userid to revoke the secret for.
      * @return void
      */
-    public function revoke_secret(string $secret, $userid = null) {
+    public function revoke_secret(string $secret, $userid = null): void {
         global $DB, $USER;
 
         $userid = $userid ?? $USER->id;
@@ -229,7 +229,7 @@ class secret_manager {
      * @param int $userid the userid to cleanup temp secrets for.
      * @return void
      */
-    public function cleanup_temp_secrets($userid = null) {
+    public function cleanup_temp_secrets($userid = null): void {
         global $DB, $USER;
         // Session records are autocleaned up.
         // Only DB cleanup required.

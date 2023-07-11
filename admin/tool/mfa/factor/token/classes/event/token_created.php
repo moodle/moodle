@@ -15,6 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace factor_token\event;
+
+use stdClass;
+
 /**
  * Event for a token being created for a user.
  *
@@ -31,11 +34,11 @@ class token_created extends \core\event\base {
      * @param stdClass $user the User object of the User who had the token creeated.
      * @param array $state an array of the state of the token.
      *
-     * @return token_created the token_created_event event
+     * @return \core\event\base the token_created_event event
      *
      * @throws \coding_exception
      */
-    public static function token_created_event($user, $state) {
+    public static function token_created_event(stdClass $user, array $state): \core\event\base {
         $data = [
             'relateduserid' => $user->id,
             'context' => \context_user::instance($user->id),
@@ -53,7 +56,7 @@ class token_created extends \core\event\base {
      *
      * @return void
      */
-    protected function init() {
+    protected function init(): void {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -63,7 +66,7 @@ class token_created extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
+    public function get_description(): string {
         $info = json_decode($this->other['state']);
         $string = '<br>';
         foreach ($info as $name => $value) {
@@ -74,7 +77,10 @@ class token_created extends \core\event\base {
             $string .= ucwords($name) . ': ' . $value . '<br>';
         }
 
-        return "The user with id '{$this->other['userid']}' had an MFA token stored on their device. <br> Information:" . $string;
+        $data = new stdClass();
+        $data->string = $string;
+        $data->userid = $this->other['userid'];
+        return get_string('tokenstoredindevice', 'factor_token', $data);
     }
 
     /**
@@ -83,7 +89,7 @@ class token_created extends \core\event\base {
      * @return string
      * @throws \coding_exception
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:token_created', 'factor_token');
     }
 }

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace factor_token\tests;
+namespace factor_token;
 
 /**
  * Tests for MFA manager class.
@@ -27,11 +27,24 @@ namespace factor_token\tests;
  */
 class factor_test extends \advanced_testcase {
 
+    /**
+     * Holds specific requested factor, which is token factor.
+     *
+     * @var \factor_token\factor $factor
+     */
+    public \factor_token\factor $factor;
+
     public function setUp(): void {
         $this->resetAfterTest();
         $this->factor = new \factor_token\factor('token');
     }
 
+    /**
+     * Test calculating expiry time in general
+     *
+     * @covers ::calculate_expiry_time
+     * @return void
+     */
     public function test_calculate_expiry_time_in_general() {
         $timestamp = 1642213800; // 1230 UTC.
 
@@ -42,7 +55,7 @@ class factor_test extends \advanced_testcase {
         // Test that non-overnight timestamps are just exactly as configured.
         // We don't need to care about 0 or negative ints, they will just make the cookie expire immediately.
         $expiry = $method->invoke($this->factor, $timestamp);
-        $this->assertEquals($expiry[1], DAYSECS);
+        $this->assertEquals(DAYSECS, $expiry[1]);
 
         set_config('expiry', HOURSECS, 'factor_token');
         $expiry = $method->invoke($this->factor, $timestamp);
@@ -75,6 +88,7 @@ class factor_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the following morning.
      *
+     * @covers ::calculate_expiry_time
      * @param int $timestamp
      * @dataProvider timestamp_provider
      */
@@ -123,6 +137,7 @@ class factor_test extends \advanced_testcase {
      * value, provided it never goes past raw value expiry time, and when it
      * needs to be 2am, it's 2am on the morning after tomorrow.
      *
+     * @covers ::calculate_expiry_time
      * @param int $timestamp
      * @dataProvider timestamp_provider
      */
@@ -173,6 +188,7 @@ class factor_test extends \advanced_testcase {
     /**
      * This should check if the 3am expiry is pushed back to 2am as expected, but everything else appears as expected
      *
+     * @covers ::calculate_expiry_time
      * @param int $timestamp
      * @dataProvider timestamp_provider
      */
@@ -217,6 +233,7 @@ class factor_test extends \advanced_testcase {
     /**
      * Only relevant based on the hour padding used, which is currently set to 2 hours (2am).
      *
+     * @covers ::calculate_expiry_time
      * @param int $timestamp
      * @dataProvider timestamp_provider
      */

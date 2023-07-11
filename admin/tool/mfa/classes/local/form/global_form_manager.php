@@ -43,7 +43,7 @@ class global_form_manager {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
-    public function definition(&$mform) {
+    public function definition(\MoodleQuickForm &$mform): void {
         foreach ($this->activefactors as $factor) {
             $factor->global_definition($mform);
         }
@@ -55,7 +55,7 @@ class global_form_manager {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
-    public function definition_after_data(&$mform) {
+    public function definition_after_data(\MoodleQuickForm &$mform): void {
         foreach ($this->activefactors as $factor) {
             $factor->global_definition_after_data($mform);
         }
@@ -68,7 +68,7 @@ class global_form_manager {
      * @param array $files Files form the form.
      * @return array of errors from validation.
      */
-    public function validation($data, $files) {
+    public function validation(array $data, array $files): array {
         $errors = [];
         foreach ($this->activefactors as $factor) {
             $errors = array_merge($errors, $factor->global_validation($data, $files));
@@ -82,7 +82,7 @@ class global_form_manager {
      * @param \stdClass $data Data from the form.
      * @return void
      */
-    public function submit(\stdClass $data) {
+    public function submit(\stdClass $data): void {
         foreach ($this->activefactors as $factor) {
             $factor->global_submit($data);
         }

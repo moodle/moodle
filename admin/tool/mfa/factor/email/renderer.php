@@ -33,7 +33,7 @@ class factor_email_renderer extends plugin_renderer_base {
      * @param   int $instanceid
      * @return  string|boolean
      */
-    public function generate_email($instanceid) {
+    public function generate_email(int $instanceid): string|bool {
         global $DB;
         $instance = $DB->get_record('tool_mfa', ['id' => $instanceid]);
         $authurl = new \moodle_url('/admin/tool/mfa/factor/email/email.php',

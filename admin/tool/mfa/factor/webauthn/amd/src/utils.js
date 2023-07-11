@@ -29,21 +29,24 @@ define([], function() {
             let suffix = '?=';
             if (typeof obj === 'object') {
                 for (let key in obj) {
-                    if (typeof obj[key] === 'string') {
-                        let str = obj[key];
-                        if (str.substring(0, prefix.length) === prefix && str.substring(str.length - suffix.length) === suffix) {
-                            str = str.substring(prefix.length, str.length - suffix.length);
-
-                            let binary_string = window.atob(str);
-                            let len = binary_string.length;
-                            let bytes = new Uint8Array(len);
-                            for (let i = 0; i < len; i++) {
-                                bytes[i] = binary_string.charCodeAt(i);
-                            }
-                            obj[key] = bytes.buffer;
-                        }
-                    } else {
+                    let isString = true;
+                    if (typeof obj[key] !== 'string') {
                         this.recursiveBase64StrToArrayBuffer(obj[key]);
+                        isString = false;
+                    }
+
+                    let str = obj[key];
+                    if (isString && str.substring(0, prefix.length) === prefix &&
+                         str.substring(str.length - suffix.length) === suffix) {
+                        str = str.substring(prefix.length, str.length - suffix.length);
+
+                        const binaryString = window.atob(str);
+                        let len = binaryString.length;
+                        let bytes = new Uint8Array(len);
+                        for (let i = 0; i < len; i++) {
+                            bytes[i] = binaryString.charCodeAt(i);
+                        }
+                        obj[key] = bytes.buffer;
                     }
                 }
             }

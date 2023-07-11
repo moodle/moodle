@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace factor_grace\tests;
+namespace factor_grace;
 
 /**
  * Tests for grace factor.
@@ -26,6 +26,12 @@ namespace factor_grace\tests;
  */
 class factor_test extends \advanced_testcase {
 
+    /**
+     * Test affecting factors
+     *
+     * @covers ::get_affecting_factors
+     * @return void
+     */
     public function test_affecting_factors() {
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();

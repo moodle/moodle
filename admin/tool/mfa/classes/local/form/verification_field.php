@@ -82,7 +82,7 @@ class verification_field extends \MoodleQuickForm_text {
      *
      * @return string
      */
-    public function toHtml() {
+    public function toHtml(): string {
         // Empty the value after all attributes decided.
         $this->_attributes['value'] = '';
         $result = parent::toHtml();

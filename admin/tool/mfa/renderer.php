@@ -28,9 +28,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * Returns the state of the factor as a badge
      *
      * @param string $state
-     * @return html
+     * @return string
      */
-    public function get_state_badge($state) {
+    public function get_state_badge(string $state): string {
 
         switch ($state) {
             case \tool_mfa\plugininfo\factor::STATE_PASS:
@@ -57,9 +57,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
     /**
      * Returns a list of factors which a user can add
      *
-     * @return html
+     * @return string
      */
-    public function available_factors() {
+    public function available_factors(): string {
         $html = $this->output->heading(get_string('preferences:availablefactors', 'tool_mfa'), 2);
 
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
@@ -77,10 +77,10 @@ class tool_mfa_renderer extends plugin_renderer_base {
     /**
      * Returns the html section for factor setup
      *
-     * @param   object $factor object of the factor class
-     * @return  void
+     * @param object $factor object of the factor class
+     * @return string
      */
-    public function setup_factor($factor) {
+    public function setup_factor(object $factor): string {
         $html = '';
 
         $html .= html_writer::start_tag('div', ['class' => 'card']);
@@ -105,7 +105,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @return string $html
      * @throws \coding_exception
      */
-    public function active_factors() {
+    public function active_factors(): string {
         global $USER, $CFG;
 
         require_once($CFG->dirroot . '/iplookup/lib.php');
@@ -206,7 +206,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      *
      * @return string $notification
      */
-    public function not_enough_factors() {
+    public function not_enough_factors(): string {
         global $CFG, $SITE;
 
         $notification = \html_writer::tag('h4', get_string('error:notenoughfactors', 'tool_mfa'));
@@ -231,7 +231,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         // Logout button.
         $url = new \moodle_url('/admin/tool/mfa/auth.php', ['logout' => 1]);
-        $btn = new \single_button($url, get_string('logout'), 'post', true);
+        $btn = new \single_button($url, get_string('logout'), 'post', \single_button::BUTTON_PRIMARY);
         $return .= $this->render($btn);
 
         $return .= $this->guide_link();
@@ -245,7 +245,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @param int $lookback the period to view.
      * @return string the HTML for the table
      */
-    public function factors_in_use_table($lookback) {
+    public function factors_in_use_table(int $lookback): string {
         global $DB;
 
         $factors = \tool_mfa\plugininfo\factor::get_factors();
@@ -326,8 +326,8 @@ class tool_mfa_renderer extends plugin_renderer_base {
 
         // Auth rows.
         $authtypes = get_enabled_auth_plugins(true);
+        $row = [];
         foreach ($authtypes as $authtype) {
-            $row = [];
             $row[] = \html_writer::tag('b', $authtype);
 
             // Setup the overall totals columns.
@@ -380,7 +380,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      *
      * @return string the HTML for the table
      */
-    public function factors_locked_table() {
+    public function factors_locked_table(): string {
         global $DB;
 
         $factors = \tool_mfa\plugininfo\factor::get_factors();
@@ -435,7 +435,7 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @param object $factor the factor class
      * @return string the HTML for the table
      */
-    public function factor_locked_users_table($factor) {
+    public function factor_locked_users_table(object $factor): string {
         global $DB;
 
         $table = new html_table();
@@ -509,9 +509,9 @@ class tool_mfa_renderer extends plugin_renderer_base {
     /**
      * Returns a html section render of the guide link template
      *
-     * @return  string
+     * @return string
      */
-    public function guide_link() {
+    public function guide_link(): string {
         if (!get_config('tool_mfa', 'guidance')) {
             return '';
         }
@@ -528,11 +528,12 @@ class tool_mfa_renderer extends plugin_renderer_base {
      * @param HTML_QuickForm_element $element element
      * @param bool $required if input is required field
      * @param bool $advanced if input is an advanced field
-     * @param string $error error message to display
+     * @param string|null $error error message to display
      * @param bool $ingroup True if this element is rendered as part of a group
      * @return mixed string|bool
      */
-    public function mform_element($element, $required, $advanced, $error, $ingroup) {
+    public function mform_element(HTML_QuickForm_element $element, bool $required,
+        bool $advanced, string|null $error, bool $ingroup): string|bool {
         $script = null;
         if ($element instanceof tool_mfa\local\form\verification_field) {
             if ($this->page->pagelayout === 'secure') {

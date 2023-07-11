@@ -16,6 +16,7 @@
 
 namespace factor_nosetup;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -35,7 +36,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
@@ -62,7 +63,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -72,7 +73,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         // Check if user has any other input or setup factors active.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
@@ -91,7 +92,7 @@ class factor extends object_factor_base {
      * @param stdClass $user
      * @return void
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         // We return Neutral here because to support optional rollouts
         // it needs to report neutral or the menu to setup will not display.
         return [\tool_mfa\plugininfo\factor::STATE_NEUTRAL];
@@ -101,10 +102,10 @@ class factor extends object_factor_base {
      * No Setup Factor implementation.
      * The state can never be set. Always return true.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return true;
     }
 
@@ -115,7 +116,7 @@ class factor extends object_factor_base {
      * @param array $combination array of factors that make up the combination
      * @return bool
      */
-    public function check_combination($combination) {
+    public function check_combination(array $combination): bool {
         // If this combination has more than 1 factor that has setup or input, not valid.
         foreach ($combination as $factor) {
             if ($factor->has_setup() || $factor->has_input()) {

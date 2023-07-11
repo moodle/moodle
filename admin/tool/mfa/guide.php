@@ -37,7 +37,7 @@ if (!get_config('tool_mfa', 'guidance')) {
 }
 
 // Navigation. Target user preferences as previous node if authed.
-if (isloggedin() && (!empty($SESSION->tool_mfa_authenticated) || $SESSION->tool_mfa_authenticated)) {
+if (isloggedin() && (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_mfa_authenticated)) {
     if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
         $PAGE->navbar->add($node->get_content(), $node->action());
     }

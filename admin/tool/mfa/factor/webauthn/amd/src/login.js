@@ -25,34 +25,39 @@
 define(['factor_webauthn/utils'], function(utils) {
     return {
         init: function(getArgs) {
-            document.getElementById('id_submitbutton').addEventListener('click', async function(e) {
-                e.preventDefault();
-                if (!navigator.credentials || !navigator.credentials.create) {
-                    throw new Error('Browser not supported.');
-                }
+            const idSubmitButton = document.getElementById('id_submitbutton');
+            if (idSubmitButton) {
+                idSubmitButton.addEventListener('click', async function(e) {
+                    e.preventDefault();
+                    if (!navigator.credentials || !navigator.credentials.create) {
+                        throw new Error('Browser not supported.');
+                    }
 
-                getArgs = JSON.parse(getArgs);
+                    getArgs = JSON.parse(getArgs);
 
-                if (getArgs.success === false) {
-                    throw new Error(getArgs.msg || 'unknown error occured');
-                }
+                    if (getArgs.success === false) {
+                        throw new Error(getArgs.msg || 'unknown error occured');
+                    }
 
-                utils.recursiveBase64StrToArrayBuffer(getArgs);
+                    utils.recursiveBase64StrToArrayBuffer(getArgs);
 
-                const cred = await navigator.credentials.get(getArgs);
+                    const cred = await navigator.credentials.get(getArgs);
 
-                const authenticatorAttestationResponse = {
-                    id: cred.rawId ? utils.arrayBufferToBase64(cred.rawId) : null,
-                    clientDataJSON: cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
-                    authenticatorData:
-                        cred.response.authenticatorData ? utils.arrayBufferToBase64(cred.response.authenticatorData) : null,
-                    signature: cred.response.signature ? utils.arrayBufferToBase64(cred.response.signature) : null,
-                    userHandle: cred.response.userHandle ? utils.arrayBufferToBase64(cred.response.userHandle) : null
-                };
+                    const authenticatorAttestationResponse = {
+                        id: cred.rawId ? utils.arrayBufferToBase64(cred.rawId) : null,
+                        clientDataJSON:
+                            cred.response.clientDataJSON ? utils.arrayBufferToBase64(cred.response.clientDataJSON) : null,
+                        authenticatorData:
+                            cred.response.authenticatorData ? utils.arrayBufferToBase64(cred.response.authenticatorData) : null,
+                        signature: cred.response.signature ? utils.arrayBufferToBase64(cred.response.signature) : null,
+                        userHandle: cred.response.userHandle ? utils.arrayBufferToBase64(cred.response.userHandle) : null
+                    };
 
-                document.getElementById('id_response_input').value = JSON.stringify(authenticatorAttestationResponse);
-                document.getElementById('id_response_input').form.submit();
-            });
+                    const responseInput = document.getElementById('id_response_input');
+                    responseInput.value = JSON.stringify(authenticatorAttestationResponse);
+                    responseInput.form.submit();
+                });
+            }
         }
     };
 });

@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mfa\tests;
+namespace tool_mfa;
+use tool_mfa\tool_mfa_trait;
 
 defined('MOODLE_INTERNAL') || die();
-require_once(__DIR__ . '/tool_mfa_testcase.php');
+require_once(__DIR__ . '/tool_mfa_trait.php');
 
 /**
  * Tests for MFA manager class.
@@ -27,8 +28,16 @@ require_once(__DIR__ . '/tool_mfa_testcase.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class manager_test extends tool_mfa_testcase {
+class manager_test extends \advanced_testcase {
 
+    use tool_mfa_trait;
+
+    /**
+     * Tests getting the factor total weight
+     *
+     * @covers ::get_total_weight
+     * @covers ::setup_user_factor
+     */
     public function test_get_total_weight() {
         $this->resetAfterTest(true);
 
@@ -69,6 +78,11 @@ class manager_test extends tool_mfa_testcase {
         $this->assertEquals(300, \tool_mfa\manager::get_total_weight());
     }
 
+    /**
+     * Tests getting the factor status
+     *
+     * @covers ::get_status
+     */
     public function test_get_status() {
         $this->resetAfterTest(true);
 
@@ -77,21 +91,21 @@ class manager_test extends tool_mfa_testcase {
         $this->setUser($user);
 
         // Check for fail status with no factors.
-        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_FAIL);
+        $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_FAIL, \tool_mfa\manager::get_status());
 
         // Now add a no input factor.
         $this->set_factor_state('auth', 1, 100);
         set_config('goodauth', 'manual', 'factor_auth');
 
         // Check state is now passing.
-        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_PASS);
+        $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_PASS, \tool_mfa\manager::get_status());
 
         // Now add a failure state factor, and ensure that fail takes precedent.
         $this->set_factor_state('email', 1, 100);
         $factoremail = \tool_mfa\plugininfo\factor::get_factor('email');
         $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_FAIL);
 
-        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_FAIL);
+        $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_FAIL, \tool_mfa\manager::get_status());
 
         // Remove no input factor, and remove fail state by logging in/out. Simulates no data entered yet.
         $this->setUser(null);
@@ -99,9 +113,14 @@ class manager_test extends tool_mfa_testcase {
         $this->set_factor_state('auth', 0, 100);
         $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_UNKNOWN);
 
-        $this->assertEquals(\tool_mfa\manager::get_status(), \tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+        $this->assertEquals(\tool_mfa\plugininfo\factor::STATE_NEUTRAL, \tool_mfa\manager::get_status());
     }
 
+    /**
+     * Tests checking if passed enough factors
+     *
+     * @covers ::passed_enough_factors
+     */
     public function test_passed_enough_factors() {
         $this->resetAfterTest(true);
 
@@ -110,27 +129,27 @@ class manager_test extends tool_mfa_testcase {
         $this->setUser($user);
 
         // Check when no factors are setup.
-        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+        $this->assertEquals(false, \tool_mfa\manager::passed_enough_factors());
 
         // Setup a no input factor.
         $this->set_factor_state('auth', 1, 100);
         set_config('goodauth', 'manual', 'factor_auth');
 
         // Check that is enough to pass.
-        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
+        $this->assertEquals(true, \tool_mfa\manager::passed_enough_factors());
 
         // Lower the weight of the factor.
         $this->set_factor_state('auth', 1, 75);
-        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+        $this->assertEquals(false, \tool_mfa\manager::passed_enough_factors());
 
         // Add another factor to get enough weight to pass, but dont set pass state yet.
         $this->set_factor_state('email', 1, 100);
         $factoremail = \tool_mfa\plugininfo\factor::get_factor('email');
-        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), false);
+        $this->assertEquals(false, \tool_mfa\manager::passed_enough_factors());
 
         // Now pass the factor and check weight.
         $factoremail->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-        $this->assertEquals(\tool_mfa\manager::passed_enough_factors(), true);
+        $this->assertEquals(true, \tool_mfa\manager::passed_enough_factors());
     }
 
     /**
@@ -154,15 +173,13 @@ class manager_test extends tool_mfa_testcase {
             ['/admin/tool/mfa/action.php', 'http://test.server/parent/directory', true],
             ['/', 'http://test.server/parent/directory', true, ['url' => $badparam1]],
             ['/', 'http://test.server/parent/directory', true, ['url' => $badparam2]],
-            ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false],
-            ['/admin/tool/securityquestions/set_responses.php', 'http://test.server', false, ['delete' => 1]],
-            ['/admin/tool/securityquestions/randompage.php', 'http://test.server', true, ['delete' => 1]],
         ];
     }
 
     /**
      * Tests whether it should require mfa
      *
+     * @covers ::should_require_mfa
      * @param string $urlstring
      * @param string $webroot
      * @param bool $status
@@ -176,9 +193,14 @@ class manager_test extends tool_mfa_testcase {
         $this->setUser($user);
         $CFG->wwwroot = $webroot;
         $url = new \moodle_url($urlstring, $params);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), $status);
+        $this->assertEquals($status, \tool_mfa\manager::should_require_mfa($url, false));
     }
 
+    /**
+     * Tests whether it should require the mfa checks
+     *
+     * @covers ::should_require_mfa
+     */
     public function test_should_require_mfa_checks() {
         // Setup test and user.
         global $CFG;
@@ -189,61 +211,68 @@ class manager_test extends tool_mfa_testcase {
 
         // Upgrade checks.
         $this->setAdminUser();
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        // Mark the site as upgraded so it will not fail when running the unittest as a whole.
+        $CFG->allversionshash = \core_component::get_all_versions_hash();
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $oldhash = $CFG->allversionshash;
         $CFG->allversionshash = 'abc';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $CFG->allversionshash = $oldhash;
         $upgradesettings = new \moodle_url('/admin/upgradesettings.php');
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($upgradesettings, false), \tool_mfa\manager::NO_REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($upgradesettings, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
 
         // Admin not setup.
         $this->setUser($user);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $CFG->adminsetuppending = 1;
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $CFG->adminsetuppending = 0;
 
         // Check prevent_redirect.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, true), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, true));
 
         // User not setup properly.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $notsetup = clone($user);
         unset($notsetup->firstname);
         $this->setUser($notsetup);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setUser($user);
 
         // Enrolment.
         $enrolurl = new \moodle_url('/enrol/index.php');
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($enrolurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($enrolurl, false));
 
         // Guest User.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setGuestUser();
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setUser($user);
 
         // Forced password changes.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         set_user_preference('auth_forcepasswordchange', true);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         set_user_preference('auth_forcepasswordchange', false);
 
         // Login as check.
         $user2 = $this->getDataGenerator()->create_user();
         $syscontext = \context_system::instance();
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setAdminUser();
         \core\session\manager::loginas($user2->id, $syscontext, false);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($badurl, false), \tool_mfa\manager::NO_REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::NO_REDIRECT, \tool_mfa\manager::should_require_mfa($badurl, false));
         $this->setUser($user);
     }
 
+    /**
+     * Tests should require the mfa redirection loop
+     *
+     * @covers ::should_require_mfa
+     */
     public function test_should_require_mfa_redirection_loop() {
         // Setup test and user.
         global $CFG, $SESSION;
@@ -257,44 +286,50 @@ class manager_test extends tool_mfa_testcase {
         $url = new \moodle_url('/');
 
         // Test you get three redirs then exception.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         // Set count to threshold.
         $SESSION->mfa_redir_count = 5;
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT_EXCEPTION);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT_EXCEPTION, \tool_mfa\manager::should_require_mfa($url, false));
         // Reset session vars.
         unset($SESSION->mfa_redir_referer);
         unset($SESSION->mfa_redir_count);
 
         // Test 4 different redir urls.
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         $_SERVER['HTTP_REFERER'] = 'http://phpunit.test/2';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         $_SERVER['HTTP_REFERER'] = 'http://phpunit3.test/3';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         $_SERVER['HTTP_REFERER'] = 'http://phpunit4.test/4';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         // Reset session vars.
         unset($SESSION->mfa_redir_referer);
         unset($SESSION->mfa_redir_count);
 
         // Test 6 then jump to new referer (5 + 1 to set the first time).
         $_SERVER['HTTP_REFERER'] = 'http://phpunit.test';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
 
         $_SERVER['HTTP_REFERER'] = 'http://phpunit.test/2';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
         // Now test that going back to original URL doesnt cause exception.
         $_SERVER['HTTP_REFERER'] = 'http://phpunit.test';
-        $this->assertEquals(\tool_mfa\manager::should_require_mfa($url, false), \tool_mfa\manager::REDIRECT);
+        $this->assertEquals(\tool_mfa\manager::REDIRECT, \tool_mfa\manager::should_require_mfa($url, false));
     }
 
+    /**
+     * Tests checking for possible setup factor
+     *
+     * @covers ::possible_factor_setup
+     * @covers ::setup_user_factor
+     */
     public function test_possible_factor_setup() {
         // Setup test and user.
         $this->resetAfterTest(true);
@@ -325,6 +360,11 @@ class manager_test extends tool_mfa_testcase {
         set_config('enabled', 0, 'factor_admin');
     }
 
+    /**
+     * Tests checking if a factor is ready
+     *
+     * @covers ::is_ready
+     */
     public function test_is_ready() {
         // Setup test and user.
         global $CFG;
@@ -360,6 +400,12 @@ class manager_test extends tool_mfa_testcase {
         set_config('enabled', 1, 'factor_nosetup');
     }
 
+    /**
+     * Tests core hooks
+     *
+     * @covers ::mfa_config_hook_test
+     * @covers ::mfa_login_hook_test
+     */
     public function test_core_hooks() {
         // Setup test and user.
         global $CFG, $SESSION;
@@ -374,6 +420,11 @@ class manager_test extends tool_mfa_testcase {
         $this->assertTrue($SESSION->mfa_login_hook_test);
     }
 
+    /**
+     * Tests circular redirect auth
+     *
+     * @covers ::should_require_mfa
+     */
     public function test_circular_redirect_auth() {
         // Setup test and user.
         $this->resetAfterTest(true);
@@ -388,7 +439,7 @@ class manager_test extends tool_mfa_testcase {
         $this->assertEquals(\tool_mfa\manager::REDIRECT,
             \tool_mfa\manager::should_require_mfa($baseurl, false));
 
-        // Now hammer it up to the threshold to emulate a repeated force browse from auth.php
+        // Now hammer it up to the threshold to emulate a repeated force browse from auth.php.
         for ($i = 0; $i < \tool_mfa\manager::REDIR_LOOP_THRESHOLD; $i++) {
             \tool_mfa\manager::should_require_mfa($baseurl, false);
         }

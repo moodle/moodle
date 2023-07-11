@@ -16,6 +16,8 @@
 
 namespace factor_email\event;
 
+use stdClass;
+
 /**
  * Event for when a user receives an unauthorised email from MFA.
  *
@@ -37,11 +39,11 @@ class unauth_email extends \core\event\base {
      * @param string $ip the ip address the unauthorised email came from.
      * @param string $useragent the browser fingerpring the unauthorised email came from.
      *
-     * @return user_passed_mfa the user_passed_mfa event
+     * @return \core\event\base the user_passed_mfa event
      *
      * @throws \coding_exception
      */
-    public static function unauth_email_event($user, $ip, $useragent) {
+    public static function unauth_email_event(stdClass $user, string $ip, string $useragent): \core\event\base {
 
         $data = [
             'relateduserid' => null,
@@ -61,7 +63,7 @@ class unauth_email extends \core\event\base {
      *
      * @return void
      */
-    protected function init() {
+    protected function init(): void {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -71,9 +73,12 @@ class unauth_email extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
-        return "The user with id '{$this->other['userid']}' made an unauthorised login attempt using email verification from
-            IP '{$this->other['ip']}' with browser agent '{$this->other['useragent']}'.";
+    public function get_description(): string {
+        $data = new stdClass();
+        $data->userid = $this->other['userid'];
+        $data->ip = $this->other['ip'];
+        $data->useragent = $this->other['useragent'];
+        return get_string('unauthloginattempt', 'factor_email', $data);
     }
 
     /**
@@ -82,7 +87,7 @@ class unauth_email extends \core\event\base {
      * @return string
      * @throws \coding_exception
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:unauthemail', 'factor_email');
     }
 }

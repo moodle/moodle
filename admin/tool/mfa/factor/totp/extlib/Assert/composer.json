@@ -1,0 +1,23 @@
+{
+    "name": "beberlei/assert",
+    "description": "Thin assertion library for input validation in business models.",
+    "authors": [
+        {"name": "Benjamin Eberlei", "email": "kontakt@beberlei.de"}
+    ],
+    "license": "BSD-2-Clause",
+    "keywords": ["assert", "assertion", "validation"],
+    "require": {
+        "ext-mbstring": "*"
+    },
+    "autoload": {
+        "psr-0": {
+            "Assert": "lib/"
+        },
+        "files": ["lib/Assert/functions.php"]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
+    }
+}

@@ -35,7 +35,7 @@ class delete_unusable_factors extends \core\task\scheduled_task {
      *
      * @return string
      */
-    public function get_name() {
+    public function get_name(): string {
         return get_string('deleteunusablefactors', 'factor_nosetup');
     }
 
@@ -44,7 +44,7 @@ class delete_unusable_factors extends \core\task\scheduled_task {
      *
      * @return void
      */
-    public function execute() {
+    public function execute(): void {
         mtrace('Starting to revoke unusable Nosetup factors');
         $this->revoke_factors();
     }
@@ -54,7 +54,7 @@ class delete_unusable_factors extends \core\task\scheduled_task {
      *
      * @return void
      */
-    private function revoke_factors() {
+    private function revoke_factors(): void {
         global $DB;
 
         $factorobject = \tool_mfa\plugininfo\factor::get_factor('nosetup');

@@ -35,7 +35,7 @@ class revoke_expired_factors extends \core\task\scheduled_task {
      *
      * @return string
      */
-    public function get_name() {
+    public function get_name(): string {
         return get_string('revokeexpiredfactors', 'factor_grace');
     }
 
@@ -44,7 +44,7 @@ class revoke_expired_factors extends \core\task\scheduled_task {
      *
      * @return void
      */
-    public function execute() {
+    public function execute(): void {
         mtrace('Starting to revoke expired Grace factors');
         $this->revoke_factors();
     }
@@ -54,7 +54,7 @@ class revoke_expired_factors extends \core\task\scheduled_task {
      *
      * @return void
      */
-    private function revoke_factors() {
+    private function revoke_factors(): void {
         global $DB;
 
         // If config is not set, pull out.

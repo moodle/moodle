@@ -16,6 +16,8 @@
 
 namespace tool_mfa\plugininfo;
 
+use stdClass;
+
 /**
  * Subplugin info class.
  *
@@ -46,7 +48,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return array of factor objects.
      */
-    public static function get_factors() {
+    public static function get_factors(): array {
         $return = [];
         $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
 
@@ -66,7 +68,7 @@ class factor extends \core\plugininfo\base {
      * @return array of factor objects
      * @throws \dml_exception
      */
-    public static function sort_factors_by_order($unsorted) {
+    public static function sort_factors_by_order(array $unsorted): array {
         $sorted = [];
         $orderarray = explode(',', get_config('tool_mfa', 'factor_order'));
 
@@ -90,7 +92,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return mixed factor object or false if factor not found.
      */
-    public static function get_factor($name) {
+    public static function get_factor(string $name): object|bool {
         $factors = \core_plugin_manager::instance()->get_plugins_of_type('factor');
 
         foreach ($factors as $factor) {
@@ -110,7 +112,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return array of factor objects
      */
-    public static function get_enabled_factors() {
+    public static function get_enabled_factors(): array {
         $return = [];
         $factors = self::get_factors();
 
@@ -128,7 +130,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return array of factor objects.
      */
-    public static function get_active_user_factor_types() {
+    public static function get_active_user_factor_types(): array {
         global $USER;
         $return = [];
         $factors = self::get_enabled_factors();
@@ -149,7 +151,7 @@ class factor extends \core\plugininfo\base {
      * @param stdClass $user the user to get types for.
      * @return array of factor objects.
      */
-    public static function get_active_other_user_factor_types($user) {
+    public static function get_active_other_user_factor_types(stdClass $user): array {
         $return = [];
         $factors = self::get_enabled_factors();
 
@@ -168,7 +170,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return mixed factor object the next factor to be authenticated or false.
      */
-    public static function get_next_user_factor() {
+    public static function get_next_user_factor(): object {
         $factors = self::get_active_user_factor_types();
 
         foreach ($factors as $factor) {
@@ -189,7 +191,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return array
      */
-    public static function get_factor_actions() {
+    public static function get_factor_actions(): array {
         $actions = [];
         $actions[] = 'setup';
         $actions[] = 'revoke';
@@ -212,7 +214,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return null|bool
      */
-    public function is_enabled() {
+    public function is_enabled(): null|bool {
         if (!$this->rootdir) {
             // Plugin missing.
             return false;
@@ -232,7 +234,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return string
      */
-    public function get_settings_section_name() {
+    public function get_settings_section_name(): string {
         return $this->type . '_' . $this->name;
     }
 
@@ -246,7 +248,7 @@ class factor extends \core\plugininfo\base {
      * @param string $parentnodename
      * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
+    public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig): void {
 
         if (!$this->is_installed_and_upgraded()) {
             return;
@@ -274,7 +276,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return bool
      */
-    public static function factor_exists($factorname) {
+    public static function factor_exists(string $factorname): bool {
         $factor = self::get_factor($factorname);
         return !$factor ? false : true;
     }
@@ -286,7 +288,7 @@ class factor extends \core\plugininfo\base {
      *
      * @return stdClass|null Factor instance or nothing if not found.
      */
-    public static function get_instance_from_id($factorid) {
+    public static function get_instance_from_id(int $factorid): stdClass|null {
         global $DB;
         return $DB->get_record('tool_mfa', ['id' => $factorid]);
     }

@@ -19,6 +19,7 @@ namespace factor_cohort;
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../../../../../../cohort/lib.php');
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -38,7 +39,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
         if (!empty($records)) {
@@ -64,7 +65,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -74,7 +75,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         global $USER;
         $cohortstring = get_config('factor_cohort', 'cohorts');
         // Nothing selected, everyone passes.
@@ -97,10 +98,10 @@ class factor extends object_factor_base {
      * cohort implementation.
      * Cannot set state, return true.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return true;
     }
 
@@ -108,9 +109,9 @@ class factor extends object_factor_base {
      * cohort implementation.
      * User can not influence. Result is whatever current state is.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [$this->get_state()];
     }
 
@@ -120,20 +121,33 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_summary_condition() {
-        global $DB;
+    public function get_summary_condition(): string {
         $selectedcohorts = get_config('factor_cohort', 'cohorts');
         if (empty($selectedcohorts)) {
             return get_string('summarycondition', 'factor_cohort', get_string('none'));
-        } else {
-            $selectedcohorts = explode(',', $selectedcohorts);
         }
-        $names = [];
-        foreach ($selectedcohorts as $cohort) {
-                $record = $DB->get_record('cohort', ['id' => $cohort]);
-                $names[] = $record->name;
+
+        $selectedcohorts = $this->get_cohorts(explode(',', $selectedcohorts));
+        if (empty($selectedcohorts)) {
+            return get_string('summarycondition', 'factor_cohort', get_string('none'));
         }
-        $string = implode(', ', $names);
-        return get_string('summarycondition', 'factor_cohort', $string);
+
+        return get_string('summarycondition', 'factor_cohort', implode(', ', $selectedcohorts));
+    }
+
+    /**
+     * Get array of the selected cohorts.
+     *
+     * @param array $selectedcohorts
+     * @return array
+     */
+    public function get_cohorts(array $selectedcohorts) : array {
+        global $DB;
+
+        [$insql, $inparams] = $DB->get_in_or_equal($selectedcohorts);
+        $sql = "SELECT id, name FROM {cohort} WHERE id $insql";
+        $cohorts = $DB->get_records_sql_menu($sql, $inparams);
+
+        return $cohorts;
     }
 }

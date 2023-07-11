@@ -16,6 +16,7 @@
 
 namespace factor_role;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -35,7 +36,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
@@ -62,7 +63,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -72,7 +73,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         global $USER;
         $rolestring = get_config('factor_role', 'roles');
 
@@ -114,10 +115,10 @@ class factor extends object_factor_base {
      * Role implementation.
      * Cannot set state, return true.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return true;
     }
 
@@ -125,9 +126,10 @@ class factor extends object_factor_base {
      * Role implementation.
      * User can not influence. Result is whatever current state is.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
+     * @return array
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [$this->get_state()];
     }
 
@@ -137,27 +139,46 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_summary_condition() {
-        global $DB;
-
+    public function get_summary_condition(): string {
         $selectedroles = get_config('factor_role', 'roles');
         if (empty($selectedroles)) {
             return get_string('summarycondition', 'factor_role', get_string('none'));
-        } else {
-            $selectedroles = explode(',', $selectedroles);
         }
 
-        $names = [];
-        foreach ($selectedroles as $role) {
-            if ($role === 'admin') {
-                $names[] = get_string('administrator');
-            } else {
-                $record = $DB->get_record('role', ['id' => $role]);
-                $names[] = role_get_name($record);
+        $selectedroles = $this->get_roles(explode(',', $selectedroles));
+        if (empty($selectedroles)) {
+            return get_string('summarycondition', 'factor_role', get_string('none'));
+        }
+
+        return get_string('summarycondition', 'factor_role', implode(', ', $selectedroles));
+    }
+
+    /**
+     * Get array of the selected role name.
+     *
+     * @param array $selectedroles
+     * @return array
+     */
+    public function get_roles(array $selectedroles) : array {
+        global $DB;
+
+        $roles = [];
+
+        // Checks for admin role and gets its role name.
+        if (($key = array_search('admin', $selectedroles)) !== false) {
+            $roles[] = get_string('administrator');
+            unset($selectedroles[$key]);
+        }
+
+        // Gets role name for all non admin roles.
+        if (count($selectedroles) > 0) {
+            [$insql, $inparams] = $DB->get_in_or_equal($selectedroles);
+            $otherroles = $DB->get_records_select('role', 'id ' . $insql, $inparams);
+            foreach ($otherroles as $role) {
+                $roles[] = role_get_name($role);
             }
         }
 
-        $string = implode(', ', $names);
-        return get_string('summarycondition', 'factor_role', $string);
+        return $roles;
     }
 }

@@ -23,6 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\context;
+
 /**
  * Main hook.
  *
@@ -37,7 +39,7 @@
  * @throws \moodle_exception
  */
 function tool_mfa_after_require_login($courseorid = null, $autologinguest = null, $cm = null,
-    $setwantsurltome = null, $preventredirect = null) {
+    $setwantsurltome = null, $preventredirect = null): void {
 
     global $SESSION;
     // Tests for hooks being fired to test patches.
@@ -59,10 +61,10 @@ function tool_mfa_after_require_login($courseorid = null, $autologinguest = null
  * @param stdClass $course
  * @param context_course $coursecontext
  *
- * @return void or null
+ * @return mix void or null
  * @throws \moodle_exception
  */
-function tool_mfa_extend_navigation_user_settings($navigation, $user, $usercontext, $course, $coursecontext) {
+function tool_mfa_extend_navigation_user_settings(navigation_node $navigation, stdClass $user, $usercontext, stdClass $course, $coursecontext) {
     global $PAGE;
 
     // Only inject if user is on the preferences page.
@@ -83,8 +85,10 @@ function tool_mfa_extend_navigation_user_settings($navigation, $user, $userconte
 /**
  * Triggered as soon as practical on every moodle bootstrap after config has
  * been loaded. The $USER object is available at this point too.
+ *
+ * @return void
  */
-function tool_mfa_after_config() {
+function tool_mfa_after_config(): void {
     global $CFG, $SESSION;
 
     // Tests for hooks being fired to test patches.
@@ -104,8 +108,10 @@ function tool_mfa_after_config() {
 
 /**
  * Any plugin typically an admin tool can add new bulk user actions
+ *
+ * @return array
  */
-function tool_mfa_bulk_user_actions() {
+function tool_mfa_bulk_user_actions(): array {
     return [
         'tool_mfa_reset_factors' => new action_link(
             new moodle_url('/admin/tool/mfa/reset_factor.php'),
@@ -126,7 +132,8 @@ function tool_mfa_bulk_user_actions() {
  * @param array $options
  * @return bool
  */
-function tool_mfa_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+function tool_mfa_pluginfile(stdClass $course, stdClass $cm, context $context, string $filearea,
+    array $args, bool $forcedownload, array $options = []): bool {
     // Hardcode to only send guidance files from the top level.
     $fs = get_file_storage();
     $file = $fs->get_file(

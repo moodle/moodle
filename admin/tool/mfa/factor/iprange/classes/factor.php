@@ -16,6 +16,7 @@
 
 namespace factor_iprange;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -35,7 +36,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
@@ -62,7 +63,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -72,7 +73,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         $safeips = get_config('factor_iprange', 'safeips');
 
         // TODO: Check for failures here.
@@ -90,10 +91,10 @@ class factor extends object_factor_base {
      * IP Range Factor implementation.
      * Cannot set state, return true.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return true;
     }
 
@@ -102,9 +103,9 @@ class factor extends object_factor_base {
      * User can influence state prior to login.
      * Possible states are either neutral or pass.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,

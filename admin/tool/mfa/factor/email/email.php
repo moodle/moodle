@@ -88,7 +88,7 @@ if ($form->is_cancelled()) {
 
         // Suspend user account.
         if (get_config('factor_email', 'suspend')) {
-            $DB->set_field('user', 'suspended', 1, ['id' => $userid]);
+            $DB->set_field('user', 'suspended', 1, ['id' => $user->id]);
         }
 
         $message = get_string('email:revokesuccess', 'factor_email', fullname($user));

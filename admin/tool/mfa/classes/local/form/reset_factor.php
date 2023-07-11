@@ -32,7 +32,7 @@ class reset_factor extends \moodleform {
     /**
      * Form definition.
      */
-    public function definition() {
+    public function definition(): void {
         $mform = $this->_form;
         $factors = $this->_customdata['factors'];
         $bulkaction = $this->_customdata['bulk'];

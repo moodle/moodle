@@ -34,7 +34,7 @@ class revoke_factor_form extends \moodleform {
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition() {
+    public function definition(): void {
         global $OUTPUT;
         $mform = $this->_form;
         $factorname = $this->_customdata['factorname'];

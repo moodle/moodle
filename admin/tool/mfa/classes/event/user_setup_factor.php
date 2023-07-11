@@ -16,6 +16,8 @@
 
 namespace tool_mfa\event;
 
+use stdClass;
+
 /**
  * Event for when user successfully setup new MFA Factor.
  *
@@ -33,14 +35,14 @@ class user_setup_factor extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param object $user the User object of the User who has setup new factor
+     * @param stdClass $user the User object of the User who has setup new factor
      * @param string $factorname setup factor
      *
-     * @return user_passed_mfa the user_passed_mfa event
+     * @return self the related event
      *
      * @throws \coding_exception
      */
-    public static function user_setup_factor_event($user, $factorname) {
+    public static function user_setup_factor_event(stdClass $user, $factorname): self {
 
         $data = [
             'relateduserid' => null,
@@ -59,7 +61,7 @@ class user_setup_factor extends \core\event\base {
      *
      * @return void
      */
-    protected function init() {
+    protected function init(): void {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -69,7 +71,7 @@ class user_setup_factor extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
+    public function get_description(): string {
         return "The user with id '{$this->other['userid']}' successfully setup {$this->other['factorname']}";
     }
 
@@ -79,7 +81,7 @@ class user_setup_factor extends \core\event\base {
      * @return string
      * @throws \coding_exception
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:usersetupfactor', 'tool_mfa');
     }
 }

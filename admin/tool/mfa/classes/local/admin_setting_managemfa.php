@@ -43,9 +43,9 @@ class admin_setting_managemfa extends \admin_setting {
     /**
      * Always returns true
      *
-     * @return true
+     * @return bool
      */
-    public function get_setting() {
+    public function get_setting(): bool {
         return true;
     }
 
@@ -55,7 +55,7 @@ class admin_setting_managemfa extends \admin_setting {
      * @param mixed $data
      * @return string Always returns ''
      */
-    public function write_setting($data) {
+    public function write_setting($data): string {
         return '';
     }
 
@@ -69,7 +69,7 @@ class admin_setting_managemfa extends \admin_setting {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public function output_html($data, $query='') {
+    public function output_html($data, $query=''): string {
         global $OUTPUT;
 
         $return = $OUTPUT->box_start('generalbox');

@@ -65,7 +65,7 @@ class login_form extends \moodleform {
      * {@inheritDoc}
      * @see moodleform::definition()
      */
-    public function definition() {
+    public function definition(): void {
         $mform = $this->_form;
         $factor = $this->_customdata['factor'];
         $mform = $factor->login_form_definition($mform);
@@ -74,8 +74,10 @@ class login_form extends \moodleform {
 
     /**
      * Invokes factor login_form_definition_after_data() method after form data has been set.
+     *
+     * @return void
      */
-    public function definition_after_data() {
+    public function definition_after_data(): void {
         $mform = $this->_form;
         $factor = $this->_customdata['factor'];
 

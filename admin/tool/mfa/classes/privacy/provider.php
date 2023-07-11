@@ -103,8 +103,9 @@ class provider implements
      * Gets the list of users who have data with a context. Secrets context is a subset of this table.
      *
      * @param userlist $userlist the userlist containing users who have data in this context.
+     * @return void
      */
-    public static function get_users_in_context(userlist $userlist) {
+    public static function get_users_in_context(userlist $userlist): void {
         $context = $userlist->get_context();
         // If current context is system, all users are contained within, get all users.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -119,8 +120,9 @@ class provider implements
      * Exports all data stored in provided contexts for user. Secrets should not be exported as they are transient.
      *
      * @param approved_contextlist $contextlist the list of contexts to export for.
+     * @return void
      */
-    public static function export_user_data(approved_contextlist $contextlist) {
+    public static function export_user_data(approved_contextlist $contextlist): void {
         global $DB;
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist as $context) {
@@ -166,8 +168,9 @@ class provider implements
      * Deletes data for all users in context.
      *
      * @param context $context The context to delete for.
+     * @return void
      */
-    public static function delete_data_for_all_users_in_context(\context $context) {
+    public static function delete_data_for_all_users_in_context(\context $context): void {
         global $DB;
         // All data contained in system context.
         if ($context->contextlevel == CONTEXT_SYSTEM) {
@@ -181,8 +184,9 @@ class provider implements
      * Deletes all data in all provided contexts for user.
      *
      * @param approved_contextlist $contextlist the list of contexts to delete for.
+     * @return void
      */
-    public static function delete_data_for_user(approved_contextlist $contextlist) {
+    public static function delete_data_for_user(approved_contextlist $contextlist): void {
         global $DB;
         $userid = $contextlist->get_user()->id;
         foreach ($contextlist as $context) {
@@ -199,8 +203,9 @@ class provider implements
      * Given a userlist, deletes all data in all provided contexts for the users
      *
      * @param approved_userlist $userlist the list of users to delete data for
+     * @return void
      */
-    public static function delete_data_for_users(approved_userlist $userlist) {
+    public static function delete_data_for_users(approved_userlist $userlist): void {
         $users = $userlist->get_users();
         foreach ($users as $user) {
             // Create contextlist.

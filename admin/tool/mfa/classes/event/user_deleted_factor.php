@@ -16,6 +16,8 @@
 
 namespace tool_mfa\event;
 
+use stdClass;
+
 /**
  * Event for when user factor is deleted.
  *
@@ -37,11 +39,11 @@ class user_deleted_factor extends \core\event\base {
      * @param stdClass $deleteuser the user who performed the factor delete.
      * @param string $factorname deleted factor
      *
-     * @return user_factor_deleted the user_factor_deleted event
+     * @return \core\event\base the user_factor_deleted event
      *
      * @throws \coding_exception
      */
-    public static function user_deleted_factor_event($user, $deleteuser, $factorname) {
+    public static function user_deleted_factor_event(stdClass $user, $deleteuser, $factorname): \core\event\base {
 
         $data = [
             'relateduserid' => $user->id,
@@ -61,7 +63,7 @@ class user_deleted_factor extends \core\event\base {
      *
      * @return void
      */
-    protected function init() {
+    protected function init(): void {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -71,7 +73,7 @@ class user_deleted_factor extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
+    public function get_description(): string {
         // The log message changed from logging the deleter user object to the ID. This must be kept for backwards compat
         // With old log events.
         if (is_object($this->other['delete'])) {
@@ -89,7 +91,7 @@ class user_deleted_factor extends \core\event\base {
      * @return string
      * @throws \coding_exception
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:userdeletedfactor', 'tool_mfa');
     }
 }

@@ -14,11 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mfa\tests;
+namespace tool_mfa;
+use tool_mfa\tool_mfa_trait;
 
 defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/tool_mfa_testcase.php');
+require_once(__DIR__ . '/tool_mfa_trait.php');
 
 /**
  * Tests for MFA admin settings
@@ -29,8 +29,15 @@ require_once(__DIR__ . '/tool_mfa_testcase.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class admin_setting_managemfa_test extends tool_mfa_testcase {
+class admin_setting_managemfa_test extends \advanced_testcase {
 
+    use tool_mfa_trait;
+
+    /**
+     * Tests getting the factor combinations
+     *
+     * @covers ::get_factor_combinations
+     */
     public function test_get_factor_combinations_default() {
         $namagemfa = new \tool_mfa\local\admin_setting_managemfa();
         $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
@@ -39,7 +46,12 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
         $this->assertEquals(0, count($combinations));
     }
 
-    public function test_get_factor_combinations_provider() {
+    /**
+     * Data provider for test_get_factor_combinations_with_data_provider().
+     *
+     * @return array
+     */
+    public function get_factor_combinations_provider() {
         $provider = [];
 
         $factors = [];
@@ -122,9 +134,10 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
     }
 
     /**
-     * Tests getting the factor combinations
+     * Tests getting the factor combinations with data provider
      *
-     * @dataProvider test_get_factor_combinations_provider
+     * @covers ::get_factor_combinations
+     * @dataProvider get_factor_combinations_provider
      * @param array $factorset configured factors
      * @param int $combinationscount expected count of available combinations
      */
@@ -156,6 +169,11 @@ class admin_setting_managemfa_test extends tool_mfa_testcase {
         $this->assertEquals($combinationscount, count($combinations));
     }
 
+    /**
+     * Tests checking the factor combinations
+     *
+     * @covers ::get_factor_combinations
+     */
     public function test_factor_combination_checker() {
         $this->resetAfterTest();
         $managemfa = new \tool_mfa\local\admin_setting_managemfa();

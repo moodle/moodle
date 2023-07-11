@@ -16,6 +16,8 @@
 
 namespace tool_mfa\event;
 
+use stdClass;
+
 /**
  * Event for when user successfully passed all MFA factor checks.
  *
@@ -33,13 +35,13 @@ class user_failed_mfa extends \core\event\base {
     /**
      * Create instance of event.
      *
-     * @param int $user the User object of the User who failed MFA authentication.
+     * @param stdClass $user the User object of the User who failed MFA authentication.
      *
      * @return user_failed_mfa the user_passed_mfa event
      *
      * @throws \coding_exception
      */
-    public static function user_failed_mfa_event($user) {
+    public static function user_failed_mfa_event(stdClass $user): user_failed_mfa {
         // Build debug info string.
         $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
         $debug = '';
@@ -71,7 +73,7 @@ class user_failed_mfa extends \core\event\base {
      *
      * @return void
      */
-    protected function init() {
+    protected function init(): void {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
@@ -81,7 +83,7 @@ class user_failed_mfa extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
+    public function get_description(): string {
         return "The user with id '{$this->other['userid']}' failed authenticating with MFA.
             <br> Information: {$this->other['failurereason']}{$this->other['debug']}";
     }
@@ -92,7 +94,7 @@ class user_failed_mfa extends \core\event\base {
      * @return string
      * @throws \coding_exception
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:userfailedmfa', 'tool_mfa');
     }
 }

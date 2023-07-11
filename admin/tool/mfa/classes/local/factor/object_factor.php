@@ -25,6 +25,8 @@
 
 namespace tool_mfa\local\factor;
 
+use stdClass;
+
 interface object_factor {
 
     /**
@@ -33,7 +35,7 @@ interface object_factor {
      * @return bool
      * @throws \dml_exception
      */
-    public function is_enabled();
+    public function is_enabled(): bool;
 
     /**
      * Returns configured factor weight.
@@ -41,7 +43,7 @@ interface object_factor {
      * @return int
      * @throws \dml_exception
      */
-    public function get_weight();
+    public function get_weight(): int;
 
     /**
      * Returns factor name from language string.
@@ -49,7 +51,7 @@ interface object_factor {
      * @return string
      * @throws \coding_exception
      */
-    public function get_display_name();
+    public function get_display_name(): string;
 
     /**
      * Returns factor info from language string.
@@ -57,7 +59,7 @@ interface object_factor {
      * @return string
      * @throws \coding_exception
      */
-    public function get_info();
+    public function get_info(): string;
 
     /**
      * Defines setup_factor form definition page for particular factor.
@@ -66,7 +68,7 @@ interface object_factor {
      * @return object $mform
      * @throws \coding_exception
      */
-    public function setup_factor_form_definition($mform);
+    public function setup_factor_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm;
 
     /**
      * Defines setup_factor form definition page after form data has been set.
@@ -75,7 +77,7 @@ interface object_factor {
      * @return object $mform
      * @throws \coding_exception
      */
-    public function setup_factor_form_definition_after_data($mform);
+    public function setup_factor_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm;
 
     /**
      * Implements setup_factor form validation for particular factor.
@@ -84,7 +86,7 @@ interface object_factor {
      * @param array $data
      * @return array
      */
-    public function setup_factor_form_validation($data);
+    public function setup_factor_form_validation(array $data): array;
 
     /**
      * Defines login form definition page for particular factor.
@@ -93,7 +95,7 @@ interface object_factor {
      * @return object $mform
      * @throws \coding_exception
      */
-    public function login_form_definition($mform);
+    public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm;
 
     /**
      * Defines login form definition page after form data has been set.
@@ -102,7 +104,7 @@ interface object_factor {
      * @return object $mform
      * @throws \coding_exception
      */
-    public function login_form_definition_after_data($mform);
+    public function login_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm;
 
     /**
      * Implements login form validation for particular factor.
@@ -111,16 +113,16 @@ interface object_factor {
      * @param array $data
      * @return array
      */
-    public function login_form_validation($data);
+    public function login_form_validation(array $data): array;
 
     /**
      * Setups given factor and adds it to user's active factors list.
      * Returns true if factor has been successfully added, otherwise false.
      *
-     * @param array $data
-     * @return stdClass the factor record, or null.
+     * @param stdClass $data
+     * @return stdClass|null the factor record, or null.
      */
-    public function setup_user_factor($data);
+    public function setup_user_factor(stdClass $data): stdClass|null;
 
     /**
      * Returns an array of all user factors of given type (both active and revoked).
@@ -128,7 +130,7 @@ interface object_factor {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user);
+    public function get_all_user_factors(stdClass $user): array;
 
     /**
      * Returns an array of active user factor records.
@@ -137,7 +139,7 @@ interface object_factor {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_active_user_factors($user);
+    public function get_active_user_factors(stdClass $user): array;
 
     /**
      * Returns true if factor class has factor records that might be revoked.
@@ -145,7 +147,7 @@ interface object_factor {
      *
      * @return bool
      */
-    public function has_revoke();
+    public function has_revoke(): bool;
 
     /**
      * Marks factor record as revoked.
@@ -154,97 +156,98 @@ interface object_factor {
      * @param int $factorid
      * @return bool
      */
-    public function revoke_user_factor($factorid);
+    public function revoke_user_factor(?int $factorid = null): bool;
 
     /**
      * When validation code is correct - update lastverified field for given factor.
      * If factor id is not provided, update all factor entries for user.
      *
      * @param int $factorid
-     * @return bool
+     * @return bool|\dml_exception
      */
-    public function update_lastverified($factorid);
+    public function update_lastverified(?int $factorid = null): bool|\dml_exception;
 
     /**
      * Gets lastverified timestamp.
      *
      * @param int $factorid
-     * @return int
+     * @return int|bool
      */
-    public function get_lastverified($factorid);
+    public function get_lastverified(int $factorid): int|bool;
 
     /**
      * Returns true if factor needs to be setup by user and has setup_form.
      *
      * @return bool
      */
-    public function has_setup();
+    public function has_setup(): bool;
 
     /**
      * If has_setup returns true, decides if the setup buttons should be shown on the preferences page.
      *
      * @return bool
      */
-    public function show_setup_buttons();
+    public function show_setup_buttons(): bool;
 
     /**
      * Returns true if factor requires user input for success or failure during login.
      *
      * @return bool
      */
-    public function has_input();
+    public function has_input(): bool;
 
     /**
      * Returns the state of the factor check
      *
-     * @return mixed
+     * @return string
      */
-    public function get_state();
+    public function get_state(): string;
 
     /**
      * Sets the state of the factor check into the session.
      * Returns whether storing the var was successful.
      *
-     * @param mixed $state
+     * @param string $state
      * @return bool
      */
-    public function set_state($state);
+    public function set_state(string $state): bool;
 
     /**
      * Fires any additional actions required by the factor once the user reaches the pass state.
      *
      * @return void
      */
-    public function post_pass_state();
+    public function post_pass_state(): void;
 
     /**
      * Retrieves label for a factorid.
      *
      * @param int $factorid
-     * @return string
+     * @return string|\dml_exception
      */
-    public function get_label($factorid);
+    public function get_label(int $factorid): string|\dml_exception;
 
     /**
      * Returns a list of urls to not redirect from.
      *
      * @return array
      */
-    public function get_no_redirect_urls();
+    public function get_no_redirect_urls(): array;
 
     /**
      * Returns all possible states for a user.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
+     * @return array
      */
-    public function possible_states($user);
+    public function possible_states(stdClass $user): array;
 
     /**
      * Return summary condition for passing factor.
      *
-     * @return array
+     * @return string
      */
-    public function get_summary_condition();
+    public function get_summary_condition(): string;
 
     /**
      * Checks whether the factor combination is valid based on factor behaviour.
@@ -254,28 +257,29 @@ interface object_factor {
      * @param array $combination array of factors that make up the combination
      * @return bool
      */
-    public function check_combination($combination);
+    public function check_combination(array $combination): bool;
 
     /**
      * Gets the string for setup button on preferences page.
      *
      * @return string the string to display on the button.
      */
-    public function get_setup_string();
+    public function get_setup_string(): string;
 
     /**
      * Deletes all instances of a factor for user.
      *
      * @param stdClass $user the user to delete for.
+     * @return void
      */
-    public function delete_factor_for_user($user);
+    public function delete_factor_for_user(stdClass $user): void;
 
     /**
      * Process a cancel action from a user.
      *
      * @return void
      */
-    public function process_cancel_action();
+    public function process_cancel_action(): void;
 
     /**
      * Hook point for global auth form action hooks.
@@ -283,7 +287,7 @@ interface object_factor {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
-    public function global_definition($mform);
+    public function global_definition(\MoodleQuickForm $mform): void;
 
     /**
      * Hook point for global auth form action hooks.
@@ -291,7 +295,7 @@ interface object_factor {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
-    public function global_definition_after_data($mform);
+    public function global_definition_after_data(\MoodleQuickForm $mform): void;
 
     /**
      * Hook point for global auth form action hooks.
@@ -300,12 +304,13 @@ interface object_factor {
      * @param array $files Files form the form.
      * @return array of errors from validation.
      */
-    public function global_validation($data, $files): array;
+    public function global_validation(array $data, array $files): array;
 
     /**
      * Hook point for global auth form action hooks.
      *
      * @param object $data Data from the form.
+     * @return void
      */
-    public function global_submit($data);
+    public function global_submit(object $data): void;
 }

@@ -16,6 +16,7 @@
 
 namespace factor_email;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -35,7 +36,7 @@ class factor extends object_factor_base {
      * @param \MoodleQuickForm $mform
      * @return object $mform
      */
-    public function login_form_definition($mform) {
+    public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
 
         $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
         $mform->setType('verificationcode', PARAM_ALPHANUM);
@@ -48,7 +49,7 @@ class factor extends object_factor_base {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return object $mform
      */
-    public function login_form_definition_after_data($mform) {
+    public function login_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm {
         $this->generate_and_email_code();
         return $mform;
     }
@@ -57,8 +58,9 @@ class factor extends object_factor_base {
      * Sends and e-mail to user with given verification code.
      *
      * @param int $instanceid
+     * @return void
      */
-    public static function email_verification_code($instanceid) {
+    public static function email_verification_code(int $instanceid): void {
         global $PAGE, $USER;
         $noreplyuser = \core_user::get_noreply_user();
         $subject = get_string('email:subject', 'factor_email');
@@ -73,7 +75,7 @@ class factor extends object_factor_base {
      * @param array $data
      * @return array
      */
-    public function login_form_validation($data) {
+    public function login_form_validation(array $data): array {
         global $USER;
         $return = [];
 
@@ -90,7 +92,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
 
         $records = $DB->get_records('tool_mfa', [
@@ -121,7 +123,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         if (self::is_ready()) {
             return true;
         }
@@ -133,7 +135,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         if (!self::is_ready()) {
             return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
         }
@@ -146,7 +148,7 @@ class factor extends object_factor_base {
      *
      * @return bool
      */
-    private static function is_ready() {
+    private static function is_ready(): bool {
         global $DB, $USER;
 
         if (empty($USER->email)) {
@@ -171,7 +173,7 @@ class factor extends object_factor_base {
      *
      * @return void
      */
-    private function generate_and_email_code() {
+    private function generate_and_email_code(): void {
         global $DB, $USER;
 
         // Get instance that isnt parent email type (label check).
@@ -224,7 +226,7 @@ class factor extends object_factor_base {
      * @param string $enteredcode
      * @return bool
      */
-    private function check_verification_code($enteredcode) {
+    private function check_verification_code(string $enteredcode): bool {
         global $DB, $USER;
         $duration = get_config('factor_email', 'duration');
 
@@ -251,7 +253,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function post_pass_state() {
+    public function post_pass_state(): void {
         global $DB, $USER;
         // Delete all email records except base record.
         $selectsql = 'userid = ?
@@ -269,7 +271,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_no_redirect_urls() {
+    public function get_no_redirect_urls(): array {
         $email = new \moodle_url('/admin/tool/mfa/factor/email/email.php');
         return [$email];
     }
@@ -277,9 +279,9 @@ class factor extends object_factor_base {
     /**
      * Email factor implementation.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         // Email can return all states.
         return [
             \tool_mfa\plugininfo\factor::STATE_FAIL,

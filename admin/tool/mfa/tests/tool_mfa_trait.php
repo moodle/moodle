@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mfa\tests;
+namespace tool_mfa;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -23,7 +23,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once(__DIR__ . '/../lib.php');
 
 /**
- * Base testcase class for testing this plugin
+ * Trait for testing this plugin
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
@@ -31,7 +31,7 @@ require_once(__DIR__ . '/../lib.php');
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-abstract class tool_mfa_testcase extends \advanced_testcase {
+trait tool_mfa_trait {
 
     /**
      * Sets the state of the factor, in particular the weight and whether it is enabled
@@ -40,7 +40,7 @@ abstract class tool_mfa_testcase extends \advanced_testcase {
      * @param   int $enabled
      * @param   int $weight
      */
-    protected function set_factor_state($factorname, $enabled = 0, $weight = 100) {
+    public function set_factor_state($factorname, $enabled = 0, $weight = 100) {
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $this->set_factor_config($factor, 'enabled', $enabled);
         $this->set_factor_config($factor, 'weight', $weight);
@@ -53,7 +53,7 @@ abstract class tool_mfa_testcase extends \advanced_testcase {
      * @param   string $key
      * @param   mixed $value
      */
-    protected function set_factor_config($factor, $key, $value) {
+    public function set_factor_config($factor, $key, $value) {
         \tool_mfa\manager::set_factor_config([$key => $value], 'factor_' . $factor->name);
 
         if ($key == 'enabled') {

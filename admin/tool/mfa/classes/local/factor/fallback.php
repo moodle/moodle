@@ -36,21 +36,21 @@ class fallback extends object_factor_base {
     /**
      * {@inheritDoc}
      */
-    public function get_display_name() {
+    public function get_display_name(): string {
         return get_string('fallback', 'tool_mfa');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function get_info() {
+    public function get_info(): string {
         return get_string('fallback_info', 'tool_mfa');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         return \tool_mfa\plugininfo\factor::STATE_FAIL;
     }
 
@@ -58,10 +58,10 @@ class fallback extends object_factor_base {
      * Sets the state of the factor check into the session.
      * Returns whether storing the var was successful.
      *
-     * @param mixed $state
+     * @param string $state
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state(string $state): bool {
         return false;
     }
 }

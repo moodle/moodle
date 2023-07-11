@@ -16,6 +16,7 @@
 
 namespace factor_token;
 
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 use tool_mfa\local\secret_manager;
 
@@ -34,7 +35,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return false;
     }
 
@@ -45,7 +46,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         $records = $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
 
@@ -72,7 +73,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         global $USER;
 
         // Check if there was a previous locked status to return.
@@ -108,10 +109,10 @@ class factor extends object_factor_base {
      * Token Implementation.
      * We can't get_state like the parent here or it will recurse forever.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set
      * @return bool
      */
-    public function set_state($state) {
+    public function set_state($state): bool {
         global $SESSION;
         $property = 'factor_' . $this->name;
         $SESSION->$property = $state;
@@ -121,9 +122,10 @@ class factor extends object_factor_base {
     /**
      * Token implementation.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
+     * @return array
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
@@ -138,7 +140,7 @@ class factor extends object_factor_base {
      * @param \MoodleQuickForm $mform Form to inject global elements into.
      * @return void
      */
-    public function global_definition_after_data($mform) {
+    public function global_definition_after_data($mform): void {
         global $SESSION;
 
         // First thing, we need to decide on whether we should show the checkbox.
@@ -159,8 +161,9 @@ class factor extends object_factor_base {
      * Store information about the token status.
      *
      * @param object $data Data from the form.
+     * @return void
      */
-    public function global_submit($data) {
+    public function global_submit($data): void {
         global $SESSION;
 
         // Store any kind of response here, we shouldnt show again.
@@ -174,7 +177,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function post_pass_state() {
+    public function post_pass_state(): void {
         global $CFG, $SESSION, $USER;
 
         if (!property_exists($SESSION, 'tool_mfa_factor_token')) {

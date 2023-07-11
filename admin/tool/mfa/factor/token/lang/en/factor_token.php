@@ -32,3 +32,4 @@ $string['settings:expireovernight_help'] = 'This forces tokens to expire overnig
 $string['settings:expiry'] = 'Trust duration';
 $string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new MFA authentication.';
 $string['summarycondition'] = 'the user has previously trusted this device';
+$string['tokenstoredindevice'] = 'The user with id {$a->userid} had an MFA token stored on their device. <br> Information: {$a->string}.';

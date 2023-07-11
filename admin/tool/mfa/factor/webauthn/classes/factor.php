@@ -23,6 +23,7 @@ require_once($CFG->libdir . '/webauthn/src/WebAuthn.php');
 use lbuchs\WebAuthn\Binary\ByteBuffer;
 use lbuchs\WebAuthn\WebAuthn;
 use lbuchs\WebAuthn\WebAuthnException;
+use stdClass;
 use tool_mfa\local\factor\object_factor_base;
 
 /**
@@ -63,7 +64,7 @@ class factor extends object_factor_base {
      * @param stdClass $user the user to check against.
      * @return array
      */
-    public function get_all_user_factors($user) {
+    public function get_all_user_factors(stdClass $user): array {
         global $DB;
         return $DB->get_records('tool_mfa', ['userid' => $user->id, 'factor' => $this->name]);
     }
@@ -73,7 +74,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_input() {
+    public function has_input(): bool {
         return true;
     }
 
@@ -82,7 +83,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_revoke() {
+    public function has_revoke(): bool {
         return true;
     }
 
@@ -91,7 +92,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function has_setup() {
+    public function has_setup(): bool {
         return true;
     }
 
@@ -100,16 +101,17 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function show_setup_buttons() {
+    public function show_setup_buttons(): bool {
         return true;
     }
 
     /**
      * WebAuthn factor implementation.
      *
-     * @param \stdClass $user
+     * @param stdClass $user
+     * @return array
      */
-    public function possible_states($user) {
+    public function possible_states(stdClass $user): array {
         return [
             \tool_mfa\plugininfo\factor::STATE_PASS,
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
@@ -122,7 +124,7 @@ class factor extends object_factor_base {
      *
      * {@inheritDoc}
      */
-    public function get_state() {
+    public function get_state(): string {
         global $USER;
         $userfactors = $this->get_active_user_factors($USER);
 
@@ -136,8 +138,10 @@ class factor extends object_factor_base {
 
     /**
      * Gets the string for setup button on preferences page.
+     *
+     * @return string
      */
-    public function get_setup_string() {
+    public function get_setup_string(): string {
         return get_string('setupfactor', 'factor_webauthn');
     }
 
@@ -145,10 +149,12 @@ class factor extends object_factor_base {
      * WebAuthn Factor implementation.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      */
-    public function login_form_definition($mform) {
+    public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
         global $PAGE, $USER, $SESSION;
+
+        $mform->addElement('html', get_string('loginexplanation', 'factor_webauthn'));
 
         $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
@@ -184,7 +190,7 @@ class factor extends object_factor_base {
      * @param array $data
      * @return array
      */
-    public function login_form_validation($data) {
+    public function login_form_validation(array $data): array {
         global $USER, $SESSION;
 
         $errors = [];
@@ -234,7 +240,7 @@ class factor extends object_factor_base {
      * @param \MoodleQuickForm $mform
      * @return object $mform
      */
-    public function setup_factor_form_definition($mform) {
+    public function setup_factor_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
         global $PAGE, $USER, $SESSION;
 
         $mform->addElement('text', 'webauthn_name', get_string('authenticatorname', 'factor_webauthn'));
@@ -283,10 +289,10 @@ class factor extends object_factor_base {
     /**
      * WebAuthn Factor implementation.
      *
-     * @param array $data
-     * @return array
+     * @param object $data
+     * @return stdClass|null
      */
-    public function setup_user_factor($data) {
+    public function setup_user_factor(object $data): stdClass|null {
         global $DB, $USER, $SESSION;
 
         if (!empty($data->webauthn_name) && !empty($data->response_input) && isset($SESSION->factor_webauthn_challenge)) {

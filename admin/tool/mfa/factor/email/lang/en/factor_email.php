@@ -52,6 +52,8 @@ $string['settings:suspend'] = 'Suspend unauthorised accounts';
 $string['settings:suspend_help'] = 'Check this to suspend user accounts if an unauthorised email verification is received.';
 $string['setupfactor'] = 'E-Mail Factor setup';
 $string['summarycondition'] = 'has valid email setup';
+$string['unauthloginattempt'] = 'The user with id {$a->userid} made an unauthorised login attempt using email verification from
+IP {$a->ip} with browser agent {$a->useragent}';
 $string['unauthemail'] = 'Unauthorised Email';
 $string['verificationcode'] = 'Enter verification code for confirmation';
 $string['verificationcode_help'] = 'Verification code has been sent to your email address';

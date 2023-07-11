@@ -33,7 +33,7 @@ class email extends \moodleform {
     /**
      * Form definition.
      */
-    public function definition() {
+    public function definition(): void {
         $mform = $this->_form;
         $mform->addElement('html', get_string('email:accident', 'factor_email'));
         $this->add_action_buttons(true, get_string('continue'));
@@ -49,7 +49,7 @@ class email extends \moodleform {
      * @return array of "element_name"=>"error_description" if there are errors,
      *         or an empty array if everything is OK (true allowed for backwards compatibility too).
      */
-    public function validation($data, $files) {
+    public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
         return $errors;
     }
