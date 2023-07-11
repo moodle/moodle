@@ -24,6 +24,7 @@ use communication_matrix\local\spec\features\matrix\{
     update_room_name_v3 as update_room_name_feature,
     update_room_topic_v3 as update_room_topic_feature,
     upload_content_v3 as upload_content_feature,
+    media_create_v1 as media_create_feature,
 };
 use communication_matrix\local\spec\features\synapse\{
     create_user_v2 as create_user_feature,
@@ -409,7 +410,7 @@ class communication_feature implements
      * Update the room avatar when an instance image is added or updated.
      */
     public function update_room_avatar(): void {
-        // Either of the following features of the remote API are required.
+        // Both of the following features of the remote API are required.
         $this->matrixapi->require_features([
             upload_content_feature::class,
             update_room_avatar_feature::class,
@@ -423,20 +424,37 @@ class communication_feature implements
         $instanceimage = $this->processor->get_avatar();
         $contenturi = null;
 
-        // If avatar is set for the instance, upload to Matrix. Otherwise, leave null for unsetting.
-        if (!empty($instanceimage)) {
-            // First upload the content.
-            $response = $this->matrixapi->upload_content($instanceimage);
-            $body = self::get_body($response);
-            $contenturi = $body->content_uri;
+        if ($this->matrixapi->implements_feature(media_create_feature::class)) {
+            // From version 1.7 we can fetch a mxc URI and use it before uploading the content.
+            if ($instanceimage) {
+                $response = $this->matrixapi->media_create();
+                $contenturi = self::get_body($response)->content_uri;
+
+                // Now update the room avatar.
+                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+
+                // And finally upload the content.
+                $this->matrixapi->upload_content($instanceimage);
+            } else {
+                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), null);
+            }
+        } else {
+            // Prior to v1.7 the only way to upload content was to upload the content, which returns a mxc URI to use.
+
+            if ($instanceimage) {
+                // First upload the content.
+                $response = $this->matrixapi->upload_content($instanceimage);
+                $body = self::get_body($response);
+                $contenturi = $body->content_uri;
+            }
 
             // Now update the room avatar.
             $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+        }
 
-            // Indicate the avatar has been synced if it was successfully set with Matrix.
-            if ($response->getReasonPhrase() === 'OK') {
-                $this->processor->set_avatar_synced_flag(true);
-            }
+        // Indicate the avatar has been synced if it was successfully set with Matrix.
+        if ($response->getReasonPhrase() === 'OK') {
+            $this->processor->set_avatar_synced_flag(true);
         }
     }
 

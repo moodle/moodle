@@ -253,6 +253,16 @@ class matrix_client_test extends \advanced_testcase {
      */
     public function implements_feature_provider(): array {
         return [
+            'Basic supported feature' => [
+                'v1.7',
+                features\matrix\media_create_v1::class,
+                true,
+            ],
+            'Basic unsupported feature' => [
+                'v1.6',
+                features\matrix\media_create_v1::class,
+                false,
+            ],
             '[supported] as array' => [
                 'v1.6',
                 [features\matrix\create_room_v3::class],
@@ -262,6 +272,21 @@ class matrix_client_test extends \advanced_testcase {
                 'v1.6',
                 [
                     features\matrix\create_room_v3::class,
+                    features\matrix\update_room_avatar_v3::class,
+                ],
+                true,
+            ],
+            '[unsupported] as array' => [
+                'v1.6',
+                [
+                    features\matrix\media_create_v1::class,
+                ],
+                false,
+            ],
+            '[unsupported, supported] as array' => [
+                'v1.6',
+                [
+                    features\matrix\media_create_v1::class,
                     features\matrix\update_room_avatar_v3::class,
                 ],
                 true,
@@ -286,6 +311,27 @@ class matrix_client_test extends \advanced_testcase {
             [
                 features\matrix\create_room_v3::class,
                 features\matrix\update_room_avatar_v3::class,
+            ],
+            true,
+        ];
+
+        $testcases['Require many including an unsupported feature'] = [
+            'v1.6',
+            [
+                features\matrix\create_room_v3::class,
+                features\matrix\media_create_v1::class,
+            ],
+            false,
+        ];
+
+        $testcases['Require many including an unsupported feature which has an alternate'] = [
+            'v1.6',
+            [
+                features\matrix\create_room_v3::class,
+                [
+                    features\matrix\media_create_v1::class,
+                    features\matrix\update_room_avatar_v3::class,
+                ],
             ],
             true,
         ];

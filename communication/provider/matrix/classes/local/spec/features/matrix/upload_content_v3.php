@@ -37,23 +37,41 @@ trait upload_content_v3 {
      * Upload the content in the matrix/synapse server.
      *
      * @param null|\stored_file $content The content to be uploaded
+     * @param null|string $mediaid The mediaid to associate a file with. Supported for v1.7 API an above only.
      * @return Response
      */
     public function upload_content(
         ?\stored_file $content,
+        ?string $mediaid = null,
     ): Response {
         $query = [];
         if ($content) {
             $query['filename'] = $content->get_filename();
         }
 
-        $command = new command(
-            $this,
-            method: 'POST',
-            endpoint: '_matrix/media/v3/upload',
-            sendasjson: false,
-            query: $query,
-        );
+        if ($mediaid !== null) {
+            // Specification of the mediaid requires version 1.7 or above of the upload API.
+            // See https://spec.matrix.org/v1.7/client-server-api/#put_matrixmediav3uploadservernamemediaid.
+            $this->requires_version('1.7');
+            $command = new command(
+                $this,
+                method: 'PUT',
+                endpoint: '_matrix/media/v3/upload/:mediaid',
+                sendasjson: false,
+                query: $query,
+                params: [
+                    'mediaid' => $mediaid,
+                ],
+            );
+        } else {
+            $command = new command(
+                $this,
+                method: 'POST',
+                endpoint: '_matrix/media/v3/upload',
+                sendasjson: false,
+                query: $query,
+            );
+        }
 
         if ($content) {
             // Add the content-type, and header.

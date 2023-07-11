@@ -14,22 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace communication_matrix\local\spec;
+namespace communication_matrix\local\spec\features\matrix;
+
+use communication_matrix\local\command;
+use GuzzleHttp\Psr7\Response;
 
 /**
- * Matrix API to support version v1.7 of the Matrix specification.
+ * Matrix API feature to create an mxc Media URI.
  *
- * https://spec.matrix.org/v1.7/client-server-api/
- * https://spec.matrix.org/v1.7/changelog/#api-changes
+ * https://spec.matrix.org/v1.1/client-server-api/#post_matrixmediav3upload
  *
  * @package    communication_matrix
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @codeCoverageIgnore
+ * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
-class v1p7 extends v1p6 {
-    // Note: A new Content Upload API was introduced.
-    // See details in the spec:
-    // https://github.com/matrix-org/matrix-spec-proposals/pull/2246.
+trait media_create_v1 {
 
-    use features\matrix\media_create_v1;
+    /**
+     * Create a media URI.
+     *
+     * @return Response
+     */
+    public function media_create(): Response {
+        return $this->execute(new command(
+            $this,
+            method: 'POST',
+            endpoint: '_matrix/media/v1/create',
+        ));
+    }
 }
