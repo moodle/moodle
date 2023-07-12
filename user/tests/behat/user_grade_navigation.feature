@@ -22,18 +22,15 @@ Feature: The student can navigate to their grades page and user grade report.
       | teacher1 | C1 | editingteacher |
       | student1 | C2 | student |
     And the following "activities" exist:
-      | activity | course | idnumber | name | intro | grade |
-      | assign | C1 | a1 | Test assignment one | Submit something! | 300 |
-      | assign | C1 | a2 | Test assignment two | Submit something! | 100 |
-      | assign | C1 | a3 | Test assignment three | Submit something! | 150 |
-      | assign | C2 | a4 | Test assignment four | Submit something! | 150 |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
-    And I give the grade "150.00" to the user "Student 1" for the grade item "Test assignment one"
-    And I give the grade "67.00" to the user "Student 1" for the grade item "Test assignment two"
-    And I press "Save changes"
-    And I log out
+      | activity | course | idnumber | name                  | grade |
+      | assign   | C1     | a1       | Test assignment one   | 300   |
+      | assign   | C1     | a2       | Test assignment two   | 100   |
+      | assign   | C1     | a3       | Test assignment three | 150   |
+      | assign   | C2     | a4       | Test assignment four  | 150   |
+    And the following "grade grades" exist:
+      | gradeitem           | user     | grade  |
+      | Test assignment one | student1 | 150.00 |
+      | Test assignment two | student1 | 67.00  |
 
   Scenario: Navigation to Grades and the user grade report.
     When I log in as "student1"

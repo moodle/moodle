@@ -23,9 +23,7 @@ Feature: Turn editing mode on
     Given the following "activities" exist:
       | activity | course | idnumber | name              | intro             |
       | assign   | C1     | assign1  | Test Assignment 1 | Test Assignment 1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And "Edit  assign Test Assignment 1" "link" should exist
     And I turn editing mode off

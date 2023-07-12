@@ -46,13 +46,10 @@ Feature: The activity results block displays student in visible groups low score
       | course                          | C1              |
       | idnumber                        | 0001            |
       | name                            | Test assignment |
-      | intro                           | Offline text    |
-      | section                         | 1               |
       | assignsubmission_file_enabled   | 0               |
       | groupmode                       | 2               |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as teacher1
+    And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
@@ -86,9 +83,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 3" in the "Activity results" "block"
     And I should see "75.00/100.00" in the "Activity results" "block"
 
@@ -102,9 +97,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 3" in the "Activity results" "block"
     And I should see "75.00" in the "Activity results" "block"
 
@@ -123,9 +116,7 @@ Feature: The activity results block displays student in visible groups low score
     And I should see "85%" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
     And I should see "75%" in the "Activity results" "block"
-    And I log out
-    And I log in as "student5"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student5
     Then I should see "Group 2" in the "Activity results" "block"
     And I should see "85%" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
@@ -141,9 +132,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 2" in the "Activity results" "block"
     And I should see "85.00/100.00" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
@@ -159,9 +148,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 2" in the "Activity results" "block"
     And I should see "85.00" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
@@ -179,9 +166,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Display only ID numbers |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"
     And I should see "75.00%" in the "Activity results" "block"
@@ -196,9 +181,7 @@ Feature: The activity results block displays student in visible groups low score
       | config_nameformat | Anonymous results |
       | config_usegroups | Yes |
     And I press "Save changes"
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"
     And I should see "75.00%" in the "Activity results" "block"

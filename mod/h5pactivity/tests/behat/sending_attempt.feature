@@ -22,9 +22,7 @@ Feature: Do a H5P attempt
     And the following "activity" exists:
       | activity        | h5pactivity                                |
       | course          | C1                                         |
-      | section         | 1                                          |
       | name            | Awesome H5P package                        |
-      | intro           | Description                                |
       | packagefilepath | h5p/tests/fixtures/multiple-choice-2-6.h5p |
       | grademethod     | 2                                          |
 
@@ -43,7 +41,6 @@ Feature: Do a H5P attempt
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
     And I click on "Check" "button" in the ".h5p-question-buttons" "css_element"
     And I switch to the main frame
-    And I log out
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to course participants
     And I follow "Student 1"
@@ -85,8 +82,7 @@ Feature: Do a H5P attempt
     And "2" row "Score" column of "table" table should contain "1"
     And "3" row "Score" column of "table" table should contain "0"
     And "4" row "Score" column of "table" table should contain "1"
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I set the field "Select all or one user" to "Student 1"
     Then the following should exist in the "user-grade" table:
       | Grade item          | Grade | Percentage  |

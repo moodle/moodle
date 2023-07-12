@@ -54,10 +54,7 @@ Feature: Backup user data
     And I navigate to "Recycle bin" in current page administration
     And I should see "Quiz 1"
     And I click on "Restore" "link" in the "region-main" "region"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "User report" in the course gradebook
+    When I am on the "Course 1" "grades > User report > View" page logged in as "student1"
     Then "Quiz 1" row "Grade" column of "user-grade" table should contain "50"
     And "Quiz 1" row "Percentage" column of "user-grade" table should contain "50"
 
