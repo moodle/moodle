@@ -710,7 +710,7 @@ class lib_test extends \advanced_testcase {
         $cohort2 = $this->getDataGenerator()->create_cohort();
 
         // Test cohort_get_cohort.
-        $result = cohort_get_cohort($cohort1->id, \context_system::instance(), true);
+        $result = cohort_get_cohort($cohort1->id, $coursectx, true);
         $this->assertObjectHasAttribute('customfields', $result);
         $this->assertCount(1, $result->customfields);
         $field = reset($result->customfields);
@@ -719,7 +719,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals('Test value 1', $field->get_value());
 
         // Test custom fields are not returned if not needed.
-        $result = cohort_get_cohort($cohort1->id, \context_system::instance());
+        $result = cohort_get_cohort($cohort1->id, $coursectx);
         $this->assertObjectNotHasAttribute('customfields', $result);
 
         // Test cohort_get_cohorts.
@@ -939,4 +939,35 @@ class lib_test extends \advanced_testcase {
             }
         }
     }
+
+    /**
+     * Test the behaviour of cohort_get_cohort().
+     *
+     * @covers ::cohort_get_cohort
+     */
+    public function test_cohort_get_cohort() {
+        $this->resetAfterTest();
+
+        $cat = $this->getDataGenerator()->create_category();
+        $cat1 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+
+        $course1 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'shortname' => 'ANON1']);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'shortname' => 'ANON2']);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat1->id)->id]);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course2->id));
+        $this->assertFalse($result);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course2->id), true);
+        $this->assertFalse($result);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course1->id));
+        $this->assertEquals($cohort1->id, $result->id);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course1->id), true);
+        $this->assertEquals($cohort1->id, $result->id);
+    }
+
 }
