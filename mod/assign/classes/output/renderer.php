@@ -1446,7 +1446,8 @@ class renderer extends \plugin_renderer_base {
         ];
         $button->set_callback_options('assign_portfolio_caller', $portfolioparams, 'mod_assign');
         $button->set_format_by_file($file);
-        return $button->to_html(PORTFOLIO_ADD_ICON_LINK);
+
+        return (string) $button->to_html(PORTFOLIO_ADD_ICON_LINK);
     }
 
     /**
