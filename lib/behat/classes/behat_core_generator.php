@@ -613,6 +613,16 @@ class behat_core_generator extends behat_generator_base {
 
         if (!isset($data['status'])) {
             $data['status'] = null;
+        } else {
+            $status = strtolower($data['status']);
+            switch ($status) {
+                case 'active':
+                    $data['status'] = ENROL_USER_ACTIVE;
+                    break;
+                case 'suspended':
+                    $data['status'] = ENROL_USER_SUSPENDED;
+                    break;
+            }
         }
 
         // If the provided course shortname is the site shortname we consider it a system role assign.
