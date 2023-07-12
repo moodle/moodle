@@ -786,7 +786,8 @@ if (empty($courseid)) {
                   lit.licensename,
                   lit.licenseallocated,
                   lit.companyid,
-                  lit.coursecleared
+                  lit.coursecleared,
+                  lit.modifiedtime
                   {$fieldsql->selects}";
     $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
     $wheresql = $searchinfo->sqlsearch . " AND 1=1 $departmentsql $companysql $datesql $coursesql $validsql";

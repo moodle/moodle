@@ -401,7 +401,21 @@ if (!$table->is_downloading()) {
 }
 
 // Set up the initial SQL for the form.
-$selectsql = "lit.id,lit.userid,lit.courseid,lit.coursename,lit.licenseid,lit.licensename,lit.licenseallocated,lit.timeenrolled,lit.timestarted,lit.timecompleted,lit.timeexpires,lit.finalscore,lit.id AS certsource,lit.coursecleared,1 AS actions";
+$selectsql = "lit.id,
+              lit.userid,
+              lit.courseid,
+              lit.coursename,
+              lit.licenseid,
+              lit.licensename,
+              lit.licenseallocated,
+              lit.timeenrolled,
+              lit.timestarted,
+              lit.timecompleted,
+              lit.timeexpires,
+              lit.finalscore,
+              lit.id AS certsource,
+              lit.coursecleared,1 AS actions,
+              lit.modifiedtime";
 $fromsql = "{local_iomad_track} lit ";
 $sqlparams = array('userid' => $userid, 'companyid' => $companyid);
 
