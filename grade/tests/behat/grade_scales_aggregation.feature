@@ -34,12 +34,9 @@ Feature: Control the aggregation of the scales
       | Scale me | C1     | Letterscale |
     And the following config values are set as admin:
       | grade_includescalesinaggregation | 0 |
-    And I log out
 
   Scenario Outline: Scales can be excluded from aggregation
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     When I give the grade "10" to the user "Student 1" for the grade item "Grade me"
     And I give the grade "B" to the user "Student 1" for the grade item "Scale me"
@@ -57,10 +54,7 @@ Feature: Control the aggregation of the scales
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_includescalesinaggregation | 1 |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item   | Grade          | Percentage  | Contribution to course total |
@@ -81,9 +75,7 @@ Feature: Control the aggregation of the scales
       | Mode of grades                      | 10.00       | 10.00 %  | 10.00        | 0.00         | 75.00        | 75.00 %   | 0.00 %        | 75.00 %       |
 
   Scenario: Weights of scales cannot be edited when they are not aggregated
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     When I set the following settings for grade item "Course 1" of type "course" on "grader" page:
       | Aggregation | Natural |

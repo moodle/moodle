@@ -28,8 +28,7 @@ Feature: Singleview report pagination
       | user   | student[count] |
       | course | C1             |
       | role   |student         |
-    When I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     Then the field "perpage" matches value "20"
@@ -48,13 +47,11 @@ Feature: Singleview report pagination
     And the following "activities" exist:
       | activity | course | idnumber | name                | intro             | grade |
       | assign   | C2     | a2       | Test assignment two | Submit something! | 300   |
-    When I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And I set the field "perpage" to "100"
-    And I am on the "Course 2" "Course" page
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 2" "grades > Grader report > View" page
     And I click on grade item menu "Test assignment two" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     Then the field "perpage" matches value "100"
@@ -69,8 +66,7 @@ Feature: Singleview report pagination
       | user   | student[count] |
       | course | C1             |
       | role   |student         |
-    When I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     And I set the field "perpage" to "100"
@@ -90,8 +86,7 @@ Feature: Singleview report pagination
       | user   | student[count] |
       | course | C1             |
       | role   |student         |
-    When I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Single view for this item" in the open action menu
     # By default, we have 20 students per page.

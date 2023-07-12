@@ -28,9 +28,8 @@ Feature: Within the singleview report, a teacher can search for users.
       | assign   | C1     | a1       | Test assignment one |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
     And I change window size to "large"
-    And I navigate to "View > Single view" in the course gradebook
+    And I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
     And I click on "Users" "link" in the ".page-toggler" "css_element"
 
   Scenario: A teacher can view and trigger the user search
@@ -122,8 +121,7 @@ Feature: Within the singleview report, a teacher can search for users.
       | Turtle Manatee     |
 
     # Case: No users enrolled.
-    And I am on the "Course 2" "Course" page
-    And I navigate to "View > Single view" in the course gradebook
+    And I am on the "Course 2" "grades > Single view > View" page
     And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I set the field "Search users" to "a"
     And I wait until "No results for \"a\"" "text" exists

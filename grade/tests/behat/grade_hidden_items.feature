@@ -26,9 +26,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | assign   | C1     | a2       | Test assignment two   | Submit something! | Sub category 1 | 100   |
       | assign   | C1     | a3       | Test assignment three | Submit something! | Sub category 2 | 100   |
       | assign   | C1     | a4       | Test assignment four  | Submit something! | Sub category 2 | 100   |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | calculated |
@@ -40,18 +38,14 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
     And I navigate to "Grades > Report settings > User report" in site administration
     And I set the field "s__grade_report_user_showtotalsifcontainhidden" to "Show totals excluding hidden items"
     And I press "Save changes"
-    When I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment one"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test assignment three"
     And I press "Save changes"
     And I set the following settings for grade item "Test assignment four" of type "gradeitem" on "grader" page:
       | Hidden | 1 |
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page
     And I click on "Student 1" in the "user" search widget
     And I set the field "View report as" to "Myself"
     Then the following should exist in the "user-grade" table:
@@ -60,10 +54,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | Test assignment two | 0.00 %( Empty ) | - | 0–100 | - | 0.00 % |
       | Test assignment three | 100.00 % | 50.00 | 0–100 | 50.00 % | 25.00 % |
       | Course total | - | 100.00 | 0–200 | 50.00 % | - |
-    When I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "User report" in the course gradebook
+    When I am on the "Course 1" "grades > User report > View" page logged in as "student1"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Test assignment one | 100.00 % | 50.00 | 0–100 | 50.00 % |  25.00 % |

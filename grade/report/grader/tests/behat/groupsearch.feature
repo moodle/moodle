@@ -24,9 +24,7 @@ Feature: Group searching functionality within the grader report.
       | user     | group |
       | student1 | dg    |
       | student2 | g2    |
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I change window size to "large"
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: A teacher can see the 'group' search widget only when group mode is enabled in the course
     Given ".groupsearchwidget" "css_element" should exist

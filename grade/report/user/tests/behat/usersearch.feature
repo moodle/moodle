@@ -28,9 +28,8 @@ Feature: Within the User report, a teacher can search for users.
       | assign   | C1     | a1       | Test assignment one |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
     And I change window size to "large"
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can view and trigger the user search
     # Check the placeholder text
@@ -149,8 +148,7 @@ Feature: Within the User report, a teacher can search for users.
       | Dummy User         |
 
     # Case: No users enrolled.
-    And I am on the "Course 2" "Course" page
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 2" "grades > User report > View" page
     And I set the field "Search users" to "a"
     And I should see "No results for \"a\""
 
