@@ -1062,18 +1062,7 @@ document.body.className += ' jsenabled';
         </span>
        
                                                                                             </div>
-                                                                                            <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-  Tooltip on top
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
-  Tooltip on right
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
-  Tooltip on bottom
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
-  Tooltip on left
-</button>
+                                                                                            
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
@@ -1113,7 +1102,7 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item inproress-course" data-activityname="1.1 Introduction to Computing Devices">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level1-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
@@ -1167,7 +1156,7 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item locked-course" data-activityname="1.1 Reflect">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level2-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
@@ -1220,7 +1209,7 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item " data-activityname="1.2 Parts of a Computer">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level3-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
