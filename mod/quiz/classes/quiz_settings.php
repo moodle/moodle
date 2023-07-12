@@ -338,9 +338,10 @@ class quiz_settings {
      * Get some of the question in this quiz.
      *
      * @param array|null $questionids question ids of the questions to load. null for all.
+     * @param bool $requirequestionfullyloaded Whether to require that a particular question is fully loaded.
      * @return stdClass[] the question data objects.
      */
-    public function get_questions($questionids = null) {
+    public function get_questions(?array $questionids = null, bool $requirequestionfullyloaded = true) {
         if (is_null($questionids)) {
             $questionids = array_keys($this->questions);
         }
@@ -350,7 +351,9 @@ class quiz_settings {
                 throw new moodle_exception('cannotstartmissingquestion', 'quiz', $this->view_url());
             }
             $questions[$id] = $this->questions[$id];
-            $this->ensure_question_loaded($id);
+            if ($requirequestionfullyloaded) {
+                $this->ensure_question_loaded($id);
+            }
         }
         return $questions;
     }
@@ -561,7 +564,7 @@ class quiz_settings {
         // To control if we need to look in categories for questions.
         $qcategories = [];
 
-        foreach ($this->get_questions() as $questiondata) {
+        foreach ($this->get_questions(null, false) as $questiondata) {
             if ($questiondata->status == question_version_status::QUESTION_STATUS_DRAFT) {
                 // Skip questions where all versions are draft.
                 continue;
