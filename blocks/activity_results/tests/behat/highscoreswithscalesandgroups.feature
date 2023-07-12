@@ -41,14 +41,10 @@ Feature: The activity results block displays student in group high scores as sca
       | student4 | G2 |
       | student5 | G3 |
       | student6 | G3 |
+    And the following "scales" exist:
+      | name     | scale                                                                |
+      | My Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Scales" in the course gradebook
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name | My Scale |
-      | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
-    And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on
     And I add a "Assignment" to section "1" and I fill the form with:
       | Assignment name | Test assignment |
@@ -57,8 +53,7 @@ Feature: The activity results block displays student in group high scores as sca
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
       | Group mode | Separate groups |
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"
@@ -80,9 +75,7 @@ Feature: The activity results block displays student in group high scores as sca
     And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Student 1" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
 
@@ -101,9 +94,7 @@ Feature: The activity results block displays student in group high scores as sca
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student3
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -124,10 +115,8 @@ Feature: The activity results block displays student in group high scores as sca
     And I should see "Excellent!" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
     # Students cannot see user identity fields.
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "User" in the "Activity results" "block"
     And I should not see "User S1" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
@@ -147,9 +136,7 @@ Feature: The activity results block displays student in group high scores as sca
     And I should see "Excellent!" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student1
     And I should see "User" in the "Activity results" "block"
     And I should see "Excellent!" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"

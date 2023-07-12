@@ -47,10 +47,7 @@ Feature: We can enter in grades and view reports from the gradebook
       | Online text | This is a submission for assignment 2 |
     And I press "Save changes"
     Then I should see "Submitted for grading"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name 1"
     And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment name 2"

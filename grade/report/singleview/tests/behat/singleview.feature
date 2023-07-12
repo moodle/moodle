@@ -1,4 +1,4 @@
-@core @core_grades @gradereport_singleview
+@core @core_grades @gradereport_singleview @javascript
 Feature: We can use Single view
   As a teacher
   In order to view and edit grades
@@ -7,7 +7,7 @@ Feature: We can use Single view
   Background:
     Given the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "users" exist:
       | username | firstname | lastname    | email                | idnumber | middlename | alternatename | firstnamephonetic | lastnamephonetic |
       | teacher1 | Teacher   | 1           | teacher1@example.com | t1       |            | fred          |                   |                  |
@@ -53,11 +53,8 @@ Feature: We can use Single view
     And the following config values are set as admin:
       | fullnamedisplay | firstnamephonetic,lastnamephonetic |
       | alternativefullnameformat | middlename, alternatename, firstname, lastname |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    Given I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
-  @javascript
   Scenario: I can update grades, add feedback and exclude grades.
     Given I navigate to "View > Single view" in the course gradebook
     And I select "Student" from the "Select user..." singleselect
@@ -97,10 +94,7 @@ Feature: We can use Single view
     And the following should exist in the "generaltable" table:
         | First name (Alternate name) Surname | Grade |
         | Ann, Jill, Grainne, Beauchamp | Very good |
-    And I log out
-    And I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    Given I navigate to "View > Single view" in the course gradebook
+    And I am on the "Course 1" "grades > Single view > View" page logged in as "teacher2"
     And I select "Student" from the "Select user..." singleselect
     And the "Exclude for Test assignment one" "checkbox" should be disabled
     And the "Override for Test assignment one" "checkbox" should be enabled

@@ -24,9 +24,7 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
       | assign   | C1     | a3       | Test assignment three        | x     | 200   |
       | assign   | C1     | a4       | Test assignment four (extra) | x     | 20    |
       | assign   | C1     | a5       | Test assignment five (extra) | x     | 10    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
     And I set the following settings for grade item "Test assignment four (extra)":
       | Extra credit | 1 |
     And I set the following settings for grade item "Test assignment five (extra)":
