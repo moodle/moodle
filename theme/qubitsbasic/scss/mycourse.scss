@@ -914,9 +914,7 @@ button.close:focus,
 ol {
   margin: 0px !important;
 }
-#page-header {
-  display: none !important;
-}
+
 .sectionname {
   font-size: 16px !important;
 }
@@ -932,4 +930,41 @@ ol {
     color: #9e9ea2 !important;
   }
 }
+#page.drawers .main-inner {
+  padding: 0 !important;
+  margin-top: 0px !important;
+}
+#page.drawers {
+  margin-top: 90px !important;
+}
+.sidebar.close-bars .nav-links li .sub-menu {
+  height: 200px;
+  overflow-y: scroll;
+}
 
+.badge-secondary {
+  background-color: #008195 !important;
+  color: #ffffff !important;
+  box-shadow: none !important;
+}
+.userinitials.size-35 {
+  width: 50px !important;
+  height: 50px !important;
+}
+.usermenu .dropdown.show #user-action-menu {
+  margin-top: 15px !important;
+}
+#page-content {
+  margin-top: 20px !important;
+}
+.dropdown-item.active,
+.dropdown-item:active,
+.dropdown-item:hover,
+.dropdown-item:focus,
+.dropdown-item:focus-within {
+  background-color: #1482e6 !important ;
+}
+.custom-select {
+  background: #ffffff url("[[pix:theme|down-arrow]]") right 0.75rem center/8px
+    10px no-repeat !important;
+}

@@ -78,23 +78,8 @@ if ($inpopup and $page->display == RESOURCELIB_DISPLAY_POPUP) {
 $PAGE->activityheader->set_attrs($activityheader);
 $PAGE->set_pagelayout('executablebook');
 echo $OUTPUT->header();
-$content = file_rewrite_pluginfile_urls($page->content, 'pluginfile.php', $context->id, 'mod_qubitspage', 'content', $page->revision);
-$formatoptions = new stdClass;
-$formatoptions->noclean = true;
-$formatoptions->overflowdiv = true;
-$formatoptions->context = $context;
-$content = format_text($content, $page->contentformat, $formatoptions);
-$templatecontext = array(
-    "PYODIDE_INDEX_URL" => "https://cdn.jsdelivr.net/pyodide/v0.21.3/full/",
-    "tickimgurl" => new moodle_url("/mod/qubitspage/pix/chapter-tick.png"),
-    "staticbasic" => new moodle_url("/mod/qubitspage/static/")
-);
-//preg_match_all('/<pythoncode>(.*?)<\/pythoncode>/s', $content, $matches);
-echo $OUTPUT->box($content, "generalbox center clearfix", "qubitspage");
 $pageslug = trim(strip_tags($page->intro));
 $qmurl = $CFG->wwwroot . '/mod/qubitspage';
-//$PAGE->requires->jquery();
-//echo $OUTPUT->render_from_template("mod_qubitspage/pythoncode-v2", $templatecontext);
 ?>
 
 <div id="__next"></div>
@@ -114,11 +99,5 @@ $qmurl = $CFG->wwwroot . '/mod/qubitspage';
     }
 </script>
 <?php
-
-if (!isset($options['printlastmodified']) || !empty($options['printlastmodified'])) {
-    $strlastmodified = get_string("lastmodified");
-    echo html_writer::div("$strlastmodified: " . userdate($page->timemodified), 'modified');
-}
-
 echo $OUTPUT->footer();
 ?>
