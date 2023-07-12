@@ -145,7 +145,7 @@ class mod_data_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return ($data['completionentries'] != 0);
+        return (!empty($data['completionentriesenabled']) && $data['completionentries'] != 0);
     }
 
       /**
