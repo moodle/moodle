@@ -50,6 +50,70 @@ class behat_grades extends behat_base {
     }
 
     /**
+     * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     * Recognised page names are:
+     * | pagetype              | name meaning | description                                       |
+     * | [report] view         | Course name  | The view page for the specified course and report |
+     * | gradebook setup       | Course name  | The gradebook setup page for the specified course |
+     * | course grade settings | Course name  | The grade settings page                           |
+     *
+     * @param string $type identifies which type of page this is - for example "Grader > View"
+     * @param string $identifier identifies the particular page - for example "Course name"
+     * @return moodle_url the corresponding URL.
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        $type = strtolower($type);
+        if (strpos($type, '>') !== false) {
+            [$pluginname, $type] = explode('>', $type);
+            $pluginname = strtolower(trim($pluginname));
+
+            // Fetch the list of plugins.
+            $plugins = \core_component::get_plugin_list('gradereport');
+
+            if (array_key_exists($pluginname, $plugins)) {
+                $plugin = $pluginname;
+            } else {
+                $plugins = array_combine(
+                    array_keys($plugins),
+                    array_keys($plugins),
+                );
+
+                // This plugin is not in the list of plugins. Check the pluginname string.
+                $names = array_map(fn($name) => strtolower(get_string('pluginname', "gradereport_{$name}")), $plugins);
+                $result = array_search($pluginname, $names);
+                if ($result === false) {
+                    throw new \coding_exception("Unknown plugin '{$pluginname}'");
+                }
+                $plugin = $result;
+            }
+        }
+        $type = trim($type);
+
+        switch ($type) {
+            case 'view':
+                return new moodle_url(
+                    "/grade/report/{$plugin}/index.php",
+                    ['id' => $this->get_course_id($identifier)]
+                );
+            case 'gradebook setup':
+                return new moodle_url(
+                    "/grade/edit/tree/index.php",
+                    ['id' => $this->get_course_id($identifier)]
+                );
+            case 'course grade settings':
+                return new moodle_url(
+                    "/grade/edit/settings/index.php",
+                    ['id' => $this->get_course_id($identifier)]
+                );
+            default:
+                throw new \coding_exception(
+                    "Unknown page type '$type' for page identifier '$identifier'"
+                );
+        }
+    }
+
+    /**
      * Select a given element within a specific container instance.
      *
      * @Given /^I select "(?P<input_value>(?:[^"]|\\")*)" in the "(?P<instance>(?:[^"]|\\")*)" "(?P<instance_type>(?:[^"]|\\")*)"$/
