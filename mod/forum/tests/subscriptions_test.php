@@ -58,6 +58,11 @@ class subscriptions_test extends \advanced_testcase {
         \mod_forum\subscriptions::reset_discussion_cache();
     }
 
+    /**
+     * Test subscription modes modifications.
+     *
+     * @covers \mod_forum\event\subscription_mode_updated
+     */
     public function test_subscription_modes() {
         global $DB;
 
@@ -68,6 +73,7 @@ class subscriptions_test extends \advanced_testcase {
 
         $options = array('course' => $course->id);
         $forum = $this->getDataGenerator()->create_module('forum', $options);
+        $context = \context_module::instance($forum->cmid);
 
         // Create a user enrolled in the course as a student.
         list($user) = $this->helper_create_users($course, 1);
@@ -75,33 +81,69 @@ class subscriptions_test extends \advanced_testcase {
         // Must be logged in as the current user.
         $this->setUser($user);
 
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
+        $sink = $this->redirectEvents(); // Capturing the event.
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_FORCESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertEquals(FORUM_FORCESUBSCRIBE, \mod_forum\subscriptions::get_subscription_mode($forum));
         $this->assertTrue(\mod_forum\subscriptions::is_forcesubscribed($forum));
         $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
         $this->assertFalse(\mod_forum\subscriptions::subscription_disabled($forum));
 
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\subscription_mode_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        $sink = $this->redirectEvents(); // Capturing the event.
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_DISALLOWSUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertEquals(FORUM_DISALLOWSUBSCRIBE, \mod_forum\subscriptions::get_subscription_mode($forum));
         $this->assertTrue(\mod_forum\subscriptions::subscription_disabled($forum));
         $this->assertFalse(\mod_forum\subscriptions::is_subscribable($forum));
         $this->assertFalse(\mod_forum\subscriptions::is_forcesubscribed($forum));
 
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\subscription_mode_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        $sink = $this->redirectEvents(); // Capturing the event.
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_INITIALSUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertEquals(FORUM_INITIALSUBSCRIBE, \mod_forum\subscriptions::get_subscription_mode($forum));
         $this->assertTrue(\mod_forum\subscriptions::is_subscribable($forum));
         $this->assertFalse(\mod_forum\subscriptions::subscription_disabled($forum));
         $this->assertFalse(\mod_forum\subscriptions::is_forcesubscribed($forum));
 
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_CHOOSESUBSCRIBE);
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\subscription_mode_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+
+        $sink = $this->redirectEvents(); // Capturing the event.
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_CHOOSESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertEquals(FORUM_CHOOSESUBSCRIBE, \mod_forum\subscriptions::get_subscription_mode($forum));
         $this->assertTrue(\mod_forum\subscriptions::is_subscribable($forum));
         $this->assertFalse(\mod_forum\subscriptions::subscription_disabled($forum));
         $this->assertFalse(\mod_forum\subscriptions::is_forcesubscribed($forum));
+
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\subscription_mode_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
     }
 
     /**
@@ -1436,12 +1478,12 @@ class subscriptions_test extends \advanced_testcase {
 
         // Subscribption disabled.
         $this->setUser($student->id);
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_DISALLOWSUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
         $this->assertFalse((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));
 
-        \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
+        \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_FORCESUBSCRIBE);
         $forum = $DB->get_record('forum', array('id' => $forum->id));
         $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, $discussion->id));
         $this->assertTrue((boolean)\mod_forum\subscriptions::get_user_default_subscription($forum, $context, $cm, null));

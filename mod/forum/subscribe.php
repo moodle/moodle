@@ -126,7 +126,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
     require_sesskey();
     switch ($mode) {
         case FORUM_CHOOSESUBSCRIBE : // 0
-            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_CHOOSESUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_CHOOSESUBSCRIBE);
             redirect(
                     $subscribersurl,
                     get_string('everyonecannowchoose', 'forum'),
@@ -135,7 +135,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
             );
             break;
         case FORUM_FORCESUBSCRIBE : // 1
-            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_FORCESUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_FORCESUBSCRIBE);
             redirect(
                     $subscribersurl,
                     get_string('everyoneisnowsubscribed', 'forum'),
@@ -144,7 +144,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
             );
             break;
         case FORUM_INITIALSUBSCRIBE : // 2
-            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_INITIALSUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_INITIALSUBSCRIBE);
             if ($forum->forcesubscribe <> FORUM_INITIALSUBSCRIBE) {
                 // Reload the forum again to get the updated forcesubscribe field.
                 $forum = $DB->get_record('forum', array('id' => $id), '*', MUST_EXIST);
@@ -161,7 +161,7 @@ if (!is_null($mode) and has_capability('mod/forum:managesubscriptions', $context
             );
             break;
         case FORUM_DISALLOWSUBSCRIBE : // 3
-            \mod_forum\subscriptions::set_subscription_mode($forum->id, FORUM_DISALLOWSUBSCRIBE);
+            \mod_forum\subscriptions::set_subscription_mode($forum, FORUM_DISALLOWSUBSCRIBE);
             redirect(
                     $subscribersurl,
                     get_string('noonecansubscribenow', 'forum'),

@@ -242,6 +242,7 @@ $string['eventdiscussionsubscriptioncreated'] = 'Discussion subscription created
 $string['eventdiscussionsubscriptiondeleted'] = 'Discussion subscription deleted';
 $string['eventdiscussionpinned'] = 'Discussion pinned';
 $string['eventdiscussionunpinned'] = 'Discussion unpinned';
+$string['eventforumsubscriptionupdated'] = 'Subscription mode updated';
 $string['eventuserreportviewed'] = 'User report viewed';
 $string['eventpostcreated'] = 'Post created';
 $string['eventpostdeleted'] = 'Post deleted';
