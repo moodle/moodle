@@ -234,7 +234,7 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(http://qubits.localhost.com/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png)
+  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png)
     no-repeat;
   background-size: contain;
   width: 118px;
@@ -354,6 +354,10 @@ code {
 }
 .tool-button {
   min-width: 40px !important;
+  background-color: #fff;
+}
+.tool-button:hover{
+  background-color: #fff;
 }
 .reset-button {
   position: absolute !important;

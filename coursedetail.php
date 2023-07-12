@@ -938,6 +938,7 @@ document.body.className += ' jsenabled';
                                                 </div>
                                         </div>
                             </div>
+                    
                                     <ul class="section m-0 p-0 img-text  d-block " data-for="cmlist">
                                                 <li
                                                     class="activity activity-wrapper forum modtype_forum  hasinfo"
@@ -1013,7 +1014,7 @@ document.body.className += ' jsenabled';
                                                aria-controls="coursecontentcollapse1"
                                                class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
                                                     stretched-link 
-                                                   "
+                                                   " data-toggle="tooltip" data-placement="top" title="Tooltip on top"
                                                aria-label="Unit 1:  Computing Devices">
                                             <span class="expanded-icon icon-no-margin p-2" title="Collapse">
                                                 <i class="icon fa fa-chevron-down fa-fw " aria-hidden="true"  ></i>
@@ -1061,6 +1062,18 @@ document.body.className += ' jsenabled';
         </span>
        
                                                                                             </div>
+                                                                                            <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
+  Tooltip on top
+</button>
+<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
+  Tooltip on right
+</button>
+<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
+  Tooltip on bottom
+</button>
+<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
+  Tooltip on left
+</button>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
