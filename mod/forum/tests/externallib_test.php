@@ -1901,6 +1901,8 @@ class externallib_test extends externallib_advanced_testcase {
 
     /*
      * Test set_lock_state.
+     *
+     * @covers \mod_forum\event\discussion_lock_updated
      */
     public function test_set_lock_state() {
         global $DB;
@@ -1916,6 +1918,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record->course = $course->id;
         $record->type = 'news';
         $forum = self::getDataGenerator()->create_module('forum', $record);
+        $context = \context_module::instance($forum->cmid);
 
         $record = new \stdClass();
         $record->course = $course->id;
@@ -1937,16 +1940,38 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Set the lock.
         self::setAdminUser();
+        $sink = $this->redirectEvents(); // Capturing the event.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertTrue($result['locked']);
         $this->assertNotEquals(0, $result['times']['locked']);
 
+        // Check that the event contains the expected values.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\discussion_lock_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertStringContainsString(' locked the discussion:', $event->get_description());
+
         // Unset the lock.
+        $sink = $this->redirectEvents(); // Capturing the event.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertFalse($result['locked']);
         $this->assertEquals('0', $result['times']['locked']);
+
+        // Check that the event contains the expected values.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\discussion_lock_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertStringContainsString(' unlocked the discussion:', $event->get_description());
     }
 
     /*

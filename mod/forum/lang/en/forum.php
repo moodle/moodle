@@ -236,6 +236,7 @@ $string['eventcoursesearched'] = 'Course searched';
 $string['eventdiscussioncreated'] = 'Discussion created';
 $string['eventdiscussionupdated'] = 'Discussion updated';
 $string['eventdiscussiondeleted'] = 'Discussion deleted';
+$string['eventdiscussionlockupdated'] = 'Discussion lock updated';
 $string['eventdiscussionmoved'] = 'Discussion moved';
 $string['eventdiscussionviewed'] = 'Discussion viewed';
 $string['eventdiscussionsubscriptioncreated'] = 'Discussion subscription created';

@@ -1747,6 +1747,18 @@ class mod_forum_external extends external_api {
         $discussion->toggle_locked_state($lockedvalue);
         $response = $discussionvault->update_discussion($discussion);
         $discussion = !$response ? $response : $discussion;
+
+        // Trigger an event.
+        $params = [
+            'context' => $forum->get_context(),
+            'objectid' => $discussion->get_id(),
+            'other' => ['forumid' => $forum->get_id(), 'status' => $lockedvalue ? 'locked' : 'unlocked'],
+        ];
+        $event = \mod_forum\event\discussion_lock_updated::create($params);
+        $discussionrecord = $DB->get_record('forum_discussions', ['id' => $discussion->get_id()]);
+        $event->add_record_snapshot('forum_discussions', $discussionrecord);
+        $event->trigger();
+
         $exporterfactory = mod_forum\local\container::get_exporter_factory();
         $exporter = $exporterfactory->get_discussion_exporter($USER, $forum, $discussion);
         return $exporter->export($PAGE->get_renderer('mod_forum'));
