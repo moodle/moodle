@@ -30,9 +30,7 @@ Feature: View the user report as the student will see it
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a5 | Test assignment five | Submit something! | 100 |
       | assign | C1 | a6 | Test assignment six | Submit something! | 100 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    When I am on the "C1" "grades > gradebook setup" page logged in as "teacher1"
     And I hide the grade item "Test assignment six"
     And I hide the grade item "Sub category 2"
     And I navigate to "View > Grader report" in the course gradebook

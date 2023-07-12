@@ -24,23 +24,20 @@ Feature: We can understand the gradebook user report
       | assign | C1 | a4 | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment four | Submit something! |
       | assign | C1 | a5 | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment five | Submit something! |
       | assign | C1 | a6 | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment six | Submit something! |
+    And the following "grade grades" exist:
+      | gradeitem                                                                                                    | user     | grade |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment one   | student1 | 60.00 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment two   | student1 | 20.00 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment three | student1 | 40.00 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment four  | student1 | 10.00 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment five  | student1 | 70.00 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Test assignment six   | student1 | 30.00 |
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
-    And I give the grade "60.00" to the user "Student 1" for the grade item "EN Test assignment one"
-    And I give the grade "20.00" to the user "Student 1" for the grade item "EN Test assignment two"
-    And I give the grade "40.00" to the user "Student 1" for the grade item "EN Test assignment three"
-    And I give the grade "10.00" to the user "Student 1" for the grade item "EN Test assignment four"
-    And I give the grade "70.00" to the user "Student 1" for the grade item "EN Test assignment five"
-    And I give the grade "30.00" to the user "Student 1" for the grade item "EN Test assignment six"
-    And I press "Save changes"
+    And I am on the "Course 1" "grades > course grade settings" page logged in as "teacher1"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"

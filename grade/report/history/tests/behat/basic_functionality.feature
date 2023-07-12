@@ -22,22 +22,17 @@ Feature: A teacher checks the grade history report in a course
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity | course | section | name                         | intro                                         |
-      | assign   | C1     | 1       | The greatest assignment ever | Write a behat test for Moodle - it's amazing  |
-      | assign   | C1     | 1       | Rewarding assignment         | After writing your behat test go grab a beer! |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "View > Grader report" in the course gradebook
+      | activity | course | name                         |
+      | assign   | C1     | The greatest assignment ever |
+      | assign   | C1     | Rewarding assignment         |
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "The greatest assignment ever"
     And I give the grade "60.00" to the user "Student 1" for the grade item "Rewarding assignment"
     And I give the grade "50.00" to the user "Student 2" for the grade item "The greatest assignment ever"
     And I give the grade "60.00" to the user "Student 2" for the grade item "Rewarding assignment"
     And I press "Save changes"
-    And I log out
-    And I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher2"
     And I turn editing mode on
     And I give the grade "70.00" to the user "Student 1" for the grade item "The greatest assignment ever"
     And I give the grade "80.00" to the user "Student 1" for the grade item "Rewarding assignment"
