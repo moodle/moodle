@@ -604,8 +604,8 @@ class behat_navigation extends behat_base {
         $dividercount = substr_count($page, ' > ');
         if ($dividercount === 0) {
             return ['core', $page];
-        } else if ($dividercount === 1) {
-            list($component, $name) = explode(' > ', $page);
+        } else if ($dividercount >= 1) {
+            [$component, $name] = explode(' > ', $page, 2);
             if ($component === 'core') {
                 throw new coding_exception('Do not specify the component "core > ..." for core pages.');
             }
