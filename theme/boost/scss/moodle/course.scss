@@ -1266,6 +1266,26 @@ $activity-item-hover: theme-color-level('primary', -12) !default;
 $activity-item-border-radius: 1rem !default;
 $activity-add-hover: theme-color-level('primary', -10) !default;
 
+/* Functions/Mixins definition */
+
+// Activity completion button custom styling mixin.
+@mixin completion-button() {
+    &.btn {
+        border: $border-width solid $gray-400;
+        font-weight: bold;
+        @include border-radius();
+        .icon {
+            font-size: inherit;
+        }
+    }
+    @each $color, $value in $theme-colors {
+        &.btn-#{$color} {
+            $bg-color: theme-color-level($color, $alert-bg-level);
+            @include alert-variant($bg-color, $bg-color, $value);
+        }
+    }
+}
+
 /* Activity & Block 'add' buttons */
 
 .activity-add,
@@ -1558,15 +1578,13 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         }
     }
 
-    .activity-info {
+    .activity-completion {
         grid-area: completion;
         justify-self: end;
         // Re-style completion buttons (mark as done & dropdown).
         button,
         a[role="button"] {
-            border: $border-width solid $border-color;
-            @include border-radius();
-            font-weight: bold;
+            @include completion-button();
         }
         @include media-breakpoint-down(xs) {
             width: 100%;
@@ -1685,21 +1703,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
 .section .draggable .activity-item .dragicon {
     display: none;
-}
-
-// Revisit these styles when MDL-78289 lands. Probably not needed anymore.
-.automatic-completion-conditions .badge {
-    font-size: 80%;
-    padding: map-get($spacers, 2);
-    margin-top: map-get($spacers, 1);
-    .icon {
-        width: 0.7rem;
-        height: 0.7rem;
-        font-size: 0.7rem;
-    }
-    &:first-child {
-        margin-top: 0;
-    }
 }
 
 /* Activity divider */
