@@ -20,13 +20,10 @@ Feature: I need to export grades as text
       | activity | course | idnumber | name | intro | assignsubmission_onlinetext_enabled |
       | assign | C1 | a1 | Test assignment name | Submit your online text | 1 |
       | assign | C1 | a2 | Test assignment name 2 | Submit your online text | 1 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
-    And I change window size to "large"
-    And I give the grade "80.00" to the user "Student 1" for the grade item "Test assignment name"
-    And I press "Save changes"
+    And the following "grade grades" exist:
+      | gradeitem            | user     | grade |
+      | Test assignment name | student1 | 80.00 |
+    And I am on the "Course 1" course page logged in as teacher1
 
   @javascript
   Scenario: Export grades as text

@@ -16,11 +16,9 @@ Feature: Within the singleview report, a teacher can search for users.
       | student1  | C1     | student        |
       | student2  | C1     | student        |
       | student32 | C1     | student        |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I change window size to "large"
 
   Scenario: A teacher can search for and find a user to view
-    Given I navigate to "View > Single view" in the course gradebook
+    Given I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
     When I click on "Users" "link" in the ".page-toggler" "css_element"
     And I wait until the page is ready
     And I click on ".search-widget[data-searchtype='user']" "css_element"
