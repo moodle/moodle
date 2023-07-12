@@ -1,10 +1,14 @@
 <?php
 
-define("DOL_URL", 'https://infans.dolibarrgestion.fr/');
-$serveur = "51.91.175.128";
+define("DOL_URL", 'https://test.dolibarrgestion.fr/');
+// $serveur = "51.91.175.128";
+// $dbname = "dolibarrdebian";
+// $user = "moodle";
+// $pass = "WK95A5v^i|=a";
+$serveur = "51.75.149.139";
 $dbname = "dolibarrdebian";
-$user = "moodle";
-$pass = "WK95A5v^i|=a";
+$user = "moodleTest";
+$pass = "0Yzj27UH]hmk@zJ1";
 
 try		{
     $bdd = new PDO('mysql:host='.$serveur

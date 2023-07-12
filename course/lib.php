@@ -1379,7 +1379,6 @@ function getparcours($shortname) {
         $head .= '</div>';
         $head .= '</div>';
         $head .= '</div>';
-
         $head .=  '<style>';
         $head .=  '.iconestyle {
                         font-size: 20px;
