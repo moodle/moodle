@@ -1051,7 +1051,8 @@ document.body.className += ' jsenabled';
 
                                                                 <div class="activity-basis d-flex align-items-center">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
-                                                                                    <div class="activity-instance d-flex flex-column">
+                                                                                    <div class="activity-instance d-flex flex-column course_tooltip">
+                                                                                    <span class="tooltiptext">This challenge is locked for you until you make a submission for the previous one.</span>
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
                                                                                                 <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
@@ -1068,6 +1069,7 @@ document.body.className += ' jsenabled';
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
+                                                                                            
                                                                                                                 <a href="http://qubits.localhost.in/mod/page/view.php?id=4" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 1 Summary <span class="accesshide " > Page</span></span>
     </a>
