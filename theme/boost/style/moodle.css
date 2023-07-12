@@ -34952,12 +34952,13 @@ p.arrow_button {
 /**
  * Grader report.
  */
-.path-grade-report-grader .gradeparent {
-  z-index: 5;
-}
 .path-grade-report-grader .gradeparent tr .cell,
 .path-grade-report-grader .gradeparent .floater .cell {
   background-color: #fff;
+}
+.path-grade-report-grader .gradeparent tr .cell.gradecell .dropdown-menu.show,
+.path-grade-report-grader .gradeparent .floater .cell.gradecell .dropdown-menu.show {
+  z-index: 1;
 }
 .path-grade-report-grader .gradeparent table,
 .path-grade-report-grader .gradeparent .cell {
@@ -34974,11 +34975,20 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent tr.heading {
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 4;
+}
+.path-grade-report-grader .gradeparent tr.userrow th {
+  z-index: 2;
+}
+.path-grade-report-grader .gradeparent tr.userrow th.actions-menu-active {
+  z-index: 3;
 }
 .path-grade-report-grader .gradeparent tr.lastrow {
   position: sticky;
-  bottom: 0;
+  bottom: -1px;
+}
+.path-grade-report-grader .gradeparent tr.lastrow.pinned {
+  z-index: 4;
 }
 .path-grade-report-grader .gradeparent tr.lastrow td,
 .path-grade-report-grader .gradeparent tr.lastrow th {
@@ -34986,7 +34996,6 @@ p.arrow_button {
 }
 .path-grade-report-grader .gradeparent th.header {
   position: sticky;
-  z-index: 1;
 }
 @media (max-width: 767.98px) {
   .path-grade-report-grader .gradeparent th.header {
@@ -34997,6 +35006,9 @@ p.arrow_button {
   .path-grade-report-grader .gradeparent th.header {
     left: -3rem;
   }
+}
+.path-grade-report-grader .gradeparent th.header#studentheader {
+  z-index: 1;
 }
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent;
