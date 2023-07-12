@@ -102,3 +102,11 @@ Feature: Restricting access to course lists
     And I follow "Biology Y1"
     And I should see "You cannot enrol yourself in this course."
     And I log out
+
+  @javascript
+  Scenario: Browse courses as a user who has a disabled enrolment in them
+    Given the following "course enrolments" exist:
+      | user  | course | role    | status |
+      | usere | ENG1   | student | 1      |
+    When I am on the "ENG1" course page logged in as usere
+    Then I should see "You cannot enrol yourself in this course."
