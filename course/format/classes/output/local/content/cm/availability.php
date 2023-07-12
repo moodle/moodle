@@ -86,11 +86,16 @@ class availability extends section_avalability {
             // Nothing to be displayed to the user.
             return [];
         }
+
         if (!$this->mod->uservisible) {
-            return $this->user_availability_info($output);
+            return ['info' => $this->user_availability_info($output)];
         }
 
-        return $this->conditional_availability_info($output);
+        $editurl = new \moodle_url(
+            '/course/modedit.php',
+            ['update' => $this->mod->id, 'showonly' => 'availabilityconditionsheader']
+        );
+        return ['editurl' => $editurl->out(false), 'info' => $this->conditional_availability_info($output)];
     }
 
     /**

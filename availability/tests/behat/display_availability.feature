@@ -69,24 +69,24 @@ Feature: display_availability
     And I press "Save and return to course"
 
     # Page 1 should show in single-line format, showing the date
-    Then I should see "Available until" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "2013" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "2013" in the "#section-1 .availabilityinfo" "css_element"
-    And "li" "css_element" should not exist in the "#section-1 .availabilityinfo" "css_element"
-    And "Show more" "button" should not exist in the "#section-1 .availabilityinfo" "css_element"
+    Then I should see "Available until" in the "Page 1" "core_availability > Activity availability"
+    And I should see "2013" in the "Page 1" "core_availability > Activity availability"
+    And I should see "2013" in the "Page 1" "core_availability > Activity availability"
+    And "li" "css_element" should not exist in the "Page 1" "core_availability > Activity availability"
+    And "Show more" "button" should not exist in the "Page 1" "core_availability > Activity availability"
 
     # Page 2 should show in list format.
-    And "li" "css_element" should exist in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "Not available unless:" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "It is before" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "hidden otherwise" in the "#section-2 .availabilityinfo" "css_element"
+    And "li" "css_element" should exist in the "Page 2" "core_availability > Activity availability"
+    And I should see "Not available unless:" in the "Page 2" "core_availability > Activity availability"
+    And I should see "It is before" in the "Page 2" "core_availability > Activity availability"
+    And I should see "hidden otherwise" in the "Page 2" "core_availability > Activity availability"
     And I click on "Show more" "button" in the "Page 2" "activity"
-    And I should see "Email address" in the "#section-2 .availabilityinfo" "css_element"
-    And I click on "Show less" "button" in the "#section-2 .availabilityinfo" "css_element"
-    And I should not see "Email address" in the "#section-2 .availabilityinfo" "css_element"
+    And I should see "Email address" in the "Page 2" "core_availability > Activity availability"
+    And I click on "Show less" "button" in the "Page 2" "core_availability > Activity availability"
+    And I should not see "Email address" in the "Page 2" "core_availability > Activity availability"
 
     # Page 3 should not have available info.
-    And "#section-3 .availabilityinfo" "css_element" should not exist
+    And "Page 3" "core_availability > Activity availability" should not exist
 
     # Change to student view.
     Given I am on the "C1" "Course" page logged in as "student1"
@@ -139,9 +139,9 @@ Feature: display_availability
     And I am on "Course 1" course homepage
 
     # Check display
-    Then I should see "Not available unless" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "Available until" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "hidden otherwise" in the "#section-2 .availabilityinfo" "css_element"
+    Then I should see "Not available unless" in the "section-1" "core_availability > Section availability"
+    And I should see "Available until" in the "section-2" "core_availability > Section availability"
+    And I should see "hidden otherwise" in the "section-2" "core_availability > Section availability"
 
     # Change to student view.
     Given I am on the "Course 1" "Course" page logged in as "student1"
@@ -153,11 +153,11 @@ Feature: display_availability
 
     # Section 1 should be visible and show info.
     And I should see "Topic 1" in the "region-main" "region"
-    And I should see "Not available unless" in the "#section-1 .availabilityinfo" "css_element"
-    And I click on "Show more" "button" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "Email address" in the "#section-1 .availabilityinfo" "css_element"
-    And I click on "Show less" "button" in the "#section-1 .availabilityinfo" "css_element"
-    And I should not see "Email address" in the "#section-1 .availabilityinfo" "css_element"
+    And I should see "Not available unless" in the "section-1" "core_availability > Section availability"
+    And I click on "Show more" "button" in the "section-1" "core_availability > Section availability"
+    And I should see "Email address" in the "section-1" "core_availability > Section availability"
+    And I click on "Show less" "button" in the "section-1" "core_availability > Section availability"
+    And I should not see "Email address" in the "section-1" "core_availability > Section availability"
 
     # Section 2 should not be available at all
     And I should not see "Topic 2" in the "region-main" "region"

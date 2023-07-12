@@ -143,6 +143,10 @@ M.core_availability.form = {
             }
             this.updateRestrictByGroup();
         }
+
+        // Everything is ready. Make sure the div is visible.
+        this.parent = Y.one('#fitem_id_availabilityconditionsjson');
+        this.parent.removeClass('d-none');
     },
 
     /**

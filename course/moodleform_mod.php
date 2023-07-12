@@ -712,7 +712,10 @@ abstract class moodleform_mod extends moodleform {
             // conflicts with fields in existing modules (such as assign).
             // So it uses a long name that will not conflict.
             $mform->addElement('textarea', 'availabilityconditionsjson',
-                    get_string('accessrestrictions', 'availability'));
+                    get_string('accessrestrictions', 'availability'),
+                    ['class' => 'd-none']
+            );
+
             // The _cm variable may not be a proper cm_info, so get one from modinfo.
             if ($this->_cm) {
                 $modinfo = get_fast_modinfo($COURSE);
@@ -1064,6 +1067,9 @@ abstract class moodleform_mod extends moodleform {
 
         $mform->addElement('hidden', 'beforemod', 0);
         $mform->setType('beforemod', PARAM_INT);
+
+        $mform->addElement('hidden', 'showonly', '');
+        $mform->setType('showonly', PARAM_ALPHANUMEXT);
     }
 
     public function standard_grading_coursemodule_elements() {

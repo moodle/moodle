@@ -30,8 +30,13 @@ require_once($CFG->libdir . '/formslib.php');
 $id = required_param('id', PARAM_INT);    // course_sections.id
 $sectionreturn = optional_param('sr', 0, PARAM_INT);
 $deletesection = optional_param('delete', 0, PARAM_BOOL);
+$showonly = optional_param('showonly', 0, PARAM_TAGLIST);
 
-$PAGE->set_url('/course/editsection.php', array('id'=>$id, 'sr'=> $sectionreturn));
+$params = ['id' => $id, 'sr' => $sectionreturn];
+if (!empty($showonly)) {
+    $params['showonly'] = $showonly;
+}
+$PAGE->set_url('/course/editsection.php', $params);
 
 $section = $DB->get_record('course_sections', array('id' => $id), '*', MUST_EXIST);
 $course = $DB->get_record('course', array('id' => $section->course), '*', MUST_EXIST);
@@ -96,11 +101,13 @@ $editoroptions = array(
 $courseformat = course_get_format($course);
 $defaultsectionname = $courseformat->get_default_section_name($section);
 
-$customdata = array(
+$customdata = [
     'cs' => $sectioninfo,
     'editoroptions' => $editoroptions,
-    'defaultsectionname' => $defaultsectionname
-);
+    'defaultsectionname' => $defaultsectionname,
+    'showonly' => $showonly,
+];
+
 $mform = $courseformat->editsection_form($PAGE->url, $customdata);
 
 // set current value, make an editable copy of section_info object
@@ -110,6 +117,9 @@ if (!empty($CFG->enableavailability)) {
     $initialdata['availabilityconditionsjson'] = $sectioninfo->availability;
 }
 $mform->set_data($initialdata);
+if (!empty($showonly)) {
+    $mform->filter_shown_headers(explode(',', $showonly));
+}
 
 if ($mform->is_cancelled()){
     // Form cancelled, return to course.

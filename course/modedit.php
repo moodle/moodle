@@ -37,11 +37,15 @@ $return = optional_param('return', 0, PARAM_BOOL);    //return to course/view.ph
 $type   = optional_param('type', '', PARAM_ALPHANUM); //TODO: hopefully will be removed in 2.0
 $sectionreturn = optional_param('sr', null, PARAM_INT);
 $beforemod = optional_param('beforemod', 0, PARAM_INT);
+$showonly = optional_param('showonly', '', PARAM_TAGLIST); // Settings group to show expanded and hide the rest.
 
 $url = new moodle_url('/course/modedit.php');
 $url->param('sr', $sectionreturn);
 if (!empty($return)) {
     $url->param('return', $return);
+}
+if (!empty($showonly)) {
+    $url->param('showonly', $showonly);
 }
 
 if (!empty($add)) {
@@ -113,6 +117,9 @@ if (!empty($add)) {
     $data->return = $return;
     $data->sr = $sectionreturn;
     $data->update = $update;
+    if (!empty($showonly)) {
+        $data->showonly = $showonly;
+    }
 
     $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
@@ -153,6 +160,9 @@ if (file_exists($modmoodleform)) {
 $mformclassname = 'mod_'.$module->name.'_mod_form';
 $mform = new $mformclassname($data, $cw->section, $cm, $course);
 $mform->set_data($data);
+if (!empty($showonly)) {
+    $mform->filter_shown_headers(explode(',', $showonly));
+}
 
 if ($mform->is_cancelled()) {
     if ($return && !empty($cm->id)) {
