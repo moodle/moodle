@@ -58,7 +58,9 @@ class behat_grades extends behat_base {
                 );
 
                 // This plugin is not in the list of plugins. Check the pluginname string.
-                $names = array_map(fn($name) => strtolower(get_string('pluginname', "gradereport_{$name}")), $plugins);
+                $names = array_map(function($name) {
+                    return strtolower(get_string('pluginname', "gradereport_{$name}"));
+                }, $plugins);
                 $result = array_search($pluginname, $names);
                 if ($result === false) {
                     throw new \coding_exception("Unknown plugin '{$pluginname}'");
