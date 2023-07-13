@@ -300,7 +300,7 @@ class view {
             }
             foreach ($plugincolumnobjects as $columnobject) {
                 $columnname = $columnobject->get_column_name();
-                foreach ($corequestionbankcolumns as $key => $corequestionbankcolumn) {
+                foreach ($corequestionbankcolumns as $corequestionbankcolumn) {
                     if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
                         unset($questionbankclasscolumns[$columnname]);
                         continue;
@@ -334,7 +334,7 @@ class view {
 
         // Mitigate the error in case of any regression.
         foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
-            if (empty($questionbankclasscolumn)) {
+            if (!is_object($questionbankclasscolumn)) {
                 unset($questionbankclasscolumns[$shortname]);
             }
         }
