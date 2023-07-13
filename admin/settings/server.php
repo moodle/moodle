@@ -516,8 +516,12 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_heading('noreplydomainheading', new lang_string('noreplydomain', 'admin'),
         new lang_string('noreplydomaindetail', 'admin')));
 
+    $default = clean_param('noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL);
+    if (!$default) {
+        $default = null;
+    }
     $temp->add(new admin_setting_configtext('noreplyaddress', new lang_string('noreplyaddress', 'admin'),
-        new lang_string('confignoreplyaddress', 'admin'), 'noreply@' . get_host_from_url($CFG->wwwroot), PARAM_EMAIL));
+        new lang_string('confignoreplyaddress', 'admin'), $default, PARAM_EMAIL));
 
     $temp->add(new admin_setting_configtextarea('allowedemaildomains',
         new lang_string('allowedemaildomains', 'admin'),
