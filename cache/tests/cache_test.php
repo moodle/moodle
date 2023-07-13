@@ -2096,32 +2096,6 @@ class cache_test extends \advanced_testcase {
     }
 
     /**
-     * Test application locking.
-     */
-    public function test_application_locking() {
-        $instance = cache_config_testing::instance(true);
-        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
-            'mode' => cache_store::MODE_APPLICATION,
-            'component' => 'phpunit',
-            'area' => 'test_application_locking',
-            'staticacceleration' => true,
-            'staticaccelerationsize' => 1,
-            'requirelockingread' => true,
-            'requirelockingwrite' => true
-        ));
-        $cache = cache::make('phpunit', 'test_application_locking');
-        $this->assertInstanceOf(cache_application::class, $cache);
-
-        $this->assertTrue($cache->set('a', 'A'));
-        $this->assertTrue($cache->set('b', 'B'));
-        $this->assertTrue($cache->set('c', 'C'));
-        $this->assertEquals('A', $cache->get('a'));
-        $this->assertEquals(array('b' => 'B', 'c' => 'C'), $cache->get_many(array('b', 'c')));
-        $this->assertTrue($cache->delete('a'));
-        $this->assertFalse($cache->has('a'));
-    }
-
-    /**
      * The application locking feature should work with caches that support multiple identifiers
      * (static cache and MongoDB with a specific setting).
      *
@@ -2170,28 +2144,6 @@ class cache_test extends \advanced_testcase {
         $this->expectExceptionMessage('Attempted to set cache key "b" without a lock. '
                 . 'Locking before writes is required for phpunit/test_application_locking');
         $this->assertFalse($cache->set('b', 'B'));
-    }
-
-
-    /**
-     * Test that invalid lock setting combinations are caught.
-     *
-     * @covers ::make
-     */
-    public function test_application_conflicting_locks() {
-        $instance = cache_config_testing::instance(true);
-        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
-                'mode' => cache_store::MODE_APPLICATION,
-                'component' => 'phpunit',
-                'area' => 'test_application_locking',
-                'staticacceleration' => true,
-                'staticaccelerationsize' => 1,
-                'requirelockingwrite' => true,
-                'requirelockingbeforewrite' => true,
-        ));
-
-        $this->expectException('coding_exception');
-        cache::make('phpunit', 'test_application_locking');
     }
 
     /**
