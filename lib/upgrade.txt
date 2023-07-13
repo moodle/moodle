@@ -2,6 +2,10 @@ This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
 === 4.1.5 ===
+* Added a new render of caption for the table in render_caption. It can be used by
+  set_caption($caption, $captionattributes).
+    e.g. $caption = 'Caption for table'
+    e.g. $captionattributes = ['class' => 'inline'];
 * Added new \admin_setting::is_forceable() method to determine whether the setting can be overridden or not. Therefore,
   whether the settings can be overriden or not will depend on the value of implemented \admin_setting::is_forceable() method,
   even if we define the settings in config.php.
