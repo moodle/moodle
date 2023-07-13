@@ -7876,9 +7876,12 @@ class assign {
             $gradingstatus = $this->get_grading_status($userid);
             if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
                 if ($grade->grade && $grade->grade != -1) {
-                    $assigngradestring = html_writer::span(
-                        make_grades_menu($settings->grade)[grade_floatval($grade->grade)], 'currentgrade'
-                    );
+                    if ($settings->grade > 0) {
+                        $assigngradestring = format_float($grade->grade, $this->get_grade_item()->get_decimals());
+                    } else {
+                        $assigngradestring = make_grades_menu($settings->grade)[grade_floatval($grade->grade)];
+                    }
+                    $assigngradestring = html_writer::span($assigngradestring, 'currentgrade');
                     $label = get_string('currentassigngrade', 'assign');
                     $mform->addElement('static', 'currentassigngrade', $label, $assigngradestring);
                 }
