@@ -754,6 +754,8 @@ class behat_navigation extends behat_base {
      * | Reset                      | course shortname          | Course to reset                      |
      * | Course copy                | course shortname          | Course to copy                       |
      * | Groups                     | course shortname          | Groups page for the course           |
+     * | Groups overview            | course shortname          | Groups overview page for the course  |
+     * | Groupings                  | course shortname          | Groupings page for the course        |
      * | Permissions                | course shortname          | Permissions page for the course      |
      * | Enrolment methods          | course shortname          | Enrolment methods for the course     |
      * | Enrolled users             | course shortname          | The main participants page           |
@@ -853,6 +855,20 @@ class behat_navigation extends behat_base {
                             $identifier . '" does not exist');
                 }
                 return new moodle_url('/group/index.php', ['id' => $courseid]);
+            case 'groups overview':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
+                }
+                return new moodle_url('/group/overview.php', ['id' => $courseid]);
+            case 'groupings':
+                $courseid = $this->get_course_id($identifier);
+                if (!$courseid) {
+                    throw new Exception('The specified course with shortname, fullname, or idnumber "' .
+                        $identifier . '" does not exist');
+                }
+                return new moodle_url('/group/groupings.php', ['id' => $courseid]);
             case 'permissions':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {

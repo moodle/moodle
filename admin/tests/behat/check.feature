@@ -28,7 +28,7 @@ Feature: Staff can check user permissions
   @javascript
   Scenario: Search for a user (enrolled on the course) by custom field and select them to see permissions
     When I am on the "C1" "permissions" page logged in as "admin"
-    And I select "Check permissions" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Check permissions"
     And I set the field "Search" to "Kermit"
     # The Behat 'I should see' step doesn't work for optgroup labels.
     Then "optgroup[label='Matching enrolled users (1)']" "css_element" should exist
@@ -42,7 +42,7 @@ Feature: Staff can check user permissions
   @javascript
   Scenario: Search for a user (not enrolled on the course) by custom field and select them to see permissions
     When I am on the "C1" "permissions" page logged in as "admin"
-    And I select "Check permissions" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Check permissions"
     And I set the field "Search" to "Kermit"
     # The Behat 'I should see' step doesn't work for optgroup labels.
     Then "optgroup[label*='Potential users matching'][label*=' (1)']" "css_element" should exist

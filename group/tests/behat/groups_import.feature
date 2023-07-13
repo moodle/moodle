@@ -41,7 +41,7 @@ Feature: Importing of groups and groupings
     And I should see "No" in the "Group messaging" "select"
     And I press "Cancel"
     # Check groupings
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I should see "Grouping-1"
     And I should see "Grouping-2"
     And I should see "Grouping-3"

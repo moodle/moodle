@@ -58,7 +58,7 @@ Feature: Set up contextual data for tests
     And I am on the "Course 1" "groups" page
     Then I should see "Group 1"
     And I should see "Group 2"
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 

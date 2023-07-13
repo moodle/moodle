@@ -48,7 +48,6 @@ $PAGE->set_heading($course->fullname);
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_participants_tertiary_nav($course);
-echo $OUTPUT->heading(get_string('rolerenaming'));
 
 echo $OUTPUT->paragraph(get_string('rolerenaming_help'));
 
