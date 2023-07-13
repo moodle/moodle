@@ -312,8 +312,8 @@ class grade_edit_tree {
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
-            $headercell->attributes['title'] = $object->stripped_name;
             $headercell->attributes['class'] = 'cell column-rowspan rowspan ' . $levelclass;
+            $headercell->attributes['aria-hidden'] = 'true';
             $headercell->rowspan = $row_count + 1;
             $row->cells[] = $headercell;
 
@@ -338,6 +338,7 @@ class grade_edit_tree {
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'emptyrow colspan ' . $levelclass;
+            $endcell->attributes['aria-hidden'] = 'true';
 
             $returnrows[] = new html_table_row(array($endcell));
 
