@@ -24,6 +24,7 @@
 
 namespace core_question\local\bank;
 
+use core\plugininfo\qbank;
 use core_plugin_manager;
 use core_question\bank\search\condition;
 use core_question\local\statistics\statistics_bulk_loader;
@@ -95,6 +96,13 @@ class view {
      * part of the display. Array keys are the class name.
      */
     protected $requiredcolumns;
+
+    /**
+     * @var question_action_base[] these are all the actions that can be displayed in a question's action menu.
+     *
+     * Array keys are the class name.
+     */
+    protected $questionactions;
 
     /**
      * @var column_base[] these are the 'columns' that are
@@ -201,6 +209,7 @@ class view {
 
         // Possibly the heading part can be removed.
         $this->init_columns($this->wanted_columns(), $this->heading_column());
+        $this->init_question_actions();
         $this->init_sort();
         $this->init_search_conditions();
         $this->init_bulk_actions();
@@ -252,6 +261,28 @@ class view {
     }
 
     /**
+     * Initialise list of menu actions for enabled question bank plugins.
+     *
+     * Menu action objects are stored in $this->menuactions, keyed by class name.
+     *
+     * @return void
+     */
+    protected function init_question_actions(): void {
+        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
+        $this->questionactions = [];
+        foreach ($plugins as $component => $plugin) {
+            if (!qbank::is_plugin_enabled($component)) {
+                continue;
+            }
+            $pluginentrypointobject = new $plugin();
+            $menuactions = $pluginentrypointobject->get_question_actions($this);
+            foreach ($menuactions as $menuaction) {
+                $this->questionactions[$menuaction::class] = $menuaction;
+            }
+        }
+    }
+
+    /**
      * Get the list of qbank plugins with available objects for features.
      *
      * @return array
@@ -264,13 +295,6 @@ class view {
                 'question_type_column',
                 'question_name_idnumber_tags_column',
                 'edit_menu_column',
-                'edit_action_column',
-                'copy_action_column',
-                'tags_action_column',
-                'preview_action_column',
-                'history_action_column',
-                'delete_action_column',
-                'export_xml_action_column',
                 'question_status_column',
                 'version_number_column',
                 'creator_name_column',
@@ -388,14 +412,6 @@ class view {
      * @param string $heading The name of column that is set as heading
      */
     protected function init_columns($wanted, $heading = ''): void {
-        // If we are using the edit menu column, allow it to absorb all the actions.
-        foreach ($wanted as $column) {
-            if ($column instanceof edit_menu_column) {
-                $wanted = $column->claim_menuable_columns($wanted);
-                break;
-            }
-        }
-
         // Now split columns into real columns and rows.
         $this->visiblecolumns = [];
         $this->extrarows = [];
@@ -589,26 +605,77 @@ class view {
     }
 
     /**
-     * Create the SQL query to retrieve the indicated questions, based on
-     * \core_question\bank\search\condition filters.
+     * Return an array 'table_alias' => 'JOIN clause' to bring in any data that
+     * the core view requires.
+     *
+     * @return string[] 'table_alias' => 'JOIN clause'
      */
-    protected function build_query(): void {
-        // Get the required tables and fields.
-        $joins = [];
-        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
-        if (!empty($this->requiredcolumns)) {
-            foreach ($this->requiredcolumns as $column) {
-                $extrajoins = $column->get_extra_joins();
+    protected function get_required_joins(): array {
+        return [
+            'qv' => 'JOIN {question_versions} qv ON qv.questionid = q.id',
+            'qbe' => 'JOIN {question_bank_entries} qbe on qbe.id = qv.questionbankentryid',
+            'qc' => 'JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid',
+        ];
+    }
+
+    /**
+     * Return an array of fields for any data that the core view requires.
+     *
+     * Use table alias 'q' for the question table, or one of the ones from get_required_joins.
+     * Every field requested must specify a table prefix.
+     *
+     * @return string[] fields required.
+     */
+    protected function get_required_fields(): array {
+        return [
+            'q.id',
+            'q.qtype',
+            'q.createdby',
+            'qc.id as categoryid',
+            'qc.contextid',
+            'qv.status',
+            'qv.version',
+            'qv.id as versionid',
+            'qbe.id as questionbankentryid',
+        ];
+    }
+
+    /**
+     * Gather query requirements from view component objects.
+     *
+     * This will take the required fields and joins for this view, and combine them with those for all active view components.
+     * Fields will be de-duplicated in multiple components require the same field.
+     * Joins will be de-duplicated if the alias and join clause match exactly.
+     *
+     * @throws \coding_exception If two components attempt to use the same alias for different joins.
+     * @param view_component[] $viewcomponents List of component objects included in the current view
+     * @return array [$fields, $joins] SQL fields and joins to add to the query.
+     */
+    protected function get_component_requirements(array $viewcomponents): array {
+        $fields = $this->get_required_fields();
+        $joins = $this->get_required_joins();
+        if (!empty($viewcomponents)) {
+            foreach ($viewcomponents as $viewcomponent) {
+                $extrajoins = $viewcomponent->get_extra_joins();
                 foreach ($extrajoins as $prefix => $join) {
                     if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
                         throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
                     }
                     $joins[$prefix] = $join;
                 }
-                $fields = array_merge($fields, $column->get_required_fields());
+                $fields = array_merge($fields, $viewcomponent->get_required_fields());
             }
         }
-        $fields = array_unique($fields);
+        return [array_unique($fields), $joins];
+    }
+
+    /**
+     * Create the SQL query to retrieve the indicated questions, based on
+     * \core_question\bank\search\condition filters.
+     */
+    protected function build_query(): void {
+        // Get the required tables and fields.
+        [$fields, $joins] = $this->get_component_requirements(array_merge($this->requiredcolumns, $this->questionactions));
 
         // Build the order by clause.
         $sorts = [];
@@ -944,7 +1011,7 @@ class view {
     protected function create_new_question_form($category, $canadd): void {
         if (\core\plugininfo\qbank::is_plugin_enabled('qbank_editquestion')) {
             echo editquestion_helper::create_new_question_button($category->id,
-                    $this->requiredcolumns['edit_action_column']->editquestionurl->params(), $canadd);
+                    $this->questionactions['qbank_editquestion\edit_action']->editquestionurl->params(), $canadd);
         }
     }
 
@@ -1334,5 +1401,14 @@ class view {
      */
     public function is_listing_specific_versions(): bool {
         return false;
+    }
+
+    /**
+     * Return array of menu actions.
+     *
+     * @return question_action_base[]
+     */
+    public function get_question_actions(): array {
+        return $this->questionactions;
     }
 }

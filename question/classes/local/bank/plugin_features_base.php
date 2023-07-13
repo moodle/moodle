@@ -38,12 +38,22 @@ namespace core_question\local\bank;
 class plugin_features_base {
 
     /**
-     * This method will return the array of objects to be rendered as a part of question bank columns/actions.
+     * This method will return the array of objects to be rendered as a part of question bank columns.
      *
      * @param view $qbank
      * @return array
      */
     public function get_question_columns(view $qbank): ?array {
+        return [];
+    }
+
+    /**
+     * This method will return the array of objects to be rendered as a part of question bank actions.
+     *
+     * @param view $qbank
+     * @return question_action_base[]
+     */
+    public function get_question_actions(view $qbank): array {
         return [];
     }
 

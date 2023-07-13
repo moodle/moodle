@@ -16,7 +16,7 @@
 
 namespace qbank_history;
 
-use core_question\local\bank\menu_action_column_base;
+use core_question\local\bank\question_action_base;
 
 /**
  * Question bank column for the history action icon.
@@ -26,7 +26,7 @@ use core_question\local\bank\menu_action_column_base;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class history_action_column extends menu_action_column_base {
+class history_action extends question_action_base {
 
     // Store this lang string for performance.
     protected $strpreview;
@@ -34,14 +34,6 @@ class history_action_column extends menu_action_column_base {
     public function init(): void {
         parent::init();
         $this->strpreview = get_string('history_action', 'qbank_history');
-    }
-
-    public function get_extra_classes(): array {
-        return ['pr-3'];
-    }
-
-    public function get_name(): string {
-        return 'historyaction';
     }
 
     protected function get_url_icon_and_label(\stdClass $question): array {

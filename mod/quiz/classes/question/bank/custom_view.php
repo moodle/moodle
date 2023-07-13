@@ -260,21 +260,7 @@ class custom_view extends \core_question\local\bank\view {
 
     protected function build_query(): void {
         // Get the required tables and fields.
-        $joins = [];
-        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
-        if (!empty($this->requiredcolumns)) {
-            foreach ($this->requiredcolumns as $column) {
-                $extrajoins = $column->get_extra_joins();
-                foreach ($extrajoins as $prefix => $join) {
-                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
-                    }
-                    $joins[$prefix] = $join;
-                }
-                $fields = array_merge($fields, $column->get_required_fields());
-            }
-        }
-        $fields = array_unique($fields);
+        [$fields, $joins] = $this->get_component_requirements(array_merge($this->requiredcolumns, $this->questionactions));
 
         // Build the order by clause.
         $sorts = [];
@@ -333,5 +319,14 @@ class custom_view extends \core_question\local\bank\view {
             }
         }
         $this->display_options_form($showquestiontext);
+    }
+
+    /**
+     * Return the quiz settings for the quiz this question bank is displayed in.
+     *
+     * @return bool|\stdClass
+     */
+    public function get_quiz() {
+        return $this->quiz;
     }
 }

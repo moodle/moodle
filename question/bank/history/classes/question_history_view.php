@@ -60,14 +60,16 @@ class question_history_view extends view {
         $this->basereturnurl = new \moodle_url($returnurl);
     }
 
+    protected function init_question_actions(): void {
+        parent::init_question_actions();
+        unset($this->questionactions['qbank_history\history_action']);
+    }
+
     protected function wanted_columns(): array {
         $this->requiredcolumns = [];
-        $excludefeatures = [
-            'history_action_column'
-        ];
         $questionbankcolumns = $this->get_question_bank_plugins();
         foreach ($questionbankcolumns as $classobject) {
-            if (empty($classobject) || in_array($classobject->get_column_name(), $excludefeatures)) {
+            if (empty($classobject)) {
                 continue;
             }
             $this->requiredcolumns[$classobject->get_column_name()] = $classobject;
@@ -127,21 +129,7 @@ class question_history_view extends view {
 
     protected function build_query(): void {
         // Get the required tables and fields.
-        $joins = [];
-        $fields = ['qv.status', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
-        if (!empty($this->requiredcolumns)) {
-            foreach ($this->requiredcolumns as $column) {
-                $extrajoins = $column->get_extra_joins();
-                foreach ($extrajoins as $prefix => $join) {
-                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
-                    }
-                    $joins[$prefix] = $join;
-                }
-                $fields = array_merge($fields, $column->get_required_fields());
-            }
-        }
-        $fields = array_unique($fields);
+        [$fields, $joins] = $this->get_component_requirements(array_merge($this->requiredcolumns, $this->questionactions));
 
         // Build the order by clause.
         $sorts = [];

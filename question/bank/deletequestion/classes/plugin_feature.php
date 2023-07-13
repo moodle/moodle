@@ -37,9 +37,9 @@ use core_question\local\bank\plugin_features_base;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class plugin_feature extends plugin_features_base {
-    public function get_question_columns($qbank): array {
+    public function get_question_actions($qbank): array {
         return [
-            new delete_action_column($qbank),
+            new delete_action($qbank),
         ];
     }
 

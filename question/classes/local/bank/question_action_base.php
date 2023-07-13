@@ -35,13 +35,14 @@ namespace core_question\local\bank;
  * @copyright 2019 Tim Hunt
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Since Moodle 4.3 MDL-75125 - Use question_action_base instead.
- * @todo MDL-78090 This class will be deleted in Moodle 4.7
  */
-abstract class menu_action_column_base extends action_column_base implements menuable_action {
+abstract class question_action_base extends view_component {
 
     /**
      * Get the information required to display this action either as a menu item or a separate action column.
+     *
+     * For most actions, it should be sufficient to override just this method. {@see get_action_menu_link()} is the public interface
+     * and handles building a renderable menu link object from this data.
      *
      * If this action cannot apply to this question (e.g. because the user does not have
      * permission, then return [null, null, null].
@@ -52,18 +53,21 @@ abstract class menu_action_column_base extends action_column_base implements men
      *      $icon - the icon for this action. E.g. 't/delete'.
      *      $label - text label to display in the UI (either in the menu, or as a tool-tip on the icon)
      */
-    abstract protected function get_url_icon_and_label(\stdClass $question);
-
-    protected function display_content($question, $rowclasses): void {
-        debugging('The menu_action_column_base class is deprecated. Please use question_action_base instead.', DEBUG_DEVELOPER);
-        [$url, $icon, $label] = $this->get_url_icon_and_label($question);
-        if ($url) {
-            $this->print_icon($icon, $label, $url);
-        }
+    protected function get_url_icon_and_label(\stdClass $question): array {
+        return [null, null, null];
     }
 
+    /**
+     * Return the action menu link for this action on the supplied question.
+     *
+     * For most actions, you will just need to override {@see get_url_icon_and_label()}. You only need to override
+     * this method if you need to pass additional attributes to {@see action_menu_link_secondary}, or use a different class to
+     * render the link.
+     *
+     * @param \stdClass $question
+     * @return \action_menu_link|null
+     */
     public function get_action_menu_link(\stdClass $question): ?\action_menu_link {
-        debugging('The menu_action_column_base class is deprecated. Please use question_action_base instead.', DEBUG_DEVELOPER);
         [$url, $icon, $label] = $this->get_url_icon_and_label($question);
         if (!$url) {
             return null;

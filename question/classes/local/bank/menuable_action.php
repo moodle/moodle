@@ -41,6 +41,8 @@ namespace core_question\local\bank;
  *
  * @copyright 2019 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.3 MDL-75125 - Use question_action_base instead.
+ * @todo MDL-78090 This interface will be deleted in Moodle 4.7
  */
 interface menuable_action {
 
@@ -49,6 +51,7 @@ interface menuable_action {
      *
      * @param \stdClass $question data about the question being displayed in this row.
      * @return \action_menu_link|null the action, if applicable to this question.
+     * @deprecated Since Moodle 4.3
      */
     public function get_action_menu_link(\stdClass $question): ?\action_menu_link;
 }
