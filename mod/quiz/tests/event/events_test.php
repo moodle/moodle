@@ -25,11 +25,9 @@
 
 namespace mod_quiz\event;
 
-use core\event\base;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 use context_module;
-use moodle_url;
 
 /**
  * Unit tests for quiz events.
@@ -1205,11 +1203,108 @@ class events_test extends \advanced_testcase {
     }
 
     /**
+     * Test quiz_grade_item_created.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_created
+     */
+    public function test_quiz_grade_item_created(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->create_grade_item((object) ['quizid' => $quizobj->get_quizid(), 'name' => 'Test']);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $stucture = $quizobj->get_structure();
+        $gradeitem = array_values($stucture->get_grade_items())[0];
+        $this->assertInstanceOf(quiz_grade_item_created::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' created quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
+     * Test quiz_grade_item_updated.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_updated
+     */
+    public function test_quiz_grade_item_updated(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->update_grade_item((object) ['id' => $gradeitem->id, 'name' => 'Test']);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(quiz_grade_item_updated::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' updated quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
+     * Test quiz_grade_item_deleted.
+     *
+     * @covers \mod_quiz\event\quiz_grade_item_deleted
+     */
+    public function test_quiz_grade_item_deleted(): void {
+        global $USER;
+
+        $quizobj = $this->prepare_quiz();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+        $stucture = $quizobj->get_structure();
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $stucture->delete_grade_item($gradeitem->id);
+        $events = $sink->get_events();
+        /** @var slot_grade_item_updated $event */
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf(quiz_grade_item_deleted::class, $event);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertEquals(new \moodle_url('/mod/quiz/editgrading.php', ['cmid' => $quizobj->get_cmid()]),
+            $event->get_url());
+        $this->assertEquals("The user with id '$USER->id' deleted quiz grade item with id '$gradeitem->id' " .
+            "for the quiz with course module id '{$quizobj->get_cmid()}'.",
+            $event->get_description());
+    }
+
+    /**
      * Test slot_grade_item_updated.
      *
      * @covers \mod_quiz\event\slot_grade_item_updated
      */
-    public function test_slot_grade_item_updated() {
+    public function test_slot_grade_item_updated(): void {
         global $USER;
 
         $quizobj = $this->prepare_quiz();

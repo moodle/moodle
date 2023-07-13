@@ -19,6 +19,9 @@ namespace mod_quiz;
 use coding_exception;
 use context_module;
 use core\output\inplace_editable;
+use mod_quiz\event\quiz_grade_item_created;
+use mod_quiz\event\quiz_grade_item_deleted;
+use mod_quiz\event\quiz_grade_item_updated;
 use mod_quiz\event\slot_grade_item_updated;
 use mod_quiz\event\slot_mark_updated;
 use mod_quiz\question\bank\qbank_helper;
@@ -56,6 +59,9 @@ class structure {
      * quiz_sections, once it exists.
      */
     protected $sections = [];
+
+    /** @var stdClass[] quiz_grade_items for this quiz indexed by id. */
+    protected array $gradeitems = [];
 
     /** @var bool caches the results of can_be_edited. */
     protected $canbeedited = null;
@@ -723,6 +729,7 @@ class structure {
     protected function populate_structure() {
         global $DB;
 
+        $this->populate_grade_items();
         $slots = qbank_helper::get_question_structure($this->quizobj->get_quizid(), $this->quizobj->get_context());
         $this->questions = [];
         $this->slotsinorder = [];
@@ -738,6 +745,15 @@ class structure {
         $this->sections = $DB->get_records('quiz_sections', ['quizid' => $this->quizobj->get_quizid()], 'firstslot');
         $this->populate_slots_with_sections();
         $this->populate_question_numbers();
+    }
+
+    /**
+     * Load the information about the grade items for this quiz.
+     */
+    protected function populate_grade_items(): void {
+        global $DB;
+        $this->gradeitems = $DB->get_records('quiz_grade_items',
+                ['quizid' => $this->get_quizid()], 'sortorder');
     }
 
     /**
@@ -1182,9 +1198,7 @@ class structure {
         }
 
         $transaction = $DB->start_delegated_transaction();
-        $previousmaxmark = $slot->quizgradeitemid;
-        $slot->quizgradeitemid = $gradeitemid;
-        $DB->update_record('quiz_slots', $slot);
+        $DB->set_field('quiz_slots', 'quizgradeitemid', $gradeitemid, ['id' => $slot->id]);
 
         // Log slot mark updated event.
         slot_grade_item_updated::create([
@@ -1192,10 +1206,12 @@ class structure {
             'objectid' => $slot->id,
             'other' => [
                 'quizid' => $this->get_quizid(),
-                'previousgradeitem' => $previousmaxmark,
+                'previousgradeitem' => $slot->quizgradeitemid,
                 'newgradeitem' => $gradeitemid,
             ],
         ])->trigger();
+
+        $this->slotsinorder[$slot->slot]->quizgradeitemid = $gradeitemid;
 
         $transaction->allow_commit();
         return true;
@@ -1426,6 +1442,136 @@ class structure {
         return $this->canaddrandom;
     }
 
+    /**
+     * Get the grade items defined for this quiz.
+     *
+     * @return stdClass[] quiz_grade_item rows, indexed by id.
+     */
+    public function get_grade_items(): array {
+        return $this->gradeitems;
+    }
+
+    /**
+     * Check the grade item with the given id belongs to this quiz.
+     *
+     * @param int $gradeitemid id of a quiz grade item.
+     * @throws coding_exception if the grade item does not belong to this quiz.
+     */
+    public function verify_grade_item_is_ours(int $gradeitemid): void {
+        if (!array_key_exists($gradeitemid, $this->gradeitems)) {
+            throw new coding_exception('Grade item ' . $gradeitemid .
+                    ' does not belong to quiz ' . $this->get_quizid());
+        }
+    }
+
+    /**
+     * Is a particular quiz grade item used by any slots?
+     *
+     * @param int $gradeitemid id of a quiz grade item belonging to this quiz.
+     * @return bool true if it is used.
+     */
+    public function is_grade_item_used(int $gradeitemid): bool {
+        $this->verify_grade_item_is_ours($gradeitemid);
+
+        foreach ($this->slotsinorder as $slot) {
+            if ($slot->quizgradeitemid == $gradeitemid) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Create a grade item.
+     *
+     * The new grade item is added at the end of the order.
+     *
+     * @param stdClass $gradeitemdata must have property name.
+     */
+    public function create_grade_item(stdClass $gradeitemdata): void {
+        global $DB;
+
+        // Add to the end of the sort order.
+        $gradeitemdata->sortorder = $DB->get_field('quiz_grade_items',
+                'COALESCE(MAX(sortorder) + 1, 1)',
+                ['quizid' => $this->get_quizid()]);
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Create the grade item.
+        $gradeitemdata->id = $DB->insert_record('quiz_grade_items', $gradeitemdata);
+        $this->gradeitems[$gradeitemdata->id] = $DB->get_record(
+                'quiz_grade_items', ['id' => $gradeitemdata->id]);
+
+        // Log.
+        quiz_grade_item_created::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $gradeitemdata->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+            ],
+        ])->trigger();
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Update a grade item.
+     *
+     * @param stdClass $gradeitemdata must have properties id and name.
+     */
+    public function update_grade_item(stdClass $gradeitemdata): void {
+        global $DB;
+
+        $this->verify_grade_item_is_ours($gradeitemdata->id);
+
+        $transaction = $DB->start_delegated_transaction();
+
+        // Update the grade item.
+        $DB->update_record('quiz_grade_items', $gradeitemdata);
+        $this->gradeitems[$gradeitemdata->id] = $DB->get_record(
+                'quiz_grade_items', ['id' => $gradeitemdata->id]);
+
+        // Log.
+        quiz_grade_item_updated::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $gradeitemdata->id,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+            ],
+        ])->trigger();
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Delete a grade item (only if it is not used).
+     *
+     * @param int $gradeitemid id of the grade item to delete. Must belong to this quiz.
+     */
+    public function delete_grade_item(int $gradeitemid): void {
+        global $DB;
+
+        if ($this->is_grade_item_used($gradeitemid)) {
+            throw new coding_exception('Cannot delete a quiz grade item which is used.');
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->delete_records('quiz_grade_items', ['id' => $gradeitemid]);
+        unset($this->gradeitems[$gradeitemid]);
+
+        // Log.
+        quiz_grade_item_deleted::create([
+            'context' => $this->quizobj->get_context(),
+            'objectid' => $gradeitemid,
+            'other' => [
+                'quizid' => $this->get_quizid(),
+            ],
+        ])->trigger();
+
+        $transaction->allow_commit();
+    }
 
     /**
      * @deprecated since Moodle 4.0 MDL-71573

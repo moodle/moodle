@@ -76,7 +76,7 @@ final class update_slots_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Create a quiz of one shortanswer question.
+     * Create a quiz of two shortanswer questions.
      *
      * @return quiz_settings the newly created quiz.
      */
