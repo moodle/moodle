@@ -37,43 +37,48 @@ class helper {
         global $DB;
         $questionnames = '';
         $inuse = false;
-        $hasmutipleversions = false;
         $questionversions = [];
         $countselectedquestion = count($questionids);
+
         if ($deleteallversions) {
-            $listofquestions = \question_bank::get_all_versions_of_questions($questionids);
-            foreach ($listofquestions as $questionbankentry) {
-                if (count($questionbankentry) > 1 && !$hasmutipleversions) {
-                    $hasmutipleversions = true;
-                }
-                // Flip the array to list question by question id. [ qid => qversion ].
-                $questionversions += array_flip($questionbankentry);
+            $versionsofeachquestionbankentry = \question_bank::get_all_versions_of_questions($questionids);
+            foreach ($versionsofeachquestionbankentry as $entryid => $versions) {
+                // Re-order to oldest first.
+                $versionsofeachquestionbankentry[$entryid] = array_reverse($versions, true);
+                // Flip the array to list question by question id. [ qid => version ].
+                $questionversions += array_flip($versions);
             }
             // Flatten an array.
-            $questionids = array_merge(...$listofquestions);
+            $questionids = array_merge(...$versionsofeachquestionbankentry);
         }
-        [$questionsql, $params] = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
-        $questions = $DB->get_records_select('question', 'id ' . $questionsql, $params,
-            'name ASC', 'id, name');
-        foreach ($questions as $question) {
-            if (questions_in_use([$question->id])) {
+
+        // Get the names of all the questions.
+        $questions = $DB->get_records_list('question', 'id', $questionids, '', 'id, name');
+
+        // Build the message.
+        foreach ($questionids as $questionid) {
+            if (questions_in_use([$questionid])) {
                 $questionnames .= '* ';
                 $inuse = true;
             }
-            $questionname = format_string($question->name);
-            if (isset($questionversions[$question->id])) {
+            $questionname = format_string($questions[$questionid]->name);
+            if (isset($questionversions[$questionid])) {
                 $a = new \stdClass();
                 $a->name = $questionname;
-                $a->version = $questionversions[$question->id];
+                $a->version = $questionversions[$questionid];
                 $questionnames .= get_string('questionnameandquestionversion',
                     'question', $a) . '<br />';
             } else {
                 $questionnames .= $questionname . '<br />';
             }
         }
+
+        // Add the in-use message if required.
         if ($inuse) {
             $questionnames .= '<br />'.get_string('questionsinuse', 'question');
         }
+
+        // Add in the right tile and message text.
         $confirmtitle = [
             'confirmtitle' => $countselectedquestion > 1 ? get_string('deleteversiontitle_plural',
                 'question') : get_string('deleteversiontitle', 'question'),
