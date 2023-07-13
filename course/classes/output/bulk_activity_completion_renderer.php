@@ -126,8 +126,12 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
      * @param moodleform $form
      * @param array $modules
      * @return string
+     * @deprecated since Moodle 4.3 MDL-78528
+     * @todo MDL-78711 This will be deleted in Moodle 4.7
      */
     public function edit_default_completion($form, $modules) {
+        debugging('edit_default_completion() is deprecated and will be removed.', DEBUG_DEVELOPER);
+
         ob_start();
         $form->display();
         $formhtml = ob_get_contents();
