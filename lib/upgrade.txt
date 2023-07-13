@@ -3,6 +3,10 @@ information provided here is intended especially for developers.
 
 === 4.3 ===
 
+* Added a new render of caption for the table in render_caption. It can be used by
+  set_caption($caption, $captionattributes).
+    e.g. $caption = 'Caption for table'
+    e.g. $captionattributes = ['class' => 'inline'];
 * Admin settings for passwords (admin_setting_configpasswordunmask) can now be a required field using the following class:
     - admin_setting_requiredpasswordunmask
 * The `$a` argument passed to `get_string` can now include any stringable type, removing the need for explicit casts (for
