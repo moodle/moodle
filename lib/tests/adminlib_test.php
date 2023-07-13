@@ -126,4 +126,83 @@ class adminlib_test extends \advanced_testcase {
         $actual = db_should_replace($table, $column, $additionalskiptables);
         $this->assertSame($actual, $expected);
     }
+
+    /**
+     * Test method used by upgradesettings.php to make sure
+     * there are no missing settings in PHPUnit and Behat tests.
+     *
+     * @covers ::admin_output_new_settings_by_page
+     */
+    public function test_admin_output_new_settings_by_page() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Add settings not set during PHPUnit init.
+        set_config('supportemail', 'support@example.com');
+        $frontpage = new \admin_setting_special_frontpagedesc();
+        $frontpage->write_setting('test test');
+
+        // NOTE: if this test fails then it is most likely extra setting in
+        // some additional plugin without default - developer needs to add
+        // a workaround into their db/install.php for PHPUnit and Behat.
+
+        $root = admin_get_root(true, true);
+        $new = admin_output_new_settings_by_page($root);
+        $this->assertSame([], $new);
+
+        unset_config('numbering', 'book');
+        unset_config('supportemail');
+        $root = admin_get_root(true, true);
+        $new = admin_output_new_settings_by_page($root);
+        $this->assertCount(2, $new);
+    }
+
+    /**
+     * Test repeated recursive application of default settings.
+     *
+     * @covers ::admin_apply_default_settings
+     */
+    public function test_admin_apply_default_settings() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // There should not be any pending new defaults.
+        $saved = admin_apply_default_settings(null, false);
+        $this->assertSame([], $saved);
+
+        // Emulation of upgrades from CLI.
+        unset_config('logocompact', 'core_admin');
+        unset_config('grade_aggregationposition');
+        unset_config('numbering', 'book');
+        unset_config('enabled', 'core_competency');
+        unset_config('pushcourseratingstouserplans', 'core_competency');
+        $saved = admin_apply_default_settings(null, false);
+        $expected = [
+            'core_competency/enabled' => '1',
+            'grade_aggregationposition' => '1',
+            'book/numbering' => '1',
+            'core_admin/logocompact' => '',
+            'core_competency/pushcourseratingstouserplans' => '1',
+        ];
+        $this->assertEquals($expected, $saved);
+
+        // Repeated application of defaults - not done usually.
+        $saved = admin_apply_default_settings(null, true);
+        $this->assertGreaterThan(500, count($saved));
+        $saved = admin_apply_default_settings();
+        $this->assertGreaterThan(500, count($saved));
+
+        // Emulate initial application of defaults.
+        $DB->delete_records('config', []);
+        $DB->delete_records('config_plugins', []);
+        purge_all_caches();
+        $saved = admin_apply_default_settings(null, true);
+        $this->assertGreaterThan(500, count($saved));
+
+        // Make sure there were enough repetitions.
+        $saved = admin_apply_default_settings(null, false);
+        $this->assertSame([], $saved);
+    }
 }

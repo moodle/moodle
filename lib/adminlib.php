@@ -8791,39 +8791,65 @@ function admin_get_root($reload=false, $requirefulltree=true) {
 /// settings utility functions
 
 /**
- * This function applies default settings.
- * Because setting the defaults of some settings can enable other settings,
- * this function is called recursively until no more new settings are found.
+ * This function applies default settings recursively.
  *
- * @param object $node, NULL means complete tree, null by default
- * @param bool $unconditional if true overrides all values with defaults, true by default
- * @param array $admindefaultsettings default admin settings to apply. Used recursively
- * @param array $settingsoutput The names and values of the changed settings. Used recursively
- * @return array $settingsoutput The names and values of the changed settings
+ * Because setting the defaults of some settings can enable other settings,
+ * this function calls itself repeatedly (max 4 times) until no more new settings are saved.
+ *
+ * NOTE: previous "internal" parameters $admindefaultsettings, $settingsoutput were removed in Moodle 4.3.
+ *
+ * @param part_of_admin_tree|null $node NULL means apply all settings with repeated recursion
+ * @param bool $unconditional if true overrides all values with defaults (true for installation, false for CLI upgrade)
+ * @return array The names and values of the applied setting defaults
  */
-function admin_apply_default_settings($node=null, $unconditional=true, $admindefaultsettings=array(), $settingsoutput=array()) {
-    $counter = 0;
-
-    // This function relies heavily on config cache, so we need to enable in-memory caches if it
-    // is used during install when normal caching is disabled.
-    $token = new \core_cache\allow_temporary_caches();
-
+function admin_apply_default_settings(?part_of_admin_tree $node = null, bool $unconditional = true): array {
     if (is_null($node)) {
+        // This function relies heavily on config cache, so we need to enable in-memory caches if it
+        // is used during install when normal caching is disabled.
+        $token = new \core_cache\allow_temporary_caches(); // Value not used intentionally, see its destructor.
+
         core_plugin_manager::reset_caches();
-        $node = admin_get_root(true, true);
-        $counter = count($settingsoutput);
+        $root = admin_get_root(true, true);
+        $saved = admin_apply_default_settings($root, $unconditional);
+        if (!$saved) {
+            return [];
+        }
+
+        for ($i = 1; $i <= 3; $i++) {
+            core_plugin_manager::reset_caches();
+            $root = admin_get_root(true, true);
+            // No need to force defaults in repeated runs.
+            $moresaved = admin_apply_default_settings($root, false);
+            if (!$moresaved) {
+                // No more setting defaults to save.
+                return $saved;
+            }
+            $saved += $moresaved;
+        }
+
+        // We should not get here unless there are some problematic settings.php files.
+        core_plugin_manager::reset_caches();
+        return $saved;
     }
 
+    // Recursive applying of defaults in admin tree.
+    $saved = [];
     if ($node instanceof admin_category) {
-        $entries = array_keys($node->children);
-        foreach ($entries as $entry) {
-            $settingsoutput = admin_apply_default_settings(
-                    $node->children[$entry], $unconditional, $admindefaultsettings, $settingsoutput
-                    );
+        foreach ($node->children as $child) {
+            if ($child === null) {
+                // This should not happen,
+                // this is to prevent theoretical infinite loops.
+                continue;
+            }
+            if ($child instanceof admin_externalpage) {
+                continue;
+            }
+            $saved += admin_apply_default_settings($child, $unconditional);
         }
 
     } else if ($node instanceof admin_settingpage) {
-        foreach ($node->settings as $setting) {
+        /** @var admin_setting $setting */
+        foreach ((array)$node->settings as $setting) {
             if ($setting->nosave) {
                 // Not a real setting, must be a heading or description.
                 continue;
@@ -8837,30 +8863,28 @@ function admin_apply_default_settings($node=null, $unconditional=true, $admindef
                 // No value yet - default maybe applied after admin user creation or in upgradesettings.
                 continue;
             }
-
-            $settingname = $node->name . '_' . $setting->name; // Get a unique name for the setting.
-
-            if (!array_key_exists($settingname, $admindefaultsettings)) {  // Only update a setting if not already processed.
-                $admindefaultsettings[$settingname] = $settingname;
-                $settingsoutput[$settingname] = $defaultsetting;
-
-                // Set the default for this setting.
-                $setting->write_setting($defaultsetting);
-                $setting->write_setting_flags(null);
+            // This should be unique-enough setting name that matches administration UI.
+            if ($setting->plugin === null) {
+                $settingname = $setting->name;
             } else {
-                unset($admindefaultsettings[$settingname]); // Remove processed settings.
+                $settingname = $setting->plugin . '/' . $setting->name;
+            }
+            // Set the default for this setting.
+            $error = $setting->write_setting($defaultsetting);
+            if ($error === '') {
+                $setting->write_setting_flags(null);
+                if (is_int($defaultsetting) || $defaultsetting instanceof lang_string
+                    || $defaultsetting instanceof moodle_url) {
+                    $defaultsetting = (string)$defaultsetting;
+                }
+                $saved[$settingname] = $defaultsetting;
+            } else {
+                debugging("Error applying default setting '$settingname': " . $error, DEBUG_DEVELOPER);
             }
         }
     }
 
-    // Call this function recursively until all settings are processed.
-    if (($node instanceof admin_root) && ($counter != count($settingsoutput))) {
-        $settingsoutput = admin_apply_default_settings(null, $unconditional, $admindefaultsettings, $settingsoutput);
-    }
-    // Just in case somebody modifies the list of active plugins directly.
-    core_plugin_manager::reset_caches();
-
-    return $settingsoutput;
+    return $saved;
 }
 
 /**
