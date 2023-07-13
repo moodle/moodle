@@ -288,4 +288,36 @@ class version_test extends \advanced_testcase {
         $this->assertEquals(array_slice($questiondefinition, 1, 1)[0]->questionid, $questionid2);
         $this->assertEquals(array_slice($questiondefinition, 2, 1)[0]->questionid, $questionid1);
     }
+
+    /**
+     * Test that all the versions of questions are available from the method.
+     *
+     * @covers ::get_all_versions_of_questions
+     */
+    public function test_get_all_versions_of_questions() {
+        global $DB;
+
+        $questionversions = [];
+        $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+        $question = $this->qgenerator->create_question('shortanswer', null,
+            [
+                'category' => $qcategory->id,
+                'idnumber' => 'id1'
+            ]);
+        $questionversions[1] = $question->id;
+
+        // Create a new version.
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
+        $questionversions[2] = $question->id;
+        // Change the id number and get the question object.
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
+        $questionversions[3] = $question->id;
+
+        $questionbankentryid = $DB->get_record('question_versions', ['questionid' => $question->id], 'questionbankentryid');
+
+        $questionversionsofquestions = question_bank::get_all_versions_of_questions([$question->id]);
+        $questionbankentryids = array_keys($questionversionsofquestions)[0];
+        $this->assertEquals($questionbankentryid->questionbankentryid, $questionbankentryids);
+        $this->assertEquals($questionversions, $questionversionsofquestions[$questionbankentryids]);
+    }
 }
