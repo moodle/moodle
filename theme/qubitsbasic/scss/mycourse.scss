@@ -305,8 +305,8 @@
       transition-delay: 0.1s;
     }
     .main-logo {
-      width: 74%;
-      padding: 14px 10px 14px 10px;
+      width: 75%;
+      padding: 23px 10px 22px 10px;
     }
     .compact-logo {
       padding: 15px 10px 14px 10px;
@@ -368,6 +368,9 @@
         &:hover {
           color: var(--hovertextcolor);
         }
+        &:active {
+          color: var(--hovertextcolor);
+        }
       }
       .icon {
         height: 50px;
@@ -411,6 +414,9 @@
       }
 
       &:hover {
+        background: #e2eaf2 !important;
+      }
+      &:active {
         background: #e2eaf2 !important;
       }
     }
@@ -1001,4 +1007,12 @@ ol {
 
 .course_tooltip:hover .tooltiptext {
   visibility: visible;
+}
+
+.aalink.focus, a.focus.autolink, .aalink:focus, a.autolink:focus, #page-footer a:not([class]).focus, #page-footer a:not([class]):focus, .arrow_link.focus, .arrow_link:focus, a:not([class]).focus, a:not([class]):focus, .activityinstance>a.focus, .activityinstance>a:focus {
+  box-shadow: none !important;
+  transition: unset !important;
+}
+.previousnav {
+  color: #B3B3B3 !important;
 }

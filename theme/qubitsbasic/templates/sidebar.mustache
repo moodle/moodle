@@ -1,7 +1,7 @@
 <div class="sidebar">
         <div class="logo-details">
-            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/images/logos/qubits-logo.png" class="main-logo">
-            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/images/logos/qubits-compact-logo.png" class="compact-logo">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-full-logo.svg" class="main-logo">
+            <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-logo.svg" class="compact-logo">
 
             <i class="icon fa fa-arrow-left arrow-left"></i>
 
@@ -60,6 +60,7 @@ require(['jquery'], function($){
                         $(".qicon-menu").show();
                         $(".pagetitle-left-alignment").addClass("closebar-left-alignment");
                         $(".main-inner").addClass("leftnav");
+                        $(".previousnav").hide();
                     });
                     $(".qicon-menu").click(function () {
                         $(".sidebar").removeClass("close-bars");
@@ -67,6 +68,7 @@ require(['jquery'], function($){
                         $(".qicon-menu").hide();
                         $(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
                          $(".main-inner").removeClass("leftnav");
+                         $(".previousnav").show();
                     });
                     
                 }
