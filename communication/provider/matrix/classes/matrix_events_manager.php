@@ -17,6 +17,7 @@
 namespace communication_matrix;
 
 use core\http_client;
+use stored_file;
 use GuzzleHttp\Psr7\Request;
 
 /**
@@ -223,19 +224,33 @@ class matrix_events_manager {
     /**
      * Upload the content in the matrix/synapse server.
      *
-     * @param string $content The content to be uploaded
+     * @param null|stored_file $file The content to be uploaded
      * @return string|false
      */
-    public function upload_matrix_content(string $content): bool|string {
+    public function upload_matrix_content(?stored_file $file): bool|string {
         $headers = [
             'Authorization' => 'Bearer ' . $this->get_token(),
-            'Content-Type' => 'image/png'
         ];
+        $filecontent = null;
+        $query = [];
+
+        if ($file) {
+            $filecontent = $file->get_content();
+            $headers['Content-Type'] = $file->get_mimetype();
+            $query['filename'] = $file->get_filename();
+        }
 
         $client = new http_client();
-        $request = new Request('POST', $this->get_upload_content_endpoint(), $headers, $content);
+        $request = new Request(
+            'POST',
+            $this->get_upload_content_endpoint(),
+            $headers,
+            $filecontent,
+        );
 
-        $response = $client->send($request);
+        $response = $client->send($request, [
+            'query' => $query,
+        ]);
         $response = json_decode($response->getBody());
         if ($response) {
             return $response->content_uri;

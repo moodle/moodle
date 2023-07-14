@@ -16,8 +16,10 @@
 
 namespace communication_matrix;
 
+use core_communication\api;
 use core_communication\processor;
 use core_communication\communication_test_helper_trait;
+use stored_file;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -132,39 +134,96 @@ class communication_feature_test extends \advanced_testcase {
      * Test update room avatar.
      *
      * @covers ::update_room_avatar
+     * @dataProvider avatar_provider
      */
-    public function test_update_room_avatar(): void {
-        global $CFG;
-        $course = $this->get_course('Sampleroom', 'none');
+    public function test_update_room_avatar(
+        ?string $before,
+        ?string $after,
+    ): void {
+        $this->setAdminUser();
 
-        // Sample data.
-        $communicationroomname = 'Sampleroom';
-        $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
+        // Create a new draft file.
+        $logo = $this->create_communication_file('moodle_logo.jpg', 'logo.jpg');
+        $circle = $this->create_communication_file('circle.png', 'circle.png');
 
+        if ($before === 'logo') {
+            $before = $logo;
+        } else if ($before === 'circle') {
+            $before = $circle;
+        }
+
+        if ($after === 'logo') {
+            $after = $logo;
+        } else if ($after === 'circle') {
+            $after = $circle;
+        }
+
+        $communication = $this->create_matrix_room(
+            component: 'communication_matrix',
+            itemtype: 'example_room',
+            itemid: 1,
+            roomname: 'Example room name',
+            roomavatar: $before,
+        );
+
+        // Confirm that the avatar was set remotely.
+        $remoteroom = $this->backoffice_get_room();
+
+        if ($before) {
+            $this->assertStringEndsWith($before->get_filename(), $remoteroom->avatar);
+            $avatarcontent = download_file_content($remoteroom->avatar);
+            $this->assertEquals($before->get_content(), $avatarcontent);
+        } else {
+            $this->assertEmpty($remoteroom->avatar);
+        }
+
+        // Reload the API instance as the information stored has changed.
         $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->create_and_configure_room(
-            $selectedcommunication,
-            $communicationroomname,
-            $avatarurl
+            component: 'communication_matrix',
+            instancetype: 'example_room',
+            instanceid: 1,
         );
 
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
+        // Update the avatar with the 'after' avatar.
+        $communication->update_room(
+            'communication_matrix',
+            'Example room name',
+            avatar: $after,
         );
-        $communicationprocessor->get_room_provider()->create_chat_room();
+        $this->run_all_adhoc_tasks();
 
-        $matrixrooms = new matrix_rooms($communicationprocessor->get_id());
+        // Confirm that the avatar was updated remotely.
+        $remoteroom = $this->backoffice_get_room();
 
-        // Add api call to get room data and test against set data.
-        $matrixroomdata = $this->get_matrix_room_data($matrixrooms->get_matrix_room_id());
-        $this->assertNotEmpty($matrixroomdata->avatar);
+        if ($after) {
+            $this->assertStringEndsWith($after->get_filename(), $remoteroom->avatar);
+            $avatarcontent = download_file_content($remoteroom->avatar);
+            $this->assertEquals($after->get_content(), $avatarcontent);
+        } else {
+            $this->assertEmpty($remoteroom->avatar);
+        }
+    }
+
+    /**
+     * Tests for setting and updating the room avatar.
+     *
+     * @return array
+     */
+    public function avatar_provider(): array {
+        return [
+            'Empty to avatar' => [
+                null,
+                'circle',
+            ],
+            'Avatar to empty' => [
+                'circle',
+                null,
+            ],
+            'Avatar to new avatar' => [
+                'circle',
+                'logo',
+            ],
+        ];
     }
 
     /**
@@ -173,13 +232,11 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::get_chat_room_url
      */
     public function test_get_chat_room_url(): void {
-        global $CFG;
         $course = $this->get_course('Sampleroom', 'none');
 
         // Sample data.
         $communicationroomname = 'Sampleroom';
         $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
 
         $communication = \core_communication\api::load_by_instance(
             'core_course',
@@ -190,7 +247,6 @@ class communication_feature_test extends \advanced_testcase {
         $communication->create_and_configure_room(
             $selectedcommunication,
             $communicationroomname,
-            $avatarurl
         );
 
         $communicationprocessor = processor::load_by_instance(
@@ -217,14 +273,12 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::add_registered_matrix_user_to_room
      */
     public function test_create_members(): void {
-        global $CFG;
         $course = $this->get_course('Sampleroom', 'none');
         $userid = $this->get_user()->id;
 
         // Sample data.
         $communicationroomname = 'Sampleroom';
         $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
 
         $communication = \core_communication\api::load_by_instance(
             'core_course',
@@ -235,7 +289,6 @@ class communication_feature_test extends \advanced_testcase {
         $communication->create_and_configure_room(
             $selectedcommunication,
             $communicationroomname,
-            $avatarurl
         );
         $communication->add_members_to_room([$userid]);
 
@@ -274,14 +327,12 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::check_room_membership
      */
     public function test_add_and_remove_members_from_room(): void {
-        global $CFG;
         $course = $this->get_course('Sampleroom', 'none');
         $userid = $this->get_user()->id;
 
         // Sample data.
         $communicationroomname = 'Sampleroom';
         $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
 
         $communication = \core_communication\api::load_by_instance(
             'core_course',
@@ -292,7 +343,6 @@ class communication_feature_test extends \advanced_testcase {
         $communication->create_and_configure_room(
             $selectedcommunication,
             $communicationroomname,
-            $avatarurl
         );
         $communication->add_members_to_room([$userid]);
 
@@ -343,5 +393,4 @@ class communication_feature_test extends \advanced_testcase {
         $matrixroomdata = new matrix_rooms($communicationprocessor->get_id());
         $this->assertEquals('Sampletopicupdated', $matrixroomdata->get_matrix_room_topic());
     }
-
 }

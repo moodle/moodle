@@ -63,7 +63,7 @@ class matrix_communication_test extends \advanced_testcase {
         $communicationprocessor = processor::load_by_instance(
             'core_course',
             'coursecommunication',
-            $course->id
+            $course->id,
         );
 
         // Initialize the matrix room object.
@@ -81,7 +81,6 @@ class matrix_communication_test extends \advanced_testcase {
      * @covers \core_communication\api::update_room
      * @covers \core_communication\task\update_room_task::execute
      * @covers \core_communication\task\update_room_task::queue
-     * @covers \core_communication\processor::is_avatar_synced
      */
     public function test_update_course_with_matrix_provider(): void {
         global $CFG;
@@ -93,22 +92,21 @@ class matrix_communication_test extends \advanced_testcase {
         // Sample data.
         $communicationroomname = 'Sampleroomupdated';
         $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
+        $logo = $this->create_communication_file('moodle_logo.jpg', 'logo.jpg');
 
         $communication = \core_communication\api::load_by_instance(
             'core_course',
             'coursecommunication',
-            $course->id
+            $course->id,
         );
-        $communication->update_room($selectedcommunication, $communicationroomname, $avatarurl);
+        $communication->update_room($selectedcommunication, $communicationroomname, $logo);
 
+        // Pending avatar update should indicate avatar is not in sync.
         $communicationprocessor = processor::load_by_instance(
             'core_course',
             'coursecommunication',
             $course->id
         );
-
-        // Pending avatar update should indicate avatar is not in sync.
         $this->assertFalse($communicationprocessor->is_avatar_synced());
 
         // Run the task.
@@ -130,7 +128,6 @@ class matrix_communication_test extends \advanced_testcase {
         $matrixroomdata = $this->get_matrix_room_data($matrixrooms->get_matrix_room_id());
         $this->assertEquals($matrixrooms->get_matrix_room_id(), $matrixroomdata->room_id);
         $this->assertEquals($communicationroomname, $matrixroomdata->name);
-        $this->assertNotEmpty($matrixroomdata->avatar);
     }
 
     /**

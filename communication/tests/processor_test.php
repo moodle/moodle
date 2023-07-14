@@ -367,6 +367,7 @@ class processor_test extends \advanced_testcase {
      */
     public function test_get_avatar(): void {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         global $CFG;
         $course = $this->get_course('Sampleroom', 'none');
@@ -374,14 +375,17 @@ class processor_test extends \advanced_testcase {
         // Sample data.
         $communicationroomname = 'Sampleroom';
         $selectedcommunication = 'communication_matrix';
-        $avatarurl = $CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg';
+        $avatar = $this->create_communication_file(
+            'moodle_logo.jpg',
+            'moodle_logo.jpg',
+        );
 
         $communication = \core_communication\api::load_by_instance(
             'core_course',
             'coursecommunication',
             $course->id
         );
-        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $avatarurl);
+        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $avatar);
 
         $communicationprocessor = processor::load_by_instance(
             'core_course',
