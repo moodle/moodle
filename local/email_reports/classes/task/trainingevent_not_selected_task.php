@@ -94,6 +94,11 @@ class trainingevent_not_selected_task extends \core\task\scheduled_task {
                         // otherwise set the notifyperiod
                         if ($templateinfo->repeatperiod == 0) {
                             $notifyperiod = "";
+                            if (!empty($course->notifyperiod)) {
+                                // use the default notify period.
+                                $notifytime = $runtime - $course->notifyperiod * 86400;
+                                $notifyperiod = " AND sent < $notifytime";
+                            }
                         } else if ($templateinfo->repeatperiod == 99) {
                             $notifyperiod = "";
                         } else {
