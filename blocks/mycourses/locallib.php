@@ -53,7 +53,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
                                        $companycoursesql
                                        AND cc.timecompleted IS NOT NULL",
                                        array('userid' => $USER->id));
-    $myinprogress = $DB->get_records_sql("SELECT DISTINCT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade, cc.timestarted
+    $myinprogress = $DB->get_records_sql("SELECT DISTINCT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade, cc.timestarted, cc.modifiedtime
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
                                           JOIN {user_enrolments} ue ON (ue.userid = cc.userid)

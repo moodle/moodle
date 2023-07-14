@@ -28,6 +28,7 @@ use renderable;
 use renderer_base;
 use templatable;
 use core_course\external\course_summary_exporter;
+use completion_info;
 
 /**
  * Class containing data for courses view in the mycourses block.
@@ -62,6 +63,8 @@ class inprogress_view implements renderable, templatable {
 
         // Build courses view data structure.
         $inprogressview = [];
+        $totalcount = 0;
+        $completed = 0;
 
         foreach ($this->mycompletion->myinprogress as $mid => $inprogress) {
             $context = \context_course::instance($inprogress->courseid);
@@ -102,6 +105,52 @@ class inprogress_view implements renderable, templatable {
                 $usercount = $DB->count_records('course_completion_crit_compl', array('course' => $inprogress->courseid, 'userid' => $USER->id));
                 $exportedcourse->progress = round($usercount * 100 / count($totalrec), 0);
                 $exportedcourse->hasprogress = true;
+                $tooltip = "";
+                $info = new completion_info($course);
+                $completions = $info->get_completions($USER->id);
+                $showgrade = true;
+                if ($iomadcourse = $DB->get_record('iomad_courses', ['courseid' => $course->id, 'hasgrade' => 0])) {
+                    $showgrade = false;
+                }
+                // Loop through course criteria.
+                foreach ($completions as $completion) {
+                    $totalcount++;
+                    $criteria = $completion->get_criteria();
+                    $complete = $completion->is_complete();
+                    if ($complete) {
+                        $completestring = " - " . date($CFG->iomad_date_format, $completion->timecompleted);
+                        $completed++;
+                    } else {
+                        $completestring = " - " . get_string('no');
+                    }
+        
+                    if (!empty($criteria->moduleinstance)) {
+                        $modinfo = get_coursemodule_from_id('', $criteria->moduleinstance);
+                        $gradestring = "";
+                        if ($showgrade &&
+                            $gradeinfo = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                                              JOIN {grade_items} gi ON (gg.itemid = gi.id)
+                                                              JOIN {course_modules} cm ON (gi.courseid = cm.course AND gi.iteminstance = cm.instance)
+                                                              JOIN {modules} m ON (m.id = cm.module AND m.name = gi.itemmodule)
+                                                              WHERE gg.userid = :userid
+                                                              AND gi.courseid = :courseid
+                                                              AND cm.id = :moduleid",
+                                                              ['userid' => $USER->id,
+                                                               'courseid' => $course->id,
+                                                               'moduleid' => $criteria->moduleinstance])) {
+                            if (!empty($gradeinfo->finalgrade) && $gradeinfo->finalgrade != 0) {
+                                $gradestring = " - " . format_string(round($gradeinfo->finalgrade/$gradeinfo->rawgrademax * 100, $CFG->iomad_report_grade_places)."%");
+                            }
+                        }
+                        $tooltip .= $criteria->get_title() . " " . format_string($modinfo->name) . "$gradestring $completestring\r\n";
+                    } else {
+                        $tooltip = $criteria->get_title() . "$completestring \r\n" . $tooltip;
+                    }
+                }
+        
+                // Add in the modified time.
+                $tooltip .= format_string(get_string('lastmodified') . " - " .date($CFG->iomad_date_format, $inprogress->modifiedtime));
+                $exportedcourse->progresstooltip = $tooltip;
             }
             $inprogressview['courses'][] = $exportedcourse;
         }
