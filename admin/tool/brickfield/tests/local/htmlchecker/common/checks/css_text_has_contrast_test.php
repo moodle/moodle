@@ -30,6 +30,7 @@ require_once('all_checks.php');
 
 /**
  * Class test_css_text_has_contrast_test
+ * @covers \tool_brickfield\local\htmlchecker\brickfield_accessibility
  */
 class css_text_has_contrast_test extends all_checks {
     /** @var string The check type. */
@@ -345,6 +346,116 @@ EOD;
      */
     public function test_check_for_largerbold_pass(): void {
         $results = $this->get_checker_results($this->largerboldpass);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for rgb colors with insufficient contrast.
+     */
+    public function test_bad_rgbcolor(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background-color:rgb(204, 204, 204);">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for rgb colors with sufficient contrast.
+     */
+    public function test_good_rgbcolor(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background-color:rgb(0, 0, 0);">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for named colors with insufficient contrast.
+     */
+    public function test_bad_namedcolor2(): void {
+        $html = '<body><p style="color:lightcyan; background-color:lavender;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for named colors with sufficient contrast.
+     */
+    public function test_good_namedcolor2(): void {
+        $html = '<body><p style="color:linen; background-color:darkslategray;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for background value with insufficient contrast.
+     */
+    public function test_bad_backgroundcss(): void {
+        $html = '<body><p style="color:lightcyan; background:fixed lavender center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with sufficient contrast.
+     */
+    public function test_good_backgroundcss(): void {
+        $html = '<body><p style="color:linen; background:fixed darkslategray center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for background value with rgb with insufficient contrast.
+     */
+    public function test_bad_backgroundcssrgb(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background:fixed rgb(204, 204, 204) center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgb with sufficient contrast.
+     */
+    public function test_good_backgroundcssrgb(): void {
+        $html = '<body><p style="color:rgb(255, 255, 255); background:fixed rgb(0, 0, 0) center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertEmpty($results);
+    }
+
+    /**
+     * Test for text with insufficient contrast of 4.3.
+     */
+    public function test_bad_contrastrounding(): void {
+        $html = '<body><p style="color:#F50000; background-color:white; font-size: 12px">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgba with insufficient contrast.
+     */
+    public function test_bad_backgroundcssrgba(): void {
+        $html = '<body><p style="color:rgba(255, 255, 255, 0.5); background:fixed rgba(0, 204, 204, 0.5) center;">
+            This is not contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
+        $this->assertTrue($results[0]->element->tagName == 'p');
+    }
+
+    /**
+     * Test for background value with rgba with sufficient contrast.
+     */
+    public function test_good_backgroundcssrgba(): void {
+        $html = '<body><p style="color:rgba(255, 255, 255, 0.75); background:fixed rgba(0, 0, 0, 0.75) center;">
+            This is contrasty enough.</p></body>';
+        $results = $this->get_checker_results($html);
         $this->assertEmpty($results);
     }
 }

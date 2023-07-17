@@ -245,7 +245,6 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         return $luminosity;
     }
 
-
     /**
      * Returns the decimal equivalents for a HEX color. Returns null if it cannot be determined.
      * @param string $color The hex color value
@@ -268,13 +267,21 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
      */
     public function convert_color(string $color): string {
         $color = trim($color);
-        if (strpos($color, ' ') !== false) {
-            $colors = explode(' ', $color);
-            foreach ($colors as $backgroundpart) {
-                if (substr(trim($backgroundpart), 0, 1) == '#' ||
-                    in_array(trim($backgroundpart), array_keys($this->colornames)) ||
-                    strtolower(substr(trim($backgroundpart), 0, 3)) == 'rgb') {
-                    $color = $backgroundpart;
+        // Search for color in rgb format first, as this can potentially contain a space.
+        if (strpos($color, 'rgb') !== false) {
+            $colors = explode('rgb', $color, 2); // Getting 2 only in array.
+            // Getting end point of rgb value, i.e. the end bracket.
+            $endpos = strpos($colors[1], ')');
+            $color = 'rgb' . substr($colors[1], 0, ($endpos + 1)); // Recompiling rgb value.
+        } else {
+            // Splitting multi-value css background value.
+            if (strpos($color, ' ') !== false) {
+                $colors = explode(' ', $color);
+                foreach ($colors as $backgroundpart) {
+                    if (substr(trim($backgroundpart), 0, 1) == '#' ||
+                        in_array(trim($backgroundpart), array_keys($this->colornames))) {
+                        $color = $backgroundpart;
+                    }
                 }
             }
         }
@@ -296,9 +303,20 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         }
         // RGB values.
         if (strtolower(substr($color, 0, 3)) == 'rgb') {
-            $colors = explode(',', trim(str_replace('rgb(', '', $color), '()'));
-            if (count($colors) != 3) {
-                return false;
+            if (strpos($color, 'rgba') !== false) {
+                $tmpbg = $this->get_rgb($this->defaultbackground);
+                $colors = explode(',', trim(str_replace('rgba(', '', $color), '()'));
+                if (count($colors) != 4) {
+                    return false;
+                }
+                $colors[0] = round(((1 - $colors[3]) * $tmpbg['r']) + ($colors[3] * $colors[0]));
+                $colors[1] = round((1 - $colors[3]) * $tmpbg['g']) + ($colors[3] * $colors[1]);
+                $colors[2] = round((1 - $colors[3]) * $tmpbg['b']) + ($colors[3] * $colors[2]);
+            } else {
+                $colors = explode(',', trim(str_replace('rgb(', '', $color), '()'));
+                if (count($colors) != 3) {
+                    return false;
+                }
             }
             $r = intval($colors[0]);
             $g = intval($colors[1]);
