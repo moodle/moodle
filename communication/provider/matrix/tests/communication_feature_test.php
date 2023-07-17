@@ -219,7 +219,10 @@ class communication_feature_test extends \advanced_testcase {
     public function test_create_members(): void {
         global $CFG;
         $course = $this->get_course('Sampleroom', 'none');
-        $userid = $this->get_user()->id;
+        $user = $this->getDataGenerator()->create_user((object) [
+            'username' => 'colin.creavey',
+        ]);
+        $userid = $user->id;
 
         // Sample data.
         $communicationroomname = 'Sampleroom';
@@ -252,17 +255,17 @@ class communication_feature_test extends \advanced_testcase {
         $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
 
         // Get created matrixuserid from moodle.
-        $elementserver = matrix_user_manager::set_matrix_home_server($eventmanager->matrixhomeserverurl);
-        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid, $eventmanager->matrixhomeserverurl);
+        $elementserver = matrix_user_manager::get_formatted_matrix_home_server();
+        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($user->id);
 
         $this->assertNotNull($matrixuserid);
-        $this->assertEquals("@sampleun:{$elementserver}", $matrixuserid);
+        $this->assertEquals("@{$user->username}:{$elementserver}", $matrixuserid);
 
         // Add api call to get user data and test against set data.
         $matrixuserdata = $this->get_matrix_user_data($matrixrooms->get_matrix_room_id(), $matrixuserid);
 
         $this->assertNotEmpty($matrixuserdata);
-        $this->assertEquals("Samplefn Sampleln", $matrixuserdata->displayname);
+        $this->assertEquals(fullname($user), $matrixuserdata->displayname);
     }
 
     /**
@@ -309,7 +312,7 @@ class communication_feature_test extends \advanced_testcase {
         $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
 
         // Get created matrixuserid from moodle.
-        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid, $eventmanager->matrixhomeserverurl);
+        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid);
 
         // Test user is a member of the room.
         $this->assertTrue($communicationprocessor->get_room_provider()->check_room_membership($matrixuserid));
