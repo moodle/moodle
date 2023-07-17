@@ -1,6 +1,6 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v4.6.0): tools/sanitizer.js
+ * Bootstrap (v4.6.2): tools/sanitizer.js
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  * --------------------------------------------------------------------------
  */
@@ -55,14 +55,14 @@ export const DefaultWhitelist = {
 /**
  * A pattern that recognizes a commonly useful subset of URLs that are safe.
  *
- * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+ * Shoutout to Angular https://github.com/angular/angular/blob/12.2.x/packages/core/src/sanitization/url_sanitizer.ts
  */
-const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file):|[^#&/:?]*(?:[#/?]|$))/gi
+const SAFE_URL_PATTERN = /^(?:(?:https?|mailto|ftp|tel|file|sms):|[^#&/:?]*(?:[#/?]|$))/i
 
 /**
  * A pattern that matches safe data URLs. Only matches image, video and audio types.
  *
- * Shoutout to Angular 7 https://github.com/angular/angular/blob/7.2.4/packages/core/src/sanitization/url_sanitizer.ts
+ * Shoutout to Angular https://github.com/angular/angular/blob/12.2.x/packages/core/src/sanitization/url_sanitizer.ts
  */
 const DATA_URL_PATTERN = /^data:(?:image\/(?:bmp|gif|jpeg|jpg|png|tiff|webp)|video\/(?:mpeg|mp4|ogg|webm)|audio\/(?:mp3|oga|ogg|opus));base64,[\d+/a-z]+=*$/i
 
@@ -71,7 +71,7 @@ function allowedAttribute(attr, allowedAttributeList) {
 
   if (allowedAttributeList.indexOf(attrName) !== -1) {
     if (uriAttrs.indexOf(attrName) !== -1) {
-      return Boolean(attr.nodeValue.match(SAFE_URL_PATTERN) || attr.nodeValue.match(DATA_URL_PATTERN))
+      return Boolean(SAFE_URL_PATTERN.test(attr.nodeValue) || DATA_URL_PATTERN.test(attr.nodeValue))
     }
 
     return true
@@ -81,7 +81,7 @@ function allowedAttribute(attr, allowedAttributeList) {
 
   // Check if a regular expression validates the attribute.
   for (let i = 0, len = regExp.length; i < len; i++) {
-    if (attrName.match(regExp[i])) {
+    if (regExp[i].test(attrName)) {
       return true
     }
   }
@@ -114,6 +114,7 @@ export function sanitizeHtml(unsafeHtml, whiteList, sanitizeFn) {
     }
 
     const attributeList = [].slice.call(el.attributes)
+    // eslint-disable-next-line unicorn/prefer-spread
     const whitelistedAttributes = [].concat(whiteList['*'] || [], whiteList[elName] || [])
 
     attributeList.forEach(attr => {

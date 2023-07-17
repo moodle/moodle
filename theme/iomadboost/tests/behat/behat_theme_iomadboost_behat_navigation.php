@@ -27,7 +27,9 @@ use Behat\Mink\Exception\ExpectationException as ExpectationException;
  *
  * @package    theme_iomadboost
  * @category   test
- * @copyright  2021 Mihail Geshoski
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_theme_iomadboost_behat_navigation extends behat_navigation {

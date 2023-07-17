@@ -19,7 +19,9 @@
  *
  * @package    theme_iomadboost
  * @subpackage cli
- * @copyright  2016 Damyon Wiese
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

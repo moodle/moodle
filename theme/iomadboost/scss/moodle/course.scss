@@ -109,6 +109,19 @@ body:not(.editing)  .sitetopic ul.section {
         a.stealth:hover {
             color: lighten($link-color, 25%) !important; /* stylelint-disable-line declaration-no-important */
         }
+
+        &.indented {
+            .activity-item {
+                border: 0;
+                margin-left: map-get($spacers, 3);
+            }
+        }
+        &.indented + .indented {
+            .activity-item {
+                border-top: $border-width solid $border-color;
+                border-radius: unset;
+            }
+        }
     }
 
     .label {
@@ -131,7 +144,7 @@ body:not(.editing)  .sitetopic ul.section {
         width: 16px;
         height: 16px;
         padding: 0;
-        margin: 0 ($spacer / 2);
+        margin: 0 ($spacer * 0.5);
         display: inline-block;
     }
 
@@ -206,11 +219,11 @@ body:not(.editing)  .sitetopic ul.section {
         }
 
         &:after {
+            @extend .fa-solid;
             position: absolute;
-            font-family: "FontAwesome";
             font-size: 20px;
             color: $gray-600;
-            content: "";
+            content: fa-content($fa-var-spinner);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -603,8 +616,8 @@ body:not(.editing)  .sitetopic ul.section {
     &.editing {
         li.activity span.autocompletion img {
             /* Use the same spacing as the filler. */
-            margin-right: $spacer / 2;
-            margin-left: $spacer / 2;
+            margin-right: $spacer * 0.5;
+            margin-left: $spacer * 0.5;
         }
     }
 }
@@ -730,11 +743,11 @@ span.editinstructions {
 #frontpage-available-course-list,
 #frontpage-course-list,
 .course-search-result {
-    margin-top: $spacer / 2;
+    margin-top: $spacer * 0.5;
     .coursebox {
-        padding: $spacer / 2;
+        padding: $spacer * 0.5;
         border: $border-width solid $border-color;
-        margin-bottom: $spacer / 2;
+        margin-bottom: $spacer * 0.5;
 
         @include border-radius();
     }
@@ -768,6 +781,10 @@ span.editinstructions {
 .coursebox .customfieldname,
 .coursebox .customfieldseparator {
     font-weight: $font-weight-bold;
+}
+
+.coursebox .content .coursefile {
+    max-width: 100px;
 }
 
 .coursebox .content .courseimage img {
@@ -1333,6 +1350,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         display: inline-block;
     }
 
+    // Legacy dndupload classes. Can be removed in 4.4 as part of MDL-77124.
     &.dndupload-dropzone {
         border: 2px dashed $primary;
         padding-left: 2px;
@@ -1395,6 +1413,18 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         .description-inner {
             padding-bottom: 0;
             border-bottom: 0;
+        }
+    }
+}
+
+.course-content .description-inner {
+    ul {
+        list-style: disc;
+        ul {
+            list-style: circle;
+            ul {
+                list-style: square;
+            }
         }
     }
 }
@@ -1500,7 +1530,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         cursor: pointer;
     }
 
-    &:hover {
+    &:hover,
+    &.selected {
         @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
 
         .description .course-description-item,
@@ -1528,5 +1559,69 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     &:first-child {
         margin-top: 0;
+    }
+}
+
+.activity:focus-within + .activity div.divider button,
+.course-section-header:focus-within + .content .section .activity:first-child div.divider button,
+.content .section .activity:focus-within div.divider button {
+    visibility: visible;
+}
+
+.activity {
+    div.divider {
+        height: 2rem;
+        margin-top: -1.25rem;
+        margin-bottom: -0.75rem;
+        z-index: 5;
+        button {
+            border-radius: 100%;
+            width: 2rem;
+            height: 2rem;
+            position: relative;
+            left: calc(50%);
+            opacity: 0;
+            visibility: hidden;
+            transition: visibility 0.1s;
+            margin: 0;
+            padding: 0;
+            i.icon {
+                height: 1.5rem;
+                width: 1.5rem;
+                font-size: 1.5rem;
+                position: absolute;
+                left: calc(0.25rem - 1px);
+                top: calc(0.25rem - 0.5px);
+            }
+        }
+    }
+    &:not(.dragging) div.divider {
+        &:hover button,
+        &:focus button,
+        &:focus-within button {
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+.bulkenabled .bulk-hidden {
+    display: none !important; // stylelint-disable-line declaration-no-important
+}
+
+.activity-item .bulkselect {
+    position: absolute;
+    left: -2rem;
+}
+
+.course-section-header .bulkselect {
+    left: -2rem;
+    position: relative;
+    width: 0;
+}
+
+@include media-breakpoint-down(sm) {
+    .bulkenabled .course-content {
+        margin-left: 2rem;
     }
 }

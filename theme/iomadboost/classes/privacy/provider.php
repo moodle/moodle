@@ -18,7 +18,9 @@
  * Privacy Subsystem implementation for theme_iomadboost.
  *
  * @package    theme_iomadboost
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
