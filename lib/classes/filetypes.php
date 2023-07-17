@@ -313,6 +313,9 @@ abstract class core_filetypes {
             'xml' => array('type' => 'application/xml', 'icon' => 'markup'),
             'xsl' => array('type' => 'text/xml', 'icon' => 'markup'),
 
+            'yaml' => array('type' => 'application/yaml', 'icon' => 'markup'),
+            'yml' => array('type' => 'application/yaml', 'icon' => 'markup'),
+
             'zip' => array('type' => 'application/zip', 'icon' => 'archive', 'groups' => array('archive'), 'string' => 'archive')
         );
     }
