@@ -578,4 +578,33 @@ class feedback_test extends \advanced_testcase {
         $conversions = \core_files\conversion::get_conversions_for_file($sourcefile, 'pdf');
         $this->assertCount(0, $conversions);
     }
+
+    /**
+     * Tests that when the plugin is not enabled for an assignment it does not create conversion tasks.
+     *
+     * @covers \assignfeedback_editpdf\event\observer
+     */
+    public function test_submission_not_enabled() {
+        $this->require_ghostscript();
+        $this->resetAfterTest();
+        cron_setup_user();
+
+        $course = $this->getDataGenerator()->create_course();
+        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $assignopts = [
+            'assignsubmission_file_enabled' => 1,
+            'assignsubmission_file_maxfiles' => 1,
+            'assignfeedback_editpdf_enabled' => 0,
+            'assignsubmission_file_maxsizebytes' => 1000000,
+        ];
+        $assign = $this->create_instance($course, $assignopts);
+
+        // Add the standard submission.
+        $this->add_file_submission($student, $assign);
+
+        $task = \core\task\manager::get_next_adhoc_task(time());
+
+        // No task was created.
+        $this->assertNull($task);
+    }
 }
