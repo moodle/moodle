@@ -127,7 +127,7 @@ if (!$chapterid) {
 
     // The chapter itself.
     $hidden = $chapter->hidden ? ' dimmed_text' : null;
-    echo $OUTPUT->box_start('generalbox book_content' . $hidden);
+    echo $OUTPUT->box_start('generalbox book_content' . $hidden, 'mod_book-chapter');
 
     if (!$book->customtitles) {
         if (!$chapter->subchapter) {
@@ -150,6 +150,5 @@ if (!$chapterid) {
     if (core_tag_tag::is_enabled('mod_book', 'book_chapters')) {
         echo $OUTPUT->tag_list(core_tag_tag::get_item_tags('mod_book', 'book_chapters', $chapter->id), null, 'book-tags');
     }
-    echo $renderedmenu;
 }
 echo $OUTPUT->footer();

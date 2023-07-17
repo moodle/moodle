@@ -106,3 +106,56 @@
         float: none;
     }
 }
+
+.path-mod-book #mod_book-chaptersnavigation {
+    top: 80px;
+    width: inherit;
+    margin: 0 -35px;
+    position: sticky; /* Make navigation sticky. */
+}
+
+.path-mod-book #mod_book-chaptersnavigation .tertiary-navigation .navitem {
+    margin-bottom: -52px;
+}
+
+.path-mod-book .book_content {
+    margin: 0 5px;
+    padding-right: 15px;
+    padding-left: 15px;
+    position: relative; /* Chapter navigation should not float on top of content. */
+}
+
+.path-mod-book .btn-previous,
+.path-mod-book .btn-next {
+    background: #dee2e6;
+    box-shadow: 0 0.125rem 0.25rem rgb(0 0 0 / 0.075);
+    padding: 13px 10px;
+}
+
+.path-mod-book .btn-previous {
+    border-radius: 200px 0 0 200px;
+}
+
+.path-mod-book .btn-next {
+    border-radius: 0 200px 200px 0;
+}
+
+.path-mod-book .btn-previous .icon,
+.path-mod-book .btn-next .icon {
+    font-size: 24px;
+    width: auto;
+    height: auto;
+    margin: auto;
+}
+
+@media (max-width: 768px) {
+    .path-mod-book #mod_book-chaptersnavigation {
+        top: calc(100% - 250px);
+        margin: 0;
+    }
+
+    .path-mod-book .book_content {
+        margin-left: 35px;
+        margin-right: 35px;
+    }
+}
