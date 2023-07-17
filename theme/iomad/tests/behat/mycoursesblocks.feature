@@ -11,14 +11,14 @@ Feature: My courses page block layout in IOMAD theme
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I add the "Text" block
-    And I configure the "(new text block)" block
-    And I set the following fields to these values:
-      | Page contexts    | Display throughout the entire site |
+    And I add the "Text" block to the default region with:
       | Text block title | Text on all pages                  |
       | Content          | This is visible on all pages       |
+    And I configure the "Text on all pages" block
+    And I set the following fields to these values:
+      | Page contexts    | Display throughout the entire site |
       | Default region   | Right                              |
-    And I press "Save changes"
+    And I click on "Save changes" "button" in the "Configure Text on all pages block" "dialogue"
 
   Scenario: Student can see relevant blocks with correct placement on my courses page
     When I log in as "student1"

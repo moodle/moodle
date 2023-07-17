@@ -4,7 +4,7 @@ Twitter bootstrap
 -----------------
 
 Sass:
-This theme uses Bootstrap version 4.6.0
+This theme uses Bootstrap frontend toolkit.
 The Bootstrap repository is available on:
 
 https://github.com/twbs/bootstrap
@@ -21,6 +21,7 @@ To update to the latest release of twitter bootstrap:
     }
   It breaks when compiled with phpscss.
 * update ./thirdpartylibs.xml
+* follow the instructions in admin/tool/component_library/readme_moodle.txt to update the Bootstrap documentation there.
 
 Javascript:
 
@@ -29,7 +30,7 @@ Javascript:
 * copy index.js from ~/bootstrap/js to theme/iomad/amd/src
 * edit theme/iomad/amd/src/index.js and update import path (src -> bootstrap)
 * Moodle core includes the popper.js library, make sure each of the new Bootstrap js files
-includes the 'core/popper' library instead of 'popper.js'. For version 4.6.0 these files were: tooltip.js and dropdown.js
+includes the 'core/popper' library instead of 'popper.js'. For current version these files were: tooltip.js and dropdown.js
 * update ./thirdpartylibs.xml to include all new Bootstrap js files
 * run "grunt ignorefiles" to prevent linting errors appearing from the new Bootstrap js files.
 * in folder theme/iomad run "grunt amd" to compile the bootstrap JS

@@ -18,7 +18,9 @@
  * A secure layout for the iomad theme.
  *
  * @package   theme_iomad
- * @copyright 2016 Damyon Wiese
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

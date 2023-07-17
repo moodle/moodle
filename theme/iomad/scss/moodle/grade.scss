@@ -1,6 +1,8 @@
 // The class gradetreebox matches the pages displaying the gradebook
 // "Gradebook setup" > "Simple view" and "Full view".
 .gradetreebox {
+    margin: 20px 0 30px 0;
+
     h4 {
         // Force back the base font-size to minimise width.
         font-size: $font-size-base;
@@ -296,135 +298,198 @@
 }
 
 // Set up grades layout.
-.path-grade-edit-tree .setup-grades {
-    h4 {
-        margin: 0;
-    }
+.path-grade-edit-tree {
+    .gradetree-wrapper {
+        padding: 10px 10px;
+        background-color: $gray-100;
 
-    .column-rowspan {
-        padding: 0;
-        width: 24px;
-        min-width: 24px;
-        max-width: 24px;
-    }
+        .setup-grades {
+            h4 {
+                margin: 0;
+            }
 
-    .category td.column-name {
-        padding-left: 0;
-    }
+            .column-rowspan {
+                padding: 0;
+                width: 24px;
+                min-width: 24px;
+                max-width: 24px;
+            }
 
-    td.column-name {
-        padding-left: 24px;
-    }
+            .emptyrow {
+                display: none;
+            }
 
-    td.movehere {
-        padding: 0;
-    }
+            .gradeitemdescription {
+                font-weight: normal;
+                padding-left: 24px;
+            }
 
-    td.movehere a.movehere {
-        display: block;
-        width: 100%;
-        height: 2rem;
-        border: 2px dashed $gray-800;
-    }
+            &.generaltable {
 
-    .category input[type="text"],
-    .category .column-range,
-    .categoryitem,
-    .courseitem {
-        font-weight: bold;
-    }
+                tr {
+                    &.spacer {
+                        height: 0.5rem;
+                    }
 
-    .emptyrow {
-        display: none;
-    }
+                    &[data-hidden="true"] {
+                        display: none;
+                    }
 
-    .gradeitemdescription {
-        font-weight: normal;
-        padding-left: 24px;
-    }
+                    th {
+                        vertical-align: bottom;
+                        border: none;
+                        text-align: left;
+                        background-color: $gray-100;
 
-    .column-weight {
-        white-space: nowrap;
+                        &.rowspan {
+                            padding: 0;
+                            width: 24px;
+                            min-width: 24px;
+                        }
+                    }
 
-        &.level3 {
-            padding-left: 37px;
+                    td {
+                        min-width: 4.5em;
+                        background-color: $gray-100;
+                        border: none;
+                        vertical-align: middle;
+
+                        &.column-name {
+                            padding-left: 38px;
+
+                            .small {
+                                font-size: 70%;
+                            }
+
+                            .itemicon {
+                                font-size: 18px;
+                                width: 18px;
+                                height: 18px;
+                            }
+                        }
+
+                        &.column-weight {
+                            .weightoverride {
+                                margin-right: 5px;
+                            }
+                            min-width: 15em;
+                        }
+
+                        &.column-actions {
+                            .dropdown-toggle::after {
+                                display: none;
+                            }
+                        }
+
+                        &.movehere {
+                            padding: 0;
+
+                            a.movehere {
+                                display: block;
+                                width: 100%;
+                                margin: 5px 0 5px 0;
+                                padding: 3px 0 3px 0;
+
+                                hr {
+                                    border-top: 2px dashed $gray-500;
+                                    margin: 0;
+                                }
+
+                                &:hover {
+                                    hr {
+                                        border-top: 2px dashed $blue;
+                                    }
+
+                                }
+                            }
+                        }
+                    }
+
+                    &.category {
+                        td {
+                            background-color: white;
+                            border-top: 1px solid $gray-300;
+                            border-bottom: 1px solid $gray-300;
+
+                            &:first-child {
+                                border-left: 1px solid $gray-300;
+                            }
+
+                            &:last-child {
+                                border-right: 1px solid $gray-300;
+                            }
+
+                            &.column-name {
+                                padding-left: 10px;
+                                font-weight: bold;
+
+                                div {
+                                    display: flex;
+                                    min-height: 30px;
+                                    align-items: center;
+
+                                    a {
+                                        &.toggle-category {
+                                            height: 24px;
+                                            width: 24px;
+                                            font-size: 12px;
+                                            line-height: 24px;
+                                            margin-right: 3px;
+
+                                            &[aria-expanded="true"] .expanded,
+                                            &[aria-expanded="false"] .collapsed {
+                                                display: none;
+                                            }
+
+                                            i {
+                                                font-size: 12px;
+                                                width: 12px;
+                                                height: 12px;
+                                                color: #1d2125;
+                                                margin: 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    &.item {
+                        td {
+                            background-color: white;
+                            border-top: 3px solid $gray-100;
+                        }
+
+                        &.categoryitem,
+                        &.courseitem {
+                            td {
+                                min-width: 4.5em;
+                                background-color: $gray-100;
+                                border: none;
+                                vertical-align: middle;
+
+                                &.column-name {
+                                    padding-left: 0;
+                                }
+
+                                &:not(.column-actions) {
+                                    font-weight: bold;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        &.level4 {
-            padding-left: 66px;
+        .badge-light {
+            color: #1d2125;
+            background-color: #ced4da;
+            margin-right: 0.5em;
+            margin-bottom: 0.5em;
         }
 
-        &.level5 {
-            padding-left: 95px;
-        }
-
-        &.level6 {
-            padding-left: 124px;
-        }
-
-        &.level7 {
-            padding-left: 153px;
-        }
-
-        &.level8 {
-            padding-left: 182px;
-        }
-
-        &.level9 {
-            padding-left: 211px;
-        }
-
-        &.level10 {
-            padding-left: 240px;
-        }
-    }
-
-    .column-range {
-        &.level2 {
-            padding-left: 37px;
-        }
-
-        &.level3 {
-            padding-left: 66px;
-        }
-
-        &.level4 {
-            padding-left: 95px;
-        }
-
-        &.level5 {
-            padding-left: 124px;
-        }
-
-        &.level6 {
-            padding-left: 153px;
-        }
-
-        &.level7 {
-            padding-left: 182px;
-        }
-
-        &.level8 {
-            padding-left: 211px;
-        }
-
-        &.level9 {
-            padding-left: 240px;
-        }
-
-        &.level10 {
-            padding-left: 269px;
-        }
-    }
-
-    &.generaltable {
-        .levelodd {
-            background-color: $table-accent-bg;
-        }
-
-        .leveleven {
-            background-color: $table-bg;
-        }
     }
 }
 
@@ -436,6 +501,14 @@
         tr .cell,
         .floater .cell {
             background-color: $pagination-bg;
+
+            &.gradecell {
+                .dropdown-menu {
+                    &.show {
+                        z-index: 1;
+                    }
+                }
+            }
         }
 
         table,
@@ -443,8 +516,6 @@
             border-color: $table-border-color;
         }
 
-        .userrow.odd .cell,
-        .floater .cell.odd,
         .heading .cell,
         .cell.category,
         .avg .cell {
@@ -458,13 +529,27 @@
         tr.heading {
             position: sticky;
             top: 0;
-            z-index: 1;
+            z-index: 4;
+        }
+
+        tr.userrow {
+            th {
+                z-index: 2;
+
+                &.actions-menu-active {
+                    z-index: 3;
+                }
+            }
         }
 
         tr.lastrow {
             position: sticky;
-            bottom: 0;
-            z-index: 1;
+            // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned. */
+            bottom: -1px;
+
+            &.pinned {
+                z-index: 4;
+            }
 
             td,
             th {
@@ -473,8 +558,17 @@
         }
 
         th.header {
+            @include media-breakpoint-down(sm) {
+                left: 0;
+            }
+            @include media-breakpoint-up(md) {
+                left: -3rem;
+            }
             position: sticky;
-            left: -3rem;
+
+            &#studentheader {
+                z-index: 1;
+            }
         }
 
         td.noborder {
@@ -529,6 +623,17 @@
         display: none;
     }
 }
+
+.gradereport-grader-table {
+    input[name^="grade"] {
+        width: 80px;
+        display: inline-block;
+    }
+    .dropdown-toggle::after {
+        display: none;
+    }
+}
+
 
 .search-widget {
     .dropdown-menu {

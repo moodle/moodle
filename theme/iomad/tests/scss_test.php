@@ -20,7 +20,9 @@ namespace theme_iomad;
  * Unit tests for scss compilation.
  *
  * @package   theme_iomad
- * @copyright 2016 onwards Ankit Agarwal
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class scss_test extends \advanced_testcase {

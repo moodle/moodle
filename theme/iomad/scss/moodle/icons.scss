@@ -5,8 +5,14 @@
 $icon-width: 16px;
 $icon-height: 16px;
 // Size of big icons.
+$icon-medium-width: 24px;
+$icon-medium-height: 24px;
+// Size of big icons.
 $icon-big-width: 64px;
 $icon-big-height: 64px;
+// Size of icon boxes.
+$icon-box-width: 48px;
+$icon-box-height: 48px;
 
 // stylelint-disable
 $iconsizes: () !default;
@@ -137,8 +143,8 @@ $iconsizes: map-merge((
     .activityicon,
     .icon {
         margin: 0;
-        height: 24px;
-        width: 24px;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
     }
     &.small {
         width: $activity-iconcontainer-width - 10px;
@@ -151,8 +157,27 @@ $iconsizes: map-merge((
         background-color: $value;
         .activityicon,
         .icon {
-            filter: brightness(0) invert(1);
+            &:not(.nofilter) {
+                filter: brightness(0) invert(1);
+            }
         }
+    }
+}
+
+.icon-box {
+    width: $icon-box-width;
+    height: $icon-box-height;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $gray-100;
+    border-radius: 12px;
+    padding: 0.7rem;
+
+    .icon {
+        margin: 0;
+        height: $icon-medium-width;
+        width: $icon-medium-height;
     }
 }
 

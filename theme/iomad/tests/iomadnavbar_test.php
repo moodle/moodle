@@ -21,7 +21,9 @@ namespace theme_iomad;
  *
  * @package    theme_iomad
  * @covers     \theme_iomad\iomadnavbar
- * @copyright  2021 Peter Dias
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_boost by Frédéric Massart
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class iomadnavbar_test extends \advanced_testcase {

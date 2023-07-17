@@ -412,7 +412,7 @@ $author-image-margin-sm: 8px;
                 .author-image-container {
                     width: $author-image-width-sm;
                     margin-right: $author-image-margin-sm;
-                    padding-top: (36px - $author-image-width-sm) / 2;
+                    padding-top: (36px - $author-image-width-sm) * 0.5;
                 }
 
                 /**
@@ -486,7 +486,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     from {
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
-        border-radius: $grading-icon-button-size / 2;
+        border-radius: $grading-icon-button-size * 0.5;
         background-color: $gray-200;
     }
     to {
@@ -521,7 +521,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     to {
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
-        border-radius: $grading-icon-button-size / 2;
+        border-radius: $grading-icon-button-size * 0.5;
         background-color: $gray-200;
     }
 }
@@ -1105,7 +1105,7 @@ div#dock {
         .usertext {
             float: left;
             text-align: right;
-            margin-right: $spacer / 2;
+            margin-right: $spacer * 0.5;
             height: 35px;
             .meta {
                 font-size: $font-size-sm;
@@ -1166,7 +1166,7 @@ div#dock {
     border-radius: 50%;
     color: $gray-800;
     font-weight: normal;
-    margin-right: $spacer / 4;
+    margin-right: $spacer * 0.25;
     &.size-16,
     &.size-30 {
         font-size: 0.7rem;
@@ -1189,7 +1189,7 @@ div#dock {
 }
 
 img.userpicture {
-    margin-right: $spacer / 4;
+    margin-right: $spacer * 0.25;
 }
 
 @include media-breakpoint-down(sm) {
@@ -1248,7 +1248,8 @@ img.userpicture {
         width: 30px;
         border-radius: 3px;
         border: 0;
-        overflow: visible;
+        overflow: hidden;
+        white-space: nowrap;
         margin: 0 6px 6px 0;
     }
 
@@ -1332,8 +1333,8 @@ img.userpicture {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
-    padding: 0;
-    margin: 0 0.4em;
+    padding: .5em 0 .5em .1em;
+    margin: 2px;
 }
 
 /* Countdown timer. */
@@ -1395,6 +1396,8 @@ $popout-header-height: 4rem;
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem.has-popout .felement {
     width: 100%;
+    overflow: auto;
+    height: calc(100% - 4rem);
 }
 
 .path-mod-assign [data-region="grade-panel"] .mform .fitem .felement {

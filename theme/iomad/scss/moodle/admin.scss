@@ -58,10 +58,6 @@
     display: none;
 }
 
-#page-admin-report-capability-index #capabilitysearch {
-    width: 30em;
-}
-
 #page-admin-qtypes #qtypes div,
 #page-admin-qtypes #qtypes form,
 #page-admin-qbehaviours #qbehaviours div,
@@ -109,6 +105,7 @@
     margin: 1em 0 2em;
 }
 
+#page-admin-roles-override .capcurrent,
 #page-admin-roles-define .capdefault {
     background-color: $table-hover-bg;
 }
@@ -305,8 +302,7 @@
     display: block;
 }
 
-#admin-spelllanguagelist textarea,
-#page-admin-setting-editorsettingstinymce .form-textarea textarea {
+#admin-spelllanguagelist textarea {
     /* rtl:ignore */
     text-align: left;
     /* rtl:ignore */

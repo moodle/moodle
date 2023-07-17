@@ -1,34 +1,19 @@
 /**
  * --------------------------------------------------------------------------
- * Bootstrap (v4.6.0): index.js
+ * Bootstrap (v4.6.2): index.js
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
  * --------------------------------------------------------------------------
  */
 
-import Alert from './bootstrap/alert';
-import Button from './bootstrap/button';
-import Carousel from './bootstrap/carousel';
-import Collapse from './bootstrap/collapse';
-import Dropdown from './bootstrap/dropdown';
-import Modal from './bootstrap/modal';
-import Popover from './bootstrap/popover';
-import Scrollspy from './bootstrap/scrollspy';
-import Tab from './bootstrap/tab';
-import Toast from './bootstrap/toast';
-import Tooltip from './bootstrap/tooltip';
-import Util from './bootstrap/util';
-
-export {
-  Util,
-  Alert,
-  Button,
-  Carousel,
-  Collapse,
-  Dropdown,
-  Modal,
-  Popover,
-  Scrollspy,
-  Tab,
-  Toast,
-  Tooltip
-};
+export { default as Alert } from './bootstrap/alert'
+export { default as Button } from './bootstrap/button'
+export { default as Carousel } from './bootstrap/carousel'
+export { default as Collapse } from './bootstrap/collapse'
+export { default as Dropdown } from './bootstrap/dropdown'
+export { default as Modal } from './bootstrap/modal'
+export { default as Popover } from './bootstrap/popover'
+export { default as Scrollspy } from './bootstrap/scrollspy'
+export { default as Tab } from './bootstrap/tab'
+export { default as Toast } from './bootstrap/toast'
+export { default as Tooltip } from './bootstrap/tooltip'
+export { default as Util } from './bootstrap/util'
