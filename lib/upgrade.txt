@@ -87,6 +87,7 @@ information provided here is intended especially for developers.
 to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
 being forced open in all behat tests.
 * The core_useragent::get_device_type_list() function has been deprecated. Use core_useragent::devicetypes instead as a replacement.
+* A new native event in the `core_filters/events` AMD module eventTypes.filterContentRenderingComplete has been created to determine when the filter is complete the rendering.
 
 === 4.2 ===
 
