@@ -18,8 +18,9 @@
  * Overridden fontawesome icons.
  *
  * @package     theme_iomadbootstrap
- * @copyright   2019 Moodle
- * @author      Bas Brands <bas@moodle.com>
+ * @copyright 2022 Derick Turner
+ * @author    Derick Turner
+ * @based on theme_classic by Bas Brands
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace theme_iomadbootstrap\output;

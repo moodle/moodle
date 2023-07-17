@@ -10,6 +10,7 @@
         "course/format/tests/behat/course_courseindex.feature",
         "course/format/tests/behat/courseindex_keyboardnav.feature",
         "course/format/tests/behat/courseindex_completion.feature",
+        "course/format/tests/behat/courseindex_language.feature",
         "badges/tests/behat/badge_navigation.feature"
     ],
     "tags": [
