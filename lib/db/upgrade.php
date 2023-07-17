@@ -3348,5 +3348,27 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023062900.01);
     }
 
+    if ($oldversion < 2023072500.00) {
+        // Upgrade yaml mime type for existing yaml and yml files.
+        $filetypes = array(
+            '%.yaml' => 'application/yaml',
+            '%.yml' => 'application/yaml,'
+        );
+
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($filetypes as $extension => $mimetype) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                $mimetype,
+                $select,
+                array($extension)
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023072500.00);
+    }
+
     return true;
 }
