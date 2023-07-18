@@ -147,6 +147,9 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
             $fractionmax += $subq->defaultmark;
             $fractionsum += $subq->defaultmark * $subq->get_min_fraction();
         }
+        if (empty($fractionsum)) {
+            return 0;
+        }
         return $fractionsum / (!empty($this->subquestions) ? $fractionmax : 1);
     }
 
@@ -156,6 +159,9 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
         foreach ($this->subquestions as $i => $subq) {
             $fractionmax += $subq->defaultmark;
             $fractionsum += $subq->defaultmark * $subq->get_max_fraction();
+        }
+        if (empty($fractionsum)) {
+            return 1;
         }
         return $fractionsum / (!empty($this->subquestions) ? $fractionmax : 1);
     }
@@ -298,6 +304,9 @@ class qtype_multianswer_question extends question_graded_automatically_with_coun
                 $fractionsum += $subfraction * $subq->defaultmark;
                 $overallstate = $this->combine_states($overallstate, $newstate);
             }
+        }
+        if (empty($fractionmax)) {
+            return array(null, $overallstate ?? question_state::$finished);
         }
         return array($fractionsum / $fractionmax, $overallstate);
     }

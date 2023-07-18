@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/type/multianswer/question.php');
  */
 class qtype_multianswer_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('twosubq', 'fourmc', 'numericalzero', 'dollarsigns', 'multiple');
+        return array('twosubq', 'fourmc', 'numericalzero', 'dollarsigns', 'multiple', 'zeroweight');
     }
 
     /**
@@ -481,6 +481,50 @@ class qtype_multianswer_test_helper extends question_test_helper {
         $q->subquestions = array(
             1 => $mc,
             2 => $mc2,
+        );
+
+        return $q;
+    }
+
+    /**
+     * Makes a multianswer question with zero weight.
+     * This is used for testing the MDL-77378 bug.
+     * @return qtype_multianswer_question
+     */
+    public function make_multianswer_question_zeroweight() {
+        question_bank::load_question_definition_classes('multianswer');
+        $q = new qtype_multianswer_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Zero weight';
+        $q->questiontext =
+            'Optional question: {#1}.';
+        $q->generalfeedback = '';
+        $q->qtype = question_bank::get_qtype('multianswer');
+        $q->textfragments = array(
+            'Optional question: ',
+            '.',
+        );
+        $q->places = array('1' => '1');
+
+        // Shortanswer subquestion.
+        question_bank::load_question_definition_classes('shortanswer');
+        $sa = new qtype_shortanswer_question();
+        test_question_maker::initialise_a_question($sa);
+        $sa->name = 'Zero weight';
+        $sa->questiontext = '{0:SHORTANSWER:~%0%Input box~%100%*}';
+        $sa->questiontextformat = FORMAT_HTML;
+        $sa->generalfeedback = '';
+        $sa->generalfeedbackformat = FORMAT_HTML;
+        $sa->usecase = true;
+        $sa->answers = array(
+            13 => new question_answer(13, 'Input box', 0.0, '', FORMAT_HTML),
+            14 => new question_answer(14, '*', 1.0, '', FORMAT_HTML),
+        );
+        $sa->qtype = question_bank::get_qtype('shortanswer');
+        $sa->defaultmark = 0;
+
+        $q->subquestions = array(
+            1 => $sa,
         );
 
         return $q;
