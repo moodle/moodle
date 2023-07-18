@@ -43,8 +43,8 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I click on "Edit" "button"
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must make a submission"
     And I select "Show activity as complete when conditions are met" from the "completion" singleselect
+    And I should see "Student must make a submission"
     And I click on "completionview" "checkbox"
     And I click on "completionusegrade" "checkbox"
     And I click on "completionsubmit" "checkbox"
@@ -74,8 +74,8 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I click on "Edit" "button"
     And I should see "Completion tracking"
     And I should see "The changes will affect the following 2 activities or resources:"
-    And I should see "Student must make a submission"
     And I select "Show activity as complete when conditions are met" from the "completion" singleselect
+    And I should see "Student must make a submission"
     And I click on "completionusegrade" "checkbox"
     And I click on "completionpassgrade" "checkbox"
     And I click on "Save changes" "button"

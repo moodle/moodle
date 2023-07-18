@@ -21,16 +21,6 @@
  * @copyright   2017 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-/**
- * Default activity completion form
- *
- * @package     core_completion
- * @copyright   2017 Marina Glancy
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class core_completion_defaultedit_form extends core_completion_edit_base_form {
     /** @var array */
     protected $modules;
@@ -120,5 +110,15 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
             unset($data['id']);
             $this->set_data($data);
         }
+    }
+
+    /**
+     * There is no course module for this form, because it is used to update default completion settings. So it will
+     * always return null.
+     *
+     * @return \stdClass|null
+     */
+    protected function get_cm(): ?\stdClass {
+        return null;
     }
 }

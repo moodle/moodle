@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Base form for changing completion rules
- *
- * @package     core_completion
- * @copyright   2017 Marina Glancy
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
-require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->dirroot.'/course/modlib.php');
 
 /**
@@ -36,6 +27,9 @@ require_once($CFG->dirroot.'/course/modlib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class core_completion_edit_base_form extends moodleform {
+
+    use \core_completion\form\form_trait;
+
     /** @var moodleform_mod Do not use directly, call $this->get_module_form() */
     protected $_moduleform = null;
     /** @var bool */
@@ -49,6 +43,21 @@ abstract class core_completion_edit_base_form extends moodleform {
      * @return array modname=>modfullname
      */
     abstract protected function get_module_names();
+
+    /**
+     * Get the module name. If the form have more than one modules, it will return the first one.
+     *
+     * @return string|null The module name or null if there is no modules associated to this form.
+     */
+    protected function get_module_name(): ?string {
+        $modnames = $this->get_module_names();
+        if (empty($modnames)) {
+            return null;
+        }
+
+        $modnamekeys = array_keys($modnames);
+        return reset($modnamekeys);
+    }
 
     /**
      * Returns true if all selected modules support tracking view.
@@ -90,7 +99,7 @@ abstract class core_completion_edit_base_form extends moodleform {
      *
      * @return array
      */
-    protected function add_custom_completion_rules() {
+    protected function add_completion_rules() {
         $modnames = array_keys($this->get_module_names());
         if (count($modnames) != 1 || !plugin_supports('mod', $modnames[0], FEATURE_COMPLETION_HAS_RULES, false)) {
             return [];
@@ -178,67 +187,25 @@ abstract class core_completion_edit_base_form extends moodleform {
         $mform->addElement('hidden', 'id', $this->course->id);
         $mform->setType('id', PARAM_INT);
 
-        // Unlock completion automatically (this element can be used in validation).
-        $mform->addElement('hidden', 'completionunlocked', 1);
-        $mform->setType('completionunlocked', PARAM_INT);
-
-        $mform->addElement('select', 'completion', get_string('completion', 'completion'),
-            array(COMPLETION_TRACKING_NONE => get_string('completion_none', 'completion'),
-                COMPLETION_TRACKING_MANUAL => get_string('completion_manual', 'completion')));
-        $mform->addHelpButton('completion', 'completion', 'completion');
-        $mform->setDefault('completion', COMPLETION_TRACKING_NONE);
-
-        // Automatic completion once you view it.
-        $autocompletionpossible = false;
-        if ($this->support_views()) {
-            $mform->addElement('advcheckbox', 'completionview', get_string('completionview', 'completion'),
-                get_string('completionview_desc', 'completion'));
-            $mform->disabledIf('completionview', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
-            $autocompletionpossible = true;
-        }
-
-        // Automatic completion once it's graded.
-        if ($this->support_grades()) {
-            $group = [];
-            $group[] = $mform->createElement('advcheckbox', 'completionusegrade', get_string('completionusegrade', 'completion'),
-                get_string('completionusegrade_desc', 'completion'));
-            $mform->addHelpButton('completionusegrade', 'completionusegrade', 'completion', '', true);
-
-            $group[] = $mform->createElement('advcheckbox', 'completionpassgrade', get_string('completionpassgrade', 'completion'),
-                get_string('completionpassgrade_desc', 'completion'));
-            $mform->addHelpButton('completionpassgrade', 'completionpassgrade', 'completion', '', true);
-            $mform->disabledIf('completionpassgrade', 'completionusegrade', 'notchecked');
-
-            $mform->addGroup($group, 'completionpassgroup', get_string('completionpassgrade', 'completion'), ' &nbsp; ', false);
-            $mform->disabledIf('completionpassgroup', 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
-
-            $autocompletionpossible = true;
-        }
-
-        // Automatic completion according to module-specific rules.
-        foreach ($this->add_custom_completion_rules() as $element) {
-            $mform->disabledIf($element, 'completion', 'ne', COMPLETION_TRACKING_AUTOMATIC);
-            $autocompletionpossible = true;
-        }
-
-        // Automatic option only appears if possible.
-        if ($autocompletionpossible) {
-            $mform->getElement('completion')->addOption(
-                get_string('completion_automatic', 'completion'),
-                COMPLETION_TRACKING_AUTOMATIC);
-        }
-
-        // Completion expected at particular date? (For progress tracking).
-        $mform->addElement('date_time_selector', 'completionexpected',
-            get_string('completionexpected', 'completion'), ['optional' => true]);
-        $mform->addHelpButton('completionexpected', 'completionexpected', 'completion');
-        $mform->disabledIf('completionexpected', 'completion', 'eq', COMPLETION_TRACKING_NONE);
+        // Add the completion elements to the form.
+        $this->add_completion_elements(
+            $this->get_module_name(),
+            $this->support_views(),
+            $this->support_grades()
+        );
 
         if ($conflicts = $this->get_modules_with_hidden_rules()) {
             $mform->addElement('static', 'qwerty', '', get_string('hiddenrules', 'completion', join(', ', $conflicts)));
         }
 
         $this->add_action_buttons();
+    }
+
+    /**
+     * Each module which defines definition_after_data() must call this method.
+     */
+    public function definition_after_data() {
+        $this->definition_after_data_completion();
     }
 
     /**
@@ -252,15 +219,8 @@ abstract class core_completion_edit_base_form extends moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        // Completion: Don't let them choose automatic completion without turning
-        // on some conditions.
-        if (array_key_exists('completion', $data) &&
-            $data['completion'] == COMPLETION_TRACKING_AUTOMATIC) {
-            if (empty($data['completionview']) && empty($data['completionusegrade']) && empty($data['completionpassgrade']) &&
-                !$this->completion_rule_enabled($data)) {
-                $errors['completion'] = get_string('badautocompletion', 'completion');
-            }
-        }
+        // Completion: Check completion fields don't have errors.
+        $errors = array_merge($errors, $this->validate_completion($data));
 
         return $errors;
     }
