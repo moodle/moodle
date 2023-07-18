@@ -68,17 +68,15 @@ each defined as 'MOD_PURPOSE_X', so Assessment is MOD_PURPOSE_ASSESSMENT.
 
 ### Purpose colours
 
-The activity icon colours can be customised using the theme Boost 'Raw initial SCSS' feature. Simply copy this array of scss colours, customise the colours and done! There is no background colour for the 'Other' type purpose, it defaults to ```light-grey: #f8f9fa```.
+The activity icon colours can be customised using the theme Boost 'Raw initial SCSS' feature. Simply copy any of these scss variables that you want to customize, change the colour value and done! There is no background colour for the 'Other' type purpose, it defaults to ```light-grey: #f8f9fa```.
 
 {{< highlight scss >}}
-$activity-icon-colors: (
-    "administration": #5d63f6,
-    "assessment": #eb00a2,
-    "collaboration": #f7634d,
-    "communication": #11a676,
-    "content": #399be2,
-    "interface": #a378ff
-);
+$activity-icon-administration-bg: #5d63f6;
+$activity-icon-assessment-bg:     #eb66a2;
+$activity-icon-collaboration-bg:  #f7634d;
+$activity-icon-communication-bg:  #11a676;
+$activity-icon-content-bg:        #399be2;
+$activity-icon-interface-bg:      #a378ff;
 {{</ highlight >}}
 
 ### Custom activity icons
