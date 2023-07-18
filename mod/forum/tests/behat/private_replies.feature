@@ -26,10 +26,9 @@ Feature: Forum posts can be replied to in private
     And the following "mod_forum > discussions" exist:
       | user     | forum  | name                    | message                                        |
       | student1 | forum  | Answers to the homework | Here are the answers to last night's homework. |
-    And I am on the "Science 101" course page logged in as teacher1
-    And I reply "Answers to the homework" post from "Study discussions" forum with:
-      | Message         | How about you and I have a meeting after class about plagiarism? |
-      | Reply privately | 1                                                                |
+    And the following forum replies exist in course "Science 101":
+      | user     | forum             | discussion              | message                                                        | privatereplyto |
+      | teacher1 | Study discussions | Answers to the homework |How about you and I have a meeting after class about plagiarism?| student1       |
 
   Scenario: As a teacher I can see my own response
     Given I am on the "Study discussions" "forum activity" page logged in as teacher1
