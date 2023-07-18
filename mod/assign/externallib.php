@@ -357,6 +357,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                      'm.maxattempts, ' .
                      'm.markingworkflow, ' .
                      'm.markingallocation, ' .
+                     'm.markinganonymous, ' .
                      'm.requiresubmissionstatement, '.
                      'm.preventsubmissionnotingroup, '.
                      'm.intro, '.
@@ -435,6 +436,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                         'maxattempts' => $module->maxattempts,
                         'markingworkflow' => $module->markingworkflow,
                         'markingallocation' => $module->markingallocation,
+                        'markinganonymous' => $module->markinganonymous,
                         'requiresubmissionstatement' => $module->requiresubmissionstatement,
                         'preventsubmissionnotingroup' => $module->preventsubmissionnotingroup,
                         'timelimit' => $module->timelimit,
@@ -553,6 +555,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                 'maxattempts' => new external_value(PARAM_INT, 'maximum number of attempts allowed'),
                 'markingworkflow' => new external_value(PARAM_INT, 'enable marking workflow'),
                 'markingallocation' => new external_value(PARAM_INT, 'enable marking allocation'),
+                'markinganonymous' => new external_value(PARAM_INT, 'enable marking anonymous'),
                 'requiresubmissionstatement' => new external_value(PARAM_INT, 'student must accept submission statement'),
                 'preventsubmissionnotingroup' => new external_value(PARAM_INT, 'Prevent submission not in group', VALUE_OPTIONAL),
                 'submissionstatement' => new external_value(PARAM_RAW, 'Submission statement formatted.', VALUE_OPTIONAL),

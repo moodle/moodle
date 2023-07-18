@@ -344,8 +344,11 @@ $string['markerfilter'] = 'Marker filter';
 $string['markerfilternomarker'] = 'No marker';
 $string['markingallocation'] = 'Use marking allocation';
 $string['markingallocation_help'] = 'If enabled together with marking workflow, markers can be allocated to particular students.';
+$string['markinganonymous'] = 'Use marking anonymous';
+$string['markinganonymous_help'] = 'If enabled together with anonymous submissions and marking workflow, markers can release individual grades.';
 $string['markingworkflow'] = 'Use marking workflow';
 $string['markingworkflow_help'] = 'If enabled, marks will go through a series of workflow stages before being released to students. This allows for multiple rounds of marking and allows marks to be released to all students at the same time.';
+
 $string['markingworkflowstate'] = 'Marking workflow state';
 $string['markingworkflowstate_help'] = 'Possible workflow states may include (depending on your permissions):
 

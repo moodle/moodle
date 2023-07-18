@@ -28,6 +28,7 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
       | assignsubmission_onlinetext_enabled | 1                           |
       | assignsubmission_file_enabled       | 0                           |
       | markingworkflow                     | 1                           |
+      | markinganonymous                    | 0                           |
       | blindmarking                        | 1                           |
       | assignfeedback_comments_enabled     | 1                           |
       | assignfeedback_editpdf_enabled      | 1                           |

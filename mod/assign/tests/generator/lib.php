@@ -56,6 +56,7 @@ class mod_assign_generator extends testing_module_generator {
             'maxattempts'                       => -1,
             'markingworkflow'                   => 0,
             'markingallocation'                 => 0,
+            'markinganonymous'                  => 0,
             'activityformat'                    => 0,
             'timelimit'                         => 0,
             'submissionattachments'             => 0,
