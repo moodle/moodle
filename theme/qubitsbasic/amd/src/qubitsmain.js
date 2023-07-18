@@ -30,7 +30,6 @@ define(['jquery', 'core/str'], function($, Str) {
     }
 
     QubitsMain.prototype.showProfile = function(){
-        console.log("Showprofile >>>> ")
         $('#page-header').attr('style','display: block !important');
     }
 
@@ -44,6 +43,25 @@ define(['jquery', 'core/str'], function($, Str) {
             let mycourseurl = M.cfg.wwwroot+"/my/courses.php";
             $(location).attr("href", mycourseurl);
         });
+    }
+
+    QubitsMain.prototype.courseViewAndDetail = function(){
+        if($(".cvormv").length)
+        {
+            let cid = $(".cvormv").data("cid")
+            $("a.lftcitm").filter(function(){
+            return $(this).data("id") == cid
+            }).addClass("active");
+
+            $("a.link_name").filter(function(){
+            return $(this).data("name") == "mycourses"
+            }).addClass("active").parents(".nav-hover").addClass("active").parents(".nav-item").addClass("showMenu");
+        }
+        if($("body.page-mycourses").length){
+            $("a.link_name").filter(function(){
+            return $(this).data("name") == "mycourses"
+            }).addClass("active").parents(".nav-hover").addClass("active");
+        }
     }
 
     return {
