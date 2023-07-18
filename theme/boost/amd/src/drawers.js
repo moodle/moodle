@@ -25,6 +25,7 @@ import Templates from 'core/templates';
 import * as Aria from 'core/aria';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {debounce} from 'core/utils';
+import {isSmall, isLarge} from 'core/pagehelpers';
 import Pending from 'core/pending';
 // The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
@@ -48,50 +49,6 @@ const CLASSES = {
     SHOW: 'show',
     NOTINITIALISED: 'not-initialized',
     TOGGLERIGHT: '.drawer-right-toggle',
-};
-
-/**
- * Maximum sizes for breakpoints. This needs to correspond with Bootstrap
- * Breakpoints
- *
- * @private
- */
-const sizes = {
-    medium: 991,
-    large: 1400
-};
-
-/**
- * Get the current body width.
- *
- * @returns {number} the current body width.
- * @private
- */
-const getCurrentWidth = () => {
-    const DomRect = document.body.getBoundingClientRect();
-    return DomRect.x + DomRect.width;
-};
-
-/**
- * Check if the user uses a small size browser.
- *
- * @returns {boolean} true if the body is smaller than sizes.medium max size.
- * @private
- */
-const isSmall = () => {
-    const browserWidth = getCurrentWidth();
-    return browserWidth < sizes.medium;
-};
-
-/**
- * Check if the user uses a large size browser.
- *
- * @returns {boolean} true if the body is smaller than sizes.large max size.
- * @private
- */
-const isLarge = () => {
-    const browserWidth = getCurrentWidth();
-    return browserWidth >= sizes.large;
 };
 
 /**
