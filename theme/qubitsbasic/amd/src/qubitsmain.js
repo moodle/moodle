@@ -24,7 +24,26 @@ define(['jquery', 'core/str'], function($, Str) {
 
     var QubitsMain = function(){
         console.log("TODO: we have to move all common internal scripts into this file")
-        // TODO: we have to move all common internal scripts into this file
+        if($("#page-user-profile").length){
+            this.showProfile();
+        }
+    }
+
+    QubitsMain.prototype.showProfile = function(){
+        console.log("Showprofile >>>> ")
+        $('#page-header').attr('style','display: block !important');
+    }
+
+    QubitsMain.prototype.breadcrumbBackBtn = function(){
+        $(document).on("click", "#mvbkbtn", function(){
+            let cid = $(this).data("cid");
+            let coursevurl = M.cfg.wwwroot+"/course/view.php?id="+cid;
+            $(location).attr("href", coursevurl);
+        });
+        $(document).on("click", "#cvbkbtn", function(){
+            let mycourseurl = M.cfg.wwwroot+"/my/courses.php";
+            $(location).attr("href", mycourseurl);
+        });
     }
 
     return {

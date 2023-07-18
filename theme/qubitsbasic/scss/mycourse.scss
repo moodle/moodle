@@ -412,6 +412,10 @@
           padding: 8px;
         }
       }
+      .active {
+        background: #e2eaf2 !important;
+        color: var(--hovertextcolor) !important;
+      }
 
       &:hover {
         background: #e2eaf2 !important;
@@ -450,6 +454,10 @@
     &:hover {
       background: #e2eaf2;
       color: var(--hovertextcolor);
+    }
+    .active{
+      background: #e2eaf2 !important;
+      color: var(--hovertextcolor) !important;
     }
   }
   &:hover {
@@ -790,6 +798,9 @@ button.close:focus,
 .sidebar {
   .nav-links {
     .dropdown-item {
+      .active {
+        background-color: #e2eaf2 !important;
+      }
       &:hover() {
         background-color: #e2eaf2 !important;
       }
