@@ -143,3 +143,12 @@ height: 18px;
 #page-header {
   display: none !important;
 }
+.level1-indent {
+  margin-left: 3%;
+}
+.level2-indent {
+  margin-left: 7%;
+}
+.level3-indent {
+  margin-left: 11%;
+}

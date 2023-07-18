@@ -48,12 +48,12 @@ $THEME->activityheaderconfig = [
 $THEME->layouts = [
     // Most backwards compatible layout without the blocks.
     'base' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array(),
     ),
     // Standard layout with blocks.
     'standard' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -65,7 +65,7 @@ $THEME->layouts = [
         'options' => array('langmenu' => true),
     ),
     'coursecategory' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -77,14 +77,14 @@ $THEME->layouts = [
     ),
     // The site home page.
     'frontpage' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
     ),
     // Server administration scripts.
     'admin' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
@@ -97,14 +97,14 @@ $THEME->layouts = [
     ),
     // My dashboard page.
     'mydashboard' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true, 'langmenu' => true),
     ),
     // My public page.
     'mypublic' => array(
-        'file' => 'incourse.php',
+        'file' => 'general.php',
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),

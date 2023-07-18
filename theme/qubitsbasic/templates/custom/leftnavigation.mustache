@@ -14,21 +14,21 @@
             </li>
             <div class="hr-line mb-5 d-block d-sm-none"></div>
             <li class="nav-item">
-                <div class="nav-hover">
+                <div class="nav-hover" data-name="mycourses">
                     <i class="qicon-my-courses icon"></i>
-                    <a href="{{globals.config.wwwroot}}/my/courses.php" class="link_name">My Courses</a>
+                    <a href="{{globals.config.wwwroot}}/my/courses.php" class="link_name" data-name="mycourses">My Courses</a>
                     <i class="qicon-chevron-down-thin arrow icon"></i>
                 </div>
                 <ul class="sub-menu">
                     {{#myenrolcourses}}
-                    <li><a href="{{{url}}}">{{ name }}</a></li>
+                    <li><a href="{{{url}}}" class="lftcitm" data-id="{{id}}">{{ name }}</a></li>
                     {{/myenrolcourses}}
                 </ul>
             </li>
 
             <li class="nav-item">
 
-                <a href="{{globals.config.wwwroot}}/my" class="nav-hover">
+                <a href="{{globals.config.wwwroot}}/my" class="nav-hover" data-name="dashboard">
                     <span class="qicon-dashboard icon"></span>
                     <span class="link_name">Dashboard</span>
                 </a>
@@ -42,9 +42,9 @@
             </li>
 			
 			<li class="nav-item">
-                <a href="{{globals.config.wwwroot}}/sitebuilder/">
+                <a href="{{globals.config.wwwroot}}/sitebuilder/" data-name="dashboard">
                     <span class="qicon-assessment icon"></span>
-                    <span class="link_name">Site Builder</span>
+                    <span class="link_name">Editors</span>
                 </a>
             </li>
         </ul>
