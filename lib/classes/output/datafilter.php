@@ -31,6 +31,15 @@ use templatable;
  */
 abstract class datafilter implements renderable, templatable {
 
+    /** @var int None of the following match */
+    public const JOINTYPE_NONE = 0;
+
+    /** @var int Any of the following match */
+    public const JOINTYPE_ANY = 1;
+
+    /** @var int All of the following match */
+    public const JOINTYPE_ALL = 2;
+
     /** @var context $context The context where the filters are being rendered. */
     protected $context;
 
@@ -84,6 +93,7 @@ abstract class datafilter implements renderable, templatable {
         bool $allowempty = false,
         ?stdClass $filteroptions = null,
         bool $required = false,
+        array $joinlist = [self::JOINTYPE_NONE, self::JOINTYPE_ANY, self::JOINTYPE_ALL]
     ): ?stdClass {
 
         if (!$allowempty && empty($values)) {
@@ -100,6 +110,7 @@ abstract class datafilter implements renderable, templatable {
             'values' => $values,
             'filteroptions' => $filteroptions,
             'required' => $required,
+            'joinlist' => json_encode($joinlist)
         ];
     }
 }
