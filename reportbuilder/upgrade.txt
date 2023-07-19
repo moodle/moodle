@@ -18,6 +18,7 @@ Information provided here is intended especially for developers.
 * The following report entity filters/conditions have been deprecated, with replacements as follows:
   - `enrolment:method` => `enrol:plugin`
 * The `add_base_condition_sql` method of the base report class will now ignore empty where clauses
+* If a non-default column is specified in a datasource `get_default_column_sorting` method, a coding exception will be thrown
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception
 * The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
 * Two new methods:
