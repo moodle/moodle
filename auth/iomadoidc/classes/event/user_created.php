@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IOMADoIDC user created event.
+ * IOMAD OIDC user created event.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -28,7 +28,7 @@ namespace auth_iomadoidc\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event fired when IOMADoIDC creates a new user.
+ * Event fired when IOMAD OIDC creates a new user.
  */
 class user_created extends \core\event\base {
     /**

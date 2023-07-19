@@ -67,7 +67,7 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
             if (!empty($forceloginflow) && is_string($forceloginflow)) {
                 $loginflow = $forceloginflow;
             } else {
-                $configuredloginflow = get_config('auth_iomadoidc' . $postfix, 'loginflow');
+                $configuredloginflow = get_config('auth_iomadoidc', 'loginflow' . $postfix);
                 if (!empty($configuredloginflow)) {
                     $loginflow = $configuredloginflow;
                 }
@@ -153,7 +153,7 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
             $SESSION->iomadoidc = $iomadoidc;
             return false;
         }
-        // We are off to IOMADoIDC land so reset the force in SESSION.
+        // We are off to IOMAD OIDC land so reset the force in SESSION.
         if (isset($SESSION->iomadoidc)) {
             unset($SESSION->iomadoidc);
         }
@@ -179,9 +179,9 @@ class auth_plugin_iomadoidc extends \auth_plugin_base {
     }
 
     /**
-     * Handle IOMADoIDC disconnection from Moodle account.
+     * Handle IOMAD OIDC disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored IOMADoIDC tokens for the user, otherwise revert login methods.
+     * @param bool $justremovetokens If true, just remove the stored IOMADIOMAD OIDC tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
      * @param moodle_url|null $redirect Where to redirect if successful.

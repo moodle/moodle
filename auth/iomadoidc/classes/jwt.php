@@ -44,6 +44,7 @@ class jwt {
      *
      * @param string $encoded Encoded JWT.
      * @return array Array of arrays of header and body parameters.
+     * @throws moodle_exception
      */
     public static function decode($encoded) {
         if (empty($encoded) || !is_string($encoded)) {
@@ -103,6 +104,7 @@ class jwt {
      *
      * @param string $encoded The encoded JWT.
      * @return jwt A JWT instance.
+     * @throws moodle_exception
      */
     public static function instance_from_encoded($encoded) {
         [$header, $body] = static::decode($encoded);

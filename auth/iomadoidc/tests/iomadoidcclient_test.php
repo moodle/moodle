@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IOMADoIDC client test cases.
+ * IOMAD OIDC client test cases.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>

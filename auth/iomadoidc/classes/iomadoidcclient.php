@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IOMADoIDC client.
+ * IOMAD OIDC client.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -140,7 +140,7 @@ class iomadoidcclient {
     }
 
     /**
-     * Set IOMADoIDC endpoints.
+     * Set IOMAD OIDC endpoints.
      *
      * @param array $endpoints Array of endpoints. Can have keys 'auth', and 'token'.
      */
@@ -167,7 +167,7 @@ class iomadoidcclient {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMAD OIDC request.
      * @return array Array of request parameters.
      */
     protected function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
@@ -258,7 +258,7 @@ class iomadoidcclient {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMAD OIDC request.
      */
     public function authrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
         if (empty($this->clientid)) {
@@ -282,19 +282,7 @@ class iomadoidcclient {
      * @return void
      */
     public function adminconsentrequest(array $stateparams = [], array $extraparams = []) {
-        global $CFG;
-
-        // IOMAD
-        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-        $companyid = iomad::get_my_companyid(context_system::instance(), false);
-        if (!empty($companyid)) {
-            $postfix = "_$companyid";
-        } else {
-            $postfix = "";
-        }
-
-        $adminconsentendpoint = 'https://login.microsoftonline.com/' . get_config('auth_iomadoidc', 'tenantnameorguid' . $postfix) .
-            '/v2.0/adminconsent';
+        $adminconsentendpoint = 'https://login.microsoftonline.com/organizations/v2.0/adminconsent';
         $params = $this->getadminconsentrequestparams($stateparams, $extraparams);
         $redirecturl = new moodle_url($adminconsentendpoint, $params);
         redirect($redirecturl);
@@ -336,7 +324,7 @@ class iomadoidcclient {
             'client_secret' => $this->clientsecret,
         ];
 
-        if (get_config('auth_iomadoidc', 'idptype' . $postfix) != AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+        if (get_config('auth_iomadoidc', 'idptype' . $postfix) != AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
             $params['resource'] = $this->tokenresource;
         }
 
@@ -356,7 +344,7 @@ class iomadoidcclient {
      * @return array Received parameters.
      */
     public function tokenrequest($code) {
-        $CFG;
+        global $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
@@ -379,7 +367,7 @@ class iomadoidcclient {
         ];
 
         switch (get_config('auth_iomadoidc', 'clientauthmethod' . $postfix)) {
-            case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+            case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
                 $params['client_assertion_type'] = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
                 $params['client_assertion'] = static::generate_client_assertion();
                 $params['tenant'] = 'common';
@@ -415,7 +403,7 @@ class iomadoidcclient {
         ];
 
         switch (get_config('auth_iomadoidc', 'clientauthmethod' . $postfix)) {
-            case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+            case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
                 $params['client_assertion_type'] = 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer';
                 $params['client_assertion'] = static::generate_client_assertion();
                 break;
@@ -424,7 +412,6 @@ class iomadoidcclient {
         }
 
         $tokenendpoint = $this->endpoints['token'];
-        $tokenendpoint = str_replace('/common/' , '/' . get_config('auth_iomadoidc', 'tenantnameorguid' . $postfix) . '/', $tokenendpoint);
 
         $returned = $this->httpclient->post($tokenendpoint, $params);
         return utils::process_json_response($returned, ['access_token' => null]);
@@ -449,7 +436,8 @@ class iomadoidcclient {
 
         $jwt = new jwt();
         $authiomadoidcconfig = get_config('auth_iomadoidc');
-        $cert = openssl_x509_read($authiomadoidcconfig->clientcert . $postfix);
+        $opname = "clientcert" . $postfix;
+        $cert = openssl_x509_read($authiomadoidcconfig->$opname);
         $sh1hash = openssl_x509_fingerprint($cert);
         $x5t = base64_encode(hex2bin($sh1hash));
         $jwt->set_header(['alg' => 'RS256', 'typ' => 'JWT', 'x5t' => $x5t]);

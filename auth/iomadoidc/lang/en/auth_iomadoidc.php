@@ -81,8 +81,6 @@ $string['clientprivatekey'] = 'Client certificate private key';
 $string['clientprivatekey_help'] = 'When using <b>certificate</b> authentication method, this is the private key of the certificate used to authenticate with IdP.';
 $string['clientcert'] = 'Client certificate public key';
 $string['clientcert_help'] = 'When using <b>certificate</b> authentication method, this is the public key, or certificate, used in to authenticate with IdP.';
-$string['tenantnameorguid'] = 'Tenant name or GUID';
-$string['tenantnameorguid_help'] = 'Don\'t include https:// if use tenant name.';
 $string['cfg_domainhint_key'] = 'Domain Hint';
 $string['cfg_domainhint_desc'] = 'When using the <b>Authorization Code</b> login flow, pass this value as the "domain_hint" parameter. "domain_hint" is used by some OpenID Connect IdP to make the login process easier for users. Check with your provider to see whether they support this parameter.';
 $string['cfg_err_invalidauthendpoint'] = 'Invalid Authorization Endpoint';
@@ -121,7 +119,7 @@ $string['iomadoidcresource'] = 'Resource';
 $string['iomadoidcresource_help'] = 'The OpenID Connect resource for which to send the request.<br/>
 <b>Note</b> this is paramater is not supported in <b>Microsoft identity platform (v2.0)</b> IdP type.';
 $string['iomadoidcscope'] = 'Scope';
-$string['iomadoidcscope_help'] = 'The IOMADoIDC Scope to use.';
+$string['iomadoidcscope_help'] = 'The IOMAD OIDC Scope to use.';
 $string['cfg_opname_key'] = 'Provider Display Name';
 $string['cfg_opname_desc'] = 'This is an end-user-facing label that identifies the type of credentials the user must use to login. This label is used throughout the user-facing portions of this plugin to identify your provider.';
 $string['cfg_redirecturi_key'] = 'Redirect URI';
@@ -158,7 +156,7 @@ $string['application_updated_azure'] = 'OpenID Connect application setting was u
 
 $string['event_debug'] = 'Debug message';
 
-$string['task_cleanup_iomadoidc_state_and_token'] = 'Clean up IOMADoIDC state and invalid token';
+$string['task_cleanup_iomadoidc_state_and_token'] = 'Clean up IOMAD OIDC state and invalid token';
 
 $string['errorauthdisconnectemptypassword'] = 'Password cannot be empty';
 $string['errorauthdisconnectemptyusername'] = 'Username cannot be empty';
@@ -233,10 +231,10 @@ $string['privacy:metadata:auth_iomadoidc_prevlogin:userid'] = 'The ID of the Moo
 $string['privacy:metadata:auth_iomadoidc_prevlogin:method'] = 'The previous login method';
 $string['privacy:metadata:auth_iomadoidc_prevlogin:password'] = 'The previous (encrypted) user password field.';
 $string['privacy:metadata:auth_iomadoidc_token'] = 'OpenID Connect tokens';
-$string['privacy:metadata:auth_iomadoidc_token:iomadoidcuniqid'] = 'The IOMADoIDC unique user identifier.';
+$string['privacy:metadata:auth_iomadoidc_token:iomadoidcuniqid'] = 'The IOMAD OIDC unique user identifier.';
 $string['privacy:metadata:auth_iomadoidc_token:username'] = 'The username of the Moodle user';
 $string['privacy:metadata:auth_iomadoidc_token:userid'] = 'The user ID of the Moodle user';
-$string['privacy:metadata:auth_iomadoidc_token:iomadoidcusername'] = 'The username of the IOMADoIDC user';
+$string['privacy:metadata:auth_iomadoidc_token:iomadoidcusername'] = 'The username of the IOMAD OIDC user';
 $string['privacy:metadata:auth_iomadoidc_token:scope'] = 'The scope of the token';
 $string['privacy:metadata:auth_iomadoidc_token:tokenresource'] = 'The resource of the token';
 $string['privacy:metadata:auth_iomadoidc_token:authcode'] = 'The auth code for the token';
@@ -260,7 +258,7 @@ $string['ucp_disconnect_details'] = 'This will disconnect your Moodle account fr
 $string['ucp_title'] = '{$a} Management';
 $string['ucp_o365accountconnected'] = 'This Microsoft 365 account is already connected with another Moodle account.';
 
-// Clean up IOMADoIDC tokens.
+// Clean up IOMAD OIDC tokens.
 $string['cleanup_iomadoidc_tokens'] = 'Cleanup OpenID Connect tokens';
 $string['unmatched'] = 'Unmatched';
 $string['delete_token'] = 'Delete token';
@@ -269,13 +267,13 @@ $string['na'] = 'n/a';
 $string['mismatched_details'] = 'Token record contains username "{$a->tokenusername}"; matched Moodle user has username "{$a->moodleusername}".';
 $string['delete_token_and_reference'] = 'Delete token and reference';
 $string['table_token_id'] = 'Token record ID';
-$string['table_iomadoidc_username'] = 'IOMADoIDC username';
-$string['table_token_unique_id'] = 'IOMADoIDC unique ID';
+$string['table_iomadoidc_username'] = 'OIDC username';
+$string['table_token_unique_id'] = 'OIDC unique ID';
 $string['table_matching_status'] = 'Matching status';
 $string['table_matching_details'] = 'Details';
 $string['table_action'] = 'Action';
 $string['token_deleted'] = 'Token was deleted successfully';
-$string['no_token_to_cleanup'] = 'There are no IOMADoIDC token to cleanup.';
+$string['no_token_to_cleanup'] = 'There are no IOMAD OIDC token to cleanup.';
 
 $string['errorusermatched'] = 'The Microsoft 365 account "{$a->aadupn}" is already matched with Moodle user "{$a->username}". To complete the connection, please log in as that Moodle user first and follow the instructions in the Microsoft block.';
 

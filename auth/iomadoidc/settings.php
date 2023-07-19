@@ -31,19 +31,19 @@ use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_loginflow;
 use auth_iomadoidc\adminsetting\auth_iomadoidc_admin_setting_redirecturi;
 use auth_iomadoidc\utils;
 
-require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
-
 // IOMAD
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 $companyid = iomad::get_my_companyid(context_system::instance(), false);
 if (!empty($companyid)) {
     $postfix = "_$companyid";
 } else {
-    $postfix = "";
+    $postfix = ""; 
 }
 
+require_once($CFG->dirroot . '/auth/iomadoidc/lib.php');
+
 if ($hassiteconfig) {
-    // Add folder for IOMADoIDC settings.
+    // Add folder for IOMAD OIDC settings.
     $iomadoidcfolder = new admin_category('iomadoidcfolder', get_string('pluginname', 'auth_iomadoidc'));
     $ADMIN->add('authsettings', $iomadoidcfolder);
 
@@ -59,12 +59,12 @@ if ($hassiteconfig) {
         get_string('heading_basic_desc', 'auth_iomadoidc')));
 
     // Redirect URI.
-    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/redirecturi' . $postfix,
+    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/redirecturi'. $postfix,
         get_string('cfg_redirecturi_key', 'auth_iomadoidc'), get_string('cfg_redirecturi_desc', 'auth_iomadoidc'), utils::get_redirecturl()));
 
     // Link to authentication options.
     $authenticationconfigurationurl = new moodle_url('/auth/iomadoidc/manageapplication.php');
-    $settings->add(new admin_setting_description('auth_iomadoidc/authenticationlink' . $postfix,
+    $settings->add(new admin_setting_description('auth_iomadoidc/authenticationlink'. $postfix,
         get_string('settings_page_application', 'auth_iomadoidc'),
         get_string('cfg_authenticationlink_desc', 'auth_iomadoidc', $authenticationconfigurationurl->out())));
 
@@ -73,19 +73,19 @@ if ($hassiteconfig) {
         get_string('heading_additional_options', 'auth_iomadoidc'), get_string('heading_additional_options_desc', 'auth_iomadoidc')));
 
     // Force redirect.
-    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/forceredirect' . $postfix,
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/forceredirect'. $postfix,
         get_string('cfg_forceredirect_key', 'auth_iomadoidc'), get_string('cfg_forceredirect_desc', 'auth_iomadoidc'), 0));
 
     // Auto-append.
-    $settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend' . $postfix,
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/autoappend'. $postfix,
         get_string('cfg_autoappend_key', 'auth_iomadoidc'), get_string('cfg_autoappend_desc', 'auth_iomadoidc'), '', PARAM_TEXT));
 
     // Domain hint.
-    $settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint' . $postfix,
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/domainhint'. $postfix,
         get_string('cfg_domainhint_key', 'auth_iomadoidc'), get_string('cfg_domainhint_desc', 'auth_iomadoidc'), '' , PARAM_TEXT));
 
     // Login flow.
-    $settings->add(new auth_iomadoidc_admin_setting_loginflow('auth_iomadoidc/loginflow' . $postfix,
+    $settings->add(new auth_iomadoidc_admin_setting_loginflow('auth_iomadoidc/loginflow'. $postfix,
         get_string('cfg_loginflow_key', 'auth_iomadoidc'), '', 'authcode'));
 
     // User restrictions heading.
@@ -93,11 +93,11 @@ if ($hassiteconfig) {
         get_string('heading_user_restrictions', 'auth_iomadoidc'), get_string('heading_user_restrictions_desc', 'auth_iomadoidc')));
 
     // User restrictions.
-    $settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions' . $postfix,
+    $settings->add(new admin_setting_configtextarea('auth_iomadoidc/userrestrictions'. $postfix,
         get_string('cfg_userrestrictions_key', 'auth_iomadoidc'), get_string('cfg_userrestrictions_desc', 'auth_iomadoidc'), '', PARAM_TEXT));
 
     // User restrictions case sensitivity.
-    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/userrestrictionscasesensitive' . $postfix,
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/userrestrictionscasesensitive'. $postfix,
         get_string('cfg_userrestrictionscasesensitive_key', 'auth_iomadoidc'),
         get_string('cfg_userrestrictionscasesensitive_desc', 'auth_iomadoidc'), '1'));
 
@@ -106,17 +106,17 @@ if ($hassiteconfig) {
         get_string('heading_sign_out', 'auth_iomadoidc'), get_string('heading_sign_out_desc', 'auth_iomadoidc')));
 
     // Single sign out from Moodle to IdP.
-    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/single_sign_off' . $postfix,
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/single_sign_off'. $postfix,
         get_string('cfg_signoffintegration_key', 'auth_iomadoidc'),
         get_string('cfg_signoffintegration_desc', 'auth_iomadoidc', $CFG->wwwroot), '0'));
 
     // IdP logout endpoint.
-    $settings->add(new admin_setting_configtext('auth_iomadoidc/logouturi' . $postfix,
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/logouturi'. $postfix,
         get_string('cfg_logoutendpoint_key', 'auth_iomadoidc'), get_string('cfg_logoutendpoint_desc', 'auth_iomadoidc'),
         'https://login.microsoftonline.com/common/oauth2/logout', PARAM_URL));
 
     // Front channel logout URL.
-    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/logoutendpoint' . $postfix,
+    $settings->add(new auth_iomadoidc_admin_setting_redirecturi('auth_iomadoidc/logoutendpoint'. $postfix,
         get_string('cfg_frontchannellogouturl_key', 'auth_iomadoidc'), get_string('cfg_frontchannellogouturl_desc', 'auth_iomadoidc'),
         utils::get_frontchannellogouturl()));
 
@@ -125,7 +125,7 @@ if ($hassiteconfig) {
         get_string('heading_display', 'auth_iomadoidc'), get_string('heading_display_desc', 'auth_iomadoidc')));
 
     // Provider Name (opname).
-    $settings->add(new admin_setting_configtext('auth_iomadoidc/opname' . $postfix,
+    $settings->add(new admin_setting_configtext('auth_iomadoidc/opname'. $postfix,
         get_string('cfg_opname_key', 'auth_iomadoidc'), get_string('cfg_opname_desc', 'auth_iomadoidc'),
         get_string('pluginname', 'auth_iomadoidc'), PARAM_TEXT));
 
@@ -207,13 +207,13 @@ if ($hassiteconfig) {
             'component' => 'moodle',
         ],
     ];
-    $settings->add(new auth_iomadoidc_admin_setting_iconselect('auth_iomadoidc/icon' . $postfix,
+    $settings->add(new auth_iomadoidc_admin_setting_iconselect('auth_iomadoidc/icon'. $postfix,
         get_string('cfg_icon_key', 'auth_iomadoidc'), get_string('cfg_icon_desc', 'auth_iomadoidc'), 'auth_iomadoidc:o365', $icons));
 
     // Custom icon.
     $configkey = new lang_string('cfg_customicon_key', 'auth_iomadoidc');
     $configdesc = new lang_string('cfg_customicon_desc', 'auth_iomadoidc');
-    $customiconsetting = new admin_setting_configstoredfile('auth_iomadoidc/customicon' . $postfix,
+    $customiconsetting = new admin_setting_configstoredfile('auth_iomadoidc/customicon'. $postfix,
         get_string('cfg_customicon_key', 'auth_iomadoidc'), get_string('cfg_customicon_desc', 'auth_iomadoidc'), 'customicon');
     $customiconsetting->set_updatedcallback('auth_iomadoidc_initialize_customicon');
     $settings->add($customiconsetting);
@@ -223,13 +223,13 @@ if ($hassiteconfig) {
         get_string('heading_debugging', 'auth_iomadoidc'), get_string('heading_debugging_desc', 'auth_iomadoidc')));
 
     // Record debugging messages.
-    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/debugmode' . $postfix,
+    $settings->add(new admin_setting_configcheckbox('auth_iomadoidc/debugmode'. $postfix,
         get_string('cfg_debugmode_key', 'auth_iomadoidc'), get_string('cfg_debugmode_desc', 'auth_iomadoidc'), '0'));
 
     $ADMIN->add('iomadoidcfolder', $settings);
 
-    // Cleanup IOMADoIDC tokens page.
-    $ADMIN->add('iomadoidcfolder', new admin_externalpage('auth_iomadoidc_cleanup_iomadoidc_tokens' . $postfix,
+    // Cleanup IOMAD OIDC tokens page.
+    $ADMIN->add('iomadoidcfolder', new admin_externalpage('auth_iomadoidc_cleanup_iomadoidc_tokens',
         get_string('settings_page_cleanup_iomadoidc_tokens', 'auth_iomadoidc'), new moodle_url('/auth/iomadoidc/cleanupiomadoidctokens.php')));
 
     // Other settings page and its settings.

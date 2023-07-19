@@ -33,7 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class utils {
     /**
-     * Process an IOMADoIDC JSON response.
+     * Process an IOMAD OIDC JSON response.
      *
      * @param string $response The received JSON.
      * @param array $expectedstructure
@@ -122,7 +122,7 @@ class utils {
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-        $companyid = \iomad::get_my_companyid(\context_system::instance(), false);
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
         if (!empty($companyid)) {
             $postfix = "_$companyid";
         } else {

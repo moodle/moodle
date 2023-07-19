@@ -29,6 +29,7 @@ namespace auth_iomadoidc\loginflow;
 use auth_iomadoidc\jwt;
 use auth_iomadoidc\iomadoidcclient;
 use core_user;
+use moodle_exception;
 use stdClass;
 use iomad;
 
@@ -132,7 +133,7 @@ class base {
         if (auth_iomadoidc_is_local_365_installed()) {
             // Check if multi tenants is enabled. User from additional tenants can only sync fields from token.
             $userfromadditionaltenant = false;
-            $hostingtenantid = get_config('local_o365', 'aadtenantid');
+            $hostingtenantid = get_config('local_o365', 'aadtenantid' . $postfix);
             $token = jwt::instance_from_encoded($tokenrec->token);
             if ($token->claim('tid') != $hostingtenantid) {
                 $userfromadditionaltenant = true;
@@ -164,7 +165,7 @@ class base {
                         }
 
                         if (!isset($userdata['userPrincipalName'])) {
-                            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+                            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                                 $upn = $token->claim('preferred_username');
                                 if (empty($upn)) {
                                     $upn = $token->claim('email');
@@ -224,7 +225,12 @@ class base {
             $tokenames = ['idtoken', 'token'];
 
             foreach ($tokenames as $tokename) {
-                $token = jwt::instance_from_encoded($tokenrec->$tokename);
+                try {
+                    $token = jwt::instance_from_encoded($tokenrec->$tokename);
+                } catch (moodle_exception $e) {
+                    // Error occurred when decoding a token, skip.
+                    continue;
+                }
 
                 if (!isset($userdata['objectId'])) {
                     $objectid = $token->claim('oid');
@@ -234,7 +240,7 @@ class base {
                 }
 
                 if (!isset($userdata['userPrincipalName'])) {
-                    if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+                    if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                         $upn = $token->claim('preferred_username');
                         if (empty($upn)) {
                             $upn = $token->claim('email');
@@ -325,9 +331,9 @@ class base {
     }
 
     /**
-     * Handle IOMADoIDC disconnection from Moodle account.
+     * Handle IOMAD OIDC disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored IOMADoIDC tokens for the user, otherwise revert login methods.
+     * @param bool $justremovetokens If true, just remove the stored IOMAD OIDC tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
      * @param \moodle_url|null $redirect Where to redirect if successful.
@@ -386,11 +392,11 @@ class base {
 
             // We need either the user's previous method or the manual login plugin to be enabled for disconnection.
             if (empty($prevauthmethod) && is_enabled_auth('manual') !== true) {
-                throw new \moodle_exception('errornodisconnectionauthmethod', 'auth_iomadoidc');
+                throw new moodle_exception('errornodisconnectionauthmethod', 'auth_iomadoidc');
             }
 
-            // Check to see if the user has a username created by IOMADoIDC, or a self-created username.
-            // IOMADoIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
+            // Check to see if the user has a username created by IOMAD OIDC, or a self-created username.
+            // IOMAD OIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
             // Otherwise, keep their existing username.
             $iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['userid' => $userrec->id]);
             $ccun = (isset($iomadoidctoken->iomadoidcuniqid) && strtolower($iomadoidctoken->iomadoidcuniqid) === $userrec->username) ? true : false;
@@ -409,18 +415,18 @@ class base {
             } else if ($fromform = $mform->get_data()) {
                 if (empty($fromform->newmethod) || ($fromform->newmethod !== $prevauthmethod &&
                         $fromform->newmethod !== 'manual')) {
-                    throw new \moodle_exception('errorauthdisconnectinvalidmethod', 'auth_iomadoidc');
+                    throw new moodle_exception('errorauthdisconnectinvalidmethod', 'auth_iomadoidc');
                 }
 
                 $updateduser = new stdClass;
 
                 if ($fromform->newmethod === 'manual') {
                     if (empty($fromform->password)) {
-                        throw new \moodle_exception('errorauthdisconnectemptypassword', 'auth_iomadoidc');
+                        throw new moodle_exception('errorauthdisconnectemptypassword', 'auth_iomadoidc');
                     }
                     if ($customdata['canchooseusername'] === true) {
                         if (empty($fromform->username)) {
-                            throw new \moodle_exception('errorauthdisconnectemptyusername', 'auth_iomadoidc');
+                            throw new moodle_exception('errorauthdisconnectemptyusername', 'auth_iomadoidc');
                         }
 
                         if (strtolower($fromform->username) !== $userrec->username) {
@@ -429,7 +435,7 @@ class base {
                             if ($DB->record_exists('user', $usercheck) === false) {
                                 $updateduser->username = $newusername;
                             } else {
-                                throw new \moodle_exception('errorauthdisconnectusernameexists', 'auth_iomadoidc');
+                                throw new moodle_exception('errorauthdisconnectusernameexists', 'auth_iomadoidc');
                             }
                         }
                     }
@@ -451,7 +457,7 @@ class base {
                 try {
                     user_update_user($updateduser);
                 } catch (\Exception $e) {
-                    throw new \moodle_exception($e->errorcode, '', $selfurl);
+                    throw new moodle_exception($e->errorcode, '', $selfurl);
                 }
 
                 // Delete token data.
@@ -502,7 +508,7 @@ class base {
         }
 
         if (!auth_iomadoidc_is_setup_complete()) {
-            throw new \moodle_exception('errorauthnocredsandendpoints', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthnocredsandendpoints', 'auth_iomadoidc');
         }
 
         $clientid = (isset($this->config->clientid)) ? $this->config->clientid : null;
@@ -533,12 +539,12 @@ class base {
         $sub = $idtoken->claim('sub');
         if (empty($sub)) {
             \auth_iomadoidc\utils::debug('Invalid idtoken', 'base::process_idtoken', $idtoken);
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
         }
         $receivednonce = $idtoken->claim('nonce');
         if (!empty($orignonce) && (empty($receivednonce) || $receivednonce !== $orignonce)) {
             \auth_iomadoidc\utils::debug('Invalid nonce', 'base::process_idtoken', $idtoken);
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
         }
 
         // Use 'oid' if available (Azure-specific), or fall back to standard "sub" claim.
@@ -576,7 +582,7 @@ class base {
         if ($restrictions !== '') {
             $restrictions = explode("\n", $restrictions);
             // Check main user identifier claim based on IdP type, and falls back to iomadoidc-standard "sub" if still empty.
-            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                 $tomatch = $idtoken->claim('preferred_username');
                 if (empty($tomatch)) {
                     $tomatch = $idtoken->claim('email');
@@ -643,8 +649,7 @@ class base {
      * @return stdClass The created token database record.
      */
     protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, jwt $idtoken, $userid = 0,
-        $originalupn = null) {
-        global $CFG, $DB;
+        global $CFG;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
@@ -655,11 +660,14 @@ class base {
             $postfix = "";
         }
 
+        $originalupn = null) {
+        global $DB;
+
         if (!is_null($originalupn)) {
             $iomadoidcusername = $originalupn;
         } else {
             // Determine remote username depending on IdP type, or fall back to standard 'sub'.
-            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                 $iomadoidcusername = $idtoken->claim('preferred_username');
                 if (empty($iomadoidcusername)) {
                     $iomadoidcusername = $idtoken->claim('email');
@@ -678,7 +686,7 @@ class base {
 
         // We should not fail here (idtoken was verified earlier to at least contain 'sub', but just in case...).
         if (empty($iomadoidcusername)) {
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
+            throw new moodle_exception('errorauthinvalididtoken', 'auth_iomadoidc');
         }
 
         // Cleanup old invalid token with the same iomadoidcusername.

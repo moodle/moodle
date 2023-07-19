@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IOMADoIDC application configuration page.
+ * IOMAD OIDC application configuration page.
  *
  * @package auth_iomadoidc
  * @author Lai Wei <lai.wei@enovation.ie>
@@ -47,7 +47,7 @@ $PAGE->set_pagelayout('admin');
 $PAGE->set_heading(get_string('settings_page_application', 'auth_iomadoidc'));
 $PAGE->set_title(get_string('settings_page_application', 'auth_iomadoidc'));
 
-$jsparams = [AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT, AUTH_IOMADoIDC_AUTH_METHOD_SECRET, AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE,
+$jsparams = [AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT, AUTH_IOMADOIDC_AUTH_METHOD_SECRET, AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE,
     get_string('auth_method_certificate', 'auth_iomadoidc')];
 $jsmodule = [
     'name' => 'auth_iomadoidc',
@@ -59,15 +59,16 @@ admin_externalpage_setup('auth_iomadoidc_application');
 
 require_admin();
 
-$iomadoidcconfig = get_config('auth_iomadoidc' . $postfix);
+$iomadoidcconfig = get_config('auth_iomadoidc');
 
 $form = new application(null, ['iomadoidcconfig' => $iomadoidcconfig]);
 
 $formdata = [];
-foreach (['idptype', 'clientid', 'clientauthmethod', 'clientsecret', 'clientprivatekey', 'clientcert', 'tenantnameorguid',
+foreach (['idptype', 'clientid', 'clientauthmethod', 'clientsecret', 'clientprivatekey', 'clientcert',
     'authendpoint', 'tokenendpoint', 'iomadoidcresource', 'iomadoidcscope'] as $field) {
-    if (!empty($iomadoidcconfig->$field . $postfix)) {
-        $formdata[$field] = $iomadoidcconfig->$field;
+    $opname = $field . $postfix;
+    if (isset($iomadoidcconfig->$opname)) {
+        $formdata[$field] = $iomadoidcconfig->$opname;
     }
 }
 
@@ -78,19 +79,19 @@ if ($form->is_cancelled()) {
 } else if ($fromform = $form->get_data()) {
     // Handle odd cases where clientauthmethod is not received.
     if (!isset($fromform->clientauthmethod)) {
-        $fromform->clientauthmethod = optional_param('clientauthmethod', AUTH_IOMADoIDC_AUTH_METHOD_SECRET, PARAM_INT);
+        $fromform->clientauthmethod = optional_param('clientauthmethod', AUTH_IOMADOIDC_AUTH_METHOD_SECRET, PARAM_INT);
     }
 
     // Prepare config settings to save.
-    $configstosave = ['idptype', 'clientid', 'tenantnameorguid', 'clientauthmethod', 'authendpoint', 'tokenendpoint',
+    $configstosave = ['idptype', 'clientid', 'clientauthmethod', 'authendpoint', 'tokenendpoint',
         'iomadoidcresource', 'iomadoidcscope'];
 
     // Depending on the value of clientauthmethod, save clientsecret or (clientprivatekey and clientcert).
     switch ($fromform->clientauthmethod) {
-        case AUTH_IOMADoIDC_AUTH_METHOD_SECRET:
+        case AUTH_IOMADOIDC_AUTH_METHOD_SECRET:
             $configstosave[] = 'clientsecret';
             break;
-        case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+        case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
             $configstosave[] = 'clientprivatekey';
             $configstosave[] = 'clientcert';
             break;
@@ -98,7 +99,7 @@ if ($form->is_cancelled()) {
 
     // Save config settings.
     foreach ($configstosave as $config) {
-        $existingsetting = get_config('auth_iomadoidc', $config . $postfix);
+        $existingsetting = get_config('auth_iomadoidc', $config);
         if ($fromform->$config != $existingsetting) {
             set_config($config . $postfix, $fromform->$config, 'auth_iomadoidc');
             add_to_config_log($config . $postfix, $existingsetting, $fromform->$config, 'auth_iomadoidc');
@@ -106,11 +107,24 @@ if ($form->is_cancelled()) {
     }
 
     // Redirect message depend on IdP type.
-    if ($fromform->idptype == AUTH_IOMADoIDC_IDP_TYPE_OTHER) {
-        redirect($url, get_string('application_updated', 'auth_iomadoidc'));
-    } else {
+    $showprovideadminconsentnotification = false;
+
+    if ($fromform->idptype != AUTH_IOMADOIDC_IDP_TYPE_OTHER) {
+        if (auth_iomadoidc_is_local_365_installed()) {
+            require_once($CFG->dirroot . '/local/o365/classes/utils.php');
+            if (method_exists('\local_o365\utils', 'is_connected')) {
+                if (\local_o365\utils::is_connected()) {
+                    $showprovideadminconsentnotification = true;
+                }
+            }
+        }
+    }
+
+    if ($showprovideadminconsentnotification) {
         $localo365configurl = new moodle_url('/admin/settings.php', ['section' => 'local_o365']);
         redirect($url, get_string('application_updated_azure', 'auth_iomadoidc', $localo365configurl->out()));
+    } else {
+        redirect($url, get_string('application_updated', 'auth_iomadoidc'));
     }
 }
 

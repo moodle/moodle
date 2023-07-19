@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * IOMADoIDC disconnect form.
+ * IOMAD OIDC disconnect form.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot.'/lib/formslib.php');
 
 /**
- * IOMADoIDC Disconnect Form.
+ * IOMAD OIDC Disconnect Form.
  */
 class disconnect extends \moodleform {
     /**

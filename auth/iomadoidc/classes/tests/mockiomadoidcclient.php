@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Mock IOMADoIDC client used in unit test.
+ * Mock IOMAD OIDC client used in unit test.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -42,7 +42,7 @@ class mockiomadoidcclient extends \auth_iomadoidc\iomadoidcclient {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMAD OIDC request.
      * @return array Array of request parameters.
      */
     public function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {

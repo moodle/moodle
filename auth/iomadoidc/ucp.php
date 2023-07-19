@@ -34,7 +34,7 @@ if (!empty($companyid)) {
     $postfix = "_$companyid";
 } else {
     $postfix = "";
-}
+}       
 
 require_login();
 

@@ -50,9 +50,9 @@ class application extends moodleform {
 
         // IdP type.
         $idptypeoptions = [
-            AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD => get_string('idp_type_azuread', 'auth_iomadoidc'),
-            AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT => get_string('idp_type_microsoft', 'auth_iomadoidc'),
-            AUTH_IOMADoIDC_IDP_TYPE_OTHER => get_string('idp_type_other', 'auth_iomadoidc'),
+            AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD => get_string('idp_type_azuread', 'auth_iomadoidc'),
+            AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT => get_string('idp_type_microsoft', 'auth_iomadoidc'),
+            AUTH_IOMADOIDC_IDP_TYPE_OTHER => get_string('idp_type_other', 'auth_iomadoidc'),
         ];
         $mform->addElement('select', 'idptype', auth_iomadoidc_config_name_in_form('idptype'), $idptypeoptions);
         $mform->addElement('static', 'idptype_help', '', get_string('idptype_help', 'auth_iomadoidc'));
@@ -63,45 +63,40 @@ class application extends moodleform {
         $mform->addElement('static', 'clientid_help', '', get_string('clientid_help', 'auth_iomadoidc'));
         $mform->addRule('clientid', null, 'required', null, 'client');
 
-        // Tenant name or GUID.
-        $mform->addElement('text', 'tenantnameorguid', auth_iomadoidc_config_name_in_form('tenantnameorguid'), ['size' => 60]);
-        $mform->setType('tenantnameorguid', PARAM_TEXT);
-        $mform->addElement('static', 'tenantnameorguid_help', '', get_string('tenantnameorguid_help', 'auth_iomadoidc'));
-
         // Authentication header.
         $mform->addElement('header', 'authentication', get_string('settings_section_authentication', 'auth_iomadoidc'));
         $mform->setExpanded('authentication');
 
         // Authentication method depending on IdP type.
         $authmethodoptions = [
-            AUTH_IOMADoIDC_AUTH_METHOD_SECRET => get_string('auth_method_secret', 'auth_iomadoidc'),
+            AUTH_IOMADOIDC_AUTH_METHOD_SECRET => get_string('auth_method_secret', 'auth_iomadoidc'),
         ];
         if (isset($this->_customdata['iomadoidcconfig']->idptype) &&
-            $this->_customdata['iomadoidcconfig']->idptype == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
-            $authmethodoptions[AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE] = get_string('auth_method_certificate', 'auth_iomadoidc');
+            $this->_customdata['iomadoidcconfig']->idptype == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
+            $authmethodoptions[AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE] = get_string('auth_method_certificate', 'auth_iomadoidc');
         }
         $mform->addElement('select', 'clientauthmethod', auth_iomadoidc_config_name_in_form('clientauthmethod'), $authmethodoptions);
-        $mform->setDefault('clientauthmethod', AUTH_IOMADoIDC_AUTH_METHOD_SECRET);
+        $mform->setDefault('clientauthmethod', AUTH_IOMADOIDC_AUTH_METHOD_SECRET);
         $mform->addElement('static', 'clientauthmethod_help', '', get_string('clientauthmethod_help', 'auth_iomadoidc'));
 
         // Secret.
         $mform->addElement('text', 'clientsecret', auth_iomadoidc_config_name_in_form('clientsecret'), ['size' => 60]);
         $mform->setType('clientsecret', PARAM_TEXT);
-        $mform->disabledIf('clientsecret', 'clientauthmethod', 'neq', AUTH_IOMADoIDC_AUTH_METHOD_SECRET);
+        $mform->disabledIf('clientsecret', 'clientauthmethod', 'neq', AUTH_IOMADOIDC_AUTH_METHOD_SECRET);
         $mform->addElement('static', 'clientsecret_help', '', get_string('clientsecret_help', 'auth_iomadoidc'));
 
         // Certificate private key.
         $mform->addElement('textarea', 'clientprivatekey', auth_iomadoidc_config_name_in_form('clientprivatekey'),
             ['rows' => 10, 'cols' => 80]);
         $mform->setType('clientprivatekey', PARAM_TEXT);
-        $mform->disabledIf('clientprivatekey', 'clientauthmethod', 'neq', AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientprivatekey', 'clientauthmethod', 'neq', AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE);
         $mform->addElement('static', 'clientprivatekey_help', '', get_string('clientprivatekey_help', 'auth_iomadoidc'));
 
         // Certificate certificate.
         $mform->addElement('textarea', 'clientcert', auth_iomadoidc_config_name_in_form('clientcert'),
             ['rows' => 10, 'cols' => 80]);
         $mform->setType('clientcert', PARAM_TEXT);
-        $mform->disabledIf('clientcert', 'clientauthmethod', 'neq', AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE);
+        $mform->disabledIf('clientcert', 'clientauthmethod', 'neq', AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE);
         $mform->addElement('static', 'clientcert_help', '', get_string('clientcert_help', 'auth_iomadoidc'));
 
         // Endpoints header.
@@ -153,29 +148,19 @@ class application extends moodleform {
         $errors = parent::validation($data, $files);
 
         if (!isset($data['clientauthmethod'])) {
-            $data['clientauthmethod'] = $this->optional_param('clientauthmethod', AUTH_IOMADoIDC_AUTH_METHOD_SECRET, PARAM_INT);
-        }
-
-        // Validate "tenantnameorguid".
-        switch ($data['idptype']) {
-            case AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD:
-            case AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT:
-                if (empty($data['tenantnameorguid'])) {
-                    $errors['tenantnameorguid'] = get_string('error_empty_tenantnameorguid', 'auth_iomadoidc');
-                }
-                break;
+            $data['clientauthmethod'] = $this->optional_param('clientauthmethod', AUTH_IOMADOIDC_AUTH_METHOD_SECRET, PARAM_INT);
         }
 
         // Validate "clientauthmethod" according to "idptype".
         switch ($data['idptype']) {
-            case AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD:
-            case AUTH_IOMADoIDC_IDP_TYPE_OTHER:
-                if ($data['clientauthmethod'] != AUTH_IOMADoIDC_AUTH_METHOD_SECRET) {
+            case AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD:
+            case AUTH_IOMADOIDC_IDP_TYPE_OTHER:
+                if ($data['clientauthmethod'] != AUTH_IOMADOIDC_AUTH_METHOD_SECRET) {
                     $errors['clientauthmethod'] = get_string('error_invalid_client_authentication_method', 'auth_iomadoidc');
                 }
                 break;
-            case AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT:
-                if (!in_array($data['clientauthmethod'], [AUTH_IOMADoIDC_AUTH_METHOD_SECRET, AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE])) {
+            case AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT:
+                if (!in_array($data['clientauthmethod'], [AUTH_IOMADOIDC_AUTH_METHOD_SECRET, AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE])) {
                     $errors['clientauthmethod'] = get_string('error_invalid_client_authentication_method', 'auth_iomadoidc');
                 }
                 break;
@@ -183,12 +168,12 @@ class application extends moodleform {
 
         // Validate authentication variables.
         switch ($data['clientauthmethod']) {
-            case AUTH_IOMADoIDC_AUTH_METHOD_SECRET:
+            case AUTH_IOMADOIDC_AUTH_METHOD_SECRET:
                 if (empty(trim($data['clientsecret']))) {
                     $errors['clientsecret'] = get_string('error_empty_client_secret', 'auth_iomadoidc');
                 }
                 break;
-            case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+            case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
                 if (empty(trim($data['clientprivatekey']))) {
                     $errors['clientprivatekey'] = get_string('error_empty_client_private_key', 'auth_iomadoidc');
                 }
@@ -199,7 +184,7 @@ class application extends moodleform {
         }
 
         // Validate endpoints.
-        if (in_array($data['idptype'], [AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD, AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT])) {
+        if (in_array($data['idptype'], [AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD, AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT])) {
             // Validate authendpoint.
             $authendpointidptype = auth_iomadoidc_determine_endpoint_version($data['authendpoint']);
             if ($authendpointidptype != $data['idptype']) {
@@ -214,7 +199,7 @@ class application extends moodleform {
         }
 
         // Validate iomadoidcresource.
-        if (in_array($data['idptype'], [AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD, AUTH_IOMADoIDC_IDP_TYPE_OTHER])) {
+        if (in_array($data['idptype'], [AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD, AUTH_IOMADOIDC_IDP_TYPE_OTHER])) {
             if (empty(trim($data['iomadoidcresource']))) {
                 $errors['iomadoidcresource'] = get_string('error_empty_iomadoidcresource', 'auth_iomadoidc');
             }

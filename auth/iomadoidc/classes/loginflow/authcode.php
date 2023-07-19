@@ -78,7 +78,7 @@ class authcode extends base {
     }
 
     /**
-     * Get an IOMADoIDC parameter.
+     * Get an IOMAD OIDC parameter.
      *
      * This is a modification to PARAM_ALPHANUMEXT to add a few additional characters from Base64-variants.
      *
@@ -114,7 +114,7 @@ class authcode extends base {
             $postfix = "";
         }
 
-        if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+        if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
             $adminconsent = optional_param('admin_consent', '', PARAM_TEXT);
             if ($adminconsent) {
                 $state = $this->getiomadoidcparam('state');
@@ -191,7 +191,7 @@ class authcode extends base {
      *
      * @param bool $promptlogin Whether to prompt for login or use existing session.
      * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the IOMADoIDC request.
+     * @param array $extraparams Additional parameters to send with the IOMAD OIDC request.
      */
     public function initiateauthrequest($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
         $client = $this->get_iomadoidcclient();
@@ -349,12 +349,12 @@ class authcode extends base {
             return true;
         }
 
-        // Check if IOMADoIDC user is already migrated.
+        // Check if IOMAD OIDC user is already migrated.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
         if (isloggedin() && !isguestuser() && (empty($tokenrec) || (isset($USER->auth) && $USER->auth !== 'iomadoidc'))) {
-            // If user is already logged in and trying to link Microsoft 365 account or use it for IOMADoIDC.
+            // If user is already logged in and trying to link Microsoft 365 account or use it for IOMAD OIDC.
             // Check if that Microsoft 365 account already exists in moodle.
-            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                 $upn = $idtoken->claim('preferred_username');
                 if (empty($upn)) {
                     $upn = $idtoken->claim('email');
@@ -382,7 +382,7 @@ class authcode extends base {
                 redirect(new moodle_url($redirect));
             }
 
-            // If the user is already logged in we can treat this as a "migration" - a user switching to IOMADoIDC.
+            // If the user is already logged in we can treat this as a "migration" - a user switching to IOMAD OIDC.
             $connectiononly = false;
             if (isset($additionaldata['connectiononly']) && $additionaldata['connectiononly'] === true) {
                 $connectiononly = true;
@@ -391,7 +391,7 @@ class authcode extends base {
             $redirect = (!empty($additionaldata['redirect'])) ? $additionaldata['redirect'] : '/auth/iomadoidc/ucp.php';
             redirect(new moodle_url($redirect));
         } else {
-            // Otherwise it's a user logging in normally with IOMADoIDC.
+            // Otherwise it's a user logging in normally with IOMAD OIDC.
             $this->handlelogin($iomadoidcuniqid, $authparams, $tokenparams, $idtoken);
             if ($USER->id && $DB->record_exists('auth_iomadoidc_token', ['userid' => $USER->id])) {
                 $DB->set_field('auth_iomadoidc_token', 'sid', $sid, ['userid' => $USER->id]);
@@ -412,7 +412,7 @@ class authcode extends base {
     protected function handlemigration($iomadoidcuniqid, $authparams, $tokenparams, $idtoken, $connectiononly = false) {
         global $USER, $DB, $CFG;
 
-        // Check if IOMADoIDC user is already connected to a Moodle user.
+        // Check if IOMAD OIDC user is already connected to a Moodle user.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['iomadoidcuniqid' => $iomadoidcuniqid]);
         if (!empty($tokenrec)) {
             $existinguserparams = ['username' => $tokenrec->username, 'mnethostid' => $CFG->mnet_localhost_id];
@@ -431,13 +431,13 @@ class authcode extends base {
                     $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
                     return true;
                 } else {
-                    // IOMADoIDC user connected to user that is not us. Can't continue.
+                    // IOMAD OIDC user connected to user that is not us. Can't continue.
                     throw new moodle_exception('errorauthuserconnectedtodifferent', 'auth_iomadoidc');
                 }
             }
         }
 
-        // Check if Moodle user is already connected to an IOMADoIDC user.
+        // Check if Moodle user is already connected to an IOMAD OIDC user.
         $tokenrec = $DB->get_record('auth_iomadoidc_token', ['userid' => $USER->id]);
         if (!empty($tokenrec)) {
             if ($tokenrec->iomadoidcuniqid === $iomadoidcuniqid) {
@@ -606,7 +606,7 @@ class authcode extends base {
 
             // Generate a Moodle username.
             // Use 'upn' if available for username (Azure-specific), or fall back to lower-case iomadoidcuniqid.
-            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT) {
+            if (get_config('auth_iomadoidc', 'idptype' . $postfix) == AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT) {
                 $username = $idtoken->claim('preferred_username');
                 if (empty($username)) {
                     $username = $idtoken->claim('email');

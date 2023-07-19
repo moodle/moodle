@@ -27,18 +27,18 @@
 defined('MOODLE_INTERNAL') || die();
 
 // IdP types.
-CONST AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD = 1;
-CONST AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT = 2;
-CONST AUTH_IOMADoIDC_IDP_TYPE_OTHER = 3;
+CONST AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD = 1;
+CONST AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT = 2;
+CONST AUTH_IOMADOIDC_IDP_TYPE_OTHER = 3;
 
 // Azure AD / Microsoft endpoint version.
-CONST AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_UNKNOWN = 0;
-CONST AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_1 = 1;
-CONST AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_2 = 2;
+CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_UNKNOWN = 0;
+CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_1 = 1;
+CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_2 = 2;
 
-// IOMADoIDC application authentication method.
-CONST AUTH_IOMADoIDC_AUTH_METHOD_SECRET = 1;
-CONST AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE = 2;
+// IOMAD OIDC application authentication method.
+CONST AUTH_IOMADOIDC_AUTH_METHOD_SECRET = 1;
+CONST AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE = 2;
 
 /**
  * Initialize custom icon.
@@ -332,6 +332,7 @@ function auth_iomadoidc_get_email_remote_fields() {
  * @return array
  */
 function auth_iomadoidc_get_field_mappings() {
+    global $CFG;
 
     // IOMAD
     require_once($CFG->dirroot . '/local/iomad/lib/company.php');
@@ -341,6 +342,7 @@ function auth_iomadoidc_get_field_mappings() {
     } else {
         $postfix = "";
     }
+
     $fieldmappings = [];
 
     $userfields = auth_iomadoidc_get_all_user_fields();
@@ -394,23 +396,26 @@ function auth_iomadoidc_apply_default_email_mapping() {
     } else {
         $postfix = "";
     }
-    set_config('field_map_email', 'mail', 'auth_iomadoidc' . $postfix);
+
+    set_config('field_map_email' . $postfix, 'mail', 'auth_iomadoidc');
 
     $authiomadoidcconfig = get_config('auth_iomadoidc');
 
     $fieldsetting = [];
-    $fieldsetting['field_map'] = 'mail';
+    $fieldsetting['field_map' . $postfix] = 'mail';
 
     if (property_exists($authiomadoidcconfig, 'field_lock_email' . $postfix)) {
-        $fieldsetting['field_lock'] = $authiomadoidcconfig->field_lock_email;
+        $opname = "field_lock_email" . $postfix;
+        $fieldsetting['field_lock' . $postfix] = $authiomadoidcconfig->$opname;
     } else {
-        $fieldsetting['field_lock'] = 'unlocked';
+        $fieldsetting['field_lock' . $postfix] = 'unlocked';
     }
 
     if (property_exists($authiomadoidcconfig, 'field_updatelocal_email' . $postfix)) {
-        $fieldsetting['update_local'] = $authiomadoidcconfig->field_updatelocal_email;
+        $opname = "field_updatelocal_email" . $postfix;
+        $fieldsetting['update_local' . $postfix] = $authiomadoidcconfig->$opname;
     } else {
-        $fieldsetting['update_local'] = 'always';
+        $fieldsetting['update_local' . $postfix] = 'always';
     }
 
     return $fieldsetting;
@@ -553,13 +558,13 @@ function auth_iomadoidc_get_all_user_fields() {
  * @return int
  */
 function auth_iomadoidc_determine_endpoint_version(string $endpoint) {
-    $endpointversion = AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_UNKNOWN;
+    $endpointversion = AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_UNKNOWN;
 
     if (strpos($endpoint, 'https://login.microsoftonline.com/') === 0) {
         if (strpos($endpoint, 'oauth2/v2.0/') !== false) {
-            $endpointversion = AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_2;
+            $endpointversion = AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_2;
         } else if (strpos($endpoint, 'oauth2') !== false) {
-            $endpointversion = AUTH_IOMADoIDC_AAD_ENDPOINT_VERSION_1;
+            $endpointversion = AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_1;
         }
     }
 
@@ -586,19 +591,17 @@ function auth_iomadoidc_config_name_in_form(string $stringid) {
  */
 function auth_iomadoidc_is_setup_complete() {
     $pluginconfig = get_config('auth_iomadoidc');
-    if (empty($pluginconfig->clientid) || empty($pluginconfig->idptype) || empty($pluginconfig->clientauthmethod) ||
-        (in_array($pluginconfig->idptype, [AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD, AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT]) &&
-            empty($pluginconfig->tenantnameorguid))) {
+    if (empty($pluginconfig->clientid) || empty($pluginconfig->idptype) || empty($pluginconfig->clientauthmethod)) {
         return false;
     }
 
     switch ($pluginconfig->clientauthmethod) {
-        case AUTH_IOMADoIDC_AUTH_METHOD_SECRET:
+        case AUTH_IOMADOIDC_AUTH_METHOD_SECRET:
             if (empty($pluginconfig->clientsecret)) {
                 return false;
             }
             break;
-        case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+        case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
             if (empty($pluginconfig->clientcert) || empty($pluginconfig->clientprivatekey)) {
                 return false;
             }
@@ -632,13 +635,13 @@ function auth_iomadoidc_get_idp_type_name() {
     $idptypename = '';
 
     switch (get_config('auth_iomadoidc', 'idptype' . $postfix)) {
-        case AUTH_IOMADoIDC_IDP_TYPE_AZURE_AD:
+        case AUTH_IOMADOIDC_IDP_TYPE_AZURE_AD:
             $idptypename = get_string('idp_type_azuread', 'auth_iomadoidc');
             break;
-        case AUTH_IOMADoIDC_IDP_TYPE_MICROSOFT:
+        case AUTH_IOMADOIDC_IDP_TYPE_MICROSOFT:
             $idptypename = get_string('idp_type_microsoft', 'auth_iomadoidc');
             break;
-        case AUTH_IOMADoIDC_IDP_TYPE_OTHER:
+        case AUTH_IOMADOIDC_IDP_TYPE_OTHER:
             $idptypename = get_string('idp_type_other', 'auth_iomadoidc');
             break;
     }
@@ -666,10 +669,10 @@ function auth_iomadoidc_get_client_auth_method_name() {
     $authmethodname = '';
 
     switch (get_config('auth_iomadoidc', 'clientauthmethod' . $postfix)) {
-        case AUTH_IOMADoIDC_AUTH_METHOD_SECRET:
+        case AUTH_IOMADOIDC_AUTH_METHOD_SECRET:
             $authmethodname = get_string('auth_method_secret', 'auth_iomadoidc');
             break;
-        case AUTH_IOMADoIDC_AUTH_METHOD_CERTIFICATE:
+        case AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE:
             $authmethodname = get_string('auth_method_certificate', 'auth_iomadoidc');
             break;
     }
