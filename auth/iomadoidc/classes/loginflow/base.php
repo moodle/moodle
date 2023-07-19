@@ -649,7 +649,8 @@ class base {
      * @return stdClass The created token database record.
      */
     protected function createtoken($iomadoidcuniqid, $username, $authparams, $tokenparams, jwt $idtoken, $userid = 0,
-        global $CFG;
+        $originalupn = null) {
+        global $CFG, $DB;
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
@@ -659,9 +660,6 @@ class base {
         } else {
             $postfix = "";
         }
-
-        $originalupn = null) {
-        global $DB;
 
         if (!is_null($originalupn)) {
             $iomadoidcusername = $originalupn;
