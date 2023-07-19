@@ -26,6 +26,9 @@ namespace core_question\local\bank;
  */
 abstract class view_component {
 
+    /** @var view Question bank view. */
+    protected $qbank;
+
     /**
      * Constructor.
      * @param view $qbank the question bank view we are helping to render.
