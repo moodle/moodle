@@ -39,3 +39,16 @@ Feature: Activity type tooltip.
     Given I am on the "C1" "Course" page logged in as "student1"
     When I hover over the "assign icon" "link" in the "Activity sample 1" "activity"
     Then "body>.tooltip" "css_element" should not exist
+
+  Scenario: Student cannot see the activity icon link if does not have access.
+    Given I am on the "Activity sample 2" "page activity editing" page logged in as "admin"
+    When I expand all fieldsets
+    And I press "Add restriction..."
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    And I set the field "direction" to "until"
+    And I set the field "x[year]" to "2013"
+    And I set the field "x[month]" to "March"
+    And I press "Save and return to course"
+    And I log out
+    And I am on the "C1" "Course" page logged in as "student1"
+    Then "page icon" "link" should not exist in the "Activity sample 2" "activity"
