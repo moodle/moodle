@@ -596,7 +596,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             if (core_text::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
             }
-            if (strval($data->idnumber) !== '' && $DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
+
+            // Ensure there are no other categories with the same idnumber.
+            if (strval($data->idnumber) !== '' &&
+                    $DB->record_exists_select('course_categories', 'idnumber = ? AND id != ?', [$data->idnumber, $this->id])) {
+
                 throw new moodle_exception('categoryidnumbertaken');
             }
             $newcategory->idnumber = $data->idnumber;
