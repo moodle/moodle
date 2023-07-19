@@ -31,7 +31,7 @@ import {prefetchStrings} from 'core/prefetch';
 import {get_string as getString} from 'core/str';
 
 prefetchStrings('tool_dataprivacy', [
-    'selectedcourses',
+    'selectcourses',
     'approverequest',
     'errornoselectedcourse',
 ]);
