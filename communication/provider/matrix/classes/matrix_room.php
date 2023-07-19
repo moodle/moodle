@@ -19,13 +19,15 @@ namespace communication_matrix;
 use stdClass;
 
 /**
- * Class matrix_rooms to manage the updates to the room information in db.
+ * Class to manage the updates to the room information in db.
  *
  * @package    communication_matrix
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class matrix_rooms {
+class matrix_room {
+
+    private const TABLE = 'matrix_room';
 
     /** @var \stdClass|null $record The matrix room record from db */
 
@@ -39,7 +41,7 @@ class matrix_rooms {
     ): ?self {
         global $DB;
 
-        $record = $DB->get_record('matrix_rooms', ['commid' => $processorid]);
+        $record = $DB->get_record(self::TABLE, ['commid' => $processorid]);
 
         if (!$record) {
             return null;
@@ -48,7 +50,7 @@ class matrix_rooms {
     }
 
     /**
-     * Matrix rooms constructor to load the matrix room information from matrix_rooms table.
+     * Matrix rooms constructor to load the matrix room information from matrix_room table.
      *
      * @param stdClass $record
      */
@@ -77,7 +79,7 @@ class matrix_rooms {
             'roomid' => $roomid,
             'topic' => $topic,
         ];
-        $roomrecord->id = $DB->insert_record('matrix_rooms', $roomrecord);
+        $roomrecord->id = $DB->insert_record(self::TABLE, $roomrecord);
 
         return self::load_by_processor_id($processorid);
     }
@@ -102,7 +104,7 @@ class matrix_rooms {
             $this->record->topic = $topic;
         }
 
-        $DB->update_record('matrix_rooms', $this->record);
+        $DB->update_record(self::TABLE, $this->record);
     }
 
     /**
@@ -110,7 +112,8 @@ class matrix_rooms {
      */
     public function delete_room_record(): void {
         global $DB;
-        $DB->delete_records('matrix_rooms', ['commid' => $this->record->commid]);
+
+        $DB->delete_records(self::TABLE, ['commid' => $this->record->commid]);
 
         unset($this->record);
     }
