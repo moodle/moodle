@@ -20,7 +20,6 @@ namespace core_course\reportbuilder\datasource;
 
 use completion_completion;
 use completion_criteria_self;
-use core_collator;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\duration;
@@ -28,8 +27,8 @@ use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
+use core_user;
 use grade_item;
-use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,8 +40,6 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
  *
  * @package     core_course
  * @covers      \core_course\reportbuilder\datasource\participants
- * @covers      \core_course\reportbuilder\local\formatters\completion
- * @covers      \core_course\reportbuilder\local\formatters\enrolment
  * @copyright   2022 David Matamoros <davidmc@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -62,11 +59,23 @@ class participants_test extends core_reportbuilder_testcase {
      * Test default datasource
      */
     public function test_datasource_default(): void {
-        $this->resetAfterTest();
-        $this->setAdminUser();
+        global $DB;
 
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $this->resetAfterTest();
+
+        // Course one, two manually enrolled users.
+        $courseone = $this->getDataGenerator()->create_course(['fullname' => 'Zebras']);
+        $userone = $this->getDataGenerator()->create_and_enrol($courseone, 'student', ['firstname' => 'Zoe']);
+        $usertwo = $this->getDataGenerator()->create_and_enrol($courseone, 'student', ['firstname' => 'Amy']);
+
+        // Course two, two self enrolled users (one inactive).
+        $coursetwo = $this->getDataGenerator()->create_course(['fullname' => 'Aardvarks']);
+
+        $enrol = $DB->get_record('enrol', ['courseid' => $coursetwo->id, 'enrol' => 'self']);
+        enrol_get_plugin($enrol->enrol)->update_status($enrol, ENROL_INSTANCE_ENABLED);
+
+        $this->getDataGenerator()->enrol_user($userone->id, $coursetwo->id, null, 'self');
+        $this->getDataGenerator()->enrol_user($usertwo->id, $coursetwo->id, null, 'self', 0, 0, ENROL_USER_SUSPENDED);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -74,18 +83,20 @@ class participants_test extends core_reportbuilder_testcase {
 
         $content = $this->get_custom_report_content($report->get('id'));
 
-        // Consistent order, just in case.
-        core_collator::asort_array_of_arrays_by_key($content, 'c1_enrol');
-        $content = array_values($content);
+        // Default columns are course, user, method. Sorted by each.
+        $courseoneurl = course_get_url($courseone);
+        $coursetwourl = course_get_url($coursetwo);
 
-        $courseurl = course_get_url($course);
-        $userurl = new moodle_url('/user/profile.php', ['id' => $user->id]);
+        $useroneurl = core_user::get_profile_url($userone);
+        $usertwourl = core_user::get_profile_url($usertwo);
 
         $this->assertEquals([
-            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", 'Guest access', ''],
-            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", 'Manual enrolments',
-                "<a href=\"{$userurl}\">" . fullname($user) . "</a>"],
-            ["<a href=\"{$courseurl}\">{$course->fullname}</a>", 'Self enrolment (Student)', ''],
+            ["<a href=\"{$coursetwourl}\">{$coursetwo->fullname}</a>",
+                "<a href=\"{$useroneurl}\">" . fullname($userone) . "</a>", 'Self enrolment (Student)'],
+            ["<a href=\"{$courseoneurl}\">{$courseone->fullname}</a>",
+                "<a href=\"{$usertwourl}\">" . fullname($usertwo) . "</a>", 'Manual enrolments'],
+            ["<a href=\"{$courseoneurl}\">{$courseone->fullname}</a>",
+                "<a href=\"{$useroneurl}\">" . fullname($userone) . "</a>", 'Manual enrolments'],
         ], array_map('array_values', $content));
     }
 
@@ -136,7 +147,7 @@ class participants_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Courses', 'source' => participants::class, 'default' => false]);
+        $report = $generator->create_report(['name' => 'Participants', 'source' => participants::class, 'default' => false]);
 
         $generator->create_column(['reportid' => $report->get('id'),
             'uniqueidentifier' => 'course:fullname']);
@@ -408,7 +419,7 @@ class participants_test extends core_reportbuilder_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Courses', 'source' => participants::class, 'default' => false]);
+        $report = $generator->create_report(['name' => 'Participants', 'source' => participants::class, 'default' => false]);
 
         // Add user firstname column to the report.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);

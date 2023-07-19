@@ -27,8 +27,10 @@ use core_group\reportbuilder\local\entities\group;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\database;
 use core_role\reportbuilder\local\entities\role;
+use core_user\output\status_field;
 
 /**
  * Course participants datasource
@@ -77,9 +79,9 @@ class participants extends datasource {
         // Join user entity.
         $userentity = new user();
         $user = $userentity->get_table_alias('user');
-        $userentity->add_joins($enrolmententity->get_joins());
-        $userentity->add_join("LEFT JOIN {user} {$user} ON {$userenrolment}.userid = {$user}.id AND {$user}.deleted = 0");
-        $this->add_entity($userentity);
+        $this->add_entity($userentity
+            ->add_joins($enrolmententity->get_joins())
+            ->add_join("LEFT JOIN {user} {$user} ON {$user}.id = {$userenrolment}.userid AND {$user}.deleted = 0"));
 
         // Join the role entity.
         $roleentity = (new role())
@@ -108,8 +110,7 @@ class participants extends datasource {
             ->add_joins($userentity->get_joins())
             ->add_join("
                 LEFT JOIN ({$groupsinnerselect}) {$groups}
-                       ON {$groups}.courseid = {$course}.id
-                      AND {$groups}.userid = {$user}.id")
+                       ON {$groups}.courseid = {$course}.id AND {$groups}.userid = {$user}.id")
         );
 
         // Join completion entity.
@@ -130,12 +131,11 @@ class participants extends datasource {
         $accessentity = (new access())
             ->set_table_alias('user', $user);
         $lastaccess = $accessentity->get_table_alias('user_lastaccess');
-        $accessentity->add_joins($userentity->get_joins());
-        $accessentity->add_join("
-            LEFT JOIN {user_lastaccess} {$lastaccess}
-                   ON {$lastaccess}.userid = {$user}.id AND {$lastaccess}.courseid = {$course}.id
-        ");
-        $this->add_entity($accessentity);
+        $this->add_entity($accessentity
+            ->add_joins($userentity->get_joins())
+            ->add_join("
+                LEFT JOIN {user_lastaccess} {$lastaccess}
+                       ON {$lastaccess}.userid = {$user}.id AND {$lastaccess}.courseid = {$course}.id"));
 
         // Add all entities columns/filters/conditions.
         $this->add_all_from_entities();
@@ -158,8 +158,21 @@ class participants extends datasource {
     public function get_default_columns(): array {
         return [
             'course:coursefullnamewithlink',
-            'enrol:name',
             'user:fullnamewithlink',
+            'enrol:name',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'course:coursefullnamewithlink' => SORT_ASC,
+            'user:fullnamewithlink' => SORT_ASC,
+            'enrol:name' => SORT_ASC,
         ];
     }
 
@@ -182,8 +195,21 @@ class participants extends datasource {
      */
     public function get_default_conditions(): array {
         return [
+            'enrolment:status',
             'user:suspended',
             'user:confirmed',
+        ];
+    }
+
+    /**
+     * Return the condition values that will be set for the report upon creation
+     *
+     * @return array
+     */
+    public function get_default_condition_values(): array {
+        return [
+            'enrolment:status_operator' => select::EQUAL_TO,
+            'enrolment:status_value' => status_field::STATUS_ACTIVE,
         ];
     }
 }
