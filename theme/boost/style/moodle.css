@@ -29510,6 +29510,19 @@ span.editinstructions .alert-link {
     margin-left: 2rem;
   }
 }
+/* Activity completion */
+.defaultactivitycompletion-item a {
+  color: #000;
+  text-decoration: none;
+}
+.defaultactivitycompletion-item a img {
+  filter: invert(25%) sepia(86%) saturate(1158%) hue-rotate(189deg) brightness(104%) contrast(92%);
+}
+.defaultactivitycompletion-item .activityicon {
+  width: 32px;
+  height: 32px;
+}
+
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
 :target {
   scroll-margin-top: 70px;

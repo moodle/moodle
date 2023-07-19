@@ -28,6 +28,7 @@ require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->libdir.'/completionlib.php');
 
 $id = required_param('id', PARAM_INT);       // Course id.
+$modids = optional_param_array('modids', [], PARAM_INT);
 
 // Perform some basic access control checks.
 if ($id) {
@@ -56,9 +57,24 @@ $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
 $PAGE->set_pagelayout('admin');
 
-// Get all that stuff I need for the renderer.
-$manager = new \core_completion\manager($id);
-$activityresourcedata = $manager->get_activities_and_resources();
+// Get list of modules that have been sent in the form.
+$manager = new \core_completion\manager($course->id);
+$allmodules = $manager->get_activities_and_resources(false);
+$modules = [];
+foreach ($allmodules->modules as $module) {
+    if ($module->canmanage && in_array($module->id, $modids)) {
+        $modules[$module->id] = $module;
+    }
+}
+
+$form = null;
+if (!empty($modules)) {
+    $form = new core_completion_defaultedit_form(null, ['course' => $course, 'modules' => $modules, 'displaycancel' => false]);
+    if (!$form->is_cancelled() && $data = $form->get_data()) {
+        $data->modules = $modules;
+        $manager->apply_default_completion($data, $form->has_custom_completion_rules(), $form->get_suffix());
+    }
+}
 
 $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
@@ -68,8 +84,6 @@ echo $OUTPUT->header();
 $actionbar = new \core_course\output\completion_action_bar($course->id, $PAGE->url);
 echo $renderer->render_course_completion_action_bar($actionbar);
 
-$PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['theform']);
-
-echo $renderer->defaultcompletion($activityresourcedata);
+echo $renderer->defaultcompletion($allmodules, $modules, $form);
 
 echo $OUTPUT->footer();

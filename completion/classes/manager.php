@@ -205,9 +205,10 @@ class manager {
     /**
      * Gets the course modules for the current course.
      *
+     * @param bool $includedefaults Whether the default values should be included or not.
      * @return stdClass $data containing the modules
      */
-    public function get_activities_and_resources() {
+    public function get_activities_and_resources(bool $includedefaults = true) {
         global $DB, $OUTPUT, $CFG;
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -224,12 +225,14 @@ class manager {
         $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
             $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
-            $module->formattedname = format_string(get_string('modulenameplural', 'mod_' . $module->name),
+            $module->formattedname = format_string(get_string('modulename', 'mod_' . $module->name),
                 true, ['context' => $coursecontext]);
             $module->canmanage = $canmanage && course_allowed_module($course, $module->name);
-            $defaults = self::get_default_completion($course, $module, false);
-            $defaults->modname = $module->name;
-            $module->completionstatus = $this->get_completion_detail($defaults);
+            if ($includedefaults) {
+                $defaults = self::get_default_completion($course, $module, false);
+                $defaults->modname = $module->name;
+                $module->completionstatus = $this->get_completion_detail($defaults);
+            }
         }
 
         return $data;
@@ -443,9 +446,35 @@ class manager {
      * @param stdClass $data data received from the core_completion_bulkedit_form
      * @param bool $updatecustomrules if we need to update the custom rules of the module -
      *      if no module-specific completion rules were added to the form, update of the module table is not needed.
+     * @param string $suffix the suffix to add to the name of the completion rules.
      */
-    public function apply_default_completion($data, $updatecustomrules) {
+    public function apply_default_completion($data, $updatecustomrules, string $suffix = '') {
         global $DB;
+
+        if (!empty($suffix)) {
+            // Fields were renamed to avoid conflicts, but they need to be stored in DB with the original name.
+            $modules = property_exists($data, 'modules') ? $data->modules : null;
+            if ($modules !== null) {
+                unset($data->modules);
+                $data = (array)$data;
+                foreach ($data as $name => $value) {
+                    if (str_ends_with($name, $suffix)) {
+                        $data[substr($name, 0, strpos($name, $suffix))] = $value;
+                        unset($data[$name]);
+                    } else if ($name == 'customdata') {
+                        $customrules = $value['customcompletionrules'];
+                        foreach ($customrules as $rulename => $rulevalue) {
+                            if (str_ends_with($rulename, $suffix)) {
+                                $customrules[substr($rulename, 0, strpos($rulename, $suffix))] = $rulevalue;
+                                unset($customrules[$rulename]);
+                            }
+                        }
+                        $data['customdata'] = $customrules;
+                    }
+                }
+                $data = (object)$data;
+            }
+        }
 
         $courseid = $data->id;
         // MDL-72375 Unset the id here, it should not be stored in customrules.
@@ -511,9 +540,10 @@ class manager {
      * @param stdClass $module
      * @param bool $flatten if true all module custom completion rules become properties of the same object,
      *   otherwise they can be found as array in ->customdata['customcompletionrules']
+     * @param string $suffix the suffix to add to the name of the completion rules.
      * @return stdClass
      */
-    public static function get_default_completion($course, $module, $flatten = true) {
+    public static function get_default_completion($course, $module, $flatten = true, string $suffix = '') {
         global $DB, $CFG;
         if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
             'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules')) {
@@ -541,6 +571,28 @@ class manager {
                 }
             }
         }
+
+        // If the suffix is not empty, the completion rules need to be renamed to avoid conflicts.
+        if (!empty($suffix)) {
+            $data = (array)$data;
+            foreach ($data as $name => $value) {
+                if (str_starts_with($name, 'completion')) {
+                    $data[$name . $suffix] = $value;
+                    unset($data[$name]);
+                } else if ($name == 'customdata') {
+                    $customrules = $value['customcompletionrules'];
+                    foreach ($customrules as $rulename => $rulevalue) {
+                        if (str_starts_with($rulename, 'completion')) {
+                            $customrules[$rulename . $suffix] = $rulevalue;
+                            unset($customrules[$rulename]);
+                        }
+                    }
+                    $data['customdata'] = $customrules;
+                }
+            }
+            $data = (object)$data;
+        }
+
         return $data;
     }
 }

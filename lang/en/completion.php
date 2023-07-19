@@ -144,6 +144,7 @@ $string['datepassed'] = 'Date passed';
 $string['days'] = 'Days';
 $string['daysoftotal'] = '{$a->days} of {$a->total}';
 $string['daysuntilcompletion'] = 'Days until completion';
+$string['defaultactivitycompletion'] = 'These are the default completion conditions for activities in all courses.';
 $string['defaultcompletion'] = 'Default activity completion';
 $string['defaultcompletionupdated'] = 'Changes saved';
 $string['deletecompletiondata'] = 'Delete completion data';
