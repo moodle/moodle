@@ -235,6 +235,7 @@ $string['selfcompletion'] = 'Self completion';
 $string['showcompletionconditions'] = 'Show activity completion conditions';
 $string['showcompletionconditions_help'] = 'Activity completion conditions are always shown on the activity page. This setting determines whether activity completion conditions are also shown below each activity on the course page.';
 $string['showinguser'] = 'Showing user';
+$string['studentsmust'] = 'Students must';
 $string['timecompleted'] = 'Time completed';
 $string['todo'] = 'To do';
 $string['unenrolingfromcourse'] = 'Unenrolling from course';
@@ -250,6 +251,7 @@ $string['viewingactivity'] = 'Viewing the {$a}';
 $string['withconditions'] = 'With conditions';
 $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
+$string['youmust'] = 'You must';
 
 // Deprecated since Moodle 4.0.
 $string['yourprogress'] = 'Your progress';

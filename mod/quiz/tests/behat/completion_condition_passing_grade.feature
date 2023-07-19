@@ -31,6 +31,7 @@ Feature: Set a quiz to be marked complete when the student passes
       | question       | page |
       | First question | 1    |
 
+  @javascript
   Scenario: student1 passes on the first try
     When I log in as "student1"
     And I am on "Course 1" course homepage

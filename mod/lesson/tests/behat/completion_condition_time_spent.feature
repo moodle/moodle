@@ -1,4 +1,4 @@
-@mod @mod_lesson
+@mod @mod_lesson @javascript
 Feature: Set time spent as a completion condition for a lesson
   In order to ensure students spend the needed time to study lessons
   As a teacher

@@ -223,6 +223,15 @@ class cm_completion_details {
     }
 
     /**
+     * Whether this activity module instance tracks completion manually.
+     *
+     * @return bool
+     */
+    public function is_manual(): bool {
+        return $this->cminfo->completion == COMPLETION_TRACKING_MANUAL;
+    }
+
+    /**
      * Fetches the user ID that has overridden the completion state of this activity for the user.
      *
      * @return int|null
@@ -247,6 +256,10 @@ class cm_completion_details {
      */
     public function show_manual_completion(): bool {
         global $PAGE;
+
+        if (!$this->is_manual()) {
+            return false;
+        }
 
         if ($PAGE->context->contextlevel == CONTEXT_MODULE) {
             // Manual completion should always be shown on the activity page.

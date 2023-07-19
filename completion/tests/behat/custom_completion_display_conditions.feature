@@ -18,13 +18,14 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
       | activity  | course | idnumber | name              | completion  | completionsubmit |
       | choice    | C1     | c1m      | Test choice manual| 1           | 0                |
       | choice    | C1     | c1a      | Test choice auto  | 2           | 1                |
-
+  @javascript
   Scenario: Completion condition displaying for manual and auto completion
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage
-    # The manual completion toggle button should be always displayed in both course homepage and activity view.
-    Then the manual completion button for "Test choice manual" should be disabled
+    # The manual completion "Mark as done" criteria should displayed in the dropdown in the course homepage.
+    Then "Test choice manual" should have the "Mark as done" completion condition
     And I follow "Test choice manual"
+    # The manual completion toggle button should be displayed in activity view.
     And the manual completion button for "Test choice manual" should be disabled
     # Automatic completion conditions should be displayed on both activity view page and course homepage if show completion conditions is enabled.
     And I am on "Course 1" course homepage

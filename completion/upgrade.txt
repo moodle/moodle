@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.3 ===
 * A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any
   form.
+* New method is_manual() has been added to `core_completion/cm_completion_details`
 
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is

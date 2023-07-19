@@ -77,6 +77,7 @@ Feature: View activity completion information in the URL resource
     When I am on the "Music history" "url activity" page logged in as student1
     Then the "View" completion condition of "Music history" is displayed as "done"
 
+  @javascript
   Scenario: View automatic completion items in open display mode as teacher
     Given the following "activity" exists:
       | activity       | url                 |
@@ -92,6 +93,7 @@ Feature: View activity completion information in the URL resource
     And I am on the "Course 1" course page
     Then "Music history" should have the "View" completion condition
 
+  @javascript
   Scenario: View automatic completion items in open display mode as student
     Given the following "activity" exists:
       | activity       | url                 |
@@ -172,7 +174,7 @@ Feature: View activity completion information in the URL resource
     And the manual completion button of "Music history" is displayed as "Done"
 
   @javascript
-  Scenario Outline: The manual completion button will be shown on the course page for Open, In pop-up and New window display mode if the Show activity completion conditions is set to No as teacher
+  Scenario Outline: The Mark as done completion condition will be shown on the course page for Open, In pop-up and New window display mode if the Show activity completion conditions is set to No as teacher
     Given the following "activity" exists:
       | activity       | url                 |
       | course         | C1                  |
@@ -186,8 +188,7 @@ Feature: View activity completion information in the URL resource
       | popupwidth     | 620                 |
       | popupheight    | 450                 |
     When I am on the "Course 1" course page logged in as teacher1
-    Then the manual completion button for "Music history" should exist
-    And the manual completion button for "Music history" should be disabled
+    Then "Music history" should have the "Mark as done" completion condition
 
     Examples:
       | display | description |
