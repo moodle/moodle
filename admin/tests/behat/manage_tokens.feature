@@ -24,8 +24,9 @@ Feature: Manage external services tokens
     And I set the field "Service" to "Moodle mobile web service"
     And I set the field "IP restriction" to "127.0.0.1"
     When I press "Save changes"
-    Then I should see "Firstname1 Lastname1" in the "Webservice1" "table_row"
-    And I should see "127.0.0.1" in the "Webservice1" "table_row"
+    Then the following should exist in the "generaltable" table:
+      | Name        | First name           | Service                   | IP restriction | Last access |
+      | Webservice1 | Firstname1 Lastname1 | Moodle mobile web service | 127.0.0.1      | Never       |
 
     # Verify the message and the "Copy to clipboard" button.
     And I should see "Copy the token now. It won't be shown again once you leave this page."
