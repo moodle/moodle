@@ -16,6 +16,8 @@
 
 namespace core_question;
 
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 use qubaid_list;
 use question_bank;
 use question_engine;
@@ -331,5 +333,51 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
             'sequencenumber' => 1,
             'state'          => (string) question_state::$gaveup,
         ), $state);
+    }
+
+    /**
+     * Test that a Quiz with only description questions wont break \quiz_statistics\task\recalculate.
+     *
+     * @covers \quiz_statistics\task\recalculate::execute()
+     * @return void
+     */
+    public function test_quiz_with_description_questions_recalculate_statistics() {
+        $this->resetAfterTest();
+
+        // Create course with quiz module.
+        $course = $this->getDataGenerator()->create_course();
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $layout = '1';
+        $quiz = $quizgenerator->create_instance([
+            'course' => $course->id,
+            'grade' => 0.0, 'sumgrades' => 1,
+            'layout' => $layout
+        ]);
+
+        // Add question of type description to quiz.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('description', null, ['category' => $cat->id]);
+        quiz_add_quiz_question($question->id, $quiz);
+
+        // Create attempt.
+        $user = $this->getDataGenerator()->create_user();
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, null, $timenow, false, $user->id);
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Submit attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($timenow, false);
+        $attemptobj->process_finish($timenow, false);
+
+        // Calculate the statistics.
+        $this->expectOutputRegex('~.*Calculations completed.*~');
+        $statisticstask = new \quiz_statistics\task\recalculate();
+        $statisticstask->execute();
     }
 }
