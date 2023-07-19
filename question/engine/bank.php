@@ -27,6 +27,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\output\question_version_info;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -285,7 +286,9 @@ abstract class question_bank {
      * @return question_definition loaded from the database.
      */
     public static function make_question($questiondata) {
-        return self::get_qtype($questiondata->qtype, false)->make_question($questiondata, false);
+        $definition = self::get_qtype($questiondata->qtype, false)->make_question($questiondata, false);
+        question_version_info::$pendingdefinitions[$definition->id] = $definition;
+        return $definition;
     }
 
     /**
