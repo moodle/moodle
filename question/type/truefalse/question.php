@@ -41,6 +41,15 @@ class qtype_truefalse_question extends question_graded_automatically {
     public $trueanswerid;
     public $falseanswerid;
 
+    /** @var int the format of the true feedback. */
+    public $truefeedbackformat;
+
+    /** @var int the format of the false feedback. */
+    public $falsefeedbackformat;
+
+    /** @var bool true to show the standard instruction, otherwise hide it. */
+    public $showstandardinstruction;
+
     public function get_expected_data() {
         return array('answer' => PARAM_INT);
     }

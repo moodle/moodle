@@ -78,7 +78,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
             15 => new question_answer(15, '*', 0.0, 'Wrong answer', FORMAT_HTML),
         );
         $sa->qtype = question_bank::get_qtype('shortanswer');
-        $sa->maxmark = 1;
+        $sa->defaultmark = 1;
 
         // Multiple-choice subquestion.
         question_bank::load_question_definition_classes('multichoice');
@@ -104,7 +104,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
                     'Well done!', FORMAT_HTML),
         );
         $mc->qtype = question_bank::get_qtype('multichoice');
-        $mc->maxmark = 1;
+        $mc->defaultmark = 1;
 
         $q->subquestions = array(
             1 => $sa,
@@ -342,7 +342,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
                          $data['Arizona'], FORMAT_HTML),
             );
             $mc->qtype = question_bank::get_qtype('multichoice');
-            $mc->maxmark = 1;
+            $mc->defaultmark = 1;
 
             $q->subquestions[$i] = $mc;
         }
@@ -385,7 +385,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
         );
         $sub->qtype = question_bank::get_qtype('numerical');
         $sub->ap = new qtype_numerical_answer_processor(array());
-        $sub->maxmark = 1;
+        $sub->defaultmark = 1;
 
         $q->subquestions = array(
             1 => $sub,
@@ -444,7 +444,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
                                       '', FORMAT_HTML),
         );
         $mc->qtype = question_bank::get_qtype('multichoice');
-        $mc->maxmark = 1;
+        $mc->defaultmark = 1;
 
         // Multiple-choice subquestion.
         question_bank::load_question_definition_classes('multichoice');
@@ -474,7 +474,7 @@ class qtype_multianswer_test_helper extends question_test_helper {
                                       'Correct', FORMAT_HTML),
         );
         $mc2->qtype = question_bank::get_qtype('multichoice');
-        $mc2->maxmark = 1;
+        $mc2->defaultmark = 1;
 
         $q->subquestions = array(
             1 => $mc,
