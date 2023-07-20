@@ -28,9 +28,11 @@ use admin_setting_configtextarea;
 use admin_setting_heading;
 use admin_settingpage;
 use cache_helper;
+use core_plugin_manager;
 use lang_string;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\helpers\roles;
+use mod_bigbluebuttonbn\local\plugins\admin_page_manage_extensions;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 
 /**
@@ -45,6 +47,9 @@ class settings {
 
     /** @var admin_category shared value */
     private $admin;
+
+    /** @var bool whether the current user has moodle/site:config capability  */
+    private $hassiteconfig;
 
     /** @var bool Module is enabled */
     private $moduleenabled;
@@ -64,11 +69,13 @@ class settings {
      * @param admin_category $admin
      * @param \core\plugininfo\mod $module
      * @param string $categoryname for the plugin setting (main setting page)
+     * @param bool $hassiteconfig whether the current user has moodle/site:config capability
      */
-    public function __construct(admin_category $admin, \core\plugininfo\mod $module, string $categoryname) {
+    public function __construct(admin_category $admin, \core\plugininfo\mod $module, string $categoryname, bool $hassiteconfig) {
         $this->moduleenabled = $module->is_enabled() === true;
         $this->admin = $admin;
         $this->section = $categoryname;
+        $this->hassiteconfig = $hassiteconfig;
 
         $modbigbluebuttobnfolder = new admin_category(
             $this->parent,
@@ -108,6 +115,14 @@ class settings {
         $this->add_extended_settings();
         // Renders settings for experimental features.
         $this->add_experimental_settings();
+
+        // Add all subplugin settings if any.
+        $this->admin->add($this->parent, new admin_category('bbbextplugins',
+            new lang_string('subplugintype_bbbext', 'mod_bigbluebuttonbn'), !$this->moduleenabled));
+        $this->admin->add($this->parent, new admin_page_manage_extensions());
+        foreach (core_plugin_manager::instance()->get_plugins_of_type(extension::BBB_EXTENSION_PLUGIN_NAME) as $plugin) {
+            $plugin->load_settings($this->admin, extension::BBB_EXTENSION_PLUGIN_NAME, $this->hassiteconfig);
+        }
     }
 
     /**

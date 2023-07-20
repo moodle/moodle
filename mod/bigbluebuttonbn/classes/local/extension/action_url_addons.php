@@ -13,20 +13,31 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace mod_bigbluebuttonbn\local\extension;
 
 /**
- * Settings for BigBlueButtonBN.
+ * A single action class to mutate the action URL.
  *
  * @package   mod_bigbluebuttonbn
- * @copyright 2010 onwards, Blindside Networks Inc
+ * @copyright 2023 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
+ * @author    Laurent David (laurent@call-learning.fr)
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-$bbbsettings = new mod_bigbluebuttonbn\settings($ADMIN, $module, $section, $hassiteconfig);
-$bbbsettings->add_all_settings();
-
-$settings = null;
+class action_url_addons {
+    /**
+     * Mutate the action URL.
+     *
+     * By design:
+     *  1. we should only add parameters
+     *  2. we cannot count on the order the subplugins are called
+     *
+     * @param string $action
+     * @param array $data
+     * @param array $metadata
+     * @return array associative array with the additional data and metadata (indexed by 'data' and
+     * 'metadata' keys).
+     */
+    public function execute(string $action = '', array $data = [], array $metadata = []): array {
+        return ['data' => [], 'metadata' => []];
+    }
+}
