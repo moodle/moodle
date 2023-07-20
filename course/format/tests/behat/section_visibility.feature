@@ -1,5 +1,5 @@
 @core @core_courseformat
-Feature: Varify section visibility interface.
+Feature: Varify section visibility interface
   In order to edit the course sections visibility
   As a teacher
   I need to be able to see the updateds visibility information
@@ -26,7 +26,7 @@ Feature: Varify section visibility interface.
   Scenario: Activities available but not shown on course page only apply to hidden sections.
     Given I hide section "1"
     And I open "Activity sample 1" actions menu
-    And I click on "Make available" "link" in the "Activity sample 1" "activity"
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
     And I should see "Available but not shown on course page" in the "Activity sample 1" "activity"
     When I show section "1"
     Then I should not see "Available but not shown on course page" in the "Activity sample 1" "activity"
@@ -43,7 +43,7 @@ Feature: Varify section visibility interface.
   @javascript
   Scenario: Hiden activities in hidden sections stay hidden when the section is shown.
     Given I open "Activity sample 1" actions menu
-    And I click on "Hide" "link" in the "Activity sample 1" "activity"
+    And I choose "Availability > Hide on course page" in the open action menu
     And I should see "Hidden from students" in the "Activity sample 1" "activity"
     And I hide section "1"
     And I should see "Hidden from students" in the "Activity sample 1" "activity"

@@ -50,7 +50,7 @@ Feature: Course activity controls works as expected
     And I click on "Cancel" "button"
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
-    And I click on "Hide" "link" in the "Test forum name 1" activity
+    And I choose "Availability > Hide on course page" in the open action menu
     And <belowpage> "section" <should_see_other_sections> exist
     And I delete "Test forum name 1" activity
     And I should not see "Test forum name 1" in the "region-main" "region"
@@ -110,7 +110,7 @@ Feature: Course activity controls works as expected
     And I should see "Display description on course page"
     And I press "Save and return to course"
     And <belowpage> "section" <should_see_other_sections> exist
-    And I click on "Hide" "link" in the "Test forum name 1" activity
+    And I click on "Hide on course page" "link" in the "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
     And I delete "Test forum name 1" activity
     And <belowpage> "section" <should_see_other_sections> exist
