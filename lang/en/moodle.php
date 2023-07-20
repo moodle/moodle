@@ -301,6 +301,7 @@ $string['contentbank'] = 'Content bank';
 $string['context'] = 'Context';
 $string['contextlevel'] = 'Context level';
 $string['contextname'] = 'Context name';
+$string['contextparent'] = 'Parent';
 $string['contexturl'] = 'Context URL';
 $string['continue'] = 'Continue';
 $string['continuetocourse'] = 'Click here to enter your course';
