@@ -129,4 +129,4 @@ Feature: Add customised file types
     And I expand all fieldsets
     And I set the field "Show type" to "1"
     And I press "Save and return to course"
-    Then I should see "FROG" in the "div.activitybadge" "css_element"
+    Then I should see "FROG" in the "span.activitybadge" "css_element"
