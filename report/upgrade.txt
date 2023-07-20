@@ -1,6 +1,11 @@
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.3.6 ===
+
+* The `report_helper::print_report_selector` method accepts an additional argument for adding content to the
+  tertiary navigation to align with the report selector
+
 === 4.2 ===
 
 * The method report_progress\local\helper::get_activities_to_show() has an additional parameter $activitysection
