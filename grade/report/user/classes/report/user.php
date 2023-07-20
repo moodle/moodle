@@ -375,51 +375,51 @@ class user extends grade_report {
         // Setting up table headers.
 
         $this->tablecolumns = ['itemname'];
-        $this->tableheaders = [\grade_helper::get_lang_string('gradeitem', 'grades')];
+        $this->tableheaders = [get_string('gradeitem', 'grades')];
 
         if ($this->showweight) {
             $this->tablecolumns[] = 'weight';
-            $this->tableheaders[] = \grade_helper::get_lang_string('weightuc', 'grades');
+            $this->tableheaders[] = get_string('weightuc', 'grades');
         }
 
         if ($this->showgrade) {
             $this->tablecolumns[] = 'grade';
-            $this->tableheaders[] = \grade_helper::get_lang_string('grade', 'grades');
+            $this->tableheaders[] = get_string('grade', 'grades');
         }
 
         if ($this->showrange) {
             $this->tablecolumns[] = 'range';
-            $this->tableheaders[] = \grade_helper::get_lang_string('range', 'grades');
+            $this->tableheaders[] = get_string('range', 'grades');
         }
 
         if ($this->showpercentage) {
             $this->tablecolumns[] = 'percentage';
-            $this->tableheaders[] = \grade_helper::get_lang_string('percentage', 'grades');
+            $this->tableheaders[] = get_string('percentage', 'grades');
         }
 
         if ($this->showlettergrade) {
             $this->tablecolumns[] = 'lettergrade';
-            $this->tableheaders[] = \grade_helper::get_lang_string('lettergrade', 'grades');
+            $this->tableheaders[] = get_string('lettergrade', 'grades');
         }
 
         if ($this->showrank) {
             $this->tablecolumns[] = 'rank';
-            $this->tableheaders[] = \grade_helper::get_lang_string('rank', 'grades');
+            $this->tableheaders[] = get_string('rank', 'grades');
         }
 
         if ($this->showaverage) {
             $this->tablecolumns[] = 'average';
-            $this->tableheaders[] = \grade_helper::get_lang_string('average', 'grades');
+            $this->tableheaders[] = get_string('average', 'grades');
         }
 
         if ($this->showfeedback) {
             $this->tablecolumns[] = 'feedback';
-            $this->tableheaders[] = \grade_helper::get_lang_string('feedback', 'grades');
+            $this->tableheaders[] = get_string('feedback', 'grades');
         }
 
         if ($this->showcontributiontocoursetotal) {
             $this->tablecolumns[] = 'contributiontocoursetotal';
-            $this->tableheaders[] = \grade_helper::get_lang_string('contributiontocoursetotal', 'grades');
+            $this->tableheaders[] = get_string('contributiontocoursetotal', 'grades');
         }
     }
 
@@ -1021,7 +1021,7 @@ class user extends grade_report {
 
         $table = new \html_table();
         $table->attributes = [
-            'summary' => s(\grade_helper::get_lang_string('tablesummary', 'gradereport_user')),
+            'summary' => s(get_string('tablesummary', 'gradereport_user')),
             'class' => 'generaltable boxaligncenter user-grade',
         ];
 

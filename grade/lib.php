@@ -1759,7 +1759,7 @@ class grade_structure {
             return null;
         }
 
-        $gradeanalysisstring = grade_helper::get_lang_string('gradeanalysis', 'grades');
+        $gradeanalysisstring = get_string('gradeanalysis', 'grades');
         return html_writer::link($url, $gradeanalysisstring,
             ['class' => 'dropdown-item', 'aria-label' => $gradeanalysisstring, 'role' => 'menuitem']);
     }
@@ -1907,7 +1907,7 @@ class grade_structure {
             return null;
         }
 
-        $title = grade_helper::get_lang_string('resetweightsshort', 'grades');
+        $title = get_string('resetweightsshort', 'grades');
         $str = get_string('resetweights', 'grades', $this->get_params_for_iconstr($element));
         $url = new moodle_url('/grade/edit/tree/action.php', [
             'id' => $this->courseid,
@@ -1938,7 +1938,7 @@ class grade_structure {
                     'sesskey' => sesskey(),
                 ]);
                 $gpr->add_url_params($deleteconfirmationurl);
-                $title = grade_helper::get_lang_string('delete');
+                $title = get_string('delete');
                 return html_writer::link(
                     '',
                     $title,
@@ -1978,7 +1978,7 @@ class grade_structure {
                 $duplicateparams['eid'] = $element['eid'];
                 $duplicateparams['sesskey'] = sesskey();
                 $url = new moodle_url('index.php', $duplicateparams);
-                $title = grade_helper::get_lang_string('duplicate');
+                $title = get_string('duplicate');
                 $gpr->add_url_params($url);
                 return html_writer::link($url, $title,
                     ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
@@ -2102,7 +2102,7 @@ class grade_structure {
                     ['courseid' => $this->courseid, 'id' => $object->id]);
             }
             $url = $gpr->add_url_params($url);
-            $title = grade_helper::get_lang_string('editgrade', 'grades');
+            $title = get_string('editgrade', 'grades');
         } else if (($element['type'] == 'item') || ($element['type'] == 'categoryitem') ||
             ($element['type'] == 'courseitem')) {
             $url = new moodle_url('#');
@@ -2127,7 +2127,7 @@ class grade_structure {
             }
         } else if ($element['type'] == 'category') {
             $url = new moodle_url('#');
-            $title = grade_helper::get_lang_string('categoryedit', 'grades');
+            $title = get_string('categoryedit', 'grades');
             return html_writer::link($url, $title, [
                 'class' => 'dropdown-item',
                 'aria-label' => $title,
@@ -2280,10 +2280,10 @@ class grade_structure {
 
         if ($element['object']->is_hidden()) {
             $url->param('action', 'show');
-            $title = grade_helper::get_lang_string('show');
+            $title = get_string('show');
         } else {
             $url->param('action', 'hide');
-            $title = grade_helper::get_lang_string('hide');
+            $title = get_string('hide');
         }
 
         $url = html_writer::link($url, $title,
@@ -2385,19 +2385,19 @@ class grade_structure {
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
                 $strnonunlockable = get_string('nonunlockableverbose', 'grades', $strparamobj);
-                $title = grade_helper::get_lang_string('unlock', 'grades');
+                $title = get_string('unlock', 'grades');
                 return html_writer::span($title, 'text-muted dropdown-item', ['title' => $strnonunlockable,
                     'aria-label' => $title, 'role' => 'menuitem']);
             } else if ($element['object']->is_locked()) {
                 if (has_capability('moodle/grade:unlock', $this->context)) {
-                    $title = grade_helper::get_lang_string('unlock', 'grades');
+                    $title = get_string('unlock', 'grades');
                     $url->param('action', 'unlock');
                 } else {
                     return null;
                 }
             } else {
                 if (has_capability('moodle/grade:lock', $this->context)) {
-                    $title = grade_helper::get_lang_string('lock', 'grades');
+                    $title = get_string('lock', 'grades');
                     $url->param('action', 'lock');
                 } else {
                     return null;
@@ -2480,7 +2480,7 @@ class grade_structure {
 
             // Show calculation icon only when calculation possible.
             if (!$object->is_external_item() && ($isscale || $isvalue)) {
-                $editcalculationstring = grade_helper::get_lang_string('editcalculation', 'grades');
+                $editcalculationstring = get_string('editcalculation', 'grades');
                 $url = new moodle_url('/grade/edit/tree/calculation.php',
                     ['courseid' => $this->courseid, 'id' => $object->id]);
                 $url = $gpr->add_url_params($url);
@@ -2663,7 +2663,7 @@ class grade_structure {
             }
 
             if ($element['type'] != 'text' && !empty($element['object']->feedback)) {
-                $viewfeedbackstring = grade_helper::get_lang_string('viewfeedback', 'grades');
+                $viewfeedbackstring = get_string('viewfeedback', 'grades');
                 $context->viewfeedbackurl = html_writer::link('#', $viewfeedbackstring, ['class' => 'dropdown-item',
                     'aria-label' => $viewfeedbackstring, 'role' => 'menuitem', 'data-action' => 'feedback',
                     'data-courseid' => $this->courseid]);
@@ -2703,9 +2703,9 @@ class grade_structure {
     public function get_sorting_link(moodle_url $sortlink, object $gpr, string $direction = 'asc'): string {
 
         if ($direction == 'asc') {
-            $title = grade_helper::get_lang_string('asc');
+            $title = get_string('asc');
         } else {
-            $title = grade_helper::get_lang_string('desc');
+            $title = get_string('desc');
         }
 
         $sortlink->param('sort', $direction);
@@ -3557,11 +3557,16 @@ abstract class grade_helper {
      * First checks the cached language strings, then returns match if found, or uses get_string()
      * to get it from the DB, caches it then returns it.
      *
+     * @deprecated since 4.3
+     * @todo MDL-78780 This will be deleted in Moodle 4.7.
      * @param string $strcode
      * @param string|null $section Optional language section
      * @return string
      */
     public static function get_lang_string(string $strcode, ?string $section = null): string {
+        debugging('grade_helper::get_lang_string() is deprecated, please use' .
+            ' get_string() instead.', DEBUG_DEVELOPER);
+
         if (empty(self::$langstrings[$strcode])) {
             self::$langstrings[$strcode] = get_string($strcode, $section);
         }

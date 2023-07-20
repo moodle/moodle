@@ -36,7 +36,7 @@
 function gradereport_singleview_get_report_link(context_course $context, int $courseid,
         array $element, grade_plugin_return $gpr, string $mode, ?stdClass $templatecontext): ?stdClass {
 
-    $reportstring = grade_helper::get_lang_string('singleviewreport_' . $mode, 'gradereport_singleview');
+    $reportstring = get_string('singleviewreport_' . $mode, 'gradereport_singleview');
     if (!isset($templatecontext)) {
         $templatecontext = new stdClass();
     }
