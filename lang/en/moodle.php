@@ -1248,7 +1248,6 @@ $string['mailteachers'] = 'Inform teachers';
 $string['maincoursepage'] = 'Main course page';
 $string['makeafolder'] = 'Create folder';
 $string['makeavailable'] = 'Make available';
-$string['makeavailablecmtitle'] = 'Make activity available';
 $string['makeeditable'] = 'If you make \'{$a}\' editable by the web server process (eg apache) then you could edit this file directly from this page';
 $string['makethismyhome'] = 'Make this my home page';
 $string['makeunavailable'] = 'Make unavailable';
@@ -1350,7 +1349,6 @@ $string['missingusername'] = 'Missing username';
 $string['moddoesnotsupporttype'] = 'Module {$a->modname} does not support uploads of type {$a->type}';
 $string['modhide'] = 'Hide';
 $string['modshow'] = 'Show';
-$string['modshowcmtitle'] = 'Show activity';
 $string['modvisible'] = 'Availability';
 $string['modvisible_help'] = '* Show on course page: Available to students (subject to any access restrictions which may be set).
 * Hide on course page: Not available to students.';
@@ -2452,3 +2450,5 @@ $string['supplyinfo'] = 'More details';
 
 // Deprecated since Moodle 4.3.
 $string['clicktochangeinbrackets'] = '{$a} (Click to change)';
+$string['modshowcmtitle'] = 'Show activity';
+$string['makeavailablecmtitle'] = 'Make activity available';
