@@ -685,6 +685,10 @@ function message_output_fragment_processor_settings($args = []) {
     $userid = $args['userid'];
 
     $user = core_user::get_user($userid, '*', MUST_EXIST);
+    if (!core_message_can_edit_message_profile($user)) {
+        throw new moodle_exception('Cannot edit message profile');
+    }
+
     $processor = get_message_processor($type);
     $providers = message_get_providers_for_user($userid);
     $processorwrapper = new stdClass();
