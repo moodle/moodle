@@ -144,7 +144,7 @@
     <location>jquery</location>
     <name>jQuery UI</name>
     <license>MIT</license>
-    <version>1.12.1</version>
+    <version>1.13.2</version>
     <licenseversion></licenseversion>
   </library>
   <library>
