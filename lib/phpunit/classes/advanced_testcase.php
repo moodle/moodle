@@ -719,4 +719,16 @@ abstract class advanced_testcase extends base_testcase {
         }
         $tasks->close();
     }
+
+
+    /**
+     * Run adhoc tasks.
+     */
+    protected function run_all_adhoc_tasks(): void {
+        // Run the adhoc task.
+        while ($task = \core\task\manager::get_next_adhoc_task(time())) {
+            $task->execute();
+            \core\task\manager::adhoc_task_complete($task);
+        }
+    }
 }
