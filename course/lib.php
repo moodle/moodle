@@ -5133,3 +5133,19 @@ function course_output_fragment_new_base_form($args) {
 
     return $o;
 }
+
+/**
+ * Get the current course image for the given course.
+ *
+ * @param \stdClass $course
+ * @return null|stored_file
+ */
+function course_get_courseimage(\stdClass $course): ?stored_file {
+    $courseinlist = new core_course_list_element($course);
+    foreach ($courseinlist->get_course_overviewfiles() as $file) {
+        if ($file->is_valid_image()) {
+            return $file;
+        }
+    }
+    return null;
+}
