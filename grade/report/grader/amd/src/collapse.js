@@ -39,7 +39,8 @@ const selectors = {
     formItems: {
         cancel: 'cancel',
         save: 'save',
-        checked: 'input[type="checkbox"]:checked'
+        checked: 'input[type="checkbox"]:checked',
+        currentlyUnchecked: 'input[type="checkbox"]:not([data-action="selectall"])',
     },
     hider: 'hide',
     expand: 'expand',
@@ -197,7 +198,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             if (idx === -1) {
                 this.getDataset().push(desiredToHide);
             }
-            await this.prefcountpippe();
+            await this.prefcountpipe();
 
             this.nodesUpdate(desiredToHide);
         }
@@ -210,7 +211,7 @@ export default class ColumnSearch extends GradebookSearchClass {
             const idx = this.getDataset().indexOf(desiredToHide);
             this.getDataset().splice(idx, 1);
 
-            await this.prefcountpippe();
+            await this.prefcountpipe();
 
             this.nodesUpdate(e.target.closest(selectors.colVal)?.dataset.col);
             this.nodesUpdate(e.target.closest(selectors.colVal)?.dataset.itemid);
@@ -268,13 +269,20 @@ export default class ColumnSearch extends GradebookSearchClass {
         ];
         CustomEvents.define(document, events);
 
+        const selectall = form.querySelector('[data-action="selectall"]');
+
         // Register clicks & keyboard form handling.
         events.forEach((event) => {
+            const submitBtn = form.querySelector(`[data-action="${selectors.formItems.save}"`);
             form.addEventListener(event, (e) => {
                 // Stop Bootstrap from being clever.
                 e.stopPropagation();
-                const submitBtn = form.querySelector(`[data-action="${selectors.formItems.save}"`);
-                if (e.target.closest('input')) {
+                const input = e.target.closest('input');
+                if (input) {
+                    // If the user is unchecking an item, we need to uncheck the select all if it's checked.
+                    if (selectall.checked && !input.checked) {
+                        selectall.checked = false;
+                    }
                     const checkedCount = Array.from(form.querySelectorAll(selectors.formItems.checked)).length;
                     // Check if any are clicked or not then change disabled.
                     submitBtn.disabled = checkedCount <= 0;
@@ -288,6 +296,23 @@ export default class ColumnSearch extends GradebookSearchClass {
                 this.searchInput.value = '';
                 this.setSearchTerms(this.searchInput.value);
                 await this.filterrenderpipe();
+            });
+            selectall.addEventListener(event, (e) => {
+                // Stop Bootstrap from being clever.
+                e.stopPropagation();
+                if (!selectall.checked) {
+                    const touncheck = Array.from(form.querySelectorAll(selectors.formItems.checked));
+                    touncheck.forEach(item => {
+                        item.checked = false;
+                    });
+                    submitBtn.disabled = true;
+                } else {
+                    const currentUnchecked = Array.from(form.querySelectorAll(selectors.formItems.currentlyUnchecked));
+                    currentUnchecked.forEach(item => {
+                        item.checked = true;
+                    });
+                    submitBtn.disabled = false;
+                }
             });
         });
 
@@ -304,7 +329,10 @@ export default class ColumnSearch extends GradebookSearchClass {
                 this.getDataset().splice(idx, 1);
                 this.nodesUpdate(item.dataset.collapse);
             });
-            await this.prefcountpippe();
+            // Reset the check all & submit to false just in case.
+            selectall.checked = false;
+            e.submitter.disabled = true;
+            await this.prefcountpipe();
         });
     }
 
@@ -320,7 +348,7 @@ export default class ColumnSearch extends GradebookSearchClass {
      *
      * @returns {Promise<void>}
      */
-    async prefcountpippe() {
+    async prefcountpipe() {
         this.setPreferences();
         this.countUpdate();
         await this.filterrenderpipe();
@@ -487,10 +515,13 @@ export default class ColumnSearch extends GradebookSearchClass {
      * Build the content then replace the node.
      */
     async renderDropdown() {
+        const form = this.component.querySelector(selectors.formDropdown);
+        const selectall = form.querySelector('[data-action="selectall"]');
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapseresults', {
             'results': this.getMatchedResults(),
             'searchTerm': this.getSearchTerm(),
         });
+        selectall.disabled = this.getMatchedResults().length === 0;
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
     }
 
