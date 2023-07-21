@@ -948,6 +948,7 @@ $string['neverdeleteruns'] = 'Never delete runs';
 $string['newestdocindexed'] = 'Newest document indexed';
 $string['nobookmarksforuser'] = 'You do not have any bookmarks.';
 $string['nodatabase'] = 'No database';
+$string['noemaileverwarning'] = '<strong>Note:</strong> All outgoing emails have been disabled';
 $string['nohttpsformobilewarning'] = 'It is recommended to enable HTTPS with a valid certificate. The Moodle app will always try to use a secured connection first.';
 $string['nomissingstrings'] = 'No missing strings';
 $string['none'] = 'None';
