@@ -542,9 +542,9 @@ function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $elemen
                 $v->id = $track->valueid;
                 $v->value = $value;
                 $v->timemodified = time();
-                $DB->update_record('scorm_scoes_value', $track);
+                $DB->update_record('scorm_scoes_value', $v);
             }
-            $id = $track->id;
+            $id = $track->valueid;
         }
     } else {
         $track = new stdClass();
@@ -593,6 +593,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $elemen
         // Missing fields are: scoid, attempt.
         $track->scoid = $scoid;
         $track->attempt = $attempt->id;
+        $track->id = $id;
         // Trigger submitted event.
         $event->add_record_snapshot('scorm_scoes_value', $track);
         $event->add_record_snapshot('course_modules', $cm);

@@ -55,7 +55,7 @@ if (confirm_sesskey() && (!empty($scoid))) {
     $request = null;
     if (has_capability('mod/scorm:savetrack', context_module::instance($cm->id))) {
         // Preload all current tracking data.
-        $sql = "SELECT e.element, v.id, v.value, v.timemodified
+        $sql = "SELECT e.element, v.value, v.timemodified, v.id as valueid
                   FROM {scorm_scoes_value} v
                   JOIN {scorm_attempt} a ON a.id = v.attemptid
                   JOIN {scorm_element} e on e.id = v.elementid
