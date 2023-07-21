@@ -25,6 +25,7 @@
 
 namespace core_completion;
 
+use core\context;
 use stdClass;
 use context_course;
 use cm_info;
@@ -54,6 +55,20 @@ class manager {
      */
     public function __construct($courseid) {
         $this->courseid = $courseid;
+    }
+
+    /**
+     * Returns current course context or system level for $SITE courseid.
+     *
+     * @return context The course based on current courseid or system context.
+     */
+    protected function get_context(): context {
+        global $SITE;
+
+        if ($this->courseid && $this->courseid != $SITE->id) {
+            return context_course::instance($this->courseid);
+        }
+        return \context_system::instance();
     }
 
     /**
@@ -220,13 +235,13 @@ class manager {
         $data->helpicon = $OUTPUT->help_icon('bulkcompletiontracking', 'core_completion');
         // Add icon information.
         $data->modules = array_values($modules);
-        $coursecontext = context_course::instance($this->courseid);
-        $canmanage = has_capability('moodle/course:manageactivities', $coursecontext);
+        $context = $this->get_context();
+        $canmanage = has_capability('moodle/course:manageactivities', $context);
         $course = get_course($this->courseid);
         foreach ($data->modules as $module) {
             $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
             $module->formattedname = format_string(get_string('modulename', 'mod_' . $module->name),
-                true, ['context' => $coursecontext]);
+                true, ['context' => $context]);
             $module->canmanage = $canmanage && course_allowed_module($course, $module->name);
             if ($includedefaults) {
                 $defaults = self::get_default_completion($course, $module, false);

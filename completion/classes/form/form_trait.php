@@ -104,6 +104,7 @@ trait form_trait {
      * @param bool $supportgrades True if the module supports grades and false otherwise.
      * @param bool $rating True if the rating feature is enabled and false otherwise.
      * @param bool $defaultcompletion True if the default completion is enabled and false otherwise. To review in MDL-78531.
+     * @param int|null $courseid Course where to add completion elements.
      * @throws \coding_exception If the form is not moodleform_mod and $modname is null.
      */
     protected function add_completion_elements(
@@ -111,9 +112,10 @@ trait form_trait {
         bool $supportviews = false,
         bool $supportgrades = false,
         bool $rating = false,
-        bool $defaultcompletion = true
+        bool $defaultcompletion = true,
+        ?int $courseid = null
     ): void {
-        global $CFG;
+        global $CFG, $SITE;
 
         $mform = $this->get_form();
         if ($modname === null) {
@@ -204,12 +206,15 @@ trait form_trait {
         }
 
         // Completion expected at particular date? (For progress tracking).
-        $completionexpectedel = 'completionexpected' . $suffix;
-        $mform->addElement('date_time_selector', $completionexpectedel, get_string('completionexpected', 'completion'),
+        // We don't show completion expected at site level default completion.
+        if ($courseid != $SITE->id) {
+            $completionexpectedel = 'completionexpected' . $suffix;
+            $mform->addElement('date_time_selector', $completionexpectedel, get_string('completionexpected', 'completion'),
                 ['optional' => true]);
-        $a = get_string('pluginname', $modname);
-        $mform->addHelpButton($completionexpectedel, 'completionexpected', 'completion', '', false, $a);
-        $mform->hideIf($completionexpectedel, 'completion', 'eq', COMPLETION_TRACKING_NONE);
+            $a = get_string('pluginname', $modname);
+            $mform->addHelpButton($completionexpectedel, 'completionexpected', 'completion', '', false, $a);
+            $mform->hideIf($completionexpectedel, 'completion', 'eq', COMPLETION_TRACKING_NONE);
+        }
     }
 
     /**
@@ -356,16 +361,19 @@ trait form_trait {
      * It should be called from the definition_after_data() to setup the completion settings in the form.
      */
     protected function definition_after_data_completion(): void {
-        global $COURSE;
+        global $COURSE, $SITE;
         $mform = $this->get_form();
 
         $completion = new \completion_info($COURSE);
-        if ($completion->is_enabled()) {
+        // We use $SITE course for site default activity completion,
+        // so users could set default values regardless of whether completion is enabled or not.".
+        if ($completion->is_enabled() || $COURSE->id == $SITE->id) {
             $suffix = $this->get_suffix();
 
             // If anybody has completed the activity, these options will be 'locked'.
             $cm = $this->get_cm();
-            $completedcount = empty($cm) ? 0 : $completion->count_user_data($cm);
+            // We use $SITE course for site default activity completion, so we don't need any unlock button.
+            $completedcount = (empty($cm) || $COURSE->id == $SITE->id) ? 0 : $completion->count_user_data($cm);
             $freeze = false;
             if (!$completedcount) {
                 // The unlock buttons don't need suffix because they are only displayed in the module settings page.
@@ -374,7 +382,9 @@ trait form_trait {
                 }
                 // Automatically set to unlocked. Note: this is necessary in order to make it recalculate completion once
                 // the option is changed, maybe someone has completed it now.
-                $mform->getElement('completionunlocked')->setValue(1);
+                if ($mform->elementExists('completionunlocked')) {
+                    $mform->getElement('completionunlocked')->setValue(1);
+                }
             } else {
                 // Has the element been unlocked, either by the button being pressed in this request, or the field already
                 // being set from a previous one?
