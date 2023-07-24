@@ -301,6 +301,11 @@ fieldset.coursesearchbox label {
         background-color: $dropdown-link-active-bg;
         color: $dropdown-link-active-color;
     }
+    &[aria-disabled="true"] {
+        pointer-events: none;
+        color: $custom-select-disabled-color;
+        background-color: $custom-select-disabled-bg;
+    }
     &::before {
         content: "\200B";
     }

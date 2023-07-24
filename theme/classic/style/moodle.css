@@ -32872,6 +32872,11 @@ fieldset.coursesearchbox label {
   background-color: #0f6cbf;
   color: #fff;
 }
+.form-autocomplete-suggestions li[aria-disabled=true] {
+  pointer-events: none;
+  color: #6a737b;
+  background-color: #e9ecef;
+}
 .form-autocomplete-suggestions li::before {
   content: "​";
 }

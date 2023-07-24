@@ -98,6 +98,8 @@ being forced open in all behat tests.
 * New "joinlist" parameter added to core\output\datafilter::get_filter_object(). This takes an array of datafilter::JOINTYPE_*
   constants to define which types of join the filter supports. By default this will include all three of "Any", "All" and "None",
   but a subset can be specified instead.
+* core/form-autocomplete now supports disabled options in the source select list. These will be displayed in the autocomplete
+  options with the aria-disabled attribute, and will not be selectable.
 
 === 4.2 ===
 
