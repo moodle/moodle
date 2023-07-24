@@ -33,7 +33,7 @@ class course_sender extends resource_sender {
     /**
      * @var \core\context\course|false The course context.
      */
-    private \core\context\course|false $coursecontext;
+    protected \core\context\course|false $coursecontext;
 
     /**
      * Constructor for course sender.
