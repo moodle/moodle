@@ -73,6 +73,13 @@ class moodlenet_send_course_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($result['warnings']);
         $this->assertEquals('errorinvalidformat', $result['warnings'][0]['warningcode']);
 
+        // Test with invalid course module id.
+        $result = moodlenet_send_course::execute($issuer->get('id'), $course->id, 0, [random_int(5, 30)]);
+        $result = external_api::clean_returnvalue(moodlenet_send_course::execute_returns(), $result);
+        $this->assertFalse($result['status']);
+        $this->assertNotEmpty($result['warnings']);
+        $this->assertEquals('errorinvalidcmids', $result['warnings'][0]['warningcode']);
+
         // Test with the user does not have permission.
         $this->setUser($user);
         $result = moodlenet_send_course::execute($issuer->get('id'), $course->id, 0);
