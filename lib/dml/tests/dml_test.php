@@ -4366,29 +4366,68 @@ EOD;
         $tablename = $table->getName();
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('charshort', XMLDB_TYPE_CHAR, '255');
+        $table->add_field('charlong', XMLDB_TYPE_CHAR, '1333');
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('description'=>'áéíóú'));
-        $DB->insert_record($tablename, array('description'=>'dxxx'));
-        $DB->insert_record($tablename, array('description'=>'bcde'));
+        // Regarding 1300 length - all drivers except Oracle support larger values (2K+), but this hits a limit on Oracle.
+        $DB->insert_record($tablename, [
+            'charshort' => 'áéíóú',
+            'charlong' => str_repeat('A', 512),
+            'description' => str_repeat('X', 1300),
+        ]);
+        $DB->insert_record($tablename, [
+            'charshort' => 'dxxx',
+            'charlong' => str_repeat('B', 512),
+            'description' => str_repeat('Y', 1300),
+        ]);
+        $DB->insert_record($tablename, [
+            'charshort' => 'bcde',
+            'charlong' => str_repeat('C', 512),
+            'description' => str_repeat('Z', 1300),
+        ]);
 
-        // Fieldnames and values mixed.
-        $sql = 'SELECT id, ' . $DB->sql_concat('description', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
-        $this->assertCount(3, $records);
-        $this->assertSame('áéíóúharcoded123.45test', $records[1]->result);
+        // Char (short) fieldnames and values.
+        $fieldsql = $DB->sql_concat('charshort', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            'áéíóúharcoded123.45test',
+            'dxxxharcoded123.45test',
+            'bcdeharcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
+        // Char (long) fieldnames and values.
+        $fieldsql = $DB->sql_concat('charlong', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            str_repeat('A', 512) . 'harcoded123.45test',
+            str_repeat('B', 512) . 'harcoded123.45test',
+            str_repeat('C', 512) . 'harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
+        // Text fieldnames and values.
+        $fieldsql = $DB->sql_concat('description', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            str_repeat('X', 1300) . 'harcoded123.45test',
+            str_repeat('Y', 1300) . 'harcoded123.45test',
+            str_repeat('Z', 1300) . 'harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
         // Integer fieldnames and values.
-        $sql = 'SELECT id, ' . $DB->sql_concat('id', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
-        $this->assertCount(3, $records);
-        $this->assertSame('1harcoded123.45test', $records[1]->result);
+        $fieldsql = $DB->sql_concat('id', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            '1harcoded123.45test',
+            '2harcoded123.45test',
+            '3harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
         // All integer fieldnames.
-        $sql = 'SELECT id, ' . $DB->sql_concat('id', 'id', 'id') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array());
-        $this->assertCount(3, $records);
-        $this->assertSame('111', $records[1]->result);
+        $fieldsql = $DB->sql_concat('id', 'id', 'id');
+        $this->assertEqualsCanonicalizing([
+            '111',
+            '222',
+            '333',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, ''));
 
     }
 
