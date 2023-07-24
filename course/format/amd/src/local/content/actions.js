@@ -488,11 +488,16 @@ export default class extends BaseComponent {
      * @param {string} mutationName the mutation name
      */
     async _requestMutationAction(target, event, mutationName) {
-        if (!target.dataset.id) {
+        if (!target.dataset.id && target.dataset.for !== 'bulkaction') {
             return;
         }
         event.preventDefault();
-        this.reactive.dispatch(mutationName, [target.dataset.id]);
+        if (target.dataset.for === 'bulkaction') {
+            // If the mutation is a bulk action we use the current selection.
+            this.reactive.dispatch(mutationName, this.reactive.get('bulk').selection);
+        } else {
+            this.reactive.dispatch(mutationName, [target.dataset.id]);
+        }
     }
 
     /**
