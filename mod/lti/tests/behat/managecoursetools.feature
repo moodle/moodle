@@ -59,6 +59,18 @@ Feature: Manage course tools
     When I navigate to "LTI External tools" in current page administration
     Then "You don't have permission to edit this tool" "icon" should exist in the "Test tool" "table_row"
 
+  Scenario: Viewing course tools with the capability to add/edit and without the capability to use
+    Given the following "role capability" exists:
+      | role                             | editingteacher |
+      | mod/lti:addcoursetool            | allow          |
+      | mod/lti:addmanualinstance        | allow          |
+      | mod/lti:addpreconfiguredinstance | prohibit       |
+    And the following "mod_lti > course tools" exist:
+      | name      | description         | baseurl                  | course |
+      | Test tool | Example description | https://example.com/tool | C1     |
+    When I am on the "Course 1" course page logged in as teacher1
+    Then "LTI External tools" "link" should not exist in current page administration
+
   @javascript
   Scenario: Edit a course tool
     Given the following "mod_lti > course tools" exist:
