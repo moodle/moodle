@@ -76,7 +76,7 @@ class defaultuserrole extends check {
         }
 
         // Risky caps - usually very dangerous.
-        $sql = "SELECT rc.contextid, rc.capability
+        $sql = "SELECT rc.id, rc.contextid, rc.capability
                   FROM {role_capabilities} rc
                   JOIN {capabilities} cap ON cap.name = rc.capability
                  WHERE " . $DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS)) . " <> 0
