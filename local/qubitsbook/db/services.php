@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
+/** 
  * Local Plugin Services
  *
  * Simple form to search for users and add them using a manual enrolment to this course.
@@ -30,9 +30,20 @@ $functions = [
         'classname' => 'local_qubitsbook_external',
         'methodname' => 'get_chapter_content',
         'classpath' => 'local/qubitsbook/classes/external.php',
-        'description' => 'Get Chapter MDX content from Moodle storage',
+        'description' => 'Get Chaptder MDX content from Moodle storage',
         'type' => 'read',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ]
+    ],
+    'local_qubitsbook_create_assignment_service' => [
+        'classname' => 'local_qubitsbook_external',
+        'methodname' => 'create_assignment_service',
+        'classpath' => 'local/qubitsbook/classes/external.php',
+        'description' => 'Create New assignment',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ],
+    
+    
 ];
