@@ -389,9 +389,6 @@ function question_delete_question($questionid): void {
     // Delete questiontype-specific data.
     question_bank::get_qtype($question->qtype, false)->delete_question($question->id, $questiondata->contextid);
 
-    // Delete all tag instances.
-    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
-
     // Delete the custom filed data for the question.
     $customfieldhandler = qbank_customfields\customfield\question_handler::create();
     $customfieldhandler->delete_instance($question->id);
