@@ -389,10 +389,6 @@ function question_delete_question($questionid): void {
     // Delete questiontype-specific data.
     question_bank::get_qtype($question->qtype, false)->delete_question($question->id, $questiondata->contextid);
 
-    // Delete the custom filed data for the question.
-    $customfieldhandler = qbank_customfields\customfield\question_handler::create();
-    $customfieldhandler->delete_instance($question->id);
-
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {

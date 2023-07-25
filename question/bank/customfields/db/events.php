@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_customfields.
+ * Question custom fields events
  *
- * @package     qbank_customfields
- * @copyright   2021 Catalyst IT Australia Pty Ltd
- * @author      Matt Porritt <mattp@catalyst-au.net>
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbank_customfields
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'qbank_customfields';
-$plugin->version   = 2023042401;
-$plugin->requires  = 2023041800;
-$plugin->maturity  = MATURITY_STABLE;
+$observers = [
+    [
+        'eventname' => '\core\event\question_deleted',
+        'callback' => '\qbank_customfields\event\question_deleted_observer::delete_question_customfields'
+    ]
+];
