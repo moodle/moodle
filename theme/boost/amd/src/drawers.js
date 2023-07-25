@@ -240,6 +240,11 @@ export default class Drawers {
     drawerNode = null;
 
     constructor(drawerNode) {
+        // Some behat tests may use fake drawer divs to test components in drawers.
+        if (drawerNode.dataset.behatFakeDrawer !== undefined) {
+            return;
+        }
+
         this.drawerNode = drawerNode;
 
         if (isSmall()) {
