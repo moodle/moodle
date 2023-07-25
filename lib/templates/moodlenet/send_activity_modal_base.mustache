@@ -45,8 +45,13 @@
                     </div>
                     <hr class="moodlenet-share-activity-info-hr">
                     <div class="moodlenet-share-notice">
-                        {{#pix}} e/help, core, {{#str}} moodlenet:sharenotice, moodle, {{sharetype}} {{/str}}{{/pix}} {{#str}} moodlenet:sharenotice, moodle, {{sharetype}} {{/str}}
+                        {{sharenotice}}
                     </div>
+                    {{^fullsharing}}
+                        <div class="moodlenet-share-total-activities font-weight-bold pl-2 ml-3">
+                            {{selectedactivitiesnotice}}
+                        </div>
+                    {{/fullsharing}}
                 </div>
             </div>
             <div class="modal-footer" data-region="footer">

@@ -53,7 +53,7 @@ class moodlenet_get_shared_course_info extends external_api {
      * @return array
      */
     public static function execute(int $courseid): array {
-        global $CFG, $USER;
+        global $USER;
 
         [
             'courseid' => $courseid
