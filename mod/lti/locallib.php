@@ -2643,6 +2643,8 @@ function lti_get_type_type_config($id) {
 
     $type->typeid = $basicltitype->id;
 
+    $type->course = $basicltitype->course;
+
     $type->toolproxyid = $basicltitype->toolproxyid;
 
     $type->lti_toolurl = $basicltitype->baseurl;
