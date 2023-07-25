@@ -126,7 +126,7 @@ class course_external_tools_list extends system_report {
                 if (get_site()->id == $row->course) {
                     return \html_writer::div(
                         \html_writer::div(
-                            $OUTPUT->pix_icon('t/locked', get_string('sitetoolnocourseediting', 'mod_lti')
+                            $OUTPUT->pix_icon('t/locked', get_string('courseexternaltoolsnoeditpermissions', 'mod_lti')
                         ), 'tool-action-icon-container'), 'd-flex justify-content-end'
                     );
                 }
@@ -135,7 +135,7 @@ class course_external_tools_list extends system_report {
                 if (!has_capability('mod/lti:addcoursetool', \context_course::instance($row->course))) {
                     return \html_writer::div(
                         \html_writer::div(
-                            $OUTPUT->pix_icon('t/locked', get_string('courseexternaltoolsnoaddpermissions', 'mod_lti')
+                            $OUTPUT->pix_icon('t/locked', get_string('courseexternaltoolsnoeditpermissions', 'mod_lti')
                         ), 'tool-action-icon-container'), 'd-flex justify-content-end'
                     );
                 }

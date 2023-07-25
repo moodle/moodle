@@ -30,7 +30,7 @@ Feature: Manage course tools
       | Tool URL         | http://example.com              |
       | Tool description | A short description of the tool |
     And I press "Save changes"
-    And I should see "Successfully added course tool"
+    And I should see "Teaching Tool 1 added"
     And I should see "A short description of the tool" in the "Teaching Tool 1" "table_row"
 
   Scenario: Viewing a site level tool in the course tools table
@@ -42,9 +42,9 @@ Feature: Manage course tools
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "LTI External tools" in current page administration
     Then I should see "Test tool 2" in the "reportbuilder-table" "table"
-    And "This is a site level tool which cannot be edited" "icon" should exist in the "Test tool 2" "table_row"
+    And "You don't have permission to edit this tool" "icon" should exist in the "Test tool 2" "table_row"
     And I should see "Test tool 3" in the "reportbuilder-table" "table"
-    And "This is a site level tool which cannot be edited" "icon" should exist in the "Test tool 3" "table_row"
+    And "You don't have permission to edit this tool" "icon" should exist in the "Test tool 3" "table_row"
     And I should not see "Example tool" in the "reportbuilder-table" "table"
 
   Scenario: Viewing course tools without the capability to add/edit but having the capability to use
@@ -57,7 +57,7 @@ Feature: Manage course tools
       | Test tool | Example description | https://example.com/tool | C1     |
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "LTI External tools" in current page administration
-    Then "You don't have permission to add or edit course tools" "icon" should exist in the "Test tool" "table_row"
+    Then "You don't have permission to edit this tool" "icon" should exist in the "Test tool" "table_row"
 
   @javascript
   Scenario: Edit a course tool
@@ -79,7 +79,7 @@ Feature: Manage course tools
       | Tool URL         | http://example.com                       |
       | Tool description | A short description of the tool (edited) |
     And I press "Save changes"
-    And I should see "The changes to the course tool 'Test tool (edited)' were saved"
+    And I should see "Changes saved"
     And I should see "A short description of the tool (edited)" in the "Test tool (edited)" "table_row"
 
   @javascript
