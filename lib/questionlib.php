@@ -399,9 +399,6 @@ function question_delete_question($questionid): void {
         }
     }
 
-    // Delete question comments.
-    $DB->delete_records('comments', ['itemid' => $questionid, 'component' => 'qbank_comment',
-                                            'commentarea' => 'question']);
     // Finally delete the question record itself.
     $DB->delete_records('question', ['id' => $question->id]);
     $DB->delete_records('question_versions', ['id' => $questiondata->versionid]);
@@ -414,6 +411,7 @@ function question_delete_question($questionid): void {
     question_bank::notify_question_edited($question->id);
 
     // Log the deletion of this question.
+    // Any qbank plugins storing additional question data should observe this event and perform the necessary deletion.
     $question->category = $questiondata->categoryid;
     $question->contextid = $questiondata->contextid;
     $event = \core\event\question_deleted::create_from_question_instance($question);
