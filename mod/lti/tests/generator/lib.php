@@ -118,7 +118,8 @@ class mod_lti_generator extends testing_module_generator {
         if (!isset($type['course']) || $type['course'] == $SITE->id) {
             throw new coding_exception('Must specify a non-site course when creating a course tool type.');
         }
-        $type['coursevisible'] = LTI_COURSEVISIBLE_PRECONFIGURED; // The default for course tools.
+        $type['coursevisible'] = LTI_COURSEVISIBLE_ACTIVITYCHOOSER; // The default for course tools.
+        $type['state'] = LTI_TOOL_STATE_CONFIGURED; // The default for course tools.
         lti_add_type((object) $type, (object) $config);
     }
 }

@@ -196,7 +196,7 @@ class mod_lti_edit_types_form extends moodleform {
             $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
             $mform->setDefault('lti_coursevisible', '1');
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_PRECONFIGURED);
+            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_ACTIVITYCHOOSER);
         }
         $mform->setType('lti_coursevisible', PARAM_INT);
 
