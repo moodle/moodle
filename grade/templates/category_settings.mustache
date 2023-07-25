@@ -24,10 +24,16 @@
         "aggregateonlygraded": 1,
         "aggregateoutcomes": 0,
         "droplow": 1,
-        "keephigh": 1
+        "keephigh": 1,
+        "calculatedgrade": "calculated grade"
     }
 }}
 <div class="card-deck" role="list">
+    {{#calculatedgrade}}
+        <span class="badge badge-pill badge-light" role="listitem">
+            <strong>{{calculatedgrade}}</strong>
+        </span>
+    {{/calculatedgrade}}
     {{#aggregation}}
         <span class="badge badge-pill badge-light" role="listitem">
             <strong>{{aggregation}}</strong>

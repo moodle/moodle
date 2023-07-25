@@ -23,7 +23,8 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test locked category |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Hidden item |
@@ -70,7 +71,8 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test overridden category B|
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Cat b item |

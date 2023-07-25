@@ -93,7 +93,7 @@ Feature: Teacher can unhide grades on the edit page allowing students to view th
     And I choose "Edit category" in the open action menu
     And the field "Hidden" matches value "1"
     And I set the field "Hidden" to "0"
-    And I press "Save changes"
+    And I click on "Save" "button" in the "Edit category" "dialogue"
     And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     Then I should see "50.00"

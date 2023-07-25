@@ -398,7 +398,8 @@ Feature: We can use calculated grade totals
       | Category name | Sub category 3 |
       | Aggregation | Natural |
       | Drop the lowest | 1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -457,7 +458,8 @@ Feature: We can use calculated grade totals
     And I set the following fields to these values:
       | Category name | Sub sub category 1 |
       | Parent category | Sub category 3 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
     And I navigate to "View > Grader report" in the course gradebook
     And I should see "270.00 (24.77 %)" in the ".course" "css_element"
 

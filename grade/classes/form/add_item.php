@@ -59,12 +59,6 @@ class add_item extends dynamic_form {
                 $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
                 redirect($this->gpr->add_url_params($url));
             }
-            if ($gradeitem->is_course_item() || $gradeitem->is_category_item()) {
-                $gradecategory = $gradeitem->get_item_category();
-                $url = new moodle_url('/grade/edit/tree/category.php', ['id' => $gradecategory->id, 'courseid' => $courseid]);
-                redirect($this->gpr->add_url_params($url));
-            }
-
             $item = $gradeitem->get_record_data();
             $parentcategory = $gradeitem->get_parent_category();
 

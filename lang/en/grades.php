@@ -111,6 +111,7 @@ $string['calculationadd'] = 'Add calculation';
 $string['calculationedit'] = 'Edit calculation';
 $string['calculationsaved'] = 'Calculation saved';
 $string['calculationview'] = 'View calculation';
+$string['calculationwarning'] = 'This category uses a grade calculation for the category total rather than an aggregation.';
 $string['cannotaccessgroup'] = 'Can not access grades of selected group, sorry.';
 $string['categories'] = 'Categories';
 $string['category'] = 'Category';

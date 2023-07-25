@@ -63,14 +63,14 @@ class behat_grade extends behat_base {
             $this->execute("behat_grades::i_click_on_grade_item_menu", [$gradeitem, $type, $page]);
         }
 
-        if ($type == 'gradeitem') {
-            $linktext = get_string('itemsedit', 'grades');
-        } else if ($type == 'category') {
-            $linktext = get_string('categoryedit', 'grades');
-        } else {
-            $linktext = get_string('categoryedit', 'grades');
-        }
+        $linktext = $type == 'gradeitem' ? get_string('itemsedit', 'grades') : get_string('categoryedit', 'grades');
+
         $this->execute("behat_action_menu::i_choose_in_the_open_action_menu", $linktext);
+
+        if ($type !== 'gradeitem') {
+            $this->execute('behat_general::i_click_on_in_the', [get_string('showmore', 'form'),
+                'link', '.modal-dialog', 'css_element']);
+        }
 
         $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
         if ($this->getSession()->getPage()->find('xpath', './/button[@data-action="save"]')) {

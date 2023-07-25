@@ -1062,29 +1062,33 @@ class grade_edit_tree_column_status extends grade_edit_tree_column {
         $element['object'] = $category;
         $categorycell->text = $gtree->set_grade_status_icons($element);
 
-        // Aggregation type.
-        $aggrstrings = grade_helper::get_aggregation_strings();
         $context = new stdClass();
-        $context->aggregation = $aggrstrings[$category->aggregation];
+        if ($category->grade_item->is_calculated()) {
+            $context->calculatedgrade = grade_helper::get_lang_string('calculatedgrade', 'grades');
+        } else {
+            // Aggregation type.
+            $aggrstrings = grade_helper::get_aggregation_strings();
+            $context->aggregation = $aggrstrings[$category->aggregation];
 
-        // Include/exclude empty grades.
-        if ($category->aggregateonlygraded) {
-            $context->aggregateonlygraded = $category->aggregateonlygraded;
-        }
+            // Include/exclude empty grades.
+            if ($category->aggregateonlygraded) {
+                $context->aggregateonlygraded = $category->aggregateonlygraded;
+            }
 
-        // Aggregate outcomes.
-        if ($category->aggregateoutcomes) {
-            $context->aggregateoutcomes = $category->aggregateoutcomes;
-        }
+            // Aggregate outcomes.
+            if ($category->aggregateoutcomes) {
+                $context->aggregateoutcomes = $category->aggregateoutcomes;
+            }
 
-        // Drop the lowest.
-        if ($category->droplow) {
-            $context->droplow = $category->droplow;
-        }
+            // Drop the lowest.
+            if ($category->droplow) {
+                $context->droplow = $category->droplow;
+            }
 
-        // Keep the highest.
-        if ($category->keephigh) {
-            $context->keephigh = $category->keephigh;
+            // Keep the highest.
+            if ($category->keephigh) {
+                $context->keephigh = $category->keephigh;
+            }
         }
         $categorycell->text .= $OUTPUT->render_from_template('core_grades/category_settings', $context);
         return $categorycell;
