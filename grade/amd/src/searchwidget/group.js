@@ -114,6 +114,7 @@ const registerListenerEvents = () => {
             new URL(location.href);
         actionUrl.searchParams.set('id', courseId);
         actionUrl.searchParams.set('group', e.target.value);
+        actionUrl.searchParams.delete('page');
 
         location.href = actionUrl.href;
 
