@@ -53,15 +53,36 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class mod_lti_mod_form extends moodleform_mod {
 
+    /** @var int|null the typeid or null if the instance form is being created for a manually configured tool instance.*/
+    protected ?int $typeid;
+
+    /** @var string|null type */
+    protected ?string $type;
+
+    /**
+     * Constructor.
+     *
+     * @param \stdClass $current the current form data.
+     * @param string $section the section number.
+     * @param \stdClass $cm the course module object.
+     * @param \stdClass $course the course object.
+     */
+    public function __construct($current, $section, $cm, $course) {
+
+        // Setup some of the pieces used to control display in the form definition() method.
+        // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
+        $this->typeid = optional_param('typeid', null, PARAM_INT);
+        $this->type = optional_param('type', null, PARAM_ALPHA);
+
+        parent::__construct($current, $section, $cm, $course);
+    }
+
     public function definition() {
         global $PAGE, $OUTPUT, $COURSE;
 
-        if ($type = optional_param('type', false, PARAM_ALPHA)) {
-            component_callback("ltisource_$type", 'add_instance_hook');
+        if ($this->type) {
+            component_callback("ltisource_$this->type", 'add_instance_hook');
         }
-
-        // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
-        $typeid = optional_param('typeid', false, PARAM_INT);
 
         $showoptions = has_capability('mod/lti:addmanualinstance', $this->context);
         // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
@@ -73,7 +94,7 @@ class mod_lti_mod_form extends moodleform_mod {
                 $showtypes = false;
             }
         } else {
-            $showtypes = !$typeid;
+            $showtypes = !$this->typeid;
         }
 
         $mform =& $this->_form;
@@ -118,8 +139,8 @@ class mod_lti_mod_form extends moodleform_mod {
 
         if ($showtypes) {
             $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
-            if ($typeid) {
-                $mform->getElement('typeid')->setValue($typeid);
+            if ($this->typeid) {
+                $mform->getElement('typeid')->setValue($this->typeid);
             }
             $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
@@ -160,10 +181,10 @@ class mod_lti_mod_form extends moodleform_mod {
                 $tooltypes->addOption($type->name, $id, $attributes);
             }
         } else {
-            $mform->addElement('hidden', 'typeid', $typeid);
+            $mform->addElement('hidden', 'typeid', $this->typeid);
             $mform->setType('typeid', PARAM_INT);
-            if ($typeid) {
-                $config = lti_get_type_config($typeid);
+            if ($this->typeid) {
+                $config = lti_get_type_config($this->typeid);
                 if (!empty($config['contentitem'])) {
                     $mform->addElement('hidden', 'contentitem', 1);
                     $mform->setType('contentitem', PARAM_INT);
@@ -178,7 +199,7 @@ class mod_lti_mod_form extends moodleform_mod {
             'data-contentitemurl' => $contentitemurl->out(false)
         ];
         if (!$showtypes) {
-            if (!$typeid || empty(lti_get_type_config($typeid)['contentitem'])) {
+            if (!$this->typeid || empty(lti_get_type_config($this->typeid)['contentitem'])) {
                 $contentbuttonattributes['disabled'] = 'disabled';
             }
         }
@@ -353,7 +374,7 @@ class mod_lti_mod_form extends moodleform_mod {
             ),
         );
 
-        if (!empty($typeid)) {
+        if (!empty($this->typeid)) {
             $mform->setAdvanced('typeid');
             $mform->setAdvanced('toolurl');
         }
