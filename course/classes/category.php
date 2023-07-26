@@ -3210,24 +3210,27 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         $fields = array_keys(array_filter(self::$coursecatfields));
         $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
         $rs = $DB->get_recordset_sql("
-            SELECT cc.". join(',cc.', $fields). ", $ctxselect
-            FROM {course_categories} cc
-            JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat
-            LEFT JOIN {role_assignments} ra ON ra.contextid = ctx.id
-            LEFT JOIN {role_capabilities} rc ON rc.contextid = ctx.id
-            LEFT JOIN {role_assignments} rc_ra ON rc_ra.roleid = rc.roleid
-            LEFT JOIN {context} rc_ra_ctx ON rc_ra_ctx.id = rc_ra.contextid
-            WHERE ctx.path LIKE :parentpath
-            AND (
-                ra.userid = :userid1
-                OR (
-                    rc_ra.userid = :userid2
-                    AND (ctx.path = rc_ra_ctx.path OR ctx.path LIKE " . $DB->sql_concat("rc_ra_ctx.path", "'/%'") . ")
-                )
-            )
+                SELECT cc.". join(',cc.', $fields). ", $ctxselect
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat1
+                  JOIN {role_assignments} ra ON ra.contextid = ctx.id
+                 WHERE ctx.path LIKE :parentpath1
+                       AND ra.userid = :userid1
+            UNION
+                SELECT cc.". join(',cc.', $fields). ", $ctxselect
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat2
+                  JOIN {role_capabilities} rc ON rc.contextid = ctx.id
+                  JOIN {role_assignments} rc_ra ON rc_ra.roleid = rc.roleid
+                  JOIN {context} rc_ra_ctx ON rc_ra_ctx.id = rc_ra.contextid
+                 WHERE ctx.path LIKE :parentpath2
+                       AND rc_ra.userid = :userid2
+                       AND (ctx.path = rc_ra_ctx.path OR ctx.path LIKE " . $DB->sql_concat("rc_ra_ctx.path", "'/%'") . ")
         ", [
-            'contextcoursecat' => CONTEXT_COURSECAT,
-            'parentpath' => $parentcat->get_context()->path . '/%',
+            'contextcoursecat1' => CONTEXT_COURSECAT,
+            'contextcoursecat2' => CONTEXT_COURSECAT,
+            'parentpath1' => $parentcat->get_context()->path . '/%',
+            'parentpath2' => $parentcat->get_context()->path . '/%',
             'userid1' => $USER->id,
             'userid2' => $USER->id
         ]);
