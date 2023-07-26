@@ -2352,7 +2352,10 @@ class grade_structure {
                 ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
             $url = $gpr->add_url_params($url);
 
-            if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
+            if ($element['type'] == 'category') {
+                // Grade categories themselves cannot be locked.
+                return null;
+            } else if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
                 // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
@@ -2480,7 +2483,7 @@ class grade_structure {
                 'moodle', $attributes);
         }
 
-        if ($element['object']->is_locked()) {
+        if (($element['type'] != 'category') && $element['object']->is_locked()) {
             $statusicons .= $OUTPUT->pix_icon('i/lock', grade_helper::get_lang_string('locked', 'grades'),
                 'moodle', $attributes);
         }
@@ -2640,7 +2643,6 @@ class grade_structure {
                     }
                     $context->editurl = $this->get_edit_link($element, $gpr);
                     $context->hideurl = $this->get_hiding_link($element, $gpr);
-                    $context->lockurl = $this->get_locking_link($element, $gpr);
                 }
             }
 
