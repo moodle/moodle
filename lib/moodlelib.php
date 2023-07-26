@@ -10031,23 +10031,12 @@ function is_proxybypass( $url ) {
     // Get the possible bypass hosts into an array.
     $matches = explode( ',', $CFG->proxybypass );
 
-    // Check for a match.
-    // (IPs need to match the left hand side and hosts the right of the url,
-    // but we can recklessly check both as there can't be a false +ve).
-    foreach ($matches as $match) {
-        $match = trim($match);
+    // Check for a exact match on the IP or in the domains.
+    $isdomaininallowedlist = \core\ip_utils::is_domain_in_allowed_list($host, $matches);
+    $isipinsubnetlist = \core\ip_utils::is_ip_in_subnet_list($host, $CFG->proxybypass, ',');
 
-        // Try for IP match (Left side).
-        $lhs = substr($host, 0, strlen($match));
-        if (strcasecmp($match, $lhs)==0) {
-            return true;
-        }
-
-        // Try for host match (Right side).
-        $rhs = substr($host, -strlen($match));
-        if (strcasecmp($match, $rhs)==0) {
-            return true;
-        }
+    if ($isdomaininallowedlist || $isipinsubnetlist) {
+        return true;
     }
 
     // Nothing matched.
