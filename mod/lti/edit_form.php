@@ -180,21 +180,24 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setForceLtr('lti_customparameters');
 
         if (!empty($this->_customdata->isadmin)) {
-            $options = array(
-                LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
-                LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
-                LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
-            );
-            if ($istool) {
-                // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
-                unset($options[LTI_COURSEVISIBLE_NO]);
-                $stringname = 'show_in_course_lti2';
-            } else {
-                $stringname = 'show_in_course_lti1';
+            // Only site-level preconfigured tools allow the control of course visibility in the site admin tool type form.
+            if (!$this->_customdata->iscoursetool) {
+                $options = array(
+                    LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
+                    LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
+                    LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
+                );
+                if ($istool) {
+                    // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
+                    unset($options[LTI_COURSEVISIBLE_NO]);
+                    $stringname = 'show_in_course_lti2';
+                } else {
+                    $stringname = 'show_in_course_lti1';
+                }
+                $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
+                $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
+                $mform->setDefault('lti_coursevisible', '1');
             }
-            $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
-            $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
-            $mform->setDefault('lti_coursevisible', '1');
         } else {
             $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_ACTIVITYCHOOSER);
         }
