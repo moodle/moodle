@@ -156,7 +156,19 @@ class mod_lti_mod_form extends moodleform_mod {
             }
             $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
-            foreach (lti_get_types_for_add_instance() as $id => $type) {
+            // To prevent the use of manually configured instances, existing instances which are using a preconfigured tool will not
+            // display the option "Automatic, based on tool URL" in the preconfigured tools select. This prevents switching from an
+            // instance configured using a preconfigured tool to an instance that is manually configured.
+            // Exceptions are made for:
+            // - Existing manually configured instances (i.e. no type set).
+            // - Instances using a tool type which isn't visible in the course preconfigured tools selector, such as when a
+            // site-level tool type is domain-matched.
+            $instancetypes = lti_get_types_for_add_instance();
+            if (!empty($this->current->typeid) && array_key_exists($this->current->typeid, $instancetypes)) {
+                unset($instancetypes[0]);
+            }
+
+            foreach ($instancetypes as $id => $type) {
                 if (!empty($type->toolproxyid)) {
                     $toolproxy[] = $type->id;
                     $attributes = array('globalTool' => 1, 'toolproxy' => 1);

@@ -56,3 +56,5 @@ Feature: Add tools
     Then the field "Preconfigured tool" matches value "Course tool 1"
     And the "Select content" "button" should be disabled
     And the "Tool URL" "field" should be disabled
+    And I click on "Preconfigured tool" "select"
+    And I should not see "Automatic, based on tool URL"
