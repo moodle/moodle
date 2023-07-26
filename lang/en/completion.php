@@ -88,7 +88,6 @@ $string['completion_link'] = 'activity/completion';
 $string['completion_manual'] = 'Students can manually mark the activity as completed';
 $string['completion_none'] = 'Do not indicate activity completion';
 $string['completionactivitydefault'] = 'Use activity default';
-$string['completiondefault'] = 'Default completion tracking';
 $string['completiondisabled'] = 'Disabled, not shown in activity settings';
 $string['completionenabled'] = 'Enabled, control via completion and activity settings';
 $string['completionexpected'] = 'Set reminder in Timeline';
@@ -118,7 +117,6 @@ $string['completionusegrade_help'] = 'If enabled, the activity is considered com
 $string['completionupdated'] = 'Updated completion for activity <b>{$a}</b>';
 $string['completionview'] = 'Require view';
 $string['completionview_desc'] = 'Student must view this activity to complete it';
-$string['configcompletiondefault'] = 'The default setting for completion tracking when creating new activities.';
 $string['configenablecompletion'] = 'If enabled, course and activity completion conditions may be set. Setting activity completion conditions is recommended so that meaningful data is displayed for users in their course overview on the Dashboard.';
 $string['confirmselfcompletion'] = 'Confirm self completion';
 $string['courseaggregation'] = 'Condition requires';
@@ -260,4 +258,8 @@ $string['youmust'] = 'You must';
 
 // Deprecated since Moodle 4.0.
 $string['yourprogress'] = 'Your progress';
+
+// Deprecated since Moodle 4.3.
 $string['editcoursecompletionsettings'] = 'Edit course completion settings';
+$string['completiondefault'] = 'Default completion tracking';
+$string['configcompletiondefault'] = 'The default setting for completion tracking when creating new activities.';

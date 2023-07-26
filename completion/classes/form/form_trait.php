@@ -103,7 +103,6 @@ trait form_trait {
      * @param bool $supportviews True if the module supports views and false otherwise.
      * @param bool $supportgrades True if the module supports grades and false otherwise.
      * @param bool $rating True if the rating feature is enabled and false otherwise.
-     * @param bool $defaultcompletion True if the default completion is enabled and false otherwise. To review in MDL-78531.
      * @param int|null $courseid Course where to add completion elements.
      * @throws \coding_exception If the form is not moodleform_mod and $modname is null.
      */
@@ -112,7 +111,6 @@ trait form_trait {
         bool $supportviews = false,
         bool $supportgrades = false,
         bool $rating = false,
-        bool $defaultcompletion = true,
         ?int $courseid = null
     ): void {
         global $SITE;
