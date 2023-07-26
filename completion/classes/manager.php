@@ -559,9 +559,18 @@ class manager {
      * @return stdClass
      */
     public static function get_default_completion($course, $module, $flatten = true, string $suffix = '') {
-        global $DB, $CFG;
-        if ($data = $DB->get_record('course_completion_defaults', ['course' => $course->id, 'module' => $module->id],
-            'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules')) {
+        global $DB, $CFG, $SITE;
+
+        $fields = 'completion, completionview, completionexpected, completionusegrade, completionpassgrade, customrules';
+        // Check course default completion values.
+        $params = ['course' => $course->id, 'module' => $module->id];
+        $data = $DB->get_record('course_completion_defaults', $params, $fields);
+        if (!$data && $course->id != $SITE->id) {
+            // If there is no course default completion, check site level default completion values ($SITE->id).
+            $params['course'] = $SITE->id;
+            $data = $DB->get_record('course_completion_defaults', $params, $fields);
+        }
+        if ($data) {
             if ($data->customrules && ($customrules = @json_decode($data->customrules, true))) {
                 // MDL-72375 This will override activity id for new mods. Skip this field, it is already exposed as courseid.
                 unset($customrules['id']);
@@ -578,13 +587,6 @@ class manager {
         } else {
             $data = new stdClass();
             $data->completion = COMPLETION_TRACKING_NONE;
-            if ($CFG->completiondefault) {
-                $completion = new \completion_info(get_fast_modinfo($course->id)->get_course());
-                if ($completion->is_enabled() && plugin_supports('mod', $module->name, FEATURE_MODEDIT_DEFAULT_COMPLETION, true)) {
-                    $data->completion = COMPLETION_TRACKING_MANUAL;
-                    $data->completionview = 1;
-                }
-            }
         }
 
         // If the suffix is not empty, the completion rules need to be renamed to avoid conflicts.

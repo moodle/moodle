@@ -115,7 +115,7 @@ trait form_trait {
         bool $defaultcompletion = true,
         ?int $courseid = null
     ): void {
-        global $CFG, $SITE;
+        global $SITE;
 
         $mform = $this->get_form();
         if ($modname === null) {
@@ -125,7 +125,6 @@ trait form_trait {
                 $supportviews = plugin_supports('mod', $modname, FEATURE_COMPLETION_TRACKS_VIEWS, false);
                 $supportgrades = plugin_supports('mod', $modname, FEATURE_GRADE_HAS_GRADE, false);
                 $rating = $this->_features->rating;
-                $defaultcompletion = $CFG->completiondefault && $this->_features->defaultcompletion;
             } else {
                 throw new \coding_exception('You must specify the modname parameter if you are not using a moodleform_mod.');
             }
@@ -139,15 +138,6 @@ trait form_trait {
         $mform->setType('completionunlocked', PARAM_INT);
 
         $trackingdefault = COMPLETION_TRACKING_NONE;
-        // If system and activity default completion is on, set it.
-        if ($defaultcompletion) {
-            $hasrules = plugin_supports('mod', $modname, FEATURE_COMPLETION_HAS_RULES, true);
-            if ($hasrules || $supportviews) {
-                $trackingdefault = COMPLETION_TRACKING_AUTOMATIC;
-            } else {
-                $trackingdefault = COMPLETION_TRACKING_MANUAL;
-            }
-        }
 
         // Get the sufix to add to the completion elements name.
         $suffix = $this->get_suffix();
