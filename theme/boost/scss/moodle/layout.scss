@@ -228,7 +228,8 @@
             margin-left: 0;
             margin-right: $drawer-right-width;
             padding-right: 1rem;
-            .jsenabled & .btn-footer-popover {
+            .jsenabled & .btn-footer-popover,
+            .jsenabled & .btn-footer-communication {
                 right: calc(#{$drawer-right-width} + 2rem);
             }
         }
