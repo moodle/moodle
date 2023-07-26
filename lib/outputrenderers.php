@@ -3278,6 +3278,20 @@ EOD;
     }
 
     /**
+     * Outputs a screen reader only inline text.
+     *
+     * @param string $contents The contents of the paragraph
+     * @return string the HTML to output.
+     */
+    public function sr_text(string $contents): string {
+        return html_writer::tag(
+            'span',
+            $contents,
+            ['class' => 'sr-only']
+        ) . ' ';
+    }
+
+    /**
      * Outputs a container.
      *
      * @param string $contents The contents of the box
