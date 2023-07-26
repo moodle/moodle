@@ -6782,7 +6782,15 @@ class assign {
             return false;
         }
 
-        if ($instance->requiresubmissionstatement && empty($data->submissionstatement) && $USER->id == $userid) {
+        $adminconfig = $this->get_admin_config();
+
+        $submissionstatement = '';
+        if ($instance->requiresubmissionstatement) {
+            $submissionstatement = $this->get_submissionstatement($adminconfig, $instance, $this->context);
+        }
+
+        if (!empty($submissionstatement) && $instance->requiresubmissionstatement
+                && empty($data->submissionstatement) && $USER->id == $userid) {
             return false;
         }
 

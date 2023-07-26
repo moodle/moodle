@@ -11,6 +11,7 @@ information provided here is intended especially for developers.
   even if we define the settings in config.php.
 * New \core\output\activity_header::get_heading_level() method to get the heading level for a given heading level depending whether
   the page displays a heading for the activity (usually a h2 heading containing the activity name).
+* count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
 
 === 4.2.1 ===
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
