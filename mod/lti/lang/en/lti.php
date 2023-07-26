@@ -289,6 +289,7 @@ $string['launchoptions'] = 'Launch options';
 $string['lti'] = 'LTI';
 $string['lti:addcoursetool'] = 'Add course-specific tool configurations';
 $string['lti:addmanualinstance'] = 'Add a manually-configured tool';
+$string['lti:addmanualinstanceprohibitederror'] = 'The manual creation of tools without a course tool definition is no longer supported. Please create a course tool first and then use that to create activity instances.';
 $string['lti:addinstance'] = 'Add a new external tool';
 $string['lti:addpreconfiguredinstance'] = 'Add a preconfigured tool';
 $string['lti:grade'] = 'View grades returned by the external tool';

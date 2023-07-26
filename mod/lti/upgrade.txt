@@ -3,6 +3,8 @@ This files describes API changes in the lti code.
 === 4.3 ===
 
 * The `lti_libxml_disable_entity_loader` method is deprecated, as it is no longer required from PHP 8.0
+* The `mod_lti_mod_form` constructor will now throw an exception if called without passing a typeid as manual configuration of
+  instances is now unsupported.
 
 === 4.2 ===
 

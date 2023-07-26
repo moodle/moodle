@@ -62,10 +62,13 @@ class mod_lti_mod_form extends moodleform_mod {
     /**
      * Constructor.
      *
+     * Throws an exception if trying to init the form for a new manual instance of a tool, which is not supported in 4.3 onward.
+     *
      * @param \stdClass $current the current form data.
      * @param string $section the section number.
      * @param \stdClass $cm the course module object.
      * @param \stdClass $course the course object.
+     * @throws moodle_exception if trying to init the form for the creation of a manual instance, which is no longer supported.
      */
     public function __construct($current, $section, $cm, $course) {
 
@@ -73,6 +76,15 @@ class mod_lti_mod_form extends moodleform_mod {
         // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
         $this->typeid = optional_param('typeid', null, PARAM_INT);
         $this->type = optional_param('type', null, PARAM_ALPHA);
+
+        // Only permit construction if the form deals with editing an existing instance (current->id not empty), or creating an
+        // instance from a preconfigured tool type ($this->typeid not empty).
+        global $PAGE;
+        if ($PAGE->has_set_url() && str_contains($PAGE->url, '/course/modedit.php')) {
+            if (empty($this->typeid) && empty($current->id)) {
+                throw new moodle_exception('lti:addmanualinstanceprohibitederror', 'mod_lti');
+            }
+        }
 
         parent::__construct($current, $section, $cm, $course);
     }

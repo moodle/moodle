@@ -14,18 +14,9 @@ Feature: Content-Item support
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
-    # Create tool type that supports deep linking.
-    And I follow "configure a tool manually"
-    And I set the field "Tool name" to "Teaching Tool 1"
-    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
-    And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
-    And I expand all fieldsets
-    And I set the field "Supports Deep Linking (Content-Item Message)" to "1"
-    And I press "Save changes"
-    And I should see "Teaching Tool 1"
-    And I log out
+    And the following "mod_lti > tool types" exist:
+      | name            | description        | baseurl                                   | coursevisible | state | lti_contentitem |
+      | Teaching Tool 1 | Tool 1 description | /mod/lti/tests/fixtures/tool_provider.php | 2             | 1     | 1               |
 
   @javascript
   Scenario: Tool that supports Deep Linking should be able to configure a tool via the Select content button
@@ -51,19 +42,14 @@ Feature: Content-Item support
 
   @javascript
   Scenario: Changing preconfigured tool selection
-    Given I log in as "admin"
-    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
-    And I follow "configure a tool manually"
-    And I set the field "Tool name" to "Teaching Tool 2"
-    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
-    And I set the field "Tool configuration usage" to "Show in activity chooser and as a preconfigured tool"
-    And I expand all fieldsets
-    And I press "Save changes"
-    And I should see "Teaching Tool 2"
-    And I log out
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "External tool" to section "1"
+    Given the following "mod_lti > tool types" exist:
+      | name            | description         | baseurl                                   | coursevisible | state |
+      | Teaching Tool 2 | Another description | /mod/lti/tests/fixtures/tool_provider.php | 2             | 1     |
+    # Create a manually configured instance using the generator (this isn't possible via the UI any more).
+    And the following "activities" exist:
+      | activity | course | name                 | typeid | toolurl                                   |
+      | lti      | C1     | Test tool activity 1 | 0      | /mod/lti/tests/fixtures/tool_provider.php |
+    When I am on the "Test tool activity 1" "lti activity editing" page logged in as teacher1
     # On load with no preconfigured tool selected: Select content button - disabled, Tool URL - enabled.
     And the field "Preconfigured tool" matches value "Automatic, based on tool URL"
     And I set the field "Activity name" to "Test tool activity 1"
