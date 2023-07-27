@@ -2643,6 +2643,23 @@ input[disabled] {
     }
 }
 
+/*
+ * Helpers to show elements only when a parent element has focus or hover.
+ */
+
+// Add this class to the element to hide.
+.v-parent-focus {
+    opacity: 0;
+    visibility: hidden;
+}
+
+// Add this class to the parent element to control focus.
+.focus-control:focus-within .v-parent-focus,
+.focus-control:hover .v-parent-focus {
+    opacity: 1;
+    visibility: visible;
+}
+
 // Emoji picker.
 $picker-width: 350px !default;
 $picker-width-xs: 320px !default;

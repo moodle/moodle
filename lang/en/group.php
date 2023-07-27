@@ -115,6 +115,8 @@ $string['groupmembers'] = 'Group members';
 $string['groupmemberssee'] = 'See group members';
 $string['groupmembersselected'] = 'Members of selected group';
 $string['groupmode'] = 'Group mode';
+$string['groupmode_groupsseparate_help'] = 'Each group member can only see their own group, others are invisible';
+$string['groupmode_groupsvisible_help'] = 'Each group member works in their own group, but can also see other groups';
 $string['groupmode_help'] = 'This setting has 3 options:
 
 * No groups

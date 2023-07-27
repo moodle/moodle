@@ -25458,6 +25458,20 @@ input[disabled] {
     width: 300px;
   }
 }
+/*
+ * Helpers to show elements only when a parent element has focus or hover.
+ */
+.v-parent-focus {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.focus-control:focus-within .v-parent-focus,
+.focus-control:hover .v-parent-focus {
+  opacity: 1;
+  visibility: visible;
+}
+
 .emoji-picker {
   width: 350px;
   height: 400px;

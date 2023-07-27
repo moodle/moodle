@@ -253,7 +253,6 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/grading' => 'fa-magic',
             'core:i/gradingnotifications' => 'fa-bell-o',
             'core:i/groupevent' => 'fa-group',
-            'core:i/groupn' => 'fa-user',
             'core:i/group' => 'fa-users',
             'core:i/home' => 'fa-home',
             'core:i/hide' => 'fa-eye',
