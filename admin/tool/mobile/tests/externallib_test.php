@@ -230,6 +230,8 @@ class externallib_test extends externallib_advanced_testcase {
             array('name' => 'tool_mobile_custommenuitems', 'value' => ''),
             array('name' => 'tool_mobile_apppolicy', 'value' => ''),
             array('name' => 'tool_mobile_autologinmintimebetweenreq', 'value' => 6 * MINSECS),
+            array('name' => 'tool_mobile_autologout', 'value' => get_config('tool_mobile', 'autologout')),
+            array('name' => 'tool_mobile_autologouttime', 'value' => get_config('tool_mobile', 'autologouttime')),
             array('name' => 'calendartype', 'value' => $CFG->calendartype),
             array('name' => 'calendar_site_timeformat', 'value' => $CFG->calendar_site_timeformat),
             array('name' => 'calendar_startwday', 'value' => $CFG->calendar_startwday),
