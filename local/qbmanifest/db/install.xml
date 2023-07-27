@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="local/qbmanifest/db" VERSION="20210930" COMMENT="XMLDB file for Moodle local/qbmanifest"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="manifest_importlog" COMMENT="This table saves information about an instance of local_qbmanifest in a course.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="added_by" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="file_name" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="The name of the manifest file."/>
+        
+        <FIELD NAME="added_time" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="The unique id for this log instance."/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="added_by" UNIQUE="false" FIELDS="added_by" COMMENT="reference to user table user id"/>        
+      </INDEXES>
+    </TABLE>   
+  </TABLES>
+</XMLDB>
