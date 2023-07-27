@@ -54,16 +54,18 @@ function scorm_get_completion_state($course, $cm, $userid, $type) {
         $tracks = $DB->get_records_sql(
             "
             SELECT
-                id,
-                scoid,
-                element,
-                value
+                v.id,
+                v.scoid,
+                e.element,
+                v.value
             FROM
-                {scorm_scoes_track}
+                 {scorm_scoes_value} v
+            JOIN {scorm_attempt} a on a.id = v.attemptid
+            JOIN {scorm_element} e on e.id = v.elementid
             WHERE
-                scormid = ?
-            AND userid = ?
-            AND element IN
+                a.scormid = ?
+            AND a.userid = ?
+            AND e.element IN
             (
                 'cmi.core.lesson_status',
                 'cmi.completion_status',

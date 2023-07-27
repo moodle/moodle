@@ -481,11 +481,12 @@ class mod_scorm_external extends external_api {
 
         // Check settings / permissions to view the SCORM.
         scorm_require_available($scorm);
+        $attemptobject = scorm_get_attempt($USER->id, $scorm->id, $params['attempt']);
 
         foreach ($params['tracks'] as $track) {
             $element = $track['element'];
             $value = $track['value'];
-            $trackid = scorm_insert_track($USER->id, $scorm->id, $sco->id, $params['attempt'], $element, $value,
+            $trackid = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attemptobject, $element, $value,
                                             $scorm->forcecompleted);
 
             if ($trackid) {
