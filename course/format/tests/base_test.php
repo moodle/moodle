@@ -662,6 +662,75 @@ class base_test extends advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test for the get_non_ajax_cm_action_url method.
+     *
+     * @covers ::get_non_ajax_cm_action_url
+     * @dataProvider get_non_ajax_cm_action_url_provider
+     * @param string $action the ajax action name
+     * @param string $expectedparam the expected param to check
+     * @param string $exception if an exception is expected
+     */
+    public function test_get_non_ajax_cm_action_url(string $action, string $expectedparam, bool $exception) {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $assign0 = $generator->create_module('assign', array('course' => $course, 'section' => 0));
+
+        $format = course_get_format($course);
+        $modinfo = $format->get_modinfo();
+        $cminfo = $modinfo->get_cm($assign0->cmid);
+
+        if ($exception) {
+            $this->expectException(\coding_exception::class);
+        }
+        $result = $format->get_non_ajax_cm_action_url($action, $cminfo);
+        $this->assertEquals($assign0->cmid, $result->param($expectedparam));
+    }
+
+    /**
+     * Data provider for test_get_non_ajax_cm_action_url.
+     *
+     * @return array the testing scenarios
+     */
+    public function get_non_ajax_cm_action_url_provider(): array {
+        return [
+            'duplicate' => [
+                'action' => 'cmDuplicate',
+                'expectedparam' => 'duplicate',
+                'exception' => false,
+            ],
+            'hide' => [
+                'action' => 'cmHide',
+                'expectedparam' => 'hide',
+                'exception' => false,
+            ],
+            'show' => [
+                'action' => 'cmShow',
+                'expectedparam' => 'show',
+                'exception' => false,
+            ],
+            'stealth' => [
+                'action' => 'cmStealth',
+                'expectedparam' => 'stealth',
+                'exception' => false,
+            ],
+            'delete' => [
+                'action' => 'cmDelete',
+                'expectedparam' => 'delete',
+                'exception' => false,
+            ],
+            'non-existent' => [
+                'action' => 'nonExistent',
+                'expectedparam' => '',
+                'exception' => true,
+            ],
+        ];
+    }
 }
 
 /**

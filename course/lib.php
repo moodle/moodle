@@ -1657,8 +1657,13 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $hasmanageactivities = has_capability('moodle/course:manageactivities', $modcontext);
 
     if (!isset($str)) {
-        $str = get_strings(array('delete', 'move', 'moveright', 'moveleft',
-            'editsettings', 'duplicate', 'modhide', 'makeavailable', 'makeunavailable', 'modshow'), 'moodle');
+        $str = get_strings(
+            [
+                'delete', 'move', 'moveright', 'moveleft', 'editsettings', 'duplicate', 'modhide',
+                'makeavailable', 'makeunavailable', 'modshow', 'modshowcmtitle', 'makeavailablecmtitle',
+            ],
+            'moodle'
+        );
         $str->assign         = get_string('assignroles', 'role');
         $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
         $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
@@ -1785,6 +1790,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                     'class' => 'editing_show',
                     'data-action' => ($usecomponents) ? 'cmShow' : 'show',
                     'data-id' => $mod->id,
+                    // Title is needed mostly for behat tests. Otherwise it will follow any link with "show".
+                    'title' => $str->modshowcmtitle,
                 ]
             );
         }
@@ -1819,6 +1826,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
                     'data-action' => $action,
                     'data-sectionreturn' => $sr,
                     'data-id' => $mod->id,
+                    // Title is needed mostly for behat tests. Otherwise it will follow any link with "make available".
+                    'title' => $str->makeavailablecmtitle,
                 ]
             );
         }

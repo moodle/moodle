@@ -741,6 +741,37 @@ abstract class base {
     }
 
     /**
+     * Return the old non-ajax activity action url.
+     *
+     * Goutte behats tests cannot trigger javascript events,
+     * so we must translate to an old non-ajax url while non-ajax
+     * course editing is still supported.
+     *
+     * @param string $action action name the reactive action
+     * @param cm_info $cm course module
+     * @return moodle_url
+     */
+    public function get_non_ajax_cm_action_url(string $action, cm_info $cm): moodle_url {
+        $nonajaxactions = [
+            'cmDelete' => 'delete',
+            'cmDuplicate' => 'duplicate',
+            'cmHide' => 'hide',
+            'cmShow' => 'show',
+            'cmStealth' => 'stealth',
+        ];
+        if (!isset($nonajaxactions[$action])) {
+            throw new coding_exception('Unknown activity action: ' . $action);
+        }
+        $nonajaxaction = $nonajaxactions[$action];
+        $nonajaxurl = new moodle_url(
+            '/course/mod.php',
+            ['sesskey' => sesskey(), $nonajaxaction => $cm->id]
+        );
+        $nonajaxurl->param('sr', $this->get_section_number());
+        return $nonajaxurl;
+    }
+
+    /**
      * Loads all of the course sections into the navigation
      *
      * This method is called from global_navigation::load_course_sections()

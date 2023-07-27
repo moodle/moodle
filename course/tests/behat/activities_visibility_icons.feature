@@ -44,7 +44,7 @@ Feature: Toggle activities visibility from the course page
     # Stealth behaviour is not available by default:
     And "Test forum name" actions menu should not have "Make available" item
     And "Test forum name" actions menu should not have "Make unavailable" item
-    And I click on "Show" "link" in the "Test forum name" activity
+    And I click on "Show activity" "link" in the "Test forum name" activity
     And "Test forum name" activity should be visible
     And I open "Test forum name" actions menu
     And "Test forum name" actions menu should not have "Show" item
@@ -130,7 +130,7 @@ Feature: Toggle activities visibility from the course page
     And "Test assignment name" actions menu should have "Show" item
     And "Test assignment name" actions menu should not have "Hide" item
     And "Test assignment name" actions menu should not have "Make unavailable" item
-    And I click on "Make available" "link" in the "Test assignment name" activity
+    And I click on "Make activity available" "link" in the "Test assignment name" activity
     And "Test assignment name" activity should be available but hidden from course page
     # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "Test assignment name" actions menu
