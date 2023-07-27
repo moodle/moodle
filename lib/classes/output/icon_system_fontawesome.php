@@ -269,7 +269,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/lock' => 'fa-lock',
             'core:i/log' => 'fa-list-alt',
             'core:i/mahara_host' => 'fa-id-badge',
-            'core:i/manual_item' => 'fa-square-o',
+            'core:i/manual_item' => 'fa-pencil-square-o',
             'core:i/marked' => 'fa-circle',
             'core:i/marker' => 'fa-circle-o',
             'core:i/mean' => 'fa-calculator',
