@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_qbmanifest';
-$plugin->version = 2022060100;
+$plugin->version = 2023072700;
 $plugin->release = 'v1.1';
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_ALPHA;
