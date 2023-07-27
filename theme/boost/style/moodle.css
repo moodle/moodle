@@ -29355,6 +29355,15 @@ span.editinstructions .alert-link {
   height: 0.8203125rem;
   margin-right: 0.25rem;
 }
+.activity-item .activity-completion .completion-dialog .editcompletion a {
+  border-radius: 0.5rem;
+  color: #495057;
+  font-weight: bold;
+  text-decoration: none;
+}
+.activity-item .activity-completion .completion-dialog .editcompletion a:hover {
+  background-color: #e9ecef;
+}
 .activity-item .activity-groupmode-info {
   grid-area: groupmode;
   justify-self: end;

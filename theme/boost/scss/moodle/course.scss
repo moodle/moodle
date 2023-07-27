@@ -1603,6 +1603,15 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
                 height: $font-size-sm;
                 margin-right: map-get($spacers, 1);
             }
+            .editcompletion a {
+                @include border-radius();
+                color: $gray-700;
+                font-weight: bold;
+                text-decoration: none;
+                &:hover {
+                    background-color: $gray-200;
+                }
+            }
         }
     }
 
