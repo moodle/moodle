@@ -632,7 +632,7 @@ class local_qubitsbook_external extends external_api {
                     { 
                        $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
 
-                       $submissintype[] = array(
+                       $submissintype = array(
                         'type'=> $config->plugin,
                         'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
                         ); 
@@ -643,7 +643,7 @@ class local_qubitsbook_external extends external_api {
 
                         $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
 
-                           $submissintype[] = array(
+                           $submissintype = array(
                             'type'=> $config->plugin,
                             'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
                             'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
@@ -683,20 +683,18 @@ class local_qubitsbook_external extends external_api {
             if($checkenrol)
             { 
                 $lti_updated = [                        
-                        'message'=>'Success here',
+                        'message'=>'Assignment details',
                         'userdetails' => $userdetails,
-                       // 'assignmentdetails' => $returnarray
-                        ];
-                      //  print_r($lti_updated);die();
-            }
-            
+                        'assignmentdetails' => $returnarray
+                        ];                       
+            }            
             else
             {
                 //return json_encode(['status' => 0,'message' => 'Not enrol']);
                 $lti_updated = [                        
                         'message'=>'Error: Not enrol',
                         'userdetails' => '',
-                       // 'assignmentdetails' => ''
+                        'assignmentdetails' => ''
                         ];
             }
         }
@@ -706,41 +704,52 @@ class local_qubitsbook_external extends external_api {
             $lti_updated = [                        
                         'message'=>'Error: Unique Field not match',
                         'userdetails' => '',
-                      // 'assignmentdetails' => ''
+                        'assignmentdetails' => ''
                         ];
         }
-        
+         //print_r($lti_updated);die();
         return $lti_updated;
     }
 
     public static function get_assignment_service_returns()
     {
-       /* return new external_single_structure(
-            array(
-                'message'=> new external_value(PARAM_TEXT, 'success message'),
-               // 'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field'),
-                'userdetails' => new external_value(PARAM_TEXT, 'successs message',VALUE_OPTIONAL),
-                'assignmentdetails' => new external_value(PARAM_TEXT, 'success messages',VALUE_OPTIONAL)
-            )
-        );*/
- 
-        return new external_multiple_structure(
-                new external_single_structure(
+        return new external_single_structure(
                         array(
-                "message"=> new external_value(PARAM_RAW, 'success message'),
-                "userdetails" => new external_multiple_structure(
-                                    new external_single_structure(
-                                        array(
-                                            "userid" =>  new external_value(PARAM_RAW, 'User ID'),
-                                             "email" =>  new external_value(PARAM_RAW, 'Email'),
-                                              "username" =>  new external_value(PARAM_RAW, 'Username'),
-                                               "sesskey" =>  new external_value(PARAM_RAW, 'Session Key'),
-                                                "role" =>  new external_value(PARAM_RAW, 'Role')
-                                            ), 'Userdetails'
+                        'message' => new external_value(PARAM_RAW, 'success'),
+                        'userdetails' => new external_single_structure(
+                                    array(
+                                    'userid' => new external_value(PARAM_RAW, 'USER id'),
+                                    'email' => new external_value(PARAM_RAW, 'User Email'),
+                                    'username' => new external_value(PARAM_RAW, 'Username'),
+                                    'sesskey' => new external_value(PARAM_RAW, 'Session Key'),
+                                    'role' => new external_value(PARAM_RAW, 'User Role')
                                     )
-                                )
-                            )
+                                ),
+                                'User Details', VALUE_OPTIONAL,
+                        'assignmentdetails' => new external_single_structure(
+                                    array(
+                                    'course_id' => new external_value(PARAM_RAW, 'course id'),
+                                    'assignmentid' => new external_value(PARAM_RAW, 'Assignment ID'),
+                                    'assignment_title' => new external_value(PARAM_RAW, 'Assignment Name'),
+                                    'assignment_activitydesc' => new external_value(PARAM_RAW, 'Assignment Question'),
+                                    'duedate' => new external_value(PARAM_RAW, 'Last date'),
+                                    'allowsubmissionsfromdate' => new external_value(PARAM_RAW, 'Start Submission date'),
+                                    'assign_uniquefield' => new external_value(PARAM_RAW, 'Unique field'),
+                                    'submission_status' => new external_value(PARAM_RAW, 'Submission Status (New,submitted)'),
+                                    'submissiontypes' => new external_single_structure(
+                                        array(
+                                         'type' => new external_value(PARAM_RAW, 'Submission Type (text,file,codblock)'),
+                                         'wordlimit' =>new external_value(PARAM_RAW, 'Text Limit')
+                                        )
+                                    ),
+                                    'Submission Type Details', VALUE_OPTIONAL
+                                    )
+                                ),
+                                'Assignment Details', VALUE_OPTIONAL
                         )
-               );
+                );
+
+ 
+       
     }
 }
