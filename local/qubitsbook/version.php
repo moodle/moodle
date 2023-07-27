@@ -28,7 +28,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_qubitsbook';
-$plugin->version = 2023060100;
+$plugin->version = 2023072701;
 $plugin->release = 'v1.0';
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_ALPHA;
