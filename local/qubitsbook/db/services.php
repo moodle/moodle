@@ -24,7 +24,7 @@
  * @copyright 2023 <https://www.yardstickedu.com/> 
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+ 
 $functions = [
     'local_qubitsbook_get_chapter_content' => [
         'classname' => 'local_qubitsbook_external',
@@ -40,6 +40,15 @@ $functions = [
         'methodname' => 'create_assignment_service',
         'classpath' => 'local/qubitsbook/classes/external.php',
         'description' => 'Create New assignment',
+        'type' => 'write',
+        'ajax' => true,
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+    ],
+    'local_qubitsbook_get_assignment_service' => [
+        'classname' => 'local_qubitsbook_external',
+        'methodname' => 'get_assignment_service',
+        'classpath' => 'local/qubitsbook/classes/external.php',
+        'description' => 'GET assignment',
         'type' => 'write',
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)

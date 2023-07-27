@@ -1,4 +1,4 @@
-<?php
+<?php 
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -32,9 +32,6 @@ require_once("$CFG->libdir/enrollib.php");
 require_once($CFG->dirroot . '/mod/qbassign/lib.php');
 require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
 require_once($CFG->dirroot . '/course/lib.php');
-
-
-require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/user/externallib.php");
 
 
@@ -106,12 +103,15 @@ class local_qubitsbook_external extends external_api {
             'grade_duedate' => new external_value(PARAM_TEXT, 'Grade Due Date'),
             'grade' => new external_value(PARAM_TEXT, 'Grade'),
             'description' => new external_value(PARAM_TEXT, 'Description'),
-           // 'additional_files' => new external_value(PARAM_FILE, 'Additional Files')
+            'submission_type' => new external_value(PARAM_TEXT, 'Submission Type'),
+            'submissionstatus' => new external_value(PARAM_TEXT, 'Submission Status',VALUE_OPTIONAL),
+            'wrdlmit' => new external_value(PARAM_TEXT, 'Word Limit',VALUE_OPTIONAL),
+            'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field'),
             )
         );
     }
 
-    public static function create_assignment_service($courseid,$siteid,$chapterid,$assign_name,$duedate,$submissionfrom,$grade_duedate,$grade,$description)
+    public static function create_assignment_service($courseid,$siteid,$chapterid,$assign_name,$duedate,$submissionfrom,$grade_duedate,$grade,$description,$submission_type,$submissionstatus,$wrdlmit,$uniquefield)
     {
         global $DB,$CFG;
         /*echo $courseid;
@@ -212,24 +212,30 @@ class local_qubitsbook_external extends external_api {
         $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata); 
 
         //Additional activities for online submission type
-        $submission_type ='onlinetext';
-        $submissionstatus = 'yes';
-        $wrdlmit = '255';
+        //$submission_type ='onlinetext';
+        //$submissionstatus = 'yes';
+        //$wrdlmit = '255';
 
-        $submission_filetype ='onlinefile';
+        /*$submission_filetype ='onlinefile';
         $submissionfilestatus = 'yes';
 
         $submission_codetype ='codeblock';
-        $submissioncodestatus = 'yes';
+        $submissioncodestatus = 'yes';*/
+
+        $wrdlmit = (isset($wrdlmit))?$wrdlmit:'';
 
         if($submission_type == 'onlinetext')
         {
+           $sqlupdate = "UPDATE mdl_qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$returnid;
+            $getpluginconfigtxt = $DB->execute($sqlupdate);
+
+
            $submission_status = ($submissionstatus=='yes')?1:0;
-           if($submission_status==1)
-           {
-               $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'onlinetex','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
+           //if($submission_status==1)
+           //{
+               //$getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'onlinetex','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
               // print_r($getactive_online);
-               if(isset($getactive_online))
+               /*if(isset($getactive_online))
                {
                 
                    $updateactivityonline = new stdClass();
@@ -238,8 +244,8 @@ class local_qubitsbook_external extends external_api {
                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
                }
                else
-               { 
-                    $updatesactivityonline =  array(
+               {*/ 
+                    /*$updatesactivityonline =  array(
                     'qbassignment' => $returnid,
                     'plugin' => 'onlinetex',
                     'subtype' => 'qbassignsubmission',
@@ -247,7 +253,7 @@ class local_qubitsbook_external extends external_api {
                     'value' => $submission_status
                     );
                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
-               }                   
+               } */                  
 
                 $submissionlimit =  array(
                 'qbassignment' => $returnid,
@@ -263,10 +269,10 @@ class local_qubitsbook_external extends external_api {
                 'plugin' => 'onlinetex',
                 'subtype' => 'qbassignsubmission',
                 'name' => 'wordlimitenabled',
-                'value' => 1
+                'value' => $submission_status
                 );
                 $onlinetext_limiter = $DB->insert_record('qbassign_plugin_config', $submissionlimits);
-           }                    
+           //}                    
         }   
         if($submission_filetype == 'onlinefile') 
         {
@@ -345,11 +351,29 @@ class local_qubitsbook_external extends external_api {
                 );
                 $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
             }           
-        }    
+        } 
+
+        $modl = $DB->get_record('course_modules', array('course' => $courseid,'instance'=>$returnid));
+        $mod_id = $modl->id;
+
+        $contxtl = $DB->get_record('context', array('instanceid'=>$mod_id));
+        $insertmeta =  array(
+            'fieldid' => 8,
+            'instanceid' => $mod_id, 
+            'charvalue' => $uniquefield,
+            'value' => $uniquefield,
+            'contextid' => $contxtl->id,
+            'timecreated' => time(),
+            'timemodified' => time(),
+            'valueformat' => 0
+        );
+        $insercustom = $DB->insert_record('customfield_data', $insertmeta);       
+
         purge_all_caches();
         $lti_updated = [                        
                         'message'=>'Success here',
-                        'assignment_id' =>$returnid
+                        'assignment_id' =>$returnid,
+                        'uniquefield' => $uniquefield
                         ];
         return $lti_updated;
     }
@@ -359,7 +383,8 @@ class local_qubitsbook_external extends external_api {
         return new external_single_structure(
                 array(
                     'assignment_id' => new external_value(PARAM_TEXT, 'assignment id'),
-                    'message'=> new external_value(PARAM_TEXT, 'success message')
+                    'message'=> new external_value(PARAM_TEXT, 'success message'),
+                    'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field')
                 )
             );
     }
@@ -373,7 +398,7 @@ class local_qubitsbook_external extends external_api {
 
     public static function getassignmentbysection($courseid,$moduleid)
     {
-        global $DB,$CFG;
+        global $DB,$CFG,$CONTEXT,$USER;
         //Get QBassign course Module
         $get_coursemodulelist = $DB->get_record('course_modules', array('id' => $moduleid));
         $chapterid = $get_coursemodulelist->section;
@@ -397,16 +422,38 @@ class local_qubitsbook_external extends external_api {
             {
                 foreach($getpluginconfig as $config)
                 {
-                    $submissintype[] = array(
-                    'type'=> $config->plugin,
-                    );
+                    if($config->plugin=='onlinetex')
+                    {
+                       $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
+
+                       $submissintype[] = array(
+                        'type'=> $config->plugin,
+                        'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
+                        ); 
+                    }
+                    if($config->plugin=='file')
+                    {
+                        $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
+
+                        $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
+
+                           $submissintype[] = array(
+                            'type'=> $config->plugin,
+                            'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
+                            'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
+                            ); 
+                    }
                 }
             }
 
             $get_customfield = $DB->get_record('customfield_data', array('instanceid' => $listofactivity,'fieldid'=>8));
             $customfield_activity = $get_customfield->value;
 
-            $returnarray[] = array(
+            $contextsystem = context_module::instance($get_courseactivity->id);
+            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
+            if($checkenrol)
+            {
+                $returnarray[] = array(
                 'title' => $get_courseassign->name,
                 'activitydesc' => $get_courseassign->intro,
                 'duedate' => $get_courseassign->duedate,
@@ -414,8 +461,23 @@ class local_qubitsbook_external extends external_api {
                 'id' => $getassign,
                 'uniquefield' => $customfield_activity,
                 'submissiontypes' => $submissintype
-            );
+                );
+            }
         }
+
+        $context = context_course::instance($get_courseassign->course);
+        $roles = get_user_roles($context, $USER->id, true);
+        $role = key($roles);
+        $rolename = $roles[$role]->shortname;
+
+        //print_r($rolename);
+        $userdetails = array(
+            'userid' => $USER->id,
+            'email' => $USER->email,
+            'username' => $USER->username,
+            'sesskey' => $USER->sesskey,
+            'role' => $rolename
+        );
 
         $coursedetails = array(
             'courseid' => $courseid,
@@ -423,6 +485,8 @@ class local_qubitsbook_external extends external_api {
             'section_id' => $get_coursemodulelist->section,
             'summary' => $get_coursemodulelist->summary
         );
+        echo '<pre>';
+        return json_encode(['status' => 1,'message' => 'success','userdetails'=>$userdetails,'coursedetails'=>$coursedetails,'assignmentdetails'=>$returnarray]);
 
             
     }
@@ -435,7 +499,7 @@ class local_qubitsbook_external extends external_api {
        
         //Get activity unique field details
         $get_customfield = $DB->get_record('customfield_data', array('charvalue' => $uniquefield_assign));
-        //print_r(count($get_customfield));die();
+
         if(isset($get_customfield))
         {
             $customfield_activity = $get_customfield->instanceid;
@@ -495,8 +559,6 @@ class local_qubitsbook_external extends external_api {
                 'role' => $rolename
             );
 
-            
-
             $returnarray = array(
                 'course_id' => $get_assignmentdetails->course,            
                 'assignmentid' => $get_assignmentdetails->id,
@@ -524,4 +586,161 @@ class local_qubitsbook_external extends external_api {
         }
     }
 
+    //get_assignment_service
+
+    public static function get_assignment_service_parameters()
+    {
+         return new external_function_parameters(
+            array(
+            'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field')
+         )
+        );
+    }
+
+    public static function get_assignment_service($uniquefield)
+    {
+        
+        require_once('../../config.php');
+        global $DB,$CFG,$USER,$CONTEXT;
+       
+        //Get activity unique field details
+        $get_customfield = $DB->get_record('customfield_data', array('charvalue' => $uniquefield));
+
+        if(isset($get_customfield))
+        { 
+            $customfield_activity = $get_customfield->instanceid;
+
+            //Get activity Module details
+            $get_coursefield = $DB->get_record('course_modules', array('id' => $customfield_activity));
+            $instance_id = $get_coursefield->instance;
+
+            //Get assignment Module details
+            $get_assignmentdetails = $DB->get_record('qbassign', array('id' => $instance_id));
+
+            //Get assignment submission details
+            $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
+
+            //Get submission type details (file,onlinetex,codeblock)
+            $sql = "SELECT * FROM `mdl_qbassign_plugin_config` WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
+            $getpluginconfig = $DB->get_records_sql($sql);
+            $countsql = count($getpluginconfig);
+            if($countsql>0)
+            { 
+                foreach($getpluginconfig as $config)
+                {
+                    if($config->plugin=='onlinetex')
+                    { 
+                       $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
+
+                       $submissintype[] = array(
+                        'type'=> $config->plugin,
+                        'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
+                        ); 
+                    }
+                    if($config->plugin=='file')
+                    {
+                        $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
+
+                        $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
+
+                           $submissintype[] = array(
+                            'type'=> $config->plugin,
+                            'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
+                            'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
+                            ); 
+                    }
+                }
+            }
+            $context = context_course::instance($get_assignmentdetails->course);
+            $roles = get_user_roles($context, $USER->id, true);
+            $role = key($roles);
+            $rolename = $roles[$role]->shortname;
+
+            //print_r($rolename);
+            $userdetails = array(
+                'userid' => $USER->id,
+                'email' => $USER->email,
+                'username' => $USER->username,
+                'sesskey' => $USER->sesskey,
+                'role' => $rolename
+            );
+            $returnarray = array(
+                'course_id' => $get_assignmentdetails->course,            
+                'assignmentid' => $get_assignmentdetails->id,
+                'assignment_title' => $get_assignmentdetails->name,
+                'assignment_activitydesc' => $get_assignmentdetails->intro,
+                'duedate' => $get_assignmentdetails->duedate,
+                'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
+                'assign_uniquefield' => $uniquefield,
+                'submission_status' => $get_assignmentsubmission_details->status,
+                'submissiontypes' => $submissintype
+            );
+           // echo '<pre>';
+
+
+            $contextsystem = context_module::instance($customfield_activity);
+            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
+            if($checkenrol)
+            { 
+                $lti_updated = [                        
+                        'message'=>'Success here',
+                        'userdetails' => $userdetails,
+                       // 'assignmentdetails' => $returnarray
+                        ];
+                      //  print_r($lti_updated);die();
+            }
+            
+            else
+            {
+                //return json_encode(['status' => 0,'message' => 'Not enrol']);
+                $lti_updated = [                        
+                        'message'=>'Error: Not enrol',
+                        'userdetails' => '',
+                       // 'assignmentdetails' => ''
+                        ];
+            }
+        }
+        else
+        {           
+            //return json_encode(['status' => 0,'message' => 'Unique Field not match']);
+            $lti_updated = [                        
+                        'message'=>'Error: Unique Field not match',
+                        'userdetails' => '',
+                      // 'assignmentdetails' => ''
+                        ];
+        }
+        
+        return $lti_updated;
+    }
+
+    public static function get_assignment_service_returns()
+    {
+       /* return new external_single_structure(
+            array(
+                'message'=> new external_value(PARAM_TEXT, 'success message'),
+               // 'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field'),
+                'userdetails' => new external_value(PARAM_TEXT, 'successs message',VALUE_OPTIONAL),
+                'assignmentdetails' => new external_value(PARAM_TEXT, 'success messages',VALUE_OPTIONAL)
+            )
+        );*/
+ 
+        return new external_multiple_structure(
+                new external_single_structure(
+                        array(
+                "message"=> new external_value(PARAM_RAW, 'success message'),
+                "userdetails" => new external_multiple_structure(
+                                    new external_single_structure(
+                                        array(
+                                            "userid" =>  new external_value(PARAM_RAW, 'User ID'),
+                                             "email" =>  new external_value(PARAM_RAW, 'Email'),
+                                              "username" =>  new external_value(PARAM_RAW, 'Username'),
+                                               "sesskey" =>  new external_value(PARAM_RAW, 'Session Key'),
+                                                "role" =>  new external_value(PARAM_RAW, 'Role')
+                                            ), 'Userdetails'
+                                    )
+                                )
+                            )
+                        )
+               );
+    }
 }
