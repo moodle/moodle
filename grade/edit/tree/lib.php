@@ -296,11 +296,13 @@ class grade_edit_tree {
             $parentcategories = array_merge($rowclasses, [$eid]);
             $emptyrow->attributes['class'] = 'spacer ' . implode(' ', $parentcategories);
             $emptyrow->attributes['data-hidden'] = 'false';
+            $emptyrow->attributes['aria-hidden'] = 'true';
 
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
             $headercell->attributes['class'] = 'cell column-rowspan rowspan';
+            $headercell->attributes['aria-hidden'] = 'true';
             $headercell->rowspan = $row_count;
             $emptyrow->cells[] = $headercell;
 
@@ -310,6 +312,7 @@ class grade_edit_tree {
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'emptyrow colspan ' . $levelclass;
+            $endcell->attributes['aria-hidden'] = 'true';
 
             $returnrows[] = new html_table_row(array($endcell));
 
