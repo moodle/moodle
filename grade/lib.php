@@ -1429,10 +1429,14 @@ class grade_structure {
      * @param bool  $spacerifnone return spacer if no icon found
      *
      * @return string icon or spacer
+     * @deprecated since Moodle 4.4 - please use grade_helper::get_element_icon.
+     * @todo MDL-XXXXX This will be deleted in Moodle 4.8.
      */
     public function get_element_icon(&$element, $spacerifnone=false) {
         global $CFG, $OUTPUT;
         require_once $CFG->libdir.'/filelib.php';
+        debugging('The function get_element_icon() is deprecated, please use grade_helper::get_element_icon() instead.',
+            DEBUG_DEVELOPER);
 
         $outputstr = '';
 
@@ -1535,8 +1539,14 @@ class grade_structure {
      *
      * @param array $element An array representing an element in the grade_tree
      * @return string The string that describes the type of the grade element
+     * @deprecated since Moodle 4.4 - please use grade_helper::get_element_type_string.
+     * @todo MDL-XXXXX This will be deleted in Moodle 4.8.
      */
     public function get_element_type_string(array $element): string {
+        debugging('The function get_element_type_string() is deprecated,' .
+            ' please use grade_helper::get_element_type_string() instead.',
+            DEBUG_DEVELOPER);
+
         // If the element is a grade category.
         if ($element['type'] == 'category') {
             return get_string('category', 'grades');
@@ -1585,10 +1595,15 @@ class grade_structure {
      * @param moodle_url|null $sortlink Link to sort column.
      *
      * @return string header
+     * @deprecated since Moodle 4.4 - please use grade_helper::get_element_header.
+     * @todo MDL-XXXXX This will be deleted in Moodle 4.8.
      */
     public function get_element_header(array &$element, bool $withlink = false, bool $icon = true,
             bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
             ?moodle_url $sortlink = null) {
+        debugging('The function get_element_header() is deprecated, please use grade_helper::get_element_header() instead.',
+            DEBUG_DEVELOPER);
+
         $header = '';
 
         if ($icon) {
@@ -1638,8 +1653,15 @@ class grade_structure {
         return $header;
     }
 
+    /**
+     * @deprecated since Moodle 4.4 - please use grade_helper::get_activity_link.
+     * @todo MDL-XXXXX This will be deleted in Moodle 4.8.
+     */
     private function get_activity_link($element) {
         global $CFG;
+        debugging('The function get_activity_link() is deprecated, please use grade_helper::get_activity_link() instead.',
+            DEBUG_DEVELOPER);
+
         /** @var array static cache of the grade.php file existence flags */
         static $hasgradephp = array();
 
@@ -4059,5 +4081,273 @@ abstract class grade_helper {
         self::$exportplugins = null;
         self::$pluginstrings = null;
         self::$aggregationstrings = null;
+    }
+
+    /**
+     * Returns icon of element
+     *
+     * @param array $element An array representing an element in the grade_tree
+     * @param bool  $spacerifnone return spacer if no icon found
+     *
+     * @return string icon or spacer
+     */
+    public static function get_element_icon(array $element, bool $spacerifnone = false): string {
+        global $CFG, $OUTPUT;
+        require_once($CFG->libdir . '/filelib.php');
+
+        $outputstr = '';
+
+        // Object holding pix_icon information before instantiation.
+        $icon = new stdClass();
+        $icon->attributes = ['class' => 'icon itemicon'];
+        $icon->component = 'moodle';
+
+        $none = true;
+        switch ($element['type']) {
+            case 'item':
+            case 'courseitem':
+            case 'categoryitem':
+                $none = false;
+
+                $iscourse   = $element['object']->is_course_item();
+                $iscategory = $element['object']->is_category_item();
+                $isscale    = $element['object']->gradetype == GRADE_TYPE_SCALE;
+                $isvalue    = $element['object']->gradetype == GRADE_TYPE_VALUE;
+                $isoutcome  = !empty($element['object']->outcomeid);
+
+                if ($element['object']->is_calculated()) {
+                    $icon->pix = 'i/calc';
+                    $icon->title = s(get_string('calculatedgrade', 'grades'));
+
+                } else if (($iscourse || $iscategory) && ($isscale || $isvalue)) {
+                    if ($category = $element['object']->get_item_category()) {
+                        $aggrstrings = self::get_aggregation_strings();
+                        $stragg = $aggrstrings[$category->aggregation];
+
+                        $icon->pix = 'i/calc';
+                        $icon->title = s($stragg);
+
+                        switch ($category->aggregation) {
+                            case GRADE_AGGREGATE_MEAN:
+                            case GRADE_AGGREGATE_MEDIAN:
+                            case GRADE_AGGREGATE_WEIGHTED_MEAN:
+                            case GRADE_AGGREGATE_WEIGHTED_MEAN2:
+                            case GRADE_AGGREGATE_EXTRACREDIT_MEAN:
+                                $icon->pix = 'i/agg_mean';
+                                break;
+                            case GRADE_AGGREGATE_SUM:
+                                $icon->pix = 'i/agg_sum';
+                                break;
+                        }
+                    }
+
+                } else if ($element['object']->itemtype == 'mod') {
+                    // Prevent outcomes displaying the same icon as the activity they are attached to.
+                    if ($isoutcome) {
+                        $icon->pix = 'i/outcomes';
+                        $icon->title = s(get_string('outcome', 'grades'));
+                    } else {
+                        $modinfo = get_fast_modinfo($element['object']->courseid);
+                        $module = $element['object']->itemmodule;
+                        $instanceid = $element['object']->iteminstance;
+                        if (isset($modinfo->instances[$module][$instanceid])) {
+                            $icon->url = $modinfo->instances[$module][$instanceid]->get_icon_url();
+                        } else {
+                            $icon->pix = 'monologo';
+                            $icon->component = $element['object']->itemmodule;
+                        }
+                        $icon->title = s(get_string('modulename', $element['object']->itemmodule));
+                    }
+                } else if ($element['object']->itemtype == 'manual') {
+                    if ($element['object']->is_outcome_item()) {
+                        $icon->pix = 'i/outcomes';
+                        $icon->title = s(get_string('outcome', 'grades'));
+                    } else {
+                        $icon->pix = 'i/manual_item';
+                        $icon->title = s(get_string('manualitem', 'grades'));
+                    }
+                }
+                break;
+
+            case 'category':
+                $none = false;
+                $icon->pix = 'i/folder';
+                $icon->title = s(get_string('category', 'grades'));
+                break;
+        }
+
+        if ($none) {
+            if ($spacerifnone) {
+                $outputstr = $OUTPUT->spacer() . ' ';
+            }
+        } else if (isset($icon->url)) {
+            $outputstr = html_writer::img($icon->url, $icon->title, $icon->attributes);
+        } else {
+            $outputstr = $OUTPUT->pix_icon($icon->pix, $icon->title, $icon->component, $icon->attributes);
+        }
+
+        return $outputstr;
+    }
+
+    /**
+     * Returns the string that describes the type of the element.
+     *
+     * @param array $element An array representing an element in the grade_tree
+     * @return string The string that describes the type of the grade element
+     */
+    public static function get_element_type_string(array $element): string {
+        // If the element is a grade category.
+        if ($element['type'] == 'category') {
+            return get_string('category', 'grades');
+        }
+        // If the element is a grade item.
+        if (in_array($element['type'], ['item', 'courseitem', 'categoryitem'])) {
+            // If calculated grade item.
+            if ($element['object']->is_calculated()) {
+                return get_string('calculatedgrade', 'grades');
+            }
+            // If aggregated type grade item.
+            if ($element['object']->is_aggregate_item()) {
+                return get_string('aggregation', 'core_grades');
+            }
+            // If external grade item (module, plugin, etc.).
+            if ($element['object']->is_external_item()) {
+                // If outcome grade item.
+                if ($element['object']->is_outcome_item()) {
+                    return get_string('outcome', 'grades');
+                }
+                return get_string('modulename', $element['object']->itemmodule);
+            }
+            // If manual grade item.
+            if ($element['object']->itemtype == 'manual') {
+                // If outcome grade item.
+                if ($element['object']->is_outcome_item()) {
+                    return get_string('outcome', 'grades');
+                }
+                return get_string('manualitem', 'grades');
+            }
+        }
+
+        return '';
+    }
+
+    /**
+     * Returns name of element optionally with icon and link
+     *
+     * @param array $element An array representing an element in the grade_tree
+     * @param bool  $withlink Whether or not this header has a link
+     * @param bool  $icon Whether or not to display an icon with this header
+     * @param bool  $spacerifnone return spacer if no icon found
+     * @param bool  $withdescription Show description if defined by this item.
+     * @param bool  $fulltotal If the item is a category total, returns $categoryname."total"
+     *                         instead of "Category total" or "Course total"
+     * @param moodle_url|null $sortlink Link to sort column.
+     *
+     * @return string header
+     */
+    public static function get_element_header(array $element, bool $withlink = false, bool $icon = true,
+            bool $spacerifnone = false, bool $withdescription = false, bool $fulltotal = false,
+            ?moodle_url $sortlink = null): string {
+        $header = '';
+
+        if ($icon) {
+            $header .= self::get_element_icon($element, $spacerifnone);
+        }
+
+        $title = $element['object']->get_name($fulltotal);
+        $titleunescaped = $element['object']->get_name($fulltotal, false);
+        $header .= $title;
+
+        if ($element['type'] != 'item' && $element['type'] != 'categoryitem' && $element['type'] != 'courseitem') {
+            return $header;
+        }
+
+        if ($sortlink) {
+            $url = $sortlink;
+            $header = html_writer::link($url, $header, [
+                'title' => $titleunescaped,
+                'class' => 'gradeitemheader ',
+            ]);
+        } else {
+            if ($withlink && $url = self::get_activity_link($element)) {
+                $a = new stdClass();
+                $a->name = get_string('modulename', $element['object']->itemmodule);
+                $a->title = $titleunescaped;
+                $title = get_string('linktoactivity', 'grades', $a);
+                $header = html_writer::link($url, $header, [
+                    'title' => $title,
+                    'class' => 'gradeitemheader ',
+                ]);
+            } else {
+                $header = html_writer::span($header, 'gradeitemheader ', [
+                    'title' => $titleunescaped,
+                    'tabindex' => '0',
+                ]);
+            }
+        }
+
+        if ($withdescription) {
+            $desc = $element['object']->get_description();
+            if (!empty($desc)) {
+                $header .= '<div class="gradeitemdescription">' . s($desc) . '</div><div class="gradeitemdescriptionfiller"></div>';
+            }
+        }
+
+        return $header;
+    }
+
+    /**
+     * Returns a link to grading page if grade.php exists in the module or link to activity
+     *
+     * @param array $element An array representing an element in the grade_tree
+     *
+     * @return string|null link to grading page|activity or null if not found
+     */
+    public static function get_activity_link(array $element): ?string {
+        global $CFG;
+        /** @var array static cache of the grade.php file existence flags */
+        static $hasgradephp = [];
+
+        $itemtype = $element['object']->itemtype;
+        $itemmodule = $element['object']->itemmodule;
+        $iteminstance = $element['object']->iteminstance;
+        $itemnumber = $element['object']->itemnumber;
+
+        // Links only for module items that have valid instance, module and are
+        // called from grade_tree with valid modinfo.
+        if ($itemtype != 'mod' || !$iteminstance || !$itemmodule || !isset($element['modinfo'])) {
+            return null;
+        }
+
+        // Get $cm efficiently and with visibility information using modinfo.
+        $instances = $element['modinfo']->get_instances();
+        if (empty($instances[$itemmodule][$iteminstance])) {
+            return null;
+        }
+        $cm = $instances[$itemmodule][$iteminstance];
+
+        // Do not add link if activity is not visible to the current user.
+        if (!$cm->uservisible) {
+            return null;
+        }
+
+        if (!array_key_exists($itemmodule, $hasgradephp)) {
+            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
+                $hasgradephp[$itemmodule] = true;
+            } else {
+                $hasgradephp[$itemmodule] = false;
+            }
+        }
+
+        // If module has grade.php, link to that, otherwise view.php.
+        if ($hasgradephp[$itemmodule]) {
+            $args = ['id' => $cm->id, 'itemnumber' => $itemnumber];
+            if (isset($element['userid'])) {
+                $args['userid'] = $element['userid'];
+            }
+            return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
+        } else {
+            return new moodle_url('/mod/' . $itemmodule . '/view.php', ['id' => $cm->id]);
+        }
     }
 }

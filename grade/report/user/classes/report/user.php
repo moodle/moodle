@@ -446,7 +446,7 @@ class user extends grade_report {
         $gradeobject = $element['object'];
         $eid = $gradeobject->id;
         $element['userid'] = $userid = $this->user->id;
-        $fullname = $this->gtree->get_element_header($element, true, false, true, false, true);
+        $fullname = grade_helper::get_element_header($element, true, false, true, false, true);
         $data = [];
         $gradeitemdata = [];
         $hidden = '';
@@ -541,8 +541,8 @@ class user extends grade_report {
                     $class .= ($type == 'categoryitem' || $type == 'courseitem') ? " d$depth baggb" : " item b1b";
                 }
 
-                $itemicon = \html_writer::div($this->gtree->get_element_icon($element), 'mr-1');
-                $elementtype = $this->gtree->get_element_type_string($element);
+                $itemicon = \html_writer::div(grade_helper::get_element_icon($element), 'mr-1');
+                $elementtype = grade_helper::get_element_type_string($element);
                 $itemtype = \html_writer::span($elementtype, 'd-block text-uppercase small dimmed_text',
                     ['title' => $elementtype]);
 

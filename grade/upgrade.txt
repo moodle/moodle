@@ -1,6 +1,12 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.4 ===
+* The grade_structure::get_element_icon() function has been deprecated. Please use grade_helper::get_element_icon() instead.
+* The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
+* The grade_structure::get_element_header() function has been deprecated. Please use grade_helper::get_element_header() instead.
+* The grade_structure::get_activity_link() functions has been deprecated. Please use grade_helper::get_activity_link() instead.
+
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
 * The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying

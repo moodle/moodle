@@ -190,13 +190,13 @@ class user extends tablelike implements selectable_items {
         $gradetreeitem['object'] = $item;
         $gradetreeitem['userid'] = $this->item->id;
 
-        $itemname = $this->structure->get_element_header($gradetreeitem, true, false, false, false, true);
+        $itemname = \grade_helper::get_element_header($gradetreeitem, true, false, false, false, true);
         $grade->label = $item->get_name();
 
         $formatteddefinition = $this->format_definition($grade);
 
         $itemicon = html_writer::div($this->format_icon($item), 'mr-1');
-        $itemtype = \html_writer::span($this->structure->get_element_type_string($gradetreeitem),
+        $itemtype = \html_writer::span(\grade_helper::get_element_type_string($gradetreeitem),
             'd-block text-uppercase small dimmed_text');
         // If a behat test site is running avoid outputting the information about the type of the grade item.
         // This additional information currently causes issues in behat particularly with the existing xpath used to
@@ -251,7 +251,7 @@ class user extends tablelike implements selectable_items {
      */
     private function format_icon($item): string {
         $element = ['type' => 'item', 'object' => $item];
-        return $this->structure->get_element_icon($element);
+        return \grade_helper::get_element_icon($element);
     }
 
     /**

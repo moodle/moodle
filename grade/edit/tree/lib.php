@@ -101,10 +101,10 @@ class grade_edit_tree {
 
         $object = $element['object'];
         $eid    = $element['eid'];
-        $name = $this->gtree->get_element_header($element, true, false, true, false, true);
-        $icon = $this->gtree->get_element_icon($element);
-        $type = $this->gtree->get_element_type_string($element);
-        $strippedname = $this->gtree->get_element_header($element, false, false, false);
+        $name = grade_helper::get_element_header($element, true, false, true, false, true);
+        $icon = grade_helper::get_element_icon($element);
+        $type = grade_helper::get_element_type_string($element);
+        $strippedname = grade_helper::get_element_header($element, false, false, false);
         $is_category_item = false;
         if ($element['type'] == 'categoryitem' || $element['type'] == 'courseitem') {
             $is_category_item = true;
@@ -370,7 +370,7 @@ class grade_edit_tree {
                             'moveaction' => $moveaction,
                             'itemtype' => $object->itemtype,
                             'icon' => $icon,
-                            'type' => $type
+                            'type' => $type,
                         ]
                     );
                 }

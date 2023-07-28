@@ -885,7 +885,7 @@ class grade_report_grader extends grade_report {
                     if (!$element['object']->is_aggregate_item()) {
                         $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
                     }
-                    $headerlink = $this->gtree->get_element_header($element, true,
+                    $headerlink = grade_helper::get_element_header($element, true,
                         true, false, false, true, $sortlink);
 
                     $itemcell = new html_table_cell();
