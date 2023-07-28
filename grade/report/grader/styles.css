@@ -212,13 +212,13 @@
     text-align: center;
 }
 
-.path-grade-report-grader .action-menu {
+.path-grade-report-grader .gradeparent table .action-menu {
     display: inline-block;
     margin-right: -0.5rem;
     padding-left: 0.5rem;
 }
 
-.path-grade-report-grader .heading .action-menu {
+.path-grade-report-grader .gradeparent table .heading .action-menu {
     padding-left: 0;
 }
 
