@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 23.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="200px"
+	 height="150px" viewBox="0 0 200 150" style="enable-background:new 0 0 200 150;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.1;fill:#231F20;stroke:#231F20;stroke-width:12;stroke-miterlimit:10;}
+	.st1{fill:#FFFFFF;stroke:#7F8CA5;stroke-width:2;stroke-miterlimit:10;}
+	.st2{fill:#BFC6D4;stroke:#7F8CA5;stroke-width:2;stroke-miterlimit:10;}
+	.st3{fill:#FFFFFF;}
+	.st4{opacity:0.25;}
+	.st5{fill:#231F20;}
+	.st6{opacity:0.15;}
+	.st7{fill:none;stroke:#231F20;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;}
+	.st8{fill:#7F9BD4;}
+</style>
+<g id="Layer_1">
+</g>
+<g id="Unsupported_Mask">
+	<g>
+		<g>
+			<path class="st0" d="M186,140H14c-2.21,0-4-1.79-4-4V14c0-2.21,1.79-4,4-4h172c2.21,0,4,1.79,4,4v122
+				C190,138.21,188.21,140,186,140z"/>
+			<path class="st1" d="M186,140H14c-2.21,0-4-1.79-4-4V14c0-2.21,1.79-4,4-4h172c2.21,0,4,1.79,4,4v122
+				C190,138.21,188.21,140,186,140z"/>
+			<path class="st2" d="M190,30H10V14c0-2.21,1.79-4,4-4h172c2.21,0,4,1.79,4,4V30z"/>
+			<path class="st3" d="M179.5,24h-128c-2.21,0-4-1.79-4-4v0c0-2.21,1.79-4,4-4h128c2.21,0,4,1.79,4,4v0
+				C183.5,22.21,181.71,24,179.5,24z"/>
+			<g class="st4">
+				<path class="st5" d="M24.09,20.22c-0.08,0.38-0.38,0.65-0.72,0.72l-2.87,0.66v1.77c0,0.44-0.55,0.66-0.87,0.36l-3.36-3.38
+					c-0.21-0.19-0.21-0.51,0-0.7l3.36-3.38c0.32-0.32,0.87-0.09,0.87,0.36v1.8l2.87,0.65C23.88,19.2,24.2,19.71,24.09,20.22z"/>
+			</g>
+			<g class="st4">
+				<path class="st5" d="M30.62,19.78c0.08-0.38,0.38-0.65,0.72-0.72l2.87-0.66v-1.77c0-0.44,0.55-0.66,0.87-0.36l3.36,3.38
+					c0.21,0.19,0.21,0.51,0,0.7l-3.36,3.38c-0.32,0.32-0.87,0.09-0.87-0.36v-1.8l-2.87-0.65C30.83,20.8,30.5,20.29,30.62,19.78z"/>
+			</g>
+			<g class="st6">
+				<line class="st7" x1="69.89" y1="20" x2="51.43" y2="20"/>
+				<line class="st7" x1="113.74" y1="20" x2="98.4" y2="20"/>
+				<line class="st7" x1="93.9" y1="20" x2="74.02" y2="20"/>
+			</g>
+		</g>
+		<g>
+			<circle class="st8" cx="89.61" cy="73.46" r="3.85"/>
+			<circle class="st8" cx="110.39" cy="73.46" r="3.85"/>
+			<g>
+				<path class="st8" d="M83.06,94.84c1.02-3.39,3.54-6.3,6.6-8.19c3.07-1.94,6.72-2.9,10.34-2.91c3.61,0.01,7.27,0.97,10.33,2.91
+					c3.06,1.89,5.58,4.8,6.6,8.19c0.16,0.53-0.14,1.1-0.68,1.26c-0.4,0.12-0.83-0.02-1.08-0.33l-0.02-0.03
+					c-3.85-4.75-9.5-7-15.17-7.01c-5.67,0.01-11.32,2.25-15.16,7.01l-0.02,0.02c-0.35,0.43-0.99,0.5-1.42,0.15
+					C83.06,95.66,82.95,95.23,83.06,94.84z"/>
+			</g>
+		</g>
+	</g>
+</g>
+</svg>
