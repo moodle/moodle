@@ -1,6 +1,24 @@
 @import "./mixins.scss";
 $bg-primary: #f5f5f5;
 
+.login-page-wrapper {
+  margin-top: 0 !important;
+}
+.login-form-submit .btn {
+  width: 126px;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  margin-top: 6px !important;
+}
+.login-form-username label,
+.login-form-password label {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+.qubits-login-logo {
+  width: 40% !important;
+  margin-bottom: 30px;
+}
 .position-inherit {
   position: inherit !important;
 }
@@ -41,4 +59,7 @@ $bg-primary: #f5f5f5;
   @include breakpoint(xlg) {
     background-size: contain;
   }
+}
+.login-heading {
+  font-size: 22px !important;
 }
