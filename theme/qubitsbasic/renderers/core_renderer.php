@@ -183,5 +183,17 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
         ];
         return $this->render_from_template("theme_qubitsbasic/custom/exbookfiles", $context);
     }
+
+    public function third_party_editor_files(){
+        global $CFG; 
+        if($this->page->pagelayout !== 'thirdparty'){
+            return '';
+        }
+        $context = [
+            'wwwroot' => $CFG->wwwroot,
+            'qmurl' => $CFG->wwwroot.'/third_party/qubits'
+        ];
+        return $this->render_from_template("theme_qubitsbasic/custom/trdptyfiles", $context);
+    }
     
 }

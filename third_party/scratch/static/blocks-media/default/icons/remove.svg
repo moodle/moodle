@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.1 (47250) - http://www.bohemiancoding.com/sketch -->
+    <title>delete-argument v2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="delete-argument-v2" stroke="#FF661A">
+            <g id="Group" transform="translate(3.000000, 2.500000)">
+                <path d="M1,3 L13,3 L11.8900496,14.0995037 C11.8389294,14.6107055 11.4087639,15 10.8950124,15 L3.10498756,15 C2.59123611,15 2.16107055,14.6107055 2.10995037,14.0995037 L1,3 Z" id="Rectangle" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M7,11 L7,6" id="Line" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M9.5,11 L9.5,6" id="Line-Copy" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M4.5,11 L4.5,6" id="Line-Copy-2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                <rect id="Rectangle-2" fill="#FF661A" x="0" y="2.5" width="14" height="1" rx="0.5"></rect>
+                <path d="M6,0 L8,0 C8.55228475,-1.01453063e-16 9,0.44771525 9,1 L9,3 L5,3 L5,1 C5,0.44771525 5.44771525,1.01453063e-16 6,0 Z" id="Rectangle-3" stroke-width="1.5"></path>
+            </g>
+        </g>
+    </g>
+</svg>
