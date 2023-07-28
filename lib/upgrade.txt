@@ -71,6 +71,8 @@ information provided here is intended especially for developers.
 * The moodle-core-notification-confirm module, found under the M.core.confirm namespace, has been deprecated.
   Any code using it should be rewritten as an ESM and use the core/notification module instead.
   See MDL-77174 for further information.
+* addHelpButton() function has a new optional $a parameter to allow variables with translation strings.
+* help_icon constructor has a new optional $a parameter to allow variables with translation strings.
 
 === 4.2 ===
 

@@ -2354,12 +2354,21 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string $component component name to look the help string in
      * @param string $linktext optional text to display next to the icon
      * @param bool $suppresscheck set to true if the element may not exist
+     * @param string|object|array|int $a An object, string or number that can be used
+     *      within translation strings
      */
-    function addHelpButton($elementname, $identifier, $component = 'moodle', $linktext = '', $suppresscheck = false) {
+    public function addHelpButton(
+        $elementname,
+        $identifier,
+        $component = 'moodle',
+        $linktext = '',
+        $suppresscheck = false,
+        $a = null
+    ) {
         global $OUTPUT;
         if (array_key_exists($elementname, $this->_elementIndex)) {
             $element = $this->_elements[$this->_elementIndex[$elementname]];
-            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext);
+            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext, $a);
         } else if (!$suppresscheck) {
             debugging(get_string('nonexistentformelements', 'form', $elementname));
         }
