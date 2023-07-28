@@ -15,11 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Local plugin "QubitsBook"
+ * Local plugin "QbCourseApi"
  *
- * @package   local_qubitsbook
+ * @package   local_qbcourseapi
  * @author    Qubits Dev Team
  * @copyright 2023 <https://www.yardstickedu.com/>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,8 +26,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_qubitsbook';
-$plugin->version = 2023072701;
-$plugin->release = 'v1.0';
-$plugin->requires = 2020061500;
-$plugin->maturity = MATURITY_ALPHA;
+$string['pluginname'] = 'Qubits - Manifest Course Import Module';
+$string['uploadmanifest'] = 'Upload Manifest file';
+$string['qbmformtitle'] = 'Sync the Courses via Manifest json file';
+$string['qbmformfile'] = 'Manifest File';
+$string['qbmformsync'] = 'Sync';

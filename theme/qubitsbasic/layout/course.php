@@ -104,7 +104,8 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'iscourseandmoddtlpage' => true
 ];
 
 echo $OUTPUT->render_from_template('theme_qubitsbasic/course', $templatecontext);

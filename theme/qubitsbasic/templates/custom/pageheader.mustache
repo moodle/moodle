@@ -1,3 +1,10 @@
+{{#iscourseviewpage}}
+<i class="icon fa fa-chevron-left arrow-left previousnav cvormv" id="cvbkbtn" data-cid="{{courseid}}" role="button"></i>
+{{/iscourseviewpage}}
+{{#ismodulepage}}
+<i class="icon fa fa-chevron-left arrow-left previousnav cvormv" id="mvbkbtn" data-cid="{{courseid}}" role="button"></i>
+{{/ismodulepage}}
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb bg-none">
         {{#ismycoursepage}}
@@ -21,3 +28,11 @@
         {{/otherpage}}
     </ol>
 </nav>
+
+{{#js}}
+require(['theme_qubitsbasic/qubitsmain'], (QubitsMain) => {
+ let qubitsMain = QubitsMain.init();
+ qubitsMain.breadcrumbBackBtn();
+ qubitsMain.courseViewAndDetail();
+});
+{{/js}}

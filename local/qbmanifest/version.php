@@ -17,9 +17,9 @@
 
 
 /**
- * Local plugin "QubitsBook"
+ * Local plugin "QbManifest"
  *
- * @package   local_qubitsbook
+ * @package   local_qbmanifest
  * @author    Qubits Dev Team
  * @copyright 2023 <https://www.yardstickedu.com/>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -27,8 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_qubitsbook';
-$plugin->version = 2023072701;
-$plugin->release = 'v1.0';
+$plugin->component = 'local_qbmanifest';
+$plugin->version = 2022060100;
+$plugin->release = 'v1.1';
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_ALPHA;

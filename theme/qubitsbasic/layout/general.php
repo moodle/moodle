@@ -104,8 +104,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton,
-    'iscourseandmoddtlpage' => true
+    'addblockbutton' => $addblockbutton
 ];
 
-echo $OUTPUT->render_from_template('theme_qubitsbasic/executablebook', $templatecontext);
+echo $OUTPUT->render_from_template('theme_qubitsbasic/general', $templatecontext);

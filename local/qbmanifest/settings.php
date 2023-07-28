@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,20 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
 /**
- * Local plugin "QubitsBook"
+ * Link to CSV course upload.
  *
- * @package   local_qubitsbook
- * @author    Qubits Dev Team
- * @copyright 2023 <https://www.yardstickedu.com/>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    local_qbcourseapi
+ * @copyright  2011 Piers Harding
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'local_qubitsbook';
-$plugin->version = 2023072701;
-$plugin->release = 'v1.0';
-$plugin->requires = 2020061500;
-$plugin->maturity = MATURITY_ALPHA;
+if ($hassiteconfig) {
+    $ADMIN->add('courses', new admin_externalpage('localqbcourseapi',
+        get_string('uploadmanifest', 'local_qbmanifest'), "$CFG->wwwroot/local/qbmanifest/index.php"));
+}

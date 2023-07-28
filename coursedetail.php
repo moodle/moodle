@@ -4,144 +4,144 @@
 <html  dir="ltr" lang="en" xml:lang="en">
 <head>
     <title>Course: DigiChamps Level 1</title>
-    <link rel="shortcut icon" href="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=theme&amp;image=favicon" />
+    <link rel="shortcut icon" href="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=theme&amp;image=favicon" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="keywords" content="moodle, Course: DigiChamps Level 1" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/yui_combo.php?3.17.2/cssreset/cssreset-min.css&amp;3.17.2/cssfonts/cssfonts-min.css&amp;3.17.2/cssgrids/cssgrids-min.css&amp;3.17.2/cssbase/cssbase-min.css" /><link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css" /><script id="firstthemesheet" type="text/css">/** Required in order to fix style inclusion problems in IE with YUI **/</script><link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculated" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculatedmulti" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculatedsimple" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddimageortext" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddmarker" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddwtos" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_essay" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_gapselect" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_match" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_multianswer" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_multichoice" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_numerical" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_shortanswer" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_truefalse" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_assign" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_bigbluebuttonbn" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_book" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_chat" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_data" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_feedback" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_folder" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_forum" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_glossary" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_imscp" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_lti" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_quiz" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_resource" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_scorm" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_survey" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_url" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_wiki" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_workshop" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=enrol_lti" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_accessreview" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_activity_results" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_blog_tags" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_course_list" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_course_summary" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_globalsearch" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_lp" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_myoverview" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_myprofile" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_navigation" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_online_users" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_private_files" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_recent_activity" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_rss_client" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_search_forums" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_settings" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_site_main_menu" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_social_activities" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_tag_flickr" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_tag_youtube" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_timeline" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=media_videojs" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_glossary" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_mathjaxloader" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_mediaplugin" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=editor_tiny" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=editor_tinymce" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=format_singleactivity" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_completion" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_eventlist" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_log" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_loglive" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_outline" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_participation" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_progress" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_stats" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_grader" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_history" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_singleview" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_user" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradingform_guide" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradingform_rubric" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mnetservice_enrol" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbank_comment" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbank_usage" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbehaviour_deferredcbm" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_admin_presets" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_behat" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_brickfield" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_capability" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_dataprivacy" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_filetypes" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_installaddon" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_langimport" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_lp" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_messageinbound" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_mobile" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_policy" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_profiling" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_task" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_templatelibrary" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_usertours" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_xmldb_boost" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=paygw_paypal" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=assignfeedback_editpdf" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=quiz_grading" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopform_rubric" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopallocation_manual" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopallocation_random" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_accessibilitychecker" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_backcolor" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_charmap" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_collapse" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_emojipicker" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_emoticon" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_equation" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_fontcolor" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_h5p" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_html" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_image" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_managefiles" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_media" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_recordrtc" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_table" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_accessibilitychecker" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_equation" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_media" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_recordrtc" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tinymce_managefiles" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?theme=qubitsbasic&amp;type=scss" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?sheet=qubitsfonts&amp;theme=qubitsbasic&amp;type=theme" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?sheet=qubitsbasic&amp;theme=qubitsbasic&amp;type=theme" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?sheet=styles&amp;theme=qubitsbasic&amp;type=theme" />
-<link rel="stylesheet" type="text/css" href="http://qubits.localhost.in/theme/styles_debug.php?sheet=temp&amp;theme=qubitsbasic&amp;type=theme" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/yui_combo.php?3.17.2/cssreset/cssreset-min.css&amp;3.17.2/cssfonts/cssfonts-min.css&amp;3.17.2/cssgrids/cssgrids-min.css&amp;3.17.2/cssbase/cssbase-min.css" /><link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.css" /><script id="firstthemesheet" type="text/css">/** Required in order to fix style inclusion problems in IE with YUI **/</script><link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculated" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculatedmulti" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_calculatedsimple" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddimageortext" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddmarker" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_ddwtos" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_essay" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_gapselect" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_match" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_multianswer" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_multichoice" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_numerical" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_shortanswer" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qtype_truefalse" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_assign" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_bigbluebuttonbn" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_book" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_chat" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_data" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_feedback" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_folder" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_forum" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_glossary" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_imscp" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_lti" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_quiz" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_resource" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_scorm" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_survey" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_url" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_wiki" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mod_workshop" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=enrol_lti" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_accessreview" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_activity_results" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_blog_tags" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_course_list" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_course_summary" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_globalsearch" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_lp" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_myoverview" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_myprofile" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_navigation" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_online_users" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_private_files" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_recent_activity" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_rss_client" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_search_forums" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_settings" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_site_main_menu" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_social_activities" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_tag_flickr" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_tag_youtube" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=block_timeline" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=media_videojs" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_glossary" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_mathjaxloader" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=filter_mediaplugin" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=editor_tiny" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=editor_tinymce" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=format_singleactivity" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_completion" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_eventlist" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_log" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_loglive" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_outline" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_participation" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_progress" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=report_stats" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_grader" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_history" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_singleview" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradereport_user" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradingform_guide" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=gradingform_rubric" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=mnetservice_enrol" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbank_comment" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbank_usage" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=qbehaviour_deferredcbm" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_admin_presets" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_behat" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_brickfield" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_capability" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_dataprivacy" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_filetypes" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_installaddon" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_langimport" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_lp" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_messageinbound" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_mobile" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_policy" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_profiling" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_task" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_templatelibrary" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_usertours" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tool_xmldb_boost" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=paygw_paypal" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=assignfeedback_editpdf" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=quiz_grading" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopform_rubric" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopallocation_manual" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=workshopallocation_random" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_accessibilitychecker" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_backcolor" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_charmap" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_collapse" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_emojipicker" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_emoticon" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_equation" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_fontcolor" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_h5p" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_html" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_image" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_managefiles" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_media" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_recordrtc" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=atto_table" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_accessibilitychecker" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_equation" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_media" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tiny_recordrtc" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=plugin&amp;subtype=tinymce_managefiles" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?theme=qubitsbasic&amp;type=scss" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?sheet=qubitsfonts&amp;theme=qubitsbasic&amp;type=theme" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?sheet=qubitsbasic&amp;theme=qubitsbasic&amp;type=theme" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?sheet=styles&amp;theme=qubitsbasic&amp;type=theme" />
+<link rel="stylesheet" type="text/css" href="http://qubits.localhost.com/theme/styles_debug.php?sheet=temp&amp;theme=qubitsbasic&amp;type=theme" />
 <script>
 //<![CDATA[
 var M = {}; M.yui = {};
 M.pageloadstarttime = new Date();
-M.cfg = {"wwwroot":"http:\/\/qubits.localhost.in","homeurl":{},"sesskey":"oZHwTKnr6s","sessiontimeout":"28800","sessiontimeoutwarning":"1200","themerev":-1,"slasharguments":1,"theme":"qubitsbasic","iconsystemmodule":"core\/icon_system_fontawesome","jsrev":"1687431051","admin":"admin","svgicons":true,"usertimezone":"UTC","courseId":3,"courseContextId":19,"contextid":19,"contextInstanceId":3,"langrev":1687431051,"templaterev":"1687431051"};var yui1ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin')}};
+M.cfg = {"wwwroot":"http:\/\/qubits.localhost.com","homeurl":{},"sesskey":"oZHwTKnr6s","sessiontimeout":"28800","sessiontimeoutwarning":"1200","themerev":-1,"slasharguments":1,"theme":"qubitsbasic","iconsystemmodule":"core\/icon_system_fontawesome","jsrev":"1687431051","admin":"admin","svgicons":true,"usertimezone":"UTC","courseId":3,"courseContextId":19,"contextid":19,"contextInstanceId":3,"langrev":1687431051,"templaterev":"1687431051"};var yui1ConfigFn = function(me) {if(/-skin|reset|fonts|grids|base/.test(me.name)){me.type='css';me.path=me.path.replace(/\.js/,'.css');me.path=me.path.replace(/\/yui2-skin/,'/assets/skins/sam/yui2-skin')}};
 var yui2ConfigFn = function(me) {var parts=me.name.replace(/^moodle-/,'').split('-'),component=parts.shift(),module=parts[0],min='-min';if(/-(skin|core)$/.test(me.name)){parts.pop();me.type='css';min=''}
 if(module){var filename=parts.join('-');me.path=component+'/'+module+'/'+filename+min+'.'+me.type}else{me.path=component+'/'+component+'.'+me.type}};
-YUI_config = {"debug":false,"base":"http:\/\/qubits.localhost.in\/lib\/yuilib\/3.17.2\/","comboBase":"http:\/\/qubits.localhost.in\/theme\/yui_combo.php?","combine":true,"filter":null,"insertBefore":"firstthemesheet","groups":{"yui2":{"base":"http:\/\/qubits.localhost.in\/lib\/yuilib\/2in3\/2.9.0\/build\/","comboBase":"http:\/\/qubits.localhost.in\/theme\/yui_combo.php?","combine":true,"ext":false,"root":"2in3\/2.9.0\/build\/","patterns":{"yui2-":{"group":"yui2","configFn":yui1ConfigFn}}},"moodle":{"name":"moodle","base":"http:\/\/qubits.localhost.in\/theme\/yui_combo.php?m\/1687431051\/","combine":true,"comboBase":"http:\/\/qubits.localhost.in\/theme\/yui_combo.php?","ext":false,"root":"m\/1687431051\/","patterns":{"moodle-":{"group":"moodle","configFn":yui2ConfigFn}},"filter":null,"modules":{"moodle-core-actionmenu":{"requires":["base","event","node-event-simulate"]},"moodle-core-blocks":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification"]},"moodle-core-chooserdialogue":{"requires":["base","panel","moodle-core-notification"]},"moodle-core-dragdrop":{"requires":["base","node","io","dom","dd","event-key","event-focus","moodle-core-notification"]},"moodle-core-event":{"requires":["event-custom"]},"moodle-core-formchangechecker":{"requires":["base","event-focus","moodle-core-event"]},"moodle-core-handlebars":{"condition":{"trigger":"handlebars","when":"after"}},"moodle-core-languninstallconfirm":{"requires":["base","node","moodle-core-notification-confirm","moodle-core-notification-alert"]},"moodle-core-lockscroll":{"requires":["plugin","base-build"]},"moodle-core-maintenancemodetimer":{"requires":["base","node"]},"moodle-core-notification":{"requires":["moodle-core-notification-dialogue","moodle-core-notification-alert","moodle-core-notification-confirm","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-core-notification-dialogue":{"requires":["base","node","panel","escape","event-key","dd-plugin","moodle-core-widget-focusafterclose","moodle-core-lockscroll"]},"moodle-core-notification-alert":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-confirm":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-exception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-ajaxexception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-popuphelp":{"requires":["moodle-core-tooltip"]},"moodle-core-tooltip":{"requires":["base","node","io-base","moodle-core-notification-dialogue","json-parse","widget-position","widget-position-align","event-outside","cache-base"]},"moodle-core_availability-form":{"requires":["base","node","event","event-delegate","panel","moodle-core-notification-dialogue","json"]},"moodle-backup-backupselectall":{"requires":["node","event","node-event-simulate","anim"]},"moodle-backup-confirmcancel":{"requires":["node","node-event-simulate","moodle-core-notification-confirm"]},"moodle-course-categoryexpander":{"requires":["node","event-key"]},"moodle-course-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-course-coursebase","moodle-course-util"]},"moodle-course-management":{"requires":["base","node","io-base","moodle-core-notification-exception","json-parse","dd-constrain","dd-proxy","dd-drop","dd-delegate","node-event-delegate"]},"moodle-course-util":{"requires":["node"],"use":["moodle-course-util-base"],"submodules":{"moodle-course-util-base":{},"moodle-course-util-section":{"requires":["node","moodle-course-util-base"]},"moodle-course-util-cm":{"requires":["node","moodle-course-util-base"]}}},"moodle-form-dateselector":{"requires":["base","node","overlay","calendar"]},"moodle-form-passwordunmask":{"requires":[]},"moodle-form-shortforms":{"requires":["node","base","selector-css3","moodle-core-event"]},"moodle-question-chooser":{"requires":["moodle-core-chooserdialogue"]},"moodle-question-preview":{"requires":["base","dom","event-delegate","event-key","core_question_engine"]},"moodle-question-searchform":{"requires":["base","node"]},"moodle-availability_completion-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_date-form":{"requires":["base","node","event","io","moodle-core_availability-form"]},"moodle-availability_grade-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_group-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_grouping-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_profile-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-mod_assign-history":{"requires":["node","transition"]},"moodle-mod_quiz-autosave":{"requires":["base","node","event","event-valuechange","node-event-delegate","io-form"]},"moodle-mod_quiz-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-base","moodle-mod_quiz-util-page","moodle-mod_quiz-util-slot","moodle-course-util"]},"moodle-mod_quiz-modform":{"requires":["base","node","event"]},"moodle-mod_quiz-questionchooser":{"requires":["moodle-core-chooserdialogue","moodle-mod_quiz-util","querystring-parse"]},"moodle-mod_quiz-quizbase":{"requires":["base","node"]},"moodle-mod_quiz-toolboxes":{"requires":["base","node","event","event-key","io","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-slot","moodle-core-notification-ajaxexception"]},"moodle-mod_quiz-util":{"requires":["node","moodle-core-actionmenu"],"use":["moodle-mod_quiz-util-base"],"submodules":{"moodle-mod_quiz-util-base":{},"moodle-mod_quiz-util-slot":{"requires":["node","moodle-mod_quiz-util-base"]},"moodle-mod_quiz-util-page":{"requires":["node","moodle-mod_quiz-util-base"]}}},"moodle-message_airnotifier-toolboxes":{"requires":["base","node","io"]},"moodle-filter_glossary-autolinker":{"requires":["base","node","io-base","json-parse","event-delegate","overlay","moodle-core-event","moodle-core-notification-alert","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-filter_mathjaxloader-loader":{"requires":["moodle-core-event"]},"moodle-editor_atto-editor":{"requires":["node","transition","io","overlay","escape","event","event-simulate","event-custom","node-event-html5","node-event-simulate","yui-throttle","moodle-core-notification-dialogue","moodle-core-notification-confirm","moodle-editor_atto-rangy","handlebars","timers","querystring-stringify"]},"moodle-editor_atto-plugin":{"requires":["node","base","escape","event","event-outside","handlebars","event-custom","timers","moodle-editor_atto-menu"]},"moodle-editor_atto-menu":{"requires":["moodle-core-notification-dialogue","node","event","event-custom"]},"moodle-editor_atto-rangy":{"requires":[]},"moodle-report_eventlist-eventfilter":{"requires":["base","event","node","node-event-delegate","datatable","autocomplete","autocomplete-filters"]},"moodle-report_loglive-fetchlogs":{"requires":["base","event","node","io","node-event-delegate"]},"moodle-gradereport_history-userselector":{"requires":["escape","event-delegate","event-key","handlebars","io-base","json-parse","moodle-core-notification-dialogue"]},"moodle-qbank_editquestion-chooser":{"requires":["moodle-core-chooserdialogue"]},"moodle-tool_capability-search":{"requires":["base","node"]},"moodle-tool_lp-dragdrop-reorder":{"requires":["moodle-core-dragdrop"]},"moodle-tool_monitor-dropdown":{"requires":["base","event","node"]},"moodle-assignfeedback_editpdf-editor":{"requires":["base","event","node","io","graphics","json","event-move","event-resize","transition","querystring-stringify-simple","moodle-core-notification-dialog","moodle-core-notification-alert","moodle-core-notification-warning","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-atto_accessibilitychecker-button":{"requires":["color-base","moodle-editor_atto-plugin"]},"moodle-atto_accessibilityhelper-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_align-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_bold-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_charmap-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_clear-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_collapse-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_emojipicker-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_emoticon-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_equation-button":{"requires":["moodle-editor_atto-plugin","moodle-core-event","io","event-valuechange","tabview","array-extras"]},"moodle-atto_h5p-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_html-beautify":{},"moodle-atto_html-button":{"requires":["promise","moodle-editor_atto-plugin","moodle-atto_html-beautify","moodle-atto_html-codemirror","event-valuechange"]},"moodle-atto_html-codemirror":{"requires":["moodle-atto_html-codemirror-skin"]},"moodle-atto_image-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_indent-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_italic-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_link-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_managefiles-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_managefiles-usedfiles":{"requires":["node","escape"]},"moodle-atto_media-button":{"requires":["moodle-editor_atto-plugin","moodle-form-shortforms"]},"moodle-atto_noautolink-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_orderedlist-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_recordrtc-button":{"requires":["moodle-editor_atto-plugin","moodle-atto_recordrtc-recording"]},"moodle-atto_recordrtc-recording":{"requires":["moodle-atto_recordrtc-button"]},"moodle-atto_rtl-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_strike-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_subscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_superscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_table-button":{"requires":["moodle-editor_atto-plugin","moodle-editor_atto-menu","event","event-valuechange"]},"moodle-atto_title-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_underline-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_undo-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_unorderedlist-button":{"requires":["moodle-editor_atto-plugin"]}}},"gallery":{"name":"gallery","base":"http:\/\/qubits.localhost.in\/lib\/yuilib\/gallery\/","combine":true,"comboBase":"http:\/\/qubits.localhost.in\/theme\/yui_combo.php?","ext":false,"root":"gallery\/1687431051\/","patterns":{"gallery-":{"group":"gallery"}}}},"modules":{"core_filepicker":{"name":"core_filepicker","fullpath":"http:\/\/qubits.localhost.in\/lib\/javascript.php\/1687431051\/repository\/filepicker.js","requires":["base","node","node-event-simulate","json","async-queue","io-base","io-upload-iframe","io-form","yui2-treeview","panel","cookie","datatable","datatable-sort","resize-plugin","dd-plugin","escape","moodle-core_filepicker","moodle-core-notification-dialogue"]},"core_comment":{"name":"core_comment","fullpath":"http:\/\/qubits.localhost.in\/lib\/javascript.php\/1687431051\/comment\/comment.js","requires":["base","io-base","node","json","yui2-animation","overlay","escape"]},"mathjax":{"name":"mathjax","fullpath":"https:\/\/cdn.jsdelivr.net\/npm\/mathjax@2.7.9\/MathJax.js?delayStartupUntil=configured"}}};
+YUI_config = {"debug":false,"base":"http:\/\/qubits.localhost.com\/lib\/yuilib\/3.17.2\/","comboBase":"http:\/\/qubits.localhost.com\/theme\/yui_combo.php?","combine":true,"filter":null,"insertBefore":"firstthemesheet","groups":{"yui2":{"base":"http:\/\/qubits.localhost.com\/lib\/yuilib\/2in3\/2.9.0\/build\/","comboBase":"http:\/\/qubits.localhost.com\/theme\/yui_combo.php?","combine":true,"ext":false,"root":"2in3\/2.9.0\/build\/","patterns":{"yui2-":{"group":"yui2","configFn":yui1ConfigFn}}},"moodle":{"name":"moodle","base":"http:\/\/qubits.localhost.com\/theme\/yui_combo.php?m\/1687431051\/","combine":true,"comboBase":"http:\/\/qubits.localhost.com\/theme\/yui_combo.php?","ext":false,"root":"m\/1687431051\/","patterns":{"moodle-":{"group":"moodle","configFn":yui2ConfigFn}},"filter":null,"modules":{"moodle-core-actionmenu":{"requires":["base","event","node-event-simulate"]},"moodle-core-blocks":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification"]},"moodle-core-chooserdialogue":{"requires":["base","panel","moodle-core-notification"]},"moodle-core-dragdrop":{"requires":["base","node","io","dom","dd","event-key","event-focus","moodle-core-notification"]},"moodle-core-event":{"requires":["event-custom"]},"moodle-core-formchangechecker":{"requires":["base","event-focus","moodle-core-event"]},"moodle-core-handlebars":{"condition":{"trigger":"handlebars","when":"after"}},"moodle-core-languninstallconfirm":{"requires":["base","node","moodle-core-notification-confirm","moodle-core-notification-alert"]},"moodle-core-lockscroll":{"requires":["plugin","base-build"]},"moodle-core-maintenancemodetimer":{"requires":["base","node"]},"moodle-core-notification":{"requires":["moodle-core-notification-dialogue","moodle-core-notification-alert","moodle-core-notification-confirm","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-core-notification-dialogue":{"requires":["base","node","panel","escape","event-key","dd-plugin","moodle-core-widget-focusafterclose","moodle-core-lockscroll"]},"moodle-core-notification-alert":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-confirm":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-exception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-notification-ajaxexception":{"requires":["moodle-core-notification-dialogue"]},"moodle-core-popuphelp":{"requires":["moodle-core-tooltip"]},"moodle-core-tooltip":{"requires":["base","node","io-base","moodle-core-notification-dialogue","json-parse","widget-position","widget-position-align","event-outside","cache-base"]},"moodle-core_availability-form":{"requires":["base","node","event","event-delegate","panel","moodle-core-notification-dialogue","json"]},"moodle-backup-backupselectall":{"requires":["node","event","node-event-simulate","anim"]},"moodle-backup-confirmcancel":{"requires":["node","node-event-simulate","moodle-core-notification-confirm"]},"moodle-course-categoryexpander":{"requires":["node","event-key"]},"moodle-course-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-course-coursebase","moodle-course-util"]},"moodle-course-management":{"requires":["base","node","io-base","moodle-core-notification-exception","json-parse","dd-constrain","dd-proxy","dd-drop","dd-delegate","node-event-delegate"]},"moodle-course-util":{"requires":["node"],"use":["moodle-course-util-base"],"submodules":{"moodle-course-util-base":{},"moodle-course-util-section":{"requires":["node","moodle-course-util-base"]},"moodle-course-util-cm":{"requires":["node","moodle-course-util-base"]}}},"moodle-form-dateselector":{"requires":["base","node","overlay","calendar"]},"moodle-form-passwordunmask":{"requires":[]},"moodle-form-shortforms":{"requires":["node","base","selector-css3","moodle-core-event"]},"moodle-question-chooser":{"requires":["moodle-core-chooserdialogue"]},"moodle-question-preview":{"requires":["base","dom","event-delegate","event-key","core_question_engine"]},"moodle-question-searchform":{"requires":["base","node"]},"moodle-availability_completion-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_date-form":{"requires":["base","node","event","io","moodle-core_availability-form"]},"moodle-availability_grade-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_group-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_grouping-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-availability_profile-form":{"requires":["base","node","event","moodle-core_availability-form"]},"moodle-mod_assign-history":{"requires":["node","transition"]},"moodle-mod_quiz-autosave":{"requires":["base","node","event","event-valuechange","node-event-delegate","io-form"]},"moodle-mod_quiz-dragdrop":{"requires":["base","node","io","dom","dd","dd-scroll","moodle-core-dragdrop","moodle-core-notification","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-base","moodle-mod_quiz-util-page","moodle-mod_quiz-util-slot","moodle-course-util"]},"moodle-mod_quiz-modform":{"requires":["base","node","event"]},"moodle-mod_quiz-questionchooser":{"requires":["moodle-core-chooserdialogue","moodle-mod_quiz-util","querystring-parse"]},"moodle-mod_quiz-quizbase":{"requires":["base","node"]},"moodle-mod_quiz-toolboxes":{"requires":["base","node","event","event-key","io","moodle-mod_quiz-quizbase","moodle-mod_quiz-util-slot","moodle-core-notification-ajaxexception"]},"moodle-mod_quiz-util":{"requires":["node","moodle-core-actionmenu"],"use":["moodle-mod_quiz-util-base"],"submodules":{"moodle-mod_quiz-util-base":{},"moodle-mod_quiz-util-slot":{"requires":["node","moodle-mod_quiz-util-base"]},"moodle-mod_quiz-util-page":{"requires":["node","moodle-mod_quiz-util-base"]}}},"moodle-message_airnotifier-toolboxes":{"requires":["base","node","io"]},"moodle-filter_glossary-autolinker":{"requires":["base","node","io-base","json-parse","event-delegate","overlay","moodle-core-event","moodle-core-notification-alert","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-filter_mathjaxloader-loader":{"requires":["moodle-core-event"]},"moodle-editor_atto-editor":{"requires":["node","transition","io","overlay","escape","event","event-simulate","event-custom","node-event-html5","node-event-simulate","yui-throttle","moodle-core-notification-dialogue","moodle-core-notification-confirm","moodle-editor_atto-rangy","handlebars","timers","querystring-stringify"]},"moodle-editor_atto-plugin":{"requires":["node","base","escape","event","event-outside","handlebars","event-custom","timers","moodle-editor_atto-menu"]},"moodle-editor_atto-menu":{"requires":["moodle-core-notification-dialogue","node","event","event-custom"]},"moodle-editor_atto-rangy":{"requires":[]},"moodle-report_eventlist-eventfilter":{"requires":["base","event","node","node-event-delegate","datatable","autocomplete","autocomplete-filters"]},"moodle-report_loglive-fetchlogs":{"requires":["base","event","node","io","node-event-delegate"]},"moodle-gradereport_history-userselector":{"requires":["escape","event-delegate","event-key","handlebars","io-base","json-parse","moodle-core-notification-dialogue"]},"moodle-qbank_editquestion-chooser":{"requires":["moodle-core-chooserdialogue"]},"moodle-tool_capability-search":{"requires":["base","node"]},"moodle-tool_lp-dragdrop-reorder":{"requires":["moodle-core-dragdrop"]},"moodle-tool_monitor-dropdown":{"requires":["base","event","node"]},"moodle-assignfeedback_editpdf-editor":{"requires":["base","event","node","io","graphics","json","event-move","event-resize","transition","querystring-stringify-simple","moodle-core-notification-dialog","moodle-core-notification-alert","moodle-core-notification-warning","moodle-core-notification-exception","moodle-core-notification-ajaxexception"]},"moodle-atto_accessibilitychecker-button":{"requires":["color-base","moodle-editor_atto-plugin"]},"moodle-atto_accessibilityhelper-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_align-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_bold-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_charmap-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_clear-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_collapse-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_emojipicker-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_emoticon-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_equation-button":{"requires":["moodle-editor_atto-plugin","moodle-core-event","io","event-valuechange","tabview","array-extras"]},"moodle-atto_h5p-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_html-beautify":{},"moodle-atto_html-button":{"requires":["promise","moodle-editor_atto-plugin","moodle-atto_html-beautify","moodle-atto_html-codemirror","event-valuechange"]},"moodle-atto_html-codemirror":{"requires":["moodle-atto_html-codemirror-skin"]},"moodle-atto_image-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_indent-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_italic-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_link-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_managefiles-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_managefiles-usedfiles":{"requires":["node","escape"]},"moodle-atto_media-button":{"requires":["moodle-editor_atto-plugin","moodle-form-shortforms"]},"moodle-atto_noautolink-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_orderedlist-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_recordrtc-button":{"requires":["moodle-editor_atto-plugin","moodle-atto_recordrtc-recording"]},"moodle-atto_recordrtc-recording":{"requires":["moodle-atto_recordrtc-button"]},"moodle-atto_rtl-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_strike-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_subscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_superscript-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_table-button":{"requires":["moodle-editor_atto-plugin","moodle-editor_atto-menu","event","event-valuechange"]},"moodle-atto_title-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_underline-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_undo-button":{"requires":["moodle-editor_atto-plugin"]},"moodle-atto_unorderedlist-button":{"requires":["moodle-editor_atto-plugin"]}}},"gallery":{"name":"gallery","base":"http:\/\/qubits.localhost.com\/lib\/yuilib\/gallery\/","combine":true,"comboBase":"http:\/\/qubits.localhost.com\/theme\/yui_combo.php?","ext":false,"root":"gallery\/1687431051\/","patterns":{"gallery-":{"group":"gallery"}}}},"modules":{"core_filepicker":{"name":"core_filepicker","fullpath":"http:\/\/qubits.localhost.com\/lib\/javascript.php\/1687431051\/repository\/filepicker.js","requires":["base","node","node-event-simulate","json","async-queue","io-base","io-upload-iframe","io-form","yui2-treeview","panel","cookie","datatable","datatable-sort","resize-plugin","dd-plugin","escape","moodle-core_filepicker","moodle-core-notification-dialogue"]},"core_comment":{"name":"core_comment","fullpath":"http:\/\/qubits.localhost.com\/lib\/javascript.php\/1687431051\/comment\/comment.js","requires":["base","io-base","node","json","yui2-animation","overlay","escape"]},"mathjax":{"name":"mathjax","fullpath":"https:\/\/cdn.jsdelivr.net\/npm\/mathjax@2.7.9\/MathJax.js?delayStartupUntil=configured"}}};
 M.yui.loader = {modules: {}};
 
 //]]>
@@ -156,8 +156,8 @@ M.yui.loader = {modules: {}};
 
     <div>
     <a class="sr-only sr-only-focusable" href="#maincontent">Skip to main content</a>
-</div><script src="http://qubits.localhost.in/lib/javascript.php/1687431051/lib/polyfills/polyfill.js"></script>
-<script src="http://qubits.localhost.in/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.js"></script><script src="http://qubits.localhost.in/lib/javascript.php/1687431051/lib/javascript-static.js"></script>
+</div><script src="http://qubits.localhost.com/lib/javascript.php/1687431051/lib/polyfills/polyfill.js"></script>
+<script src="http://qubits.localhost.com/theme/yui_combo.php?rollup/3.17.2/yui-moodlesimple-min.js"></script><script src="http://qubits.localhost.com/lib/javascript.php/1687431051/lib/javascript-static.js"></script>
 <script>
 //<![CDATA[
 document.body.className += ' jsenabled';
@@ -186,35 +186,35 @@ document.body.className += ' jsenabled';
                             <i class="qicon-chevron-down-thin arrow icon"></i>
                         </a>
                         <ul class="sub-menu">
-                                   <li> <a href="http://qubits.localhost.in/user/profile.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/user/profile.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Profile
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/grade/report/overview/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/grade/report/overview/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Grades
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/calendar/view.php?view=month" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/calendar/view.php?view=month" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Calendar
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/user/files.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/user/files.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Private files
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/reportbuilder/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/reportbuilder/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Reports
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/user/preferences.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/user/preferences.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Preferences
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/course/switchrole.php?id=3&amp;switchrole=-1&amp;returnurl=%2Fcourse%2Fview.php%3Fid%3D3" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/course/switchrole.php?id=3&amp;switchrole=-1&amp;returnurl=%2Fcourse%2Fview.php%3Fid%3D3" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Switch role to...
                                     </a> </li>
-                                   <li> <a href="http://qubits.localhost.in/login/logout.php?sesskey=oZHwTKnr6s" class="dropdown-item" role="menuitem" tabindex="-1">
+                                   <li> <a href="http://qubits.localhost.com/login/logout.php?sesskey=oZHwTKnr6s" class="dropdown-item" role="menuitem" tabindex="-1">
                                             
                                         Log out
                                     </a> </li>
@@ -236,7 +236,7 @@ document.body.className += ' jsenabled';
                     <i class="qicon-chevron-down-thin arrow icon"></i>
                 </div>
                 <ul class="sub-menu">
-                    <li><a href="http://qubits.localhost.in/course/view.php?id=2">Computer course for beginners</a></li>
+                    <li><a href="http://qubits.localhost.com/course/view.php?id=2">Computer course for beginners</a></li>
                 </ul>
             </li>
 
@@ -330,7 +330,7 @@ document.body.className += ' jsenabled';
             <span class="normal-icon"><i class="icon fa fa-check fa-fw " aria-hidden="true"  ></i></span>
             <span class="loading-icon icon-no-margin"><i class="icon fa fa-circle-o-notch fa-spin fa-fw "  title="Loading" role="img" aria-label="Loading"></i></span>
         </a>
-            <a href="http://qubits.localhost.in/message/notificationpreferences.php"
+            <a href="http://qubits.localhost.com/message/notificationpreferences.php"
                title="Notification preferences"
                aria-label="Notification preferences">
                 <i class="icon fa fa-cog fa-fw " aria-hidden="true"  ></i></a>
@@ -350,7 +350,7 @@ document.body.className += ' jsenabled';
             <span class="loading-icon icon-no-margin"><i class="icon fa fa-circle-o-notch fa-spin fa-fw "  title="Loading" role="img" aria-label="Loading"></i></span>
         </div>
                 <a class="see-all-link"
-                    href="http://qubits.localhost.in/message/output/popup/notifications.php">
+                    href="http://qubits.localhost.com/message/output/popup/notifications.php">
                     <div class="popover-region-footer-container">
                         <div class="popover-region-seeall-text">See all</div>
                     </div>
@@ -387,43 +387,43 @@ document.body.className += ' jsenabled';
                                     <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
                                         <div class="carousel-inner">
                                             <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="User">
-                                                        <a href="http://qubits.localhost.in/user/profile.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/user/profile.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Profile
                                                         </a>
                                                     
-                                                        <a href="http://qubits.localhost.in/grade/report/overview/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/grade/report/overview/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Grades
                                                         </a>
                                                     
-                                                        <a href="http://qubits.localhost.in/calendar/view.php?view=month" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/calendar/view.php?view=month" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Calendar
                                                         </a>
                                                     
-                                                        <a href="http://qubits.localhost.in/user/files.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/user/files.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Private files
                                                         </a>
                                                     
-                                                        <a href="http://qubits.localhost.in/reportbuilder/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/reportbuilder/index.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Reports
                                                         </a>
                                                     
                                                     <div class="dropdown-divider"></div>
-                                                        <a href="http://qubits.localhost.in/user/preferences.php" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/user/preferences.php" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Preferences
                                                         </a>
                                                     
-                                                        <a href="http://qubits.localhost.in/course/switchrole.php?id=3&amp;switchrole=-1&amp;returnurl=%2Fcourse%2Fview.php%3Fid%3D3" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/course/switchrole.php?id=3&amp;switchrole=-1&amp;returnurl=%2Fcourse%2Fview.php%3Fid%3D3" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Switch role to...
                                                         </a>
                                                     <div class="dropdown-divider"></div>
-                                                        <a href="http://qubits.localhost.in/login/logout.php?sesskey=oZHwTKnr6s" class="dropdown-item" role="menuitem" tabindex="-1">
+                                                        <a href="http://qubits.localhost.com/login/logout.php?sesskey=oZHwTKnr6s" class="dropdown-item" role="menuitem" tabindex="-1">
                                                                 
                                                             Log out
                                                         </a>
@@ -436,18 +436,18 @@ document.body.className += ' jsenabled';
                     </div>
             </div>
             <div class="divider border-left h-75 align-self-center ml-1 mr-3"></div>
-<form action="http://qubits.localhost.in/editmode.php" method="post" class="d-flex align-items-center editmode-switch-form">
+<form action="http://qubits.localhost.com/editmode.php" method="post" class="d-flex align-items-center editmode-switch-form">
     <div class="input-group">
         <label class="mr-2 mb-0 " for="64953479a65fd649534791b3b968-editingswitch">
             Edit mode
         </label>
         <div class="custom-control custom-switch">
-            <input type="checkbox" name="setmode" class="custom-control-input" id="64953479a65fd649534791b3b968-editingswitch" data-context="19" data-pageurl="http://qubits.localhost.in/course/view.php?id=3">
+            <input type="checkbox" name="setmode" class="custom-control-input" id="64953479a65fd649534791b3b968-editingswitch" data-context="19" data-pageurl="http://qubits.localhost.com/course/view.php?id=3">
             <span class="custom-control-label">&nbsp;</span>
         </div>
     </div>
     <input type="hidden" name="sesskey" value="oZHwTKnr6s">
-    <input type="hidden" name="pageurl" value="http://qubits.localhost.in/course/view.php?id=3">
+    <input type="hidden" name="pageurl" value="http://qubits.localhost.com/course/view.php?id=3">
     <input type="hidden" name="context" value="19">
     <noscript>
         <input type="submit" value="Set mode">
@@ -473,16 +473,16 @@ document.body.className += ' jsenabled';
     </div>
     <div class="drawercontent drag-container" data-usertour="scroller">
                 <div class="list-group">
-                <a href="http://qubits.localhost.in/?redirect=0" class="list-group-item list-group-item-action  " >
+                <a href="http://qubits.localhost.com/?redirect=0" class="list-group-item list-group-item-action  " >
                     Home
                 </a>
-                <a href="http://qubits.localhost.in/my/" class="list-group-item list-group-item-action  " >
+                <a href="http://qubits.localhost.com/my/" class="list-group-item list-group-item-action  " >
                     Dashboard
                 </a>
-                <a href="http://qubits.localhost.in/my/courses.php" class="list-group-item list-group-item-action  " >
+                <a href="http://qubits.localhost.com/my/courses.php" class="list-group-item list-group-item-action  " >
                     My courses
                 </a>
-                <a href="http://qubits.localhost.in/admin/search.php" class="list-group-item list-group-item-action  " >
+                <a href="http://qubits.localhost.com/admin/search.php" class="list-group-item list-group-item-action  " >
                     Site administration
                 </a>
         </div>
@@ -572,7 +572,7 @@ document.body.className += ' jsenabled';
 
 
         <div class="card-text content mt-3">
-            <ul class="block_tree list" role="tree" data-ajax-loader="block_navigation/nav_loader"><li class="type_unknown depth_1 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b93_group" data-collapsible="false" aria-labelledby="random649534791b3b92_label_1_1"><p class="tree_item branch navigation_node"><a tabindex="-1" id="random649534791b3b92_label_1_1" href="http://qubits.localhost.in/my/">Dashboard</a></p><ul id="random649534791b3b93_group" role="group"><li class="type_setting depth_2 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b94_label_2_2"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b94_label_2_2" href="http://qubits.localhost.in/?redirect=0"><i class="icon fa fa-home fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site home</span></a></p></li><li class="type_course depth_2 contains_branch" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b96_group" aria-labelledby="random649534791b3b94_label_2_3"><p class="tree_item branch"><span tabindex="-1" id="random649534791b3b94_label_2_3" title="Qubits">Site pages</span></p><ul id="random649534791b3b96_group" role="group" aria-hidden="true"><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_5"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_5" href="http://qubits.localhost.in/my/courses.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">My courses</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_6"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_6" href="http://qubits.localhost.in/user/index.php?id=1"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Participants</span></a></p></li><li class="type_unknown depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_7"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_7" href="http://qubits.localhost.in/blog/index.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site blogs</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_8"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_8" href="http://qubits.localhost.in/badges/view.php?type=1"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site badges</span></a></p></li><li class="type_setting depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_9"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_9" href="http://qubits.localhost.in/notes/index.php?filtertype=course&amp;filterselect=0"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Notes</span></a></p></li><li class="type_setting depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_10"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_10" href="http://qubits.localhost.in/tag/search.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Tags</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_12"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_12" href="http://qubits.localhost.in/contentbank/index.php?contextid=19"><i class="icon fa fa-paint-brush fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Content bank</span></a></p></li></ul></li><li class="type_system depth_2 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b915_group" aria-labelledby="random649534791b3b94_label_2_13"><p class="tree_item branch canexpand"><a tabindex="-1" id="random649534791b3b94_label_2_13" href="http://qubits.localhost.in/my/courses.php">My courses</a></p><ul id="random649534791b3b915_group" role="group"><li class="type_course depth_3 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_20_2" data-node-key="2" data-node-type="20" aria-labelledby="random649534791b3b916_label_3_14"><p class="tree_item branch" id="expandable_branch_20_2"><a tabindex="-1" id="random649534791b3b916_label_3_14" title="Computer course for beginners" href="http://qubits.localhost.in/course/view.php?id=2">cc</a></p></li></ul></li><li class="type_system depth_2 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b917_group" aria-labelledby="random649534791b3b94_label_2_15"><p class="tree_item branch"><a tabindex="-1" id="random649534791b3b94_label_2_15" href="http://qubits.localhost.in/course/index.php">Courses</a></p><ul id="random649534791b3b917_group" role="group"><li class="type_course depth_3 contains_branch current_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b919_group" aria-labelledby="random649534791b3b918_label_3_16"><p class="tree_item branch active_tree_node canexpand"><a tabindex="-1" id="random649534791b3b918_label_3_16" title="DigiChamps Level 1" href="http://qubits.localhost.in/course/view.php?id=3">DCL01</a></p><ul id="random649534791b3b919_group" role="group"><li class="type_container depth_4 contains_branch" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b921_group" aria-labelledby="random649534791b3b920_label_4_17"><p class="tree_item branch"><a tabindex="-1" id="random649534791b3b920_label_4_17" href="http://qubits.localhost.in/user/index.php?id=3">Participants</a></p><ul id="random649534791b3b921_group" role="group" aria-hidden="true"><li class="type_setting depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_18"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_18" href="http://qubits.localhost.in/blog/index.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Course blogs</span></a></p></li><li class="type_setting depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_19"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_19" href="http://qubits.localhost.in/notes/index.php?filtertype=course&amp;filterselect=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Notes</span></a></p></li><li class="type_user depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_20"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_20" href="http://qubits.localhost.in/user/view.php?id=2&amp;course=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Admin User</span></a></p></li></ul></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_21"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_21" href="http://qubits.localhost.in/badges/view.php?type=2&amp;id=3"><i class="icon fa fa-shield fa-fw navicon"  title="Badges" role="img" aria-label="Badges"></i><span class="item-content-wrap">Badges</span></a></p></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_22"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_22" href="http://qubits.localhost.in/admin/tool/lp/coursecompetencies.php?courseid=3"><i class="icon fa fa-check-square-o fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Competencies</span></a></p></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_23"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_23" href="http://qubits.localhost.in/grade/report/index.php?id=3"><i class="icon fa fa-table fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Grades</span></a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_6" data-node-key="6" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_24"><p class="tree_item branch" id="expandable_branch_30_6"><a tabindex="-1" id="random649534791b3b920_label_4_24" class="dimmed_text" href="http://qubits.localhost.in/course/view.php?id=3#section-0">General</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_7" data-node-key="7" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_25"><p class="tree_item branch" id="expandable_branch_30_7"><a tabindex="-1" id="random649534791b3b920_label_4_25" href="http://qubits.localhost.in/course/view.php?id=3#section-1">Unit 1:  Computing Devices</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_8" data-node-key="8" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_26"><p class="tree_item branch" id="expandable_branch_30_8"><a tabindex="-1" id="random649534791b3b920_label_4_26" href="http://qubits.localhost.in/course/view.php?id=3#section-2">Unit 2: Development of Technology</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_9" data-node-key="9" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_27"><p class="tree_item branch" id="expandable_branch_30_9"><a tabindex="-1" id="random649534791b3b920_label_4_27" class="dimmed_text" href="http://qubits.localhost.in/course/view.php?id=3#section-3">Unit 3: Internet and Safety</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_10" data-node-key="10" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_28"><p class="tree_item branch" id="expandable_branch_30_10"><a tabindex="-1" id="random649534791b3b920_label_4_28" class="dimmed_text" href="http://qubits.localhost.in/course/view.php?id=3#section-4">Unit 4: Painting and Stamps</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_11" data-node-key="11" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_29"><p class="tree_item branch" id="expandable_branch_30_11"><a tabindex="-1" id="random649534791b3b920_label_4_29" class="dimmed_text" href="http://qubits.localhost.in/course/view.php?id=3#section-5">Unit 5: PowerPoint Basics</a></p></li></ul></li></ul></li></ul></li></ul>
+            <ul class="block_tree list" role="tree" data-ajax-loader="block_navigation/nav_loader"><li class="type_unknown depth_1 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b93_group" data-collapsible="false" aria-labelledby="random649534791b3b92_label_1_1"><p class="tree_item branch navigation_node"><a tabindex="-1" id="random649534791b3b92_label_1_1" href="http://qubits.localhost.com/my/">Dashboard</a></p><ul id="random649534791b3b93_group" role="group"><li class="type_setting depth_2 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b94_label_2_2"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b94_label_2_2" href="http://qubits.localhost.com/?redirect=0"><i class="icon fa fa-home fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site home</span></a></p></li><li class="type_course depth_2 contains_branch" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b96_group" aria-labelledby="random649534791b3b94_label_2_3"><p class="tree_item branch"><span tabindex="-1" id="random649534791b3b94_label_2_3" title="Qubits">Site pages</span></p><ul id="random649534791b3b96_group" role="group" aria-hidden="true"><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_5"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_5" href="http://qubits.localhost.com/my/courses.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">My courses</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_6"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_6" href="http://qubits.localhost.com/user/index.php?id=1"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Participants</span></a></p></li><li class="type_unknown depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_7"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_7" href="http://qubits.localhost.com/blog/index.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site blogs</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_8"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_8" href="http://qubits.localhost.com/badges/view.php?type=1"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Site badges</span></a></p></li><li class="type_setting depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_9"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_9" href="http://qubits.localhost.com/notes/index.php?filtertype=course&amp;filterselect=0"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Notes</span></a></p></li><li class="type_setting depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_10"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_10" href="http://qubits.localhost.com/tag/search.php"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Tags</span></a></p></li><li class="type_custom depth_3 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b97_label_3_12"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b97_label_3_12" href="http://qubits.localhost.com/contentbank/index.php?contextid=19"><i class="icon fa fa-paint-brush fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Content bank</span></a></p></li></ul></li><li class="type_system depth_2 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b915_group" aria-labelledby="random649534791b3b94_label_2_13"><p class="tree_item branch canexpand"><a tabindex="-1" id="random649534791b3b94_label_2_13" href="http://qubits.localhost.com/my/courses.php">My courses</a></p><ul id="random649534791b3b915_group" role="group"><li class="type_course depth_3 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_20_2" data-node-key="2" data-node-type="20" aria-labelledby="random649534791b3b916_label_3_14"><p class="tree_item branch" id="expandable_branch_20_2"><a tabindex="-1" id="random649534791b3b916_label_3_14" title="Computer course for beginners" href="http://qubits.localhost.com/course/view.php?id=2">cc</a></p></li></ul></li><li class="type_system depth_2 contains_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b917_group" aria-labelledby="random649534791b3b94_label_2_15"><p class="tree_item branch"><a tabindex="-1" id="random649534791b3b94_label_2_15" href="http://qubits.localhost.com/course/index.php">Courses</a></p><ul id="random649534791b3b917_group" role="group"><li class="type_course depth_3 contains_branch current_branch" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b919_group" aria-labelledby="random649534791b3b918_label_3_16"><p class="tree_item branch active_tree_node canexpand"><a tabindex="-1" id="random649534791b3b918_label_3_16" title="DigiChamps Level 1" href="http://qubits.localhost.com/course/view.php?id=3">DCL01</a></p><ul id="random649534791b3b919_group" role="group"><li class="type_container depth_4 contains_branch" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b921_group" aria-labelledby="random649534791b3b920_label_4_17"><p class="tree_item branch"><a tabindex="-1" id="random649534791b3b920_label_4_17" href="http://qubits.localhost.com/user/index.php?id=3">Participants</a></p><ul id="random649534791b3b921_group" role="group" aria-hidden="true"><li class="type_setting depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_18"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_18" href="http://qubits.localhost.com/blog/index.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Course blogs</span></a></p></li><li class="type_setting depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_19"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_19" href="http://qubits.localhost.com/notes/index.php?filtertype=course&amp;filterselect=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Notes</span></a></p></li><li class="type_user depth_5 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b922_label_5_20"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b922_label_5_20" href="http://qubits.localhost.com/user/view.php?id=2&amp;course=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Admin User</span></a></p></li></ul></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_21"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_21" href="http://qubits.localhost.com/badges/view.php?type=2&amp;id=3"><i class="icon fa fa-shield fa-fw navicon"  title="Badges" role="img" aria-label="Badges"></i><span class="item-content-wrap">Badges</span></a></p></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_22"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_22" href="http://qubits.localhost.com/admin/tool/lp/coursecompetencies.php?courseid=3"><i class="icon fa fa-check-square-o fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Competencies</span></a></p></li><li class="type_setting depth_4 item_with_icon" role="treeitem" aria-labelledby="random649534791b3b920_label_4_23"><p class="tree_item hasicon"><a tabindex="-1" id="random649534791b3b920_label_4_23" href="http://qubits.localhost.com/grade/report/index.php?id=3"><i class="icon fa fa-table fa-fw navicon" aria-hidden="true"  ></i><span class="item-content-wrap">Grades</span></a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_6" data-node-key="6" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_24"><p class="tree_item branch" id="expandable_branch_30_6"><a tabindex="-1" id="random649534791b3b920_label_4_24" class="dimmed_text" href="http://qubits.localhost.com/course/view.php?id=3#section-0">General</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_7" data-node-key="7" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_25"><p class="tree_item branch" id="expandable_branch_30_7"><a tabindex="-1" id="random649534791b3b920_label_4_25" href="http://qubits.localhost.com/course/view.php?id=3#section-1">Unit 1:  Computing Devices</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_8" data-node-key="8" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_26"><p class="tree_item branch" id="expandable_branch_30_8"><a tabindex="-1" id="random649534791b3b920_label_4_26" href="http://qubits.localhost.com/course/view.php?id=3#section-2">Unit 2: Development of Technology</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_9" data-node-key="9" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_27"><p class="tree_item branch" id="expandable_branch_30_9"><a tabindex="-1" id="random649534791b3b920_label_4_27" class="dimmed_text" href="http://qubits.localhost.com/course/view.php?id=3#section-3">Unit 3: Internet and Safety</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_10" data-node-key="10" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_28"><p class="tree_item branch" id="expandable_branch_30_10"><a tabindex="-1" id="random649534791b3b920_label_4_28" class="dimmed_text" href="http://qubits.localhost.com/course/view.php?id=3#section-4">Unit 4: Painting and Stamps</a></p></li><li class="type_structure depth_4 contains_branch" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false" data-node-id="expandable_branch_30_11" data-node-key="11" data-node-type="30" aria-labelledby="random649534791b3b920_label_4_29"><p class="tree_item branch" id="expandable_branch_30_11"><a tabindex="-1" id="random649534791b3b920_label_4_29" class="dimmed_text" href="http://qubits.localhost.com/course/view.php?id=3#section-5">Unit 5: PowerPoint Basics</a></p></li></ul></li></ul></li></ul></li></ul>
             <div class="footer"></div>
             
         </div>
@@ -597,36 +597,36 @@ document.body.className += ' jsenabled';
 
 
         <div class="card-text content mt-3">
-            <div id="settingsnav" class="box py-3 block_tree_box"><ul class="block_tree list" role="tree" data-ajax-loader="block_navigation/site_admin_loader"><li class="type_course depth_1 contains_branch" tabindex="-1" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b929_group"><p class="tree_item root_node tree_item branch"><span tabindex="0">Course administration</span></p><ul id="random649534791b3b929_group" role="group"><li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/course/edit.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Settings</a></p></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/course/completion.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Course completion</a></p></li>
-<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b932_group"><p class="tree_item tree_item branch"><span tabindex="0">Users</span></p><ul id="random649534791b3b932_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/user/index.php?id=3"><i class="icon fa fa-user-plus fa-fw navicon" aria-hidden="true"  ></i>Enrolled users</a></p></li>
-<li class="type_setting depth_3 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b934_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.in/enrol/instances.php?id=3">Enrolment methods</a></p><ul id="random649534791b3b934_group" role="group" aria-hidden="true"><li class="type_setting depth_4 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/enrol/editinstance.php?courseid=3&amp;id=4&amp;type=manual"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Manual enrolments</a></p></li></ul></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/group/index.php?id=3"><i class="icon fa fa-users fa-fw navicon" aria-hidden="true"  ></i>Groups</a></p></li>
-<li class="type_setting depth_3 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b937_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.in/admin/roles/permissions.php?contextid=19">Permissions</a></p><ul id="random649534791b3b937_group" role="group" aria-hidden="true"><li class="type_setting depth_4 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/admin/roles/check.php?contextid=19"><i class="icon fa fa-unlock-alt fa-fw navicon" aria-hidden="true"  ></i>Check permissions</a></p></li></ul></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/enrol/otherusers.php?id=3"><i class="icon fa fa-user-plus fa-fw navicon" aria-hidden="true"  ></i>Other users</a></p></li></ul></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/filter/manage.php?contextid=19"><i class="icon fa fa-filter fa-fw navicon" aria-hidden="true"  ></i>Filters</a></p></li>
-<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b941_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.in/report/view.php?courseid=3">Reports</a></p><ul id="random649534791b3b941_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/competency/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Competency breakdown</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/log/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Logs</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/loglive/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Live logs</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/outline/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Activity report</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/participation/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Course participation</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/report/progress/index.php?course=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Activity completion</a></p></li></ul></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/grade/edit/tree/index.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Gradebook setup</a></p></li>
-<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b949_group"><p class="tree_item tree_item branch"><span tabindex="0">Badges</span></p><ul id="random649534791b3b949_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/badges/index.php?type=2&amp;id=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Manage badges</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/badges/newbadge.php?type=2&amp;id=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Add a new badge</a></p></li></ul></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/backup/import.php?id=3"><i class="icon fa fa-level-up fa-fw navicon" aria-hidden="true"  ></i>Import</a></p></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/backup/backup.php?id=3"><i class="icon fa fa-file-zip-o fa-fw navicon" aria-hidden="true"  ></i>Backup</a></p></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/backup/restorefile.php?contextid=19"><i class="icon fa fa-level-up fa-fw navicon" aria-hidden="true"  ></i>Restore</a></p></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/backup/copy.php?id=3"><i class="icon fa fa-copy fa-fw navicon" aria-hidden="true"  ></i>Copy course</a></p></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/course/reset.php?id=3"><i class="icon fa fa-arrow-left fa-fw navicon" aria-hidden="true"  ></i>Reset</a></p></li>
-<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b957_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.in/question/edit.php?courseid=3">Question bank</a></p><ul id="random649534791b3b957_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/question/edit.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Questions</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/question/bank/managecategories/category.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Categories</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/question/bank/importquestions/import.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Import</a></p></li>
-<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/question/bank/exportquestions/export.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Export</a></p></li></ul></li>
-<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.in/admin/tool/brickfield/index.php?courseid=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Accessibility toolkit</a></p></li></ul></li>
-<li class="type_siteadmin depth_1 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false"><hr /><p class="tree_item root_node tree_item branch" id="expandable_branch_71_siteadministration"><a href="http://qubits.localhost.in/admin/search.php">Site administration</a></p></li></ul></div>
+            <div id="settingsnav" class="box py-3 block_tree_box"><ul class="block_tree list" role="tree" data-ajax-loader="block_navigation/site_admin_loader"><li class="type_course depth_1 contains_branch" tabindex="-1" role="treeitem" aria-expanded="true" aria-owns="random649534791b3b929_group"><p class="tree_item root_node tree_item branch"><span tabindex="0">Course administration</span></p><ul id="random649534791b3b929_group" role="group"><li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/course/edit.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Settings</a></p></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/course/completion.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Course completion</a></p></li>
+<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b932_group"><p class="tree_item tree_item branch"><span tabindex="0">Users</span></p><ul id="random649534791b3b932_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/user/index.php?id=3"><i class="icon fa fa-user-plus fa-fw navicon" aria-hidden="true"  ></i>Enrolled users</a></p></li>
+<li class="type_setting depth_3 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b934_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.com/enrol/instances.php?id=3">Enrolment methods</a></p><ul id="random649534791b3b934_group" role="group" aria-hidden="true"><li class="type_setting depth_4 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/enrol/editinstance.php?courseid=3&amp;id=4&amp;type=manual"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Manual enrolments</a></p></li></ul></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/group/index.php?id=3"><i class="icon fa fa-users fa-fw navicon" aria-hidden="true"  ></i>Groups</a></p></li>
+<li class="type_setting depth_3 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b937_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.com/admin/roles/permissions.php?contextid=19">Permissions</a></p><ul id="random649534791b3b937_group" role="group" aria-hidden="true"><li class="type_setting depth_4 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/admin/roles/check.php?contextid=19"><i class="icon fa fa-unlock-alt fa-fw navicon" aria-hidden="true"  ></i>Check permissions</a></p></li></ul></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/enrol/otherusers.php?id=3"><i class="icon fa fa-user-plus fa-fw navicon" aria-hidden="true"  ></i>Other users</a></p></li></ul></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/filter/manage.php?contextid=19"><i class="icon fa fa-filter fa-fw navicon" aria-hidden="true"  ></i>Filters</a></p></li>
+<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b941_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.com/report/view.php?courseid=3">Reports</a></p><ul id="random649534791b3b941_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/competency/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Competency breakdown</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/log/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Logs</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/loglive/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Live logs</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/outline/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Activity report</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/participation/index.php?id=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Course participation</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/report/progress/index.php?course=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Activity completion</a></p></li></ul></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/grade/edit/tree/index.php?id=3"><i class="icon fa fa-cog fa-fw navicon" aria-hidden="true"  ></i>Gradebook setup</a></p></li>
+<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b949_group"><p class="tree_item tree_item branch"><span tabindex="0">Badges</span></p><ul id="random649534791b3b949_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/badges/index.php?type=2&amp;id=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Manage badges</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/badges/newbadge.php?type=2&amp;id=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Add a new badge</a></p></li></ul></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/backup/import.php?id=3"><i class="icon fa fa-level-up fa-fw navicon" aria-hidden="true"  ></i>Import</a></p></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/backup/backup.php?id=3"><i class="icon fa fa-file-zip-o fa-fw navicon" aria-hidden="true"  ></i>Backup</a></p></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/backup/restorefile.php?contextid=19"><i class="icon fa fa-level-up fa-fw navicon" aria-hidden="true"  ></i>Restore</a></p></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/backup/copy.php?id=3"><i class="icon fa fa-copy fa-fw navicon" aria-hidden="true"  ></i>Copy course</a></p></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/course/reset.php?id=3"><i class="icon fa fa-arrow-left fa-fw navicon" aria-hidden="true"  ></i>Reset</a></p></li>
+<li class="type_container depth_2 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" aria-owns="random649534791b3b957_group"><p class="tree_item tree_item branch"><a href="http://qubits.localhost.com/question/edit.php?courseid=3">Question bank</a></p><ul id="random649534791b3b957_group" role="group" aria-hidden="true"><li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/question/edit.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Questions</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/question/bank/managecategories/category.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Categories</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/question/bank/importquestions/import.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Import</a></p></li>
+<li class="type_setting depth_3 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/question/bank/exportquestions/export.php?courseid=3"><i class="icon fa fa-fw fa-fw navicon" aria-hidden="true"  ></i>Export</a></p></li></ul></li>
+<li class="type_setting depth_2 item_with_icon" tabindex="-1" role="treeitem"><p class="tree_item hasicon tree_item leaf"><a href="http://qubits.localhost.com/admin/tool/brickfield/index.php?courseid=3"><i class="icon fa fa-area-chart fa-fw navicon" aria-hidden="true"  ></i>Accessibility toolkit</a></p></li></ul></li>
+<li class="type_siteadmin depth_1 contains_branch" tabindex="-1" role="treeitem" aria-expanded="false" data-requires-ajax="true" data-loaded="false"><hr /><p class="tree_item root_node tree_item branch" id="expandable_branch_71_siteadministration"><a href="http://qubits.localhost.com/admin/search.php">Site administration</a></p></li></ul></div>
             <div class="footer"><div class="simplesearchform ">
-    <form autocomplete="off" action="http://qubits.localhost.in/admin/search.php" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
+    <form autocomplete="off" action="http://qubits.localhost.com/admin/search.php" method="get" accept-charset="utf-8" class="mform form-inline simplesearchform">
     <div class="input-group">
         <label for="searchinput-6495347966538649534791b3b963">
             <span class="sr-only">Search in settings</span>
@@ -706,7 +706,7 @@ document.body.className += ' jsenabled';
             </div>
             <div class="ml-auto d-flex">
                 <div class="singlebutton">
-    <form method="post" action="http://qubits.localhost.in/course/view.php" >
+    <form method="post" action="http://qubits.localhost.com/course/view.php" >
             <input type="hidden" name="id" value="3">
             <input type="hidden" name="sesskey" value="oZHwTKnr6s">
             <input type="hidden" name="edit" value="on">
@@ -736,7 +736,7 @@ document.body.className += ' jsenabled';
                         <ul id="moremenu-649534796990d-nav-tabs" role="menubar" class="nav more-nav nav-tabs">
                                         <li data-key="coursehome" class="nav-item" role="none" data-forceintomoremenu="false">
                                                     <a role="menuitem" class="nav-link active active_tree_node "
-                                                        href="http://qubits.localhost.in/course/view.php?id=3"
+                                                        href="http://qubits.localhost.com/course/view.php?id=3"
                                                         aria-current="true"
                                                         
                                                     >
@@ -745,7 +745,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="editsettings" class="nav-item" role="none" data-forceintomoremenu="false">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/course/edit.php?id=3"
+                                                        href="http://qubits.localhost.com/course/edit.php?id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -754,7 +754,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="participants" class="nav-item" role="none" data-forceintomoremenu="false">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/user/index.php?id=3"
+                                                        href="http://qubits.localhost.com/user/index.php?id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -763,7 +763,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="grades" class="nav-item" role="none" data-forceintomoremenu="false">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/grade/report/index.php?id=3"
+                                                        href="http://qubits.localhost.com/grade/report/index.php?id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -772,7 +772,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="coursereports" class="nav-item" role="none" data-forceintomoremenu="false">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/report/view.php?courseid=3"
+                                                        href="http://qubits.localhost.com/report/view.php?courseid=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -781,7 +781,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="questionbank" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/question/edit.php?courseid=3"
+                                                        href="http://qubits.localhost.com/question/edit.php?courseid=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -790,7 +790,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="contentbank" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/contentbank/index.php?contextid=19"
+                                                        href="http://qubits.localhost.com/contentbank/index.php?contextid=19"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -799,7 +799,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="coursecompletion" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/course/completion.php?id=3"
+                                                        href="http://qubits.localhost.com/course/completion.php?id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -808,7 +808,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="badgesview" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/badges/view.php?type=2&amp;id=3"
+                                                        href="http://qubits.localhost.com/badges/view.php?type=2&amp;id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -817,7 +817,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="competencies" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/admin/tool/lp/coursecompetencies.php?courseid=3"
+                                                        href="http://qubits.localhost.com/admin/tool/lp/coursecompetencies.php?courseid=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -826,7 +826,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="filtermanagement" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/filter/manage.php?contextid=19"
+                                                        href="http://qubits.localhost.com/filter/manage.php?contextid=19"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -835,7 +835,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="13" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/admin/tool/brickfield/index.php?courseid=3"
+                                                        href="http://qubits.localhost.com/admin/tool/brickfield/index.php?courseid=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -844,7 +844,7 @@ document.body.className += ' jsenabled';
                                         </li>
                                         <li data-key="coursereuse" class="nav-item" role="none" data-forceintomoremenu="true">
                                                     <a role="menuitem" class="nav-link  "
-                                                        href="http://qubits.localhost.in/backup/import.php?id=3"
+                                                        href="http://qubits.localhost.com/backup/import.php?id=3"
                                                         
                                                         tabindex="-1"
                                                     >
@@ -953,7 +953,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_forum position-relative align-self-start">
                                                                                             <div class="activityiconcontainer collaboration courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=forum&amp;image=monologo" class="activityicon " alt="forum icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=forum&amp;image=monologo" class="activityicon " alt="forum icon"> -->
         <span class="activityicon" alt="forum icon">    
             <i class="qicon-theory icon">
 
@@ -965,7 +965,7 @@ document.body.className += ' jsenabled';
                                                                                                     Forum
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/forum/view.php?id=3" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/forum/view.php?id=3" class=" aalink stretched-link" onclick="">
         <span class="instancename">Announcements <span class="accesshide " > Forum</span></span>
     </a>
                                                                                                             
@@ -1051,10 +1051,11 @@ document.body.className += ' jsenabled';
 
                                                                 <div class="activity-basis d-flex align-items-center">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
-                                                                                    <div class="activity-instance d-flex flex-column">
+                                                                                    <div class="activity-instance d-flex flex-column course_tooltip">
+                                                                                    <span class="tooltiptext">This challenge is locked for you until you make a submission for the previous one.</span>
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon">    
             <i class="qicon-theory icon">
 
@@ -1062,24 +1063,14 @@ document.body.className += ' jsenabled';
         </span>
        
                                                                                             </div>
-                                                                                            <button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="top" title="Tooltip on top">
-  Tooltip on top
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="right" title="Tooltip on right">
-  Tooltip on right
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="bottom" title="Tooltip on bottom">
-  Tooltip on bottom
-</button>
-<button type="button" class="btn btn-secondary" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
-  Tooltip on left
-</button>
+                                                                                            
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=4" class=" aalink stretched-link" onclick="">
+                                                                                            
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=4" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 1 Summary <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1113,12 +1104,12 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item inproress-course" data-activityname="1.1 Introduction to Computing Devices">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level1-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
                                                                                                  <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i>                                                                       
 </span>
                                                                                             </div>
@@ -1127,7 +1118,7 @@ document.body.className += ' jsenabled';
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=5" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=5" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.1 Introduction to Computing Devices <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1167,12 +1158,12 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item locked-course" data-activityname="1.1 Reflect">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level2-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1180,7 +1171,7 @@ document.body.className += ' jsenabled';
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=6" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=6" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.1 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -1220,12 +1211,12 @@ document.body.className += ' jsenabled';
                                                 >
                                                         <div class="activity-item " data-activityname="1.2 Parts of a Computer">
 
-                                                                <div class="activity-basis d-flex align-items-center">
+                                                                <div class="activity-basis d-flex align-items-center level3-indent">
                                                                     <div class="d-flex flex-column flex-md-row w-100 align-self-start">
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1233,7 +1224,7 @@ document.body.className += ' jsenabled';
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=7" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=7" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.2 Parts of a Computer <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1278,7 +1269,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1286,7 +1277,7 @@ document.body.className += ' jsenabled';
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=8" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=8" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.2 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -1331,7 +1322,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1339,7 +1330,7 @@ document.body.className += ' jsenabled';
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=9" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=9" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.3 Safety Measures <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1384,7 +1375,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1392,7 +1383,7 @@ document.body.className += ' jsenabled';
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=10" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=10" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.3 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -1437,7 +1428,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1445,7 +1436,7 @@ document.body.className += ' jsenabled';
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=11" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=11" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.4 Keyboard and Mouse <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1490,7 +1481,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-challenge icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1498,7 +1489,7 @@ document.body.className += ' jsenabled';
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=12" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=12" class=" aalink stretched-link" onclick="">
         <span class="instancename">1.4 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -1543,7 +1534,7 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_quiz position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <!-- <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon"> -->
+                                                                                                <!-- <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon"> -->
                                                                                                 <span class="activityicon" alt="forum icon"> <i class="qicon-exercise icon"></i></span>
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
@@ -1551,7 +1542,7 @@ document.body.className += ' jsenabled';
                                                                                                     Quiz
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/quiz/view.php?id=13" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/quiz/view.php?id=13" class=" aalink stretched-link" onclick="">
         <span class="instancename">Exercise - Unit 1 <span class="accesshide " > Quiz</span></span>
     </a>
                                                                                                             
@@ -1651,14 +1642,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=14" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=14" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 2 Summary <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1706,14 +1697,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=15" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=15" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.1 Technology and Us <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -1761,14 +1752,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=16" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=16" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.1 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -1823,14 +1814,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=17" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=17" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.1 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -1885,14 +1876,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=18" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=18" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.1 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -1947,14 +1938,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=19" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=19" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.1 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -2002,14 +1993,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=20" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=20" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.2 How to Turn on the System and Work with Applications <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -2057,14 +2048,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=21" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=21" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.2 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2119,14 +2110,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=22" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=22" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.2 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2181,14 +2172,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=23" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=23" class=" aalink stretched-link" onclick="">
         <span class="instancename">2.2 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -2236,14 +2227,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_quiz position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Quiz
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/quiz/view.php?id=24" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/quiz/view.php?id=24" class=" aalink stretched-link" onclick="">
         <span class="instancename">Exercise - Unit 2 <span class="accesshide " > Quiz</span></span>
     </a>
                                                                                                             
@@ -2347,14 +2338,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=25" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=25" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 3 Summary <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -2402,14 +2393,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=26" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=26" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.1 Search the Internet <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -2457,14 +2448,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=27" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=27" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.1 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2519,14 +2510,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=28" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=28" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.1 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2581,14 +2572,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=29" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=29" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.1 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2643,14 +2634,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=30" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=30" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.1 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -2698,14 +2689,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=31" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=31" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.2 Be Safe <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -2753,14 +2744,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=32" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=32" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.2 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2815,14 +2806,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=33" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=33" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.2  Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2872,14 +2863,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=34" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=34" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.2 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -2929,14 +2920,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=35" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=35" class=" aalink stretched-link" onclick="">
         <span class="instancename">3.2 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -2979,14 +2970,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_quiz position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Quiz
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/quiz/view.php?id=36" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/quiz/view.php?id=36" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 3 - Exercise <span class="accesshide " > Quiz</span></span>
     </a>
                                                                                                             
@@ -3085,14 +3076,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=37" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=37" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 4 Summary <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -3135,14 +3126,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=38" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=38" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.1 Paint tool <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -3185,14 +3176,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=39" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=39" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.1 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3242,14 +3233,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=40" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=40" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.1 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3299,14 +3290,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=41" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=41" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.1 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3356,14 +3347,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=42" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=42" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.1 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -3406,14 +3397,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=43" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=43" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.2 Color a Canvas <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -3456,14 +3447,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=44" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=44" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.2 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3513,14 +3504,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=45" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=45" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.2 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3570,14 +3561,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=46" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=46" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.2 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -3620,14 +3611,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=47" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=47" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.3 Stamps <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -3670,14 +3661,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=48" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=48" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.3 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3727,14 +3718,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=49" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=49" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.3 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3784,14 +3775,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=50" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=50" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.3 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -3834,14 +3825,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=51" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=51" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.4 Manage and Present Projects <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -3884,14 +3875,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=52" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=52" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.4 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3941,14 +3932,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=53" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=53" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.4 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -3998,14 +3989,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=54" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=54" class=" aalink stretched-link" onclick="">
         <span class="instancename">4.4 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -4048,14 +4039,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_quiz position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Quiz
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/quiz/view.php?id=55" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/quiz/view.php?id=55" class=" aalink stretched-link" onclick="">
         <span class="instancename">Exercise - Unit 4 <span class="accesshide " > Quiz</span></span>
     </a>
                                                                                                             
@@ -4161,14 +4152,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=56" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=56" class=" aalink stretched-link" onclick="">
         <span class="instancename">Unit 5 Summary <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -4211,14 +4202,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=57" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=57" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.1 My Favorite Picture <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -4261,14 +4252,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=58" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=58" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.1 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4318,14 +4309,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=59" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=59" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.1 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4375,14 +4366,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=60" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=60" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.1 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4432,14 +4423,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=61" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=61" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.1 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -4482,14 +4473,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_page position-relative align-self-start">
                                                                                             <div class="activityiconcontainer content courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=page&amp;image=monologo" class="activityicon " alt="page icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Page
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/page/view.php?id=62" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/page/view.php?id=62" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.2 Parents and their Young Ones <span class="accesshide " > Page</span></span>
     </a>
                                                                                                             
@@ -4532,14 +4523,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=63" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=63" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.2 Mastery Challenge 1 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4589,14 +4580,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=64" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=64" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.2 Mastery Challenge 2 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4646,14 +4637,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_assign position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=assign&amp;image=monologo" class="activityicon " alt="assign icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Assignment
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/assign/view.php?id=65" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/assign/view.php?id=65" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.2 Mastery Challenge 3 <span class="accesshide " > Assignment</span></span>
     </a>
                                                                                                             
@@ -4703,14 +4694,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_feedback position-relative align-self-start">
                                                                                             <div class="activityiconcontainer communication courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=feedback&amp;image=monologo" class="activityicon " alt="feedback icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Feedback
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/feedback/view.php?id=66" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/feedback/view.php?id=66" class=" aalink stretched-link" onclick="">
         <span class="instancename">5.2 Reflect <span class="accesshide " > Feedback</span></span>
     </a>
                                                                                                             
@@ -4753,14 +4744,14 @@ document.body.className += ' jsenabled';
                                                                                     <div class="activity-instance d-flex flex-column">
                                                                                         <div class="activitytitle media  modtype_quiz position-relative align-self-start">
                                                                                             <div class="activityiconcontainer assessment courseicon align-self-start mr-3">
-                                                                                                <img src="http://qubits.localhost.in/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
+                                                                                                <img src="http://qubits.localhost.com/theme/image.php?theme=qubitsbasic&amp;component=quiz&amp;image=monologo" class="activityicon " alt="quiz icon">
                                                                                             </div>
                                                                                             <div class="media-body align-self-center">
                                                                                                 <div class="text-uppercase small">
                                                                                                     Quiz
                                                                                                 </div>
                                                                                                 <div class="activityname">
-                                                                                                                <a href="http://qubits.localhost.in/mod/quiz/view.php?id=67" class=" aalink stretched-link" onclick="">
+                                                                                                                <a href="http://qubits.localhost.com/mod/quiz/view.php?id=67" class=" aalink stretched-link" onclick="">
         <span class="instancename">Exercise - Unit 5 <span class="accesshide " > Quiz</span></span>
     </a>
                                                                                                             
@@ -4823,29 +4814,29 @@ document.body.className += ' jsenabled';
         
                             <div class="footer-support-link"><a target="_blank" href="https://moodle.com/help/?utm_source=CTA-banner&amp;utm_medium=platform&amp;utm_campaign=name~Moodle4+cat~lms+mp~no"><i class="icon fa fa-life-ring fa-fw fa fa-life-ring" aria-hidden="true"  ></i>Services and support<i class="icon fa fa-external-link fa-fw ml-1"  title="Opens in new window" role="img" aria-label="Opens in new window"></i></a></div>
         
-                            <div class="footer-support-link"><a href="http://qubits.localhost.in/user/contactsitesupport.php"><i class="icon fa fa-envelope-o fa-fw " aria-hidden="true"  ></i>Contact site support</a></div>
+                            <div class="footer-support-link"><a href="http://qubits.localhost.com/user/contactsitesupport.php"><i class="icon fa fa-envelope-o fa-fw " aria-hidden="true"  ></i>Contact site support</a></div>
                     </div>
                 <div class="footer-section p-3 border-bottom">
                     <div class="logininfo">
-                        <div class="logininfo">You are logged in as <a href="http://qubits.localhost.in/user/profile.php?id=2" title="View profile">Admin User</a> (<a href="http://qubits.localhost.in/login/logout.php?sesskey=oZHwTKnr6s">Log out</a>)</div>
+                        <div class="logininfo">You are logged in as <a href="http://qubits.localhost.com/user/profile.php?id=2" title="View profile">Admin User</a> (<a href="http://qubits.localhost.com/login/logout.php?sesskey=oZHwTKnr6s">Log out</a>)</div>
                     </div>
                     <div class="tool_usertours-resettourcontainer">
                     </div>
         
-                    <div class="tool_dataprivacy"><a href="http://qubits.localhost.in/admin/tool/dataprivacy/summary.php">Data retention summary</a></div>
+                    <div class="tool_dataprivacy"><a href="http://qubits.localhost.com/admin/tool/dataprivacy/summary.php">Data retention summary</a></div>
                     <script>
 //<![CDATA[
 var require = {
-    baseUrl : 'http://qubits.localhost.in/lib/requirejs.php/1687431051/',
+    baseUrl : 'http://qubits.localhost.com/lib/requirejs.php/1687431051/',
     // We only support AMD modules with an explicit define() statement.
     enforceDefine: true,
     skipDataMain: true,
     waitSeconds : 0,
 
     paths: {
-        jquery: 'http://qubits.localhost.in/lib/javascript.php/1687431051/lib/jquery/jquery-3.6.1.min',
-        jqueryui: 'http://qubits.localhost.in/lib/javascript.php/1687431051/lib/jquery/ui-1.13.2/jquery-ui.min',
-        jqueryprivate: 'http://qubits.localhost.in/lib/javascript.php/1687431051/lib/requirejs/jquery-private'
+        jquery: 'http://qubits.localhost.com/lib/javascript.php/1687431051/lib/jquery/jquery-3.6.1.min',
+        jqueryui: 'http://qubits.localhost.com/lib/javascript.php/1687431051/lib/jquery/ui-1.13.2/jquery-ui.min',
+        jqueryprivate: 'http://qubits.localhost.com/lib/javascript.php/1687431051/lib/requirejs/jquery-private'
     },
 
     // Custom jquery config map.
@@ -4865,7 +4856,7 @@ var require = {
 
 //]]>
 </script>
-<script src="http://qubits.localhost.in/lib/javascript.php/1687431051/lib/requirejs/require.min.js"></script>
+<script src="http://qubits.localhost.com/lib/javascript.php/1687431051/lib/requirejs/require.min.js"></script>
 <script>
 //<![CDATA[
 M.util.js_pending("core/first");
@@ -5349,7 +5340,7 @@ M.util.js_pending('core/utility'); require(['core/utility'], function(amd) {M.ut
 });
 //]]>
 </script>
-<script src="http://qubits.localhost.in/lib/javascript.php/1687431051/course/format/topics/format.js"></script>
+<script src="http://qubits.localhost.com/lib/javascript.php/1687431051/course/format/topics/format.js"></script>
 <script>
 //<![CDATA[
 M.str = {"moodle":{"lastmodified":"Last modified","name":"Name","error":"Error","info":"Information","yes":"Yes","no":"No","viewallcourses":"View all courses","cancel":"Cancel","confirm":"Confirm","areyousure":"Are you sure?","closebuttontitle":"Close","unknownerror":"Unknown error","file":"File","url":"URL","collapseall":"Collapse all","expandall":"Expand all"},"repository":{"type":"Type","size":"Size","invalidjson":"Invalid JSON string","nofilesattached":"No files attached","filepicker":"File picker","logout":"Logout","nofilesavailable":"No files available","norepositoriesavailable":"Sorry, none of your current repositories can return files in the required format.","fileexistsdialogheader":"File exists","fileexistsdialog_editor":"A file with that name has already been attached to the text you are editing.","fileexistsdialog_filemanager":"A file with that name has already been attached","renameto":"Rename to \"{$a}\"","referencesexist":"There are {$a} links to this file","select":"Select"},"admin":{"confirmdeletecomments":"You are about to delete comments, are you sure?","confirmation":"Confirmation"},"debug":{"debuginfo":"Debug info","line":"Line","stacktrace":"Stack trace"},"langconfig":{"labelsep":": "}};
@@ -6574,7 +6565,7 @@ M.util.help_popups.setup(Y);
                         style="top: -1px; bottom: 0; right: 0; left: 0; background: rgba(0,0,0,0.3);"
                     ></div>
                 </div>                    <div data-region="view-overview" class="text-center">
-                        <a href="http://qubits.localhost.in/message/index.php">
+                        <a href="http://qubits.localhost.com/message/index.php">
                             See all
                         </a>
                     </div>
