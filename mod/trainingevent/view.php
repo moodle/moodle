@@ -258,6 +258,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         if (!empty($location->postcode)) {
                             $eventlocation .= ", " . format_string($location->postcode);
                         }
+                        if (!empty($location->description)) {
+                            $eventlocation .= ", " . strip_tags($location->description);
+                        }
                         $calendarevent->location = $eventlocation; 
                         $calendarevent->courseid = 0;
                         $calendarevent->groupid = 0;
@@ -528,6 +531,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             }
                             if (!empty($location->postcode)) {
                                 $eventlocation .= ", " . format_string($location->postcode);
+                            }
+                            if (!empty($location->description)) {
+                                $eventlocation .= ", " . strip_tags($location->description);
                             }
                             $calendarevent->location = $eventlocation; 
                             $calendarevent->courseid = 0;
@@ -890,6 +896,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         if (!empty($location->postcode)) {
                             $eventlocation .= ", " . format_string($location->postcode);
                         }
+                        if (!empty($location->description)) {
+                            $eventlocation .= ", " . strip_tags($location->description);
+                        }
                         $calendarevent->location = $eventlocation; 
                         $calendarevent->courseid = 0;
                         $calendarevent->groupid = 0;
@@ -1110,6 +1119,18 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $eventtable .= "</tr></table>";
         $eventtable .= "<table>";
         $eventtable .= "<tr><th>" . get_string('location', 'trainingevent') . "</th><td>" . $location->name . "</td></tr>";
+
+        if (!empty($location->description)) {
+            $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
+            $systemcontext = context_system::instance();
+            $editoroptions['context'] = $systemcontext;
+            $editoroptions['subdirs'] = file_area_contains_subdirs($systemcontext, 'classroom', 'description', 0);
+
+            $summary = file_rewrite_pluginfile_urls($location->description, 'pluginfile.php', $systemcontext->id, 'block_iomad_company_admin', 'classroom_description', null);
+            $summary = format_text($summary, $location->descriptionformat, $editoroptions, $location->id);
+            $eventtable .= "<tr><th></th><td>" . $summary . "</td></tr>";
+        }
+
         if (empty($location->isvirtual)) {
             $eventtable .= "<tr><th>" . get_string('address') . "</th><td>" . $location->address . "</td></tr>";
             $eventtable .= "<tr><th>" . get_string('city') . "</th><td>" . $location->city . "</td></tr>";

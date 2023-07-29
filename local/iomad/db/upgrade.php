@@ -2411,5 +2411,29 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023042700, 'local', 'iomad');
     }
 
+    if ($oldversion < 2023072900) {
+
+        // Define field description to be added to classroom.
+        $table = new xmldb_table('classroom');
+        $field = new xmldb_field('description', XMLDB_TYPE_TEXT, null, null, null, null, null, 'isvirtual');
+
+        // Conditionally launch add field description.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field description_format to be added to classroom.
+        $table = new xmldb_table('classroom');
+        $field = new xmldb_field('descriptionformat', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'description');
+
+        // Conditionally launch add field descriptionformat.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2023072900, 'local', 'iomad');
+    }
+
     return $result;
 }

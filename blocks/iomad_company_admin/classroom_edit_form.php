@@ -45,14 +45,21 @@ if ($returnurl) {
 }
 $templatelist = new moodle_url('/blocks/iomad_company_admin/classroom_list.php', $urlparams);
 
+$editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
+
 if ($classroomid) {
     $isadding = false;
+    $editoroptions['context'] = $context;
+    $editoroptions['subdirs'] = file_area_contains_subdirs($context, 'classroom', 'description', 0);
 
-    $classroomrecord = $DB->get_record('classroom', array('id' => $classroomid), '*', MUST_EXIST);
+    $classroomrecord = (object) $DB->get_record('classroom', array('id' => $classroomid), '*', MUST_EXIST);
     iomad::require_capability('block/iomad_company_admin:classrooms_edit', $context);
+    $classroomrecord = file_prepare_standard_editor($classroomrecord, 'description', $editoroptions, $context, 'block_iomad_company_admin', 'classroom_description', 0);
 
     $title = 'classrooms_edit';
 } else {
+    $editoroptions['context'] = $context;
+    $editoroptions['subdirs'] = 0;
     $isadding = true;
     $classroomid = 0;
     $classroomrecord = new stdClass;
@@ -85,7 +92,7 @@ require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 // Get the form data.
 
 // Set up the form.
-$mform = new \block_iomad_company_admin\forms\classroom_edit_form($PAGE->url, $isadding, $companyid, $classroomid);
+$mform = new \block_iomad_company_admin\forms\classroom_edit_form($PAGE->url, $isadding, $companyid, $classroomid, $editoroptions);
 $mform->set_data($classroomrecord);
 
 if ($mform->is_cancelled()) {
@@ -110,6 +117,9 @@ if ($mform->is_cancelled()) {
         }
     }
 
+    $data->description = "";
+    $data->descriptionformat = $data->description_editor['format'];
+
     if ($isadding) {
         $data->companyid = $companyid;
         $classroomid = $DB->insert_record('classroom', $data);
@@ -120,6 +130,11 @@ if ($mform->is_cancelled()) {
         $DB->update_record('classroom', $data);
         $message = get_string('classroomupdatedok', 'block_iomad_company_admin');
     }
+
+    // Save the files used in the summary editor and store
+    $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'block_iomad_company_admin', 'classroom_description', 0);
+    $DB->set_field('classroom', 'description', $data->description, ['id' => $classroomid]);
+    $DB->set_field('classroom', 'descriptionformat', $data->descriptionformat, ['id' => $classroomid]);
 
     redirect($templatelist, $message, null, \core\output\notification::NOTIFY_SUCCESS);
 }

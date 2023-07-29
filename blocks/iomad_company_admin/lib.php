@@ -244,3 +244,41 @@ function block_iomad_company_admin_inplace_editable($itemtype, $itemid, $newvalu
     }
 }
 
+/**
+ * This function delegates file serving to individual plugins
+ *
+ * @param string $relativepath
+ * @param bool $forcedownload
+ * @param null|string $preview the preview mode, defaults to serving the original file
+ * @param boolean $offline If offline is requested - don't serve a redirect to an external file, return a file suitable for viewing
+ *                         offline (e.g. mobile app).
+ * @param bool $embed Whether this file will be served embed into an iframe.
+ * @todo MDL-31088 file serving improments
+ */
+function block_iomad_company_admin_pluginfile($course, $birecord_or_cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    global $DB, $CFG, $USER;
+
+    if ($context->contextlevel != CONTEXT_SYSTEM) {
+        send_file_not_found();
+    }
+
+    if ($filearea === 'classroom_description') {
+        if ($CFG->forcelogin) {
+            // no login necessary - unless login forced everywhere
+            require_login();
+        }
+
+        $fs = get_file_storage();
+
+        $filename = array_pop($args);
+        $filepath = $args ? '/'.implode('/', $args).'/' : '/';
+        if (!$file = $fs->get_file($context->id, 'block_iomad_company_admin', 'classroom_description', 0, $filepath, $filename) or $file->is_directory()) {
+            send_file_not_found();
+        }
+
+        \core\session\manager::write_close(); // Unlock session during file serving.
+        send_stored_file($file, null, 0, $forcedownload, $options);
+    } else {
+        send_file_not_found();
+    }
+}

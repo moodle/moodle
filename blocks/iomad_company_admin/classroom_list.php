@@ -100,6 +100,16 @@ if ($delete and confirm_sesskey()) {
     }
 
 }
+
+// Set up the page buttons.
+$buttons = "";
+if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
+    $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_edit_form.php');
+    $buttons = $OUTPUT->single_button($linkurl, get_string('classrooms_add', 'block_iomad_company_admin'), 'get');
+}
+
+$PAGE->set_button($buttons);
+
 echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
@@ -156,13 +166,5 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
 } else {
     echo '<div class="alert alert-warning">' . get_string('nolocations', 'block_iomad_company_admin') . '</div>';
 }
-
-if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
-    echo "<a class=\"btn btn-success\" href=\"classroom_edit_form.php\">" . get_string('classrooms_add', $block) . "</a>&nbsp";
-}
-
-// exit button
-$link = new moodle_url('/my');
-echo '<a class="btn btn-primary" href="' . $link . '">' . get_string('todashboard', 'block_iomad_company_admin') . '</a>';
 
 echo $OUTPUT->footer();

@@ -37,10 +37,12 @@ class classroom_edit_form extends moodleform {
     protected $classroomid;
     protected $companyid;
 
-    public function __construct($actionurl, $isadding, $companyid, $classroomid) {
+    public function __construct($actionurl, $isadding, $companyid, $classroomid, $editoroptions) {
         $this->isadding = $isadding;
         $this->classroomid = $classroomid;
         $this->companyid = $companyid;
+        $this->editoroptions = $editoroptions;
+
         parent::__construct($actionurl);
     }
 
@@ -91,6 +93,12 @@ class classroom_edit_form extends moodleform {
         $mform->hideIf('postcode', 'isvirtual', 'checked');
         $mform->hideIf('country', 'isvirtual', 'checked');
         $mform->hideIf('capacity', 'isvirtual', 'checked');
+
+        $mform->addElement('editor', 'description_editor',
+                            get_string('classroom_description', 'block_iomad_company_admin'), null, $this->editoroptions);
+        $mform->addHelpButton('description_editor', 'classroom_description', 'block_iomad_company_admin');
+        $mform->setType('description_editor', PARAM_RAW);
+
 
         $this->add_action_buttons();
     }
