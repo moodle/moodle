@@ -1016,7 +1016,7 @@ class company {
     }
 
 
-    public static function upsert_company_user($userid, $companyid, $departmentid, $managertype, $educator=false, $ws=false) {
+    public static function upsert_company_user($userid, $companyid, $departmentid, $managertype, $educator=false, $ws=false, $move=false) {
         global $DB, $CFG;
 
         $assign = [
@@ -2053,7 +2053,7 @@ class company {
      * @param int companyid
      * @return array
      */
-    public static function get_all_subdepartments_raw($departmentid, $ignorecurrentbranch = false, $addchildcompanies = true) {
+    public static function get_all_subdepartments_raw($departmentid, $ignorecurrentbranch = false, $addchildcompanies = false) {
 
         // Are we trimming a current branch?
         if ($departmentid == $ignorecurrentbranch) {
@@ -2114,7 +2114,7 @@ class company {
      * Returns array()
      *
      **/
-    public static function get_all_subdepartments($parentnodeid, $addchildcompanies = true) {
+    public static function get_all_subdepartments($parentnodeid, $addchildcompanies = false) {
         $parentnode = self::get_departmentbyid($parentnodeid);
         $parentlist = array();
         $parentlist[$parentnodeid] = format_string($parentnode->name);
@@ -2148,10 +2148,10 @@ class company {
      * Returns array()
      *
      **/
-    public static function get_recursive_department_users($departmentid) {
+    public static function get_recursive_department_users($departmentid, $addchildcompanies = false) {
         global $DB;
 
-        $departmentlist = self::get_all_subdepartments($departmentid);
+        $departmentlist = self::get_all_subdepartments($departmentid, $addchildcompanies);
         $userlist = array();
         foreach ($departmentlist as $id => $value) {
             $departmentusers = self::get_department_users($id);
