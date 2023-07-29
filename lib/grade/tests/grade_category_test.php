@@ -784,13 +784,17 @@ class grade_category_test extends \grade_base_testcase {
         $category = new \grade_category($this->grade_categories[0]);
         $this->assertTrue(method_exists($category, 'set_locked'));
 
-        // Will return false as cannot lock a grade that needs updating.
-        $this->assertFalse($category->set_locked(1));
+        // Even though a grade that needs updating cannot be locked, set_locked will return true because it will successfully
+        // schedule the locking for as soon as final grades are recalculated.
+        $this->assertTrue($category->set_locked(1));
+        // The category should not be locked yet as we are waiting for a recalculation.
+        $this->assertFalse($category->is_locked());
         grade_regrade_final_grades($this->courseid);
 
         // Get the category from the db again.
         $category = new \grade_category($this->grade_categories[0]);
-        $this->assertTrue($category->set_locked(1));
+        // The category is locked now.
+        $this->assertTrue($category->is_locked());
     }
 
     protected function sub_test_grade_category_is_hidden() {
