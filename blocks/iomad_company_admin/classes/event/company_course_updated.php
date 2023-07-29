@@ -84,16 +84,6 @@ class company_course_updated extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->userid, 'iomad', 'company course updated ', '/blocks/ioamd_company_admin/iomad_courses_form.php',
-            ' course id ' . $this->courseid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

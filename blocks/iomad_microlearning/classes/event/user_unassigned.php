@@ -82,16 +82,6 @@ class user_unassigned extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->objectid, 'iomad', 'microlearning thread user unassigned ', '/blocks/iomad_microlearning/users.php',
-            ' User id ' . $this->userid , ' Related user id ' . $this->relateduserid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

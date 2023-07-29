@@ -82,16 +82,6 @@ class nugget_moved extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->objectid, 'iomad', 'microlearning nugget moved ', '/blocks/iomad_microlearning/nuggets.php?threadid='.$this->other['threadid'],
-            ' User id ' . $this->userid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

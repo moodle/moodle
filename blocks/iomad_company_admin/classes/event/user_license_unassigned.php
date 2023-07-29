@@ -85,16 +85,6 @@ class user_license_unassigned extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'iomad', 'assign user license ', '/blocks/ioamd_company_admin/company_users_licenses_form.php',
-            ' license id ' . $this->other['licenseid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

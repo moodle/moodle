@@ -84,16 +84,6 @@ class company_suspended extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->userid, 'iomad', 'company suspended ', '/blocks/ioamd_company_admin/editcompanies.php',
-            ' company id ' . $this->other['companyid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

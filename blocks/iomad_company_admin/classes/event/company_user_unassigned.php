@@ -87,16 +87,6 @@ class company_user_unassigned extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'iomad', 'unassign company user', '/blocks/ioamd_company_admin/company_users_form.php',
-            $this->other['usertypename'] . ' ' . $this->other['companyname'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -82,16 +82,6 @@ class thread_created extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->objectid, 'iomad', 'microlearning thread created ', '/blocks/iomad_microlearning/threads.php',
-            ' User id ' . $this->userid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

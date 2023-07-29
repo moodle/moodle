@@ -85,16 +85,6 @@ class user_attending extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'mod_trainingevent', 'user is attending', '/mod/trainingevent/view.php',
-            ' trainingevent id ' . $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

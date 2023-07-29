@@ -82,16 +82,6 @@ class user_course_expired extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'iomad', 'course completion expiry ', '/course/view.php',
-            ' User id ' . $this->userid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

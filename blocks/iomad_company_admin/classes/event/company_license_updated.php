@@ -85,16 +85,6 @@ class company_license_updated extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->userid, 'iomad', 'license updated ', '/blocks/ioamd_company_admin/company_license_edit_form.php',
-            ' license id ' . $this->other['licenseid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

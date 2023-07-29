@@ -85,16 +85,6 @@ class request_granted extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'iomad', 'user granted final access ', '/blocks/iomad_approve_access/approve.php',
-            ' trainingevent id ' . $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception
