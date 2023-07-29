@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="72px" height="72px" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
+    <title>mic-indicator</title>
+    <desc>Created with Sketch.</desc>
+    <style type="text/css">
+    	<![CDATA[
+    	@-webkit-keyframes pulsate {
+    		0%    { transform: scale(0.9);}
+    		100%  { transform: scale(1);}
+    	}
+    	 @keyframes pulsate {
+    		 0%   { transform: scale(0.9);}
+             100% { transform: scale(1);}
+    	 }
+    	 #outer2 {
+    		 transform-origin: 36px 36px;
+    		 -webkit-animation: pulsate 0.5s ease-in-out infinite alternate;
+    		 animation: 		pulsate 0.5s ease-in-out infinite alternate;
+    	 }
+    	]]>
+    </style>
+    <defs>
+        <rect id="path-1" x="12" y="12" width="48" height="48" rx="24"></rect>
+        <filter x="-25.0%" y="-25.0%" width="150.0%" height="150.0%" filterUnits="objectBoundingBox" id="filter-2">
+            <feOffset dx="0" dy="0" in="SourceAlpha" result="shadowOffsetOuter1"></feOffset>
+            <feGaussianBlur stdDeviation="4" in="shadowOffsetOuter1" result="shadowBlurOuter1"></feGaussianBlur>
+            <feColorMatrix values="0 0 0 0 0   0 0 0 0 0   0 0 0 0 0  0 0 0 0.5 0" type="matrix" in="shadowBlurOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="mic-indicator" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="outer2" fill-opacity="0.5" fill="#FF6680" cx="36" cy="36" r="36"></circle>
+        <circle id="outer1" fill-opacity="0.75" fill="#FF6680" cx="36" cy="36" r="30"></circle>
+        <g id="inner">
+            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+            <use fill="#FF6680" fill-rule="evenodd" xlink:href="#path-1"></use>
+        </g>
+        <path d="M36.9963348,44.7623014 L36.9963348,48.2884231 C36.9963348,49.0019454 36.4179107,49.5803695 35.7043884,49.5803695 C34.9908661,49.5803695 34.412442,49.0019454 34.412442,48.2884231 L34.412442,44.7622856 C30.605975,44.2998533 27.3265946,41.8173633 25.8174076,38.25498 C25.5390741,37.5979834 25.8460411,36.8397485 26.5030377,36.561415 C27.1600343,36.2830814 27.9182692,36.5900485 28.1966027,37.2470451 C29.4739872,40.2622666 32.4093867,42.2564316 35.7043884,42.2564316 C39.0137059,42.2564316 41.9570951,40.2456265 43.2309675,37.2070862 C43.5068404,36.5490526 44.2639212,36.2392502 44.9219548,36.515123 C45.5799884,36.7909959 45.8897908,37.5480767 45.613918,38.2061103 C44.1094038,41.7947953 40.8201868,44.2978089 36.9963348,44.7623014 Z M35.7092978,38.8775668 C33.2106734,38.8775668 31.1849015,36.8292863 31.1849015,34.3028994 L31.1849015,27.5754474 C31.1849015,25.0490605 33.2106734,23.00078 35.7092978,23.00078 C38.210506,23.00078 40.236278,25.0490605 40.236278,27.5754474 L40.236278,34.3028994 C40.236278,36.8292863 38.210506,38.8775668 35.7092978,38.8775668 Z" id="icon" fill="#FFFFFF"></path>
+    </g>
+</svg>
