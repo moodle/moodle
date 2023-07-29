@@ -128,7 +128,7 @@ if ($managersform->is_cancelled()) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/my'));
+        redirect(new moodle_url('/blocks/iomad_company_admin/index.php'));
     }
 } else {
     $managersform->process($departmentid, $roleid);
