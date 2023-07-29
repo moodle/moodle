@@ -26,7 +26,7 @@
 function local_report_completion_overview_menu() {
 
         return array(
-            'userlicenseallocations' => array(
+            'completionoverview' => array(
                 'category' => 'Reports',
                 'tab' => 8,
                 'name' => get_string('pluginname', 'local_report_completion_overview'),
