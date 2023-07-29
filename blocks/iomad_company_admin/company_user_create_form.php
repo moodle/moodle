@@ -34,8 +34,9 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', company_user::companyid(), PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $createdok = optional_param('createdok', 0, PARAM_INTEGER);
-$createcourses = optional_param_array('currentcourses', null, PARAM_INT);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
+$submitbutton = optional_param('submitbutton', null, PARAM_CLEAN);
+$submitandback = optional_param('submitandback', null, PARAM_CLEAN);
 
 $context = context_system::instance();
 require_login();
@@ -65,7 +66,8 @@ $PAGE->set_heading($linktext);
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
 // Javascript for fancy select.
-$PAGE->requires->js_call_amd('block_iomad_company_admin/company_user', 'init', []);;
+// Parameter is name of proper select form element followed by 1=submit its form
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
@@ -81,7 +83,7 @@ $mform = new \block_iomad_company_admin\forms\user_edit_form($PAGE->url, $compan
 if ($mform->is_cancelled()) {
     redirect($dashboardurl);
     die;
-} else if ($data = $mform->get_data()) {
+} else if ((!empty($submitbutton) || !empty($submitandback)) && $data = $mform->get_data()) {
     // Trim first and lastnames
     $data->firstname = trim($data->firstname);
     $data->lastname = trim($data->lastname);
@@ -123,9 +125,9 @@ if ($mform->is_cancelled()) {
     company::assign_user_to_department($data->deptid, $userid);
 
     // Enrol the user on the courses.
-    if (!empty($createcourses)) {
+    if (!empty($data->currentcourses)) {
         $userdata = $DB->get_record('user', array('id' => $userid));
-        company_user::enrol($userdata, $createcourses, $companyid);
+        company_user::enrol($userdata, $data->currentcourses, $companyid);
     }
     // Assign and licenses.
     if (!empty($licenseid)) {

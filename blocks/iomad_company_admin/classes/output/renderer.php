@@ -306,7 +306,7 @@ class renderer extends plugin_renderer_base {
         return $returnhtml;
     }
 
-    public function display_tree_selector_form($company, &$mform, $parentid = 0, $before = '', $addchildcompanies = false) {
+    public function display_tree_selector_form($company, &$mform, $parentid = 0, $before = '', $addchildcompanies = false, $disableonchange = false) {
         global $USER;
 
         // Get the available departments.
@@ -344,8 +344,13 @@ class renderer extends plugin_renderer_base {
 
         // This is getting hidden anyway, so no need for label
         $mform->addElement('html', '<div class="display:none;">');
-        $mform->addElement('select', 'deptid', ' ',
-                            $subhierarchieslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
+        if (!$disableonchange) {
+            $mform->addElement('select', 'deptid', ' ',
+                                $subhierarchieslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
+        } else {
+            $mform->addElement('select', 'deptid', ' ',
+                                $subhierarchieslist, array('class' => 'iomad_department_select'));
+        }
         $mform->disabledIf('deptid', 'action', 'eq', 1);
         $mform->addElement('html', '</div>');
 

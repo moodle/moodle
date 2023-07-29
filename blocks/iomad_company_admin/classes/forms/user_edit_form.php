@@ -149,8 +149,7 @@ class user_edit_form extends \moodleform {
 
         // Deal with company optional fields.
         $mform->addElement('header', 'category_id', get_string('advanced'));
-        $mform->addElement('static', 'departmenttext', get_string('department', 'block_iomad_company_admin'));
-        $output->display_tree_selector_form($this->company, $mform);
+        $output->display_tree_selector_form($this->company, $mform, 0, '', false, true);
 
         // Add in company/department manager checkboxes.
         $managerarray = array();
@@ -184,6 +183,8 @@ class user_edit_form extends \moodleform {
             $mform->setType('educator', PARAM_BOOL);
         }
 
+        // Optional profile fields.
+        $mform->addElement('header', 'profile_id', get_string('profilefields', 'mnet'));
         // Get global fields.
         if ($fields = $DB->get_records_sql("SELECT * FROM {user_info_field}
                                             WHERE categoryid NOT IN (
