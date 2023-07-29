@@ -27,6 +27,12 @@ defined('MOODLE_INTERNAL') || die();
 
 use plugin_renderer_base;
 use html_writer;
+use html_table;
+use moodle_url;
+use single_select;
+use context_system;
+use iomad;
+use company;
 
 class renderer extends plugin_renderer_base {
 
@@ -41,13 +47,13 @@ class renderer extends plugin_renderer_base {
 
         $out .= '<a class="btn btn-primary" href="'.$backlink.'">' .
                                            get_string('back') . '</a>';
-        $table = new \html_table();
+        $table = new html_table();
         foreach ($templates as $template) {
-            $deletelink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+            $deletelink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
                                           array('templateid' => $template->id,
                                                 'action' => 'delete',
                                                 'sesskey' => sesskey()));
-            $editlink = new \moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
+            $editlink = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php',
                                         array('templateid' => $template->id, 'action' => 'edit'));
             $row = array($template->name, '<a class="btn btn-primary" href="'.$deletelink.'">' .
                                            get_string('deleteroletemplate', 'block_iomad_company_admin') . '</a> ' .
@@ -57,7 +63,7 @@ class renderer extends plugin_renderer_base {
             $table->data[] = $row;
         }
 
-        $out .= \html_writer::table($table);
+        $out .= html_writer::table($table);
         return $out;
     }
 
@@ -257,10 +263,10 @@ class renderer extends plugin_renderer_base {
         return $html;
     }
 
-    public function display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid = 0) {
+    public function display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid = 0, $addchildcompanies = false) {
         global $DB, $USER;
 
-        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);
@@ -269,8 +275,8 @@ class renderer extends plugin_renderer_base {
         $subhierarchieslist = array();
         $departmenttree = array();
         foreach ($userlevels as $userlevelid => $userlevel) {
-            $subhierarchieslist = $subhierarchieslist + \company::get_all_subdepartments($userlevelid);
-            $departmenttree[] = \company::get_all_subdepartments_raw($userlevelid);
+            $subhierarchieslist = $subhierarchieslist + company::get_all_subdepartments($userlevelid, $addchildcompanies);
+            $departmenttree[] = company::get_all_subdepartments_raw($userlevelid, false, $addchildcompanies);
         }
         if (empty($departmentid)) {
             $departmentid = key($userlevels);
@@ -278,7 +284,7 @@ class renderer extends plugin_renderer_base {
 
         $treehtml = $this->department_tree($departmenttree, optional_param('deptid', 0, PARAM_INT));
 
-        $departmentselect = new \single_select(new \moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
+        $departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'deptid', $subhierarchieslist, $departmentid);
         $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
                                    $this->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
@@ -288,24 +294,24 @@ class renderer extends plugin_renderer_base {
             $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
             $returnhtml = html_writer::tag('h4', get_string('departmentwithname', 'block_iomad_company_admin', $departmentrec));
         }
-        $returnhtml .=  \html_writer::start_tag('div', array('class' => 'iomadclear'));
-        $returnhtml .= \html_writer::start_tag('div', array('class' => 'fitem'));
+        $returnhtml .=  html_writer::start_tag('div', array('class' => 'iomadclear'));
+        $returnhtml .= html_writer::start_tag('div', array('class' => 'fitem'));
         $returnhtml .= $treehtml;
-        $returnhtml .= \html_writer::start_tag('div', array('style' => 'display:none'));
+        $returnhtml .= html_writer::start_tag('div', array('style' => 'display:none'));
         $returnhtml .= $this->render($departmentselect);
-        $returnhtml .= \html_writer::end_tag('div');
-        $returnhtml .= \html_writer::end_tag('div');
-        $returnhtml .= \html_writer::end_tag('div');
+        $returnhtml .= html_writer::end_tag('div');
+        $returnhtml .= html_writer::end_tag('div');
+        $returnhtml .= html_writer::end_tag('div');
 
         return $returnhtml;
     }
 
-    public function display_tree_selector_form($company, &$mform, $parentid = 0, $before = '') {
+    public function display_tree_selector_form($company, &$mform, $parentid = 0, $before = '', $addchildcompanies = false) {
         global $USER;
 
         // Get the available departments.
-        $parentlevel = \company::get_company_parentnode($company->id);
-        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+        $parentlevel = company::get_company_parentnode($company->id);
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);
@@ -315,8 +321,8 @@ class renderer extends plugin_renderer_base {
         $subhierarchieslist = array();
         $departmenttree = array();
         foreach ($userlevels as $userlevelid => $userlevel) {
-            $subhierarchieslist = $subhierarchieslist + \company::get_all_subdepartments($userlevelid);
-            $departmenttree[] = \company::get_all_subdepartments_raw($userlevelid);
+            $subhierarchieslist = $subhierarchieslist + company::get_all_subdepartments($userlevelidm, $addchildcompanies);
+            $departmenttree[] = company::get_all_subdepartments_raw($userlevelid, false, $addchildcompanies);
         }
 
         // Set up the tree HTML.        
