@@ -605,7 +605,7 @@ if (empty($courseid)) {
 
         // Display the department selector.
         $selectorparams['showsummary'] = false;
-        echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid);
+        echo $output->display_tree_selector($company, $parentlevel, $selecturl, $selectparams, $departmentid, $viewchildren);
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrols', 'style' => 'padding-left: 15px'));
         echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
         $mform->display();

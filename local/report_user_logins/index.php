@@ -461,7 +461,7 @@ if (!$table->is_downloading()) {
     echo $output->header();
     $treeparams = $params;
     $treeparams['showsummary'] = false;
-    echo $output->display_tree_selector($realcompany, $parentlevel, $url, $treeparams, $departmentid);
+    echo $output->display_tree_selector($realcompany, $parentlevel, $url, $treeparams, $departmentid, $viewchildren);
 
     // Display the search form and department picker.
     if (!$showsummary && !empty($companyid)) {
