@@ -1063,6 +1063,7 @@ class company {
             $companycourses[$sharedcourse->courseid] = $sharedcourse;
         }
 
+        // Does the user exist in the department?
         if (!$user=$DB->get_record('company_users', $assign)) {
             if (($managertype == 1 || $managertype == 2) && $CFG->iomad_autoenrol_managers) {
                 $assign['educator'] = 1;
@@ -1070,8 +1071,18 @@ class company {
                 $assign['educator'] = $educator;
             }   
 
+            // Add the user to the new department.
             $success = $DB->insert_record('company_users',
                 array_merge($assign,['managertype'=>$managertype,'departmentid'=>$departmentid]));
+
+            // Are we moving the user?
+            if ($move) {
+                $DB->delete_records_select('company_users',
+                                           'companyid = :companyid AND userid = :userid AND departmentid != :departmentid',
+                                           ['companyid' => $companyid,
+                                            'userid' => $userid,
+                                            'departmentid' => $departmentid]);
+            }
             if ($managertype == 1 &&
                        $DB->get_records_sql('SELECT id FROM {company_users}
                                             WHERE
@@ -1180,6 +1191,7 @@ class company {
                 $DB->set_field('company_users', 'managertype', 4, ['companyid' => $companyid, 'userid' => $userid]);
             }
         } else {
+            // Changing a user that is currently in the department.
             $s = [];
             if($user->departmentid != $departmentid) {
                 $s['departmentid'] = $departmentid;
@@ -1430,7 +1442,8 @@ class company {
                             'companyid' => $company->id,
                             'departmentid' => $departmentid,
                             'usertype' => $managertype,
-                            'usertypename' => $managertypes[$managertype]);
+                            'usertypename' => $managertypes[$managertype],
+                            'moved' => $move);
         $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => $systemcontext,
                                                                                       'objectid' => $company->id,
                                                                                       'userid' => $userid,
