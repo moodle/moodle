@@ -12,6 +12,8 @@ information provided here is intended especially for developers.
 * New \core\output\activity_header::get_heading_level() method to get the heading level for a given heading level depending whether
   the page displays a heading for the activity (usually a h2 heading containing the activity name).
 * count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
+* The method grade_item::set_locked() now returns true if the grade item needs to be updated. The method schedules the locking of
+  the grade item once the recalculations are completed. (This was fixed in 4.3, 4.2.2)
 
 === 4.2.1 ===
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
