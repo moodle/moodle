@@ -321,7 +321,7 @@ class renderer extends plugin_renderer_base {
         $subhierarchieslist = array();
         $departmenttree = array();
         foreach ($userlevels as $userlevelid => $userlevel) {
-            $subhierarchieslist = $subhierarchieslist + company::get_all_subdepartments($userlevelidm, $addchildcompanies);
+            $subhierarchieslist = $subhierarchieslist + company::get_all_subdepartments($userlevelid, $addchildcompanies);
             $departmenttree[] = company::get_all_subdepartments_raw($userlevelid, false, $addchildcompanies);
         }
 
