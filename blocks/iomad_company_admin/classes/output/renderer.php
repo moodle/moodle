@@ -348,5 +348,9 @@ class renderer extends plugin_renderer_base {
                             $subhierarchieslist, array('class' => 'iomad_department_select', 'onchange' => 'this.form.submit()'));
         $mform->disabledIf('deptid', 'action', 'eq', 1);
         $mform->addElement('html', '</div>');
+
+        // Disable the onchange popup.
+        $mform->disable_form_change_checker();
+
     }
 }
