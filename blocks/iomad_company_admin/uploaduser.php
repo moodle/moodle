@@ -36,6 +36,7 @@ $readcount   = optional_param('readcount', 0, PARAM_INT);
 $uploadtype  = optional_param('uutype', 0, PARAM_INT);
 $licenseid = optional_param('licenseid', 0, PARAM_INT);
 $userdepartment = optional_param('userdepartment', 0, PARAM_INT);
+$cancelled = optional_param('cancel', null, PARAM_CLEAN);
 
 if (!empty($licenseid)) {
     $SESSION->chosenlicenseid = $licenseid;
@@ -91,7 +92,7 @@ $PAGE->requires->jquery();
 
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
-$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('userdepartment', '', $userdepartment));
+$PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', '', $userdepartment));
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -140,6 +141,7 @@ $errorstr                   = get_string('error');
 $strcantmanageuser          = get_string('invaliduser', 'block_iomad_company_admin');
 
 $returnurl = $CFG->wwwroot."/blocks/iomad_company_admin/uploaduser.php";
+$cancelurl = $CFG->wwwroot."/blocks/iomad_company_admin/index.php";
 $bulknurl  = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 $today = time();
@@ -245,9 +247,9 @@ $mform->set_data(array('iid' => $iid,
                        'companyid' => $companyid));
 
 // If a file has been uploaded, then process it.
-if ($mform->is_cancelled()) {
+if (!empty($cancelled)) {
     $cir->cleanup(true);
-    redirect($returnurl);
+    redirect($cancelurl);
 
 } else if ($formdata = $mform->get_data()) {
     if (!empty($formdata->submitbutton)) {
