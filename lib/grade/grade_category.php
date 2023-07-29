@@ -2536,25 +2536,21 @@ class grade_category extends grade_object {
 
         $result = $this->grade_item->set_locked($lockedstate, $cascade, true);
 
-        if ($cascade) {
-            //process all children - items and categories
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+        // Process all children - items and categories.
+        if ($children = grade_item::fetch_all(['categoryid' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, false);
 
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, false);
-
-                    if (empty($lockedstate) and $refresh) {
-                        //refresh when unlocking
-                        $child->refresh_grades();
-                    }
+                if (empty($lockedstate) && $refresh) {
+                    // Refresh when unlocking.
+                    $child->refresh_grades();
                 }
             }
+        }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, true);
-                }
+        if ($children = static::fetch_all(['parent' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, true);
             }
         }
 
