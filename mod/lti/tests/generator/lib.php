@@ -137,11 +137,10 @@ class mod_lti_generator extends testing_module_generator {
      * Create a course tool type.
      *
      * @param array $type the type info.
-     * @param array|null $config the type configuration.
      * @return void
      * @throws coding_exception if any required fields are missing.
      */
-    public function create_course_tool_types(array $type, ?array $config = null): void {
+    public function create_course_tool_types(array $type): void {
         global $SITE;
 
         if (!isset($type['baseurl'])) {
@@ -150,8 +149,18 @@ class mod_lti_generator extends testing_module_generator {
         if (!isset($type['course']) || $type['course'] == $SITE->id) {
             throw new coding_exception('Must specify a non-site course when creating a course tool type.');
         }
+
+        $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
         $type['coursevisible'] = LTI_COURSEVISIBLE_ACTIVITYCHOOSER; // The default for course tools.
         $type['state'] = LTI_TOOL_STATE_CONFIGURED; // The default for course tools.
-        lti_add_type((object) $type, (object) $config);
+
+        // Sensible defaults permitting the tool type to be used in a launch.
+        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
+
+        ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($type);
+
+        lti_add_type(type: (object) $type, config: (object) $config);
     }
 }
