@@ -179,7 +179,7 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
         }
         $context = [
             'wwwroot' => $CFG->wwwroot,
-            'qmurl' => $CFG->wwwroot.'/mod/qubitspage'
+            'qmurl' => $CFG->wwwroot.'/third_party/qubits'
         ];
         return $this->render_from_template("theme_qubitsbasic/custom/exbookfiles", $context);
     }

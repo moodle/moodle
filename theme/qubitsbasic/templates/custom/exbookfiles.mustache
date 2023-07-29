@@ -1,24 +1,19 @@
+
+   <link rel="stylesheet" href="{{qmurl}}/css/Chapter.css" />
 <link rel="icon" href="{{qmurl}}/qubits-logo.png" sizes="any" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.jsdelivr.net/gh/qubits-platform/sqlite-wasm@master/sqlite3.js" defer=""></script>
 
 <link
       rel="preload"
-      href="{{qmurl}}/_next/static/css/e3e63d49e6555528.css"
+      href="{{qmurl}}/_next/static/css/b7fe1c3ced7eec1e.css"
       as="style"
     />
     <link
       rel="stylesheet"
-      href="{{qmurl}}/_next/static/css/e3e63d49e6555528.css"
+      href="{{qmurl}}/_next/static/css/b7fe1c3ced7eec1e.css"
       data-n-g=""
     />
-<link rel="stylesheet" href="{{qmurl}}/css/pytutor.css" />
-<link rel="stylesheet" href="{{qmurl}}/css/jquery-ui.min.css" />
-<style>
-.ace-tm{
-    background-color: #fff;
-}
-</style>
 
 
 <noscript data-n-css=""></noscript>
@@ -30,24 +25,25 @@ require(["jquery", "jqueryui"], function($, jqui){
     $.getScript( "https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js" )
     .done(function( script, textStatus ) {
         $.when(
-            $.getScript(`${murl}/js/d3.v2.min.js`),
-            $.getScript(`${murl}/js/jquery.jsPlumb-1.3.10-all-min.js`),
-            $.getScript(`${murl}/js/pytutor.js`),
+        
             $.getScript(`${murl}/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js`),
-            $.getScript(`${murl}/_next/static/chunks/webpack-4cd66ff8df179b99.js`),
+            $.getScript(`${murl}/_next/static/chunks//webpack-43101c00246b507b.js`),
             $.getScript(`${murl}/_next/static/chunks/framework-2c79e2a64abdb08b.js`),
             $.getScript(`${murl}/_next/static/chunks/main-164f91e3b1a225f8.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/_app-1d8d968e6d152aff.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/index-44a994c9ffe51c6c.js`),
-            $.getScript(`${murl}/_next/static/KBNmaMY8_hUwQkFmcUMeO/_buildManifest.js`),
-            $.getScript(`${murl}/_next/static/KBNmaMY8_hUwQkFmcUMeO/_ssgManifest.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/_app-aea6920bd27938ca.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/index-6d1727bb89913d4c.js`),
+            $.getScript(`${murl}/_next/static/G7GxyPIfk8vrAIEzQ0oJE/_buildManifest.js`),
+            $.getScript(`${murl}/_next/static/G7GxyPIfk8vrAIEzQ0oJE/_ssgManifest.js`),
+            $.getScript(`${murl}/_next/static/chunks/2b7b2d2a-81f6f30138d3ccc2.js`),
             $.getScript(`${murl}/_next/static/chunks/8a28b14e.d29918a3616a3ec4.js`),
-            $.getScript(`${murl}/_next/static/chunks/25.42ab8018a3117c3f.js`),
+            $.getScript(`${murl}/_next/static/chunks/532.35480cd4f03f1675.js`),
             $.getScript(`${murl}/_next/static/chunks/330.15fd4ae41f8497d9.js`),
-            $.getScript(`${murl}/_next/static/chunks/437.9085b1f68fdda0c9.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Chapter2-f805aa114b1502b2.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Chapter3-c56d845d803f27df.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/_error-54de1933a164a1ff.js`),
+            $.getScript(`${murl}/_next/static/chunks/437.debbe791beb99ebe.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/Editor/[language]-442dea7ff734f272.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/_error-3986dd5834f581dc.js`),
+             $.getScript(`${murl}/_next/static/chunks/pages/pdf-2b97332112a4bd32.js`),
+
+           
 
             $.Deferred(
                 function( deferred ){
@@ -58,7 +54,6 @@ require(["jquery", "jqueryui"], function($, jqui){
 
         })
         
-        $( "#datepicker" ).datepicker();
 
     })
     .fail(function( jqxhr, settings, exception ) {
@@ -67,4 +62,3 @@ require(["jquery", "jqueryui"], function($, jqui){
     
 });
 {{/js}}
-
