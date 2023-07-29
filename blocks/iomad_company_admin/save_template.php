@@ -59,7 +59,9 @@ $PAGE->navbar->add($linktext, $linkurl);
 
 $mform = new \block_iomad_company_admin\forms\company_role_save_form($linkurl, $companyid, $templateid);
 
-if ($data = $mform->get_data()) {
+if ($mform->is_cancelled()) {
+    redirect(new moodle_url('/blocks/iomad_company_admin/company_capabilities.php'));
+} else if ($data = $mform->get_data()) {
 
     // Save the template.
     $templateid = $DB->insert_record('company_role_templates', ['name' => $data->name]);

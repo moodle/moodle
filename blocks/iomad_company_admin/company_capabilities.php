@@ -71,7 +71,8 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/company_capabilities', '
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
-echo $OUTPUT->header();
+// Set up the page buttons.
+$buttons = "";
 
 if ($roleid) {
 
@@ -83,12 +84,22 @@ if ($roleid) {
     }
 
     $capabilities = new \block_iomad_company_admin\output\capabilities($caps, $roleid, $companyid, $templateid, $linkurl);
+    $buttons .= $output->single_button($linkurl, get_string('listroles', 'block_iomad_company_admin'), 'get');
+
+    $PAGE->set_button($buttons);
+
+    echo $OUTPUT->header();
     echo $output->render_capabilities($capabilities);
 } else if ($manage) {
 
     // Display the list of templates.
     $templates = $DB->get_records('company_role_templates', array(), 'name');
     $roletemplates = new \block_iomad_company_admin\output\roletemplates($templates, $linkurl);
+    $buttons .= $output->single_button($linkurl, get_string('back'), 'get');
+
+    $PAGE->set_button($buttons);
+
+    echo $OUTPUT->header();
     echo $output->render_roletemplates($roletemplates);
 } else {
 
@@ -97,6 +108,15 @@ if ($roleid) {
     $saveurl = new moodle_url('/blocks/iomad_company_admin/save_template.php', ['templateid' => $templateid]);
     $manageurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', ['manage' => 1]);
     $backurl = empty($templateid) ? '' : $backurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php');
+    $buttons .= $output->single_button($saveurl, get_string('saveroletemplate', 'block_iomad_company_admin'), 'get');
+    $buttons .= $output->single_button($manageurl, get_string('managetemplates', 'block_iomad_company_admin'), 'get');
+    if (!empty($templateid)) {
+        $buttons .= $output->single_button($backurl, get_string('backtocompanytemplate', 'block_iomad_company_admin'), 'get');
+    }
+
+    $PAGE->set_button($buttons);
+
+    echo $OUTPUT->header();
     $capabilitiesroles = new \block_iomad_company_admin\output\capabilitiesroles($roles, $companyid, $templateid, $linkurl, $saveurl, $manageurl, $backurl, $templatesaved);
     echo $output->render_capabilitiesroles($capabilitiesroles);
 }
