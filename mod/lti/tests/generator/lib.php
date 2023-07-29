@@ -89,16 +89,48 @@ class mod_lti_generator extends testing_module_generator {
     }
 
     /**
+     * Split type creation data into 'type' and 'config' components, based on input array key prefixes.
+     *
+     * The $data array contains both the type data and config data that will be passed to lti_add_type(). This must be split into
+     * two params (type, config) based on the array key prefixes ({@see lti_add_type()} for how the two params are handled):
+     * - NO prefix: denotes 'type' data.
+     * - 'lti_' prefix: denotes 'config' data.
+     * - 'ltiservice_' prefix: denotes 'config' data, specifically config for service plugins.
+     *
+     * @param array $data array of type and config data containing prefixed keys.
+     * @return array containing separated type and config data. E.g. ['type' = [...], 'config' => [...]]
+     */
+    protected function get_type_and_config_from_data(array $data): array {
+        // Grab any non-prefixed fields; these are the type fields. The rest is considered config.
+        $type = array_filter(
+            $data,
+            fn($val, $key) => !str_contains($key, 'lti_') && !str_contains($key, 'ltiservice_'),
+            ARRAY_FILTER_USE_BOTH
+        );
+        $config = array_diff_key($data, $type);
+
+        return ['type' => $type, 'config' => $config];
+    }
+
+    /**
      * Create a tool type.
      *
-     * @param array $type
-     * @param array|null $config
+     * @param array $data
      */
-    public function create_tool_types(array $type, ?array $config = null) {
-        if (!isset($type['baseurl'])) {
+    public function create_tool_types(array $data) {
+        if (!isset($data['baseurl'])) {
             throw new coding_exception('Must specify baseurl when creating a LTI tool type.');
         }
-        lti_add_type((object) $type, (object) $config);
+        $data['baseurl'] = (new moodle_url($data['baseurl']))->out(false); // Permits relative URLs in behat features.
+
+        // Sensible defaults permitting the tool type to be used in a launch.
+        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_sendname'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+
+        ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
+
+        lti_add_type(type: (object) $type, config: (object) $config);
     }
 
     /**
