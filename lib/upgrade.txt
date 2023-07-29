@@ -59,7 +59,7 @@ information provided here is intended especially for developers.
   the page displays a heading for the activity (usually a h2 heading containing the activity name).
 * New method moodleform::filter_shown_headers() is created to show some expanded headers only and hide the rest.
 * count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
-* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writter.
+* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writer.
 * New events \core\event\qbank_plugin_enabled and \core\event\qbank_plugin_disabled are triggered when a qbank plugin is enabled or
   disabled respectively, with the plugin's frankenstyle name. Any plugins that need to perform an action in response to a qbank
   plugin being enabled or disabled should observe these events.
@@ -158,6 +158,8 @@ being forced open in all behat tests.
   but a subset can be specified instead.
 * core/form-autocomplete now supports disabled options in the source select list. These will be displayed in the autocomplete
   options with the aria-disabled attribute, and will not be selectable.
+* The method grade_item::set_locked() now returns true if the grade item needs to be updated. The method schedules the locking of
+  the grade item once the recalculations are completed. (This was fixed in 4.3, 4.2.2)
 
 === 4.2 ===
 
