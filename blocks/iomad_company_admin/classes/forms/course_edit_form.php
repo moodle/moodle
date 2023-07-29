@@ -90,6 +90,11 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('summary_editor', 'coursesummary');
         $mform->setType('summary_editor', PARAM_RAW);
 
+        if ($overviewfilesoptions = course_overviewfiles_options(null)) {
+            $mform->addElement('filemanager', 'overviewfiles_filemanager', get_string('courseoverviewfiles'), null, $overviewfilesoptions);
+            $mform->addHelpButton('overviewfiles_filemanager', 'courseoverviewfiles');
+        }
+
         $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
         $mform->addHelpButton('startdate', 'startdate');
         $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
