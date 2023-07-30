@@ -66,6 +66,8 @@ information provided here is intended especially for developers.
   that need to perform processing when a question is deleted should observe the \core\event\question_deleted event instead.
 * The external function core_grades_get_groups_for_selector is now relocated.
   Please use it at core_group_get_groups_for_selector instead.
+* The random_bytes_emulate() function has been deprecated, because it's not required anymore. PHP native function random_bytes()
+  should be used instead.
 
 === 4.2 ===
 

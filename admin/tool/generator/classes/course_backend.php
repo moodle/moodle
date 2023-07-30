@@ -454,7 +454,7 @@ class tool_generator_course_backend extends tool_generator_backend {
 
             // Generate random binary data (different for each file so it
             // doesn't compress unrealistically).
-            $data = random_bytes_emulate($this->limit_filesize(self::$paramsmallfilesize[$this->size]));
+            $data = random_bytes($this->limit_filesize(self::$paramsmallfilesize[$this->size]));
 
             $fs->create_file_from_string($filerecord, $data);
             $this->dot($i, $count);
@@ -495,7 +495,7 @@ class tool_generator_course_backend extends tool_generator_backend {
                 throw new coding_exception('Failed to open temporary file');
             }
             for ($j = 0; $j < $blocks; $j++) {
-                $data = random_bytes_emulate($blocksize);
+                $data = random_bytes($blocksize);
                 fwrite($handle, $data);
                 $this->dot($i * $blocks + $j, $count * $blocks);
             }

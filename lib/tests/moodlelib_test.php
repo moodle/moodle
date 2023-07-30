@@ -3873,35 +3873,6 @@ EOT;
 
     }
 
-    /*
-     * Test emulation of random_bytes() function.
-     */
-    public function test_random_bytes_emulate() {
-        $result = random_bytes_emulate(10);
-        $this->assertSame(10, strlen($result));
-        $this->assertnotSame($result, random_bytes_emulate(10));
-
-        $result = random_bytes_emulate(21);
-        $this->assertSame(21, strlen($result));
-        $this->assertnotSame($result, random_bytes_emulate(21));
-
-        $result = random_bytes_emulate(666);
-        $this->assertSame(666, strlen($result));
-
-        $result = random_bytes_emulate(40);
-        $this->assertSame(40, strlen($result));
-
-        $this->assertDebuggingNotCalled();
-
-        $result = random_bytes_emulate(0);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
-
-        $result = random_bytes_emulate(-1);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
-    }
-
     /**
      * Test function for creation of random strings.
      */
@@ -3927,14 +3898,6 @@ EOT;
         $this->assertMatchesRegularExpression('/^[' . $pool . ']+$/', $result);
 
         $this->assertDebuggingNotCalled();
-
-        $result = random_string(0);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
-
-        $result = random_string(-1);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
     }
 
     /**
@@ -3962,14 +3925,6 @@ EOT;
         $this->assertMatchesRegularExpression('/^[' . $pool . ']+$/', $result);
 
         $this->assertDebuggingNotCalled();
-
-        $result = complex_random_string(0);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
-
-        $result = complex_random_string(-1);
-        $this->assertSame('', $result);
-        $this->assertDebuggingCalled();
     }
 
     /**
