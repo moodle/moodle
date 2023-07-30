@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<XMLDB PATH="local/esupervision/db" VERSION="20201215" COMMENT="XMLDB file for Moodle local plugin">
+    <TABLES>
+        <!-- Table for storing project information -->
+        <TABLE NAME="esupervision_projects" COMMENT="Table for storing project information">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO_INCREMENT="true" COMMENT="Primary key"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="255" NOTNULL="true" COMMENT="Project name"/>
+                <FIELD NAME="description" TYPE="text" LENGTH="TEXT_UNLIMITED" NOTNULL="true" COMMENT="Project description"/>
+                <FIELD NAME="supervisor" TYPE="text" LENGTH="255" NOTNULL="true" COMMENT="Assigned supervisor"/>
+                <FIELD NAME="status" TYPE="text" LENGTH="100" NOTNULL="true" COMMENT="Project status"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <!-- Table for storing supervisor information -->
+        <TABLE NAME="esupervision_supervisors" COMMENT="Table for storing supervisor information">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO_INCREMENT="true" COMMENT="Primary key"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="255" NOTNULL="true" COMMENT="Supervisor name"/>
+                <FIELD NAME="email" TYPE="text" LENGTH="100" NOTNULL="true" COMMENT="Supervisor email"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <!-- Table for storing student information -->
+        <TABLE NAME="esupervision_students" COMMENT="Table for storing student information">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO_INCREMENT="true" COMMENT="Primary key"/>
+                <FIELD NAME="name" TYPE="text" LENGTH="255" NOTNULL="true" COMMENT="Student name"/>
+                <FIELD NAME="email" TYPE="text" LENGTH="100" NOTNULL="true" COMMENT="Student email"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <!-- Table for storing feedback information -->
+        <TABLE NAME="esupervision_feedback" COMMENT="Table for storing feedback information">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" AUTO_INCREMENT="true" COMMENT="Primary key"/>
+                <FIELD NAME="project_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="Foreign key to projects table"/>
+                <FIELD NAME="student_id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" COMMENT="Foreign key to students table"/>
+                <FIELD NAME="feedback_text" TYPE="text" LENGTH="TEXT_UNLIMITED" NOTNULL="true" COMMENT="Feedback text"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="fk_project" TYPE="foreign" FIELDS="project_id" REFTABLE="esupervision_projects" REFFIELDS="id"/>
+                <KEY NAME="fk_student" TYPE="foreign" FIELDS="student_id" REFTABLE="esupervision_students" REFFIELDS="id"/>
+            </KEYS>
+        </TABLE>
+    </TABLES>
+</XMLDB>

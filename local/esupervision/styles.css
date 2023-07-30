@@ -1,0 +1,72 @@
+/* local/your_plugin/styles.css */
+
+/* Style the form container */
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+}
+
+/* Style form input fields and labels */
+.form-container input[type="text"],
+.form-container textarea {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.form-container label {
+    font-weight: bold;
+    /* color: black */
+}
+
+/* Style the submit button */
+.form-container input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-container input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+
+
+/* Style the project list table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Style table header cells */
+table th {
+    background-color: #f2f2f2;
+    padding: 10px;
+    text-align: left;
+}
+
+/* Style table data cells */
+table td {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+/* Style links in the table */
+table a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+/* Style the project status column */
+.project-status {
+    font-weight: bold;
+}
