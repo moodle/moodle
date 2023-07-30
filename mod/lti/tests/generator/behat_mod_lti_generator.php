@@ -50,7 +50,28 @@ class behat_mod_lti_generator extends behat_generator_base {
                 'datagenerator' => 'course_tool_types',
                 'required' => ['baseurl', 'course'],
                 'switchids' => ['course' => 'course']
-            ]
+            ],
+            'tool instances' => [
+                'singular' => 'instance',
+                'datagenerator' => 'instance',
+                'required' => ['course', 'tool'],
+                'switchids' => ['course' => 'course', 'tool' => 'typeid']
+            ],
         ];
+    }
+
+    /**
+     * Handles the switchid ['tool' => 'typeid'] for finding a tool by name.
+     *
+     * @param string $name the name of the tool.
+     * @return int the id of the tool type identified by the name $name.
+     */
+    protected function get_tool_id(string $name): int {
+        global $DB;
+
+        if (!$id = $DB->get_field('lti_types', 'id', ['name' => $name])) {
+            throw new coding_exception('The specified tool with name "' . $name . '" does not exist');
+        }
+        return (int) $id;
     }
 }
