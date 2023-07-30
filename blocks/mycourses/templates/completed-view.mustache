@@ -28,67 +28,77 @@
     {}
 }}
 <div id="completed-view-{{uniqid}}" data-region="completed-view">
-   {{#completedview.courses}}
-        <div class="tab-content">
-            <div class="tab-pane active " id="mycourses_completed_view">
-                    <div class="mycourselisting">
-                        <div class="courseimage">
-                            <a href="{{ url }}"><img class="imgresponsive" src="{{ image }}" class="courseimage"></a>
-                        </div>
-                        <div class="mycoursedetails">
-                            <div class="mycourseheading">
-                                <h4 class="title">
-                                    {{#visible}}
-                                        <a href="{{ url }}">{{ fullname }}</a>
-                                    {{/visible}}
-                                    {{^visible}}
-                                        {{ fullname }}
-                                    {{/visible}}
-                                </h4>
-                            </div>
-                            <div class="mycoursesummary">
-                                {{ summary}}
-                            </div>
-                            <div class="finalresults">
-                                <div class="ml-auto mt-auto w-50 p-t-1">
-                                    <div class="progress bg-white border">
-                                        <div class="progress-bar bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="100"></div>
+    <div class="tab-content">
+        <div class="tab-pane active " id="mycourses_completed_view">
+            <div id="paged-content-container-{{uniqid}}" data-region="paged-content-container">
+                <div id="page-container-1" data-region="page-container" class="paged-content-page-container" aria-live="polite">
+                    <div id="paged-content-page" data-page="1">
+                        <ul class="list-group" id="{{uniqid}}">
+
+                            {{#completedview.courses}}
+                                <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="5">
+                                    <div class="row">
+                                        <div class="col-md-2 d-flex align-items-center mb-sm-3 mb-md-0">
+                                            <a href="{{url}}" tabindex="-1">
+                                                <div class="card-img dashboard-list-img mw-100" style='background-image: url("{{{image}}}");'>
+                                                    <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <div class="col-md-9 d-flex flex-column">
+                                            <a href="{{url}}" class="aalink fullname mr-2 mb-1">
+                                                {{> core_course/favouriteicon }}
+                                                <span class="sr-only">
+                                                    {{#str}}aria:coursename, core_course{{/str}}
+                                                </span>
+                                                {{fullname}}
+                                            </a>
+                                            </br>
+                                            {{ summary}}
+                                            <div class="progress bg-white border">
+                                                <div class="progress-bar bar" role="progressbar" aria-valuenow="{{progress}}" style="width: {{progress}}%" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                            <div class="small">
+                                                <span class="sr-only">{{#str}}aria:courseprogress, block_mycourses{{/str}}</span>
+                                                <strong>{{progress}}%</strong> {{#str}}complete, block_mycourses{{/str}}
+                                                <strong>{{#str}} timecompleted, local_report_completion {{/str}}</strong> {{ timecompleted }}
+                                                {{#timeexpires}}
+                                                    <strong>({{#str}} timeexpires, local_report_completion {{/str}}</strong> {{ timeexpires }})
+                                                {{/timeexpires}}
+                                                {{#hasgrade}}
+                                                    <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                                {{/hasgrade}}
+                                                {{^hasgrade}}
+                                                    <strong>{{#str}} result, block_mycourses,  {{ finalscore }}</strong> {{/str}}
+                                                {{/hasgrade}}
+                                            </div>
+                                            {{#certificates}}
+                                                <div class = "certificatediv">
+                                                    <b>{{#str}} downloadcert, block_mycourses {{/str}}: </b><a href="{{ certificateurl }}" title="{{ certificatename }}"><img src="{{ certificateimage }}" alt="{{ certificatename }}"></a></p>
+                                                </div>
+                                            {{/certificates}}
+                                        </div>
                                     </div>
-                                    <div class="small">
-                                        <span class="sr-only">{{#str}}aria:courseprogress, block_mycourses{{/str}}</span>
-                                        <strong>{{progress}}%</strong> {{#str}}complete, block_mycourses{{/str}}
-                                        <strong>{{#str}} timecompleted, local_report_completion {{/str}}</strong> {{ timecompleted }}
-                                        {{#timeexpires}}
-                                            <strong>({{#str}} timeexpires, local_report_completion {{/str}}</strong> {{ timeexpires }})
-                                        {{/timeexpires}}
-                                        {{#hasgrade}}
-                                            <strong>{{#str}} finalscore, block_mycourses,  {{ finalscore }}</strong> {{/str}}
-                                        {{/hasgrade}}
-                                        {{^hasgrade}}
-                                            <strong>{{#str}} result, block_mycourses,  {{ finalscore }}</strong> {{/str}}
-                                        {{/hasgrade}}
+                                </li>
+                            {{/completedview.courses}}
+                            {{^completedview.courses}}
+                                </br>
+                                <li class="list-group-item course-listitem border-left-0 border-right-0 border-top-0 px-2 rounded-0" data-region="course-content" data-course-id="5">
+                                    <div class="text-xs-center text-center m-t-3">
+                                        <img class="empty-placeholder-image-lg"
+                                            src="{{nocourses}}"
+                                            alt="{{#str}} nocompleted, block_mycourses {{/str}}"
+                                            role="presentation">
+                                        <p class="text-muted m-t-1">{{#str}} nocompleted, block_mycourses {{/str}}</p>
                                     </div>
-                                </div>
-                                {{#certificates}}
-                                    <div class = "certificatediv">
-                                        <b>{{#str}} downloadcert, block_mycourses {{/str}}: </b><a href="{{ certificateurl }}" title="{{ certificatename }}"><img src="{{ certificateimage }}" alt="{{ certificatename }}"></a></p>
-                                    </div>
-                                {{/certificates}}
-                            </div>
-                        </div>
+                                </li>
+                            {{/completedview.courses}}
+                        </ul>
                     </div>
+                </div>
             </div>
         </div>
-    {{/completedview.courses}}
-    {{^completedview.courses}}
-        <div class="text-xs-center text-center m-t-3">
-            <img class="empty-placeholder-image-lg"
-                src="{{nocourses}}"
-                alt="{{#str}} nocompleted, block_mycourses {{/str}}"
-                role="presentation">
-            <p class="text-muted m-t-1">{{#str}} nocompleted, block_mycourses {{/str}}</p>
-        </div>
-    {{/completedview.courses}}
+    </div>
 </div>
 {{#js}}
 require(['jquery', 'core/custom_interaction_events'], function($, customEvents) {

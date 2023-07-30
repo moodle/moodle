@@ -58,7 +58,7 @@ class inprogress_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $OUTPUT;
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
@@ -80,19 +80,9 @@ class inprogress_view implements renderable, templatable {
                 $coursesummary = '';
             }
             // display course overview files
-            $imageurl = '';
-            foreach ($courseobj->get_course_overviewfiles() as $file) {
-                $isimage = $file->is_valid_image();
-                if (!$isimage) {
-                    $imageurl = null;
-                } else {
-                    $imageurl = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                }
-            }
+            $imageurl = \core_course\external\course_summary_exporter::get_course_image($courseobj);
             if (empty($imageurl)) {
-                $imageurl = $output->image_url('i/course');
+                $imageurl = $OUTPUT->get_generated_image_for_id($course->id);
             }
 
             $exportedcourse = $exporter->export($output);

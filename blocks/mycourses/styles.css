@@ -13,6 +13,10 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
     display: none;
 }
 
+.dashboard-list-img {
+    width: 7rem!important;
+}
+
 .block_mycourses .mycourselisting .courseimage {
     width: 10%;
     float:left;
@@ -65,8 +69,10 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
 
 .progress {
     background-color: #666;
+    width: 50%;
 }
 
 .progress-bar {
     background-color: green;
 }
+

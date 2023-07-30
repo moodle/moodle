@@ -29,7 +29,7 @@
 }}
 <div class="buttoncontrols" style="display:inline-flex;">
   <div class="dropdown show" style='padding-right: 5px'>
-    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{#str}} sort {{/str}}
     </a>
 
@@ -38,14 +38,29 @@
       <a class="dropdown-item" href="{{sortdateurl}}">{{#str}} date {{/str}}</a>
     </div>
   </div>
-  <div class="dropdown show">
-    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinkorder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+  <div class="dropdown show" style='padding-right: 5px'>
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinkorder" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       {{#str}} order {{/str}}
     </a>
 
     <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLinkorder">
       <a class="dropdown-item" href="{{sortascurl}}">{{#str}} asc {{/str}}</a>
       <a class="dropdown-item" href="{{sortdescurl}}">{{#str}} desc {{/str}}</a>
+    </div>
+  </div>
+  <div class="dropdown show">
+    <a class="btn btn-outline-secondary dropdown-toggle" href="#" role="button" id="mycoursesdropdownMenuLinktype" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{#viewlist}}
+          {{#str}} list, block_myoverview {{/str}}
+      {{/viewlist}}
+      {{#viewcard}}
+          {{#str}} card, block_myoverview {{/str}}
+      {{/viewcard}}
+    </a>
+
+    <div class="dropdown-menu" aria-labelledby="mycoursesdropdownMenuLinktype">
+      <a class="dropdown-item" href="{{listviewurl}}">{{#str}} list, block_myoverview {{/str}}</a>
+      <a class="dropdown-item" href="{{cardviewurl}}">{{#str}} card, block_myoverview {{/str}}</a>
     </div>
   </div>
 </div>
@@ -81,13 +96,28 @@
     </ul>
     <div class="tab-content content-centred">
         <div role="tabpanel" class="tab-pane {{#viewingavailable}}active{{/viewingavailable}}" id="mycourses_available_view">
-            {{> block_mycourses/available-view }}
+            {{#viewlist}}
+                {{> block_mycourses/available-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/available-card-view }}
+            {{/viewcard}}
         </div>
         <div role="tabpanel" class="tab-pane {{#viewinginprogress}}active{{/viewinginprogress}}" id="mycourses_inprogress_view">
-            {{> block_mycourses/inprogress-view }}
+            {{#viewlist}}
+                {{> block_mycourses/inprogress-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/inprogress-card-view }}
+            {{/viewcard}}
         </div>
         <div role="tabpanel" class="tab-pane {{#viewingcompleted}}active{{/viewingcompleted}}" id="mycourses_completed_view">
-            {{> block_mycourses/completed-view }}
+            {{#viewlist}}
+                {{> block_mycourses/completed-view }}
+            {{/viewlist}}
+            {{#viewcard}}
+                {{> block_mycourses/completed-card-view }}
+            {{/viewcard}}
         </div>
     </div>
 </div>

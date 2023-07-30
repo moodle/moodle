@@ -71,6 +71,8 @@ class main implements renderable, templatable {
         // Get the sorting params.
         $sort = optional_param('sort', 'coursefullname', PARAM_CLEAN);
         $dir = optional_param('dir', 'ASC', PARAM_CLEAN);
+        $tab = optional_param('tab', 'inprogress#mycourses_inprogress_view', PARAM_CLEAN);
+        $view = optional_param('view', 'card', PARAM_CLEAN);
 
         // Get the completion info.
         $mycompletion = mycourses_get_my_completion(0, $sort, $dir);
@@ -91,10 +93,20 @@ class main implements renderable, templatable {
             $viewinginprogress = true;
         }
         $nocoursesurl = $output->image_url('courses', 'block_mycourses')->out();
-        $sortnameurl = new moodle_url($PAGE->url->out(false), ['sort' => 'coursefullname', 'dir' => $dir, 'tab' => $this->tab]);
-        $sortdateurl = new moodle_url($PAGE->url->out(false), ['sort' => 'timestarted', 'dir' => $dir, 'tab' => $this->tab]);
-        $sortascurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'ASC', 'tab' => $this->tab]);
-        $sortdescurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'DESC', 'tab' => $this->tab]);
+        $sortnameurl = new moodle_url($PAGE->url->out(false), ['sort' => 'coursefullname', 'dir' => $dir, 'tab' => $this->tab, 'view' => $view]);
+        $sortdateurl = new moodle_url($PAGE->url->out(false), ['sort' => 'timestarted', 'dir' => $dir, 'tab' => $this->tab, 'view' => $view]);
+        $sortascurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'ASC', 'tab' => $this->tab, 'view' => $view]);
+        $sortdescurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => 'DESC', 'tab' => $this->tab, 'view' => $view]);
+        $listviewurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => $dir, 'tab' => $this->tab, 'view' => 'list']);
+        $cardviewurl = new moodle_url($PAGE->url->out(false), ['sort' => $sort, 'dir' => $dir, 'tab' => $this->tab, 'view' => 'card']);
+        $viewlist = false;
+        $viewcard = false;
+        if ($view == 'list') {
+            $viewlist = true;
+        }
+        if ($view == 'card') {
+            $viewcard = true;
+        }
 
         return [
             'midnight' => usergetmidnight(time()),
@@ -109,6 +121,10 @@ class main implements renderable, templatable {
             'sortdateurl' => $sortdateurl->out(false),
             'sortascurl' => $sortascurl->out(false),
             'sortdescurl' => $sortdescurl->out(false),
+            'listviewurl' => $listviewurl->out(false),
+            'cardviewurl' => $cardviewurl->out(false),
+            'viewlist' => $viewlist,
+            'viewcard' => $viewcard,
         ];
     }
 }

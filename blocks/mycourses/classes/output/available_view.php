@@ -57,7 +57,7 @@ class available_view implements renderable, templatable {
      * @return array
      */
     public function export_for_template(renderer_base $output) {
-        global $CFG, $DB;
+        global $CFG, $DB, $OUTPUT;
         require_once($CFG->dirroot.'/course/lib.php');
 
         // Build courses view data structure.
@@ -71,20 +71,16 @@ class available_view implements renderable, templatable {
 
             $exporter = new course_summary_exporter($course, ['context' => $context]);
             $exportedcourse = $exporter->export($output);
+
             // Convert summary to plain text.
             $coursesummary = content_to_text($exportedcourse->summary, $exportedcourse->summaryformat);
+
             // display course overview files
-            $imageurl = '';
-            foreach ($courseobj->get_course_overviewfiles() as $file) {
-                $isimage = $file->is_valid_image();
-                if (!$isimage) {
-                    $imageurl = null;
-                } else {
-                    $imageurl = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                }
+            $imageurl = \core_course\external\course_summary_exporter::get_course_image($courseobj);
+            if (empty($imageurl)) {
+                $imageurl = $OUTPUT->get_generated_image_for_id($course->id);
             }
+
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
             $exportedcourse->image = $imageurl;
@@ -106,21 +102,13 @@ class available_view implements renderable, templatable {
             } else {
                 $coursesummary = '';
             }
+
             // display course overview files
-            $imageurl = '';
-            foreach ($courseobj->get_course_overviewfiles() as $file) {
-                $isimage = $file->is_valid_image();
-                if (!$isimage) {
-                    $imageurl = $output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
-                } else {
-                    $imageurl = file_encode_url("$CFG->wwwroot/pluginfile.php",
-                                '/'. $file->get_contextid(). '/'. $file->get_component(). '/'.
-                                $file->get_filearea(). $file->get_filepath(). $file->get_filename(), !$isimage);
-                }
-            }
+            $imageurl = \core_course\external\course_summary_exporter::get_course_image($courseobj);
             if (empty($imageurl)) {
-                $imageurl = $output->image_url('i/course');
+                $imageurl = $OUTPUT->get_generated_image_for_id($course->id);
             }
+
             $exportedcourse = $exporter->export($output);
             $exportedcourse->url = new \moodle_url('/course/view.php', array('id' => $notstarted->courseid));
             $exportedcourse->image = $imageurl;
