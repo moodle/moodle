@@ -28,13 +28,21 @@ require_once("$CFG->dirroot/theme/qubitsbasic/externallib.php");
 class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
 
     public function qubits_left_navigation(){
-        global $CFG, $PAGE;
+        global $CFG, $PAGE,$DB;
         $mycourses = enrol_get_my_courses(array('id', 'cacherev'), 'fullname');
         $myenrolcourses = array();
         foreach($mycourses as $mycourse){
+            $category = $DB->get_record('course_categories',array('id'=>$mycourse->category));
+            $categoryName = $category->name;
+            $mform = new theme_qubitsbasic_external();
+            $course_customdata = $mform->get_custom_fields_data_by_cid($mycourse->id);
+            $level = isset($course_customdata["level"]) ? $course_customdata["level"] : "1";
+
             $myenrolcourses[] = array(
                 "name" => $mycourse->fullname,
                 "id" => $mycourse->id,
+                "categoryname" => $categoryName,
+                "level" => "Level ".$level,
                 "url" => $CFG->wwwroot.'/course/view.php?id='.$mycourse->id
             );
         }
@@ -179,9 +187,21 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
         }
         $context = [
             'wwwroot' => $CFG->wwwroot,
-            'qmurl' => $CFG->wwwroot.'/mod/qubitspage'
+            'qmurl' => $CFG->wwwroot.'/third_party/qubits'
         ];
         return $this->render_from_template("theme_qubitsbasic/custom/exbookfiles", $context);
+    }
+
+    public function third_party_editor_files(){
+        global $CFG; 
+        if($this->page->pagelayout !== 'thirdparty'){
+            return '';
+        }
+        $context = [
+            'wwwroot' => $CFG->wwwroot,
+            'qmurl' => $CFG->wwwroot.'/third_party/qubits'
+        ];
+        return $this->render_from_template("theme_qubitsbasic/custom/trdptyfiles", $context);
     }
     
 }

@@ -21,7 +21,7 @@
                 </div>
                 <ul class="sub-menu">
                     {{#myenrolcourses}}
-                    <li><a href="{{{url}}}" class="lftcitm" data-id="{{id}}">{{ name }}</a></li>
+                    <li><a href="{{{url}}}" class="lftcitm" data-id="{{id}}">{{ categoryname }} - {{ level }}</a></li>
                     {{/myenrolcourses}}
                 </ul>
             </li>
@@ -35,16 +35,24 @@
             </li>
 
             <li class="nav-item">
-                <a href="#">
+                <a href="javascript:;">
                     <span class="qicon-assessment icon"></span>
                     <span class="link_name">Assesments</span>
                 </a>
             </li>
 			
-			<li class="nav-item">
-                <a href="{{globals.config.wwwroot}}/sitebuilder/" data-name="dashboard">
-                    <span class="qicon-assessment icon"></span>
-                    <span class="link_name">Editors</span>
-                </a>
+            <li class="nav-item">
+                <div class="nav-hover">
+                    <i class="qicon-my-courses icon"></i>
+                    <a href="javascript:;" class="link_name" id="extrnledtrs">External Editors</a>
+                    <i class="qicon-chevron-down-thin arrow icon"></i>
+                </div>
+                <ul class="sub-menu">
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=python" id="lnkpython">Python</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=javascript" id="lnkjs">JavaScript</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=sql" id="lnksql">SQL</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/scratch" id="lnkscratch">Scratch</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/webbuilder" id="lnkwebbuilder">Web Builder</a></li>
+                </ul>
             </li>
         </ul>

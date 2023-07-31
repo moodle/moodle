@@ -118,4 +118,9 @@ $THEME->layouts = [
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
+    'thirdparty' => array(
+        'file' => 'thirdparty.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    )
 ];

@@ -574,6 +574,8 @@ class mysqli_native_moodle_database extends moodle_database {
         $conn = null;
         $dberr = null;
         try {
+			if($dbhost !== "localhost")
+				$this->mysqli->ssl_set(NULL, NULL, "/var/www/moodledata/certificates/ca-certificates.crt", NULL, NULL);
             // real_connect() is doing things we don't expext.
             $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
         } catch (\Exception $e) {

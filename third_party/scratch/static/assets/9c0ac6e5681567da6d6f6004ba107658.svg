@@ -1,0 +1,74 @@
+<svg width="72px" height="110px" viewBox="0 0 72 90" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.2 (57519) - http://www.bohemiancoding.com/sketch -->
+   <style type="text/css">
+       <![CDATA[
+       @-webkit-keyframes wiggle {
+           0% { transform: translate(0,-10px); }
+           100% { transform: translate(0, 0); }
+       }
+        @keyframes wiggle {
+            0% { transform: translate(0,-10px); }
+            100% { transform: translate(0, 0); }
+        }
+        #arrow {
+            -webkit-animation: wiggle 0.5s infinite ease-in-out alternate;
+            animation: wiggle 0.5s infinite ease-in-out alternate;
+        }
+       ]]>
+      </style>
+    <title>wedo-button-illustration</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M36.4863865,32 C35.8359214,32 35.2288206,31.7593361 34.7778315,31.3255814 L25.7002299,22.5385506 C24.9977276,21.8165589 24.8098155,20.8035318 25.2000945,19.933224 C25.5874826,19.0629161 26.4432056,18.52562 27.4348035,18.52562 L30.877932,18.52562 L32.6327422,6.29653575 C32.8842554,4.42439448 34.5667917,3 36.5470965,3 C36.7176629,3 36.8911203,3.01119367 37.0616867,3.03078259 C38.8482975,3.30222908 40.2272834,4.65106629 40.4441051,6.31052784 L42.2451707,18.52562 L45.5379695,18.52562 C46.5411312,18.52562 47.4344366,19.0964972 47.8131518,19.9779986 C48.191867,20.865097 47.9866092,21.8473415 47.272543,22.5385506 L38.1949414,31.3255814 C37.7439523,31.7593361 37.1368516,32 36.4863865,32 Z" id="path-1"></path>
+        <filter x="-15.2%" y="-12.1%" width="130.4%" height="124.1%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="1.5" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feComposite in="shadowOffsetOuter1" in2="SourceAlpha" operator="out" result="shadowOffsetOuter1"></feComposite>
+            <feColorMatrix values="0 0 0 0 0.298039216   0 0 0 0 0.592156863   0 0 0 0 1  0 0 0 0.25 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="wedo-button-illustration" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="wedo-top" transform="translate(1.000000, 15.000000)" fill-rule="nonzero" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16.7391304,0.506849315 L53.2608696,0.506849315 C55.5020251,0.506849315 57.3188406,2.32224266 57.3188406,4.56164384 L57.3188406,71.4657534 C57.3188406,72.585454 56.4104328,73.4931507 55.2898551,73.4931507 L14.7101449,73.4931507 C13.5895672,73.4931507 12.6811594,72.585454 12.6811594,71.4657534 L12.6811594,4.56164384 C12.6811594,2.32224266 14.4979749,0.506849315 16.7391304,0.506849315 Z" id="Shape" stroke="#7C87A5" fill="#FFFFFF"></path>
+            <path d="M1.52173913,16.7260274 L12.6811594,16.7260274 L12.6811594,57.2739726 L1.52173913,57.2739726 C0.961450254,57.2739726 0.507246377,56.8201243 0.507246377,56.260274 L0.507246377,17.739726 C0.507246377,17.1798757 0.961450254,16.7260274 1.52173913,16.7260274 Z" id="Shape" stroke="#7C87A5" fill="#E6E7E8"></path>
+            <path d="M57.3188406,16.7260274 L68.4782609,16.7260274 C69.0385497,16.7260274 69.4927536,17.1798757 69.4927536,17.739726 L69.4927536,56.260274 C69.4927536,56.8201243 69.0385497,57.2739726 68.4782609,57.2739726 L57.3188406,57.2739726 L57.3188406,16.7260274 Z" id="Shape" stroke="#7C87A5" fill="#E6E7E8"></path>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="14.6986301" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="23.8219178" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="6.5942029" cy="23.8219178" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="6.5942029" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="6.5942029" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="6.5942029" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="63.4057971" cy="23.8219178" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="63.4057971" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="63.4057971" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#E6E7E8" opacity="0.5" cx="63.4057971" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="18.7681159" cy="60.3150685" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="29.5927536" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="29.5927536" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="29.5927536" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="29.5927536" cy="60.3150685" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="40.4072464" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="40.4072464" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="40.4072464" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="40.4072464" cy="60.3150685" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="14.6986301" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="23.8219178" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="32.9452055" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="42.0684932" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="51.1917808" rx="3.04347826" ry="3.04109589"></ellipse>
+            <ellipse id="Oval" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5" cx="51.2318841" cy="60.3150685" rx="3.04347826" ry="3.04109589"></ellipse>
+            <path d="M18.7681159,67.4109589 L30.942029,67.4109589 C32.0626067,67.4109589 32.9710145,68.3186556 32.9710145,69.4383562 L32.9710145,73.4931507 L16.7391304,73.4931507 L16.7391304,69.4383562 C16.7391304,68.3186556 17.6475382,67.4109589 18.7681159,67.4109589 Z" id="Shape" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5"></path>
+            <path d="M39.057971,67.4109589 L51.2318841,67.4109589 C52.3524618,67.4109589 53.2608696,68.3186556 53.2608696,69.4383562 L53.2608696,73.4931507 L37.0289855,73.4931507 L37.0289855,69.4383562 C37.0289855,68.3186556 37.9373933,67.4109589 39.057971,67.4109589 Z" id="Shape" stroke="#7C87A5" fill="#FFFFFF" opacity="0.5"></path>
+            <path d="M26.884058,0.506849315 L43.115942,0.506849315 L43.115942,23.8219178 C43.115942,25.5014687 41.7533304,26.8630137 40.0724638,26.8630137 L29.9275362,26.8630137 C28.2466696,26.8630137 26.884058,25.5014687 26.884058,23.8219178 L26.884058,0.506849315 Z" id="Shape" stroke="#7C87A5" fill="#E6E7E8"></path>
+            <rect id="Rectangle-path" stroke="#389438" fill="#46B946" x="28.9130435" y="12.6712329" width="12.173913" height="12.1643836" rx="2"></rect>
+            <path d="M57.3188406,4.56164384 L57.3188406,8.61643836 C57.3188406,6.37703718 55.5020251,4.56164384 53.2608696,4.56164384 L16.7391304,4.56164384 C14.4979749,4.56164384 12.6811594,6.37703718 12.6811594,8.61643836 L12.6811594,4.56164384 C12.6811594,2.32224266 14.4979749,0.506849315 16.7391304,0.506849315 L53.2608696,0.506849315 C55.5020251,0.506849315 57.3188406,2.32224266 57.3188406,4.56164384 Z" id="Shape" stroke="#7C87A5" fill="#7C87A5" opacity="0.1"></path>
+        </g>
+        <g id="arrow">
+            <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+            <use stroke="#4280D7" stroke-width="1" fill="#4C97FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+        </g>
+    </g>
+</svg>
