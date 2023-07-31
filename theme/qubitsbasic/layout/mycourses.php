@@ -84,6 +84,20 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
+$_GET['sesskey'] = sesskey();
+$_GET['info'] = "theme_qubitsbasic_get_enrolled_courses_by_timeline_classification";
+$methodname = "theme_qubitsbasic_get_enrolled_courses_by_timeline_classification";
+$args = array(
+    "offset" => 0,
+    "limit" => 100,
+    "classification"=> "all",
+    "sort" => "fullname",
+    "customfieldname" => "level",
+    "customfieldvalue" => ""
+);
+$response = external_api::call_external_function($methodname, $args, true);
+$mycourses = isset($response["data"]["courses"])?$response["data"]["courses"]:array();
+//echo "<pre>"; print_r($mycourses); echo "</pre>"; exit;
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -104,7 +118,8 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
+    'mycourses' => $mycourses
 ];
 
 echo $OUTPUT->render_from_template('theme_qubitsbasic/mycourses', $templatecontext);

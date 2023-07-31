@@ -181,3 +181,18 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
 
 {{{ output.third_party_editor_files }}}
 
+{{#js}}
+require(['jquery'],function($){
+    $("#extrnledtrs").addClass("active").parents(".nav-hover").addClass("active").parent(".nav-item").addClass("showMenu");
+    if($("body").hasClass("page-editor-qubits-python"))
+      $("#lnkpython").addClass("active");
+    if($("body").hasClass("page-editor-qubits-javascript"))
+      $("#lnkjs").addClass("active");
+    if($("body").hasClass("page-editor-qubits-sql"))
+      $("#lnksql").addClass("active");
+    if($("body").hasClass("path-third_party-scratch"))
+      $("#lnkscratch").addClass("active");
+    if($("body").hasClass("path-third_party-webbuilder"))
+      $("#lnkwebbuilder").addClass("active");
+});
+{{/js}}

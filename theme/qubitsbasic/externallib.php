@@ -3939,6 +3939,7 @@ class theme_qubitsbasic_external extends external_api {
                 $compiler = new core_scss();
                 $cardstyle = $compiler->compile($coursescss);
                 $course->cardstyle = $cardstyle;
+                $course->iscomplete = ($course->progress == 100) ? true : false;
             }
             $course->courselastopened = self::get_course_last_open($course->id);
             return $course;

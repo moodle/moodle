@@ -1,9 +1,7 @@
 <?php
 require('../../config.php');
 $elanguage      = optional_param('language', '', PARAM_TEXT);
-$clsname = 'page-editor-qubits-'.$elanguage;
 $PAGE->set_pagelayout('thirdparty');
-$PAGE->add_body_class($clsname);
 echo $OUTPUT->header();
 
 ?>
@@ -17,10 +15,12 @@ echo $OUTPUT->header();
 		},
 
 
-		"page": "/Editor/[language]",
-	"query": {
-	  "language": "<?php echo $elanguage; ?>"
-	},
+		"page": "/pdf",
+		"query": {
+			"course": "DigiPro",
+			"Level": "Level1",
+			"pdf": "DPL01_U01_S02"
+		},
 
 		"buildId": "G7GxyPIfk8vrAIEzQ0oJE",
 		"isFallback": false,
