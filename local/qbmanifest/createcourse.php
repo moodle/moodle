@@ -97,10 +97,6 @@ class local_qbcourse extends external_api {
                             array(
                                 'shortname'=> 'cardcolour',
                                 'value' => trim($courses[0]['cardcolour'])
-                            ),
-                            array(
-                                'shortname'=> 'course001',
-                                'value' => trim($courses[0]['course001'])
                             )
                         )
                 
@@ -242,13 +238,6 @@ class local_qbcourse extends external_api {
             if($cardcolour){
                 $DB->set_field('customfield_data', 'charvalue', trim($otherfields->cardcolour), array('fieldid' => $cardcolour->id,'instanceid'=>$cid));
                 $DB->set_field('customfield_data', 'value', trim($otherfields->cardcolour), array('fieldid' => $cardcolour->id,'instanceid'=>$cid));
-            }
-            
-
-            $course001 = $DB->get_record('customfield_field', array('shortname' => 'course001'));
-            if($course001){
-                $DB->set_field('customfield_data', 'charvalue', trim($otherfields->course001), array('fieldid' => $course001->id,'instanceid'=>$cid));
-                $DB->set_field('customfield_data', 'value', trim($otherfields->course001), array('fieldid' => $course001->id,'instanceid'=>$cid));
             }
             
         }
