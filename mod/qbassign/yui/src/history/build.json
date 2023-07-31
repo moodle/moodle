@@ -1,0 +1,10 @@
+{
+    "name": "moodle-mod_qbassign-history",
+    "builds": {
+        "moodle-mod_qbassign-history": {
+            "jsfiles": [
+                "history.js"
+            ]
+        }
+    }
+}

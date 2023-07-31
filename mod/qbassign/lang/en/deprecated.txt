@@ -1,0 +1,4 @@
+allowsubmissionsfromdatesummary,mod_qbassign
+allowsubmissionsanddescriptionfromdatesummary,mod_qbassign
+relativedatessubmissionduedateafter,mod_qbassign
+relativedatessubmissionduedatebefore,mod_qbassign
