@@ -57,14 +57,14 @@ if ($mform->is_cancelled()) {
             $datacourse[0]['summary'] = $course->summary;
 
             $datacourse[0]['level'] = '';
-                $datacourse[0]['cardcolour'] = '';
-                $datacourse[0]['course001'] = '';
+            $datacourse[0]['cardcolour'] = '';
+             
 
             if(isset($course->otherfields))
             {
                 $datacourse[0]['level'] = $course->otherfields->level;
                 $datacourse[0]['cardcolour'] = $course->otherfields->cardcolour;
-                $datacourse[0]['course001'] = $course->otherfields->course001;
+                
             }
             
             require_once($CFG->dirroot.'/local/qbmanifest/createcourse.php');
