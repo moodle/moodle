@@ -18431,6 +18431,9 @@ span.editinstructions .alert-link {
   border-left: calc(1px + 5px) solid #0f6cbf;
   padding-left: calc(1.25rem - 5px);
 }
+#course-category-listings .listitem:hover {
+  z-index: 2;
+}
 #course-category-listings .item-actions {
   margin-right: 1em;
   display: inline-block;
