@@ -83,7 +83,7 @@ class lesson_page_type_matching extends lesson_page {
         foreach ($answers as $answer) {
             // get all the response
             if ($answer->response != null) {
-                $responses[] = trim($answer->response);
+                $responses[] = format_text(trim($answer->response));
             }
         }
 
