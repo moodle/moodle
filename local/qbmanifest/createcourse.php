@@ -262,17 +262,15 @@ class local_qbcourse extends external_api {
                         $page->course = $cid;
                         $page->name = trim($activities[$a]->title);
 
-                        if(empty($activities[$a]->description))
+                        if(empty($activities[$a]->route))
                         $page->intro = '<p>.</p>';
                         else
-                        $page->intro = $activities[$a]->description;
+                        $page->intro = $activities[$a]->route;
 
                         $page->introformat = 1;
 
-                        if(empty($activities[$a]->content))
-                        $page->content = '<p>/</p>';
-                        else
-                        $page->content = $activities[$a]->content;
+                        $page->content = '<p>.</p>';
+                        
 
                         $page->contentformat = 1;
                         $page->legacyfiles = 0;
