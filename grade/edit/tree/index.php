@@ -246,18 +246,11 @@ if ($recreatetree) {
     $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
 }
 
-$bulkmoveoptions = ['' => get_string('choosedots')] + $grade_edit_tree->categories;
 $tpldata = (object) [
     'actionurl' => $returnurl,
     'sesskey' => sesskey(),
-    'showsave' => !$moving,
-    'showbulkmove' => !$moving && count($grade_edit_tree->categories) > 1,
-    'bulkmoveoptions' => array_map(function($option) use ($bulkmoveoptions) {
-        return [
-            'name' => $bulkmoveoptions[$option],
-            'value' => $option
-        ];
-    }, array_keys($bulkmoveoptions))
+    'movingmodeenabled' => $moving,
+    'courseid' => $courseid
 ];
 
 // Check to see if we have a normalisation message to send.
@@ -268,9 +261,9 @@ if ($weightsadjusted) {
 
 $tpldata->table = html_writer::table($grade_edit_tree->table);
 
-if ($moving) {
-    $tpldata->cancelmovingbutton = $OUTPUT->single_button(
-        new moodle_url('index.php', ['id' => $course->id]), get_string('cancel'), 'get');
+// If not in moving mode and there is more than one grade category, then initialise the bulk action module.
+if (!$moving && count($grade_edit_tree->categories) > 1) {
+    $PAGE->requires->js_call_amd('core_grades/bulkactions/edit/tree/bulk_actions', 'init', [$courseid]);
 }
 
 $footercontent = $OUTPUT->render_from_template('core_grades/edit_tree_sticky_footer', $tpldata);
