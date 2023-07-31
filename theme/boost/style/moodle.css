@@ -25987,6 +25987,13 @@ blockquote {
   width: 48px !important;
 }
 
+/* Bulk actions in sticky footer. */
+#sticky-footer [data-type=bulkactions] {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+}
+
 /* Choice list component. */
 .choicelist {
   min-width: calc(300px - 25px);
