@@ -2857,6 +2857,14 @@ $functions = array(
         'ajax'          => true,
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
+    'core_contentbank_copy_content' => [
+        'classname'     => 'core_contentbank\external\copy_content',
+        'classpath'     => '',
+        'description'   => 'Copy a content in the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:copycontent, moodle/contentbank:copyanycontent',
+    ],
     'core_contentbank_set_content_visibility' => [
         'classname'     => 'core_contentbank\external\set_content_visibility',
         'classpath'     => '',
