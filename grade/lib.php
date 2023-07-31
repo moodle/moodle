@@ -1930,12 +1930,33 @@ class grade_structure {
     public function get_delete_link(array $element, object $gpr): ?string {
         if ($element['type'] == 'item' || ($element['type'] == 'category' && $element['depth'] > 1)) {
             if (grade_edit_tree::element_deletable($element)) {
-                $url = new moodle_url('index.php',
-                    ['id' => $this->courseid, 'action' => 'delete', 'eid' => $element['eid'], 'sesskey' => sesskey()]);
+                $deleteconfirmationurl = new moodle_url('index.php', [
+                    'id' => $this->courseid,
+                    'action' => 'delete',
+                    'confirm' => 1,
+                    'eid' => $element['eid'],
+                    'sesskey' => sesskey(),
+                ]);
+                $gpr->add_url_params($deleteconfirmationurl);
                 $title = grade_helper::get_lang_string('delete');
-                $gpr->add_url_params($url);
-                return html_writer::link($url, $title,
-                    ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
+                return html_writer::link(
+                    '',
+                    $title,
+                    [
+                        'class' => 'dropdown-item',
+                        'aria-label' => $title,
+                        'role' => 'menuitem',
+                        'data-modal' => 'confirmation',
+                        'data-modal-title-str' => json_encode(['confirm', 'core']),
+                        'data-modal-content-str' => json_encode([
+                            'deletecheck',
+                            '',
+                            $element['object']->get_name()
+                        ]),
+                        'data-modal-yes-button-str' => json_encode(['delete', 'core']),
+                        'data-modal-destination' => $deleteconfirmationurl->out(false),
+                    ]
+                );
             }
         }
         return null;

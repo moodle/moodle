@@ -111,18 +111,6 @@ switch ($action) {
                 $object->delete('grade/report/grader/category');
                 redirect($returnurl);
 
-            } else {
-                $PAGE->set_title($strgrades . ': ' . $strgraderreport);
-                $PAGE->set_heading($course->fullname);
-                echo $OUTPUT->header();
-                $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
-                $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
-                $optionsno  = array('id'=>$course->id);
-                $formcontinue = new single_button(new moodle_url('index.php', $optionsyes), get_string('yes'));
-                $formcancel = new single_button(new moodle_url('index.php', $optionsno), get_string('no'), 'get');
-                echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
-                echo $OUTPUT->footer();
-                die;
             }
         }
         break;
