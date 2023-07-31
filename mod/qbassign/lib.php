@@ -1,0 +1,1845 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * This file contains the moodle hooks for the qbassign module.
+ *
+ * It delegates most functions to the qbassignment class.
+ *
+ * @package   mod_qbassign
+ * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+defined('MOODLE_INTERNAL') || die();
+
+require_once(__DIR__ . '/deprecatedlib.php');
+
+/**
+ * Adds an qbassignment instance
+ *
+ * This is done by calling the add_instance() method of the qbassignment type class
+ * @param stdClass $data
+ * @param mod_qbassign_mod_form $form
+ * @return int The instance id of the new qbassignment
+ */
+function qbassign_add_instance(stdClass $data, mod_qbassign_mod_form $form = null) {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $qbassignment = new qbassign(context_module::instance($data->coursemodule), null, null);
+    return $qbassignment->add_instance($data, true);
+}
+
+/**
+ * delete an qbassignment instance
+ * @param int $id
+ * @return bool
+ */
+function qbassign_delete_instance($id) {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+    $cm = get_coursemodule_from_instance('qbassign', $id, 0, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+
+    $qbassignment = new qbassign($context, null, null);
+    return $qbassignment->delete_instance();
+}
+
+/**
+ * This function is used by the reset_course_userdata function in moodlelib.
+ * This function will remove all qbassignment submissions and feedbacks in the database
+ * and clean up any related data.
+ *
+ * @param stdClass $data the data submitted from the reset course.
+ * @return array
+ */
+function qbassign_reset_userdata($data) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $status = array();
+    $params = array('courseid'=>$data->courseid);
+    $sql = "SELECT a.id FROM {qbassign} a WHERE a.course=:courseid";
+    $course = $DB->get_record('course', array('id'=>$data->courseid), '*', MUST_EXIST);
+    if ($qbassigns = $DB->get_records_sql($sql, $params)) {
+        foreach ($qbassigns as $qbassign) {
+            $cm = get_coursemodule_from_instance('qbassign',
+                                                 $qbassign->id,
+                                                 $data->courseid,
+                                                 false,
+                                                 MUST_EXIST);
+            $context = context_module::instance($cm->id);
+            $qbassignment = new qbassign($context, $cm, $course);
+            $status = array_merge($status, $qbassignment->reset_userdata($data));
+        }
+    }
+    return $status;
+}
+
+/**
+ * This standard function will check all instances of this module
+ * and make sure there are up-to-date events created for each of them.
+ * If courseid = 0, then every qbassignment event in the site is checked, else
+ * only qbassignment events belonging to the course specified are checked.
+ *
+ * @param int $courseid
+ * @param int|stdClass $instance qbassign module instance or ID.
+ * @param int|stdClass $cm Course module object or ID (not used in this module).
+ * @return bool
+ */
+function qbassign_refresh_events($courseid = 0, $instance = null, $cm = null) {
+    global $CFG, $DB;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    // If we have instance information then we can just update the one event instead of updating all events.
+    if (isset($instance)) {
+        if (!is_object($instance)) {
+            $instance = $DB->get_record('qbassign', array('id' => $instance), '*', MUST_EXIST);
+        }
+        if (isset($cm)) {
+            if (!is_object($cm)) {
+                qbassign_prepare_update_events($instance);
+                return true;
+            } else {
+                $course = get_course($instance->course);
+                qbassign_prepare_update_events($instance, $course, $cm);
+                return true;
+            }
+        }
+    }
+
+    if ($courseid) {
+        // Make sure that the course id is numeric.
+        if (!is_numeric($courseid)) {
+            return false;
+        }
+        if (!$qbassigns = $DB->get_records('qbassign', array('course' => $courseid))) {
+            return false;
+        }
+        // Get course from courseid parameter.
+        if (!$course = $DB->get_record('course', array('id' => $courseid), '*')) {
+            return false;
+        }
+    } else {
+        if (!$qbassigns = $DB->get_records('qbassign')) {
+            return false;
+        }
+    }
+    foreach ($qbassigns as $qbassign) {
+        qbassign_prepare_update_events($qbassign);
+    }
+
+    return true;
+}
+
+/**
+ * This actually updates the normal and completion calendar events.
+ *
+ * @param  stdClass $qbassign qbassignment object (from DB).
+ * @param  stdClass $course Course object.
+ * @param  stdClass $cm Course module object.
+ */
+function qbassign_prepare_update_events($qbassign, $course = null, $cm = null) {
+    global $DB;
+    if (!isset($course)) {
+        // Get course and course module for the qbassignment.
+        list($course, $cm) = get_course_and_cm_from_instance($qbassign->id, 'qbassign', $qbassign->course);
+    }
+    // Refresh the qbassignment's calendar events.
+    $context = context_module::instance($cm->id);
+    $qbassignment = new qbassign($context, $cm, $course);
+    $qbassignment->update_calendar($cm->id);
+    // Refresh the calendar events also for the qbassignment overrides.
+    $overrides = $DB->get_records('qbassign_overrides', ['qbassignid' => $qbassign->id], '',
+                                  'id, groupid, userid, duedate, sortorder, timelimit');
+    foreach ($overrides as $override) {
+        if (empty($override->userid)) {
+            unset($override->userid);
+        }
+        if (empty($override->groupid)) {
+            unset($override->groupid);
+        }
+        qbassign_update_events($qbassignment, $override);
+    }
+}
+
+/**
+ * Removes all grades from gradebook
+ *
+ * @param int $courseid The ID of the course to reset
+ * @param string $type Optional type of qbassignment to limit the reset to a particular qbassignment type
+ */
+function qbassign_reset_gradebook($courseid, $type='') {
+    global $CFG, $DB;
+
+    $params = array('moduletype'=>'qbassign', 'courseid'=>$courseid);
+    $sql = 'SELECT a.*, cm.idnumber as cmidnumber, a.course as courseid
+            FROM {qbassign} a, {course_modules} cm, {modules} m
+            WHERE m.name=:moduletype AND m.id=cm.module AND cm.instance=a.id AND a.course=:courseid';
+
+    if ($qbassignments = $DB->get_records_sql($sql, $params)) {
+        foreach ($qbassignments as $qbassignment) {
+            qbassign_grade_item_update($qbassignment, 'reset');
+        }
+    }
+}
+
+/**
+ * Implementation of the function for printing the form elements that control
+ * whether the course reset functionality affects the qbassignment.
+ * @param moodleform $mform form passed by reference
+ */
+function qbassign_reset_course_form_definition(&$mform) {
+    $mform->addElement('header', 'qbassignheader', get_string('modulenameplural', 'qbassign'));
+    $name = get_string('deleteallsubmissions', 'qbassign');
+    $mform->addElement('advcheckbox', 'reset_qbassign_submissions', $name);
+    $mform->addElement('advcheckbox', 'reset_qbassign_user_overrides',
+        get_string('removealluseroverrides', 'qbassign'));
+    $mform->addElement('advcheckbox', 'reset_qbassign_group_overrides',
+        get_string('removeallgroupoverrides', 'qbassign'));
+}
+
+/**
+ * Course reset form defaults.
+ * @param  object $course
+ * @return array
+ */
+function qbassign_reset_course_form_defaults($course) {
+    return array('reset_qbassign_submissions' => 1,
+            'reset_qbassign_group_overrides' => 1,
+            'reset_qbassign_user_overrides' => 1);
+}
+
+/**
+ * Update an qbassignment instance
+ *
+ * This is done by calling the update_instance() method of the qbassignment type class
+ * @param stdClass $data
+ * @param stdClass $form - unused
+ * @return object
+ */
+function qbassign_update_instance(stdClass $data, $form) {
+    global $CFG;
+   // echo '<pre>';print_r($data); die();
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+    $context = context_module::instance($data->coursemodule);
+    $qbassignment = new qbassign($context, null, null);
+    return $qbassignment->update_instance($data);
+}
+
+/**
+ * This function updates the events associated to the qbassign.
+ * If $override is non-zero, then it updates only the events
+ * associated with the specified override.
+ *
+ * @param qbassign $qbassign the qbassign object.
+ * @param object $override (optional) limit to a specific override
+ */
+function qbassign_update_events($qbassign, $override = null) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/calendar/lib.php');
+
+    $qbassigninstance = $qbassign->get_instance();
+
+    // Load the old events relating to this qbassign.
+    $conds = array('modulename' => 'qbassign', 'instance' => $qbassigninstance->id);
+    if (!empty($override)) {
+        // Only load events for this override.
+        if (isset($override->userid)) {
+            $conds['userid'] = $override->userid;
+        } else if (isset($override->groupid)) {
+            $conds['groupid'] = $override->groupid;
+        } else {
+            // This is not a valid override, it may have been left from a bad import or restore.
+            $conds['groupid'] = $conds['userid'] = 0;
+        }
+    }
+    $oldevents = $DB->get_records('event', $conds, 'id ASC');
+
+    // Now make a to-do list of all that needs to be updated.
+    if (empty($override)) {
+        // We are updating the primary settings for the qbassignment, so we need to add all the overrides.
+        $overrides = $DB->get_records('qbassign_overrides', array('qbassignid' => $qbassigninstance->id), 'id ASC');
+        // It is necessary to add an empty stdClass to the beginning of the array as the $oldevents
+        // list contains the original (non-override) event for the module. If this is not included
+        // the logic below will end up updating the wrong row when we try to reconcile this $overrides
+        // list against the $oldevents list.
+        array_unshift($overrides, new stdClass());
+    } else {
+        // Just do the one override.
+        $overrides = array($override);
+    }
+
+    if (!empty($qbassign->get_course_module())) {
+        $cmid = $qbassign->get_course_module()->id;
+    } else {
+        $cmid = get_coursemodule_from_instance('qbassign', $qbassigninstance->id, $qbassigninstance->course)->id;
+    }
+
+    foreach ($overrides as $current) {
+        $groupid   = isset($current->groupid) ? $current->groupid : 0;
+        $userid    = isset($current->userid) ? $current->userid : 0;
+        $duedate = isset($current->duedate) ? $current->duedate : $qbassigninstance->duedate;
+        $timelimit = isset($current->timelimit) ? $current->timelimit : 0;
+
+        // Only add 'due' events for an override if they differ from the qbassign default.
+        $addclose = empty($current->id) || !empty($current->duedate);
+
+        $event = new stdClass();
+        $event->type = CALENDAR_EVENT_TYPE_ACTION;
+        $event->description = format_module_intro('qbassign', $qbassigninstance, $cmid, false);
+        $event->format = FORMAT_HTML;
+        // Events module won't show user events when the courseid is nonzero.
+        $event->courseid    = ($userid) ? 0 : $qbassigninstance->course;
+        $event->groupid     = $groupid;
+        $event->userid      = $userid;
+        $event->modulename  = 'qbassign';
+        $event->instance    = $qbassigninstance->id;
+        $event->timestart   = $duedate;
+        $event->timeduration = $timelimit;
+        $event->timesort    = $event->timestart + $event->timeduration;
+        $event->visible     = instance_is_visible('qbassign', $qbassigninstance);
+        $event->eventtype   = qbassign_EVENT_TYPE_DUE;
+        $event->priority    = null;
+
+        // Determine the event name and priority.
+        if ($groupid) {
+            // Group override event.
+            $params = new stdClass();
+            $params->qbassign = $qbassigninstance->name;
+            $params->group = groups_get_group_name($groupid);
+            if ($params->group === false) {
+                // Group doesn't exist, just skip it.
+                continue;
+            }
+            $eventname = get_string('overridegroupeventname', 'qbassign', $params);
+            // Set group override priority.
+            if (isset($current->sortorder)) {
+                $event->priority = $current->sortorder;
+            }
+        } else if ($userid) {
+            // User override event.
+            $params = new stdClass();
+            $params->qbassign = $qbassigninstance->name;
+            $eventname = get_string('overrideusereventname', 'qbassign', $params);
+            // Set user override priority.
+            $event->priority = CALENDAR_EVENT_USER_OVERRIDE_PRIORITY;
+        } else {
+            // The parent event.
+            $eventname = $qbassigninstance->name;
+        }
+
+        if ($duedate && $addclose) {
+            if ($oldevent = array_shift($oldevents)) {
+                $event->id = $oldevent->id;
+            } else {
+                unset($event->id);
+            }
+            $event->name      = $eventname.' ('.get_string('duedate', 'qbassign').')';
+            calendar_event::create($event, false);
+        }
+    }
+
+    // Delete any leftover events.
+    foreach ($oldevents as $badevent) {
+        $badevent = calendar_event::load($badevent);
+        $badevent->delete();
+    }
+}
+
+/**
+ * Return the list if Moodle features this module supports
+ *
+ * @param string $feature FEATURE_xx constant for requested feature
+ * @return mixed True if module supports feature, false if not, null if doesn't know or string for the module purpose.
+ */
+function qbassign_supports($feature) {
+    switch($feature) {
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return true;
+        case FEATURE_GRADE_HAS_GRADE:
+            return true;
+        case FEATURE_GRADE_OUTCOMES:
+            return true;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_ADVANCED_GRADING:
+            return true;
+        case FEATURE_PLAGIARISM:
+            return true;
+        case FEATURE_COMMENT:
+            return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
+
+        default:
+            return null;
+    }
+}
+
+/**
+ * extend an assigment navigation settings
+ *
+ * @param settings_navigation $settings
+ * @param navigation_node $navref
+ * @return void
+ */
+function qbassign_extend_settings_navigation(settings_navigation $settings, navigation_node $navref) {
+    global $DB;
+
+    // We want to add these new nodes after the Edit settings node, and before the
+    // Locally qbassigned roles node. Of course, both of those are controlled by capabilities.
+    $keys = $navref->get_children_key_list();
+    $beforekey = null;
+    $i = array_search('modedit', $keys);
+    if ($i === false and array_key_exists(0, $keys)) {
+        $beforekey = $keys[0];
+    } else if (array_key_exists($i + 1, $keys)) {
+        $beforekey = $keys[$i + 1];
+    }
+
+    $cm = $settings->get_page()->cm;
+    if (!$cm) {
+        return;
+    }
+
+    $context = $cm->context;
+    $course = $settings->get_page()->course;
+
+    if (!$course) {
+        return;
+    }
+
+    if (has_capability('mod/qbassign:manageoverrides', $settings->get_page()->cm->context)) {
+        $url = new moodle_url('/mod/qbassign/overrides.php', ['cmid' => $settings->get_page()->cm->id, 'mode' => 'user']);
+
+        $node = navigation_node::create(get_string('overrides', 'qbassign'),
+            $url,
+            navigation_node::TYPE_SETTING, null, 'mod_qbassign_useroverrides');
+        $navref->add_node($node, $beforekey);
+    }
+
+    if (has_capability('mod/qbassign:revealidentities', $context)) {
+        $dbparams = array('id'=>$cm->instance);
+        $qbassignment = $DB->get_record('qbassign', $dbparams, 'blindmarking, revealidentities');
+
+        if ($qbassignment && $qbassignment->blindmarking && !$qbassignment->revealidentities) {
+            $urlparams = array('id' => $cm->id, 'action'=>'revealidentities');
+            $url = new moodle_url('/mod/qbassign/view.php', $urlparams);
+            $linkname = get_string('revealidentities', 'qbassign');
+            $node = $navref->add($linkname, $url, navigation_node::TYPE_SETTING);
+        }
+    }
+}
+
+/**
+ * Add a get_coursemodule_info function in case any qbassignment type wants to add 'extra' information
+ * for the course (see resource).
+ *
+ * Given a course_module object, this function returns any "extra" information that may be needed
+ * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
+ *
+ * @param stdClass $coursemodule The coursemodule object (record).
+ * @return cached_cm_info An object on information that the courses
+ *                        will know about (most noticeably, an icon).
+ */
+function qbassign_get_coursemodule_info($coursemodule) {
+    global $DB;
+
+    $dbparams = array('id'=>$coursemodule->instance);
+    $fields = 'id, name, alwaysshowdescription, allowsubmissionsfromdate, intro, introformat, completionsubmit,
+        duedate, cutoffdate, allowsubmissionsfromdate';
+    if (! $qbassignment = $DB->get_record('qbassign', $dbparams, $fields)) {
+        return false;
+    }
+
+    $result = new cached_cm_info();
+    $result->name = $qbassignment->name;
+    if ($coursemodule->showdescription) {
+        if ($qbassignment->alwaysshowdescription || time() > $qbassignment->allowsubmissionsfromdate) {
+            // Convert intro to html. Do not filter cached version, filters run at display time.
+            $result->content = format_module_intro('qbassign', $qbassignment, $coursemodule->id, false);
+        }
+    }
+
+    // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
+    if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
+        $result->customdata['customcompletionrules']['completionsubmit'] = $qbassignment->completionsubmit;
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if ($qbassignment->duedate) {
+        $result->customdata['duedate'] = $qbassignment->duedate;
+    }
+    if ($qbassignment->cutoffdate) {
+        $result->customdata['cutoffdate'] = $qbassignment->cutoffdate;
+    }
+    if ($qbassignment->allowsubmissionsfromdate) {
+        $result->customdata['allowsubmissionsfromdate'] = $qbassignment->allowsubmissionsfromdate;
+    }
+
+    return $result;
+}
+
+/**
+ * Sets dynamic information about a course module
+ *
+ * This function is called from cm_info when displaying the module
+ *
+ * @param cm_info $cm
+ */
+function mod_qbassign_cm_info_dynamic(cm_info $cm) {
+    global $USER;
+
+    $cache = cache::make('mod_qbassign', 'overrides');
+    $override = $cache->get("{$cm->instance}_u_{$USER->id}");
+
+    if (!$override) {
+        $override = (object) [
+            'allowsubmissionsfromdate' => null,
+            'duedate' => null,
+            'cutoffdate' => null,
+        ];
+    }
+
+    // No need to look for group overrides if there are user overrides for all allowsubmissionsfromdate, duedate and cutoffdate.
+    if (is_null($override->allowsubmissionsfromdate) || is_null($override->duedate) || is_null($override->cutoffdate)) {
+        $selectedgroupoverride = (object) [
+            'allowsubmissionsfromdate' => null,
+            'duedate' => null,
+            'cutoffdate' => null,
+            'sortorder' => PHP_INT_MAX, // So that every sortorder read from DB is less than this.
+        ];
+        $groupings = groups_get_user_groups($cm->course, $USER->id);
+        foreach ($groupings[0] as $groupid) {
+            $groupoverride = $cache->get("{$cm->instance}_g_{$groupid}");
+            if ($groupoverride) {
+                if ($groupoverride->sortorder < $selectedgroupoverride->sortorder) {
+                    $selectedgroupoverride = $groupoverride;
+                }
+            }
+        }
+        // If there is a user override for a setting, ignore the group override.
+        if (is_null($override->allowsubmissionsfromdate)) {
+            $override->allowsubmissionsfromdate = $selectedgroupoverride->allowsubmissionsfromdate;
+        }
+        if (is_null($override->duedate)) {
+            $override->duedate = $selectedgroupoverride->duedate;
+        }
+        if (is_null($override->cutoffdate)) {
+            $override->cutoffdate = $selectedgroupoverride->cutoffdate;
+        }
+    }
+
+    // Calculate relative dates. The qbassignment module calculates relative date only for duedate.
+    // A user or group override always has higher priority over any relative date calculation.
+    if (empty($override->duedate) && !empty($cm->customdata['duedate'])) {
+        $course = get_course($cm->course);
+        $usercoursedates = course_get_course_dates_for_user_id($course, $USER->id);
+        if ($usercoursedates['start']) {
+            $override->duedate = $cm->customdata['duedate'] + $usercoursedates['startoffset'];
+        }
+    }
+
+    // Populate some other values that can be used in calendar or on dashboard.
+    if (!is_null($override->allowsubmissionsfromdate)) {
+        $cm->override_customdata('allowsubmissionsfromdate', $override->allowsubmissionsfromdate);
+    }
+    if (!is_null($override->duedate)) {
+        $cm->override_customdata('duedate', $override->duedate);
+    }
+    if (!is_null($override->cutoffdate)) {
+        $cm->override_customdata('cutoffdate', $override->cutoffdate);
+    }
+}
+
+/**
+ * Callback which returns human-readable strings describing the active completion custom rules for the module instance.
+ *
+ * @param cm_info|stdClass $cm object with fields ->completion and ->customdata['customcompletionrules']
+ * @return array $descriptions the array of descriptions for the custom rules.
+ */
+function mod_qbassign_get_completion_active_rule_descriptions($cm) {
+    // Values will be present in cm_info, and we assume these are up to date.
+    if (empty($cm->customdata['customcompletionrules'])
+        || $cm->completion != COMPLETION_TRACKING_AUTOMATIC) {
+        return [];
+    }
+
+    $descriptions = [];
+    foreach ($cm->customdata['customcompletionrules'] as $key => $val) {
+        switch ($key) {
+            case 'completionsubmit':
+                if (!empty($val)) {
+                    $descriptions[] = get_string('completionsubmit', 'qbassign');
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return $descriptions;
+}
+
+/**
+ * Return a list of page types
+ * @param string $pagetype current page type
+ * @param stdClass $parentcontext Block's parent context
+ * @param stdClass $currentcontext Current context of block
+ */
+function qbassign_page_type_list($pagetype, $parentcontext, $currentcontext) {
+    $modulepagetype = array(
+        'mod-qbassign-*' => get_string('page-mod-qbassign-x', 'qbassign'),
+        'mod-qbassign-view' => get_string('page-mod-qbassign-view', 'qbassign'),
+    );
+    return $modulepagetype;
+}
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function qbassign_print_overview() {
+    throw new coding_exception('qbassign_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function qbassign_get_mysubmission_details_for_print_overview() {
+    throw new coding_exception('qbassign_get_mysubmission_details_for_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * @deprecated since Moodle 3.3, when the block_course_overview block was removed.
+ */
+function qbassign_get_grade_details_for_print_overview() {
+    throw new coding_exception('qbassign_get_grade_details_for_print_overview() can not be used any more and is obsolete.');
+}
+
+/**
+ * Print recent activity from all qbassignments in a given course
+ *
+ * This is used by the recent activity block
+ * @param mixed $course the course to print activity for
+ * @param bool $viewfullnames boolean to determine whether to show full names or not
+ * @param int $timestart the time the rendering started
+ * @return bool true if activity was printed, false otherwise.
+ */
+function qbassign_print_recent_activity($course, $viewfullnames, $timestart) {
+    global $CFG, $USER, $DB, $OUTPUT;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    // Do not use log table if possible, it may be huge.
+
+    $dbparams = array($timestart, $course->id, 'qbassign', qbassign_SUBMISSION_STATUS_SUBMITTED);
+    $userfieldsapi = \core_user\fields::for_userpic();
+    $namefields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;;
+    if (!$submissions = $DB->get_records_sql("SELECT asb.id, asb.timemodified, cm.id AS cmid, um.id as recordid,
+                                                     $namefields
+                                                FROM {qbassign_submission} asb
+                                                     JOIN {qbassign} a      ON a.id = asb.qbassignment
+                                                     JOIN {course_modules} cm ON cm.instance = a.id
+                                                     JOIN {modules} md        ON md.id = cm.module
+                                                     JOIN {user} u            ON u.id = asb.userid
+                                                LEFT JOIN {qbassign_user_mapping} um ON um.userid = u.id AND um.qbassignment = a.id
+                                               WHERE asb.timemodified > ? AND
+                                                     asb.latest = 1 AND
+                                                     a.course = ? AND
+                                                     md.name = ? AND
+                                                     asb.status = ?
+                                            ORDER BY asb.timemodified ASC", $dbparams)) {
+         return false;
+    }
+
+    $modinfo = get_fast_modinfo($course);
+    $show    = array();
+    $grader  = array();
+
+    $showrecentsubmissions = get_config('qbassign', 'showrecentsubmissions');
+
+    foreach ($submissions as $submission) {
+        if (!array_key_exists($submission->cmid, $modinfo->get_cms())) {
+            continue;
+        }
+        $cm = $modinfo->get_cm($submission->cmid);
+        if (!$cm->uservisible) {
+            continue;
+        }
+        if ($submission->userid == $USER->id) {
+            $show[] = $submission;
+            continue;
+        }
+
+        $context = context_module::instance($submission->cmid);
+        // The act of submitting of qbassignment may be considered private -
+        // only graders will see it if specified.
+        if (empty($showrecentsubmissions)) {
+            if (!array_key_exists($cm->id, $grader)) {
+                $grader[$cm->id] = has_capability('moodle/grade:viewall', $context);
+            }
+            if (!$grader[$cm->id]) {
+                continue;
+            }
+        }
+
+        $groupmode = groups_get_activity_groupmode($cm, $course);
+
+        if ($groupmode == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups',  $context)) {
+            if (isguestuser()) {
+                // Shortcut - guest user does not belong into any group.
+                continue;
+            }
+
+            // This will be slow - show only users that share group with me in this cm.
+            if (!$modinfo->get_groups($cm->groupingid)) {
+                continue;
+            }
+            $usersgroups =  groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
+            if (is_array($usersgroups)) {
+                $usersgroups = array_keys($usersgroups);
+                $intersect = array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid));
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+        }
+        $show[] = $submission;
+    }
+
+    if (empty($show)) {
+        return false;
+    }
+
+    echo $OUTPUT->heading(get_string('newsubmissions', 'qbassign') . ':', 6);
+
+    foreach ($show as $submission) {
+        $cm = $modinfo->get_cm($submission->cmid);
+        $context = context_module::instance($submission->cmid);
+        $qbassign = new qbassign($context, $cm, $cm->course);
+        $link = $CFG->wwwroot.'/mod/qbassign/view.php?id='.$cm->id;
+        // Obscure first and last name if blind marking enabled.
+        if ($qbassign->is_blind_marking()) {
+            $submission->firstname = get_string('participant', 'mod_qbassign');
+            if (empty($submission->recordid)) {
+                $submission->recordid = $qbassign->get_uniqueid_for_user($submission->userid);
+            }
+            $submission->lastname = $submission->recordid;
+        }
+        print_recent_activity_note($submission->timemodified,
+                                   $submission,
+                                   $cm->name,
+                                   $link,
+                                   false,
+                                   $viewfullnames);
+    }
+
+    return true;
+}
+
+/**
+ * Returns all qbassignments since a given time.
+ *
+ * @param array $activities The activity information is returned in this array
+ * @param int $index The current index in the activities array
+ * @param int $timestart The earliest activity to show
+ * @param int $courseid Limit the search to this course
+ * @param int $cmid The course module id
+ * @param int $userid Optional user id
+ * @param int $groupid Optional group id
+ * @return void
+ */
+function qbassign_get_recent_mod_activity(&$activities,
+                                        &$index,
+                                        $timestart,
+                                        $courseid,
+                                        $cmid,
+                                        $userid=0,
+                                        $groupid=0) {
+    global $CFG, $COURSE, $USER, $DB;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    if ($COURSE->id == $courseid) {
+        $course = $COURSE;
+    } else {
+        $course = $DB->get_record('course', array('id'=>$courseid));
+    }
+
+    $modinfo = get_fast_modinfo($course);
+
+    $cm = $modinfo->get_cm($cmid);
+    $params = array();
+    if ($userid) {
+        $userselect = 'AND u.id = :userid';
+        $params['userid'] = $userid;
+    } else {
+        $userselect = '';
+    }
+
+    if ($groupid) {
+        $groupselect = 'AND gm.groupid = :groupid';
+        $groupjoin   = 'JOIN {groups_members} gm ON  gm.userid=u.id';
+        $params['groupid'] = $groupid;
+    } else {
+        $groupselect = '';
+        $groupjoin   = '';
+    }
+
+    $params['cminstance'] = $cm->instance;
+    $params['timestart'] = $timestart;
+    $params['submitted'] = qbassign_SUBMISSION_STATUS_SUBMITTED;
+
+    $userfieldsapi = \core_user\fields::for_userpic();
+    $userfields = $userfieldsapi->get_sql('u', false, '', 'userid', false)->selects;
+
+    if (!$submissions = $DB->get_records_sql('SELECT asb.id, asb.timemodified, ' .
+                                                     $userfields .
+                                             '  FROM {qbassign_submission} asb
+                                                JOIN {qbassign} a ON a.id = asb.qbassignment
+                                                JOIN {user} u ON u.id = asb.userid ' .
+                                          $groupjoin .
+                                            '  WHERE asb.timemodified > :timestart AND
+                                                     asb.status = :submitted AND
+                                                     a.id = :cminstance
+                                                     ' . $userselect . ' ' . $groupselect .
+                                            ' ORDER BY asb.timemodified ASC', $params)) {
+         return;
+    }
+
+    $groupmode       = groups_get_activity_groupmode($cm, $course);
+    $cmcontext      = context_module::instance($cm->id);
+    $grader          = has_capability('moodle/grade:viewall', $cmcontext);
+    $accessallgroups = has_capability('moodle/site:accessallgroups', $cmcontext);
+    $viewfullnames   = has_capability('moodle/site:viewfullnames', $cmcontext);
+
+
+    $showrecentsubmissions = get_config('qbassign', 'showrecentsubmissions');
+    $show = array();
+    foreach ($submissions as $submission) {
+        if ($submission->userid == $USER->id) {
+            $show[] = $submission;
+            continue;
+        }
+        // The act of submitting of qbassignment may be considered private -
+        // only graders will see it if specified.
+        if (empty($showrecentsubmissions)) {
+            if (!$grader) {
+                continue;
+            }
+        }
+
+        if ($groupmode == SEPARATEGROUPS and !$accessallgroups) {
+            if (isguestuser()) {
+                // Shortcut - guest user does not belong into any group.
+                continue;
+            }
+
+            // This will be slow - show only users that share group with me in this cm.
+            if (!$modinfo->get_groups($cm->groupingid)) {
+                continue;
+            }
+            $usersgroups =  groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
+            if (is_array($usersgroups)) {
+                $usersgroups = array_keys($usersgroups);
+                $intersect = array_intersect($usersgroups, $modinfo->get_groups($cm->groupingid));
+                if (empty($intersect)) {
+                    continue;
+                }
+            }
+        }
+        $show[] = $submission;
+    }
+
+    if (empty($show)) {
+        return;
+    }
+
+    if ($grader) {
+        require_once($CFG->libdir.'/gradelib.php');
+        $userids = array();
+        foreach ($show as $id => $submission) {
+            $userids[] = $submission->userid;
+        }
+        $grades = grade_get_grades($courseid, 'mod', 'qbassign', $cm->instance, $userids);
+    }
+
+    $aname = format_string($cm->name, true);
+    foreach ($show as $submission) {
+        $activity = new stdClass();
+
+        $activity->type         = 'qbassign';
+        $activity->cmid         = $cm->id;
+        $activity->name         = $aname;
+        $activity->sectionnum   = $cm->sectionnum;
+        $activity->timestamp    = $submission->timemodified;
+        $activity->user         = new stdClass();
+        if ($grader) {
+            $activity->grade = $grades->items[0]->grades[$submission->userid]->str_long_grade;
+        }
+
+        $userfields = explode(',', implode(',', \core_user\fields::get_picture_fields()));
+        foreach ($userfields as $userfield) {
+            if ($userfield == 'id') {
+                // Aliased in SQL above.
+                $activity->user->{$userfield} = $submission->userid;
+            } else {
+                $activity->user->{$userfield} = $submission->{$userfield};
+            }
+        }
+        $activity->user->fullname = fullname($submission, $viewfullnames);
+
+        $activities[$index++] = $activity;
+    }
+
+    return;
+}
+
+/**
+ * Print recent activity from all qbassignments in a given course
+ *
+ * This is used by course/recent.php
+ * @param stdClass $activity
+ * @param int $courseid
+ * @param bool $detail
+ * @param array $modnames
+ */
+function qbassign_print_recent_mod_activity($activity, $courseid, $detail, $modnames) {
+    global $CFG, $OUTPUT;
+
+    echo '<table border="0" cellpadding="3" cellspacing="0" class="qbassignment-recent">';
+
+    echo '<tr><td class="userpicture" valign="top">';
+    echo $OUTPUT->user_picture($activity->user);
+    echo '</td><td>';
+
+    if ($detail) {
+        $modname = $modnames[$activity->type];
+        echo '<div class="title">';
+        echo $OUTPUT->image_icon('monologo', $modname, 'qbassign');
+        echo '<a href="' . $CFG->wwwroot . '/mod/qbassign/view.php?id=' . $activity->cmid . '">';
+        echo $activity->name;
+        echo '</a>';
+        echo '</div>';
+    }
+
+    if (isset($activity->grade)) {
+        echo '<div class="grade">';
+        echo get_string('gradenoun') . ': ';
+        echo $activity->grade;
+        echo '</div>';
+    }
+
+    echo '<div class="user">';
+    echo "<a href=\"$CFG->wwwroot/user/view.php?id={$activity->user->id}&amp;course=$courseid\">";
+    echo "{$activity->user->fullname}</a>  - " . userdate($activity->timestamp);
+    echo '</div>';
+
+    echo '</td></tr></table>';
+}
+
+/**
+ * @deprecated since Moodle 3.8
+ */
+function qbassign_scale_used() {
+    throw new coding_exception('qbassign_scale_used() can not be used anymore. Plugins can implement ' .
+        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
+}
+
+/**
+ * Checks if scale is being used by any instance of qbassignment
+ *
+ * This is used to find out if scale used anywhere
+ * @param int $scaleid
+ * @return boolean True if the scale is used by any qbassignment
+ */
+function qbassign_scale_used_anywhere($scaleid) {
+    global $DB;
+
+    if ($scaleid and $DB->record_exists('qbassign', array('grade'=>-$scaleid))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/**
+ * List the actions that correspond to a view of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = 'r' and edulevel = LEVEL_PARTICIPATING will
+ *       be considered as view action.
+ *
+ * @return array
+ */
+function qbassign_get_view_actions() {
+    return array('view submission', 'view feedback');
+}
+
+/**
+ * List the actions that correspond to a post of this module.
+ * This is used by the participation report.
+ *
+ * Note: This is not used by new logging system. Event with
+ *       crud = ('c' || 'u' || 'd') and edulevel = LEVEL_PARTICIPATING
+ *       will be considered as post action.
+ *
+ * @return array
+ */
+function qbassign_get_post_actions() {
+    return array('upload', 'submit', 'submit for grading');
+}
+
+/**
+ * Returns all other capabilities used by this module.
+ * @return array Array of capability strings
+ */
+function qbassign_get_extra_capabilities() {
+    return ['gradereport/grader:view', 'moodle/grade:viewall'];
+}
+
+/**
+ * Create grade item for given qbassignment.
+ *
+ * @param stdClass $qbassign record with extra cmidnumber
+ * @param array $grades optional array/object of grade(s); 'reset' means reset grades in gradebook
+ * @return int 0 if ok, error code otherwise
+ */
+function qbassign_grade_item_update($qbassign, $grades=null) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    if (!isset($qbassign->courseid)) {
+        $qbassign->courseid = $qbassign->course;
+    }
+
+    $params = array('itemname'=>$qbassign->name, 'idnumber'=>$qbassign->cmidnumber);
+
+    // Check if feedback plugin for gradebook is enabled, if yes then
+    // gradetype = GRADE_TYPE_TEXT else GRADE_TYPE_NONE.
+    $gradefeedbackenabled = false;
+
+    if (isset($qbassign->gradefeedbackenabled)) {
+        $gradefeedbackenabled = $qbassign->gradefeedbackenabled;
+    } else if ($qbassign->grade == 0) { // Grade feedback is needed only when grade == 0.
+        require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+        $mod = get_coursemodule_from_instance('qbassign', $qbassign->id, $qbassign->courseid);
+        $cm = context_module::instance($mod->id);
+        $qbassignment = new qbassign($cm, null, null);
+        $gradefeedbackenabled = $qbassignment->is_gradebook_feedback_enabled();
+    }
+
+    if ($qbassign->grade > 0) {
+        $params['gradetype'] = GRADE_TYPE_VALUE;
+        $params['grademax']  = $qbassign->grade;
+        $params['grademin']  = 0;
+
+    } else if ($qbassign->grade < 0) {
+        $params['gradetype'] = GRADE_TYPE_SCALE;
+        $params['scaleid']   = -$qbassign->grade;
+
+    } else if ($gradefeedbackenabled) {
+        // $qbassign->grade == 0 and feedback enabled.
+        $params['gradetype'] = GRADE_TYPE_TEXT;
+    } else {
+        // $qbassign->grade == 0 and no feedback enabled.
+        $params['gradetype'] = GRADE_TYPE_NONE;
+    }
+
+    if ($grades  === 'reset') {
+        $params['reset'] = true;
+        $grades = null;
+    }
+
+    return grade_update('mod/qbassign',
+                        $qbassign->courseid,
+                        'mod',
+                        'qbassign',
+                        $qbassign->id,
+                        0,
+                        $grades,
+                        $params);
+}
+
+/**
+ * Return grade for given user or all users.
+ *
+ * @param stdClass $qbassign record of qbassign with an additional cmidnumber
+ * @param int $userid optional user id, 0 means all users
+ * @return array array of grades, false if none
+ */
+function qbassign_get_user_grades($qbassign, $userid=0) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $cm = get_coursemodule_from_instance('qbassign', $qbassign->id, 0, false, MUST_EXIST);
+    $context = context_module::instance($cm->id);
+    $qbassignment = new qbassign($context, null, null);
+    $qbassignment->set_instance($qbassign);
+    return $qbassignment->get_user_grades_for_gradebook($userid);
+}
+
+/**
+ * Update activity grades.
+ *
+ * @param stdClass $qbassign database record
+ * @param int $userid specific user only, 0 means all
+ * @param bool $nullifnone - not used
+ */
+function qbassign_update_grades($qbassign, $userid=0, $nullifnone=true) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+
+    if ($qbassign->grade == 0) {
+        qbassign_grade_item_update($qbassign);
+
+    } else if ($grades = qbassign_get_user_grades($qbassign, $userid)) {
+        foreach ($grades as $k => $v) {
+            if ($v->rawgrade == -1) {
+                $grades[$k]->rawgrade = null;
+            }
+        }
+        qbassign_grade_item_update($qbassign, $grades);
+
+    } else {
+        qbassign_grade_item_update($qbassign);
+    }
+}
+
+/**
+ * List the file areas that can be browsed.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param stdClass $context
+ * @return array
+ */
+function qbassign_get_file_areas($course, $cm, $context) {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $areas = array(
+        qbassign_INTROATTACHMENT_FILEAREA => get_string('introattachments', 'mod_qbassign'),
+        qbassign_ACTIVITYATTACHMENT_FILEAREA => get_string('activityattachments', 'mod_qbassign'),
+    );
+
+    $qbassignment = new qbassign($context, $cm, $course);
+    foreach ($qbassignment->get_submission_plugins() as $plugin) {
+        if ($plugin->is_visible()) {
+            $pluginareas = $plugin->get_file_areas();
+
+            if ($pluginareas) {
+                $areas = array_merge($areas, $pluginareas);
+            }
+        }
+    }
+    foreach ($qbassignment->get_feedback_plugins() as $plugin) {
+        if ($plugin->is_visible()) {
+            $pluginareas = $plugin->get_file_areas();
+
+            if ($pluginareas) {
+                $areas = array_merge($areas, $pluginareas);
+            }
+        }
+    }
+
+    return $areas;
+}
+
+/**
+ * File browsing support for qbassign module.
+ *
+ * @param file_browser $browser
+ * @param object $areas
+ * @param object $course
+ * @param object $cm
+ * @param object $context
+ * @param string $filearea
+ * @param int $itemid
+ * @param string $filepath
+ * @param string $filename
+ * @return object file_info instance or null if not found
+ */
+function qbassign_get_file_info($browser,
+                              $areas,
+                              $course,
+                              $cm,
+                              $context,
+                              $filearea,
+                              $itemid,
+                              $filepath,
+                              $filename) {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return null;
+    }
+
+    $urlbase = $CFG->wwwroot.'/pluginfile.php';
+    $fs = get_file_storage();
+    $filepath = is_null($filepath) ? '/' : $filepath;
+    $filename = is_null($filename) ? '.' : $filename;
+
+    // Need to find where this belongs to.
+    $qbassignment = new qbassign($context, $cm, $course);
+    if ($filearea === qbassign_INTROATTACHMENT_FILEAREA || $filearea === qbassign_ACTIVITYATTACHMENT_FILEAREA) {
+        if (!has_capability('moodle/course:managefiles', $context)) {
+            // Students can not peak here!
+            return null;
+        }
+        if (!($storedfile = $fs->get_file($qbassignment->get_context()->id,
+                                          'mod_qbassign', $filearea, 0, $filepath, $filename))) {
+            return null;
+        }
+        return new file_info_stored($browser,
+                        $qbassignment->get_context(),
+                        $storedfile,
+                        $urlbase,
+                        $filearea,
+                        $itemid,
+                        true,
+                        true,
+                        false);
+    }
+
+    $pluginowner = null;
+    foreach ($qbassignment->get_submission_plugins() as $plugin) {
+        if ($plugin->is_visible()) {
+            $pluginareas = $plugin->get_file_areas();
+
+            if (array_key_exists($filearea, $pluginareas)) {
+                $pluginowner = $plugin;
+                break;
+            }
+        }
+    }
+    if (!$pluginowner) {
+        foreach ($qbassignment->get_feedback_plugins() as $plugin) {
+            if ($plugin->is_visible()) {
+                $pluginareas = $plugin->get_file_areas();
+
+                if (array_key_exists($filearea, $pluginareas)) {
+                    $pluginowner = $plugin;
+                    break;
+                }
+            }
+        }
+    }
+
+    if (!$pluginowner) {
+        return null;
+    }
+
+    $result = $pluginowner->get_file_info($browser, $filearea, $itemid, $filepath, $filename);
+    return $result;
+}
+
+/**
+ * Prints the complete info about a user's interaction with an qbassignment.
+ *
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $coursemodule
+ * @param stdClass $qbassign the database qbassign record
+ *
+ * This prints the submission summary and feedback summary for this student.
+ */
+function qbassign_user_complete($course, $user, $coursemodule, $qbassign) {
+    global $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $context = context_module::instance($coursemodule->id);
+
+    $qbassignment = new qbassign($context, $coursemodule, $course);
+
+    echo $qbassignment->view_student_summary($user, false);
+}
+
+/**
+ * Rescale all grades for this activity and push the new grades to the gradebook.
+ *
+ * @param stdClass $course Course db record
+ * @param stdClass $cm Course module db record
+ * @param float $oldmin
+ * @param float $oldmax
+ * @param float $newmin
+ * @param float $newmax
+ */
+function qbassign_rescale_activity_grades($course, $cm, $oldmin, $oldmax, $newmin, $newmax) {
+    global $DB;
+
+    if ($oldmax <= $oldmin) {
+        // Grades cannot be scaled.
+        return false;
+    }
+    $scale = ($newmax - $newmin) / ($oldmax - $oldmin);
+    if (($newmax - $newmin) <= 1) {
+        // We would lose too much precision, lets bail.
+        return false;
+    }
+
+    $params = array(
+        'p1' => $oldmin,
+        'p2' => $scale,
+        'p3' => $newmin,
+        'a' => $cm->instance
+    );
+
+    // Only rescale grades that are greater than or equal to 0. Anything else is a special value.
+    $sql = 'UPDATE {qbassign_grades} set grade = (((grade - :p1) * :p2) + :p3) where qbassignment = :a and grade >= 0';
+    $dbupdate = $DB->execute($sql, $params);
+    if (!$dbupdate) {
+        return false;
+    }
+
+    // Now re-push all grades to the gradebook.
+    $dbparams = array('id' => $cm->instance);
+    $qbassign = $DB->get_record('qbassign', $dbparams);
+    $qbassign->cmidnumber = $cm->idnumber;
+
+    qbassign_update_grades($qbassign);
+
+    return true;
+}
+
+/**
+ * Print the grade information for the qbassignment for this user.
+ *
+ * @param stdClass $course
+ * @param stdClass $user
+ * @param stdClass $coursemodule
+ * @param stdClass $qbassignment
+ */
+function qbassign_user_outline($course, $user, $coursemodule, $qbassignment) {
+    global $CFG;
+    require_once($CFG->libdir.'/gradelib.php');
+    require_once($CFG->dirroot.'/grade/grading/lib.php');
+
+    $gradinginfo = grade_get_grades($course->id,
+                                        'mod',
+                                        'qbassign',
+                                        $qbassignment->id,
+                                        $user->id);
+
+    $gradingitem = $gradinginfo->items[0];
+    $gradebookgrade = $gradingitem->grades[$user->id];
+
+    if (empty($gradebookgrade->str_long_grade)) {
+        return null;
+    }
+    $result = new stdClass();
+    if (!$gradingitem->hidden || has_capability('moodle/grade:viewhidden', context_course::instance($course->id))) {
+        $result->info = get_string('outlinegrade', 'qbassign', $gradebookgrade->str_long_grade);
+    } else {
+        $result->info = get_string('gradenoun') . ': ' . get_string('hidden', 'grades');
+    }
+    $result->time = $gradebookgrade->dategraded;
+
+    return $result;
+}
+
+/**
+ * Serves intro attachment files.
+ *
+ * @param mixed $course course or id of the course
+ * @param mixed $cm course module or id of the course module
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options additional options affecting the file serving
+ * @return bool false if file not found, does not return if found - just send the file
+ */
+function qbassign_pluginfile($course,
+                $cm,
+                context $context,
+                $filearea,
+                $args,
+                $forcedownload,
+                array $options=array()) {
+    global $CFG;
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return false;
+    }
+
+    require_login($course, false, $cm);
+    if (!has_capability('mod/qbassign:view', $context)) {
+        return false;
+    }
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+    $qbassign = new qbassign($context, $cm, $course);
+
+    if ($filearea !== qbassign_INTROATTACHMENT_FILEAREA && $filearea !== qbassign_ACTIVITYATTACHMENT_FILEAREA) {
+        return false;
+    }
+    if (!$qbassign->show_intro()) {
+        return false;
+    }
+
+    $itemid = (int)array_shift($args);
+    if ($itemid != 0) {
+        return false;
+    }
+
+    $relativepath = implode('/', $args);
+
+    $fullpath = "/{$context->id}/mod_qbassign/$filearea/$itemid/$relativepath";
+
+    $fs = get_file_storage();
+    if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+        return false;
+    }
+    send_stored_file($file, 0, 0, $forcedownload, $options);
+}
+
+/**
+ * Serve the grading panel as a fragment.
+ *
+ * @param array $args List of named arguments for the fragment loader.
+ * @return string
+ */
+function mod_qbassign_output_fragment_gradingpanel($args) {
+    global $CFG;
+
+    $context = $args['context'];
+
+    if ($context->contextlevel != CONTEXT_MODULE) {
+        return null;
+    }
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+    $qbassign = new qbassign($context, null, null);
+
+    $userid = clean_param($args['userid'], PARAM_INT);
+
+    $participant = $qbassign->get_participant($userid);
+    $isfiltered = $qbassign->is_userid_filtered($userid);
+    if (!$participant || !$isfiltered) {
+        // User is not enrolled or filtered out by filters and table preferences.
+        return '';
+    }
+
+    $attemptnumber = clean_param($args['attemptnumber'], PARAM_INT);
+    $formdata = array();
+    if (!empty($args['jsonformdata'])) {
+        $serialiseddata = json_decode($args['jsonformdata']);
+        parse_str($serialiseddata, $formdata);
+    }
+    $viewargs = array(
+        'userid' => $userid,
+        'attemptnumber' => $attemptnumber,
+        'formdata' => $formdata
+    );
+
+    return $qbassign->view('gradingpanel', $viewargs);
+}
+
+/**
+ * Check if the module has any update that affects the current user since a given time.
+ *
+ * @param  cm_info $cm course module data
+ * @param  int $from the time to check updates from
+ * @param  array $filter  if we need to check only specific updates
+ * @return stdClass an object with the different type of areas indicating if they were updated or not
+ * @since Moodle 3.2
+ */
+function qbassign_check_updates_since(cm_info $cm, $from, $filter = array()) {
+    global $DB, $USER, $CFG;
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $updates = new stdClass();
+    $updates = course_check_module_updates_since($cm, $from, array(qbassign_INTROATTACHMENT_FILEAREA), $filter);
+
+    // Check if there is a new submission by the user or new grades.
+    $select = 'qbassignment = :id AND userid = :userid AND (timecreated > :since1 OR timemodified > :since2)';
+    $params = array('id' => $cm->instance, 'userid' => $USER->id, 'since1' => $from, 'since2' => $from);
+    $updates->submissions = (object) array('updated' => false);
+    $submissions = $DB->get_records_select('qbassign_submission', $select, $params, '', 'id');
+    if (!empty($submissions)) {
+        $updates->submissions->updated = true;
+        $updates->submissions->itemids = array_keys($submissions);
+    }
+
+    $updates->grades = (object) array('updated' => false);
+    $grades = $DB->get_records_select('qbassign_grades', $select, $params, '', 'id');
+    if (!empty($grades)) {
+        $updates->grades->updated = true;
+        $updates->grades->itemids = array_keys($grades);
+    }
+
+    // Now, teachers should see other students updates.
+    if (has_capability('mod/qbassign:viewgrades', $cm->context)) {
+        $params = array('id' => $cm->instance, 'since1' => $from, 'since2' => $from);
+        $select = 'qbassignment = :id AND (timecreated > :since1 OR timemodified > :since2)';
+
+        if (groups_get_activity_groupmode($cm) == SEPARATEGROUPS) {
+            $groupusers = array_keys(groups_get_activity_shared_group_members($cm));
+            if (empty($groupusers)) {
+                return $updates;
+            }
+            list($insql, $inparams) = $DB->get_in_or_equal($groupusers, SQL_PARAMS_NAMED);
+            $select .= ' AND userid ' . $insql;
+            $params = array_merge($params, $inparams);
+        }
+
+        $updates->usersubmissions = (object) array('updated' => false);
+        $submissions = $DB->get_records_select('qbassign_submission', $select, $params, '', 'id');
+        if (!empty($submissions)) {
+            $updates->usersubmissions->updated = true;
+            $updates->usersubmissions->itemids = array_keys($submissions);
+        }
+
+        $updates->usergrades = (object) array('updated' => false);
+        $grades = $DB->get_records_select('qbassign_grades', $select, $params, '', 'id');
+        if (!empty($grades)) {
+            $updates->usergrades->updated = true;
+            $updates->usergrades->itemids = array_keys($grades);
+        }
+    }
+
+    return $updates;
+}
+
+/**
+ * Is the event visible?
+ *
+ * This is used to determine global visibility of an event in all places throughout Moodle. For example,
+ * the qbassign_EVENT_TYPE_GRADINGDUE event will not be shown to students on their calendar.
+ *
+ * @param calendar_event $event
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return bool Returns true if the event is visible to the current user, false otherwise.
+ */
+function mod_qbassign_core_calendar_is_event_visible(calendar_event $event, $userid = 0) {
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['qbassign'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    $qbassign = new qbassign($context, $cm, null);
+
+    if ($event->eventtype == qbassign_EVENT_TYPE_GRADINGDUE) {
+        return $qbassign->can_grade($userid);
+    } else {
+        return true;
+    }
+}
+
+/**
+ * This function receives a calendar event and returns the action associated with it, or null if there is none.
+ *
+ * This is used by block_myoverview in order to display the event appropriately. If null is returned then the event
+ * is not displayed on the block.
+ *
+ * @param calendar_event $event
+ * @param \core_calendar\action_factory $factory
+ * @param int $userid User id to use for all capability checks, etc. Set to 0 for current user (default).
+ * @return \core_calendar\local\event\entities\action_interface|null
+ */
+function mod_qbassign_core_calendar_provide_event_action(calendar_event $event,
+                                                       \core_calendar\action_factory $factory,
+                                                       $userid = 0) {
+
+    global $CFG, $USER;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    if (empty($userid)) {
+        $userid = $USER->id;
+    }
+
+    $cm = get_fast_modinfo($event->courseid, $userid)->instances['qbassign'][$event->instance];
+    $context = context_module::instance($cm->id);
+
+    $completion = new \completion_info($cm->get_course());
+
+    $completiondata = $completion->get_data($cm, false, $userid);
+
+    if ($completiondata->completionstate != COMPLETION_INCOMPLETE) {
+        return null;
+    }
+
+    $qbassign = new qbassign($context, $cm, null);
+
+    // Apply overrides.
+    $qbassign->update_effective_access($userid);
+
+    if ($event->eventtype == qbassign_EVENT_TYPE_GRADINGDUE) {
+        $name = get_string('gradeverb');
+        $url = new \moodle_url('/mod/qbassign/view.php', [
+            'id' => $cm->id,
+            'action' => 'grader'
+        ]);
+        $actionable = $qbassign->can_grade($userid) && (time() >= $qbassign->get_instance()->allowsubmissionsfromdate);
+        $itemcount = $actionable ? $qbassign->count_submissions_need_grading() : 0;
+    } else {
+        $usersubmission = $qbassign->get_user_submission($userid, false);
+        if ($usersubmission && $usersubmission->status === qbassign_SUBMISSION_STATUS_SUBMITTED) {
+            // The user has already submitted.
+            // We do not want to change the text to edit the submission, we want to remove the event from the Dashboard entirely.
+            return null;
+        }
+
+        $participant = $qbassign->get_participant($userid);
+
+        if (!$participant) {
+            // If the user is not a participant in the qbassignment then they have
+            // no action to take. This will filter out the events for teachers.
+            return null;
+        }
+
+        // The user has not yet submitted anything. Show the addsubmission link.
+        $name = get_string('addsubmission', 'qbassign');
+        $url = new \moodle_url('/mod/qbassign/view.php', [
+            'id' => $cm->id,
+            'action' => 'editsubmission'
+        ]);
+        $itemcount = 1;
+        $actionable = $qbassign->is_any_submission_plugin_enabled() && $qbassign->can_edit_submission($userid, $userid);
+    }
+
+    return $factory->create_instance(
+        $name,
+        $url,
+        $itemcount,
+        $actionable
+    );
+}
+
+/**
+ * Callback function that determines whether an action event should be showing its item count
+ * based on the event type and the item count.
+ *
+ * @param calendar_event $event The calendar event.
+ * @param int $itemcount The item count associated with the action event.
+ * @return bool
+ */
+function mod_qbassign_core_calendar_event_action_shows_item_count(calendar_event $event, $itemcount = 0) {
+    // List of event types where the action event's item count should be shown.
+    $eventtypesshowingitemcount = [
+        qbassign_EVENT_TYPE_GRADINGDUE
+    ];
+    // For mod_qbassign, item count should be shown if the event type is 'gradingdue' and there is one or more item count.
+    return in_array($event->eventtype, $eventtypesshowingitemcount) && $itemcount > 0;
+}
+
+/**
+ * This function calculates the minimum and maximum cutoff values for the timestart of
+ * the given event.
+ *
+ * It will return an array with two values, the first being the minimum cutoff value and
+ * the second being the maximum cutoff value. Either or both values can be null, which
+ * indicates there is no minimum or maximum, respectively.
+ *
+ * If a cutoff is required then the function must return an array containing the cutoff
+ * timestamp and error string to display to the user if the cutoff value is violated.
+ *
+ * A minimum and maximum cutoff return value will look like:
+ * [
+ *     [1505704373, 'The due date must be after the sbumission start date'],
+ *     [1506741172, 'The due date must be before the cutoff date']
+ * ]
+ *
+ * If the event does not have a valid timestart range then [false, false] will
+ * be returned.
+ *
+ * @param calendar_event $event The calendar event to get the time range for
+ * @param stdClass $instance The module instance to get the range from
+ * @return array
+ */
+function mod_qbassign_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $instance) {
+    global $CFG;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+    $qbassign = new qbassign($context, null, null);
+    $qbassign->set_instance($instance);
+
+    return $qbassign->get_valid_calendar_event_timestart_range($event);
+}
+
+/**
+ * This function will update the qbassign module according to the
+ * event that has been modified.
+ *
+ * @throws \moodle_exception
+ * @param \calendar_event $event
+ * @param stdClass $instance The module instance to get the range from
+ */
+function mod_qbassign_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $instance) {
+    global $CFG, $DB;
+
+    require_once($CFG->dirroot . '/mod/qbassign/locallib.php');
+
+    if (empty($event->instance) || $event->modulename != 'qbassign') {
+        return;
+    }
+
+    if ($instance->id != $event->instance) {
+        return;
+    }
+
+    if (!in_array($event->eventtype, [qbassign_EVENT_TYPE_DUE, qbassign_EVENT_TYPE_GRADINGDUE])) {
+        return;
+    }
+
+    $courseid = $event->courseid;
+    $modulename = $event->modulename;
+    $instanceid = $event->instance;
+    $modified = false;
+    $coursemodule = get_fast_modinfo($courseid)->instances[$modulename][$instanceid];
+    $context = context_module::instance($coursemodule->id);
+
+    // The user does not have the capability to modify this activity.
+    if (!has_capability('moodle/course:manageactivities', $context)) {
+        return;
+    }
+
+    $qbassign = new qbassign($context, $coursemodule, null);
+    $qbassign->set_instance($instance);
+
+    if ($event->eventtype == qbassign_EVENT_TYPE_DUE) {
+        // This check is in here because due date events are currently
+        // the only events that can be overridden, so we can save a DB
+        // query if we don't bother checking other events.
+        if ($qbassign->is_override_calendar_event($event)) {
+            // This is an override event so we should ignore it.
+            return;
+        }
+
+        $newduedate = $event->timestart;
+
+        if ($newduedate != $instance->duedate) {
+            $instance->duedate = $newduedate;
+            $modified = true;
+        }
+    } else if ($event->eventtype == qbassign_EVENT_TYPE_GRADINGDUE) {
+        $newduedate = $event->timestart;
+
+        if ($newduedate != $instance->gradingduedate) {
+            $instance->gradingduedate = $newduedate;
+            $modified = true;
+        }
+    }
+
+    if ($modified) {
+        $instance->timemodified = time();
+        // Persist the qbassign instance changes.
+        $DB->update_record('qbassign', $instance);
+        $qbassign->update_calendar($coursemodule->id);
+        $event = \core\event\course_module_updated::create_from_cm($coursemodule, $context);
+        $event->trigger();
+    }
+}
+
+/**
+ * Return a list of all the user preferences used by mod_qbassign.
+ *
+ * @return array
+ */
+function mod_qbassign_user_preferences() {
+    $preferences = array();
+    $preferences['qbassign_filter'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+    $preferences['qbassign_workflowfilter'] = array(
+        'type' => PARAM_ALPHA,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+    $preferences['qbassign_markerfilter'] = array(
+        'type' => PARAM_ALPHANUMEXT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => ''
+    );
+
+    return $preferences;
+}
+
+/**
+ * Given an array with a file path, it returns the itemid and the filepath for the defined filearea.
+ *
+ * @param  string $filearea The filearea.
+ * @param  array  $args The path (the part after the filearea and before the filename).
+ * @return array The itemid and the filepath inside the $args path, for the defined filearea.
+ */
+function mod_qbassign_get_path_from_pluginfile(string $filearea, array $args) : array {
+    // qbassign never has an itemid (the number represents the revision but it's not stored in database).
+    array_shift($args);
+
+    // Get the filepath.
+    if (empty($args)) {
+        $filepath = '/';
+    } else {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    return [
+        'itemid' => 0,
+        'filepath' => $filepath,
+    ];
+}
+
+/**
+ * Callback to fetch the activity event type lang string.
+ *
+ * @param string $eventtype The event type.
+ * @return lang_string The event type lang string.
+ */
+function mod_qbassign_core_calendar_get_event_action_string(string $eventtype): string {
+    $modulename = get_string('modulename', 'qbassign');
+
+    switch ($eventtype) {
+        case qbassign_EVENT_TYPE_DUE:
+            $identifier = 'calendardue';
+            break;
+        case qbassign_EVENT_TYPE_GRADINGDUE:
+            $identifier = 'calendargradingdue';
+            break;
+        default:
+            return get_string('requiresaction', 'calendar', $modulename);
+    }
+
+    return get_string($identifier, 'qbassign', $modulename);
+}

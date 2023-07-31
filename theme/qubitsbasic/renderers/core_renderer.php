@@ -85,6 +85,12 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
             $otherpage = false;
         }
 
+        $category = $DB->get_record('course_categories',array('id'=>$this->page->course->category));
+        $categoryName = $category->name;
+        $mform = new theme_qubitsbasic_external();
+        $course_customdata = $mform->get_custom_fields_data_by_cid($this->page->course->id);
+        $level = isset($course_customdata["level"]) ? $course_customdata["level"] : "1";
+
         $outputcontext = array(
             "heading" =>  $heading,
             "ismycoursepage" => $ismycoursepage,
@@ -92,7 +98,9 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
             "ismodulepage" => $ismodulepage,
             "otherpage" => $otherpage,
             "coursefullname" => $this->page->course->fullname,
-            "courseid" => $this->page->course->id
+            "courseid" => $this->page->course->id,
+            "categoryname" => $categoryName,
+            "level" => "Level ".$level
         );
         return $this->render_from_template("theme_qubitsbasic/custom/pageheader", $outputcontext);
     }

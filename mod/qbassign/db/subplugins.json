@@ -1,0 +1,6 @@
+{
+    "plugintypes": {
+        "qbassignsubmission": "mod\/qbassign\/submission",
+        "qbassignfeedback": "mod\/qbassign\/feedback"
+    }
+}
