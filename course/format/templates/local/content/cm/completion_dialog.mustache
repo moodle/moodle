@@ -19,6 +19,7 @@
     Example context (json):
     {
         "istrackeduser": true,
+        "hasconditions": true,
         "completiondetails": [
              {
                 "statuscomplete": 1,
@@ -32,73 +33,88 @@
     }
 }}
 <div class="completion-dialog px-2">
-    {{! Dialog header. }}
-    {{#istrackeduser}}
-        <strong>{{#str}}youmust, completion{{/str}}</strong>
-    {{/istrackeduser}}
-    {{^istrackeduser}}
-        <strong>{{#str}}studentsmust, completion{{/str}}</strong>
-    {{/istrackeduser}}
+    {{! Completion criterias. }}
+    {{#hasconditions}}
+        {{! Dialog header. }}
+        {{#istrackeduser}}
+            <strong>{{#str}}youmust, completion{{/str}}</strong>
+        {{/istrackeduser}}
+        {{^istrackeduser}}
+            <strong>{{#str}}studentsmust, completion{{/str}}</strong>
+        {{/istrackeduser}}
 
-    {{! Completion criterias.}}
-    <div class="ml-2" role="list">
-        {{#completiondetails}}
-            {{! Show completion status and description to tracked users. }}
-            {{#istrackeduser}}
-                {{#statuscomplete}}
-                <div class="d-flex mt-2 text-success" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
-                    <div>
-                        {{#pix}}i/checked{{/pix}}
-                        <span class="sr-only">{{#str}}completion_automatic:done, core_course{{/str}}</span>
+        <div class="ml-2" role="list">
+            {{#completiondetails}}
+                {{! Show completion status and description to tracked users. }}
+                {{#istrackeduser}}
+                    {{#statuscomplete}}
+                    <div class="d-flex mt-2 text-success" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
+                        <div>
+                            {{#pix}}i/checked{{/pix}}
+                            <span class="sr-only">{{#str}}completion_automatic:done, core_course{{/str}}</span>
+                        </div>
+                        <span>{{description}}</span>
                     </div>
-                    <span>{{description}}</span>
-                </div>
-                {{/statuscomplete}}
-                {{#statuscompletefail}}
-                <div class="d-flex mt-2 text-danger" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
-                    <div>
-                        {{#pix}}e/cancel{{/pix}}
-                        <span class="sr-only">{{#str}}completion_automatic:failed, core_course{{/str}}</span>
+                    {{/statuscomplete}}
+                    {{#statuscompletefail}}
+                    <div class="d-flex mt-2 text-danger" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
+                        <div>
+                            {{#pix}}e/cancel{{/pix}}
+                            <span class="sr-only">{{#str}}completion_automatic:failed, core_course{{/str}}</span>
+                        </div>
+                        <span>{{description}}</span>
                     </div>
-                    <span>{{description}}</span>
-                </div>
-                {{/statuscompletefail}}
-                {{#statusincomplete}}
-                <div class="d-flex mt-2" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
-                    <div>
-                        {{#pix}}i/dot{{/pix}}
-                        <span class="sr-only">{{#str}}completion_automatic:todo, core_course{{/str}}</span>
+                    {{/statuscompletefail}}
+                    {{#statusincomplete}}
+                    <div class="d-flex mt-2" role="listitem" {{#accessibledescription}}title="{{.}}" aria-label="{{.}}"{{/accessibledescription}}>
+                        <div>
+                            {{#pix}}i/dot{{/pix}}
+                            <span class="sr-only">{{#str}}completion_automatic:todo, core_course{{/str}}</span>
+                        </div>
+                        <span>{{description}}</span>
                     </div>
-                    <span>{{description}}</span>
-                </div>
-                {{/statusincomplete}}
-            {{/istrackeduser}}
+                    {{/statusincomplete}}
+                {{/istrackeduser}}
 
-            {{! Show only description (without status) to non-tracked users. }}
-            {{^istrackeduser}}
-                <div class="d-flex mt-2" role="listitem">
-                    <div>{{#pix}}i/dot{{/pix}}</div>
-                    <span>{{description}}</span>
-                </div>
-            {{/istrackeduser}}
-        {{/completiondetails}}
+                {{! Show only description (without status) to non-tracked users. }}
+                {{^istrackeduser}}
+                    <div class="d-flex mt-2" role="listitem">
+                        <div>{{#pix}}i/dot{{/pix}}</div>
+                        <span>{{description}}</span>
+                    </div>
+                {{/istrackeduser}}
+            {{/completiondetails}}
 
-        {{! Show also manual completion description in the list to non-tracked users. }}
-        {{#ismanual}}
-            {{^istrackeduser}}
-                <div class="d-flex mt-2" role="listitem">
-                    <div>{{#pix}}i/dot{{/pix}}</div>
-                    <span>{{#str}} completion_manual:markdone, core_course {{/str}}</span>
-                </div>
-            {{/istrackeduser}}
-        {{/ismanual}}
-    </div>
+            {{! Show also manual completion description in the list to non-tracked users. }}
+            {{#ismanual}}
+                {{^istrackeduser}}
+                    <div class="d-flex mt-2" role="listitem">
+                        <div>{{#pix}}i/dot{{/pix}}</div>
+                        <span>{{#str}} completion_manual:markdone, core_course {{/str}}</span>
+                    </div>
+                {{/istrackeduser}}
+            {{/ismanual}}
+        </div>
+    {{/hasconditions}}
+
+    {{! Show message if there are no completion criterias. }}
+    {{^hasconditions}}
+        {{#istrackeduser}}
+            <span>{{#str}}emptyconditionsinfo, completion{{/str}}</span>
+        {{/istrackeduser}}
+        {{^istrackeduser}}
+            <span class="text-danger">{{#pix}} req, core {{/pix}}{{#str}}emptyconditionswarning, completion{{/str}}</span>
+        {{/istrackeduser}}
+    {{/hasconditions}}
 
     {{! Show edit link to editing teachers. }}
     {{#editing}}
         {{#editurl}}
             <div class="editcompletion border-top mt-3 pt-3">
-                <a href="{{editurl}}" class="px-2 py-1">{{#pix}} i/edit, core {{/pix}}{{#str}}editconditions, completion{{/str}}</a>
+                <a href="{{editurl}}" class="px-2 py-1">
+                    {{#hasconditions}}{{#pix}} i/edit, core {{/pix}}{{#str}}editconditions, completion{{/str}}{{/hasconditions}}
+                    {{^hasconditions}}{{#pix}} t/add, core {{/pix}}{{#str}}addconditions, completion{{/str}}{{/hasconditions}}
+                </a>
             </div>
         {{/editurl}}
     {{/editing}}

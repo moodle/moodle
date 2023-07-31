@@ -87,3 +87,20 @@ Feature: Course page activities completion
     And I should see "Activity sample" in the "page-header" "region"
     And I should see "Updating: Assignment"
     And I should see "Activity completion"
+
+  Scenario: Completion dialog shows warning message if there are no criterias
+    # Create an activity with automatic completion but without completion criterias.
+    Given the following "activity" exists:
+      | activity       | assign          |
+      | name           | Activity sample |
+      | course         | C1              |
+      | completion     | 2               |
+    # Teacher view.
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    And "You have to add at least one completion condition." "text" should exist in the "Activity sample" "core_courseformat > Activity completion"
+    And "Add conditions" "link" should exist in the "Activity sample" "core_courseformat > Activity completion"
+    And I log out
+    # Student view.
+    And I am on the "C1" "Course" page logged in as "student1"
+    And "There are no completion conditions set for this activity." "text" should exist in the "Activity sample" "core_courseformat > Activity completion"
