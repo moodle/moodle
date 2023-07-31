@@ -13,7 +13,7 @@ echo $OUTPUT->header();
 <link rel="stylesheet" href="css/main.css" />
 
  <div id="editor">
-      <p>Testing Editor using Web Builder JS librrary</p>
+      <p>Web Builder</p>
 </div>
 
     <script type="text/javascript" src="js/main.js"></script>
