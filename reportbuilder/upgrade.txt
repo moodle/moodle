@@ -3,7 +3,9 @@ Information provided here is intended especially for developers.
 
 === 4.3 ===
 
-* New external method `core_reportbuilder_retrieve_system_report` for retrieving system report data
+* New external methods for retrieving system report data:
+  - `core_reportbuilder_can_view_system_report`
+  - `core_reportbuilder_retrieve_system_report`
 * New `get_tag_joins_for_entity` helper in base entity class, for returning SQL joins necessary for retrieving tags
 * New `set_is_deprecated` method in base `local\report\[column|filter]` classes to deprecate report entity columns and filters
 * The following report entity columns have been deprecated, with replacements as follows:
