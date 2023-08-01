@@ -403,3 +403,32 @@
     border: 1px solid #ddd;
     border-radius: 4px;
 }
+
+/* Strip the caret from the action menu toggle, as the ... ellipsis icon is used. */
+#page-mod-lti-coursetools a.dropdown-toggle::after {
+    display: none;
+}
+
+/* Icons in the 'actions' column of the course tools table need to be aligned with action menus which have a 36x36 trigger. */
+#page-mod-lti-coursetools table div.tool-action-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+#page-mod-lti-coursetools table div.tool-action-icon-container i {
+    margin: 0;
+}
+
+/* The following removes the striping that lives in table_sql, which we can't change from within reportbuilder */
+#page-mod-lti-coursetools table.generaltable tbody tr:nth-of-type(2n+1),
+#page-mod-lti-coursetools table.table-striped tbody tr:nth-of-type(2n+1) {
+    background: inherit;
+}
+
+#page-mod-lti-coursetools table.generaltable tbody tr:hover,
+#page-mod-lti-coursetools table.table-striped tbody tr:hover {
+    background: #fff;
+}

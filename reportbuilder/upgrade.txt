@@ -13,6 +13,12 @@ Information provided here is intended especially for developers.
   - `enrolment:method` => `enrol:plugin`
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception
 * The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
+* Two new methods:
+  - `get_default_no_results_notice` and
+  - `set_default_no_results_notice`
+  have been added to core_reportbuilder\local\report\base, allowing report implementations to control what lang string is used in
+  the notice when the report has no results. Reports can either set a preferred lang string, or pass null if the notice isn't
+  required in that particular report.
 
 === 4.2 ===
 

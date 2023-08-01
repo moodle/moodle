@@ -45,6 +45,12 @@ class behat_mod_lti_generator extends behat_generator_base {
                 'datagenerator' => 'tool_types',
                 'required' => ['baseurl'],
             ],
+            'course tools' => [
+                'singular' => 'course tool',
+                'datagenerator' => 'course_tool_types',
+                'required' => ['baseurl', 'course'],
+                'switchids' => ['course' => 'course']
+            ]
         ];
     }
 }
