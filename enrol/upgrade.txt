@@ -1,6 +1,16 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+
+* New find_instance() function has been created. It finds a matching enrolment instance in a given course using provided
+ enrolment data (for example cohort idnumber for cohort enrolment). Defaults to null. Override this function in your
+ enrolment plugin if you want it to be supported in CSV course upload. Please be aware that sometimes it is not possible
+ to uniquely find an instance based on given data. For example lti entolment records do not have any unique data except
+ id in mod_lti_enrol table. Such plugins should not be supported in CSV course upload. The exception is self enrolment
+ plugin since it is already supported in CSV course upload. For self enrolment plugin, find_instance() returns first
+ available instance in the course.
+
 === 4.3 ===
 
 * New is_csv_upload_supported() function has been created. It checks whether enrolment plugin is supported

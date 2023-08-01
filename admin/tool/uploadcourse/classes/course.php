@@ -1022,16 +1022,10 @@ class tool_uploadcourse_course {
         }
 
         $enrolmentplugins = tool_uploadcourse_helper::get_enrolment_plugins();
-        $instances = enrol_get_instances($course->id, false);
         foreach ($enrolmentdata as $enrolmethod => $method) {
 
-            $instance = null;
-            foreach ($instances as $i) {
-                if ($i->enrol == $enrolmethod) {
-                    $instance = $i;
-                    break;
-                }
-            }
+            $plugin = $enrolmentplugins[$enrolmethod];
+            $instance = $plugin->find_instance($method, $course->id);
 
             $todelete = isset($method['delete']) && $method['delete'];
             $todisable = isset($method['disable']) && $method['disable'];
