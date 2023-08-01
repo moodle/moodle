@@ -99,7 +99,7 @@ class course_external_tools_list extends system_report {
         // Tool usage column using a custom SQL subquery to count tool instances within the course.
         // TODO: This should be replaced with proper column aggregation once that's added to system_report instances in MDL-76392.
         $ti = database::generate_param_name(); // Tool instance param.
-        $sql = "(SELECT count($ti.id) as usage
+        $sql = "(SELECT COUNT($ti.id)
                 FROM {lti} $ti
                 WHERE $ti.typeid = {$entitymainalias}.id)";
         $this->add_column(new column(
