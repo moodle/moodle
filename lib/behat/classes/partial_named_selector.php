@@ -65,6 +65,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'block' => 'block',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
+        'dropdown_item' => 'dropdown_item',
         'fieldset' => 'fieldset',
         'icon' => 'icon',
         'list_item' => 'list_item',
@@ -93,6 +94,8 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'checkbox' => 'checkbox',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
+        'dropdown' => 'dropdown',
+        'dropdown_item' => 'dropdown_item',
         'field' => 'field',
         'fieldset' => 'fieldset',
         'file' => 'file',
@@ -182,6 +185,25 @@ XPATH
             and
         normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')]) = %locator%
     ]
+XPATH
+    , 'dropdown' => <<<XPATH
+        .//*[
+            contains(concat(' ', normalize-space(@class), ' '), ' dropdown-menu ')
+                and
+            @aria-labelledby =
+                (//*[
+                        contains(concat(' ', normalize-space(@class), ' '), ' dropdown-toggle ')
+                            and
+                        (contains(normalize-space(.), %locator%) or descendant::*[%titleMatch%])
+                ]/@id)
+        ]
+XPATH
+    , 'dropdown_item' => <<<XPATH
+        .//*[
+            @role = 'listitem'
+                and
+            (contains(normalize-space(.), %locator%) or descendant::*[%titleMatch%])
+        ]
 XPATH
         , 'group_message' => <<<XPATH
         .//*[@data-conversation-id]//img[contains(@alt, %locator%)]/..

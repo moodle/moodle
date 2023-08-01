@@ -27,6 +27,7 @@
 
 require_once(__DIR__ . '/../../behat/behat_base.php');
 
+use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException as ExpectationException;
 use Behat\Mink\Exception\DriverException as DriverException;
 use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
@@ -1430,6 +1431,83 @@ class behat_navigation extends behat_base {
 
         if ($this->is_editing_on()) {
             throw new ExpectationException('The edit mode could not be turned off', $this->getSession());
+        }
+    }
+
+    /**
+     * The named item should exist in the named dropdown.
+     *
+     * @Then /^the "(?P<item_string>[^"]*)" item should (?P<not_bool>not )?exist in the "(?P<dropdown_string>[^"]*)" dropdown$/
+     * @Then /^the "(?P<item_string>[^"]*)" item should (?P<not_bool>not )?exist in the "(?P<dropdown_string>[^"]*)" dropdown of the "(?P<container_string>[^"]*)" "(?P<containertype_string>[^"]*)"$/
+     * @param string $item The text on the dropdown menu item
+     * @param bool $not Whether to negate this search
+     * @param string $dropdown The name of the dropdown
+     * @param string $container The name of the container
+     * @param string $containertype The type of the container
+     */
+    public function should_exist_in_dropdown(
+        string $item,
+        bool $not,
+        string $dropdown,
+        string $container = null,
+        string $containertype = null,
+    ): void {
+        $containernode = null;
+        if ($container && $containertype) {
+            $containernode = $this->find(
+                selector: $containertype,
+                locator: $container,
+                node: null,
+            );
+        }
+        $this->should_exist_in_dropdown_in(
+            item: $item,
+            dropdown: $dropdown,
+            container: $containernode,
+            not: $not,
+        );
+    }
+
+    /**
+     * Helper to check whether an item exists in a dropdown.
+     *
+     * @param string $item The text of the item to look for
+     * @param string $dropdown The name of the dropdown
+     * @param null|NodeElement $container The container to look within
+     */
+    public function should_exist_in_dropdown_in(
+        string $item,
+        string $dropdown,
+        null|NodeElement $container,
+        bool $not,
+    ): void {
+        $dropdownnode = $this->find(
+            selector: 'named_partial',
+            locator: ['dropdown', $dropdown],
+            node: $container ?? false,
+        );
+
+        if ($not) {
+            try {
+                $this->find(
+                    selector: 'named_partial',
+                    locator: ['dropdown_item', $item],
+                    node: $dropdownnode,
+                );
+
+                throw new ExpectationException(
+                    "The '{$item}' dropdown item was found in the '{$dropdown}' selector",
+                    $this->getSession(),
+                );
+            } catch (ElementNotFoundException $e) {
+                return;
+            }
+        } else {
+            $this->find(
+                selector: 'named_partial',
+                locator: ['dropdown_item', $item],
+                node: $dropdownnode,
+            );
         }
     }
 }
