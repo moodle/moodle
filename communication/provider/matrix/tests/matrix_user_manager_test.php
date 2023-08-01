@@ -17,12 +17,7 @@
 namespace communication_matrix;
 
 use core_communication\processor;
-use core_communication\communication_test_helper_trait;
-
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/matrix_test_helper_trait.php');
-require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
+use moodle_exception;
 
 /**
  * Class matrix_user_manager_test to test the matrix user manager.
@@ -31,225 +26,208 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Stevani Andolo <stevani.andolo@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \communication_matrix\matrix_user_manager
+ * @covers \communication_matrix\matrix_user_manager
  */
 class matrix_user_manager_test extends \advanced_testcase {
+    /**
+     * Test fetcihing a users matrix userid from Moodle.
+     */
+    public function test_get_matrixid_from_moodle_without_field(): void {
+        $user = get_admin();
 
-    use matrix_test_helper_trait;
-    use communication_test_helper_trait;
-
-    public function setUp(): void {
-        parent::setUp();
-        $this->resetAfterTest();
-        $this->setup_communication_configs();
-        $this->initialise_mock_server();
+        // And confirm that they're fetched back.
+        $this->assertNull(matrix_user_manager::get_matrixid_from_moodle($user->id));
     }
 
     /**
-     * Test get matrix id from moodle.
-     *
-     * @covers ::get_matrixid_from_moodle
+     * Test fetching a user's matrix userid from Moodle.
      */
     public function test_get_matrixid_from_moodle(): void {
-        $course = $this->get_course();
-        $userid = $this->get_user()->id;
+        $this->resetAfterTest();
 
-        // Run room operation task.
-        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
 
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->add_members_to_room([$userid]);
-
-        $this->runAdhocTasks('\core_communication\task\add_members_to_room_task');
-
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
+        // Add user ids to both users.
+        matrix_user_manager::set_matrix_userid_in_moodle(
+            $user1->id,
+            '@someexampleuser:matrix.moodle.org',
         );
 
-        $matrixrooms = new matrix_rooms($communicationprocessor->get_id());
-        $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
-        $matrixhomeserverurl = $eventmanager->matrixhomeserverurl;
+        matrix_user_manager::set_matrix_userid_in_moodle(
+            $user2->id,
+            '@someotherexampleuser:matrix.moodle.org',
+        );
+
+        // And confirm that they're fetched back.
+        $this->assertEquals(
+            '@someexampleuser:matrix.moodle.org',
+            matrix_user_manager::get_matrixid_from_moodle($user1->id),
+        );
+        $this->assertEquals(
+            '@someotherexampleuser:matrix.moodle.org',
+            matrix_user_manager::get_matrixid_from_moodle($user2->id),
+        );
+    }
+
+    /**
+     * Test fetching a formatted matrix userid from Moodle when no server is set.
+     */
+    public function test_get_formatted_matrix_userid_unset(): void {
+        $this->expectException(moodle_exception::class);
+
+        matrix_user_manager::get_formatted_matrix_userid('No value');
+    }
+
+    /**
+     * Test fetch of a formatted matrix userid.
+     *
+     * @dataProvider get_formatted_matrix_userid_provider
+     * @param string $server
+     * @param string $username The moodle username to turn into a Matrix username
+     * @param string $expecteduserid The expected matrix user id
+     */
+    public function test_get_formatted_matrix_userid(
+        string $server,
+        string $username,
+        string $expecteduserid,
+    ): void {
+        $this->resetAfterTest();
+
+        set_config('matrixhomeserverurl', $server, 'communication_matrix');
+        $this->assertEquals(
+            $expecteduserid,
+            matrix_user_manager::get_formatted_matrix_userid($username),
+        );
+    }
+
+    /**
+     * Data provider for get_formatted_matrix_userid.
+     *
+     * @return array
+     */
+    public function get_formatted_matrix_userid_provider(): array {
+        return [
+            'alphanumeric' => [
+                'https://matrix.example.org',
+                'alphabet1',
+                '@alphabet1:matrix.example.org',
+            ],
+            'chara' => [
+                'https://matrix.example.org',
+                'asdf#$%^&*()+{}|<>?!,asdf',
+                '@asdf.................asdf:matrix.example.org',
+            ],
+            'local server' => [
+                'https://synapse',
+                'colin.creavey',
+                '@colin.creavey:synapse',
+            ],
+            'server with port' => [
+                'https://matrix.example.org:8448',
+                'colin.creavey',
+                '@colin.creavey:matrix.example.org',
+            ],
+        ];
+    }
+
+    /**
+     * Data provider for set_matrix_userid_in_moodle.
+     *
+     * @return array
+     */
+    public function set_matrix_userid_in_moodle_provider(): array {
+        return array_combine(
+            array_keys($this->get_formatted_matrix_userid_provider()),
+            array_map(
+                fn($value) => [$value[2]],
+                $this->get_formatted_matrix_userid_provider(),
+            ),
+        );
+    }
+
+    /**
+     * Test setting of a user's matrix userid in Moodle.
+     *
+     * @dataProvider set_matrix_userid_in_moodle_provider
+     * @param string $expectedusername
+     */
+    public function test_set_matrix_userid_in_moodle(
+        string $expectedusername,
+    ): void {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        matrix_user_manager::set_matrix_userid_in_moodle($user->id, $expectedusername);
 
         // Get created matrixuserid from moodle.
-        $elementserver = matrix_user_manager::set_matrix_home_server($matrixhomeserverurl);
-        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid, $matrixhomeserverurl);
-        $this->assertNotNull($matrixuserid);
-        $this->assertEquals("@sampleun:{$elementserver}", $matrixuserid);
+        $this->assertEquals(
+            $expectedusername,
+            matrix_user_manager::get_matrixid_from_moodle($user->id),
+        );
     }
 
     /**
-     * Sets qualified matrix user id.
+     * Test for getting a formatted matrix home server id.
      *
-     * @return void
-     * @covers ::set_qualified_matrix_user_id
+     * @dataProvider get_formatted_matrix_home_server_provider
+     * @param string $input
+     * @param string $expectedoutput
      */
-    public function test_set_qualified_matrix_user_id(): void {
+    public function test_get_formatted_matrix_home_server(
+        string $input,
+        string $expectedoutput
+    ): void {
+        $this->resetAfterTest();
 
-        $course = $this->get_course();
-        $user = $this->get_user();
-
-        // Run room operation task.
-        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
-
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->add_members_to_room([$user->id]);
-
-        $this->runAdhocTasks('\core_communication\task\add_members_to_room_task');
-
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
+        set_config(
+            'matrixhomeserverurl',
+            $input,
+            'communication_matrix',
         );
 
-        $matrixrooms = new matrix_rooms($communicationprocessor->get_id());
-        $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
-        $matrixhomeserverurl = $eventmanager->matrixhomeserverurl;
-        $elementserver = matrix_user_manager::set_matrix_home_server($matrixhomeserverurl);
-
-        // Sets qualified matrix id test1.
-        list($matrixuserid, $pureusername) = matrix_user_manager::set_qualified_matrix_user_id($user->id, $matrixhomeserverurl);
-        $this->assertEquals("@{$user->username}:{$elementserver}", $matrixuserid);
-        $this->assertEquals("sampleun", $pureusername);
-
-        // Sets qualified matrix id test2.
-        $user = $this->get_user('moodlefn', 'moodleln', 'admin@moodle.com');
-        list($matrixuserid, $pureusername) = matrix_user_manager::set_qualified_matrix_user_id($user->id, $matrixhomeserverurl);
-        $this->assertEquals("@admin.moodle.com:{$elementserver}", $matrixuserid);
-        $this->assertEquals("admin.moodle.com", $pureusername);
-
-        // Sets qualified matrix id test3.
-        $user = $this->get_user('moodlefn', 'moodleln', 'admin-user@moodle.com');
-        list($matrixuserid, $pureusername) = matrix_user_manager::set_qualified_matrix_user_id($user->id, $matrixhomeserverurl);
-        $this->assertEquals("@admin-user.moodle.com:{$elementserver}", $matrixuserid);
-        $this->assertEquals("admin-user.moodle.com", $pureusername);
+        $this->assertEquals(
+            $expectedoutput,
+            matrix_user_manager::get_formatted_matrix_home_server(),
+        );
     }
 
     /**
-     * Add user's matrix id to moodle.
+     * Data provider for get_formatted_matrix_home_server.
      *
-     * @covers ::add_user_matrix_id_to_moodle
+     * @return array
      */
-    public function test_add_user_matrix_id_to_moodle(): void {
-
-        $course = $this->get_course();
-        $userid = $this->get_user()->id;
-
-        // Run room operation task.
-        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
-
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->add_members_to_room([$userid]);
-
-        $this->runAdhocTasks('\core_communication\task\add_members_to_room_task');
-
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-
-        $matrixrooms = new matrix_rooms($communicationprocessor->get_id());
-        $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
-
-        // Sets qualified matrix id.
-        list($qualifiedmuid, $pureusername) = matrix_user_manager::set_qualified_matrix_user_id(
-            $userid,
-            $eventmanager->matrixhomeserverurl
-        );
-        $this->assertNotNull($qualifiedmuid);
-        $this->assertNotNull($pureusername);
-
-        // Will return true on success.
-        $this->assertTrue(matrix_user_manager::add_user_matrix_id_to_moodle($userid, $pureusername));
-
-        // Get created matrixuserid from moodle.
-        $elementserver = matrix_user_manager::set_matrix_home_server($eventmanager->matrixhomeserverurl);
-        $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid, $eventmanager->matrixhomeserverurl);
-        $this->assertNotNull($matrixuserid);
-        $this->assertEquals("@sampleun:{$elementserver}", $matrixuserid);
+    public function get_formatted_matrix_home_server_provider(): array {
+        return [
+            'www is removed' => [
+                'https://www.example.org',
+                'example.org',
+            ],
+            'www is not removed if it is not at the beginning' => [
+                'https://matrix.www.example.org',
+                'matrix.www.example.org',
+            ],
+            'others are not removed' => [
+                'https://matrix.example.org',
+                'matrix.example.org',
+            ],
+        ];
     }
 
     /**
-     * Add matrix home server for qualified matrix id.
-     *
-     * @return void
-     * @covers ::set_matrix_home_server
-     */
-    public function test_set_matrix_home_server(): void {
-
-        $course = $this->get_course();
-        $userid = $this->get_user()->id;
-
-        // Run room operation task.
-        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
-
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->add_members_to_room([$userid]);
-
-        $this->runAdhocTasks('\core_communication\task\add_members_to_room_task');
-
-        $communicationprocessor = processor::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-
-        $matrixrooms = new matrix_rooms($communicationprocessor->get_id());
-        $eventmanager = new matrix_events_manager($matrixrooms->get_matrix_room_id());
-
-        // Will generate matrix home server.
-        $generatedhomeserver = matrix_user_manager::set_matrix_home_server($eventmanager->matrixhomeserverurl);
-        $this->assertNotNull($generatedhomeserver);
-    }
-
-    /**
-     * Test post matrix insert new user field record.
-     *
-     * @covers ::execute
+     * Test creation of matrix user profile fields.
      */
     public function test_create_matrix_user_profile_fields(): void {
-        $course = $this->get_course();
-        $userid = $this->get_user()->id;
+        $this->resetAfterTest();
 
-        // Run room operation task.
-        $this->runAdhocTasks('\core_communication\task\create_and_configure_room_task');
+        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
+        $this->assertFalse($matrixprofilefield);
 
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $course->id
-        );
-        $communication->add_members_to_room([$userid]);
+        $this->assertIsString(matrix_user_manager::create_matrix_user_profile_fields());
+        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
+        $this->assertNotFalse($matrixprofilefield);
 
-        $this->runAdhocTasks('\core_communication\task\add_members_to_room_task');
-
-        // Check if "Communication" field has been added.
-        $categoryfield = get_config('core_communication', 'communication_category_field');
-        $this->assertNotNull($categoryfield);
-        $this->assertEquals('Communication', $categoryfield);
-
-        // Check if "matrixuserid" field has been added.
-        $infofield = get_config('communication_matrix', 'matrixuserid_field');
-        $this->assertNotNull($infofield);
-        $this->assertEquals('matrixuserid', $infofield);
+        $user = $this->getDataGenerator()->create_user();
+        $this->assertObjectHasAttribute($matrixprofilefield, profile_user_record($user->id));
     }
 }

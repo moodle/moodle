@@ -28,97 +28,80 @@ class matrix_user_manager {
     /**
      * Gets matrix user id from moodle.
      *
-     * @param string $userid Moodle user id
-     * @param string $homeserver Matrix home server url
+     * @param int $userid Moodle user id
      * @return string|null
      */
     public static function get_matrixid_from_moodle(
-        string $userid,
-        string $homeserver
+        int $userid,
     ) : ?string {
-
-        global $CFG;
-        require_once("$CFG->dirroot/user/profile/lib.php");
-
-        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
-        if (!$matrixprofilefield) {
-            $matrixprofilefield = self::create_matrix_user_profile_fields();
-        }
+        self::load_requirements();
         $field = profile_user_record($userid);
-        $pureusername = $field->{$matrixprofilefield} ?? null;
+        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
 
-        if ($pureusername) {
-            $homeserver = self::set_matrix_home_server($homeserver);
-            return "@{$pureusername}:$homeserver";
+        if ($matrixprofilefield === false) {
+            return null;
         }
 
-        return $pureusername;
+        return $field->{$matrixprofilefield} ?? null;
     }
 
     /**
-     * Sets qualified matrix user id
+     * Get a qualified matrix user id based on a Moodle username.
      *
-     * @param string $userid Moodle user id
-     * @param string $homeserver Matrix home server url
-     * @return array
+     * @param string $username The moodle username to turn into a Matrix username
+     * @return string
      */
-    public static function set_qualified_matrix_user_id(
-        string $userid,
-        string $homeserver
-    ) : array {
-
-        $user = \core_user::get_user($userid);
-        $username = preg_replace('/[@#$%^&*()+{}|<>?!,]/i', '.', $user->username);
+    public static function get_formatted_matrix_userid(
+        string $username,
+    ): string {
+        $username = preg_replace('/[@#$%^&*()+{}|<>?!,]/i', '.', $username);
         $username = ltrim(rtrim($username, '.'), '.');
 
-        $homeserver = self::set_matrix_home_server($homeserver);
+        $homeserver = self::get_formatted_matrix_home_server();
 
-        return ["@{$username}:{$homeserver}", $username];
+        return "@{$username}:{$homeserver}";
     }
 
     /**
      * Add user's Matrix user id.
      *
-     * @param string $userid Moodle user id
+     * @param int $userid Moodle user id
      * @param string $matrixuserid Matrix user id
-     * @return bool
      */
-    public static function add_user_matrix_id_to_moodle(
-        string $userid,
-        string $matrixuserid
-    ): bool {
-
-        global $CFG;
-        require_once("$CFG->dirroot/user/profile/lib.php");
-
-        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
+    public static function set_matrix_userid_in_moodle(
+        int $userid,
+        string $matrixuserid,
+    ): void {
+        $matrixprofilefield = self::get_profile_field_name();
         $field = profile_get_custom_field_data_by_shortname($matrixprofilefield);
 
-        if ($field !== null) {
-            $userinfodata = new \stdClass();
-            $userinfodata->id = $userid;
-            $userinfodata->data = $matrixuserid;
-            $userinfodata->fieldid = $field->id;
-            $userinfodata->{"profile_field_{$matrixprofilefield}"} = $matrixuserid;
-            profile_save_data($userinfodata);
-            return true;
+        if ($field === null) {
+            return;
         }
-
-        return false;
+        $userinfodata = (object) [
+            'id' => $userid,
+            'data' => $matrixuserid,
+            'fieldid' => $field->id,
+            "profile_field_{$matrixprofilefield}" => $matrixuserid,
+        ];
+        profile_save_data($userinfodata);
     }
 
     /**
      * Sets home server for user matrix id
      *
-     * @param string $homeserver Matrix home server url
      * @return string
      */
-    public static function set_matrix_home_server(string $homeserver) : string {
+    public static function get_formatted_matrix_home_server(): string {
+        $homeserver = get_config('communication_matrix', 'matrixhomeserverurl');
+        if ($homeserver === false) {
+            throw new \moodle_exception('Unknown matrix home server url');
+        }
+
         $homeserver = parse_url($homeserver)['host'];
 
-        if (strpos($homeserver, '.') !== false) {
-            $host = explode('.', $homeserver);
-            return strpos($homeserver, 'www') !== false ? $host[1] : $host[0];
+        if (str_starts_with($homeserver, 'www.')) {
+            $homeserver = str_replace('www.', '', $homeserver);
         }
 
         return $homeserver;
@@ -182,5 +165,31 @@ class matrix_user_manager {
             set_config('matrixuserid_field', 'matrixuserid', 'communication_matrix');
             return 'matrixuserid';
         }
+    }
+
+    /**
+     * Get the profile field name, creating the profiel field if it does not exist.
+     *
+     * @return string
+     */
+    protected static function get_profile_field_name(): string {
+        self::load_requirements();
+        $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
+        if ($matrixprofilefield === false) {
+            $matrixprofilefield = self::create_matrix_user_profile_fields();
+        }
+
+        return $matrixprofilefield;
+    }
+
+    /**
+     * Load requirements for profile field management.
+     *
+     * This is just a helper to keep loading legacy files isolated.
+     */
+    protected static function load_requirements(): void {
+        global $CFG;
+
+        require_once("{$CFG->dirroot}/user/profile/lib.php");
     }
 }
