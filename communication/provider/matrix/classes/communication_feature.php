@@ -295,7 +295,6 @@ class communication_feature implements
      * Update the room avatar when an instance image is added or updated.
      */
     public function update_room_avatar(): void {
-
         // Check if we have an avatar that needs to be synced.
         if (!$this->communication->is_avatar_synced()) {
 
@@ -304,7 +303,7 @@ class communication_feature implements
 
             // If avatar is set for the instance, upload to Matrix. Otherwise, leave null for unsetting.
             if (!empty($instanceimage)) {
-                $contenturi = $this->eventmanager->upload_matrix_content($instanceimage->get_content());
+                $contenturi = $this->eventmanager->upload_matrix_content($instanceimage);
             }
 
             $response = $this->eventmanager->request(['url' => $contenturi], [], false)->put(

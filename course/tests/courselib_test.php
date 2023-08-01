@@ -7271,4 +7271,36 @@ class courselib_test extends advanced_testcase {
         // The download course content value has changed, it should return true in this case.
         $this->assertTrue(set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_ENABLED));
     }
+
+    /**
+     * Test for course_get_courseimage.
+     *
+     * @covers ::course_get_courseimage
+     */
+    public function test_course_get_courseimage(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $this->assertNull(course_get_courseimage($course));
+
+        $fs = get_file_storage();
+        $file = $fs->create_file_from_pathname((object) [
+            'contextid' => \core\context\course::instance($course->id)->id,
+            'component' => 'course',
+            'filearea' => 'overviewfiles',
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => 'logo.png',
+        ], "{$CFG->dirroot}/lib/tests/fixtures/gd-logo.png");
+
+        $image = course_get_courseimage($course);
+        $this->assertInstanceOf(\stored_file::class, $image);
+        $this->assertEquals(
+            $file->get_id(),
+            $image->get_id(),
+        );
+    }
 }

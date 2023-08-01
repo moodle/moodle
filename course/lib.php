@@ -2326,7 +2326,7 @@ function create_course($data, $editoroptions = NULL) {
     // Communication api implementation in course.
     if (isset($data->selectedcommunication) && core_communication\api::is_available()) {
         // Prepare the communication api date.
-        $courseimage = course_summary_exporter::get_course_image($course);
+        $courseimage = course_get_courseimage($course);
         $communicationroomname = !empty($data->communicationroomname) ? $data->communicationroomname : $data->fullname;
         $selectedcommunication = $data->selectedcommunication;
 
@@ -2466,10 +2466,7 @@ function update_course($data, $editoroptions = NULL) {
     // Communication api call.
     if (!empty($provider) && core_communication\api::is_available()) {
         // Prepare the communication api data.
-        $courseimage = course_summary_exporter::get_course_image($data);
-        if (!$courseimage) {
-            $courseimage = null;
-        }
+        $courseimage = course_get_courseimage($data);
 
         // This nasty logic is here because of hide course doesn't pass anything in the data object.
         if (!empty($data->communicationroomname)) {
@@ -5132,4 +5129,20 @@ function course_output_fragment_new_base_form($args) {
     ob_end_clean();
 
     return $o;
+}
+
+/**
+ * Get the current course image for the given course.
+ *
+ * @param \stdClass $course
+ * @return null|stored_file
+ */
+function course_get_courseimage(\stdClass $course): ?stored_file {
+    $courseinlist = new core_course_list_element($course);
+    foreach ($courseinlist->get_course_overviewfiles() as $file) {
+        if ($file->is_valid_image()) {
+            return $file;
+        }
+    }
+    return null;
 }

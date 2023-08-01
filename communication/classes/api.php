@@ -222,20 +222,19 @@ class api {
      * If null is set, then delete the old area file and set the avatarfilename to null.
      * This will make sure the plugin api deletes the avatar from the room.
      *
-     * @param string|null $datauri The datauri of the avatar
+     * @param null|\stored_file $avatar The stored file for the avatar
      * @return bool
      */
-    public function set_avatar_from_datauri_or_filepath(?string $datauri): bool {
-
+    public function set_avatar(?\stored_file $avatar): bool {
         $currentfilename = $this->communication->get_avatar_filename();
-        if (empty($datauri) && empty($currentfilename)) {
+        if ($avatar === null && empty($currentfilename)) {
             return false;
         }
 
         $currentfilerecord = $this->communication->get_avatar();
-        if (!empty($datauri) && !empty($currentfilerecord)) {
+        if ($avatar && !empty($currentfilerecord)) {
             $currentfilehash = $currentfilerecord->get_contenthash();
-            $updatedfilehash = \file_storage::hash_from_string(file_get_contents($datauri));
+            $updatedfilehash = $avatar->get_contenthash();
 
             // No update required.
             if ($currentfilehash === $updatedfilehash) {
@@ -244,7 +243,6 @@ class api {
         }
 
         $context = \context_system::instance();
-        $filename = null;
 
         $fs = get_file_storage();
         $fs->delete_area_files(
@@ -254,12 +252,15 @@ class api {
             $this->communication->get_id()
         );
 
-        if (!empty($datauri)) {
-            $filename = "avatar.svg";
-            $fs->create_file_from_string($this->get_avatar_filerecord($filename), file_get_contents($datauri));
+        if ($avatar) {
+            $fs->create_file_from_storedfile(
+                $this->get_avatar_filerecord($avatar->get_filename()),
+                $avatar,
+            );
+            $this->communication->set_avatar_filename($avatar->get_filename());
+        } else {
+            $this->communication->set_avatar_filename(null);
         }
-
-        $this->communication->set_avatar_filename($filename);
 
         // Indicate that we need to sync the avatar when the update task is run.
         $this->communication->set_avatar_synced_flag(false);
@@ -299,16 +300,15 @@ class api {
      *
      * @param string $selectedcommunication The selected communication provider
      * @param string $communicationroomname The communication room name
+     * @param null|\stored_file $avatar The stored file for the avatar
      * @param \stdClass|null $instance The actual instance object
-     * @param string|null $avatarurl The avatar url
      */
     public function create_and_configure_room(
         string $selectedcommunication,
         string $communicationroomname,
-        ?string $avatarurl = null,
+        ?\stored_file $avatar = null,
         ?\stdClass $instance = null,
     ): void {
-
         if ($selectedcommunication !== processor::PROVIDER_NONE && $selectedcommunication !== '') {
             // Create communication record.
             $this->communication = processor::create_instance(
@@ -325,8 +325,8 @@ class api {
             }
 
             // Set the avatar.
-            if (!empty($avatarurl)) {
-                $this->set_avatar_from_datauri_or_filepath($avatarurl);
+            if (!empty($avatar)) {
+                $this->set_avatar($avatar);
             }
 
             // Add ad-hoc task to create the provider room.
@@ -342,13 +342,13 @@ class api {
      *
      * @param string $selectedprovider The selected communication provider
      * @param string $communicationroomname The communication room name
+     * @param null|\stored_file $avatar The stored file for the avatar
      * @param \stdClass|null $instance The actual instance object
-     * @param string|null $avatarurl The avatar url
      */
     public function update_room(
         string $selectedprovider,
         string $communicationroomname,
-        ?string $avatarurl = null,
+        ?\stored_file $avatar = null,
         ?\stdClass $instance = null,
     ): void {
 
@@ -367,7 +367,7 @@ class api {
             }
 
             // Update the avatar.
-            $imageupdaterequired = $this->set_avatar_from_datauri_or_filepath($avatarurl);
+            $imageupdaterequired = $this->set_avatar($avatar);
 
             // If the provider is none, we don't need to do anything from room point of view.
             if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
@@ -392,7 +392,7 @@ class api {
             }
         } else {
             // The instance didn't have any communication record, so create one.
-            $this->create_and_configure_room($selectedprovider, $communicationroomname, $avatarurl, $instance);
+            $this->create_and_configure_room($selectedprovider, $communicationroomname, $avatar, $instance);
         }
     }
 

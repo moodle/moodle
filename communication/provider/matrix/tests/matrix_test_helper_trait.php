@@ -146,6 +146,41 @@ trait matrix_test_helper_trait {
     }
 
     /**
+     * Get the URI of a backoffice endpoint on the mock server.
+     *
+     * @param string $endpoint
+     * @return string
+     */
+    protected function get_backoffice_uri(string $endpoint): string {
+        return $this->get_matrix_server_url() . '/backoffice/' . $endpoint;
+    }
+
+    /**
+     * Fetch all rooms from the back office.
+     *
+     * @return array
+     */
+    public function backoffice_get_all_rooms(): array {
+        $client = new \core\http_client();
+
+        return json_decode($client->get($this->get_backoffice_uri('rooms'))->getBody())->rooms;
+    }
+
+    /**
+     * Return the first room from the server.
+     *
+     * In most cases there is only one room.
+     * @return \stdClass
+     */
+    public function backoffice_get_room(): \stdClass {
+        // Fetch the room information from the server.
+        $rooms = $this->backoffice_get_all_rooms();
+        $this->assertCount(1, $rooms);
+        $room = reset($rooms);
+        return $room;
+    }
+
+    /**
      * Reset the mock server
      *
      * @return void
@@ -163,4 +198,52 @@ trait matrix_test_helper_trait {
         }
     }
 
+    /**
+     * Helper to create a room.
+     *
+     * @param null|string $component
+     * @param null|string $itemtype
+     * @param null|int $itemid
+     * @param null|string $roomname
+     * @param null|string $roomtopic
+     * @param null|stored_file $roomavatar
+     * @param array $members
+     * @return api
+     */
+    protected function create_matrix_room(
+        ?string $component = 'communication_matrix',
+        ?string $itemtype = 'example',
+        ?int $itemid = 1,
+        ?string $roomname = null,
+        ?string $roomtopic = null,
+        ?\stored_file $roomavatar = null,
+        array $members = [],
+    ): \core_communication\api {
+        // Create a new room.
+        $communication = \core_communication\api::load_by_instance(
+            component: $component,
+            instancetype: $itemtype,
+            instanceid: $itemid,
+        );
+
+        $communication->create_and_configure_room(
+            selectedcommunication: 'communication_matrix',
+            communicationroomname: $roomname ?? 'Room name',
+            avatar: $roomavatar,
+            instance: (object) [
+                'matrixroomtopic' => $roomtopic ?? 'A fun topic',
+            ],
+        );
+
+        $communication->add_members_to_room($members);
+
+        // Run the adhoc task.
+        $this->run_all_adhoc_tasks();
+
+        return \core_communication\api::load_by_instance(
+            component: $component,
+            instancetype: $itemtype,
+            instanceid: $itemid,
+        );
+    }
 }

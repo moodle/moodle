@@ -102,24 +102,4 @@ class matrix_events_manager_test extends \advanced_testcase {
         $this->assertEquals($this->get_matrix_server_url() . '/' . '_synapse/admin/v2/users/' . urlencode($mockuserid),
             $matrixeventsmanager->get_user_info_endpoint($mockuserid));
     }
-
-    /**
-     * Test upload matrix content.
-     *
-     * @return void
-     * @covers ::upload_matrix_content
-     */
-    public function test_upload_matrix_content(): void {
-        global $CFG;
-        $this->resetAfterTest();
-
-        $mockroomid = 'sampleroomid';
-        $filecontent = file_get_contents($CFG->dirroot . '/communication/tests/fixtures/moodle_logo.jpg');
-
-        $matrixeventsmanager = new matrix_events_manager($mockroomid);
-        $response = $matrixeventsmanager->upload_matrix_content($filecontent);
-
-        $this->assertNotFalse($response);
-        $this->assertNotEmpty($response);
-    }
 }
