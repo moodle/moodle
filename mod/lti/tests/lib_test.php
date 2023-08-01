@@ -435,6 +435,13 @@ class lib_test extends \advanced_testcase {
         $this->assertContains($course2toolrecord->id + 1, $ids);
         $this->assertNotContains($sitetoolrecordnonchooser->id + 1, $ids);
 
+        // Removing the capability to use preconfigured (site or course level) tools, should result in no content items.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/lti:addpreconfiguredinstance', CAP_PROHIBIT, $teacherrole->id,
+            \core\context\course::instance($course2->id));
+        $course2items = lti_get_course_content_items($defaultmodulecontentitem, $teacher2, $course2);
+        $this->assertCount(0, $course2items);
+
         // When fetching all content items, we expect to see all items available in activity choosers (in any course).
         $this->setAdminUser();
         $allitems = mod_lti_get_all_content_items($defaultmodulecontentitem);

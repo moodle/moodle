@@ -240,7 +240,12 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
 
     $types = [];
 
+    // Use of a tool type, whether site or course level, is controlled by the following cap.
+    if (!has_capability('mod/lti:addpreconfiguredinstance', \core\context\course::instance($course->id), $user)) {
+        return $types;
+    }
     $preconfiguredtools = lti_get_configured_types($course->id, $defaultmodulecontentitem->get_link()->param('sr'));
+
     foreach ($preconfiguredtools as $preconfiguredtool) {
 
         // Append the help link to the help text.
