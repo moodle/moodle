@@ -207,8 +207,9 @@ trait form_trait {
         $completionexpectedel = 'completionexpected' . $suffix;
         $mform->addElement('date_time_selector', $completionexpectedel, get_string('completionexpected', 'completion'),
                 ['optional' => true]);
-        $mform->addHelpButton($completionexpectedel, 'completionexpected', 'completion');
-        $mform->hideIf($completionexpectedel, $completionel, 'eq', COMPLETION_TRACKING_NONE);
+        $a = get_string('pluginname', $modname);
+        $mform->addHelpButton($completionexpectedel, 'completionexpected', 'completion', '', false, $a);
+        $mform->hideIf($completionexpectedel, 'completion', 'eq', COMPLETION_TRACKING_NONE);
     }
 
     /**
