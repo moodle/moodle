@@ -24,6 +24,11 @@
 import ModalForm from 'core_form/modalform';
 import {get_string as getString} from 'core/str';
 import Notification from 'core/notification';
+import * as FormChangeChecker from 'core_form/changechecker';
+
+const Selectors = {
+    advancedFormLink: 'a.showadvancedform'
+};
 
 /**
  * Initialize module
@@ -88,5 +93,14 @@ export const init = () => {
             modalForm.show();
         }
 
+        const showAdvancedForm = event.target.closest(Selectors.advancedFormLink);
+        if (showAdvancedForm) { // Navigate to the advanced form page and cary over any entered data.
+            event.preventDefault();
+            const form = event.target.closest('form');
+            form.action = showAdvancedForm.href;
+            // Disable the form change checker as we are going to carry over the data to the advanced form.
+            FormChangeChecker.disableAllChecks();
+            form.submit();
+        }
     });
 };
