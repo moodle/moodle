@@ -38,14 +38,15 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     Given I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort.csv" file to "File" filemanager
     And I click on "Preview" "button"
     And I should see "Unknown cohort (Not exist)!"
-    And I should see "Cohort Cohort 3 not allowed in this context."
+    And I should see "Cohort CV3 not allowed in this context."
     When I click on "Upload courses" "button"
     And I should see "Unknown cohort (Not exist)!"
-    And I should see "Cohort Cohort 3 not allowed in this context."
-    And I should see "Cohort Cohort 4 not allowed in this context."
+    And I should see "Cohort CV3 not allowed in this context."
+    And I should see "Cohort CV4 not allowed in this context."
+    And I should see "Invalid role names: student1"
     And I should see "Courses created: 2"
     And I should see "Courses updated: 0"
-    And I should see "Courses errors: 3"
+    And I should see "Courses errors: 4"
     And I am on the "Course 1" "enrolment methods" page
     Then I should not see "Cohort sync (Cohort 3 - Student)"
     And I am on the "Course 2" "enrolment methods" page
@@ -54,6 +55,13 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     And I should see "Cohort sync (Cohort 5 - Student)"
     And I click on "Edit" "link" in the "Cohort 5" "table_row"
     And the field "Add to group" matches value "None"
+    And I navigate to "Courses > Upload courses" in site administration
+    And I set the field "Upload mode" to "Create new courses, or update existing ones"
+    And I set the field "Update mode" to "Update with CSV data only"
+    And I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort_missing_fields.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    And I should see "Missing value for mandatory fields: cohortidnumber, role"
+    And "Upload courses" "button" should exist
 
   @javascript
   Scenario: Validation of groups for uploaded courses with cohort enrolments
@@ -103,3 +111,18 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
     And the field "Add to group" matches value "group1"
     And I am on the "Course 1" "groups" page
     And I should see "group1"
+
+  @javascript
+  Scenario: Upload multiple enrolment methods of same type to the same course
+    Given I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort_multiple.csv" file to "File" filemanager
+    And I click on "Preview" "button"
+    When I click on "Upload courses" "button"
+    And I should see "Courses updated: 2"
+    And I am on the "Course 1" "enrolment methods" page
+    Then I should see "Cohort sync (Cohort 1 - Student)"
+    And I should see "Cohort sync (Cohort 4 - Non-editing teacher)"
+    And I click on "Edit" "link" in the "Cohort 1" "table_row"
+    And the field "Assign role" matches value "Student"
+    And I press "Cancel"
+    And I click on "Edit" "link" in the "Cohort 4" "table_row"
+    And the field "Assign role" matches value "Non-editing teacher"
