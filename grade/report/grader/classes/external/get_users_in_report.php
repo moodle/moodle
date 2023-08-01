@@ -75,6 +75,8 @@ class get_users_in_report extends external_api {
         $context = context_course::instance($courseid);
         self::validate_context($context);
 
+        require_capability('gradereport/grader:view', $context);
+
         // Return tracking object.
         $gpr = new \grade_plugin_return(
             [
