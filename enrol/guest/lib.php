@@ -497,6 +497,28 @@ class enrol_guest_plugin extends enrol_plugin {
     public function is_csv_upload_supported(): bool {
         return true;
     }
+
+    /**
+     * Finds matching instances for a given course.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return stdClass|null Matching instance
+     */
+    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+
+        $instances = enrol_get_instances($courseid, false);
+        $instance = null;
+        foreach ($instances as $i) {
+            if ($i->enrol == 'guest') {
+                // There can be only one guest enrol instance so find first available.
+                $instance = $i;
+                break;
+            }
+        }
+        return $instance;
+    }
+
 }
 
 /**
