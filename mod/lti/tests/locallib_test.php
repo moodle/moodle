@@ -2248,4 +2248,126 @@ MwIDAQAB
 
         return ['proxies' => $proxies, 'types' => $types];
     }
+
+    /**
+     * Test for lti_get_lti_types_by_course.
+     *
+     * Note: This includes verification of the broken legacy behaviour in which the inclusion of course and site tools could be
+     * controlled independently, based on the capabilities 'mod/lti:addmanualinstance' (to include course tools) and
+     * 'mod/lti:addpreconfiguredinstance' (to include site tools). This behaviour is deprecated in 4.3 and all preconfigured tools
+     * are controlled by the single capability 'mod/lti:addpreconfiguredinstance'.
+     *
+     * @covers ::lti_get_lti_types_by_course()
+     * @return void
+     */
+    public function test_lti_get_lti_types_by_course(): void {
+        $this->resetAfterTest();
+
+        global $DB;
+        $coursecat1 = $this->getDataGenerator()->create_category();
+        $coursecat2 = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $coursecat2->id]);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $teacher2 = $this->getDataGenerator()->create_and_enrol($course2, 'editingteacher');
+
+        // Create the following tool types for testing:
+        // - Site tool configured as "Do not show" (LTI_COURSEVISIBLE_NO).
+        // - Site tool configured as "Show as a preconfigured tool only" (LTI_COURSEVISIBLE_PRECONFIGURED).
+        // - Site tool configured as "Show as a preconfigured tool and in the activity chooser" (LTI_COURSEVISIBLE_ACTIVITYCHOOSER).
+        // - Course tool which, by default, is configured as LTI_COURSEVISIBLE_ACTIVITYCHOOSER).
+        // - Site tool configured to "Show as a preconfigured tool and in the activity chooser" but restricted to a category.
+
+        /** @var \mod_lti_generator $ltigenerator */
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool do not show',
+            'baseurl' => 'http://example.com/tool/1',
+            'coursevisible' => LTI_COURSEVISIBLE_NO,
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool preconfigured only',
+            'baseurl' => 'http://example.com/tool/2',
+            'coursevisible' => LTI_COURSEVISIBLE_PRECONFIGURED,
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool preconfigured and activity chooser',
+            'baseurl' => 'http://example.com/tool/3',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
+        $ltigenerator->create_course_tool_types([
+            'name' => 'course tool preconfigured and activity chooser',
+            'baseurl' => 'http://example.com/tool/4',
+            'course' => $course->id
+        ]);
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
+            'baseurl' => 'http://example.com/tool/5',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat2->id
+        ]);
+
+        $this->setUser($teacher); // Important: this deprecated method depends on the global user for cap checks.
+
+        // Request using the default 'coursevisible' param will include all tools except the one configured as "Do not show".
+        $coursetooltypes = lti_get_lti_types_by_course($course->id);
+        $this->assertDebuggingCalled();
+        $this->assertCount(3, $coursetooltypes);
+        $this->assertEmpty(array_diff(
+            ['http://example.com/tool/2', 'http://example.com/tool/3', 'http://example.com/tool/4'],
+            array_column($coursetooltypes, 'baseurl')
+        ));
+
+        // Request for only those tools configured to show in the activity chooser for the teacher.
+        $coursetooltypes = lti_get_lti_types_by_course($course->id, [LTI_COURSEVISIBLE_ACTIVITYCHOOSER]);
+        $this->assertDebuggingCalled();
+        $this->assertCount(2, $coursetooltypes);
+        $this->assertEmpty(array_diff(
+            ['http://example.com/tool/3', 'http://example.com/tool/4'],
+            array_column($coursetooltypes, 'baseurl')
+        ));
+
+        // Request for only those tools configured to show as a preconfigured tool for the teacher.
+        $coursetooltypes = lti_get_lti_types_by_course($course->id, [LTI_COURSEVISIBLE_PRECONFIGURED]);
+        $this->assertDebuggingCalled();
+        $this->assertCount(1, $coursetooltypes);
+        $this->assertEmpty(array_diff(
+            ['http://example.com/tool/2'],
+            array_column($coursetooltypes, 'baseurl')
+        ));
+
+        // Request for teacher2 in course2 (course category 2).
+        $this->setUser($teacher2);
+        $coursetooltypes = lti_get_lti_types_by_course($course2->id);
+        $this->assertDebuggingCalled();
+        $this->assertCount(3, $coursetooltypes);
+        $this->assertEmpty(array_diff(
+            ['http://example.com/tool/2', 'http://example.com/tool/3', 'http://example.com/tool/5'],
+            array_column($coursetooltypes, 'baseurl')
+        ));
+
+        // Request for a teacher who cannot use preconfigured tools in the course.
+        // No tools are available.
+        $this->setUser($teacher);
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/lti:addpreconfiguredinstance', CAP_PROHIBIT, $teacherrole->id,
+            \core\context\course::instance($course->id));
+        $coursetooltypes = lti_get_lti_types_by_course($course->id);
+        $this->assertDebuggingCalled();
+        $this->assertCount(1, $coursetooltypes);
+        $this->unassignUserCapability('mod/lti:addpreconfiguredinstance', (\core\context\course::instance($course->id))->id,
+            $teacherrole->id);
+
+        // Request for a teacher who cannot use manually configured tools in the course.
+        // Only return site tools, which is broken legacy behaviour.
+        assign_capability('mod/lti:addmanualinstance', CAP_PROHIBIT, $teacherrole->id,
+            \context_course::instance($course->id));
+        $coursetooltypes = lti_get_lti_types_by_course($course->id);
+        $this->assertDebuggingCalled();
+        $this->assertCount(2, $coursetooltypes);
+    }
 }
