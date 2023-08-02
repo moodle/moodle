@@ -11,7 +11,6 @@ $redirect = $CFG->wwwroot.'/local/qbmanifest/index.php';
 $mform = new manifest_form();
 
 
-
 if ($mform->is_cancelled()) {
     echo "You has clicked on cancel button.";
 } else if ($fromform = $mform->get_data()) {

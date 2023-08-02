@@ -28,7 +28,13 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_qbmanifest';
-$plugin->version = 2023072700;
+$plugin->version = 2023080100;
 $plugin->release = 'v1.1';
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_ALPHA;
+
+$plugin->dependencies = [    
+    'mod_qubitspage' => ANY_VERSION,
+    'mod_qbassign' => ANY_VERSION,
+    'local_qubitsbook' => ANY_VERSION,
+];
