@@ -57,13 +57,9 @@ class get_groups_for_search_widget extends external_api {
      * @param int $courseid
      * @param string $actionbaseurl The base URL for the group action.
      * @return array Groups and warnings to pass back to the calling widget.
-     * @throws coding_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws restricted_context_exception
      * @deprecated since 4.2
      */
-    protected static function execute(int $courseid, string $actionbaseurl): array {
+    public static function execute(int $courseid, string $actionbaseurl): array {
         global $DB, $USER, $COURSE;
 
         $params = self::validate_parameters(
