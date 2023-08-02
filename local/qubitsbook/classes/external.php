@@ -114,16 +114,11 @@ class local_qubitsbook_external extends external_api {
     public static function create_assignment_service($courseid,$siteid,$chapterid,$assign_name,$duedate,$submissionfrom,$grade_duedate,$grade,$description,$submission_type,$submissionstatus,$wrdlmit,$uniquefield)
     {
         global $DB,$CFG;
-        $check_uniquefield = $DB->get_record('customfield_data', array('charvalue' => $uniquefield));
+        $check_uniquefield = $DB->get_record('qbassign', array('uid' => $uniquefield));
         if(isset($check_uniquefield->id))
         { 
             //Update assignment details if unique field already present
-            $fieldinstance = $check_uniquefield->instanceid;
-
-            $check_coursemodulefield = $DB->get_record('course_modules', array('id' => $fieldinstance));
-            $assignid = $check_coursemodulefield->instance;
-
-            $getassignment_details = $DB->get_record('qbassign', array('id' => $assignid));
+            $check_coursemodulefield = $DB->get_record('course_modules', array('instance' => $check_uniquefield->id,'course'=>$courseid));
 
             //PASS our web service values to the lib file
             $formdata = (object) array(
@@ -146,7 +141,7 @@ class local_qubitsbook_external extends external_api {
             'requireallteammemberssubmit' =>0,
             'blindmarking' => 0,
             'markingworkflow' =>0,
-            'instance' => $getassignment_details->id,
+            'instance' => $check_uniquefield->id,
             'add' => 0,
             'update' => $check_coursemodulefield->id
             );
@@ -157,20 +152,20 @@ class local_qubitsbook_external extends external_api {
 
             if($submission_type == 'onlinetext')
             {
-                $sqlupdate = "UPDATE mdl_qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$getassignment_details->id;
+                $sqlupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$check_uniquefield->id;
                 $getpluginconfigtxt = $DB->execute($sqlupdate);
                 $submission_status = ($submissionstatus=='yes')?1:0;
 
-                $sqlwrdupdate = "UPDATE mdl_qbassign_plugin_config SET value=".$submission_status." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimitenabled' AND qbassignment=".$getassignment_details->id;
+                $sqlwrdupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=".$submission_status." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimitenabled' AND qbassignment=".$check_uniquefield->id;
                 $updatewrd = $DB->execute($sqlwrdupdate);
 
-                $sqlwrdmlmtupdate = "UPDATE mdl_qbassign_plugin_config SET value=".$wrdlmit." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimit' AND qbassignment=".$getassignment_details->id;
+                $sqlwrdmlmtupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=".$wrdlmit." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimit' AND qbassignment=".$check_uniquefield->id;
                 $updatewrdlmt = $DB->execute($sqlwrdmlmtupdate);                                          
             }   
             if($submission_filetype == 'onlinefile') 
             {
                 $submission_filestatus = ($submissionfilestatus=='yes')?1:0;
-                $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$getassignment_details->id));
+                $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
 
                 if(isset($getactive_online))
                 {                
@@ -192,7 +187,7 @@ class local_qubitsbook_external extends external_api {
                 }
                
                 $submissionfilelimit =  array(
-                'qbassignment' => $getassignment_details->id,
+                'qbassignment' => $check_uniquefield->id,
                 'plugin' => 'file',
                 'subtype' => 'qbassignsubmission',
                 'name' => 'maxfilesubmissions',
@@ -201,7 +196,7 @@ class local_qubitsbook_external extends external_api {
                 $onlinetext_flimit = $DB->insert_record('qbassign_plugin_config', $submissionfilelimit);
 
                 $submissionfiletype =  array(
-                'qbassignment' => $getassignment_details->id,
+                'qbassignment' => $check_uniquefield->id,
                 'plugin' => 'file',
                 'subtype' => 'qbassignsubmission',
                 'name' => 'filetypeslist',
@@ -209,11 +204,10 @@ class local_qubitsbook_external extends external_api {
                 );
                 $onlinetext_tyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfiletype);
 
-                //$returnbytes = getbytevalue('40mb');
-                $returnbytes = '2097152';
+                $returnbytes = self::getbytevalue('40mb');
 
                 $submissionfilebytetype =  array(
-                'qbassignment' => $getassignment_details->id,
+                'qbassignment' => $check_uniquefield->id,
                 'plugin' => 'file',
                 'subtype' => 'qbassignsubmission',
                 'name' => 'maxsubmissionsizebytes',
@@ -225,7 +219,7 @@ class local_qubitsbook_external extends external_api {
             {
                 //CODE BLOCK
                 $submission_codestatus = ($submissioncodestatus=='yes')?1:0;
-                $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$getassignment_details->id));
+                $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
                 if(isset($getactive_online))
                 {
                    $updateactivityonline = new stdClass();
@@ -236,7 +230,7 @@ class local_qubitsbook_external extends external_api {
                 else
                 {
                     $updateactivityonline =  array(
-                    'qbassignment' => $getassignment_details->id,
+                    'qbassignment' => $check_uniquefield->id,
                     'plugin' => 'codeblock',
                     'subtype' => 'qbassignsubmission',
                     'name' => 'enabled',
@@ -245,11 +239,9 @@ class local_qubitsbook_external extends external_api {
                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
                 }           
             } 
-
-            purge_all_caches();
             $lti_updated = [                        
                         'message'=>'Success update here',
-                        'assignment_id' =>$getassignment_details->id,
+                        'assignment_id' =>$check_uniquefield->id,
                         'uniquefield' => $uniquefield
                         ];
             return $lti_updated;
@@ -350,70 +342,31 @@ class local_qubitsbook_external extends external_api {
             $updatecoursemoduledata = new stdClass();
             $updatecoursemoduledata->id = $courseinsertid;
             $updatecoursemoduledata->instance = $returnid;
-            $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata); 
-
-            //Additional activities for online submission type
-            //$submission_type ='onlinetext';
-            //$submissionstatus = 'yes';
-            //$wrdlmit = '255';
-
-            /*$submission_filetype ='onlinefile';
-            $submissionfilestatus = 'yes';
-
-            $submission_codetype ='codeblock';
-            $submissioncodestatus = 'yes';*/
+            $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata);
 
             $wrdlmit = (isset($wrdlmit))?$wrdlmit:'';
 
             if($submission_type == 'onlinetext')
             {
-               $sqlupdate = "UPDATE mdl_qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$returnid;
+               $sqlupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$returnid;
                 $getpluginconfigtxt = $DB->execute($sqlupdate);
-
-
-               $submission_status = ($submissionstatus=='yes')?1:0;
-               //if($submission_status==1)
-               //{
-                   //$getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'onlinetex','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
-                  // print_r($getactive_online);
-                   /*if(isset($getactive_online))
-                   {
-                    
-                       $updateactivityonline = new stdClass();
-                       $updateactivityonline->id = $getactive_online->id;
-                       $updateactivityonline->value = $submission_status;           
-                       $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
-                   }
-                   else
-                   {*/ 
-                        /*$updatesactivityonline =  array(
-                        'qbassignment' => $returnid,
-                        'plugin' => 'onlinetex',
-                        'subtype' => 'qbassignsubmission',
-                        'name' => 'enabled',
-                        'value' => $submission_status
-                        );
-                        $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
-                   } */                  
-
-                    $submissionlimit =  array(
-                    'qbassignment' => $returnid,
-                    'plugin' => 'onlinetex',
-                    'subtype' => 'qbassignsubmission',
-                    'name' => 'wordlimit',
-                    'value' => $wrdlmit
-                    );
-                    $onlinetext_limit = $DB->insert_record('qbassign_plugin_config', $submissionlimit);
-
-                    $submissionlimits =  array(
-                    'qbassignment' => $returnid,
-                    'plugin' => 'onlinetex',
-                    'subtype' => 'qbassignsubmission',
-                    'name' => 'wordlimitenabled',
-                    'value' => $submission_status
-                    );
-                    $onlinetext_limiter = $DB->insert_record('qbassign_plugin_config', $submissionlimits);
-               //}                    
+                $submission_status = ($submissionstatus=='yes')?1:0;
+                $submissionlimit =  array(
+                'qbassignment' => $returnid,
+                'plugin' => 'onlinetex',
+                'subtype' => 'qbassignsubmission',
+                'name' => 'wordlimit',
+                'value' => $wrdlmit
+                );
+                $onlinetext_limit = $DB->insert_record('qbassign_plugin_config', $submissionlimit);
+                $submissionlimits =  array(
+                'qbassignment' => $returnid,
+                'plugin' => 'onlinetex',
+                'subtype' => 'qbassignsubmission',
+                'name' => 'wordlimitenabled',
+                'value' => $submission_status
+                );
+                $onlinetext_limiter = $DB->insert_record('qbassign_plugin_config', $submissionlimits);                                   
             }   
             if($submission_filetype == 'onlinefile') 
             {
@@ -457,8 +410,7 @@ class local_qubitsbook_external extends external_api {
                 );
                 $onlinetext_tyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfiletype);
 
-                //$returnbytes = getbytevalue('40mb');
-                $returnbytes = '2097152';
+                $returnbytes = self::getbytevalue('40mb');
 
                 $submissionfilebytetype =  array(
                 'qbassignment' => $returnid,
@@ -498,19 +450,7 @@ class local_qubitsbook_external extends external_api {
             $mod_id = $modl->id;
 
             $contxtl = $DB->get_record('context', array('instanceid'=>$mod_id));
-            $insertmeta =  array(
-                'fieldid' => 8,
-                'instanceid' => $mod_id, 
-                'charvalue' => $uniquefield,
-                'value' => $uniquefield,
-                'contextid' => $contxtl->id,
-                'timecreated' => time(),
-                'timemodified' => time(),
-                'valueformat' => 0
-            );
-            $insercustom = $DB->insert_record('customfield_data', $insertmeta);       
-
-            purge_all_caches();
+            $DB->set_field('qbassign', 'uid', $uniquefield, array('id' => $returnid));
             $lti_updated = [                        
                             'message'=>'Success here',
                             'assignment_id' =>$returnid,
@@ -538,101 +478,7 @@ class local_qubitsbook_external extends external_api {
         return $byteval;
     }
 
-    public static function getassignmentbysection($courseid,$moduleid)
-    {
-        global $DB,$CFG,$CONTEXT,$USER;
-        //Get QBassign course Module
-        $get_coursemodulelist = $DB->get_record('course_modules', array('id' => $moduleid));
-        $chapterid = $get_coursemodulelist->section;
-
-        //Get QBassign course Module
-        $get_coursemodulelist = $DB->get_record('course_sections', array('id' => $chapterid));
-        $assignment_list = explode(",",$get_coursemodulelist->sequence);
-
-        $returnarray = array();
-
-        foreach ($assignment_list as $listofactivity) {
-            //echo " LIST => ".$listofactivity;
-            $get_courseactivity = $DB->get_record('course_modules', array('id' => $listofactivity));
-            $getassign = $get_courseactivity->instance;
-
-            $get_courseassign = $DB->get_record('qbassign', array('id' => $getassign));
-            $sql = "SELECT * FROM `mdl_qbassign_plugin_config` WHERE `qbassignment`=".$getassign." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
-            $getpluginconfig = $DB->get_records_sql($sql);
-            $countsql = count($getpluginconfig);
-            if($countsql>0)
-            {
-                foreach($getpluginconfig as $config)
-                {
-                    if($config->plugin=='onlinetex')
-                    {
-                       $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
-
-                       $submissintype[] = array(
-                        'type'=> $config->plugin,
-                        'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
-                        ); 
-                    }
-                    if($config->plugin=='file')
-                    {
-                        $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
-
-                        $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_courseassign->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
-
-                           $submissintype[] = array(
-                            'type'=> $config->plugin,
-                            'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
-                            'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
-                            ); 
-                    }
-                }
-            }
-
-            $get_customfield = $DB->get_record('customfield_data', array('instanceid' => $listofactivity,'fieldid'=>8));
-            $customfield_activity = $get_customfield->value;
-
-            $contextsystem = context_module::instance($get_courseactivity->id);
-            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
-            if($checkenrol)
-            {
-                $returnarray[] = array(
-                'title' => $get_courseassign->name,
-                'activitydesc' => $get_courseassign->intro,
-                'duedate' => $get_courseassign->duedate,
-                'allowsubmissionsfromdate' => $get_courseassign->allowsubmissionsfromdate,
-                'id' => $getassign,
-                'uniquefield' => $customfield_activity,
-                'submissiontypes' => $submissintype
-                );
-            }
-        }
-
-        $context = context_course::instance($get_courseassign->course);
-        $roles = get_user_roles($context, $USER->id, true);
-        $role = key($roles);
-        $rolename = $roles[$role]->shortname;
-
-        //print_r($rolename);
-        $userdetails = array(
-            'userid' => $USER->id,
-            'email' => $USER->email,
-            'username' => $USER->username,
-            'sesskey' => $USER->sesskey,
-            'role' => $rolename
-        );
-
-        $coursedetails = array(
-            'courseid' => $courseid,
-            'section_name' => $get_coursemodulelist->name,
-            'section_id' => $get_coursemodulelist->section,
-            'summary' => $get_coursemodulelist->summary
-        );
-        echo '<pre>';
-        return json_encode(['status' => 1,'message' => 'success','userdetails'=>$userdetails,'coursedetails'=>$coursedetails,'assignmentdetails'=>$returnarray]);
-
-            
-    }
-
+    
 
     public static function getsingleassignment($uniquefield_assign)
     {
@@ -657,7 +503,7 @@ class local_qubitsbook_external extends external_api {
             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
 
             //Get submission type details (file,onlinetex,codeblock)
-            $sql = "SELECT * FROM `mdl_qbassign_plugin_config` WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
+            $sql = "SELECT * FROM ".$CFG->prefix."qbassign_plugin_config WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
             $getpluginconfig = $DB->get_records_sql($sql);
             $countsql = count($getpluginconfig);
             if($countsql>0)
@@ -715,7 +561,7 @@ class local_qubitsbook_external extends external_api {
             echo '<pre>';
 
 
-            $contextsystem = context_module::instance($customfield_activity);
+            $contextsystem = context_module::instance($customfield_activity); // course module
             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
             if($checkenrol)
             return json_encode(['status' => 1,'message' => 'success','userdetails'=>$userdetails,'assignmentdetails'=>$returnarray]);
@@ -744,20 +590,17 @@ class local_qubitsbook_external extends external_api {
         require_once('../../config.php');
         global $DB,$CFG,$USER,$CONTEXT;
        
-        //Get activity unique field details
-        $get_customfield = $DB->get_record('customfield_data', array('charvalue' => $uniquefield));
-        //print_r($get_customfield->id);die();
+        //Get activity unique field details       
+        $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
 
-        if($get_customfield->id!='')
+        if($get_assignmentdetails->id!='')
         { 
-            $customfield_activity = $get_customfield->instanceid;
+            $assignid = $get_assignmentdetails->id;
+            $courseid = $get_assignmentdetails->course;
 
             //Get activity Module details
-            $get_coursefield = $DB->get_record('course_modules', array('id' => $customfield_activity));
-            $instance_id = $get_coursefield->instance;
-
-            //Get assignment Module details
-            $get_assignmentdetails = $DB->get_record('qbassign', array('id' => $instance_id));
+            $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid,'course' => $courseid));
+            $moduleid = $get_coursefield->id;
 
             //Get assignment submission details
             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
@@ -765,7 +608,7 @@ class local_qubitsbook_external extends external_api {
             $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
 
             //Get submission type details (file,onlinetex,codeblock)
-            $sql = "SELECT * FROM `mdl_qbassign_plugin_config` WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
+            $sql = "SELECT * FROM ".$CFG->prefix."qbassign_plugin_config WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
             $getpluginconfig = $DB->get_records_sql($sql);
             $countsql = count($getpluginconfig);
             if($countsql>0)
@@ -821,7 +664,7 @@ class local_qubitsbook_external extends external_api {
                 'submissiontypes' => $submissintype
             );
 
-            $contextsystem = context_module::instance($customfield_activity);
+            $contextsystem = context_module::instance($moduleid);
             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
             if($checkenrol)
             { 
