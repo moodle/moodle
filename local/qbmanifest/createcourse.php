@@ -265,7 +265,9 @@ class local_qbcourse extends external_api {
 
                 for($a=0;$a<count($activities);$a++){
 
-                      $cm_id = self::createqubitspage($cid,$activities[$a]->title,$activities[$a]->route, $activities[$a]->uid,$sec->id);   
+                    if($activities[$a]->type == 'page'){  
+
+                        $cm_id = self::createqubitspage($cid,$activities[$a]->title,$activities[$a]->route, $activities[$a]->uid,$sec->id);   
 
                         $acts = $acts.','.$cm_id;
                     }

@@ -58,4 +58,4 @@ phpcs.xml
 jsconfig.json
 
 /theme/qubitsalpha/pix/logo/*
-/local/qbmanifest/upload/*.json
+/local/qbmanifest/upload/*
