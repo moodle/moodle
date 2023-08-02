@@ -22,6 +22,7 @@ use context_course;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\boolean_select;
+use core_reportbuilder\local\filters\category;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\tags;
@@ -219,6 +220,11 @@ class courses_test extends core_reportbuilder_testcase {
         return [
             // Category.
             'Filter category' => ['course_category:name', [
+                'course_category:name_operator' => category::NOT_EQUAL_TO,
+                'course_category:name_value' => -1,
+            ], true],
+            'Filter category (no match)' => ['course_category:name', [
+                'course_category:name_operator' => category::EQUAL_TO,
                 'course_category:name_value' => -1,
             ], false],
             'Filter category name' => ['course_category:text', [
