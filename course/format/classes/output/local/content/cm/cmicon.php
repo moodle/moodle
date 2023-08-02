@@ -79,6 +79,7 @@ class cmicon implements named_templatable, renderable {
         $iconurl = $mod->get_icon_url();
         $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
         $data = [
+            'uservisible' => $mod->uservisible,
             'url' => $mod->url,
             'icon' => $iconurl,
             'iconclass' => $iconclass,
