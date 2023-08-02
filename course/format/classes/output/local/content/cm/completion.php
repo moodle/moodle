@@ -102,16 +102,21 @@ class completion implements named_templatable, renderable {
      * @return array the completion dialog exported for template
      */
     private function get_completion_dialog(\renderer_base $output, stdClass $completioninfo): array {
+        $dialogcontent = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
+        $buttoncontent = get_string('completionmenuitem', 'completion');
+        $buttonclass = '';
+
         if ($completioninfo->istrackeduser) {
             $buttoncontent = get_string('todo', 'completion');
-        } else {
-            $buttoncontent = get_string('completionmenuitem', 'completion');
+            if ($completioninfo->overallcomplete) {
+                $buttoncontent = $output->pix_icon('i/checked', '') . " " . get_string('completion_manual:done', 'core_course');
+                $buttonclass = 'btn-success';
+            }
         }
-        $content = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
 
-        $completiondialog = new dropdown_dialog($buttoncontent, $content, [
+        $completiondialog = new dropdown_dialog($buttoncontent, $dialogcontent, [
             'classes' => 'completion-dropdown',
-            'buttonclasses' => 'btn btn-sm btn-outline-secondary dropdown-toggle',
+            'buttonclasses' => 'btn btn-sm dropdown-toggle icon-no-margin ' . $buttonclass,
             'dropdownposition' => dropdown_dialog::POSITION['end'],
         ]);
 

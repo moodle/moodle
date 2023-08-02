@@ -28954,6 +28954,7 @@ span.editinstructions .alert-link {
 }
 
 /* Variables definition*/
+/* Functions/Mixins definition */
 /* Activity & Block 'add' buttons */
 .activity-add,
 .block-add {
@@ -29188,31 +29189,147 @@ span.editinstructions .alert-link {
   font-size: 0.875em;
   padding: 0;
 }
-.activity-item .activity-info {
+.activity-item .activity-completion {
   grid-area: completion;
   justify-self: end;
 }
-.activity-item .activity-info button,
-.activity-item .activity-info a[role=button] {
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
+.activity-item .activity-completion button.btn,
+.activity-item .activity-completion a[role=button].btn {
+  border: 1px solid #ced4da;
   font-weight: bold;
+  border-radius: 0.5rem;
+}
+.activity-item .activity-completion button.btn .icon,
+.activity-item .activity-completion a[role=button].btn .icon {
+  font-size: inherit;
+}
+.activity-item .activity-completion button.btn-primary,
+.activity-item .activity-completion a[role=button].btn-primary {
+  color: #0f6cbf;
+  background-color: #cfe2f2;
+  border-color: #cfe2f2;
+}
+.activity-item .activity-completion button.btn-primary hr,
+.activity-item .activity-completion a[role=button].btn-primary hr {
+  border-top-color: #bbd6ed;
+}
+.activity-item .activity-completion button.btn-primary .alert-link,
+.activity-item .activity-completion a[role=button].btn-primary .alert-link {
+  color: #0b5190;
+}
+.activity-item .activity-completion button.btn-secondary,
+.activity-item .activity-completion a[role=button].btn-secondary {
+  color: #ced4da;
+  background-color: #f5f6f8;
+  border-color: #f5f6f8;
+}
+.activity-item .activity-completion button.btn-secondary hr,
+.activity-item .activity-completion a[role=button].btn-secondary hr {
+  border-top-color: #e6e9ee;
+}
+.activity-item .activity-completion button.btn-secondary .alert-link,
+.activity-item .activity-completion a[role=button].btn-secondary .alert-link {
+  color: #b1bbc4;
+}
+.activity-item .activity-completion button.btn-success,
+.activity-item .activity-completion a[role=button].btn-success {
+  color: #357a32;
+  background-color: #d7e4d6;
+  border-color: #d7e4d6;
+}
+.activity-item .activity-completion button.btn-success hr,
+.activity-item .activity-completion a[role=button].btn-success hr {
+  border-top-color: #c8dac7;
+}
+.activity-item .activity-completion button.btn-success .alert-link,
+.activity-item .activity-completion a[role=button].btn-success .alert-link {
+  color: #255623;
+}
+.activity-item .activity-completion button.btn-info,
+.activity-item .activity-completion a[role=button].btn-info {
+  color: #008196;
+  background-color: #cce6ea;
+  border-color: #cce6ea;
+}
+.activity-item .activity-completion button.btn-info hr,
+.activity-item .activity-completion a[role=button].btn-info hr {
+  border-top-color: #badde3;
+}
+.activity-item .activity-completion button.btn-info .alert-link,
+.activity-item .activity-completion a[role=button].btn-info .alert-link {
+  color: #005563;
+}
+.activity-item .activity-completion button.btn-warning,
+.activity-item .activity-completion a[role=button].btn-warning {
+  color: #f0ad4e;
+  background-color: #fcefdc;
+  border-color: #fcefdc;
+}
+.activity-item .activity-completion button.btn-warning hr,
+.activity-item .activity-completion a[role=button].btn-warning hr {
+  border-top-color: #fae4c5;
+}
+.activity-item .activity-completion button.btn-warning .alert-link,
+.activity-item .activity-completion a[role=button].btn-warning .alert-link {
+  color: #ec971f;
+}
+.activity-item .activity-completion button.btn-danger,
+.activity-item .activity-completion a[role=button].btn-danger {
+  color: #ca3120;
+  background-color: #f4d6d2;
+  border-color: #f4d6d2;
+}
+.activity-item .activity-completion button.btn-danger hr,
+.activity-item .activity-completion a[role=button].btn-danger hr {
+  border-top-color: #efc3be;
+}
+.activity-item .activity-completion button.btn-danger .alert-link,
+.activity-item .activity-completion a[role=button].btn-danger .alert-link {
+  color: #9e2619;
+}
+.activity-item .activity-completion button.btn-light,
+.activity-item .activity-completion a[role=button].btn-light {
+  color: #f8f9fa;
+  background-color: #fefefe;
+  border-color: #fefefe;
+}
+.activity-item .activity-completion button.btn-light hr,
+.activity-item .activity-completion a[role=button].btn-light hr {
+  border-top-color: #f1f1f1;
+}
+.activity-item .activity-completion button.btn-light .alert-link,
+.activity-item .activity-completion a[role=button].btn-light .alert-link {
+  color: #dae0e5;
+}
+.activity-item .activity-completion button.btn-dark,
+.activity-item .activity-completion a[role=button].btn-dark {
+  color: #343a40;
+  background-color: #d6d8d9;
+  border-color: #d6d8d9;
+}
+.activity-item .activity-completion button.btn-dark hr,
+.activity-item .activity-completion a[role=button].btn-dark hr {
+  border-top-color: #c9cbcd;
+}
+.activity-item .activity-completion button.btn-dark .alert-link,
+.activity-item .activity-completion a[role=button].btn-dark .alert-link {
+  color: #1d2124;
 }
 @media (max-width: 575.98px) {
-  .activity-item .activity-info {
+  .activity-item .activity-completion {
     width: 100%;
     margin-top: 0.5rem;
   }
-  .activity-item .activity-info button {
+  .activity-item .activity-completion button {
     width: 100%;
   }
 }
-.activity-item .activity-info .completion-dialog {
+.activity-item .activity-completion .completion-dialog {
   color: #495057;
   font-size: 0.8203125rem;
   min-width: 12rem;
 }
-.activity-item .activity-info .completion-dialog .icon {
+.activity-item .activity-completion .completion-dialog .icon {
   font-size: 0.8203125rem;
   width: 0.8203125rem;
   height: 0.8203125rem;
@@ -29312,20 +29429,6 @@ span.editinstructions .alert-link {
 
 .section .draggable .activity-item .dragicon {
   display: none;
-}
-
-.automatic-completion-conditions .badge {
-  font-size: 80%;
-  padding: 0.5rem;
-  margin-top: 0.25rem;
-}
-.automatic-completion-conditions .badge .icon {
-  width: 0.7rem;
-  height: 0.7rem;
-  font-size: 0.7rem;
-}
-.automatic-completion-conditions .badge:first-child {
-  margin-top: 0;
 }
 
 /* Activity divider */
