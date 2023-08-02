@@ -21,9 +21,9 @@ Feature: Using the forum activities which support point scale
       | activity    | forum                  |
       | name        | Test forum name        |
       | idnumber    | forum1                 |
-    And the following forum discussions exist in course "Course 1":
-      | user     | forum           | name               | message              |
-      | student1 | Test forum name | Discussion subject | Test post in forum 1 |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name               | message              |
+      | student1 | forum1 | Discussion subject | Test post in forum 1 |
 
   @javascript
   Scenario: Forum rescale grade should not be possible when users are graded

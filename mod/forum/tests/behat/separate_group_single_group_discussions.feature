@@ -39,9 +39,9 @@ Feature: Posting to groups in a separate group discussion when restricted to gro
       | G1       | G1G2    |
       | G2       | G2G1    |
     And the following "activities" exist:
-      | activity | course | idnumber | name                  | type    | groupmode | grouping |
-      | forum    | C1     | 00001    | Multiple groups forum | general | 1         | G1       |
-      | forum    | C1     | 00001    | Single groups forum   | general | 1         | G2       |
+      | activity | course | idnumber | name                  | intro                      | type    | section | groupmode | grouping |
+      | forum    | C1     | 00001    | Multiple groups forum | Standard forum description | general | 1       | 1         | G1       |
+      | forum    | C1     | 00001    | Single groups forum   | Standard forum description | general | 1       | 1         | G2       |
 
   Scenario: Teacher with accessallgroups can post in all groups
     Given I am on the "Multiple groups forum" "forum activity" page logged in as teacher1
