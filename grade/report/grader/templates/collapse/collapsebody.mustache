@@ -45,9 +45,19 @@
         <ul class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1">
             {{>gradereport_grader/collapse/collapseresults}}
         </ul>
-        <div class="d-flex flex-row justify-content-end mt-2">
-            <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
-            <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+        <div class="d-flex px-1 mt-2">
+            <div class="d-flex align-items-center form-check">
+                <input disabled id="check-all-input" class="btn form-check-input" type="checkbox" value="" role="option" data-action="selectall" aria-labelledby="check-all">
+                <label id="check-all" class="selected-option-info text-truncate form-check-label" tabindex="-1" aria-label="{{#str}}selectall, core{{/str}}">
+                <span class="selected-option-text w-100 p-0">
+                    {{#str}}selectall, core{{/str}}
+                </span>
+                </label>
+            </div>
+            <div class="flex-row ml-auto">
+                <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+                <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+            </div>
         </div>
     </form>
 </div>
