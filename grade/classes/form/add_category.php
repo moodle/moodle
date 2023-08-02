@@ -60,10 +60,7 @@ class add_category extends dynamic_form {
         $courseid = $this->optional_param('courseid', null, PARAM_INT);
         $id = $this->optional_param('category', null, PARAM_INT);
 
-        if (!isset($id) || $id !== -1) {
-            if (!$gradecategory = grade_category::fetch(['id' => $id, 'courseid' => $courseid])) {
-                throw new \moodle_exception('invalidcategory');
-            }
+        if ($gradecategory = grade_category::fetch(['id' => $id, 'courseid' => $courseid])) {
             $gradecategory->apply_forced_settings();
             $category = $gradecategory->get_record_data();
             // Set parent.
@@ -257,8 +254,8 @@ class add_category extends dynamic_form {
         }
         $url = new moodle_url('/grade/edit/tree/category.php', $params);
         $url = $this->gpr->add_url_params($url);
-        $url = '<a href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
-        $mform->addElement('static', 'test', $url);
+        $url = '<a class="showadvancedform" href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
+        $mform->addElement('static', 'advancedform', $url);
 
         // Add return tracking info.
         $this->gpr->add_mform_elements($mform);
