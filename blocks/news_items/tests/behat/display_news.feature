@@ -18,17 +18,12 @@ Feature: Latest announcements block displays the course latest news
     And the following "blocks" exist:
       | blockname  | contextlevel | reference | pagetypepattern | defaultregion |
       | news_items | Course       | C1        | course-view-*   | side-pre      |
-    And I am on the "Course 1" Course page logged in as teacher1
-    When I add a new topic to "Announcements" forum with:
-      | Subject | Discussion One |
-      | Message | Not important |
-    And I add a new topic to "Announcements" forum with:
-      | Subject | Discussion Two |
-      | Message | Not important |
-    And I add a new topic to "Announcements" forum with:
-      | Subject | Discussion Three |
-      | Message | Not important |
-    And I am on "Course 1" course homepage
+    And the following "mod_forum > discussions" exist:
+      | user     | forum         | name             | message       |
+      | teacher1 | Announcements | Discussion One   | Not important |
+      | teacher1 | Announcements | Discussion Two   | Not important |
+      | teacher1 | Announcements | Discussion Three | Not important |
+    When I am on the "Course 1" Course page logged in as teacher1
     Then I should see "Discussion One" in the "Latest announcements" "block"
     And I should see "Discussion Two" in the "Latest announcements" "block"
     And I should see "Discussion Three" in the "Latest announcements" "block"
