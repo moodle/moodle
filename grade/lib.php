@@ -2495,51 +2495,35 @@ class grade_structure {
      * Sets status icons for the grade.
      *
      * @param array $element array with grade item info
-     * @return string status icons container HTML
+     * @return string|null status icons container HTML
      */
-    public function set_grade_status_icons(array $element): string {
+    public function set_grade_status_icons(array $element): ?string {
         global $OUTPUT;
 
-        $attributes = ['class' => 'text-muted'];
-
-        $statusicons = '';
-        if ($element['object']->is_hidden()) {
-            $statusicons .= $OUTPUT->pix_icon('i/show', grade_helper::get_lang_string('hidden', 'grades'),
-                'moodle', $attributes);
-        }
-
-        if ($element['object']->is_locked()) {
-            $statusicons .= $OUTPUT->pix_icon('i/lock', grade_helper::get_lang_string('locked', 'grades'),
-                'moodle', $attributes);
-        }
+        $context = [
+            'hidden' => $element['object']->is_hidden(),
+            'locked' => $element['object']->is_locked(),
+        ];
 
         if ($element['object'] instanceof grade_grade) {
             $grade = $element['object'];
-            if ($grade->is_overridden()) {
-                $statusicons .= $OUTPUT->pix_icon('i/overriden_grade',
-                    grade_helper::get_lang_string('overridden', 'grades'), 'moodle', $attributes);
-            }
-
-            if ($grade->is_excluded()) {
-                $statusicons .= $OUTPUT->pix_icon('i/excluded', grade_helper::get_lang_string('excluded', 'grades'),
-                    'moodle', $attributes);
-            }
+            $context['overridden'] = $grade->is_overridden();
+            $context['excluded'] = $grade->is_excluded();
+            $context['feedback'] = !empty($grade->feedback) && $grade->load_grade_item()->gradetype != GRADE_TYPE_TEXT;
         }
 
-        $class = 'grade_icons data-collapse_gradeicons';
+        // Early return if there aren't any statuses that we need to show.
+        if (!in_array(true, $context)) {
+            return null;
+        }
+
+        $context['classes'] = 'grade_icons data-collapse_gradeicons';
+
         if (isset($element['type']) && ($element['type'] == 'category')) {
-            $class = 'category_grade_icons';
+            $context['classes'] = 'category_grade_icons';
         }
 
-        if (!empty($grade->feedback) && $grade->load_grade_item()->gradetype != GRADE_TYPE_TEXT) {
-            $statusicons .= $OUTPUT->pix_icon('i/asterisk', grade_helper::get_lang_string('feedbackprovided', 'grades'),
-                'moodle', $attributes);
-        }
-
-        if ($statusicons) {
-            $statusicons = $OUTPUT->container($statusicons, $class);
-        }
-        return $statusicons;
+        return $OUTPUT->render_from_template('core_grades/status_icons', $context);
     }
 
     /**

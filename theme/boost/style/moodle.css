@@ -35399,6 +35399,18 @@ p.arrow_button {
   font-size: 90%;
 }
 
+#fitem_id_submitbutton {
+  padding-right: 2em;
+}
+
+.gradestatus {
+  padding-top: 10px;
+}
+
+.gradestatus .icon {
+  margin-right: 1rem;
+}
+
 .columns-autoflow-1to1to1 {
   column-count: 3;
 }

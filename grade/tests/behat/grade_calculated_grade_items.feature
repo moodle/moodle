@@ -45,10 +45,10 @@ Feature: Calculated grade items can be used in the gradebook
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
-      | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
+      | Course total   | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
 
   @javascript
   Scenario: Changing max grade for a category item with a calculation that has existing grades will display the same points with the new max grade values immediately.
@@ -75,10 +75,10 @@ Feature: Calculated grade items can be used in the gradebook
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
-      | Course total                        | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 37.50  | 0–50  | 75.00 %    | -                            |
+      | Course total   | -                 | 37.50  | 0–50  | 75.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 40 |
@@ -88,16 +88,16 @@ Feature: Calculated grade items can be used in the gradebook
     And I navigate to "View > User report" in the course gradebook
     When I click on "Student 1" in the "user" search widget
     Then the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–40  | 93.75 %    | -                            |
-      | Course total                        | -                 | 37.50  | 0–40  | 93.75 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 37.50  | 0–40  | 93.75 %    | -                            |
+      | Course total   | -                 | 37.50  | 0–40  | 93.75 %    | -                            |
     And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 32.50  | 0–40  | 81.25 %    | -                            |
-      | Course total                        | -                 | 32.50  | 0–40  | 81.25 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 32.50  | 0–40  | 81.25 %    | -                            |
+      | Course total   | -                 | 32.50  | 0–40  | 81.25 %    | -                            |
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
       | Min and max grades used in calculation | Initial min and max grades |
@@ -105,16 +105,16 @@ Feature: Calculated grade items can be used in the gradebook
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–40  | 93.75 %    | -                            |
-      | Course total                        | -                 | 37.50  | 0–40  | 93.75 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 37.50  | 0–40  | 93.75 %    | -                            |
+      | Course total   | -                 | 37.50  | 0–40  | 93.75 %    | -                            |
     And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
-      | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 32.50  | 0–40  | 81.25 %    | -                            |
-      | Course total                        | -                 | 32.50  | 0–40  | 81.25 %    | -                            |
+      | Grade item     | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
+      | grade item 1   | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
+      | Calc cat total | 100.00 %          | 32.50  | 0–40  | 81.25 %    | -                            |
+      | Course total   | -                 | 32.50  | 0–40  | 81.25 %    | -                            |
 
   @javascript
   Scenario: Values in calculated grade items are not always out of one hundred

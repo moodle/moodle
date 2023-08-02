@@ -103,10 +103,10 @@ Feature: View gradebook when single item scales are used
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                                       | Grade          | Range       | Contribution to course total |
-      | Test assignment one                              | Ace!           | Ace!–Ace!   | <contrib1>                   |
-      | Sub category (<aggregation>) total<aggregation>. | <cattotal1>    | 0–100       | -                            |
-      | Course total<aggregation>.                       | <coursetotal1> | 0–100       | -                            |
+      | Grade item                         | Grade          | Range       | Contribution to course total |
+      | Test assignment one                | Ace!           | Ace!–Ace!   | <contrib1>                   |
+      | Sub category (<aggregation>) total | <cattotal1>    | 0–100       | -                            |
+      | Course total                       | <coursetotal1> | 0–100       | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                                             | Max grade |
