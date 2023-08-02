@@ -23,6 +23,8 @@
  */
 
 
+use core_grades\form\add_item;
+
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php';
@@ -106,7 +108,7 @@ $item->cancontrolvisibility = $grade_item->can_control_visibility();
 
 $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
 
-$simpleform = new \core_grades\form\add_item(null, ['itemid' => $grade_item->id, 'courseid' => $courseid, 'gpr' => $gpr]);
+$simpleform = new add_item(null, ['itemid' => $grade_item->id, 'courseid' => $courseid, 'gpr' => $gpr]);
 if ($simpledata = $simpleform->get_data()) {
     $mform->set_data($simpledata);
 }
