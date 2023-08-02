@@ -23,9 +23,9 @@ Feature: Guest and not logged users could see the option to add new post or repl
     Given the following "activities" exist:
       | activity | name       | course | idnumber | type   |
       | forum    | Forum      | C1     | forum    | <type> |
-    And I add a new discussion to "Forum" forum with:
-      | Subject | Forum discussion 1 |
-      | Message | How awesome is this forum discussion? |
+    And the following "mod_forum > discussions" exist:
+      | user    | forum | name               | message                               |
+      | teacher | forum | Forum discussion 1 | How awesome is this forum discussion? |
     And I log out
     And I am on "Course 1" course homepage
     When I press "Access as a guest"
@@ -56,10 +56,10 @@ Feature: Guest and not logged users could see the option to add new post or repl
   Scenario: As a not enrolled guest I don't see the option to add a new discussion in a blog type forum
     Given the following "activities" exist:
       | activity | name  | course | idnumber | type   |
-      | forum    | Forum | C1     | forum    | blog |
-    And I add a new discussion to "Forum" forum with:
-      | Subject | Forum discussion 1 |
-      | Message | How awesome is this forum discussion? |
+      | forum    | Forum | C1     | forum    | blog   |
+    And the following "mod_forum > discussions" exist:
+      | user    | forum | name               | message                               |
+      | teacher | forum | Forum discussion 1 | How awesome is this forum discussion? |
     And I log out
     And I am on "Course 1" course homepage
     When I press "Access as a guest"
@@ -74,9 +74,9 @@ Feature: Guest and not logged users could see the option to add new post or repl
     And the following "activities" exist:
       | activity | name       | course | idnumber | type   |
       | forum    | Forum      | C1     | forum    | <type> |
-    And I add a new discussion to "Forum" forum with:
-      | Subject | Forum discussion 1 |
-      | Message | How awesome is this forum discussion? |
+    And the following "mod_forum > discussions" exist:
+      | user    | forum | name               | message                               |
+      | teacher | forum | Forum discussion 1 | How awesome is this forum discussion? |
     And I log out
     And I am on "Course 1" course homepage
     When I press "Access as a guest"
@@ -125,9 +125,9 @@ Feature: Guest and not logged users could see the option to add new post or repl
     And the following "activities" exist:
       | activity | name       | course | idnumber | type   |
       | forum    | Forum      | C1     | forum    | blog |
-    And I add a new discussion to "Forum" forum with:
-      | Subject | Forum discussion 1 |
-      | Message | How awesome is this forum discussion? |
+    And the following "mod_forum > discussions" exist:
+      | user    | forum | name               | message                               |
+      | teacher | forum | Forum discussion 1 | How awesome is this forum discussion? |
     And I log out
     And I am on "Course 1" course homepage
     When I press "Access as a guest"
