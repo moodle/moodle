@@ -20,9 +20,10 @@ Feature: Edited forum posts handle tags correctly
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And the following forum discussions exist in course "Course 1":
-      | user     | forum           | name                 | message              |
-      | teacher1 | Test forum name | Teacher post subject | Teacher post message |
+      | idnumber | forum1          |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name                 | message              |
+      | teacher1 | forum1 | Teacher post subject | Teacher post message |
 
   @javascript
   Scenario: Forum post edition of custom tags works as expected
