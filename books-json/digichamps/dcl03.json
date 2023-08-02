@@ -1,0 +1,232 @@
+[
+	{
+	  "book": {
+		"name": "Computer Science and Programming",
+		"code": "DCL03",
+		"category": "DigiChamps",
+		"categorycode": "DC",
+		"summary": ".",
+		"otherfields": {
+		  "level": "3",
+		  "cardcolour": "#215caa"
+		},
+		"chapters": [
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 1: Computing Devices",
+			"type": "topic",
+			"uid": "DCL03-TP1-000",
+			"children": [
+			  {
+				"title": "Unit 1 Summary",
+				"uid": "DCL03-TP1-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U01_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "1.1 - Computing System",
+				"uid": "DCL03-TP1-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U01_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "1.2 - Using The Computer",
+				"uid": "DCL03-TP1-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U01_S02",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 2: Internet and Emailing",
+			"type": "topic",
+			"uid": "DCL03-TP2-000",
+			"children": [
+			   {
+				"title": "Unit 2 Summary",
+				"uid": "DCL03-TP2-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U02_Intro"
+			  },
+			  {
+				"title": "2.1 - Internet",
+				"uid": "DCL03-TP2-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U02_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "2.2 - Emailing",
+				"uid": "DCL03-TP2-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U02_S02",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 3: Getting Started with TinkerCAD",
+			"type": "topic",
+			"uid": "DCL03-TP3-000",
+			"children": [
+				{
+				"title": "Unit 3 Summary",
+				"uid": "DCL03-TP3-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "3.1 - 3D Printing",
+				"uid": "DCL03-TP3-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "3.2 - Basic 3D Shapes In TinkerCAD",
+				"uid": "DCL03-TP3-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "3.3 - Views In TinkerCAD",
+				"uid": "DCL03-TP3-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL02_U03_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "3.4 - Basic Control",
+				"uid": "DCL03-TP3-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 4: SmartArt and Text",
+			"type": "topic",
+			"uid": "DCL03-TP4-000",
+			"children": [
+			  {
+				"title": "Unit 4 Tux Magic",
+				"uid": "DCL03-TP4-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "4.1 - SmartArt",
+				"uid": "DCL03-TP4-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "4.2 - SmartArt To Text And Vice Versa",
+				"uid": "DCL03-TP4-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "4.3 - SmartArt Process",
+				"uid": "DCL03-TP4-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S03",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 5: Documenting with Microsoft Word",
+			"type": "topic",
+			"uid": "DCL03-TP5-000",
+			"children": [
+			  {
+				"title": "Unit 5 Summary",
+				"uid": "DCL03-TP5-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "5.1 - UnNumbered Lists",
+				"uid": "DCL03-TP5-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "5.2 - Numbered Lists",
+				"uid": "DCL03-TP5-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "5.3 - Icons And Styles",
+				"uid": "DCL03-TP5-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "5.4 - 3D Models And SmartArt",
+				"uid": "DCL03-TP5-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL03/DCL03-TP1-000.mdx",
+			"title": "Unit 6: Fun with Data",
+			"type": "topic",
+			"uid": "DCL03-TP4-000",
+			"children": [
+			  {
+				"title": "Unit 6 Summary",
+				"uid": "DCL03-TP6-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "6.1 - Plotting Data",
+				"uid": "DCL03-TP6-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "6.2 - Data Says Something",
+				"uid": "DCL03-TP6-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "6.3 - Are These Related?",
+				"uid": "DCL03-TP6-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S03",
+				"type": "page"
+			  }
+			]
+		  }
+		]
+	  }
+	}
+  ]

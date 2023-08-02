@@ -43,11 +43,11 @@
 #searchresults a,
 .content a:link,
 a:visited,
-a>.hljs {
+a > .hljs {
   color: var(--links);
 }
 
-a:hover>.hljs {
+a:hover > .hljs {
   text-decoration: underline;
 }
 
@@ -55,7 +55,7 @@ pre {
   position: relative;
 }
 
-pre>.buttons {
+pre > .buttons {
   position: absolute;
   z-index: 100;
   right: 0;
@@ -68,11 +68,11 @@ pre>.buttons {
   transition: visibility 0.1s linear, opacity 0.1s linear;
 }
 
-pre>.buttons i {
+pre > .buttons i {
   margin-left: 8px;
 }
 
-pre>.buttons button {
+pre > .buttons button {
   cursor: inherit;
   margin: 0 5px;
   padding: 3px 5px;
@@ -88,12 +88,12 @@ pre>.buttons button {
 }
 
 @media (pointer: coarse) {
-  pre>.buttons button {
+  pre > .buttons button {
     padding: 0.3rem 1rem;
   }
 }
 
-pre>code {
+pre > code {
   padding: 1rem;
 }
 
@@ -101,7 +101,7 @@ pre>code {
   padding: 0;
 }
 
-pre>.result {
+pre > .result {
   margin-top: 10px;
   background-color: #343232;
   color: #fefefe;
@@ -180,7 +180,9 @@ h6:target:before {
 .content main {
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--content-max-width);
+  /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width); 
+  /* max-width: var(--content-max-width); */
+  max-width: 750px;
 }
 
 .content ol,
@@ -240,11 +242,16 @@ h6:target:before {
 
 blockquote {
   margin: 20px 0;
-  padding: 0 0 0 0 !important;
+  padding: 0 20px;
   color: #000;
   background-color: #f1f6f9;
   border-top: 0.1em solid #e0ecf1;
   border-bottom: 0.1em solid #e0ecf1;
+}
+
+blockquote p {
+  margin: 0 20px;
+  margin-top: 0px;
 }
 
 :root {
@@ -259,7 +266,6 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png) no-repeat;
   background-size: contain;
   width: 118px;
   height: 79px;
@@ -274,6 +280,9 @@ body {
   border-radius: 30px;
   position: relative;
   padding-left: 80px;
+}
+.content h1:not(.menu-title.heading-title) {
+  padding-left: 20px;
 }
 
 h1:target:before,
@@ -316,7 +325,7 @@ pre {
   margin: 0.4em 0;
 }
 
-pre~p {
+pre ~ p {
   margin-top: 2em;
   margin-bottom: 0;
 }
@@ -558,34 +567,25 @@ code {
   min-height: 300px;
   overflow-y: scroll;
 }
-.rpv-core__textbox{
-  width: 100% !important;
-}
 
 .error404 {
-  font-family: 'Calligraffitti', cursive;
+  font-family: "Calligraffitti", cursive;
   font-weight: 700;
-  font-size: 13rem !important;
+  font-size: 13rem;
   text-shadow: -15px 5px 20px #ced0d3;
   letter-spacing: 0.02em;
   text-align: center;
-  color: #47BBB6;
-  text-shadow: 5px 5px 0px #FFB650,
-    10px 10px 0px #FFD662,
-    15px 15px 0px #FF80BF,
-    20px 20px 0px #EF5097,
-    25px 25px 0px #6868AC,
-    30px 30px 0px #90B1E0;
+  color: #47bbb6;
+  text-shadow: 5px 5px 0px #ffb650, 10px 10px 0px #ffd662, 15px 15px 0px #ff80bf,
+    20px 20px 0px #ef5097, 25px 25px 0px #6868ac, 30px 30px 0px #90b1e0;
 }
 
 .notavailable {
   text-align: center;
-  font-size: 35px !important;
-  color: #fff;
+  background-color: #47bbb6;
+  color: white;
   padding: 10px;
   border-radius: 35px;
-  font-weight:600;
-  background-color: #47BBB6;
 }
 
 .react-pdf-viewer-Toolbar {
@@ -599,7 +599,7 @@ code {
 }
 
 .react-pdf-Toolbar {
-  padding: 0px 2px
+  padding: 0px 2px;
 }
 
 .react-pdf-fullscreen {
@@ -609,7 +609,7 @@ code {
 
 .content .title a {
   color: white;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -641,4 +641,8 @@ code {
 .MuiButtonBase-root.ai-help-button:hover {
   color: #0f6cbf;
   border-color: #747474;
+}
+
+.ace-dracula .ace_print-margin {
+  background: none !important;
 }

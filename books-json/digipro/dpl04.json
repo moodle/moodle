@@ -1,0 +1,173 @@
+[
+	{
+		"book": {
+			"name": "Computer Science and Programming",
+			"code": "DPL04",
+			"category": "DigiPro",
+			"categorycode": "DP",
+			"summary":".",			
+			"otherfields":
+				{
+				"level": "4",
+				"cardcolour":"#ff744d"
+				},
+			"chapters": [
+			      {
+					"route": "book/DPL04/DPL04-TP1-000.mdx",
+					"title": "Unit 1: Getting Started",
+					"type": "topic",
+				    "uid": "DPL04-TP1-000",
+					"children": [
+					   {
+						    "title": "Unit 1 Summary",
+							"uid": "DPL04-TP1-CHDRN1",
+							"description": "",
+							"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_Intro",
+							"type": "page"
+					   },
+					   {
+						    "title": "1.1 - scratch and its interface",
+							"uid": "DPL04-TP1-CHDRN2",
+							"description": "",
+							"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S01",
+							"type": "page"
+					   },
+					   {
+						"title": "1.2 - save and share",
+						"uid": "DPL04-TP1-CHDRN3",
+						"description": "",
+						"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S02",
+						"type": "page"
+				   },
+				   {
+					"title": "1.3 - the stage",
+					"uid": "DPL04-TP1-CHDRN4",
+					"description": "",
+					"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S03",
+					"type": "page"
+			   },
+			   {
+				"title": "Animate the Sprite",
+				"uid": "DPL04-TP1-CHDRN5",
+				"description": "",
+				"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_Intro",
+				"type": "page"
+		   }, 
+		   {
+			"title": "2.1 - moving the sprite",
+			"uid": "DPL04-TP1-CHDRN6",
+			"description": "",
+			"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S01",
+			"type": "page"
+	   },
+	   {
+		"title": "2.2 - loop the actions",
+		"uid": "DPL04-TP1-CHDRN7",
+		"description": "",
+		"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S02",
+		"type": "page"
+   },
+   {
+	"title": "2.3 - bounce off the edge",
+	"uid": "DPL04-TP1-CHDRN8",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S03",
+	"type": "page"
+},
+{
+	"title": "2.4 - random movement",
+	"uid": "DPL04-TP1-CHDRN9",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S04",
+	"type": "page"
+},
+{
+	"title": "capstone project - escape and collect game",
+	"uid": "DPL04-TP1-CHDRN10",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Capstone",
+	"type": "page"
+},	   
+{
+	"title": "the game",
+	"uid": "DPL04-TP1-CHDRN11",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Intro",
+	"type": "page"
+},	 
+{
+	"title": "3.1 - THE GAME PLAN",
+	"uid": "DPL04-TP1-CHDRN12",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S01",
+	"type": "page"
+},
+{
+	"title": "3.2 - IF-ELSE CONDTITIONS",
+	"uid": "DPL04-TP1-CHDRN13",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S02",
+	"type": "page"
+},		
+{
+	"title": "3.3 - COSTUME AND SOUND",
+	"uid": "DPL04-TP1-CHDRN14",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S03",
+	"type": "page"
+},
+{
+	"title": "3.4 - VARIABLES AND SCORE",
+	"uid": "DPL04-TP1-CHDRN15",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S04",
+	"type": "page"
+},
+{
+	"title": "3.5 - THE ENEMY SPRITE",
+	"uid": "DPL04-TP1-CHDRN16",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S05",
+	"type": "page"
+},
+{
+	"title": "CAPSTONE PROJECT - AI-BASED WASTE SEGREGATION",
+	"uid": "DPL04-TP1-CHDRN17",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Capstone",
+	"type": "page"
+},
+{
+	"title": "Training a Machine",
+	"uid": "DPL04-TP1-CHDRN18",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Intro",
+	"type": "page"
+},
+{
+	"title": "4.1 - EMOTION DETECTION",
+	"uid": "DPL04-TP1-CHDRN19",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S01",
+	"type": "page"
+},
+{
+	"title": "4.2 - TEACHABLE MACHINE",
+	"uid": "DPL04-TP1-CHDRN20",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S02",
+	"type": "page"
+},
+{
+	"title": "4.3 - DATASETS AND TRAINING",
+	"uid": "DPL04-TP1-CHDRN21",
+	"description": "",
+	"route":"/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S03",
+	"type": "page"
+}
+					]
+				  }
+			 ]
+		}
+	}
+]

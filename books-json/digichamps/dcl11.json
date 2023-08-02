@@ -1,0 +1,214 @@
+[
+	{
+		"book": {
+			"name": "Computer Science and Programming",
+			"code": "DCL11",
+			"category": "DigiChamps",
+			"categorycode": "DC",
+			"summary":".",			
+			"otherfields":
+				{
+				"level": "11",
+				"cardcolour":"#215caa"
+				},
+			"chapters": [
+			      {
+					"route": "book/DCL11/DCL11-TP1-000.mdx",
+					"title": " ",
+					"type": "topic",
+				    "uid": "DCL11-TP1-000",
+					"children": [
+					   {
+						    "title": "Computing Systems and Networks",
+							"uid": "DCL11-TP1-CHDRN1",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level11&pdf=01_DC_Level11_Unit1_Opener page - Google Docs",
+							"type": "page"
+					   },
+					   {
+						    "title": "COMPUTING HARDWARE",
+							"uid": "DCL11-TP1-CHDRN2",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level11&pdf=02_DC_L11_Unit1_Sprint1.1 - Google Docs",
+							"type": "page"
+					   },
+					   {
+						"title": "ROLES OF AN OS",
+						"uid": "DCL11-TP1-CHDRN3",
+						"description": "",
+						"route":"/pdf?course=DigiChamps&Level=Level11&pdf=03_DC_L11_Unit1_Sprint1.2 - Google Docs",
+						"type": "page"
+				   },
+				   {
+					"title": "NETWORK FUNCTIONALITY",
+					"uid": "DCL11-TP1-CHDRN4",
+					"description": "",
+					"route":"/pdf?course=DigiChamps&Level=Level11&pdf=04_DC_L11_Unit1_Sprint1.3 - Google Docs",
+					"type": "page"
+			   },
+			   {
+				"title": "EXERCISE",
+				"uid": "DCL11-TP1-CHDRN5",
+				"description": "",
+				"route":"/pdf?course=DigiChamps&Level=Level11&pdf=05_DC_L11_Unit1_Exercise - Google Docs",
+				"type": "page"
+		   }, 
+		   {
+			"title": "Software Development Cycle",
+			"uid": "DCL11-TP1-CHDRN6",
+			"description": "",
+			"route":"/pdf?course=DigiChamps&Level=Level11&pdf=06_DC_L11_Unit2_Opener Page - Google Docs",
+			"type": "page"
+	   },
+	   {
+		"title": "REQUIREMENTS,ANALYSIS AND DESIGN",
+		"uid": "DCL11-TP1-CHDRN7",
+		"description": "",
+		"route":"/pdf?course=DigiChamps&Level=Level11&pdf=07_DCL11_Unit2_Sprint2.1 - Google Docs",
+		"type": "page"
+   },
+   {
+	"title": "VERSION CONTROL AND PROJECT MANAGEMENT",
+	"uid": "DCL11-TP1-CHDRN8",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=08_DCL11_Unit2_Sprint2.2 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "GIT WORKFLOWS",
+	"uid": "DCL11-TP1-CHDRN9",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=09_DCL11_Unit2_Sprint2.3 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "BOOTSTRAP YOUR PROJECT",
+	"uid": "DCL11-TP1-CHDRN10",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=10_DCL11_Unit2_Sprint2.4 - Google Docs",
+	"type": "page"
+},	   
+{
+	"title": "EXERCISE",
+	"uid": "DCL11-TP1-CHDRN11",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=11_DC-L11-Unit2-Exercise - Google Docs",
+	"type": "page"
+},	 
+{
+	"title": "Launch the Web App",
+	"uid": "DCL11-TP1-CHDRN12",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=12_DC_Level11_Unit3_Opener page - Google Docs",
+	"type": "page"
+},
+{
+	"title": "ADVANCED JAVASCRIPT CONCEPTS",
+	"uid": "DCL11-TP1-CHDRN13",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=13_DC_L11_Unit3_Sprint3.1 - Google Docs",
+	"type": "page"
+},		
+{
+	"title": "WEB APPLICATION FUNCTIONALITIES",
+	"uid": "DCL11-TP1-CHDRN14",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=14_DC_L11_Unit3_Sprint3.2 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "TESTING AND DEPLOYMENT",
+	"uid": "DCL11-TP1-CHDRN15",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=15_DC_L11_Unit3_Sprint3.3 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "EXERCISE",
+	"uid": "DCL11-TP1-CHDRN16",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=16_DC-L11-Unit3-Exercise - Google Docs",
+	"type": "page"
+},
+{
+	"title": "Data Analysis with R",
+	"uid": "DCL11-TP1-CHDRN17",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=17_DC_Level11_Unit4_Opener page - Google Docs",
+	"type": "page"
+},
+{
+	"title": "BASICS OF R",
+	"uid": "DCL11-TP1-CHDRN18",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=18_DC_L11_U4_Sprint4.1 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "DATA FRAMES",
+	"uid": "DCL11-TP1-CHDRN19",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=19_DC_L11_U4_Sprint4.2 - Google Drive",
+	"type": "page"
+},
+{
+	"title": "CLEANING AND MANIPULATING DATA",
+	"uid": "DCL11-TP1-CHDRN20",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=20_DC_L11_Unit4_Sprint4.3 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "DATA VISULAIZATION IN R",
+	"uid": "DCL11-TP1-CHDRN21",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=21_DC_L11_Unit4_Sprint4.4 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "EXERCISE",
+	"uid": "DCL11-TP1-CHDRN22",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=22_DC_L11_Unit4_Exercise - Google Docs",
+	"type": "page"
+},
+{
+	"title": "Computing in a Global Society",
+	"uid": "DCL11-TP1-CHDRN23",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=23_DCL11_U5_Opener page - Google Docs",
+	"type": "page"
+},{
+	"title": "COMPUTATIONAL INNOVATIONS AND THEIR IMPACTS",
+	"uid": "DCL11-TP1-CHDRN24",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=24_DCL11_Unit5_Sprint5.1 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "THE DIGITAL DIVIDE",
+	"uid": "DCL11-TP1-CHDRN25",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=25_DCL11_Unit5_Sprint5.2 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "LAWS AND REGULATIONS ON SOFTWARE",
+	"uid": "DCL11-TP1-CHDRN26",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=26_DCL11_Unit5_Sprint5.3 - Google Docs",
+	"type": "page"
+},
+{
+	"title": "EXERCISE",
+	"uid": "DCL11-TP1-CHDRN27",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level11&pdf=27_DCL11_Unit5_Exercise - Google Docs",
+	"type": "page"
+}
+					]
+				  }
+			 ]
+		}
+	}
+]

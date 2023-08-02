@@ -1,0 +1,194 @@
+[
+	{
+		"book": {
+			"name": "Computer Science and Programming",
+			"code": "DCL05",
+			"category": "DigiChamps",
+			"categorycode": "DC",
+			"summary":".",			
+			"otherfields":
+				{
+				"level": "5",
+				"cardcolour":"#215caa"
+				},
+			"chapters": [
+			      {
+					"route": "book/DCL05/DCL05-TP1-000.mdx",
+					"title": "Computing Devices",
+					"type": "topic",
+				    "uid": "DCL05-TP1-000",
+					"children": [
+					   {
+						    "title": "Impact of Computing",
+							"uid": "DCL05-TP1-CHDRN1",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U01_Intro",
+							"type": "page"
+					   },
+					   {
+						    "title": "SPRINT 1.1 - IMPROVING TECHNOLOGY",
+							"uid": "DCL05-TP1-CHDRN2",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U01_S01",
+							"type": "page"
+					   },
+					   {
+						"title": "SPRINT 1.2 - COLLABORATION",
+						"uid": "DCL05-TP1-CHDRN3",
+						"description": "",
+						"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U01_S02",
+						"type": "page"
+				   },
+				   {
+					"title": "Computing Devices",
+					"uid": "DCL05-TP1-CHDRN4",
+					"description": "",
+					"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U02_Intro",
+					"type": "page"
+			   },
+			   {
+				"title": "SPRINT 2.1 - TOUCH TYPING",
+				"uid": "DCL05-TP1-CHDRN5",
+				"description": "",
+				"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U02_S01",
+				"type": "page"
+		   }, 
+		   {
+			"title": "SPRINT 2.2 - FILE MANAGEMENT",
+			"uid": "DCL05-TP1-CHDRN6",
+			"description": "",
+			"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U02_S02",
+			"type": "page"
+	   },
+	   {
+		"title": "SPRINT 2.3 - ONLINE PROTECTION",
+		"uid": "DCL05-TP1-CHDRN7",
+		"description": "",
+		"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_Intro",
+		"type": "page"
+   },
+   {
+	"title": "SPRINT 2.4 - USING A WEB BROWSER",
+	"uid": "DCL05-TP1-CHDRN8",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S01",
+	"type": "page"
+},
+{
+	"title": "Shape Generators",
+	"uid": "DCL05-TP1-CHDRN9",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 3.1 - INTRODUCTION TO SHAPE GENERATORS",
+	"uid": "DCL05-TP1-CHDRN10",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S03",
+	"type": "page"
+},	   
+{
+	"title": "SPRINT 3.2 - SCRIBBLE TOOL",
+	"uid": "DCL05-TP1-CHDRN11",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S04",
+	"type": "page"
+},	 
+{
+	"title": "SPRINT 3.3 - REMIX DESIGNS",
+	"uid": "DCL05-TP1-CHDRN12",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_Intro",
+	"type": "page"
+},
+{
+	"title": "Charts, Transitions, and Slideshow",
+	"uid": "DCL05-TP1-CHDRN13",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S01",
+	"type": "page"
+},		
+{
+	"title": "SPRINT 4.1 - CHARTS IN POWERPOINT",
+	"uid": "DCL05-TP1-CHDRN14",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.2 - TR AN SITIONS AND SOUND EFFECTS",
+	"uid": "DCL05-TP1-CHDRN15",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S03",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.3 - SLIDESHOW",
+	"uid": "DCL05-TP1-CHDRN16",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_Intro",
+	"type": "page"
+},
+{
+	"title": "Accessibility Tools and Formatting in Word",
+	"uid": "DCL05-TP1-CHDRN17",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S01",
+	"type": "page"
+},
+{
+	"title": "SPRINT 5.1 - SHAPES AND WORDART",
+	"uid": "DCL05-TP1-CHDRN18",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 5.2 - DICTATE AND READ ALOUD TOOL",
+	"uid": "DCL05-TP1-CHDRN19",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S03",
+	"type": "page"
+},
+{
+	"title": "SPRINT 5.3 - RULER, MARGINS, AND TABS",
+	"uid": "DCL05-TP1-CHDRN20",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S04",
+	"type": "page"
+},
+{
+	"title": "Data",
+	"uid": "DCL05-TP1-CHDRN21",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 6.1 - REPRESENTING DATA",
+	"uid": "DCL05-TP1-CHDRN22",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S01",
+	"type": "page"
+},
+{
+	"title": "SPRINT 6.2 - DATA AND RELATIONSHIPS",
+	"uid": "DCL05-TP1-CHDRN23",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 6.3 - DATA FOR CREATIVE SOLUTIONS",
+	"uid": "DCL05-TP1-CHDRN24",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S03",
+	"type": "page"
+}
+					]
+				  }
+			 ]
+		}
+	}
+]

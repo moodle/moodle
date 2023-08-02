@@ -20,8 +20,15 @@ require(['jquery'], function($){
         $(this).find(".white-circle").removeClass("numbercolor");
     });
 
-    $(document).on("click", ".arrow", function(){
+    $(document).on("click", ".arrow, .sbicn", function(){
         $(this).parents(".nav-item").toggleClass("showMenu");
+    });
+
+    $(document).on("click", ".amlitms", function(){
+        let url = $(this).data("url");
+        $(this).parents(".nav-item").toggleClass("showMenu");
+        if(url)
+          $(location).attr("href", url);
     });
 
     $(window).on("resize", function (e) {

@@ -22,13 +22,12 @@ echo $OUTPUT->header();
 	  "language": "<?php echo $elanguage; ?>"
 	},
 
-		"buildId": "G7GxyPIfk8vrAIEzQ0oJE",
+		"buildId": "2Fu07Q8L0oz6H4AmMQ8A9",
 		"isFallback": false,
 		"gsp": true,
 		"scriptLoader": []
 	}
 </script>
-
 <?php
 
 echo $OUTPUT->footer();

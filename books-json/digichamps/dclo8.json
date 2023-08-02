@@ -1,0 +1,235 @@
+[
+	{
+		"book": {
+			"name": "Computer Science and Programming",
+			"code": "DCL08",
+			"category": "DigiChamps",
+			"categorycode": "DC",
+			"summary":".",			
+			"otherfields":
+				{
+				"level": "8",
+				"cardcolour":"#215caa"
+				},
+			"chapters": [
+			      {
+					"route": "book/DCL08/DCL08-TP1-000.mdx",
+					"title": "Computer and Us",
+					"type": "topic",
+				    "uid": "DCL08TP1-000",
+					"children": [
+					   {
+						    "title": "Computer and Us",
+							"uid": "DCL08-TP1-CHDRN1",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_Intro",
+							"type": "page"
+					   },
+					   {
+						    "title": "SPRINT 1.1 - SOFTWARE UPDATES",
+							"uid": "DCL08-TP1-CHDRN2",
+							"description": "",
+							"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S01",
+							"type": "page"
+					   },
+					   {
+						"title": "SPRINT 1.2 - VERSION HISTORY OF CLOUD DOCUMENTS",
+						"uid": "DCL08-TP1-CHDRN3",
+						"description": "",
+						"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S02",
+						"type": "page"
+				   },
+				   {
+					"title": "Digital World",
+					"uid": "DCL08-TP1-CHDRN4",
+					"description": "",
+					"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_Intro",
+					"type": "page"
+			   },
+			   {
+				"title": "SPRINT 2.1 - CRYPTOGRAPHY",
+				"uid": "DCL08-TP1-CHDRN5",
+				"description": "",
+				"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S01",
+				"type": "page"
+		   }, 
+		   {
+			"title": "SPRINT 2.2 - SOCIAL ENGINEERING",
+			"uid": "DCL08-TP1-CHDRN6",
+			"description": "",
+			"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S02",
+			"type": "page"
+	   },
+	   {
+		"title": "SPRINT 2.3 - SOCIAL MEDIA AND DIGITAL FOOTPRINT",
+		"uid": "DCL08-TP1-CHDRN7",
+		"description": "",
+		"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S03",
+		"type": "page"
+   },
+   {
+	"title": "SPRINT 2.4 - ACTIVE AND PASSIVE DATA COLLECTION",
+	"uid": "DCL08-TP1-CHDRN8",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S04",
+	"type": "page"
+},
+{
+	"title": "Basics of HTML",
+	"uid": "DCL08-TP1-CHDRN9",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 3.1 - STARTING WITH HTML",
+	"uid": "DCL08-TP1-CHDRN10",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S01",
+	"type": "page"
+},	   
+{
+	"title": "SPRIN T 3.2 - TAGS IN HTML",
+	"uid": "DCL08-TP1-CHDRN11",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S02",
+	"type": "page"
+},	 
+{
+	"title": "SPRINT 3.3 - FORMATTING IN HTML",
+	"uid": "DCL08-TP1-CHDRN12",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S03",
+	"type": "page"
+},
+{
+	"title": "SPRINT 3.4 - ATTRIBUTES AND GROUPING",
+	"uid": "DCL08-TP1-CHDRN13",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S04",
+	"type": "page"
+},		
+{
+	"title": "More on HTML",
+	"uid": "DCL08-TP1-CHDRN14",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.1 - IMAGES IN HTML",
+	"uid": "DCL08-TP1-CHDRN15",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S01",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.2 - TABLES IN HTML",
+	"uid": "DCL08-TP1-CHDRN16",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.3 - LISTS IN HTML",
+	"uid": "DCL08-TP1-CHDRN17",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S03",
+	"type": "page"
+},
+{
+	"title": "SPRINT 4.4 - LINKS IN HTML",
+	"uid": "DCL08-TP1-CHDRN18",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S04",
+	"type": "page"
+},
+{
+	"title": "Paragraphs and Views in PowerPoint",
+	"uid": "DCL08-TP1-CHDRN19",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 5.1 - PRESENTATION",
+	"uid": "DCL08-TP1-CHDRN20",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S01",
+	"type": "page"
+},
+{
+	"title": "SPRINT 5.2 - COLL ABORATION AND REVIEW",
+	"uid": "DCL08-TP1-CHDRN21",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S02",
+	"type": "page"
+},
+{
+	"title": "Document Review",
+	"uid": "DCL08-TP1-CHDRN22",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 6.1 - INSERTING SPECIAL CHARACTERS",
+	"uid": "DCL08-TP1-CHDRN23",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S01",
+	"type": "page"
+},{
+	"title": "SPRINT 6.2 - REVIEWING DOCUMENTS",
+	"uid": "DCL08-TP1-CHDRN24",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 6.3 - COLLABORATION",
+	"uid": "DCL08-TP1-CHDRN25",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S03",
+	"type": "page"
+},
+{
+	"title": "Data and Computation",
+	"uid": "DCL08-TP1-CHDRN26",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_Intro",
+	"type": "page"
+},
+{
+	"title": "SPRINT 7 .1 - BIT IN QUBIT",
+	"uid": "DCL08-TP1-CHDRN27",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S01",
+	"type": "page"
+},
+{
+	"title": "SPRINT 7.2 - WORKING WITH DATA",
+	"uid": "DCL08-TP1-CHDRN28",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S02",
+	"type": "page"
+},
+{
+	"title": "SPRINT 7 .3 - DATA CLEANING",
+	"uid": "DCL08-TP1-CHDRN29",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S03 ",
+	"type": "page"
+},
+{
+	"title": "SPRINT 7.4 - COM PUTATIONAL MODELS",
+	"uid": "DCL08-TP1-CHDRN30",
+	"description": "",
+	"route":"/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S04",
+	"type": "page"
+}
+					]
+				  }
+			 ]
+		}
+	}
+]
