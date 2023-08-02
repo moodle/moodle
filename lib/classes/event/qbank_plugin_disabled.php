@@ -14,18 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\event;
+
 /**
- * Version information for qbank_columnsortorder.
+ * Question bank plugin was disabled
  *
- * @package    qbank_columnsortorder
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class qbank_plugin_disabled extends qbank_plugin_base {
 
-defined('MOODLE_INTERNAL') || die();
+    public static function get_name() {
+        return get_string('eventqbankdisabled', 'question');
+    }
 
-$plugin->component = 'qbank_columnsortorder';
-$plugin->version   = 2023042401;
-$plugin->requires  = 2023041800;
-$plugin->maturity  = MATURITY_STABLE;
+    public function get_description() {
+        return 'User ' .  $this->data['userid']  . ' disabled question bank plugin ' . $this->data['other']['pluginname'];
+    }
+}
