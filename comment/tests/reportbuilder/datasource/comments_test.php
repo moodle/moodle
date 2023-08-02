@@ -22,7 +22,7 @@ use context_course;
 use core_comment_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{date, text};
+use core_reportbuilder\local\filters\{date, select, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -98,7 +98,7 @@ class comments_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Blogs', 'source' => comments::class, 'default' => 0]);
 
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:contexturl']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'context:link']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:component']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:area']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:itemid']);
@@ -139,7 +139,17 @@ class comments_test extends core_reportbuilder_testcase {
                 'comment:timecreated_to' => 1622502000,
             ], false],
 
-            // User (just to check the join).
+            // Context.
+            'Context level' => ['context:level', [
+                'context:level_operator' => select::EQUAL_TO,
+                'context:level_value' => CONTEXT_COURSE,
+            ], true],
+            'Context level (no match)' => ['context:level', [
+                'context:level_operator' => select::EQUAL_TO,
+                'context:level_value' => CONTEXT_BLOCK,
+            ], false],
+
+            // User.
             'Filter user' => ['user:username', [
                 'user:username_operator' => text::IS_EQUAL_TO,
                 'user:username_value' => 'admin',
