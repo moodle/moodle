@@ -62,6 +62,8 @@ information provided here is intended especially for developers.
 * New events \core\event\qbank_plugin_enabled and \core\event\qbank_plugin_disabled are triggered when a qbank plugin is enabled or
   disabled respectively, with the plugin's frankenstyle name. Any plugins that need to perform an action in response to a qbank
   plugin being enabled or disabled should observe these events.
+* Code calling to qbank plugins was moved from question_delete_question in questionlib.php into the plugins themselves. Any plugins
+  that need to perform processing when a question is deleted should observe the \core\event\question_deleted event instead.
 
 === 4.2 ===
 
