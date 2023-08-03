@@ -8830,7 +8830,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $PAGE->set_button($OUTPUT->single_button($url, $caption, 'get'));
     }
 
-    $PAGE->set_title("$SITE->shortname: " . implode(": ", $visiblepathtosection));
+    $PAGE->set_title(implode(": ", $visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
 
     if ($hassiteconfig && empty($options['nosearch'])) {

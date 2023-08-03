@@ -35,7 +35,7 @@ $url = new \moodle_url("/h5p/overview.php");
 $PAGE->set_context($context);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title("$SITE->shortname: " . $pagetitle);
+$PAGE->set_title($pagetitle);
 $PAGE->set_heading($SITE->fullname);
 
 echo $OUTPUT->header();

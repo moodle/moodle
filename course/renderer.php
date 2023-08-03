@@ -1662,13 +1662,13 @@ class core_course_renderer extends plugin_renderer_base {
         if (core_course_category::is_simple_site()) {
             // There is only one category in the system, do not display link to it.
             $strfulllistofcourses = get_string('fulllistofcourses');
-            $this->page->set_title("$site->shortname: $strfulllistofcourses");
+            $this->page->set_title($strfulllistofcourses);
         } else if (!$coursecat->id || !$coursecat->is_uservisible()) {
             $strcategories = get_string('categories');
-            $this->page->set_title("$site->shortname: $strcategories");
+            $this->page->set_title($strcategories);
         } else {
             $strfulllistofcourses = get_string('fulllistofcourses');
-            $this->page->set_title("$site->shortname: $strfulllistofcourses");
+            $this->page->set_title($strfulllistofcourses);
         }
 
         // Print current category description
