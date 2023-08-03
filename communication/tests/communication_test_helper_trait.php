@@ -36,6 +36,15 @@ trait communication_test_helper_trait {
     }
 
     /**
+     * Disable configs for communication subsystem.
+     *
+     * @return void
+     */
+    protected function disable_communication_configs(): void {
+        set_config('enablecommunicationsubsystem', 0);
+    }
+
+    /**
      * Get or create course if it does not exist
      *
      * @param string $roomname The room name for the communication api

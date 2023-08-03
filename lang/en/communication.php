@@ -23,12 +23,14 @@
  */
 
 $string['communication'] = 'Communication';
+$string['communicationdisabled'] = 'Communication is disabled.';
 $string['communicationprovidernotfound'] = 'The \'{$a}\' communication provider doesn\'t exist or is not recognised.';
 $string['communicationroomname'] = 'Room name';
 $string['communicationroomname_help'] = 'The name that participants see when they visit the room. If you leave this blank, a default room name will be automatically set.';
 $string['communicationroompending'] = 'Your {$a} room will be ready soon.';
 $string['communicationroomready'] = 'Your {$a} room is ready!';
 $string['managecommunicationproviders'] = 'Manage communication providers';
+$string['nocommunicationinstance'] = 'No communication instance found.';
 $string['nocommunicationprovider'] = 'No communication provider found.';
 $string['nocommunicationselected'] = 'None';
 $string['privacy:metadata:communication_user'] = 'The communication user table stores the user id and communication id for communication provider mapping.';
