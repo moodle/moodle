@@ -244,6 +244,18 @@ reports,core_reportbuilder|/reportbuilder/index.php',
 
     // "htmlsettings" settingpage
     $temp = new admin_settingpage('htmlsettings', new lang_string('htmlsettings', 'admin'));
+    $sitenameintitleoptions = [
+        'shortname' => new lang_string('shortname'),
+        'fullname' => new lang_string('fullname'),
+    ];
+    $sitenameintitleconfig = new admin_setting_configselect(
+        'sitenameintitle',
+        new lang_string('sitenameintitle', 'admin'),
+        new lang_string('sitenameintitle_help', 'admin'),
+        'shortname',
+        $sitenameintitleoptions
+    );
+    $temp->add($sitenameintitleconfig);
     $temp->add(new admin_setting_configcheckbox('formatstringstriptags', new lang_string('stripalltitletags', 'admin'), new lang_string('configstripalltitletags', 'admin'), 1));
     $temp->add(new admin_setting_emoticons());
     $ADMIN->add('appearance', $temp);
