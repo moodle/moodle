@@ -235,7 +235,7 @@ if (!empty($course->id)) {
     $PAGE->navbar->add(get_string('coursemgmt', 'admin'), $managementurl);
 
     $pagedesc = $straddnewcourse;
-    $title = "$site->shortname: $straddnewcourse";
+    $title = $straddnewcourse;
     $fullname = format_string($category->name);
     $PAGE->navbar->add($pagedesc);
 }

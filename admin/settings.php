@@ -131,7 +131,7 @@ if (empty($SITE->fullname)) {
 
     $visiblepathtosection = array_reverse($settingspage->visiblepath);
 
-    $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
+    $PAGE->set_title(implode(": ",$visiblepathtosection));
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
 

@@ -1816,11 +1816,7 @@ class moodle_page {
                     '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
                     '</a> ' . $this->button);
 
-            $title = $this->title;
-            if ($title) {
-                $title .= ' - ';
-            }
-            $this->set_title($title . get_string('maintenancemode', 'admin'));
+            $this->set_title(get_string('maintenancemode', 'admin'));
         }
 
         $this->initialise_standard_body_classes();

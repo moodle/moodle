@@ -56,7 +56,7 @@ $context = context_system::instance();
 $PAGE->set_url(new \moodle_url('/'.$CFG->admin.'/tool/mobile/logout.php'));
 $PAGE->navbar->add($title);
 $PAGE->set_context($context);
-$PAGE->set_title($SITE->fullname. ': ' . $title);
+$PAGE->set_title($title);
 
 // Display the page.
 echo $OUTPUT->header();
