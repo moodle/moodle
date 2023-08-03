@@ -113,9 +113,9 @@
 .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
   border-color: transparent !important;
 }
-.custom-control-input:focus ~ .custom-control-label::before {
+/* .custom-control-input:focus ~ .custom-control-label::before {
   box-shadow: none !important;
-}
+} */
 .preference-table td,
 .preference-table th {
   border: 1px solid #dee2e6;
@@ -126,10 +126,10 @@
 
 .form-control:focus,
 .btn-primary:focus,
-.btn-secondary:focus,
 .custom-select:focus {
-  box-shadow: none !important;
+  box-shadow: 0 0 0 0.25rem rgba(15,108,191,.11) !important;
 }
+
 td,
 th {
   border: 1px solid #dee2e6 !important;

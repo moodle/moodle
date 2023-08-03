@@ -14,6 +14,7 @@ $bg-primary: #f5f5f5;
 .login-form-password label {
   font-size: 16px !important;
   font-weight: 600 !important;
+  margin-bottom: 24px;
 }
 .qubits-login-logo {
   width: 40% !important;
@@ -30,6 +31,7 @@ $bg-primary: #f5f5f5;
 }
 .footer-copyright-text {
   bottom: 10px;
+  color: #333333;
 }
 .bg-login-primary {
   background-color: $bg-primary !important;
