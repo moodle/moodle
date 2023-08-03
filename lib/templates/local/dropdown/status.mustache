@@ -98,7 +98,8 @@
         <div class="d-flex flex-column" role="listbox">
             {{#options}}
             <div
-                class="d-flex flex-row align-items-start p-2 position-relative rounded {{!
+                class="d-flex flex-row align-items-start p-2 mb-1 {{!
+                    }} position-relative rounded dropdown-item-outline {{!
                     }} {{#disabled}} dimmed_text {{/disabled}} {{!
                     }} {{#selected}} bg-light selected {{/selected}}"
                 data-optionnumber="{{optionnumber}}"
@@ -109,13 +110,13 @@
                     {{>core/pix_icon}}
                 </div>
                 {{/icon}}
-                <div class="otion-select-indicator">
-                    {{#selected}}
+                <div class="option-select-indicator">
+                    <span class="{{^selected}} d-none {{/selected}}" data-for="checkedIcon">
                         {{#pix}} i/checkedcircle, core, {{#str}} selected, form {{/str}} {{/pix}}
-                    {{/selected}}
-                    {{^selected}}
+                    </span>
+                    <span class="{{#selected}} d-none {{/selected}}" data-for="uncheckedIcon">
                         {{#pix}} i/uncheckedcircle{{/pix}}
-                    {{/selected}}
+                    </span>
                 </div>
                 <div class="option-name">
                     <a
@@ -151,3 +152,11 @@
         {{/choices}}
     {{/ dialogcontent }}
 {{/ core/local/dropdown/dialog }}
+{{#js}}
+    require(['core/local/dropdown/status'], function(Module) {
+        Module.init('#' + '{{$ dropdownid }}{{!
+            }}{{#dropdownid}}{{dropdownid}}{{/dropdownid}}{{!
+            }}{{^dropdownid}}dropdownDialog_{{uniqid}}{{/dropdownid}}{{!
+        }}{{/ dropdownid }}');
+    });
+{{/js}}

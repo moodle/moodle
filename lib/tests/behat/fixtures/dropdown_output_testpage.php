@@ -123,6 +123,59 @@ $dialog->set_classes('mb-3');
 echo $OUTPUT->render($dialog);
 echo '</div>';
 
+echo '<div id="dialogjscontrolssection" class="mb-4">';
+echo "<h3>Dropdown JS module controls</h3>";
+echo '<div class="mb-2">
+    <button class="btn btn-secondary" id="buttontext">Change button text</button>
+    <button class="btn btn-secondary" id="opendropdown">Open</button>
+    <button class="btn btn-secondary" id="closedropdown">Close</button>
+    <span id="dialogvisibility"></span>
+</div>';
+$dialog = new core\output\local\dropdown\dialog('Open dialog', 'Dialog content', [
+    'extras' => ['id' => 'dialogjscontrols'],
+]);
+echo $OUTPUT->render($dialog);
+echo '</div>';
+
+$inlinejs = <<<EOF
+require(
+    ['core/local/dropdown/dialog', 'jquery'],
+    (Module, jQuery) => {
+        const dialog = Module.getDropdownDialog('#dialogjscontrols');
+
+        document.querySelector('#buttontext').addEventListener('click', () => {
+            dialog.setButtonContent('New button text');
+        });
+
+        document.querySelector('#opendropdown').addEventListener('click', (e) => {
+            e.stopPropagation();
+            dialog.setVisible(true);
+        });
+
+        document.querySelector('#closedropdown').addEventListener('click', (e) => {
+            e.stopPropagation();
+            dialog.setVisible(false);
+        });
+
+        const visibility = () => {
+            const text = 'The dropdown is ' + (dialog.isVisible() ? 'visible' : 'hidden') + '.';
+            document.querySelector('#dialogvisibility').innerHTML = text;
+        }
+        visibility();
+
+
+        // Bootstrap 4 events are still jQuery.
+        jQuery(dialog.getElement()).on('shown.bs.dropdown', (e) => {
+            visibility();
+        });
+        jQuery(dialog.getElement()).on('hidden.bs.dropdown', (e) => {
+            visibility();
+        });
+    }
+);
+EOF;
+$PAGE->requires->js_amd_inline($inlinejs);
+
 echo "<h2>Dropdown status test page</h2>";
 
 echo '<div id="statusregularscenario" class="mb-4">';
@@ -204,5 +257,110 @@ echo $OUTPUT->render($dialog);
 $foo = optional_param('foo', 'none', PARAM_TEXT);
 echo "<p>Foo param value: $foo</p>";
 echo '</div>';
+
+echo '<div id="statussyncbutton" class="mb-4">';
+echo "<h3>Sync button text</h3>";
+$choice = new core\output\choicelist('Dialog content');
+$choice->add_option('option1', 'Option 1', [
+    'description' => 'Option 1 description',
+    'icon' => new pix_icon('t/show', 'Eye icon 1')
+]);
+$choice->add_option('option2', 'Option 2', [
+    'description' => 'Option 2 description',
+    'icon' => new pix_icon('t/hide', 'Eye icon 2')
+]);
+$choice->add_option('option3', 'Option 3', [
+    'description' => 'Option 3 description',
+    'icon' => new pix_icon('t/stealth', 'Eye icon 3')
+]);
+$choice->set_selected_value('option2');
+$dialog = new core\output\local\dropdown\status(
+    'Open dialog',
+    $choice,
+    ['buttonsync' => true, 'updatestatus' => true]
+);
+echo '<button class="btn">Focus helper</button>';
+echo $OUTPUT->render($dialog);
+echo '</div>';
+
+echo '<div id="statusjscontrolsection" class="mb-4">';
+echo "<h3>Status JS controls</h3>";
+echo '<div class="mb-2">
+    <button class="btn btn-secondary" id="setselected">Change selected value</button>
+    <button class="btn btn-secondary" id="syncbutton">Enable sync</button>
+    <button class="btn btn-secondary" id="updatestatus">Disable update</button>
+    <span id="statusvalue"></span>
+</div>';
+$choice = new core\output\choicelist('Dialog content');
+$choice->add_option('option1', 'Option 1', [
+    'description' => 'Option 1 description',
+    'icon' => new pix_icon('t/show', 'Eye icon 1')
+]);
+$choice->add_option('option2', 'Option 2', [
+    'description' => 'Option 2 description',
+    'icon' => new pix_icon('t/hide', 'Eye icon 2')
+]);
+$choice->add_option('option3', 'Option 3', [
+    'description' => 'Option 3 description',
+    'icon' => new pix_icon('t/stealth', 'Eye icon 3')
+]);
+$choice->set_selected_value('option2');
+$dialog = new core\output\local\dropdown\status(
+    'Open dialog',
+    $choice,
+    [
+        'extras' => ['id' => 'statusjscontrols'],
+        'updatestatus' => true
+    ],
+);
+echo $OUTPUT->render($dialog);
+echo '</div>';
+
+$inlinejs = <<<EOF
+require(
+    ['core/local/dropdown/status', 'jquery'],
+    (Module, jQuery) => {
+        const status = Module.getDropdownStatus('#statusjscontrols');
+
+        const printValue = () => {
+            const text = 'The status value is ' + status.getSelectedValue() + '.';
+            document.querySelector('#statusvalue').innerHTML = text;
+        }
+        printValue();
+
+        document.querySelector('#setselected').addEventListener('click', () => {
+            if (status.getSelectedValue() == 'option2') {
+                status.setSelectedValue('option3');
+            } else {
+                status.setSelectedValue('option2');
+            }
+        });
+
+        document.querySelector('#syncbutton').addEventListener('click', (e) => {
+            if (status.isButtonSyncEnabled()) {
+                status.setButtonSyncEnabled(false);
+            } else {
+                status.setButtonSyncEnabled(true);
+            }
+            e.target.innerHTML = (status.isButtonSyncEnabled()) ? 'Disable sync': 'Enable sync';
+        });
+
+        document.querySelector('#updatestatus').addEventListener('click', (e) => {
+            if (status.isUpdateStatusEnabled()) {
+                status.setUpdateStatusEnabled(false);
+            } else {
+                status.setUpdateStatusEnabled(true);
+            }
+            e.target.innerHTML = (status.isUpdateStatusEnabled()) ? 'Disable update': 'Enable update';
+        });
+
+        status.getElement().addEventListener('change', () => {
+            printValue();
+        });
+
+    }
+);
+EOF;
+$PAGE->requires->js_amd_inline($inlinejs);
 
 echo $OUTPUT->footer();
