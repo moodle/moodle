@@ -401,28 +401,6 @@ class course_edit_form extends moodleform {
         $handler->set_parent_context($categorycontext); // For course handler only.
         $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
 
-        // Add communication plugins to the form.
-        if (core_communication\api::is_available()) {
-
-            $instanceconfig = core_communication\processor::PROVIDER_NONE;
-            // For new courses.
-            if (empty($course->id)) {
-                $instanceid = 0;
-                if (!empty($courseconfig->coursecommunicationprovider)) {
-                    $instanceconfig = $courseconfig->coursecommunicationprovider;
-                }
-            } else {
-                // For existing courses.
-                $instanceid = $course->id;
-            }
-
-            $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $instanceid);
-            $communication->form_definition($mform, $instanceconfig);
-            $communication->set_data($course);
-        }
 
         // When two elements we need a group.
         $buttonarray = array();
@@ -494,15 +472,6 @@ class course_edit_form extends moodleform {
         $handler  = core_course\customfield\course_handler::create();
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
 
-        // Add communication plugins to the form.
-        if (core_communication\api::is_available()) {
-            $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                empty($course->id) ? 0 : $course->id
-            );
-            $communication->form_definition_for_provider($mform);
-        }
     }
 
     /**

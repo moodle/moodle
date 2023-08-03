@@ -191,7 +191,7 @@ class api_test extends \advanced_testcase {
      */
     public function test_create_and_configure_room_without_communication_provider_selected(): void {
         // Get the course by disabling communication so that we can create it manually calling the api.
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->get_course('Sampleroom', 'none');
 
         // Test the tasks added.
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\create_and_configure_room_task');

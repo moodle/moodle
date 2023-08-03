@@ -148,8 +148,6 @@ class api {
 
         $PAGE->requires->js_call_amd('core_communication/providerchooser', 'init');
 
-        $mform->addElement('header', 'communication', get_string('communication', 'communication'));
-
         // List the communication providers.
         $mform->addElement(
             'select',

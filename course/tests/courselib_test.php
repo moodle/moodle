@@ -7271,4 +7271,67 @@ class courselib_test extends advanced_testcase {
         // The download course content value has changed, it should return true in this case.
         $this->assertTrue(set_downloadcontent($page->cmid, DOWNLOAD_COURSE_CONTENT_ENABLED));
     }
+
+    /**
+     * Test the course_get_communication_instance_data() function.
+     *
+     * @covers ::course_get_communication_instance_data
+     */
+    public function test_course_get_communication_instance_data(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Set admin user as a valid enrolment will be checked in the callback function.
+        $this->setAdminUser();
+
+        // Use the callback function and return the data.
+        list($instance, $context, $heading, $returnurl) = component_callback(
+            'core_course',
+            'get_communication_instance_data',
+            [$course->id]
+        );
+
+        // Check the url is as expected.
+        $expectedreturnurl = new moodle_url('/course/view.php', ['id' => $course->id]);
+        $this->assertEquals($expectedreturnurl, $returnurl);
+
+        // Check the context is as expected.
+        $expectedcontext = context_course::instance($course->id);
+        $this->assertEquals($expectedcontext, $context);
+
+        // Check the instance id is as expected.
+        $this->assertEquals($course->id, $instance->id);
+
+        // Check the heading is as expected.
+        $this->assertEquals($course->fullname, $heading);
+    }
+
+    /**
+     * Test the course_update_communication_instance_data() function.
+     *
+     * @covers ::course_update_communication_instance_data
+     */
+    public function test_course_update_communication_instance_data(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+
+        // Set some data to update with.
+        $data = new stdClass();
+        $data->instanceid = $course->id;
+        $data->fullname = 'newname';
+
+        // These should not be the same yet.
+        $this->assertNotEquals($course->fullname, $data->fullname);
+
+        // Use the callback function to update the course with the data.
+        component_callback(
+            'core_course',
+            'update_communication_instance_data',
+            [$data]
+        );
+
+        // Get the course and check it was updated.
+        $course = get_course($course->id);
+        $this->assertEquals($course->fullname, $data->fullname);
+    }
 }

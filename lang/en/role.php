@@ -164,6 +164,7 @@ $string['context'] = 'Context';
 $string['contextrolenotallowed'] = 'Role {$a} not allowed in this context.';
 $string['course:activityvisibility'] = 'Hide/show activities';
 $string['course:bulkmessaging'] = 'Send a message to many people';
+$string['course:configurecoursecommunication'] = 'Configure course communication settings';
 $string['course:create'] = 'Create courses';
 $string['course:creategroupconversations'] = 'Create group conversations';
 $string['course:delete'] = 'Delete courses';
