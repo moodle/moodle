@@ -7,6 +7,16 @@ information provided here is intended especially for developers.
   - `core_group_get_course_groups`
   - `core_group_get_course_user_groups`
   - `core_group_get_activity_allowed_groups`
+* Groups now have access to create GeoPattern default images based upon their ID with their associated course context.
+  This can be done by calling the following:
+       moodle_url::make_pluginfile_url(
+           $coursecontext->id,
+           'group',
+           'generated',
+           $group->id,
+           '/',
+           'group.svg'
+       );
 
 === 4.2 ===
 * `\core_group\visibility` class added to support new `visibility` field in group records. This holds the visibility constants

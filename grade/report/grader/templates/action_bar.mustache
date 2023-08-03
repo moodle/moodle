@@ -74,26 +74,26 @@
         {{/generalnavselector}}
         {{#searchdropdown}}
             <div class="navitem">
-                {{>core_grades/tertiary_navigation_dropdown}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider"></div>
         {{/searchdropdown}}
         {{#groupselector}}
             <div class="navitem">
-                {{{groupselector}}}
+                {{{.}}}
             </div>
             <div class="navitem-divider"></div>
         {{/groupselector}}
         {{#initialselector}}
             <div class="navitem d-flex flex-column align-self-center">
-                {{>core_grades/tertiary_navigation_dropdown}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider"></div>
         {{/initialselector}}
         {{#collapsedcolumns}}
             <div class="navitem flex-column align-self-center ml-auto {{#classes}}{{.}}{{/classes}}" aria-live="polite">
                 {{#content}}
-                    {{>core_grades/tertiary_navigation_dropdown}}
+                    {{>core/comboboxsearch}}
                 {{/content}}
             </div>
         {{/collapsedcolumns}}

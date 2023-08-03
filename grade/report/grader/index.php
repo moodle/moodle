@@ -49,7 +49,7 @@ $studentsperpage = optional_param('perpage', null, PARAM_INT);
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
-$PAGE->requires->js_call_amd('gradereport_grader/search', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/user', 'init');
 $PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
 $PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
@@ -57,6 +57,12 @@ $PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     throw new \moodle_exception('invalidcourseid');
 }
+
+// Conditionally add the group JS if we have groups enabled.
+if ($course->groupmode) {
+    $PAGE->requires->js_call_amd('gradereport_grader/group', 'init');
+}
+
 require_login($course);
 $context = context_course::instance($course->id);
 

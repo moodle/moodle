@@ -163,12 +163,17 @@ if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
 $reportname = $report->screen->heading();
 
 if ($itemtype == 'user' || $itemtype == 'user_select') {
+    $PAGE->requires->js_call_amd('gradereport_singleview/user', 'init');
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'user');
 } else if ($itemtype == 'grade' || $itemtype == 'grade_select') {
+    $PAGE->requires->js_call_amd('gradereport_singleview/grade', 'init');
     $actionbar = new \gradereport_singleview\output\action_bar($context, $report, 'grade');
 } else {
     $actionbar = new \core_grades\output\general_action_bar($context, new moodle_url('/grade/report/singleview/index.php',
         ['id' => $courseid]), 'report', 'singleview');
+}
+if ($course->groupmode && $itemtype !== 'select') {
+    $PAGE->requires->js_call_amd('gradereport_singleview/group', 'init', [$itemtype]);
 }
 
 if ($itemtype == 'user') {

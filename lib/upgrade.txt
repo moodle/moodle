@@ -64,6 +64,8 @@ information provided here is intended especially for developers.
   plugin being enabled or disabled should observe these events.
 * Code calling to qbank plugins was moved from question_delete_question in questionlib.php into the plugins themselves. Any plugins
   that need to perform processing when a question is deleted should observe the \core\event\question_deleted event instead.
+* The external function core_grades_get_groups_for_selector is now relocated.
+  Please use it at core_group_get_groups_for_selector instead.
 
 === 4.2 ===
 

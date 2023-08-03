@@ -3189,3 +3189,19 @@ blockquote {
         }
     }
 }
+
+/* Combobox search dropdowns */
+.usersearchdropdown,
+.gradesearchdropdown,
+.groupsearchdropdown {
+    max-width: 350px;
+    .searchresultitemscontainer {
+        max-height: 170px;
+        overflow: auto;
+        /* stylelint-disable declaration-no-important */
+        img {
+            height: 48px !important;
+            width: 48px !important;
+        }
+    }
+}

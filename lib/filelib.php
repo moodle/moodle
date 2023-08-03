@@ -5029,6 +5029,18 @@ function file_pluginfile($relativepath, $forcedownload, $preview = null, $offlin
             \core\session\manager::write_close(); // Unlock session during file serving.
             send_stored_file($file, 60*60, 0, false, $sendfileoptions);
 
+        } else if ($filearea === 'generated') {
+            if ($CFG->forcelogin) {
+                require_login($course);
+            } else if ($course->id != SITEID) {
+                require_login($course);
+            }
+
+            $svg = $OUTPUT->get_generated_svg_for_id($group->id);
+
+            \core\session\manager::write_close(); // Unlock session during file serving.
+            send_file($svg, 'group.svg', 60 * 60, 0, true, $forcedownload);
+
         } else {
             send_file_not_found();
         }

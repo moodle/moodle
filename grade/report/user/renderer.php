@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\output\comboboxsearch;
+
 /**
  * Custom renderer for the user grade report
  *
@@ -90,47 +92,27 @@ class gradereport_user_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
-
+        $resetlink = new moodle_url('/grade/report/user/index.php', ['id' => $course->id, 'group' => 0]);
         $data = [
+            'currentvalue' => optional_param('searchvalue', '', PARAM_NOTAGS),
+            'resetlink' => $resetlink->out(false),
             'name' => 'userid',
             'courseid' => $course->id,
             'groupid' => $groupid ?? 0,
         ];
 
-        // If a particular option is selected (not in zero state).
-        if (!is_null($userid)) {
-            if ($userid) { // A single user selected.
-                $user = core_user::get_user($userid);
-                $data['selectedoption'] = [
-                    'image' => $this->user_picture($user, ['size' => 40, 'link' => false]),
-                    'text' => fullname($user),
-                    'additionaltext' => $user->email,
-                ];
-            } else { // All users selected.
-                // Get the total number of users.
-                $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-                $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-                $showonlyactiveenrol = $showonlyactiveenrol ||
-                    !has_capability('moodle/course:viewsuspendedusers', context_course::instance($course->id));
-                $gui = new graded_users_iterator($course, null, $groupid);
-                $gui->require_active_enrolment($showonlyactiveenrol);
-                $gui->init();
-                $totalusersnum = 0;
-                while ($userdata = $gui->next_user()) {
-                    $totalusersnum++;
-                }
-                $gui->close();
-
-                $data['selectedoption'] = [
-                    'text' => get_string('allusersnum', 'gradereport_user', $totalusersnum),
-                ];
-            }
-
-            $data['userid'] = $userid;
-        }
-
+        $searchdropdown = new comboboxsearch(
+            true,
+            $this->render_from_template('core_user/comboboxsearch/user_selector', $data),
+            null,
+            'user-search dropdown d-flex',
+            null,
+            'usersearchdropdown overflow-auto',
+            null,
+            false,
+        );
         $this->page->requires->js_call_amd('gradereport_user/user', 'init');
-        return $this->render_from_template('core_grades/user_selector', $data);
+        return $this->render_from_template($searchdropdown->get_template(), $searchdropdown->export_for_template($this));
     }
 
     /**
