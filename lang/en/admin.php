@@ -1285,6 +1285,8 @@ $string['sitemaintenanceon'] = 'Your site is currently in maintenance mode (only
 $string['sitemaintenanceoncli'] = 'Your site is currently in CLI maintenance mode, no web access is allowed.';
 $string['sitemaintenancewarning'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href="maintenance.php">disable maintenance mode</a>.';
 $string['sitemaintenancewarning2'] = 'Your site is currently in maintenance mode (only admins can log in).  To return this site to normal operation, <a href="{$a}">disable maintenance mode</a>.';
+$string['sitenameintitle'] = 'Include site name in page title';
+$string['sitenameintitle_help'] = 'This setting will append the site name at the end of the page title. It is encouraged to include the site name in the page title as it will improve the site\'s accessibility by allowing users to quickly identify the page that they are currently in.';
 $string['sitepolicies'] = 'Site security settings';
 $string['sitepolicy'] = 'Site policy URL';
 $string['sitepolicy_help'] = 'The URL of the site policy that all registered users must see and agree to before accessing the site. Note that this setting will only have an effect if the site policy handler is set to default (core).';
