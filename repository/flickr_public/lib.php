@@ -407,7 +407,7 @@ class repository_flickr_public extends repository {
                 if (!@getimagesize($thumbnailsource)) {
                     // Use the file extension icon as a thumbnail if the original thumbnail does not exist to avoid
                     // displaying broken thumbnails in the repository.
-                    $thumbnailsource = $OUTPUT->image_url(file_extension_icon($p['title'], 90))->out(false);
+                    $thumbnailsource = $OUTPUT->image_url(file_extension_icon($p['title']))->out(false);
                 }
 
                 // Perform a HEAD request to the image to obtain it's Content-Length.

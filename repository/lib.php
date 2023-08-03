@@ -1390,7 +1390,7 @@ abstract class repository implements cacheable_object {
                 'url'=>moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
                 'id'=>$file->get_itemid(),
                 'file'=>$file->get_filename(),
-                'icon' => $OUTPUT->image_url(file_extension_icon($thefile, 32))->out(),
+                'icon' => $OUTPUT->image_url(file_extension_icon($thefile))->out(),
             );
         } else {
             return null;
@@ -1436,7 +1436,7 @@ abstract class repository implements cacheable_object {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false)
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false)
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {
@@ -1473,8 +1473,8 @@ abstract class repository implements cacheable_object {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'icon'=>$OUTPUT->image_url(file_file_icon($child, 24))->out(false),
-                    'thumbnail'=>$OUTPUT->image_url(file_file_icon($child, 90))->out(false),
+                    'icon' => $OUTPUT->image_url(file_file_icon($child))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_file_icon($child))->out(false),
                 );
                 $filecount++;
             }
@@ -2207,7 +2207,7 @@ abstract class repository implements cacheable_object {
      */
     protected static function prepare_breadcrumb($breadcrumb) {
         global $OUTPUT;
-        $foldericon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
+        $foldericon = $OUTPUT->image_url(file_folder_icon())->out(false);
         $len = count($breadcrumb);
         for ($i = 0; $i < $len; $i++) {
             if (is_array($breadcrumb[$i]) && !isset($breadcrumb[$i]['icon'])) {
@@ -2228,7 +2228,7 @@ abstract class repository implements cacheable_object {
      */
     protected static function prepare_list($list) {
         global $OUTPUT;
-        $foldericon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
+        $foldericon = $OUTPUT->image_url(file_folder_icon())->out(false);
 
         // Reset the array keys because non-numeric keys will create an object when converted to JSON.
         $list = array_values($list);
@@ -2288,7 +2288,7 @@ abstract class repository implements cacheable_object {
                 if ($isfolder) {
                     $file['icon'] = $foldericon;
                 } else if ($filename) {
-                    $file['icon'] = $OUTPUT->image_url(file_extension_icon($filename, 24))->out(false);
+                    $file['icon'] = $OUTPUT->image_url(file_extension_icon($filename))->out(false);
                 }
             }
 

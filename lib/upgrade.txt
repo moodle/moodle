@@ -87,6 +87,13 @@ information provided here is intended especially for developers.
 to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
 being forced open in all behat tests.
 * The core_useragent::get_device_type_list() function has been deprecated. Use core_useragent::devicetypes instead as a replacement.
+* The parameter $size of the following functions has been deprecated and is not used any more:
+  - file_extension_icon
+  - file_file_icon
+  - file_folder_icon
+  - file_mimetype_icon
+  - mimeinfo_from_type
+  - url_guess_icon
 
 === 4.2 ===
 
