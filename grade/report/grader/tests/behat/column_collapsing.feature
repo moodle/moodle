@@ -192,13 +192,16 @@ Feature: Within the grader report, test that we can collapse columns
     And I press the down key
     And the focused element is "Email address" "option_role"
     And I press the end key
-    And the focused element is "Select all" "option_role"
+    And the focused element is "Country" "option_role"
     And I press the home key
     And the focused element is "Email address" "option_role"
     And I press the up key
-    And the focused element is "Select all" "option_role"
+    And the focused element is "Country" "option_role"
     And I press the down key
     And the focused element is "Email address" "option_role"
+    And I press the end key
+    And I press the tab key
+    And the focused element is "Select all" "checkbox"
     And I press the escape key
     And the focused element is "Collapsed columns" "combobox"
     And I click on "Collapsed columns" "combobox"
@@ -286,9 +289,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Ensure we are ready to move onto the next step.
-    And I wait until "Collapsed columns 4" "button" exists
-    When I click on "Collapsed columns" "button"
-    And I click on "Select all" "option_role"
+    And I wait until "Collapsed columns" "combobox" exists
+    When I click on "Collapsed columns" "combobox"
+    And I click on "Select all" "checkbox"
     And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
     # All of the previously collapsed columns should now be visible.
     Then I should see "Email" in the "First name / Last name" "table_row"
@@ -303,9 +306,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Ensure we are ready to move onto the next step.
-    And I wait until "Collapsed columns 2" "button" exists
-    When I click on "Collapsed columns" "button"
-    And I click on "Select all" "option_role"
+    And I wait until "Collapsed columns" "combobox" exists
+    When I click on "Collapsed columns" "combobox"
+    And I click on "Select all" "checkbox"
     And I click on "Email" "option_role" in the "form" "gradereport_grader > collapse search"
     # The select all option should now be unchecked, Checking the form or option role is iffy with behat so we use the id.
     Then "input#check-all-input:not([checked=checked])" "css_element" should exist
