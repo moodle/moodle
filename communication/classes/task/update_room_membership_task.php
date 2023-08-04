@@ -20,13 +20,13 @@ use core\task\adhoc_task;
 use core_communication\processor;
 
 /**
- * Class remove_members_from_room to add the task to remove members to the room and execute the task to action the removal.
+ * Class update_room_membership_task to add the task to update members for the room and execute the task to action the addition.
  *
  * @package    core_communication
- * @copyright  2023 David Woloszyn <david.woloszyn@moodle.com>
+ * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class remove_members_from_room extends adhoc_task {
+class update_room_membership_task extends adhoc_task {
 
     public function execute() {
         // Initialize the custom data operation to be used for the action.
@@ -40,10 +40,7 @@ class remove_members_from_room extends adhoc_task {
             return;
         }
 
-        $communication->get_room_user_provider()->remove_members_from_room($communication->get_all_delete_flagged_userids());
-
-        // Now remove any mapping for users who are not in the room.
-        $communication->delete_instance_non_synced_user_mapping($communication->get_instance_userids(false, true));
+        $communication->get_room_user_provider()->update_room_membership($communication->get_instance_userids());
     }
 
     /**

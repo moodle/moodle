@@ -21,6 +21,7 @@ use core_communication\task\create_and_configure_room_task;
 use core_communication\task\delete_room_task;
 use core_communication\task\remove_members_from_room;
 use core_communication\task\update_room_task;
+use core_communication\task\update_room_membership_task;
 use stdClass;
 
 /**
@@ -526,6 +527,34 @@ class api {
 
         if ($queue) {
             add_members_to_room_task::queue(
+                $this->communication
+            );
+        }
+    }
+
+    /**
+     * Create a communication ad-hoc task for updating members operation and update the user mapping.
+     *
+     * This method will add a task to the queue to update the room users.
+     *
+     * @param array $userids The user ids to add to the room
+     * @param bool $queue Whether to queue the task or not
+     */
+    public function update_room_membership(array $userids, bool $queue = true): void {
+        // No communication object? something not done right.
+        if (!$this->communication) {
+            return;
+        }
+
+        // No userids? don't bother doing anything.
+        if (empty($userids)) {
+            return;
+        }
+
+        $this->communication->reset_users_sync_flag($userids);
+
+        if ($queue) {
+            update_room_membership_task::queue(
                 $this->communication
             );
         }
