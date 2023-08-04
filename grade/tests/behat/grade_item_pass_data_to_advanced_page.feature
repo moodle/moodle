@@ -1,4 +1,4 @@
-@core @core_grades @javascript
+@core @core_grades @javascript @testtt
 Feature: We carry over data from modal to advanced grade item settings
   In order to setup grade items quickly
   As an teacher
@@ -96,6 +96,25 @@ Feature: We carry over data from modal to advanced grade item settings
     And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     And the following fields match these values:
       | Category name                | Category 1               |
+      | Aggregation                  | Mean of grades           |
+      | Minimum grade                | 1                        |
+      | Maximum grade                | 99                       |
+      | Weight adjusted              | 1                        |
+      | grade_item_aggregationcoef2  | 100                      |
+      | Parent category              | Some cool grade category |
+    And I press "Cancel"
+    And I choose the "Add category" item in the "Add" action menu
+    # Confirm that the form values are carried over even if some mandatory fields are missing (e.g. Category name).
+    And I set the following fields to these values:
+      | Aggregation                  | Mean of grades           |
+      | Minimum grade                | 1                        |
+      | Maximum grade                | 99                       |
+      | Weight adjusted              | 1                        |
+      | grade_item_aggregationcoef2  | 100                      |
+      | Parent category              | Some cool grade category |
+    And I click on "Show more..." "link" in the ".modal-dialog" "css_element"
+    And the following fields match these values:
+      | Category name                |                          |
       | Aggregation                  | Mean of grades           |
       | Minimum grade                | 1                        |
       | Maximum grade                | 99                       |

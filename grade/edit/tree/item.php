@@ -109,7 +109,8 @@ $item->cancontrolvisibility = $grade_item->can_control_visibility();
 $mform = new edit_item_form(null, array('current'=>$item, 'gpr'=>$gpr));
 
 $simpleform = new add_item(null, ['itemid' => $grade_item->id, 'courseid' => $courseid, 'gpr' => $gpr]);
-if ($simpledata = $simpleform->get_data()) {
+// Data has been carried over from the dynamic form.
+if ($simpledata = $simpleform->get_submitted_data()) {
     $mform->set_data($simpledata);
 }
 

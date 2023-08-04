@@ -133,7 +133,8 @@ if ($id) {
 $mform = new edit_category_form(null, array('current'=>$category, 'gpr'=>$gpr));
 
 $simpleform = new add_category(null, ['category' => $grade_category->id, 'courseid' => $courseid, 'gpr' => $gpr]);
-if ($simpledata = $simpleform->get_data()) {
+// Data has been carried over from the dynamic form.
+if ($simpledata = $simpleform->get_submitted_data()) {
     $mform->set_data($simpledata);
 }
 
