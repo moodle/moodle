@@ -267,7 +267,7 @@ if (!core_tables_exist()) {
     upgrade_init_javascript();
 
     $PAGE->navbar->add($strdatabasesetup);
-    $PAGE->set_title($strinstallation.' - Moodle '.$CFG->target_release);
+    $PAGE->set_title($strinstallation . moodle_page::TITLE_SEPARATOR . $CFG->target_release, false);
     $PAGE->set_heading($strinstallation);
     $PAGE->set_cacheable(false);
 
