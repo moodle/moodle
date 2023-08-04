@@ -28,7 +28,7 @@ $setmode = optional_param('setmode', false, PARAM_BOOL);
 $contextid = required_param('context', PARAM_INT);
 $pageurl = required_param('pageurl', PARAM_LOCALURL);
 
-// Behat requires JS to get the session. To allow goutte
+// Behat requires JS to get the session. To allow browserkit
 // to enable edit mode sesskey validation is skipped for behat scripts.
 if (!defined('BEHAT_SITE_RUNNING')) {
     require_sesskey();

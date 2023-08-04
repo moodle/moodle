@@ -702,7 +702,7 @@ EOF;
      * @param AfterStepScope $scope scope passed by event after step.
      */
     protected function take_screenshot(AfterStepScope $scope) {
-        // Goutte can't save screenshots.
+        // BrowserKit can't save screenshots.
         if (!$this->running_javascript()) {
             return false;
         }
