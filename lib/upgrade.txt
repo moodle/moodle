@@ -110,6 +110,15 @@ being forced open in all behat tests.
     - tiff -> image
     - wav -> audio
     - wmv -> video
+  Apart from that, the following MIME icons have been completely removed:
+    - clip-353 --> It was added in MDL-75362 by mistake.
+    - edit
+    - env
+    - explore
+    - folder-open
+    - help
+    - move
+    - parent
 
 === 4.2 ===
 
