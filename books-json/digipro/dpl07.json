@@ -1,215 +1,254 @@
 [
 	{
-		"book": {
-			"name": "Computer Science and Programming",
-			"code": "DPL07",
-			"category": "DigiPro",
-			"categorycode": "DP",
-			"summary":".",			
-			"otherfields":
-				{
-				"level": "7",
-				"cardcolour":"#215caa"
-				},
-			"chapters": [
-			      {
-					"route": "book/DPL07/DPL07-TP1-000.mdx",
-					"title": " ",
-					"type": "topic",
-				    "uid": "DPL07-TP1-000",
-					"children": [
-					   {
-						    "title": "Introduction to Python",
-							"uid": "DPL07-TP1-CHDRN1",
-							"description": "",
-							"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_Intro",
-							"type": "page"
-					   },
-					   {
-						    "title": "SPRINT 1.1 - STARTING UP WITH PYTHON",
-							"uid": "DPL07-TP1-CHDRN2",
-							"description": "",
-							"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S01",
-							"type": "page"
-					   },
-					   {
-						"title": "SPRINT 1.2 - MY FIRST PROGRAM",
-						"uid": "DPL07-TP1-CHDRN3",
-						"description": "",
-						"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S02",
-						"type": "page"
-				   },
-				   {
-					"title": "SPRINT 1.3 - VARIABLES",
-					"uid": "DPL07-TP1-CHDRN4",
-					"description": "",
-					"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S03",
-					"type": "page"
-			   },
-			   {
-				"title": "SPRINT 1.4 - TOKENS OF PYTHON",
+	  "book": {
+		"name": "Computer Science and Programming",
+		"code": "DPL07",
+		"category": "DigiPro",
+		"categorycode": "DP",
+		"summary": ".",
+		"otherfields": {
+		  "level": "7",
+		  "cardcolour": "#215caa"
+		},
+		"chapters": [
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Unit 1: Introduction to Python",
+			"type": "topic",
+			"uid": "DPL07-TP1-000",
+			"children": [
+			  {
+				"title": "Unit 1 Summary",
+				"uid": "DPL07-TP1-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "1.1 - Starting Up With Python",
+				"uid": "DPL07-TP1-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "1.2 - My First Program",
+				"uid": "DPL07-TP1-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "1.3 - Variables",
+				"uid": "DPL07-TP1-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "1.4 - Tokens Of Python",
 				"uid": "DPL07-TP1-CHDRN5",
 				"description": "",
-				"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S04",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S04",
 				"type": "page"
-		   }, 
+			  }
+			]
+		  },
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Unit 2: Numbers and Operations",
+			"type": "topic",
+			"uid": "DPL07-TP2-000",
+			"children": [
 			   {
-				"title": "Numbers and Operations",
-				"uid": "DPL07-TP1-CHDRN6",
+				"title": "Unit 2 Summary",
+				"uid": "DPL07-TP2-CHDRN1",
 				"description": "",
-				"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_Intro",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_Intro",
 				"type": "page"
-		   },
-		   {
-			"title": "SPRINT 2.1 - DATA TYPE AND CONVERSION",
-			"uid": "DPL07-TP1-CHDRN7",
-			"description": "",
-			"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S01",
-			"type": "page"
-	   },
-	   {
-		"title": "SPRINT 2.2 - ARITHMETIC OPERATIONS ON NUMBERS",
-		"uid": "DPL07-TP1-CHDRN8",
-		"description": "",
-		"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S02",
-		"type": "page"
-   },
-   {
-	"title": "SPRINT 2.3 - ARITHMETIC OPERATIONS USING PYTHON",
-	"uid": "DPL07-TP1-CHDRN9",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S03",
-	"type": "page"
-},
-{
-	"title": "SPRINT 2.3 - NESTED LOOPS",
-	"uid": "DPL07-TP1-CHDRN10",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S04",
-	"type": "page"
-},
-{
-	"title": "Strings, Lists and Python Graphics",
-	"uid": "DPL07-TP1-CHDRN11",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_Intro",
-	"type": "page"
-},	   
-{
-	"title": "CAPSTONE PROJECT - Create a Fruit Ninja Game in ScratchThe Music",
-	"uid": "DPL07-TP1-CHDRN12",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S01",
-	"type": "page"
-},	 
-{
-	"title": "SPRINT 3.2 - WORKING WITH STRINGS",
-	"uid": "DPL07-TP1-CHDRN13",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S02",
-	"type": "page"
-},
-{
-	"title": "SPRINT 3.3 - LISTS",
-	"uid": "DPL07-TP1-CHDRN14",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S03",
-	"type": "page"
-},		
-{
-	"title": "SPRINT 3.4 - DRAW SHAPES",
-	"uid": "DPL07-TP1-CHDRN15",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S04",
-	"type": "page"
-},
-{
-	"title": "CAPSTONE PROJECT - STORE PRICE CALCULATOR",
-	"uid": "DPL07-TP1-CHDRN16",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Capstone",
-	"type": "page"
-},
-{
-	"title": "Flow Control",
-	"uid": "DPL07-TP1-CHDRN17",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Intro",
-	"type": "page"
-},
-{
-	"title": "SPRINT 4.1 - MORE ON PYTHON OPERATORS",
-	"uid": "DPL07-TP1-CHDRN18",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S01",
-	"type": "page"
-},
-{
-	"title": "SPRINT 4.2 - IF CONTROL STRUCTURE",
-	"uid": "DPL07-TP1-CHDRN19",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S02",
-	"type": "page"
-},
-{
-	"title": "SPRINT 4.3 - FOR LOOP IN PYTHON",
-	"uid": "DPL07-TP1-CHDRN20",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S03",
-	"type": "page"
-},
-{
-	"title": "SPRINT 4.4 - WHILE LOOP IN PYTHON",
-	"uid": "DPL07-TP1-CHDRN21",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S04",
-	"type": "page"
-},
-{
-	"title": "CAPSTONE PROJECT - AI BASED EMOTION COMPARISON APP",
-	"uid": "DPL07-TP1-CHDRN22",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Capstone",
-	"type": "page"
-},
-{
-	"title": "AI based Emotion Recognition App",
-	"uid": "DPL07-TP1-CHDRN23",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Intro",
-	"type": "page"
-},
-{
-	"title": "SPRINT 5.1 - INTRODUCTION TO WEB APIS",
-	"uid": "DPL07-TP1-CHDRN24",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S01",
-	"type": "page"
-},
-{
-	"title": "SPRINT 5.2 - CAMERA AND DATABASE",
-	"uid": "DPL07-TP1-CHDRN25",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S02",
-	"type": "page"
-},
-{
-	"title": "SPRINT 5.3 - AGE AND GENDER DETECTION APP",
-	"uid": "DPL07-TP1-CHDRN26",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S03",
-	"type": "page"
-},
-{
-	"title": "SPRINT 5.4 - EMOTION DETECTION APP",
-	"uid": "DPL07-TP1-CHDRN27",
-	"description": "",
-	"route":"/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S04",
-	"type": "page"
-}
-					]
-				  }
-			 ]
-		}
+			  },
+			  {
+				"title": "2.1 - Data Type And Conversion",
+				"uid": "DPL07-TP2-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "2.2 - Arithmetic Operations On Numbers",
+				"uid": "DPL07-TP2-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "2.3 - Arithmetic Operations Using Python",
+				"uid": "DPL07-TP2-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "2.4 - More On Arithmetic Operations",
+				"uid": "DPL07-TP2-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Unit 3: Strings, Lists and Python Graphic",
+			"type": "topic",
+			"uid": "DPL07-TP3-000",
+			"children": [
+				{
+				"title": "Unit 3 Summary",
+				"uid": "DPL07-TP3-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "3.1 - Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
+				"uid": "DPL07-TP3-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "3.2 - Working With Strings",
+				"uid": "DPL07-TP3-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "3.3 - Lists",
+				"uid": "DPL07-TP3-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "3.4 - Draw Shapes",
+				"uid": "DPL07-TP3-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Unit 4: Flow Control",
+			"type": "topic",
+			"uid": "DPL07-TP4-000",
+			"children": [
+			  {
+				"title": "Unit 4 Summary",
+				"uid": "DPL07-TP4-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "4.1 - More On Python Operators",
+				"uid": "DPL07-TP4-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "4.2 - If Control Structure",
+				"uid": "DPL07-TP4-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "4.3 - For Loop In Python",
+				"uid": "DPL07-TP4-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "4.4 - While Loop In Python",
+				"uid": "DPL07-TP4-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Unit 5: AI Based Emotion Recognition App",
+			"type": "topic",
+			"uid": "DPL07-TP4-000",
+			"children": [
+			  {
+				"title": "Unit 5 Summary",
+				"uid": "DPL07-TP5-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Intro",
+				"type": "page"
+			  },
+			  {
+				"title": "5.1 - Introduction To Web APIS",
+				"uid": "DPL07-TP5-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S01",
+				"type": "page"
+			  },
+			  {
+				"title": "5.2 - Camera And Database",
+				"uid": "DPL07-TP5-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S02",
+				"type": "page"
+			  },
+			  {
+				"title": "5.3 - Age And Gender Detection App",
+				"uid": "DPL07-TP5-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S03",
+				"type": "page"
+			  },
+			  {
+				"title": "5.4 - Emotion Detection App",
+				"uid": "DPL07-TP5-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S04",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DPL07/DPL07-TP1-000.mdx",
+			"title": "Capstone Project",
+			"type": "topic",
+			"uid": "DPL07-TP6-000",
+			"children": [
+			  {
+				"title": "Capstone Project - Store Price Calculator",
+				"uid": "DPL07-TP6-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Capstone",
+				"type": "page"
+			  },
+			  {
+				"title": "Capstone Project - AI Based Emotion Comparison App",
+				"uid": "DPL07-TP6-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Capstone",
+				"type": "page"
+			  }
+			]
+		  }
+		]
+	  }
 	}
-]
+  ]

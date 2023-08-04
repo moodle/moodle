@@ -1,221 +1,245 @@
 [
 	{
-		"book": {
-			"name": "Computer Science and Programming",
-			"code": "DCL10",
-			"category": "DigiChamps",
-			"categorycode": "DC",
-			"summary":".",			
-			"otherfields":
-				{
-				"level": "10",
-				"cardcolour":"#215caa"
-				},
-			"chapters": [
-			      {
-					"route": "book/DCL10/DCL0-TP1-000.mdx",
-					"title": " ",
-					"type": "topic",
-				    "uid": "DCL10-TP1-000",
-					"children": [
-					   {
-						    "title": "STYLING THE GAME PAGE",
-							"uid": "DCL10-TP1-CHDRN1",
-							"description": "",
-							"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC_L10_Unit3_Sprint3.2 - Google Docs",
-							"type": "page"
-					   },
-					   {
-						    "title": "EXERCISE",
-							"uid": "DCL10-TP1-CHDRN2",
-							"description": "",
-							"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit1-Exercise - Google Docs",
-							"type": "page"
-					   },
-					   {
-						"title": "Technology, IP and Security",
-						"uid": "DCL10-TP1-CHDRN3",
-						"description": "",
-						"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-opener page - Google Docs",
-						"type": "page"
-				   },
-				   {
-					"title": "SYSTEMATIC TROUBLESHOOTING",
-					"uid": "DCL10-TP1-CHDRN4",
-					"description": "",
-					"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.1 - Google Docs",
-					"type": "page"
-			   },
-			   {
-				"title": "COLLABORATION",
+	  "book": {
+		"name": "Computer Science and Programming",
+		"code": "DCL10",
+		"category": "DigiChamps",
+		"categorycode": "DC",
+		"summary": ".",
+		"otherfields": {
+		  "level": "10",
+		  "cardcolour": "#215caa"
+		},
+		"chapters": [
+		  {
+			"route": "book/DCL10/DCL10-TP1-000.mdx",
+			"title": "Unit 1: Technology, IP and Security",
+			"type": "topic",
+			"uid": "DCL10-TP1-000",
+			"children": [
+			  {
+				"title": "Unit 1 Summary",
+				"uid": "DCL10-TP1-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-opener page - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "1.1 - Systematic Troubleshooting",
+				"uid": "DCL10-TP1-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.1 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "1.2 - Collaboration",
+				"uid": "DCL10-TP1-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.2 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "1.3 - Cloud Computing",
+				"uid": "DCL10-TP1-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.3 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "1.3 - Data Privacy",
 				"uid": "DCL10-TP1-CHDRN5",
 				"description": "",
-				"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.2 - Google Docs",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.4 - Google Docs",
 				"type": "page"
-		   }, 
-		   {
-			"title": "INNOVATION AND IP",
-			"uid": "DCL10-TP1-CHDRN6",
-			"description": "",
-			"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.3 - Google Docs",
-			"type": "page"
-	   },
-	   {
-		"title": "DATA PRIVACY",
-		"uid": "DCL10-TP1-CHDRN7",
-		"description": "",
-		"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.4 - Google Docs",
-		"type": "page"
-   },
-   {
-	"title": "NETWORK AND SECURITY",
-	"uid": "DCL10-TP1-CHDRN8",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.5 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "EXERCISE",
-	"uid": "DCL10-TP1-CHDRN9",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit2-Exercise - Google Docs",
-	"type": "page"
-},
-{
-	"title": "Photo and Video Editing",
-	"uid": "DCL10-TP1-CHDRN10",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Opener Page - Google Docs",
-	"type": "page"
-},	   
-{
-	"title": "CREATIVE PHOTO EDITING",
-	"uid": "DCL10-TP1-CHDRN11",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.1 - Google Docs",
-	"type": "page"
-},	 
-{
-	"title": "ADVANCED PHOTO EDITING",
-	"uid": "DCL10-TP1-CHDRN12",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.2 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "ADVANCED VIDEO EDITING",
-	"uid": "DCL10-TP1-CHDRN13",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.3 - Google Docs",
-	"type": "page"
-},		
-{
-	"title": "EXERCISE",
-	"uid": "DCL10-TP1-CHDRN14",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Exercise - Google Docs",
-	"type": "page"
-},
-{
-	"title": "Game Interface",
-	"uid": "DCL10-TP1-CHDRN15",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-opener page - Google Docs",
-	"type": "page"
-},
-{
-	"title": "WEB INTERFACE FOR THE GAME",
-	"uid": "DCL10-TP1-CHDRN16",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Sprint3.1 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "EXERCISE",
-	"uid": "DCL10-TP1-CHDRN17",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit4-Exercise - Google Docs",
-	"type": "page"
-},
-{
-	"title": "SETTING THE GAME ELEMENTS",
-	"uid": "DCL10-TP1-CHDRN18",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit4-Sprint4.1 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "CORE LOGIC OF THE GAME",
-	"uid": "DCL10-TP1-CHDRN19",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.2 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "GAME ENHANCEMENTS",
-	"uid": "DCL10-TP1-CHDRN20",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.3 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "ANIMATIONS",
-	"uid": "DCL10-TP1-CHDRN21",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.4 - Google Docs",
-	"type": "page"
-},{
-	"title": "EXERCISE",
-	"uid": "DCL10-TP1-CHDRN22",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Exercise - Google Docs",
-	"type": "page"
-},
-{
-	"title": "Data Analysis",
-	"uid": "DCL10-TP1-CHDRN23",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Opener Page - Google Docs",
-	"type": "page"
-},
-{
-	"title": "DATA MANIPULATION",
-	"uid": "DCL10-TP1-CHDRN24",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.1 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "CREATING DASHBOARDS",
-	"uid": "DCL10-TP1-CHDRN25",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.2 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "DATA VISUALIZATION: USING SPARKLINES",
-	"uid": "DCL10-TP1-CHDRN26",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.3 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "COMPUTATIONAL MODEL",
-	"uid": "DCL10-TP1-CHDRN27",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit5-Sprint5.4 - Google Docs",
-	"type": "page"
-},
-{
-	"title": "Game Logic and Animations",
-	"uid": "DCL10-TP1-CHDRN28",
-	"description": "",
-	"route":"/pdf?course=DigiChamps&Level=Level10&pdf=DC-Level10-Unit4-Opener page - Google Docs",
-	"type": "page"
-}
-					]
-				  }
-			 ]
-		}
+			  },
+			  {
+				"title": "Exercise",
+				"uid": "DCL10-TP1-CHDRN6",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit1-Exercise - Google Docs",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL10/DCL10-TP1-000.mdx",
+			"title": "Unit 2: Photo and Video Editing",
+			"type": "topic",
+			"uid": "DCL10-TP2-000",
+			"children": [
+			   {
+				"title": "Unit 2 Summary",
+				"uid": "DCL10-TP2-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Opener Page - Google Docs"
+			  },
+			  {
+				"title": "2.1 - Creative Photo Editing",
+				"uid": "DCL10-TP2-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.1 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "2.2 - Advanced Photo Editing",
+				"uid": "DCL10-TP2-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.2 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "2.3 - Advanced Video Editing",
+				"uid": "DCL10-TP2-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.3 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "Exercise",
+				"uid": "DCL10-TP2-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit2-Exercise - Google Docs",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL10/DCL10-TP1-000.mdx",
+			"title": "Unit 3: Game Interface",
+			"type": "topic",
+			"uid": "DCL10-TP3-000",
+			"children": [
+				{
+				"title": "Unit 3 Summary",
+				"uid": "DCL10-TP3-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-opener page - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "3.1 - Web Interface For The Game",
+				"uid": "DCL10-TP3-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Sprint3.1 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "3.2 - Styling The Game Page",
+				"uid": "DCL10-TP3-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC_L10_Unit3_Sprint3.2 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "Exercise",
+				"uid": "DCL10-TP3-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Exercise - Google Docs",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL10/DCL10-TP1-000.mdx",
+			"title": "Unit 4: Game Logic and Animations",
+			"type": "topic",
+			"uid": "DCL10-TP4-000",
+			"children": [
+			  {
+				"title": "Unit 4 Summary",
+				"uid": "DCL10-TP4-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-Level10-Unit4-Opener page - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "4.1 - Setting The Game Elements",
+				"uid": "DCL10-TP4-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit4-Sprint4.1 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "4.2 - Core Logic Of The Game",
+				"uid": "DCL10-TP4-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.2 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "4.3 - Game Enhancements",
+				"uid": "DCL10-TP4-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.3 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "4.4 - Animations",
+				"uid": "DCL10-TP4-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.4 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "Exercise",
+				"uid": "DCL10-TP4-CHDRN6",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit4-Exercise - Google Docs",
+				"type": "page"
+			  }
+			]
+		  },
+		  {
+			"route": "book/DCL10/DCL10-TP1-000.mdx",
+			"title": "Unit 5: Data Analysis",
+			"type": "topic",
+			"uid": "DCL10-TP5-000",
+			"children": [
+			  {
+				"title": "Unit 5 Summary",
+				"uid": "DCL10-TP5-CHDRN1",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Opener Page - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "5.1 - Data Manipulation",
+				"uid": "DCL10-TP5-CHDRN2",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.1 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "5.2 - Creating Dashboards",
+				"uid": "DCL10-TP5-CHDRN3",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.2 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "5.3 - Data Visualization: Using Sparklines",
+				"uid": "DCL10-TP5-CHDRN4",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.3 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "5.4 - Computational Model",
+				"uid": "DCL10-TP5-CHDRN5",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit5-Sprint5.4 - Google Docs",
+				"type": "page"
+			  },
+			  {
+				"title": "Exercise",
+				"uid": "DCL10-TP5-CHDRN6",
+				"description": "",
+				"route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Exercise - Google Docs",
+				"type": "page"
+			  }
+			]
+		  }
+		]
+	  }
 	}
-]
+  ]

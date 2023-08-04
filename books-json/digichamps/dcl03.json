@@ -99,7 +99,7 @@
 				"title": "3.3 - Views In TinkerCAD",
 				"uid": "DCL03-TP3-CHDRN4",
 				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL02_U03_S03",
+				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S03",
 				"type": "page"
 			  },
 			  {
@@ -118,7 +118,7 @@
 			"uid": "DCL03-TP4-000",
 			"children": [
 			  {
-				"title": "Unit 4 Tux Magic",
+				"title": "Unit 4 Summary",
 				"uid": "DCL03-TP4-CHDRN1",
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_Intro",
