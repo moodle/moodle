@@ -14,17 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace communication_matrix;
+
 /**
- * Version information for communication_matrix.
+ * class matrix_constants to have one location to store all constants related to matrix.
  *
  * @package    communication_matrix
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class matrix_constants {
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * User default power level for matrix.
+     */
+    public const POWER_LEVEL_DEFAULT = 0;
 
-$plugin->component = 'communication_matrix';
-$plugin->version = 2023090600;
-$plugin->requires = 2023011300;
-$plugin->maturity = MATURITY_ALPHA;
+    /**
+     * User moderator power level for matrix.
+     */
+    public const POWER_LEVEL_MODERATOR = 50;
+
+    /**
+     * User power level for matrix associated to moodle site admins. It is a custom power level for site admins.
+     */
+    public const POWER_LEVEL_MOODLE_SITE_ADMIN = 90;
+
+    /**
+     * User maximum power level for matrix. This is only associated to the token user to allow god mode actions.
+     */
+    public const POWER_LEVEL_MAXIMUM = 100;
+}

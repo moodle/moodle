@@ -50,7 +50,7 @@ class communication_feature implements
     \core_communication\room_user_provider,
     \core_communication\form_provider {
 
-    /** @var matrix_room $room The matrix room object to update room information */
+    /** @var ?matrix_room $room The matrix room object to update room information */
     private ?matrix_room $room = null;
 
     /** @var string|null The URI of the home server */
@@ -127,10 +127,7 @@ class communication_feature implements
      * @return null|matrix_room
      */
     public function get_room_configuration(): ?matrix_room {
-        if ($this->room === null) {
-            $this->room = matrix_room::load_by_processor_id($this->processor->get_id());
-        }
-
+        $this->room = matrix_room::load_by_processor_id($this->processor->get_id());
         return $this->room;
     }
 
@@ -184,8 +181,19 @@ class communication_feature implements
             }
         }
 
+        // Set the power level of the users.
+        if (!empty($addedmembers) && $this->is_power_levels_update_required($addedmembers)) {
+            $this->set_matrix_power_levels();
+        }
+
         // Mark then users as synced for the added members.
         $this->processor->mark_users_as_synced($addedmembers);
+    }
+
+    public function update_room_membership(array $userids): void {
+        $this->set_matrix_power_levels();
+        // Mark then users as synced for the updated members.
+        $this->processor->mark_users_as_synced($userids);
     }
 
     /**
@@ -207,6 +215,11 @@ class communication_feature implements
             } else {
                 $unregisteredmembers[] = $userid;
             }
+        }
+
+        // Set the power level of the users.
+        if (!empty($addedmembers) && $this->is_power_levels_update_required($addedmembers)) {
+            $this->set_matrix_power_levels();
         }
 
         // Mark then users as synced for the added members.
@@ -255,6 +268,13 @@ class communication_feature implements
     public function remove_members_from_room(array $userids): void {
         // This API requiures the remove_members_from_room feature.
         $this->matrixapi->require_feature(remove_member_from_room_feature::class);
+
+        if($this->get_room_id() === null) {
+            return;
+        }
+
+        // Remove the power level for the user first.
+        $this->set_matrix_power_levels($userids);
 
         $membersremoved = [];
 
@@ -514,5 +534,83 @@ class communication_feature implements
         $body = $response->getBody();
 
         return json_decode($body, false, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Set the matrix power level with the room.
+     *
+     * @param array $resetusers The list of users to override and reset their power level to 0
+     */
+    private function set_matrix_power_levels(array $resetusers = []): void {
+        // Get all the current users for the room.
+        $existingusers = $this->processor->get_all_userids_for_instance();
+
+        $userpowerlevels = [];
+        foreach ($existingusers as $existinguser) {
+            $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($existinguser);
+
+            if (!$matrixuserid) {
+                continue;
+            }
+
+            if (!empty($resetusers) && in_array($existinguser, $resetusers, true)) {
+                $userpowerlevels[$matrixuserid] = matrix_constants::POWER_LEVEL_DEFAULT;
+            } else {
+                $existinguserpowerlevel = $this->get_user_allowed_power_level($existinguser);
+                // We don't need to include the default power level users in request, as matrix will make then default anyways.
+                if ($existinguserpowerlevel > matrix_constants::POWER_LEVEL_DEFAULT) {
+                    $userpowerlevels[$matrixuserid] = $existinguserpowerlevel;
+                }
+            }
+        }
+
+        // Now add the token user permission to retain the permission in the room.
+        $response = $this->matrixapi->get_room_info($this->get_room_id());
+        $matrixroomdata = self::get_body($response);
+        $roomadmin = $matrixroomdata->creator;
+        $userpowerlevels[$roomadmin] = matrix_constants::POWER_LEVEL_MAXIMUM;
+
+        $this->matrixapi->update_room_power_levels($this->get_room_id(), $userpowerlevels);
+    }
+
+    /**
+     * Determine if a power level update is required.
+     * Matrix will always set a user to the default power level of 0 when a power level update is made.
+     * That is, unless we specify another level. As long as one person's level is greater than the default,
+     * we will need to set the power levels of all users greater than the default.
+     *
+     * @param array $userids The users to evaluate
+     * @return boolean Returns true if an update is required
+     */
+    private function is_power_levels_update_required(array $userids): bool {
+        // Is the user's power level greater than the default?
+        foreach ($userids as $userid) {
+            if ($this->get_user_allowed_power_level($userid) > matrix_constants::POWER_LEVEL_DEFAULT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get the allowed power level for the user id according to perms/site admin or default.
+     *
+     * @param int $userid
+     * @return int
+     */
+    public function get_user_allowed_power_level(int $userid): int {
+        $context = \context_course::instance($this->processor->get_instance_id());
+        $powerlevel = matrix_constants::POWER_LEVEL_DEFAULT;
+
+        if (has_capability('communication/matrix:moderator', $context, $userid)) {
+            $powerlevel = matrix_constants::POWER_LEVEL_MODERATOR;
+        }
+
+        // If site admin, override all caps.
+        if (is_siteadmin($userid)) {
+            $powerlevel = matrix_constants::POWER_LEVEL_MOODLE_SITE_ADMIN;
+        }
+
+        return $powerlevel;
     }
 }

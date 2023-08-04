@@ -18,6 +18,7 @@ namespace communication_matrix;
 
 use core_communication\api;
 use core_communication\communication_test_helper_trait;
+use core_communication\processor;
 use stored_file;
 
 defined('MOODLE_INTERNAL') || die();
@@ -191,7 +192,6 @@ class communication_feature_test extends \advanced_testcase {
             'Our updated room name',
             $communication->get_room_name(),
         );
-
     }
 
     /**
@@ -360,6 +360,7 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::add_members_to_room
      * @covers ::add_registered_matrix_user_to_room
      * @covers ::check_room_membership
+     * @covers ::set_matrix_power_levels
      */
     public function test_add_and_remove_members_from_room(): void {
         $user = $this->getDataGenerator()->create_user();
@@ -394,6 +395,96 @@ class communication_feature_test extends \advanced_testcase {
         $userids = array_map(fn ($userid) => substr($userid, 0, strpos($userid, ':')), $userids);
         $this->assertNotContains("@{$user->username}", $userids);
         $this->assertContains("@{$user2->username}", $userids);
+    }
+
+    /**
+     * Test update of room membership.
+     *
+     * @covers ::update_room_membership
+     * @covers ::set_matrix_power_levels
+     * @covers ::is_power_levels_update_required
+     * @covers ::get_user_allowed_power_level
+     */
+    public function test_update_room_membership(): void {
+        $this->resetAfterTest();
+
+        global $DB;
+
+        // Create a new room.
+        $course = $this->get_course('Sampleroom', 'none');
+        $user = $this->get_user();
+
+        $communication = $this->create_room(
+            component: 'core_course',
+            itemtype: 'coursecommunication',
+            itemid: $course->id
+        );
+        $provider = $communication->get_room_user_provider();
+
+        // Add the members to the room.
+        $provider->add_members_to_room([$user->id]);
+
+        // Assign teacher role to the user.
+        $coursecontext = \context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        role_assign($teacherrole->id, $user->id, $coursecontext->id);
+
+        // Test the tasks added as the role is a teacher.
+        $provider->update_room_membership([$user->id]);
+
+        $processor = \core_communication\processor::load_by_instance(
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+        );
+        $synceduser = $processor->get_instance_userids(
+            synced: true,
+        );
+        $synceduser = reset($synceduser);
+
+        // Test if the communication user record is synced.
+        $this->assertEquals($user->id, $synceduser);
+    }
+
+    /**
+     * Test the user power level allocation according to context.
+     *
+     * @covers ::get_user_allowed_power_level
+     */
+    public function test_get_user_allowed_power_level(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $course = $this->get_course();
+        $coursecontext = \context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        // Assign roles.
+        role_assign($teacherrole->id, $user1->id, $coursecontext->id);
+        role_assign($studentrole->id, $user2->id, $coursecontext->id);
+
+        $communicationprocessor = processor::load_by_instance(
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id
+        );
+
+        // Test if the power level is set according to the context.
+        $this->assertEquals(
+            matrix_constants::POWER_LEVEL_MODERATOR,
+            $communicationprocessor->get_room_provider()->get_user_allowed_power_level($user1->id)
+        );
+        $this->assertEquals(
+            matrix_constants::POWER_LEVEL_DEFAULT,
+            $communicationprocessor->get_room_provider()->get_user_allowed_power_level($user2->id)
+        );
     }
 
     /**
