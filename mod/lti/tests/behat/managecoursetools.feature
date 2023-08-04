@@ -63,7 +63,6 @@ Feature: Manage course tools
     Given the following "role capability" exists:
       | role                             | editingteacher |
       | mod/lti:addcoursetool            | allow          |
-      | mod/lti:addmanualinstance        | allow          |
       | mod/lti:addpreconfiguredinstance | prohibit       |
     And the following "mod_lti > course tools" exist:
       | name      | description         | baseurl                  | course |
