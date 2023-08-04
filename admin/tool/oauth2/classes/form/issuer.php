@@ -104,7 +104,6 @@ class issuer extends persistent {
 
         // Client Secret.
         $mform->addElement('text', 'clientsecret', get_string('issuerclientsecret', 'tool_oauth2'));
-        $mform->addRule('clientsecret', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
         // Use basic authentication.

@@ -127,3 +127,6 @@ $string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any pe
 
 // Deprecated since Moodle 4.3.
 $string['imsobv2p1_service'] = 'Open Badges';
+
+// Apple SSO.
+$string['apple_service'] = 'Apple';

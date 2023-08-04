@@ -228,6 +228,12 @@ if ($mform && $mform->is_cancelled()) {
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
     echo $renderer->single_button($addurl, get_string('moodlenet_service', 'tool_oauth2'));
 
+    // Apple template
+    $docs = 'admin/tool/oauth2/issuers/apple';
+    $params = ['action' => 'edittemplate', 'type' => 'apple', 'sesskey' => sesskey(), 'docslink' => $docs];
+    $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', $params);
+    echo $renderer->single_button($addurl, get_string('apple_service', 'tool_oauth2'));
+
     // Generic issuer.
     $addurl = new moodle_url('/admin/tool/oauth2/issuers.php', ['action' => 'edit']);
     echo $renderer->single_button($addurl, get_string('custom_service', 'tool_oauth2'));
