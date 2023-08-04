@@ -94,6 +94,7 @@ being forced open in all behat tests.
   - file_mimetype_icon
   - mimeinfo_from_type
   - url_guess_icon
+* The xxxxxxx-yyy.png MIME icons placed in pix/f have been removed and replaced with new SVG files.
 
 === 4.2 ===
 
