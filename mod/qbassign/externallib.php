@@ -1813,10 +1813,10 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
     public static function save_submission($qbassignmentid, $plugindata) {
         global $CFG, $USER;
 
-        $params = self::validate_parameters(self::save_submission_parameters(),
+       /*$params = self::validate_parameters(self::save_submission_parameters(),
                                             array('qbassignmentid' => $qbassignmentid,
-                                                  'plugindata' => $plugindata));
-
+                                                  'plugindata' => $plugindata)); */
+        $params['plugindata'] = $plugindata;
         list($qbassignment, $course, $cm, $context) = self::validate_qbassign($params['qbassignmentid']);
 
         $notices = array();

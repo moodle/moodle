@@ -19,21 +19,20 @@ echo $OUTPUT->footer();
 <script>
 //<![CDATA[
 require(['jquery'], function($){
-	let offset = 0
-	let limit = 6
-	let payload = [
-                {
-                    "index": 0,
-                    "methodname": "local_qubitsbook_get_assignment_service",
-                    "args": {
-                        "uniquefield": "sql_challenges_1"
-                    }
+	let offset = 0;
+	let limit = 6;
+	let payload ={
+                    "wstoken":"4dc910697d23e14c95c6085518482695",
+                    "moodlewsrestformat":"json",
+                    "wsfunction":"mod_qbassign_save_submission",
+                    "qbassignmentid":45,
+                    "plugindata":{"onlinetex_editor":{"text":"select * from table where name=mani","format":1,"itemid":1}}
                 }
-            ];
+            
 	let mkey = M.cfg.sesskey;
 	//mkey = "sjdhaksjda";
 	let aurl = M.cfg.wwwroot + "/lib/ajax/service-react.php?sesskey=" + mkey;
-	aurl += '&info=local_qubitsbook_get_assignment_service';
+	aurl += '&info=mod_qbassign_save_submission';
 	$.ajax({
 		type: "POST",
 		url: aurl,
