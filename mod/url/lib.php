@@ -245,8 +245,8 @@ function url_get_coursemodule_info($coursemodule) {
     }
 
     $info->customdata['display'] = $display;
-    // The icon will be filtered if it will be the default module icon.
-    $info->customdata['filtericon'] = empty($info->icon);
+    // The icon will be filtered from now on because the custom icons have been updated.
+    $info->customdata['filtericon'] = true;
 
     return $info;
 }
