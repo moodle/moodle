@@ -64,18 +64,22 @@ class instance {
     /** @var int The current groupid if set */
     protected $groupid;
 
+    /** @var int The course module id. */
+    protected $cmid;
+
     /**
      * Instance constructor.
      *
      * Never called directly. Use self::get_from_instanceid or self::get_from_cmid.
      *
-     * @param cm_info $cm
+     * @param int $cmid
      * @param stdClass $course
      * @param stdClass $instancedata
      * @param int|null $groupid
      */
-    private function __construct(cm_info $cm, stdClass $course, stdClass $instancedata, ?int $groupid = null) {
-        $this->cm = $cm;
+    private function __construct(int $cmid, stdClass $course, stdClass $instancedata, ?int $groupid = null) {
+        $this->cmid = $cmid;
+        $this->cm = null; // This is not retrieved later, whenever we call ::get_cm() it will be retrieved.
         $this->course = $course;
         $this->instancedata = $instancedata;
         $this->groupid = $groupid;
@@ -90,7 +94,7 @@ class instance {
      */
     public static function get_group_instance_from_instance(self $originalinstance, int $groupid): ?self {
         return new self(
-            $originalinstance->get_cm(),
+            $originalinstance->get_cm_id(),
             $originalinstance->get_course(),
             $originalinstance->get_instance_data(),
             $groupid
@@ -192,9 +196,7 @@ EOF;
         } else {
             $cmid = $id;
         }
-        $modinfo = get_fast_modinfo($course);
-        $cm = $modinfo->get_cm($cmid);
-        return new self($cm, $course, $instancedata);
+        return new self($cmid, $course, $instancedata);
     }
 
     /**
@@ -275,8 +277,7 @@ EOF;
         foreach ($results as $result) {
             $course = $coursetable->extract_from_result($result);
             $instancedata = $bbbtable->extract_from_result($result);
-            $cm = get_fast_modinfo($course)->get_cm($result->cmid);
-            $instances[$cm->id] = new self($cm, $course, $instancedata);
+            $instances[$result->cmid] = new self($result->cmid, $course, $instancedata);
         }
 
         return $instances;
@@ -378,6 +379,12 @@ EOF;
      * @return cm_info
      */
     public function get_cm(): cm_info {
+        if ($this->cm === null) {
+            // We do a sort of late binding here as if we call get_cm on a disabled module or in a call stack where
+            // get_cm was already called, we will get an exception or infinite loop.
+            $modinfo = get_fast_modinfo($this->course);
+            $this->cm = $modinfo->get_cm($this->cmid);
+        }
         return $this->cm;
     }
 
@@ -387,7 +394,7 @@ EOF;
      * @return int
      */
     public function get_cm_id(): int {
-        return $this->get_cm()->id;
+        return $this->cmid;
     }
 
     /**
@@ -1058,7 +1065,7 @@ EOF;
      */
     public function get_view_url(): moodle_url {
         return new moodle_url('/mod/bigbluebuttonbn/view.php', [
-            'id' => $this->cm->id,
+            'id' => $this->get_cm()->id,
         ]);
     }
 
@@ -1070,8 +1077,8 @@ EOF;
     public function get_logout_url(): moodle_url {
         return new moodle_url('/mod/bigbluebuttonbn/bbb_view.php', [
             'action' => 'logout',
-            'id' => $this->cm->id,
-            'courseid' => $this->cm->course // Used to find the course if ever the activity is deleted
+            'id' => $this->get_cm()->id,
+            'courseid' => $this->get_cm()->course // Used to find the course if ever the activity is deleted
             // while the meeting is running.
         ]);
     }
@@ -1108,7 +1115,7 @@ EOF;
     public function get_join_url(): moodle_url {
         return new moodle_url('/mod/bigbluebuttonbn/bbb_view.php', [
             'action' => 'join',
-            'id' => $this->cm->id,
+            'id' => $this->get_cm()->id,
             'bn' => $this->instancedata->id,
         ]);
     }
