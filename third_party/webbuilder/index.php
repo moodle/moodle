@@ -1,5 +1,6 @@
 <?php
 require('../../config.php');
+require_login();
 $PAGE->set_pagelayout('thirdparty');
 echo $OUTPUT->header();
 ?>

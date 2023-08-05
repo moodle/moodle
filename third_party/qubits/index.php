@@ -1,5 +1,6 @@
 <?php
 require('../../config.php');
+require_login();
 $elanguage      = optional_param('language', '', PARAM_TEXT);
 $clsname = 'page-editor-qubits-'.$elanguage;
 $PAGE->set_pagelayout('thirdparty');
