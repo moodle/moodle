@@ -361,32 +361,24 @@ function bigbluebuttonbn_reset_userdata(stdClass $data) {
  * @return null|cached_cm_info
  */
 function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
-    global $DB;
-
-    $dbparams = ['id' => $coursemodule->instance];
-    $customcompletionfields = custom_completion::get_defined_custom_rules();
-    $fieldsarray = array_merge([
-        'id',
-        'name',
-        'intro',
-        'introformat',
-    ], $customcompletionfields);
-    $fields = join(',', $fieldsarray);
-    $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', $dbparams, $fields);
-    if (!$bigbluebuttonbn) {
+    $instance = instance::get_from_instanceid($coursemodule->instance);
+    if (empty($instance)) {
         return null;
     }
     $info = new cached_cm_info();
-    $info->name = $bigbluebuttonbn->name;
+    // Warning here: if any of the instance method calls ::get_cm this will result is a recursive call.
+    // So best is just to access instance variables not linked to the cm.
+    $info->name = $instance->get_instance_var('name');
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
-        $info->content = format_module_intro('bigbluebuttonbn', $bigbluebuttonbn, $coursemodule->id, false);
+        $info->content = format_module_intro('bigbluebuttonbn', $instance->get_instance_data(), $coursemodule->id, false);
     }
+    $customcompletionfields = custom_completion::get_defined_custom_rules();
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         foreach ($customcompletionfields as $completiontype) {
             $info->customdata['customcompletionrules'][$completiontype] =
-                $bigbluebuttonbn->$completiontype ?? 0;
+                $instance->get_instance_var($completiontype) ?? 0;
         }
     }
 

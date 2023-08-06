@@ -25,7 +25,7 @@
  */
 class restore_bbbext_simple_subplugin extends restore_subplugin {
     /**
-     * Returns the paths to be handled by the subplugin at workshop level
+     * Returns the paths to be handled by the subplugin.
      *
      * @return array
      */
@@ -43,7 +43,7 @@ class restore_bbbext_simple_subplugin extends restore_subplugin {
     }
 
     /**
-     * Processes one feedback_comments element.
+     * Processes one subplugin instance additional parameter.
      *
      * @param mixed $data
      */

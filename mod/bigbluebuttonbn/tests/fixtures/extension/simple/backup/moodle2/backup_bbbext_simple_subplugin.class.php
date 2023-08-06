@@ -25,7 +25,7 @@
 class backup_bbbext_simple_subplugin extends backup_subplugin {
 
     /**
-     * Returns the subplugin information to attach to submission element.
+     * Returns the subplugin information to attach the BigBlueButton instance.
      *
      * @return backup_subplugin_element
      */

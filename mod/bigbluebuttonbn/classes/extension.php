@@ -15,7 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 namespace mod_bigbluebuttonbn;
 
+use cache;
 use mod_bigbluebuttonbn\local\extension\action_url_addons;
+use mod_bigbluebuttonbn\local\extension\mod_form_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
 use stdClass;
 use core_plugin_manager;
@@ -58,6 +60,48 @@ class extension {
             'data' => $additionaldata,
             'metadata' => $additionalmetadata
         ];
+    }
+
+    /**
+     * Get all mod_form addons classes instances
+     *
+     * @param \MoodleQuickForm $mform
+     * @param stdClass|null $bigbluebuttondata
+     * @param string|null $suffix
+     * @return array of custom completion addon classes instances
+     */
+    public static function mod_form_addons_instances(\MoodleQuickForm $mform, ?stdClass $bigbluebuttondata = null,
+        string $suffix = null): array {
+        return self::get_instances_implementing(mod_form_addons::class, [$mform, $bigbluebuttondata, $suffix]);
+    }
+
+    /**
+     * Get additional join tables for instance when extension activated
+     *
+     * @return array of additional tables names. They all have a field called bigbluebuttonbnid that identifies the bbb instance.
+     */
+    public static function get_join_tables(): array {
+        global $DB;
+        // We use cache here as it will be called very often.
+        $cache = cache::make('mod_bigbluebuttonbn', 'subplugins');
+        if ($cache->get('additionaltables')) {
+            return $cache->get('additionaltables');
+        }
+        $additionaltablesclasses = self::get_instances_implementing(mod_instance_helper::class);
+        $tables = [];
+        foreach ($additionaltablesclasses as $tableclass) {
+            $tables = array_merge($tables, $tableclass->get_join_tables() ?? []);
+        }
+        // Warning and removal for tables that do not have the bigbluebuttonid field.
+        foreach ($tables as $index => $table) {
+            $columns = $DB->get_columns($table);
+            if (empty($columns['bigbluebuttonbnid'])) {
+                debugging("get_instance_additional_tables: $table should have a column named bigbluebuttonid");
+                unset($tables[$index]);
+            }
+        }
+        $cache->set('additionaltables', $tables);
+        return $tables;
     }
 
     /**
