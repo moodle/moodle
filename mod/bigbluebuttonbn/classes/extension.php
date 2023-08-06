@@ -103,9 +103,26 @@ class extension {
      * Get new instance of classes that are named on the base of this classname and implementing this class
      *
      * @param string $classname
+     * @param array|null $newparameters additional parameters for the constructor.
      * @return array
      */
-    protected static function get_instances_implementing(string $classname): array {
+    protected static function get_instances_implementing(string $classname, ?array $newparameters = []): array {
+        $classes = self::get_classes_implementing($classname);
+        sort($classes); // Make sure all extension classes are returned in the same order. This is arbitrarily in
+        // alphabetical order and depends on the classname but this one way to ensure consistency across calls.
+        return array_map(function($targetclassname)  use ($newparameters) {
+            // If $newparameters is null, the constructor will be called without parameters.
+            return new $targetclassname(...$newparameters);
+        }, $classes);
+    }
+
+    /**
+     * Get classes are named on the base of this classname and implementing this class
+     *
+     * @param string $classname
+     * @return array
+     */
+    protected static function get_classes_implementing(string $classname): array {
         // Get the class basename without Reflection API.
         $classnamecomponents = explode("\\", $classname);
         $classbasename = end($classnamecomponents);
@@ -123,7 +140,7 @@ class extension {
                 debugging("The class $targetclassname should extend $classname in the subplugin {$sub->name}. Ignoring.");
                 continue;
             }
-            $extensionclasses[] = new $targetclassname();
+            $extensionclasses[] = $targetclassname;
         }
         return $extensionclasses;
     }
