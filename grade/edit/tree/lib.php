@@ -300,11 +300,13 @@ class grade_edit_tree {
             $parentcategories = array_merge($rowclasses, [$eid]);
             $emptyrow->attributes['class'] = 'spacer ' . implode(' ', $parentcategories);
             $emptyrow->attributes['data-hidden'] = 'false';
+            $emptyrow->attributes['aria-hidden'] = 'true';
 
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
             $headercell->attributes['class'] = 'cell column-rowspan rowspan';
+            $headercell->attributes['aria-hidden'] = 'true';
             $headercell->rowspan = $row_count;
             $emptyrow->cells[] = $headercell;
 
@@ -314,6 +316,7 @@ class grade_edit_tree {
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'emptyrow colspan ' . $levelclass;
+            $endcell->attributes['aria-hidden'] = 'true';
 
             $returnrows[] = new html_table_row(array($endcell));
 
@@ -744,13 +747,11 @@ abstract class grade_edit_tree_column {
     public function get_category_cell($category, $levelclass, $params) {
         $cell = clone($this->categorycell);
         $cell->attributes['class'] .= ' ' . $levelclass;
-        $cell->attributes['text'] = '';
         return $cell;
     }
 
     public function get_item_cell($item, $params) {
         $cell = clone($this->itemcell);
-        $cell->attributes['text'] = '';
         if (isset($params['level'])) {
             $level = $params['level'] + (($item->itemtype == 'category' || $item->itemtype == 'course') ? 0 : 1);
             $cell->attributes['class'] .= ' level' . $level;
@@ -1121,7 +1122,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         }
         // Build the master checkbox.
         $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-            'id' => $togglegroup,
+            'id' => 'select_category_' . $category->id,
             'name' => $togglegroup,
             'value' => 1,
             'classes' => 'itemselect ignoredirty',
