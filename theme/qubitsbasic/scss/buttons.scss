@@ -1,9 +1,19 @@
 @import "./mixins.scss";
+$primary-color: #1482e6;
 .btn-primary,
 .btn-primary:focus,
 .btn-primary.focus {
   background-color: #1482e6 !important;
   border-color: #1482e6 !important;
+}
+.btn-primary:hover {
+  background-color: lighten($primary-color, 10) !important;
+  border-color: lighten($primary-color, 10) !important;
+}
+.btn-primary:focus {
+  border-color: darken($primary-color, 10) !important;
+  outline: #1482e6 !important;
+  box-shadow: 0 0 0 0.2rem rgba(20, 130, 230, 0.5) !important;
 }
 .btn-secondary {
   background-color: #ebebeb !important;
@@ -19,4 +29,9 @@
 .show > .btn-outline-secondary.dropdown-toggle {
   background-color: #1169ba !important;
   border-color: #1169ba !important;
+}
+body .editreport > a,
+.editreport > a:hover,
+.editreport > a:focus {
+  color: white !important;
 }
