@@ -570,6 +570,7 @@ back to the \'Configured\' category so the registration process can be restarted
 $string['toolproxyregistration'] = 'External tool registration';
 $string['toolregistration'] = 'External tool registration';
 $string['toolsetup'] = 'External tool configuration';
+$string['tooltypenotfounderror'] = "The LTI tool used in this activity has been deleted. If you need help, contact your teacher or site administrator.";
 $string['tooltypes'] = 'Tools';
 $string['tooltypeadded'] = 'Preconfigured tool added';
 $string['tooltypedeleted'] = 'Preconfigured tool deleted';

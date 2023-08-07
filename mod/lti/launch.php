@@ -63,17 +63,21 @@ if (empty($typeid) && ($tool = lti_get_tool_by_url_match($lti->toolurl))) {
     $typeid = $tool->id;
 }
 if ($typeid) {
-    $config = lti_get_type_type_config($typeid);
-    if ($config->lti_ltiversion === LTI_VERSION_1P3) {
-        if (!isset($SESSION->lti_initiatelogin_status)) {
-            $msgtype = 'basic-lti-launch-request';
-            if ($action === 'gradeReport') {
-                $msgtype = 'LtiSubmissionReviewRequest';
+    $config = lti_get_type_config($typeid);
+    $missingtooltype = empty($config);
+    if (!$missingtooltype) {
+        $config = lti_get_type_type_config($typeid);
+        if ($config->lti_ltiversion === LTI_VERSION_1P3) {
+            if (!isset($SESSION->lti_initiatelogin_status)) {
+                $msgtype = 'basic-lti-launch-request';
+                if ($action === 'gradeReport') {
+                    $msgtype = 'LtiSubmissionReviewRequest';
+                }
+                echo lti_initiate_login($cm->course, $cmid, $lti, $config, $msgtype, '', '', $foruserid);
+                exit;
+            } else {
+                unset($SESSION->lti_initiatelogin_status);
             }
-            echo lti_initiate_login($cm->course, $cmid, $lti, $config, $msgtype, '', '', $foruserid);
-            exit;
-        } else {
-            unset($SESSION->lti_initiatelogin_status);
         }
     }
 }
@@ -84,6 +88,15 @@ $context = context_module::instance($cm->id);
 
 require_login($course, true, $cm);
 require_capability('mod/lti:view', $context);
+
+if (!empty($missingtooltype)) {
+    $PAGE->set_url(new moodle_url('/mod/lti/launch.php'));
+    $PAGE->set_context($context);
+    $PAGE->set_secondary_active_tab('modulepage');
+    $PAGE->set_pagelayout('incourse');
+    echo $OUTPUT->header();
+    throw new moodle_exception('tooltypenotfounderror', 'mod_lti');
+}
 
 // Completion and trigger events.
 if ($triggerview) {
