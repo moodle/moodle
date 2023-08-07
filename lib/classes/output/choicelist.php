@@ -18,6 +18,7 @@ namespace core\output;
 
 use renderable;
 use renderer_base;
+use core\output\named_templatable;
 
 /**
  * A generic user choice output class.
@@ -29,7 +30,7 @@ use renderer_base;
  * @copyright  2023 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class choicelist implements renderable {
+class choicelist implements renderable, named_templatable {
 
     /** @var object[] The user choices. */
     protected $options = [];
@@ -184,5 +185,15 @@ class choicelist implements renderable {
             'options' => $options,
             'hasoptions' => !empty($options),
         ];
+    }
+
+    /**
+     * Get the name of the template to use for this templatable.
+     *
+     * @param renderer_base $renderer The renderer requesting the template name
+     * @return string
+     */
+    public function get_template_name(renderer_base $renderer): string {
+        return 'core/local/choicelist';
     }
 }
