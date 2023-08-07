@@ -42,8 +42,6 @@ $userid         = optional_param('id', 0, PARAM_INT);
 $edit           = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
 $reset          = optional_param('reset', null, PARAM_BOOL);
 
-$PAGE->set_url('/user/profile.php', array('id' => $userid));
-
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
     if (isguestuser()) {
@@ -60,6 +58,11 @@ if (!empty($CFG->forceloginforprofiles)) {
 }
 
 $userid = $userid ? $userid : $USER->id;       // Owner of the page.
+
+// Even if the user didn't supply a userid, we treat page URL as if they did; this is needed
+// so navigation works correctly.
+$PAGE->set_url('/user/profile.php', ['id' => $userid]);
+
 if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->deleted)) {
     $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
