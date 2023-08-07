@@ -3383,5 +3383,51 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023081800.01);
     }
 
+    if ($oldversion < 2023082200.01) {
+        // Some MIME icons have been removed and replaced with existing icons. They need to be upgraded for custom MIME types.
+        $replacedicons = [
+            'avi' => 'video',
+            'base' => 'database',
+            'bmp' => 'image',
+            'html' => 'markup',
+            'jpeg' => 'image',
+            'mov' => 'video',
+            'mp3' => 'audio',
+            'mpeg' => 'video',
+            'png' => 'image',
+            'quicktime' => 'video',
+            'tiff' => 'image',
+            'wav' => 'audio',
+            'wmv' => 'video',
+        ];
+
+        $custom = [];
+        if (!empty($CFG->customfiletypes)) {
+            if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
+                // It's set in config.php, so the MIME icons can't be upgraded automatically.
+                echo("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
+            } else {
+                // It's a JSON string in the config table.
+                $custom = json_decode($CFG->customfiletypes);
+            }
+        }
+
+        $changed = false;
+        foreach ($custom as $customentry) {
+            if (!empty($customentry->icon) && array_key_exists($customentry->icon, $replacedicons)) {
+                $customentry->icon = $replacedicons[$customentry->icon];
+                $changed = true;
+            }
+        }
+
+        if ($changed) {
+            // Save the new customfiletypes.
+            set_config('customfiletypes', json_encode($custom));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.01);
+    }
+
     return true;
 }
