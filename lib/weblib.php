@@ -1376,8 +1376,9 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             $text = markdown_to_html($text);
             $filteroptions['stage'] = 'pre_clean';
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
-            // The markdown parser does not strip dangerous html so we need to clean it, even if noclean is set to true.
-            $text = clean_text($text, FORMAT_HTML, $options);
+            if (!$options['noclean']) {
+                $text = clean_text($text, FORMAT_HTML, $options);
+            }
             $filteroptions['stage'] = 'post_clean';
             $text = $filtermanager->filter_text($text, $context, $filteroptions);
             break;
