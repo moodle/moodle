@@ -186,7 +186,9 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
             $data->{$field.'format'} = editors_get_preferred_format();
         }
         if (!$options['noclean']) {
-            $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+            if ($data->{$field.'format'} != FORMAT_MARKDOWN) {
+                $data->{$field} = clean_text($data->{$field}, $data->{$field . 'format'});
+            }
         }
 
     } else {
@@ -198,7 +200,11 @@ function file_prepare_standard_editor($data, $field, array $options, $context=nu
             $data = trusttext_pre_edit($data, $field, $context);
         } else {
             if (!$options['noclean']) {
-                $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+                // We do not have a way to sanitise Markdown texts,
+                // luckily editors for this format should not have XSS problems.
+                if ($data->{$field.'format'} != FORMAT_MARKDOWN) {
+                    $data->{$field} = clean_text($data->{$field}, $data->{$field.'format'});
+                }
             }
         }
         $contextid = $context->id;
