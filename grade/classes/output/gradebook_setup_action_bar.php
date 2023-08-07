@@ -63,7 +63,6 @@ class gradebook_setup_action_bar extends action_bar {
             'get',
             \single_button::BUTTON_SECONDARY,
             [
-                'class' => 'btn btn-secondary',
                 'data-courseid' => $courseid,
                 'data-itemid' => -1,
                 'data-trigger' => 'add-item-form',
@@ -99,7 +98,6 @@ class gradebook_setup_action_bar extends action_bar {
             'get',
             \single_button::BUTTON_SECONDARY,
             [
-                'class' => 'btn btn-secondary',
                 'data-courseid' => $courseid,
                 'data-category' => -1,
                 'data-trigger' => 'add-category-form',
