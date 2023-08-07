@@ -44,7 +44,14 @@ $output = $PAGE->get_renderer('core');
 
 echo $output->header();
 
+echo $output->paragraph(
+    '<strong>Important note:</strong> dropdowns are not prepared
+    to be displayed inside iframes. You may need to scroll to see the
+    the dropdown content.'
+);
+
 echo $output->heading("Dropdown dialog example", 3);
+echo '<div class="p-3">';
 
 $dialog = new core\output\local\dropdown\dialog(
     'Open dialog',
@@ -55,15 +62,18 @@ $dialog = new core\output\local\dropdown\dialog(
     </ul>'
 );
 echo $OUTPUT->render($dialog);
+echo "</div>";
+
 
 echo $output->heading("Dropdown status example", 3);
+echo '<div class="p-3">';
 
 $choice = new core\output\choicelist('Choice description text');
 
 // Option one is a link.
 $choice->add_option('option1', 'Option 1', [
-    'description' => 'Option 1 description',
     'icon' => new pix_icon('t/show', 'Eye icon 1'),
+    'url' => new moodle_url('/admin/tool/componentlibrary/examples/dropdowns.php'),
 ]);
 // Option two has an icon and description.
 $choice->add_option('option2', 'Option 2', [
@@ -74,11 +84,41 @@ $choice->add_option('option2', 'Option 2', [
 $choice->add_option('option3', 'Option 3', [
     'description' => 'Option 3 description',
     'icon' => new pix_icon('t/stealth', 'Eye icon 3'),
+    'disabled' => true,
 ]);
 
 $choice->set_selected_value('option2');
 
 $dialog = new core\output\local\dropdown\status('Open dialog button', $choice);
 echo $OUTPUT->render($dialog);
+echo "</div>";
+
+echo $output->heading("Dropdown status in update mode example", 3);
+echo '<div class="p-3">';
+
+$choice = new core\output\choicelist('Choice description text');
+
+$choice->add_option('option1', 'Option 1', [
+    'description' => 'Option 1 description',
+    'icon' => new pix_icon('t/show', 'Eye icon 1'),
+]);
+$choice->add_option('option2', 'Option 2', [
+    'description' => 'Option 2 description',
+    'icon' => new pix_icon('t/hide', 'Eye icon 2'),
+]);
+
+$choice->set_selected_value('option2');
+
+$dialog = new core\output\local\dropdown\status(
+    'Open dialog button',
+    $choice,
+    [
+        'buttonsync' => true,
+        'updatestatus' => true,
+        'dialogwidth' => core\output\local\dropdown\status::WIDTH['big']
+    ]
+);
+echo $OUTPUT->render($dialog);
+echo "</div>";
 
 echo $output->footer();
