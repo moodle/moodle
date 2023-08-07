@@ -128,7 +128,7 @@ class course_external_tools_list extends system_report {
             ->set_type(column::TYPE_TEXT)
             ->set_is_sortable(false)
             ->add_fields("{$entitymainalias}.id, {$entitymainalias}.course, {$entitymainalias}.name")
-            ->add_callback(static function($field, $row) {
+            ->add_callback(function($field, $row) {
                 global $OUTPUT;
 
                 // Lock actions for site-level preconfigured tools.
@@ -169,7 +169,8 @@ class course_external_tools_list extends system_report {
                     [
                         'data-action' => 'course-tool-delete',
                         'data-course-tool-id' => $row->id,
-                        'data-course-tool-name' => $row->name
+                        'data-course-tool-name' => $row->name,
+                        'data-course-tool-usage' => $this->perrowtoolusage
                     ],
                 ));
 

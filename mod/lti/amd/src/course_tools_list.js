@@ -27,8 +27,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Ajax from 'core/ajax';
 import {add as addToast} from 'core/toast';
-import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {get_string as getString, get_strings as getStrings} from 'core/str';
 import {refreshTableContent} from 'core_table/dynamic';
 import * as Selectors from 'core_table/local/dynamic/selectors';
 
@@ -36,30 +35,31 @@ import * as Selectors from 'core_table/local/dynamic/selectors';
  * Initialise module.
  */
 export const init = () => {
-    prefetchStrings('mod_lti', [
-        'deletecoursetool',
-        'deletecoursetoolconfirm',
-        'coursetooldeleted'
-    ]);
-
-    prefetchStrings('core', [
-        'delete',
-    ]);
-
     document.addEventListener('click', event => {
 
         const courseToolDelete = event.target.closest('[data-action="course-tool-delete"]');
         if (courseToolDelete) {
             event.preventDefault();
 
+            // A different message is used in the modal if the tool has usages within the course.
+            const usage = courseToolDelete.dataset.courseToolUsage;
+            const deleteBodyStringId = usage > 0 ? 'deletecoursetoolwithusageconfirm' : 'deletecoursetoolconfirm';
+            const requiredStrings = [
+                {key: 'deletecoursetool', component: 'mod_lti', param: courseToolDelete.dataset.courseToolName},
+                {key: deleteBodyStringId, component: 'mod_lti', param: courseToolDelete.dataset.courseToolName},
+                {key: 'delete', component: 'core', param: courseToolDelete.dataset.courseToolName},
+                {key: 'coursetooldeleted', component: 'mod_lti', param: courseToolDelete.dataset.courseToolName}
+            ];
             // Use triggerElement to return focus to the action menu toggle.
             const triggerElement = courseToolDelete.closest('.dropdown').querySelector('.dropdown-toggle');
-            Notification.saveCancelPromise(
-                getString('deletecoursetool', 'mod_lti'),
-                getString('deletecoursetoolconfirm', 'mod_lti', courseToolDelete.dataset.courseToolName),
-                getString('delete', 'core'),
-                {triggerElement}
-            ).then(() => {
+
+            getStrings(requiredStrings).then(([modalTitle, modalBody, deleteLabel]) => {
+                return Notification.deleteCancelPromise(
+                    modalTitle,
+                    modalBody,
+                    deleteLabel,
+                    {triggerElement});
+            }).then(() => {
                 const pendingPromise = new Pending('mod_lti/course_tools:delete');
 
                 const request = {
@@ -67,7 +67,7 @@ export const init = () => {
                     args: {tooltypeid: courseToolDelete.dataset.courseToolId}
                 };
                 return Ajax.call([request])[0]
-                    .then(addToast(getString('coursetooldeleted', 'mod_lti')))
+                    .then(addToast(getString('coursetooldeleted', 'mod_lti', courseToolDelete.dataset.courseToolName)))
                     .then(() => {
                         const tableRoot = triggerElement.closest(Selectors.main.region);
                         return refreshTableContent(tableRoot);
