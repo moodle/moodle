@@ -38779,6 +38779,9 @@ div.editor_atto_toolbar button .icon {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
+/**
+ Deprecations
+ */
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

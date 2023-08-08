@@ -2116,6 +2116,10 @@ class moodle_page {
             $this->add_body_class($this->_devicetypeinuse . 'theme');
         }
 
+        if (!empty($CFG->themedesignermode)) {
+            $this->add_body_class('themedesignermode');
+        }
+
         // Add class for behat site to apply behat related fixes.
         if (defined('BEHAT_SITE_RUNNING')) {
             $this->add_body_class('behat-site');
