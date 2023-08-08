@@ -66,6 +66,11 @@ information provided here is intended especially for developers.
   that need to perform processing when a question is deleted should observe the \core\event\question_deleted event instead.
 * The external function core_grades_get_groups_for_selector is now relocated.
   Please use it at core_group_get_groups_for_selector instead.
+* The M.util.show_confirm_dialog function has been rewritten as an ESM to use the core/notification module instead.
+  See MDL-77174 for further information.
+* The moodle-core-notification-confirm module, found under the M.core.confirm namespace, has been deprecated.
+  Any code using it should be rewritten as an ESM and use the core/notification module instead.
+  See MDL-77174 for further information.
 
 === 4.2 ===
 

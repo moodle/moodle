@@ -108,31 +108,30 @@ Y.extend(SECTIONTOOLBOX, TOOLBOX, {
      * @chainable
      */
     delete_section_with_confirmation: function(ev, button, activity) {
-        // Prevent the default button action.
         ev.preventDefault();
+        require(['core/notification'], function(Notification) {
+            Notification.saveCancelPromise(
+                M.util.get_string('confirm', 'moodle'),
+                M.util.get_string('confirmremovesectionheading', 'quiz', activity.getData('sectionname')),
+                M.util.get_string('yes', 'moodle')
+            ).then(function() {
+                var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.ACTIONAREA));
+                var data = {
+                    'class': 'section',
+                    'action': 'DELETE',
+                    'id': activity.get('id').replace('section-', '')
+                };
+                this.send_request(data, spinner, function(response) {
+                    if (response.deleted) {
+                        window.location.reload(true);
+                    }
+                });
 
-        // Create the confirmation dialogue.
-        var confirm = new M.core.confirm({
-            question: M.util.get_string('confirmremovesectionheading', 'quiz', activity.getData('sectionname')),
-            modal: true
-        });
-
-        // If it is confirmed.
-        confirm.on('complete-yes', function() {
-
-            var spinner = M.util.add_spinner(Y, activity.one(SELECTOR.ACTIONAREA));
-            var data = {
-                'class':  'section',
-                'action': 'DELETE',
-                'id':     activity.get('id').replace('section-', '')
-            };
-            this.send_request(data, spinner, function(response) {
-                if (response.deleted) {
-                    window.location.reload(true);
-                }
+                return;
+            }.bind(this)).catch(function() {
+                // User cancelled.
             });
-
-        }, this);
+        }.bind(this));
     },
 
     /**
