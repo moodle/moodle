@@ -1121,6 +1121,7 @@ $string['includeneededusers'] = 'Include needed users';
 $string['includenoneusers'] = 'Include no users';
 $string['includeroleassignments'] = 'Include role assignments';
 $string['includesitefiles'] = 'Include site files used in this course';
+$string['includesubcategories'] = 'Include subcategories';
 $string['includeuserfiles'] = 'Include user files';
 $string['increasesections'] = 'Increase the number of sections';
 $string['indicator:accessesafterend'] = 'Course accessed after end date';
