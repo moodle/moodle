@@ -107,7 +107,13 @@ class matching extends result {
         // Fill in unchecked options.
         foreach ($options as $option) {
             if (!isset($option->useranswer)) {
-                $option->useranswer = $this->get_answer(parent::UNCHECKED, '');
+                if (!empty($option->correctanswers)) {
+                    $option->useranswer = $this->get_answer(parent::INCORRECT,
+                        get_string('answer_noanswer', 'mod_h5pactivity'));
+                } else {
+                    $option->useranswer = $this->get_answer(parent::CORRECT,
+                        get_string('answer_noanswer', 'mod_h5pactivity'));
+                }
             }
         }
 
