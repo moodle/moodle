@@ -1300,18 +1300,19 @@ interface DomParserSettings {
     allow_html_in_named_anchor?: boolean;
     allow_script_urls?: boolean;
     allow_unsafe_link_target?: boolean;
+    blob_cache?: BlobCache;
     convert_fonts_to_spans?: boolean;
+    document?: Document;
     fix_list_elements?: boolean;
     font_size_legacy_values?: string;
     forced_root_block?: boolean | string;
     forced_root_block_attrs?: Record<string, string>;
+    inline_styles?: boolean;
     preserve_cdata?: boolean;
     remove_trailing_brs?: boolean;
     root_name?: string;
+    sanitize?: boolean;
     validate?: boolean;
-    inline_styles?: boolean;
-    blob_cache?: BlobCache;
-    document?: Document;
 }
 interface DomParser {
     schema: Schema;
@@ -1904,6 +1905,7 @@ interface BaseEditorOptions {
     visual_anchor_class?: string;
     visual_table_class?: string;
     width?: number | string;
+    xss_sanitization?: boolean;
     disable_nodechange?: boolean;
     forced_plugins?: string | string[];
     plugin_base_urls?: Record<string, string>;
@@ -1993,6 +1995,7 @@ interface EditorOptions extends NormalizedEditorOptions {
     visual_anchor_class: string;
     visual_table_class: string;
     width: number | string;
+    xss_sanitization: boolean;
 }
 declare type StyleMap = Record<string, string | number>;
 interface StylesSettings {
