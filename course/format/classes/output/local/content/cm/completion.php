@@ -102,10 +102,18 @@ class completion implements named_templatable, renderable {
      * @return array the completion dialog exported for template
      */
     private function get_completion_dialog(\renderer_base $output, stdClass $completioninfo): array {
+        global $PAGE;
+
+        $editurl = new \moodle_url(
+            '/course/modedit.php',
+            ['update' => $this->mod->id, 'showonly' => 'activitycompletionheader']
+        );
+        $completioninfo->editurl = $editurl->out(false);
+        $completioninfo->editing = $PAGE->user_is_editing();
         $dialogcontent = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
+
         $buttoncontent = get_string('completionmenuitem', 'completion');
         $buttonclass = '';
-
         if ($completioninfo->istrackeduser) {
             $buttoncontent = get_string('todo', 'completion');
             if ($completioninfo->overallcomplete) {

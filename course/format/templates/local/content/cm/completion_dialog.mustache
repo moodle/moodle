@@ -93,4 +93,13 @@
             {{/istrackeduser}}
         {{/ismanual}}
     </div>
+
+    {{! Show edit link to editing teachers. }}
+    {{#editing}}
+        {{#editurl}}
+            <div class="editcompletion border-top mt-3 pt-3">
+                <a href="{{editurl}}" class="px-2 py-1">{{#pix}} i/edit, core {{/pix}}{{#str}}editconditions, completion{{/str}}</a>
+            </div>
+        {{/editurl}}
+    {{/editing}}
 </div>

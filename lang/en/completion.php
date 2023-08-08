@@ -154,6 +154,7 @@ $string['detail_desc:receivepassgrade'] = 'Receive a passing grade';
 $string['detail_desc:view'] = 'View';
 $string['done'] = 'Done';
 $string['hiddenrules'] = 'Some settings specific to <b>{$a}</b> have been hidden. To view unselect other activities';
+$string['editconditions'] = 'Edit conditions';
 $string['enablecompletion'] = 'Enable completion tracking';
 $string['enablecompletion_help'] = 'If enabled, you can set conditions for activity completion or course completion.';
 $string['enrolmentduration'] = 'Enrolment duration';
