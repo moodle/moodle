@@ -96,7 +96,7 @@ class get_gradeitems extends external_api {
             'gradeItems' => new external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_ALPHANUM, 'An ID for the grade item', VALUE_REQUIRED),
-                    'itemname' => new external_value(PARAM_TEXT, 'The full name of the grade item', VALUE_REQUIRED),
+                    'itemname' => new external_value(PARAM_CLEANHTML, 'The full name of the grade item', VALUE_REQUIRED),
                     'category' => new external_value(PARAM_TEXT, 'The grade category of the grade item', VALUE_OPTIONAL),
                 ])
             ),
