@@ -2975,4 +2975,309 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
             )
         );
     }
+
+    /**
+     * List the Assignment module details.
+     *
+     * @param int $uniquefield qbassign unique field
+     * @return array of warnings and status result
+     * @since Moodle 3.2
+     */
+
+     public static function get_assignment_service_parameters()
+     {
+          return new external_function_parameters(
+             array(
+             'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field')
+          )
+         );
+     }
+ 
+     public static function get_assignment_service($uniquefield)
+     {        
+         require_once('../../config.php');
+         global $DB,$CFG,$USER,$CONTEXT;
+        
+         //Get activity unique field details       
+         $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
+ 
+         if($get_assignmentdetails->id!='')
+         { 
+             $assignid = $get_assignmentdetails->id;
+             $courseid = $get_assignmentdetails->course;
+ 
+             //Get activity Module details
+             $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid,'course' => $courseid));
+             $moduleid = $get_coursefield->id;
+ 
+             //Get assignment submission details
+             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
+ 
+             $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
+ 
+             //Get submission type details (file,onlinetex,codeblock)
+            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+            $sql .= " AND name = :name AND value = :value ";
+            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
+            $getpluginconfig = $DB->get_records_sql($sql,
+            [
+                'qbdetid' => $get_assignmentdetails->id,
+                'subtype' => 'qbassignsubmission',
+                'name' => 'enabled',
+                'value' => '1',
+                'type1' => 'file',
+                'type2' => 'onlinetex',
+                'type3' => 'codeblock'
+            ]
+        );
+             $countsql = count($getpluginconfig);
+             if($countsql>0)
+             { 
+                 foreach($getpluginconfig as $config)
+                 {
+                     if($config->plugin=='onlinetex')
+                     { 
+                        $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
+ 
+                        $submissintype = array(
+                         'type'=> $config->plugin,
+                         'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
+                         ); 
+                     }
+                     if($config->plugin=='file')
+                     {
+                         $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
+ 
+                         $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
+ 
+                            $submissintype = array(
+                             'type'=> $config->plugin,
+                             'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
+                             'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
+                             ); 
+                     }
+                 }
+             }
+             $context = context_course::instance($get_assignmentdetails->course);
+             $roles = get_user_roles($context, $USER->id, true);
+             $role = key($roles);
+             $rolename = $roles[$role]->shortname;
+ 
+             
+             $userdetails = array(
+                 'userid' => $USER->id,
+                 'email' => $USER->email,
+                 'username' => $USER->username,
+                 'sesskey' => $USER->sesskey,
+                 'role' => $rolename
+             );
+             $returnarray = array(
+                 'course_id' => $get_assignmentdetails->course,            
+                 'assignmentid' => $get_assignmentdetails->id,
+                 'assignment_title' => $get_assignmentdetails->name,
+                 'assignment_activitydesc' => $get_assignmentdetails->intro,
+                 'duedate' => $get_assignmentdetails->duedate,
+                 'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
+                 'assign_uniquefield' => $uniquefield,
+                 'submission_status' => ($get_assignmentsubmission_details->status=='new')?0:1,
+                 'studentsubmitted_content' => $getonline_content->onlinetex,
+                 'submissiontypes' => $submissintype
+             );
+ 
+             $contextsystem = context_module::instance($moduleid);
+             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
+             if($checkenrol)
+             { 
+                 $lti_updated = [                        
+                         'message'=>'Assignment details',
+                         'userdetails' => $userdetails,
+                         'assignmentdetails' => $returnarray
+                         ]; 
+                 return $lti_updated;                      
+             }            
+             else
+             { 
+                 throw new moodle_exception('This user not enrolled', 'error');
+             }
+             
+         }
+         else
+         { 
+             throw new moodle_exception('Invalid assignment uniqueid', 'error');
+         }
+         
+     }
+ 
+     public static function get_assignment_service_returns()
+     {
+         return new external_single_structure(
+                         array(
+                         'message' => new external_value(PARAM_RAW, 'success'),
+                         'userdetails' => new external_single_structure(
+                                     array(
+                                     'userid' => new external_value(PARAM_RAW, 'USER id',VALUE_OPTIONAL),
+                                     'email' => new external_value(PARAM_RAW, 'User Email',VALUE_OPTIONAL),
+                                     'username' => new external_value(PARAM_RAW, 'Username',VALUE_OPTIONAL),
+                                     'sesskey' => new external_value(PARAM_RAW, 'Session Key',VALUE_OPTIONAL),
+                                     'role' => new external_value(PARAM_RAW, 'User Role',VALUE_OPTIONAL)
+                                     )
+                                 ),
+                                 'User Details', VALUE_OPTIONAL,
+                         'assignmentdetails' => new external_single_structure(
+                                     array(
+                                     'course_id' => new external_value(PARAM_RAW, 'course id',VALUE_OPTIONAL),
+                                     'assignmentid' => new external_value(PARAM_RAW, 'Assignment ID',VALUE_OPTIONAL),
+                                     'assignment_title' => new external_value(PARAM_RAW, 'Assignment Name',VALUE_OPTIONAL),
+                                     'assignment_activitydesc' => new external_value(PARAM_RAW, 'Assignment Question',VALUE_OPTIONAL),
+                                     'duedate' => new external_value(PARAM_RAW, 'Last date',VALUE_OPTIONAL),
+                                     'allowsubmissionsfromdate' => new external_value(PARAM_RAW, 'Start Submission date',VALUE_OPTIONAL),
+                                     'assign_uniquefield' => new external_value(PARAM_RAW, 'Unique field',VALUE_OPTIONAL),
+                                     'submission_status' => new external_value(PARAM_RAW, 'Submission Status (New,submitted)',VALUE_OPTIONAL),
+                                     'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
+                                     'submissiontypes' => new external_single_structure(
+                                         array(
+                                          'type' => new external_value(PARAM_RAW, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                          'wordlimit' =>new external_value(PARAM_RAW, 'Text Limit',VALUE_OPTIONAL)
+                                         )
+                                     ),
+                                     'Submission Type Details', VALUE_OPTIONAL
+                                     )
+                                 ),
+                                 'Assignment Details', VALUE_OPTIONAL
+                         )
+                 );
+ 
+  
+        
+     }
+
+    public static function save_studentsubmission_parameters()
+    {
+        return new external_function_parameters(
+            array(
+            'qbassignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
+            'plugindata_text' => new external_value(PARAM_TEXT, 'Submission Text',VALUE_REQUIRED),
+            'plugindata_format' => new external_value(PARAM_TEXT, 'Submission Format',VALUE_REQUIRED),
+            'plugindata_type' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED)
+            )
+        );
+    }
+
+    public static function save_studentsubmission($qbassignmentid,$plugindata_text,$plugindata_format,$plugindata_type)
+    {
+        require_once('../../config.php');
+        global $DB,$CFG,$USER,$CONTEXT;
+        $currentuser = $USER->id;
+        if(empty($currentuser))
+        {
+            throw new moodle_exception('Required Login', 'error');
+        }
+        $assignid = $DB->get_record('qbassign', array('id' => $qbassignmentid));
+        if(!empty($assignid))
+        {
+            //Get activity Module details
+            $get_coursefield = $DB->get_record('course_modules', array('instance' => $qbassignmentid,'course' => $assignid->course));
+            $moduleid = $get_coursefield->id;
+
+            $contextsystem = context_module::instance($moduleid);
+
+            $enrolledcandidates = get_enrolled_users($contextsystem, 'mod/assign:submit');
+            $enrolstudents = array();
+            foreach($enrolledcandidates as $enrol)
+            {
+                $enrolstudents[] = $enrol->id;
+            }
+            if(!in_array($currentuser, $enrolstudents))
+            {
+                throw new moodle_exception('student not enrolled', 'error');
+            }
+            else
+            {
+                foreach($enrolledcandidates as $enrol)
+                {
+                    if($currentuser==$enrol->id)
+                    {                        
+                        $get_currentuser_submission = $DB->get_record('qbassign_user_mapping', array('qbassignment' => $qbassignmentid,'userid' => $currentuser));
+                        if($get_currentuser_submission->id!='')
+                        { 
+                            //do nothing
+                            $DB->set_field('qbassign_user_mapping', 'userid', $currentuser, array('id' => $get_currentuser_submission->id,'qbassignment'=>$qbassignmentid));
+                        }
+                        else
+                        {
+                            $add_submissionlvl =  array(
+                            'qbassignment' => $qbassignmentid,
+                            'userid' => $enrol->id
+                            );
+                            $insertid = $DB->insert_record('qbassign_user_mapping', $add_submissionlvl);
+                        }                    
+                    }                    
+                }
+            }
+            $check_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
+            if($check_submission->id=='')
+            {                
+                $add_submission =  array(
+                'qbassignment' => $qbassignmentid,
+                'userid' => $USER->id,
+                'timecreated' => time(),
+                'timemodified' => time(),
+                'status' => 'submitted',
+                'latest' => 1
+                );
+                $insertid = $DB->insert_record('qbassign_submission', $add_submission);
+                if($plugindata_type =='onlinetext')
+                {
+                    $add_textsubmission =  array(
+                    'qbassignment' => $qbassignmentid,
+                    'submission' => $insertid,
+                    'onlinetex' => $plugindata_text,
+                    'onlineformat' => $plugindata_format
+                    );
+                    $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+                }
+            }
+            else
+            { 
+                $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id)); 
+                if($check_submissiontxt->id=='') // remove submission from students
+                { 
+                    $add_textsubmission =  array(
+                    'qbassignment' => $qbassignmentid,
+                    'submission' => $check_submission->id,
+                    'onlinetex' => $plugindata_text,
+                    'onlineformat' => $plugindata_format
+                    );
+                    $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+
+                    $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                }   
+                else
+                { 
+                    $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                    $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
+                   
+                    $DB->set_field('qbassignsubmission_onlinetex', 'onlinetex', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+
+                    $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                } 
+            }
+            $lti_updated = ['message'=>'sucess']; 
+            return $lti_updated; 
+        }
+        else
+        {
+            throw new moodle_exception('Assignment ID Wrong', 'error');
+        }
+
+    }
+
+    public static function save_studentsubmission_returns()
+    {
+        return new external_single_structure(
+                array(
+                    'message'=> new external_value(PARAM_TEXT, 'success message')
+                )
+            );
+    }
 }

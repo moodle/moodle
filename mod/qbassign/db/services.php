@@ -248,4 +248,22 @@ $functions = array(
             'capabilities'  => 'mod/qbassign:view',
             'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_get_assignment_service' => [
+            'classname' => 'mod_qbassign_external',
+            'methodname' => 'get_assignment_service',
+            'classpath' => 'mod/qbassign/externallib.php',
+            'description' => 'List assignment details using unique field',
+            'type' => 'write',
+            'ajax' => true,
+            'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
+        'mod_qbassign_save_studentsubmission' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'save_studentsubmission',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Save students submission',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
 );
