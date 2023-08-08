@@ -57,7 +57,7 @@ class result implements renderable, templatable {
     /** Pass answer state. */
     const FAIL = 6;
 
-    /** Unkown answer state. */
+    /** Unknown answer state. */
     const UNKNOWN = 7;
 
     /** Text answer state. */
@@ -284,7 +284,7 @@ class result implements renderable, templatable {
             self::UNCHECKED => 'unchecked',
             self::PASS => 'pass',
             self::FAIL => 'fail',
-            self::UNKNOWN => 'unkown',
+            self::UNKNOWN => 'unknown',
             self::TEXT => 'text',
         ];
         $state = $states[$state] ?? self::UNKNOWN;
