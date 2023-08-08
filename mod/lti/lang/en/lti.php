@@ -476,6 +476,8 @@ tool providers. It may be an automated process, or it may require a dialogue wit
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a resource key.';
 $string['resourceurl'] = 'Resource URL';
+$string['restricttocategory'] = 'Restrict to category';
+$string['restricttocategory_help'] = 'To restrict use of this external tool on all courses within a category, select course category / categories from the list.';
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['search:activity'] = 'External tool - activity information';

@@ -68,7 +68,7 @@ class mod_lti_edit_types_form extends moodleform {
      * Define this form.
      */
     public function definition() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB, $OUTPUT;
 
         $mform    =& $this->_form;
 
@@ -242,6 +242,16 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setAdvanced('lti_secureicon');
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
 
+        // Restrict to course categories.
+        $mform->addElement('header', 'coursecategory', get_string('restricttocategory', 'lti'));
+        $mform->addHelpButton('coursecategory', 'restricttocategory', 'lti');
+        $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
+        // Convert array of objects to two dimentional array.
+        $tree = $this->lti_build_category_tree(array_map(fn($record) => (array)$record, $records));
+        $mform->addElement('html', $OUTPUT->render_from_template('mod_lti/categorynode', ['nodes' => $tree]));
+        $mform->addElement('hidden', 'lti_coursecategories');
+        $mform->setType('lti_coursecategories', PARAM_TEXT);
+
         if (!$istool) {
             // Display the lti advantage services.
             $this->get_lti_advantage_services($mform);
@@ -389,5 +399,31 @@ class mod_lti_edit_types_form extends moodleform {
             }
         }
         return $errors;
+    }
+
+    /**
+     * Build category tree.
+     *
+     * @param array $elements
+     * @param int $parentid
+     * @return array category tree
+     */
+    public function lti_build_category_tree(array $elements, int $parentid = 0) : array {
+        $branch = [];
+
+        foreach ($elements as $element) {
+            if ($element['parent'] == $parentid) {
+                $children = $this->lti_build_category_tree($elements, $element['id']);
+                if ($children) {
+                    $element['nodes'] = $children;
+                    $element['haschildren'] = true;
+                } else {
+                    $element['nodes'] = null;
+                    $element['haschildren'] = false;
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
     }
 }

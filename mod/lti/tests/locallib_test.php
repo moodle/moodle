@@ -624,6 +624,95 @@ class locallib_test extends mod_lti_testcase {
     }
 
     /**
+     * @covers ::lti_get_tools_by_domain()
+     *
+     * Test lti_get_tools_by_domain.
+     */
+    public function test_lti_get_tools_by_domain() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        // Create a tool type with good domain.
+        $type = new \stdClass();
+        $data = new \stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool 1";
+        $type->description = "Good example description";
+        $type->tooldomain = 'example.com';
+        $type->baseurl = 'https://example.com/i/am/?where=here';
+        $type->course = SITEID;
+        $typeid = lti_add_type($type, $data);
+
+        // Create a tool type with bad domain.
+        $type = new \stdClass();
+        $data = new \stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool 2";
+        $type->description = "Bad example description";
+        $type->tooldomain = 'badexample.com';
+        $type->baseurl = 'https://badexample.com/i/am/?where=here';
+        $type->course = SITEID;
+        $typeid = lti_add_type($type, $data);
+
+        $records = lti_get_tools_by_domain('example.com', LTI_TOOL_STATE_CONFIGURED, null);
+        foreach ($records as $record) {
+            $this->assertEquals('example.com', $record->tooldomain);
+        }
+    }
+
+    /**
+     * @covers ::lti_get_tools_by_domain()
+     *
+     * Test test_lti_get_tools_by_domain_restrict_types_category.
+     */
+    public function test_lti_get_tools_by_domain_restrict_types_category() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+
+        $coursecat1 = $this->getDataGenerator()->create_category();
+        $coursecat2 = $this->getDataGenerator()->create_category();
+
+        $course1 = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $coursecat2->id]);
+
+        // Create a tool type with domain restricting to a category1.
+        $type = new \stdClass();
+        $data = new \stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool 1";
+        $type->description = "Good example description";
+        $type->tooldomain = 'exampleone.com';
+        $type->baseurl = 'https://exampleone.com/i/am/?where=here';
+        $type->course = $course1->id;
+        $typeid = lti_add_type($type, $data);
+        $typecategoryid = lti_type_add_categories($typeid, $coursecat1->id);
+
+        // Create a tool type with domain restricting to a category2.
+        $type = new \stdClass();
+        $data = new \stdClass();
+        $data->lti_contentitem = true;
+        $type->state = LTI_TOOL_STATE_CONFIGURED;
+        $type->name = "Test tool 2";
+        $type->description = "Good example description";
+        $type->tooldomain = 'exampletwo.com';
+        $type->baseurl = 'https://exampletwo.com/i/am/?where=here';
+        $type->course = $course2->id;
+        $typeid = lti_add_type($type, $data);
+        $typecategoryid = lti_type_add_categories($typeid, $coursecat2->id);
+
+        $records = lti_get_tools_by_domain('exampleone.com', LTI_TOOL_STATE_CONFIGURED, $course1->id);
+        foreach ($records as $record) {
+            $this->assertEquals('exampleone.com', $record->tooldomain);
+        }
+
+    }
+
+    /**
      * Test lti_get_jwt_message_type_mapping().
      */
     public function test_lti_get_jwt_message_type_mapping() {
