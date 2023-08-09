@@ -788,6 +788,13 @@ $capabilities = array(
         'clonepermissionsfrom' => 'moodle/site:config'
     ),
 
+    'moodle/group:configurecustomfields' => array(
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'clonepermissionsfrom' => 'moodle/site:config'
+    ),
+
     'moodle/course:create' => array(
 
         'riskbitmask' => RISK_XSS,

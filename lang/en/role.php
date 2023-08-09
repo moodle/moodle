@@ -280,6 +280,7 @@ $string['grade:unlock'] = 'Unlock grades or items';
 $string['grade:view'] = 'View own grades';
 $string['grade:viewall'] = 'View grades of other users';
 $string['grade:viewhidden'] = 'View hidden grades for owner';
+$string['group:configurecustomfields'] = 'Configure group/grouping custom fields';
 $string['h5p:deploy'] = 'Deploy H5P content';
 $string['h5p:updatelibraries'] = 'Manage H5P content types';
 $string['h5p:setdisplayoptions'] = 'Set H5P display options';

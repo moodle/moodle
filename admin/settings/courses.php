@@ -263,6 +263,27 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
                 $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
     }
 
+    // Add a category for the Groups.
+    $ADMIN->add('courses', new admin_category('groups', new lang_string('groups')));
+    $ADMIN->add(
+        'groups',
+        new admin_externalpage(
+            'group_customfield',
+            new lang_string('group_customfield', 'admin'),
+            $CFG->wwwroot . '/group/customfield.php',
+            ['moodle/group:configurecustomfields']
+        )
+    );
+    $ADMIN->add(
+        'groups',
+        new admin_externalpage(
+            'grouping_customfield',
+            new lang_string('grouping_customfield', 'admin'),
+            $CFG->wwwroot . '/group/grouping_customfield.php',
+            ['moodle/group:configurecustomfields']
+        )
+    );
+
     // Add a category for the Activity Chooser.
     $ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
     $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));

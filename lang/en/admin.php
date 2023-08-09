@@ -697,6 +697,8 @@ $string['globalsearch'] = 'Global search';
 $string['globalsearchmanage'] = 'Manage global search';
 $string['groupenrolmentkeypolicy'] = 'Group enrolment key policy';
 $string['groupenrolmentkeypolicy_desc'] = 'If enabled, group enrolment keys will be checked against the password policy as specified in the settings above.';
+$string['grouping_customfield'] = 'Grouping custom fields';
+$string['group_customfield'] = 'Group custom fields';
 $string['googlemapkey3'] = 'Google Maps API V3 key';
 $string['googlemapkey3_help'] = 'You need to enter a special key to use Google Maps for IP address lookup visualization. You can obtain the key free of charge at <a href="https://developers.google.com/maps/documentation/javascript/tutorial#api_key" target="_blank">https://developers.google.com/maps/documentation/javascript/tutorial#api_key</a>';
 $string['gotofirst'] = 'Go to first missing string';
