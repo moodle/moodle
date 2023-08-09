@@ -98,7 +98,7 @@ class mod_lti_generator extends testing_module_generator {
      * - 'ltiservice_' prefix: denotes 'config' data, specifically config for service plugins.
      *
      * @param array $data array of type and config data containing prefixed keys.
-     * @return array containing separated type and config data. E.g. ['type' = [...], 'config' => [...]]
+     * @return array containing separated objects for type and config data. E.g. ['type' = stdClass, 'config' => stdClass]
      */
     protected function get_type_and_config_from_data(array $data): array {
         // Grab any non-prefixed fields; these are the type fields. The rest is considered config.
@@ -109,7 +109,7 @@ class mod_lti_generator extends testing_module_generator {
         );
         $config = array_diff_key($data, $type);
 
-        return ['type' => $type, 'config' => $config];
+        return ['type' => (object) $type, 'config' => (object) $config];
     }
 
     /**
@@ -159,8 +159,18 @@ class mod_lti_generator extends testing_module_generator {
         $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
 
+        // Required for cartridge processing support.
+        $type['lti_toolurl'] = $type['baseurl'];
+        $type['lti_description'] = $type['description'] ?? '';
+        $type['lti_icon'] = $type['icon'] ?? '';
+        $type['lti_secureicon'] = $type['secureicon'] ?? '';
+        if (!empty($type['name'])) {
+            $type['lti_typename'] = $type['name'];
+        }
+
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($type);
 
-        lti_add_type(type: (object) $type, config: (object) $config);
+        lti_load_type_if_cartridge($config);
+        lti_add_type(type: $type, config: $config);
     }
 }
