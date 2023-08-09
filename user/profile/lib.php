@@ -147,6 +147,17 @@ class profile_field_base {
     }
 
     /**
+     * Display the name of the profile field.
+     *
+     * @return string
+     */
+    public function display_name() {
+        $options = new stdClass();
+        $options->para = false;
+        return format_text($this->field->name, FORMAT_MOODLE, $options);
+    }
+
+    /**
      * Print out the form field in the edit profile page
      * @param MoodleQuickForm $mform instance of the moodleform class
      * @return bool
