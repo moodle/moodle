@@ -1,5 +1,17 @@
 # This is a description for the TinyMCE 6 library integration with Moodle.
 
+Please note that we have a clone of the official TinyMCE repository which contains the working build and branch for each release. This ensures build repeatability and gives us the ability to patch stable versions of Moodle for security fixes where relevant.
+
+The Moodle `master` branch is named as the upcoming STABLE branch name, for example during the development of Moodle 4.2.0, the upcoming STABLE branch name will be MOODLE_402_STABLE.
+
+## Patches included in this release
+
+- MDL-78714: Add support for disabling XSS Sanitisation (TINY-9600)
+- MDL-77470: Fix for CVE-2022-23494
+
+Please note: TinyMCE issue numbers are related to bugs in their private issue
+tracker. See git history of their repository for relevant information.
+
 ## Upgrade procedure for TinyMCE Editor
 
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
@@ -10,7 +22,7 @@
 
 2. Check out a clean copy of TinyMCE of the target version.
 
- ```
+ ```../../
  tinymce=`mktemp -d`
  cd "${tinymce}"
  git clone https://github.com/tinymce/tinymce.git
@@ -25,21 +37,43 @@
  sed -i 's/"target.*es.*",/"target": "es2020",/' tsconfig.shared.json
  ```
 
-4. Rebuild TinyMCE
+4. Install dependencies
 
  ```
- yarn
- yarn build
+yarn
  ```
 
-5. Remove the old TinyMCE configuration and replace it with the newly built version.
+5. Check in the base changes
 
  ```
- rm -rf "${MOODLEDIR}/js"
- cp -r modules/tinymce/js "${MOODLEDIR}/js"
+git commit -m 'MDL: Add build configuration'
  ```
 
-6. Check the (Release notes)[https://www.tiny.cloud/docs/tinymce/6/release-notes/] for any new plugins, premium plugins, menu items, or buttons and add them to classes/manager.php
+6. Apply any necessary security patches.
+7. Rebuild TinyMCE
+
+ ```
+yarn
+yarn build
+ ```
+
+8. Remove the old TinyMCE configuration and replace it with the newly built version.
+
+ ```
+rm -rf "${MOODLEDIR}/js"
+cp -r modules/tinymce/js "${MOODLEDIR}/js"
+ ```
+
+9. Push the build to MoodleHQ for future change support
+
+ ```
+# Tag the next Moodle version.
+git tag v4.2.0
+git remote add moodlehq --tags
+git push moodlehq MOODLE_402_STABLE
+ ```
+
+10. Check the (Release notes)[https://www.tiny.cloud/docs/tinymce/6/release-notes/] for any new plugins, premium plugins, menu items, or buttons and add them to classes/manager.php
 
 ## Update procedure for included TinyMCE translations
 
