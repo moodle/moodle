@@ -10,7 +10,7 @@ The Moodle `master` branch is named as the upcoming STABLE branch name, for exam
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`
+MOODLEDIR=`pwd`../../
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
@@ -118,7 +118,7 @@ cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`
+MOODLEDIR=`pwd`../../
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
