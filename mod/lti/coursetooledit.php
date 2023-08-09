@@ -43,17 +43,17 @@ if (!empty($typeid)) {
 
 // Page setup.
 $url = new moodle_url('/mod/lti/coursetooledit.php', ['courseid' => $courseid]);
+$type = !empty($typeid) ? lti_get_type_type_config($typeid) : (object) ['lti_clientid' => null];
+$pageheading = !empty($typeid) ? get_string('courseexternaltooledit', 'mod_lti', $type->lti_typename) :
+    get_string('courseexternaltooladd', 'mod_lti');
+
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_title(get_string('edittype', 'mod_lti')); // TODO confirm with UX about use of 'edit preconfigured tool' for the title.
+$PAGE->set_title($pageheading);
 $PAGE->set_secondary_active_tab('coursetools');
 $PAGE->add_body_class('limitedwidth');
 
-$type = !empty($typeid) ? lti_get_type_type_config($typeid) : (object) ['lti_clientid' => null];
-$pageheading = !empty($typeid) ? get_string('courseexternaltooleditheading', 'mod_lti') :
-    get_string('courseexternaltooladdheading', 'mod_lti');
 $form = new mod_lti_edit_types_form($url, (object)array('id' => $typeid, 'clientid' => $type->lti_clientid));
-
 if ($form->is_cancelled()) {
 
     redirect(new moodle_url('/mod/lti/coursetools.php', ['id' => $courseid]));
@@ -66,7 +66,7 @@ if ($form->is_cancelled()) {
         lti_load_type_if_cartridge($data);
         lti_update_type($type, $data);
         $redirecturl = new moodle_url('/mod/lti/coursetools.php', ['id' => $courseid]);
-        $notice = get_string('courseexternaltooleditsuccess', 'mod_lti', $type->name);
+        $notice = get_string('courseexternaltooleditsuccess', 'mod_lti');
     } else {
         $type = (object) ['state' => LTI_TOOL_STATE_CONFIGURED, 'course' => $data->course];
         lti_load_type_if_cartridge($data);
