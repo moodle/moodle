@@ -3501,5 +3501,18 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023082200.04);
     }
 
+    if ($oldversion < 2023082600.01) {
+
+        // The previous default configuration had a typo, check for its presence and correct if necessary.
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        if (strpos($sensiblesettings, 'smtppass@none') !== false) {
+            $newsensiblesettings = str_replace('smtppass@none', 'smtppass@@none', $sensiblesettings);
+            set_config('sensiblesettings', $newsensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.01);
+    }
+
     return true;
 }
