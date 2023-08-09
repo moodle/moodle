@@ -110,13 +110,11 @@ class cmname implements named_templatable, renderable {
             'iconclass' => $iconclass,
             'modname' => $mod->modname,
             'textclasses' => $displayoptions['textclasses'] ?? '',
+            'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
+            'showpluginname' => $this->format->show_editor(),
             'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
             'activityname' => $this->get_title_data($output),
         ];
-
-        if ($this->format->show_editor()) {
-            $data['pluginname'] = get_string('pluginname', 'mod_' . $mod->modname);
-        }
 
         return $data;
     }
