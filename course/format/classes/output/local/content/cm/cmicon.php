@@ -84,12 +84,10 @@ class cmicon implements named_templatable, renderable {
             'icon' => $iconurl,
             'iconclass' => $iconclass,
             'modname' => $mod->modname,
+            'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
+            'showtooltip' => $this->format->show_editor(),
             'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
         ];
-
-        if ($this->format->show_editor()) {
-            $data['pluginname'] = get_string('pluginname', 'mod_' . $mod->modname);
-        }
 
         return $data;
     }
