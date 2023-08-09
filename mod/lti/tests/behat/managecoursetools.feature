@@ -127,3 +127,23 @@ Feature: Manage course tools
     And I click on "Delete" "button" in the "Delete Test tool" "dialogue"
     And I should see "Test tool removed"
     And I should not see "Test tool" in the "reportbuilder-table" "table"
+
+  @javascript
+  Scenario: Add a course tool using a cartridge URL
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I navigate to "LTI External tools" in current page administration
+    When I click on "Add tool" "link"
+    And I set the following fields to these values:
+      | Tool name        | Test tool 1             |
+      | Tool description | Test tool 1 description |
+    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml"
+    And I press "Save changes"
+    Then I should see "Test tool 1" in the "reportbuilder-table" "table"
+    # The cartridge description, if set, overrides the description set in the type edit form (bug?).
+    And I should see "Example tool description" in the "Test tool 1" "table_row"
+    And I open the action menu in "Test tool 1" "table_row"
+    And I choose "Edit" in the open action menu
+    And the field "Tool name" matches value "Test tool 1"
+    And the field "Tool URL" matches value "http://www.example.com/lti/provider.php"
+    And the field "Icon URL" matches value "http://download.moodle.org/unittest/test.jpg"
+    And the field "Secure icon URL" matches value "https://download.moodle.org/unittest/test.jpg"
