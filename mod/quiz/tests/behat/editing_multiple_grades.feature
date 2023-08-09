@@ -42,3 +42,16 @@ Feature: Setup multiple grades for a quiz
     And "Delete" "icon" should not exist in the "Intuition" "table_row"
     And "Delete" "icon" should not exist in the "Intelligence" "table_row"
     And "Delete" "icon" should exist in the "Unused grade item" "table_row"
+
+  @javascript
+  Scenario: Unused grade items can be deleted
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name              |
+      | Quiz 1 | Unused grade item |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page |
+      | Question A | 1    |
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And I follow "Delete grade item Unused grade item"
+    Then I should not see "Unused grade item"
+    And I should see "This quiz does not yet have any grade items defined"

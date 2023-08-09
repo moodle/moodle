@@ -57,7 +57,7 @@
 {{/hasgradeitems}}
 
 {{#hasgradeitems}}
-<table class="generaltable table-responsive">
+<table class="generaltable table-responsive" id="mod_quiz-grade-item-list" data-quiz-id="{{quizid}}">
     <thead>
         <tr>
             <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
@@ -80,7 +80,7 @@
                 </th>
                 <td class="align-middle">
                     {{^isused}}
-                        <a href="#" data-action-delete>
+                        <a href="#" data-action-delete="1">
                             {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
                         </a>
                     {{/isused}}

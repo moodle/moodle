@@ -57,6 +57,7 @@ class edit_grading_page implements renderable, templatable {
         $slots = $this->structure->get_slots();
 
         return [
+            'quizid' => $this->structure->get_quizid(),
             'gradeitems' => $gradeitems,
             'hasgradeitems' => !empty($gradeitems),
             'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],

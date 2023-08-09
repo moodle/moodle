@@ -65,6 +65,8 @@ $PAGE->activityheader->disable();
 $PAGE->set_secondary_active_tab('mod_quiz_edit');
 $tertiarynav = new edit_nav_actions($cmid, edit_nav_actions::GRADING);
 
+$PAGE->requires->js_call_amd('mod_quiz/edit_multiple_grades', 'init');
+
 // Do output.
 echo $output->header();
 echo $output->render($tertiarynav);
