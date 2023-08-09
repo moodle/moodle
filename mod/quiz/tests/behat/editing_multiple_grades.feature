@@ -28,9 +28,10 @@ Feature: Setup multiple grades for a quiz
 
   Scenario: Navigation to, and display of, grading setup
     Given the following "mod_quiz > grade items" exist:
-      | quiz   | name         |
-      | Quiz 1 | Intuition    |
-      | Quiz 1 | Intelligence |
+      | quiz   | name              |
+      | Quiz 1 | Intuition         |
+      | Quiz 1 | Intelligence      |
+      | Quiz 1 | Unused grade item |
     And quiz "Quiz 1" contains the following questions:
       | question   | page | grade item   |
       | Question A | 1    | Intuition    |
@@ -38,3 +39,6 @@ Feature: Setup multiple grades for a quiz
       | Question C | 2    | Intuition    |
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
     Then I should see "Grade items"
+    And "Delete" "icon" should not exist in the "Intuition" "table_row"
+    And "Delete" "icon" should not exist in the "Intelligence" "table_row"
+    And "Delete" "icon" should exist in the "Unused grade item" "table_row"

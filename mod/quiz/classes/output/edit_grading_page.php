@@ -45,6 +45,22 @@ class edit_grading_page implements renderable, templatable {
     }
 
     public function export_for_template(renderer_base $output) {
-        return [];
+        $gradeitems = [];
+        foreach ($this->structure->get_grade_items() as $gradeitem) {
+            $gradeitem = clone($gradeitem);
+            unset($gradeitem->quizid);
+            $gradeitem->displayname = format_string($gradeitem->name);
+            $gradeitem->isused = $this->structure->is_grade_item_used($gradeitem->id);
+            $gradeitems[] = $gradeitem;
+        }
+
+        $slots = $this->structure->get_slots();
+
+        return [
+            'gradeitems' => $gradeitems,
+            'hasgradeitems' => !empty($gradeitems),
+            'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],
+            'slots' => $slots,
+        ];
     }
 }
