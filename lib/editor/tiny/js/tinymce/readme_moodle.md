@@ -10,7 +10,7 @@
 
 2. Check out a clean copy of TinyMCE of the target version.
 
- ```
+ ```../../
  tinymce=`mktemp -d`
  cd "${tinymce}"
  git clone https://github.com/tinymce/tinymce.git
