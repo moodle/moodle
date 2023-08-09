@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use qtype_calculatedmulti\qtype_calculatedmulti_answer;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -212,7 +213,8 @@ class qtype_calculatedmulti extends qtype_calculated {
      * @return question_answer
      */
     public function make_answer($answer) {
-        return parent::make_answer($answer);
+        return new qtype_calculatedmulti_answer($answer->id, $answer->answer,
+                $answer->fraction, $answer->feedback, $answer->feedbackformat);
     }
 
     protected function make_hint($hint) {
