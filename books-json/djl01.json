@@ -37,6 +37,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U01_S02",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP1-CHDRN4",							
+				"fname":"DJL01-TP1-CHDRN4.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -66,6 +71,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U02_S02",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP2-CHDRN4",							
+				"fname":"DJL01-TP2-CHDRN4.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -95,6 +105,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U03_S02",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP3-CHDRN4",							
+				"fname":"DJL01-TP3-CHDRN4.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -131,6 +146,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U04_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP4-CHDRN5",							
+				"fname":"DJL01-TP4-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -174,6 +194,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U05_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP5-CHDRN6",							
+				"fname":"DJL01-TP5-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -203,6 +228,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiJunior&Level=Level1&pdf=DigiJunior_U06_S02",
 				"type": "page"
+			  },
+			  {
+				"uid": "DJL01-TP6-CHDRN4",							
+				"fname":"DJL01-TP6-CHDRN4.json",
+				"type": "assignment"
 			  }
 			]
 		  }

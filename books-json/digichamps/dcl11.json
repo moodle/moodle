@@ -51,6 +51,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level11&pdf=05_DC_L11_Unit1_Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL11-TP1-CHDRN6",							
+				"fname":"DCL11-TP1-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -100,6 +105,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level11&pdf=11_DC-L11-Unit2-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL11-TP2-CHDRN7",							
+				"fname":"DCL11-TP2-CHDRN7.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -143,6 +153,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level11&pdf=16_DC-L11-Unit3-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL11-TP3-CHDRN6",							
+				"fname":"DCL11-TP3-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -193,6 +208,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level11&pdf=22_DC_L11_Unit4_Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL11-TP4-CHDRN7",							
+				"fname":"DCL11-TP4-CHDRN7.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -236,6 +256,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level11&pdf=27_DCL11_Unit5_Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL11-TP5-CHDRN6",							
+				"fname":"DCL11-TP5-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  }

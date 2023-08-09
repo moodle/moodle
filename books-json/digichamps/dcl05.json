@@ -37,6 +37,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U01_S02",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP1-CHDRN4",							
+				"fname":"DCL05-TP1-CHDRN4.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -79,6 +84,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U02_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP2-CHDRN5",							
+				"fname":"DCL05-TP2-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -115,6 +125,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP3-CHDRN5",							
+				"fname":"DCL05-TP3-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -151,6 +166,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP4-CHDRN5",							
+				"fname":"DCL05-TP4-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -187,6 +207,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP5-CHDRN5",							
+				"fname":"DCL05-TP5-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -223,6 +248,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL05-TP6-CHDRN5",							
+				"fname":"DCL05-TP6-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  }

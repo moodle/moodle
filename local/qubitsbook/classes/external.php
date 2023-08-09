@@ -608,8 +608,22 @@ class local_qubitsbook_external extends external_api {
             $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
 
             //Get submission type details (file,onlinetex,codeblock)
-            $sql = "SELECT * FROM ".$CFG->prefix."qbassign_plugin_config WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
-            $getpluginconfig = $DB->get_records_sql($sql);
+           // $sql = "SELECT * FROM ".$CFG->prefix."qbassign_plugin_config WHERE `qbassignment`=".$get_assignmentdetails->id." AND `subtype`='qbassignsubmission' AND name='enabled' AND value=1 AND (`plugin`='file' OR plugin='onlinetex' OR plugin='codeblock')";
+            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+            $sql .= " AND name = :name AND value = :value ";
+            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
+            $getpluginconfig = $DB->get_records_sql($sql,
+            [
+                'qbdetid' => $get_assignmentdetails->id,
+                'subtype' => 'qbassignsubmission',
+                'name' => 'enabled',
+                'value' => '1',
+                'type1' => 'file',
+                'type2' => 'onlinetex',
+                'type3' => 'codeblock'
+            ]
+        );
+
             $countsql = count($getpluginconfig);
             if($countsql>0)
             { 

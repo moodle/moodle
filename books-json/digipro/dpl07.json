@@ -51,6 +51,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP1-CHDRN6",							
+				"fname":"DPL07-TP1-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -94,6 +99,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP2-CHDRN6",							
+				"fname":"DPL07-TP2-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -137,6 +147,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP3-CHDRN6",							
+				"fname":"DPL07-TP3-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -180,6 +195,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP4-CHDRN6",							
+				"fname":"DPL07-TP4-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -223,6 +243,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S04",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP5-CHDRN6",							
+				"fname":"DPL07-TP5-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -245,6 +270,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Capstone",
 				"type": "page"
+			  },
+			  {
+				"uid": "DPL07-TP6-CHDRN3",							
+				"fname":"DPL07-TP6-CHDRN3.json",
+				"type": "assignment"
 			  }
 			]
 		  }

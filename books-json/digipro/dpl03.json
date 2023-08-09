@@ -44,6 +44,11 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U01_S03",
               "type": "page"
+            },
+            {
+              "uid": "DPL03-TP1-CHDRN5",							
+              "fname":"DPL03-TP1-CHDRN5.json",
+              "type": "assignment"
             }
           ]
         },
@@ -80,6 +85,11 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U02_S03",
               "type": "page"
+            },
+            {
+              "uid": "DPL03-TP2-CHDRN5",							
+              "fname":"DPL03-TP2-CHDRN5.json",
+              "type": "assignment"
             }
 		  ]
         },
@@ -116,6 +126,11 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U03_S03",
               "type": "page"
+            },
+            {
+              "uid": "DPL03-TP3-CHDRN5",							
+              "fname":"DPL03-TP3-CHDRN5.json",
+              "type": "assignment"
             }
 		  ]
         },
@@ -159,6 +174,11 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_Capstone Project",
               "type": "page"
+            },
+            {
+              "uid": "DPL03-TP4-CHDRN6",							
+              "fname":"DPL03-TP4-CHDRN6.json",
+              "type": "assignment"
             }
 		  ]
         },
@@ -202,6 +222,11 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_Capstone Project",
               "type": "page"
+            },
+            {
+              "uid": "DPL03-TP5-CHDRN6",							
+              "fname":"DPL03-TP5-CHDRN6.json",
+              "type": "assignment"
             }
 		  ]
         }

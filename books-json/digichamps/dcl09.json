@@ -51,6 +51,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP1-CHDRN6",							
+				"fname":"DCL09-TP1-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -93,6 +98,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP2-CHDRN6",							
+				"fname":"DCL09-TP2-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -129,6 +139,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP3-CHDRN5",							
+				"fname":"DCL09-TP3-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -172,6 +187,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP4-CHDRN6",							
+				"fname":"DCL09-TP4-CHDRN6.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -222,6 +242,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Exercise - Google Docs",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP5-CHDRN7",							
+				"fname":"DCL09-TP5-CHDRN7.json",
+				"type": "assignment"
 			  }
 			]
 		  },
@@ -258,6 +283,11 @@
 				"description": "",
 				"route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
 				"type": "page"
+			  },
+			  {
+				"uid": "DCL09-TP6-CHDRN5",							
+				"fname":"DCL09-TP6-CHDRN5.json",
+				"type": "assignment"
 			  }
 			]
 		  }
