@@ -58,3 +58,85 @@ Feature: Add tools
     And the "Tool URL" "field" should be disabled
     And I click on "Preconfigured tool" "select"
     And I should not see "Automatic, based on tool URL"
+
+  @javascript
+  Scenario: Editing a (deprecated) manually configured activity instance, confirming that config changes aren't possible
+    Given the following "activities" exist:
+      | activity | name          | course | toolurl                                                  |
+      | lti      | A manual tool | C1     | /mod/lti/tests/fixtures/ims_cartridge_basic_lti_link.xml |
+    # Add a course tool with the same URL as that of the manually configured instance (the tool URL found in the above cartridge).
+    # This would normally be domain-matched during edit, resulting in the assignment of a preconfigured tool to the instance.
+    # In this case, because config changes and domain matching are disabled, the test confirms this doesn't take place.
+    And the following "mod_lti > course tools" exist:
+      | name          | baseurl                                 | course | lti_sendname | lti_sendemailaddr | lti_acceptgrades |
+      | Course tool 2 | http://www.example.com/lti/provider.php | C1     | 0            | 1                 | 2                |
+    When I am on the "A manual tool" "lti activity editing" page logged in as teacher1
+    Then I should see "Manually configured External tool activities are no longer supported"
+    And I follow "Show more..."
+    And I expand all fieldsets
+    # The privacy values below represent the existing values of the privacy settings, before saving and inheriting from the
+    # domain-matched tool values.
+    And the following fields match these values:
+    | Activity name                    | A manual tool                                 |
+    | id_showdescription               | 0                                             |
+    | Consumer key                     | 12345                                         |
+    | Icon URL                         | http://download.moodle.org/unittest/test.jpg  |
+    | Secure icon URL                  | https://download.moodle.org/unittest/test.jpg |
+    | Tool URL                         | http://www.example.com/lti/provider.php       |
+    | id_instructorchoicesendname      | 1                                             |
+    | id_instructorchoicesendemailaddr | 1                                             |
+    | id_instructorchoiceacceptgrades  | 1                                             |
+    And the "Activity name" "field" should be enabled
+    And the "Activity description" "field" should be enabled
+    And the "id_showdescription" "checkbox" should be enabled
+    And the "id_showtitlelaunch" "checkbox" should be enabled
+    And the "id_showdescriptionlaunch" "checkbox" should be enabled
+    And the "Secure tool URL" "field" should be disabled
+    And the "Consumer key" "field" should be disabled
+    And I click on "Reveal" "icon"
+    And I should see "secret"
+    And the "Custom parameters" "field" should be disabled
+    And the "Icon URL" "field" should be disabled
+    And the "Secure icon URL" "field" should be disabled
+    And I should see "Automatic, based on tool URL"
+    And the "Select content" "button" should be disabled
+    And the "Tool URL" "field" should be disabled
+    And the "id_instructorchoicesendname" "checkbox" should be disabled
+    And the "id_instructorchoicesendemailaddr" "checkbox" should be disabled
+    And the "id_instructorchoiceacceptgrades" "checkbox" should be disabled
+    And I set the following fields to these values:
+    | Activity name      | A manual tool name edited |
+    | id_showdescription | 1                         |
+    And I press "Save and return to course"
+    And I am on the "A manual tool" "lti activity editing" page logged in as teacher1
+    And I follow "Show more..."
+    # This confirms that the instance config, while locked to user edits, still inherits privacy settings from the tool which
+    # it was domain-matched to.
+    And the following fields match these values:
+    | Activity name                    | A manual tool name edited                     |
+    | id_showdescription               | 1                                             |
+    | Consumer key                     | 12345                                         |
+    | Icon URL                         | http://download.moodle.org/unittest/test.jpg  |
+    | Secure icon URL                  | https://download.moodle.org/unittest/test.jpg |
+    | Tool URL                         | http://www.example.com/lti/provider.php       |
+    | id_instructorchoicesendname      | 0                                             |
+    | id_instructorchoicesendemailaddr | 1                                             |
+    | id_instructorchoiceacceptgrades  | 2                                             |
+    And the "Activity name" "field" should be enabled
+    And the "Activity description" "field" should be enabled
+    And the "id_showdescription" "checkbox" should be enabled
+    And the "id_showtitlelaunch" "checkbox" should be enabled
+    And the "id_showdescriptionlaunch" "checkbox" should be enabled
+    And the "Secure tool URL" "field" should be disabled
+    And the "Consumer key" "field" should be disabled
+    And I click on "Reveal" "icon"
+    And I should see "secret"
+    And the "Custom parameters" "field" should be disabled
+    And the "Icon URL" "field" should be disabled
+    And the "Secure icon URL" "field" should be disabled
+    And I should see "Automatic, based on tool URL"
+    And the "Select content" "button" should be disabled
+    And the "Tool URL" "field" should be disabled
+    And the "id_instructorchoicesendname" "checkbox" should be disabled
+    And the "id_instructorchoicesendemailaddr" "checkbox" should be disabled
+    And the "id_instructorchoiceacceptgrades" "checkbox" should be disabled
