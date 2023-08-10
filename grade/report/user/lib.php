@@ -255,7 +255,7 @@ function gradereport_user_get_report_link(context_course $context, int $courseid
     global $CFG;
 
     if ($mode == 'user') {
-        $reportstring = grade_helper::get_lang_string('userreport_' . $mode, 'gradereport_user');
+        $reportstring = get_string('userreport_' . $mode, 'gradereport_user');
 
         if (!isset($templatecontext)) {
             $templatecontext = new stdClass();

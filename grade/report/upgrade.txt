@@ -32,7 +32,7 @@ information provided here is intended especially for developers.
   20.
 * The get_grade_item_id() function in behat_gradereport_grader.php has been deprecated. Please use
   behat_grades::get_grade_item_id() instead.
-* The grade_report::get_lang_string() has been deprecated. Please use grade_helper::get_lang_string() instead.
+* The grade_report::get_lang_string() has been deprecated. Please use get_string() instead.
 
 === 3.6 ===
 * External function gradereport_user_external::get_grade_items now return the following information (only for course managers).

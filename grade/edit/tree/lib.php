@@ -1065,7 +1065,7 @@ class grade_edit_tree_column_status extends grade_edit_tree_column {
 
         $context = new stdClass();
         if ($category->grade_item->is_calculated()) {
-            $context->calculatedgrade = grade_helper::get_lang_string('calculatedgrade', 'grades');
+            $context->calculatedgrade = get_string('calculatedgrade', 'grades');
         } else {
             // Aggregation type.
             $aggrstrings = grade_helper::get_aggregation_strings();

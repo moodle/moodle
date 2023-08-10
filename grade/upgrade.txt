@@ -17,6 +17,7 @@ Information provided here is intended especially for developers.
   - grade/classes/external/get_groups_for_selector
     - Has been relocated to core_group_external::get_groups_for_selector()
     - groupimageurl is now available as an optional parameter to give the user an image either set or generated for the group.
+* The grade_helper::get_lang_string() function has been deprecated. Please use get_string() instead.
 
 === 4.1 ===
 * The $importactiveurl parameter in the constructor of the core_grades\output\import_action_bar class has been deprecated and is not used anymore.
