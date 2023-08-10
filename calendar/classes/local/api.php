@@ -325,10 +325,12 @@ class api {
                 'core_calendar_event_timestart_updated',
                 [$legacyevent, $moduleinstance]
             );
-            list($course, $cm) = get_course_and_cm_from_instance($event->get_course_module()->get('instance'),
-                $event->get_course_module()->get('modname'), $event->get_course()->get('id'));
-            \course_modinfo::purge_course_module_cache($course->id, $cm->id);
-            rebuild_course_cache($course->id, true, true);
+
+            // Rebuild the course cache to make sure the updated dates are reflected.
+            $courseid = $event->get_course()->get('id');
+            $cmid = $event->get_course_module()->get('id');
+            \course_modinfo::purge_course_module_cache($courseid, $cmid);
+            rebuild_course_cache($courseid, true, true);
         }
 
         return $mapper->from_legacy_event_to_event($legacyevent);
