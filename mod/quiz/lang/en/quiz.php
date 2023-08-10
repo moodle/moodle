@@ -440,6 +440,7 @@ $string['gradeaverage'] = 'Average grade';
 $string['gradeboundary'] = 'Grade boundary';
 $string['gradeessays'] = 'Grade essays';
 $string['gradehighest'] = 'Highest grade';
+$string['gradeitemdefaultname'] = 'New grade item';
 $string['gradeitemdelete'] = 'Delete grade item {$a}';
 $string['gradeitemnewname'] = 'New name for grade item {$a}';
 $string['gradeitems'] = 'Grade items';

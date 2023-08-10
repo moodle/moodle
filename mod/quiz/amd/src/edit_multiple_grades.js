@@ -25,6 +25,22 @@ import {call as fetchMany} from 'core/ajax';
 import {addIconToContainerRemoveOnCompletion} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
+import {get_string as getString} from 'core/str';
+
+/**
+ * Call the Ajax service to add a quiz grade item.
+ *
+ * @param {Number} quizId
+ * @param {String} name
+ * @return {Promise}
+ */
+const addGradeItem = (quizId, name) => fetchMany([{
+    methodname: 'mod_quiz_create_grade_items',
+    args: {
+        quizid: quizId,
+        quizgradeitems: [{name: name}],
+    }
+}])[0];
 
 /**
  * Call the Ajax service to delete a quiz grade item.
@@ -83,15 +99,36 @@ const handleGradeItemClick = (e) => {
 };
 
 /**
+ * Handle clicks on the 'Add grade item' table.
+ *
+ * @param {Event} e click event.
+ */
+const handleAddGradeItemClick = (e) => {
+    e.preventDefault();
+    const pending = new Pending('delete-quiz-grade-item');
+    addIconToContainerRemoveOnCompletion(e.target.parentNode, pending);
+
+    const quizId = e.target.dataset.quizId;
+
+    getString('gradeitemdefaultname', 'quiz')
+        .then((name) => addGradeItem(quizId, name))
+        .then(() => pending.resolve())
+        .then(() => {
+            window.location.reload();
+        })
+        .catch(Notification.exception);
+};
+
+/**
  * Replace the container with a new version.
  */
 const registerEventListeners = () => {
     const gradeItemTable = document.getElementById('mod_quiz-grade-item-list');
-    if (!gradeItemTable) {
-        return;
+    if (gradeItemTable) {
+        gradeItemTable.addEventListener('click', handleGradeItemClick);
     }
 
-    gradeItemTable.addEventListener('click', handleGradeItemClick);
+    document.getElementById('mod_quiz-add_grade_item').addEventListener('click', handleAddGradeItemClick);
 };
 
 /**
