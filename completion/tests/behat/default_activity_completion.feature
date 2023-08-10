@@ -27,22 +27,15 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Course completion" in current page administration
     And I set the field "Course completion tertiary navigation" to "Default activity completion"
-    And I click on "Assignments" "checkbox"
-    And I click on "Edit" "button"
-    And I should see "Completion tracking"
-    And I should see "The changes will affect the following 1 activities or resources:"
+    And I click on "Expand Assignment" "button"
     And I set the following fields to these values:
-      | completion         | Show activity as complete when conditions are met |
-      | completionview     | 0                                                 |
-      | completionusegrade | 1                                                 |
-      | completionsubmit   | 1                                                 |
-    And I click on "Save changes" "button"
+      | completion_assign         | Show activity as complete when conditions are met |
+      | completionview_assign     | 0                                                 |
+      | completionusegrade_assign | 1                                                 |
+      | completionsubmit_assign   | 1                                                 |
+    And I should not see "Cancel" in the "[data-region='activitycompletion-forum']" "css_element"
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-assign']" "css_element"
     Then I should see "Changes saved"
-    And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-    And I should not see "Student must view this activity to complete it" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-    And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-    And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
-    And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I am on "Course 1" course homepage with editing mode on
     And I press "Add an activity or resource"
     And I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
@@ -66,20 +59,19 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completion | 0                    |
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Course completion" in current page administration
-    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
-    And I click on "Forums" "checkbox"
-    And I click on "Edit" "button"
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    And I click on "Expand Forum" "button"
     And I set the following fields to these values:
-      | completion                | Show activity as complete when conditions are met |
-      | completionview            | 0                                                 |
+      | completion_forum                | Show activity as complete when conditions are met |
+      | completionview_forum            | 0                                                 |
       # 0 = Rating.
-      | completiongradeitemnumber | 0                                                 |
-      | completionpassgrade       | 1                                                 |
-      | completionpostsenabled    | 1                                                 |
-      | completionposts           | 2                                                 |
-      | completionrepliesenabled  | 1                                                 |
-      | completionreplies         | 3                                                 |
-    And I click on "Save changes" "button"
+      | completiongradeitemnumber_forum | 0                                                 |
+      | completionpassgrade_forum       | 1                                                 |
+      | completionpostsenabled_forum    | 1                                                 |
+      | completionposts_forum           | 2                                                 |
+      | completionrepliesenabled_forum  | 1                                                 |
+      | completionreplies_forum         | 3                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-forum']" "css_element"
     Then I should see "Changes saved"
     And I am on "Course 1" course homepage with editing mode on
     And I press "Add an activity or resource"
@@ -109,16 +101,15 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completion | 0                    |
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Course completion" in current page administration
-    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
-    And I click on "Glossaries" "checkbox"
-    And I click on "Edit" "button"
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    And I click on "Expand Glossary" "button"
     And I set the following fields to these values:
-      | completion                | Show activity as complete when conditions are met |
-      | completionview            | 0                                                 |
-      | completionusegrade        | 1                                                 |
-      | completionentriesenabled  | 1                                                 |
-      | completionentries         | 2                                                 |
-    And I click on "Save changes" "button"
+      | completion_glossary                | Show activity as complete when conditions are met |
+      | completionview_glossary            | 0                                                 |
+      | completionusegrade_glossary        | 1                                                 |
+      | completionentriesenabled_glossary  | 1                                                 |
+      | completionentries_glossary         | 2                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-glossary']" "css_element"
     Then I should see "Changes saved"
     And I am on "Course 1" course homepage with editing mode on
     And I press "Add an activity or resource"
@@ -136,17 +127,83 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     # Completion tracking 0 = Do not indicate activity completion.
     And the field "Completion tracking" matches value "0"
 
+  Scenario: Edit default activity completion rules for several activities
+    Given I am on the "Course 1" course page logged in as teacher1
+    When I navigate to "Course completion" in current page administration
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    And I click on "Expand Assignment" "button"
+    And I set the following fields to these values:
+      | completion_assign         | Show activity as complete when conditions are met |
+      | completionview_assign     | 0                                                 |
+      | completionusegrade_assign | 0                                                 |
+      | completionsubmit_assign   | 1                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-assign']" "css_element"
+    And I should see "Changes saved"
+    And I click on "Expand Forum" "button"
+    And I set the following fields to these values:
+      | completion_forum                   | Show activity as complete when conditions are met |
+      | completionview_forum               | 0                                                 |
+      | completionpostsenabled_forum       | 1                                                 |
+      | completionposts_forum              | 3                                                 |
+      | completiondiscussionsenabled_forum | 0                                                 |
+      | completionrepliesenabled_forum     | 0                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-forum']" "css_element"
+    And I should see "Changes saved"
+    And I click on "Expand SCORM package" "button"
+    And I set the following fields to these values:
+      | completion_scorm                   | Show activity as complete when conditions are met |
+      | completionview_scorm               | 0                                                 |
+      | completionscorerequired_scorm      | 3                                                 |
+      | completionstatusrequired_scorm[2]  | 1                                                 |
+      | completionstatusrequired_scorm[4]  | 0                                                 |
+      | completionstatusallscos_scorm      | 1                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-scorm']" "css_element"
+    And I should see "Changes saved"
+    And I click on "Expand Book" "button"
+    And I set the following fields to these values:
+      | completion_book         | Do not indicate activity completion                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-book']" "css_element"
+    And I should see "Changes saved"
+    And I click on "Expand Chat" "button"
+    And I set the following fields to these values:
+      | completion_chat         | Students can manually mark the activity as completed  |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-chat']" "css_element"
+    And I should see "Changes saved"
+    # Change current page and go back to "Default activity completion", to confirm the form values have been saved properly.
+    And I set the field "Course completion tertiary navigation" to "Course completion settings"
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    Then the field "completion_chat" matches value "1"
+    # Check that the rules for book, assignment and forum are still the same.
+    And I click on "Expand Book" "button"
+    And the field "completion_book" matches value "0"
+    And I click on "Expand Assignment" "button"
+    And the field "completion_assign" matches value "2"
+    And the field "completionview_assign" matches value "0"
+    And the field "completionusegrade_assign" matches value "0"
+    And the field "completionsubmit_assign" matches value "1"
+    And the field "completion_forum" matches value "2"
+    And the field "completionview_forum" matches value "0"
+    And the field "completionpostsenabled_forum" matches value "1"
+    And the field "completionposts_forum" matches value "3"
+    And the field "completiondiscussionsenabled_forum" matches value "0"
+    And the field "completionrepliesenabled_forum" matches value "0"
+    And the field "completion_scorm" matches value "2"
+    And the field "completionview_scorm" matches value "0"
+    And the field "completionscorerequired_scorm" matches value "3"
+    And the field "completionstatusrequired_scorm[2]" matches value "1"
+    And the field "completionstatusrequired_scorm[4]" matches value "0"
+    And the field "completionstatusallscos_scorm" matches value "1"
+
   Scenario: Edit default activity completion without rules for automatic completion
     Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Course completion" in current page administration
-    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
-    And I click on "Assignments" "checkbox"
-    And I click on "Edit" "button"
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    And I click on "Expand Assignment" "button"
     And I set the following fields to these values:
-      | completion         | Show activity as complete when conditions are met |
-      | completionview     | 0                                                 |
-      | completionusegrade | 0                                                 |
-      | completionsubmit   | 0                                                 |
-    And I click on "Save changes" "button"
+      | completion_assign         | Show activity as complete when conditions are met |
+      | completionview_assign     | 0                                                 |
+      | completionusegrade_assign | 0                                                 |
+      | completionsubmit_assign   | 0                                                 |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-assign']" "css_element"
     Then I should see "When you select automatic completion, you must also enable at least one requirement (below)."
     And I should not see "Changes saved"

@@ -1784,3 +1784,19 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         margin-left: 2rem;
     }
 }
+
+/* Activity completion */
+
+.defaultactivitycompletion-item {
+    a {
+        color: $black;
+        text-decoration: none;
+        img {
+            filter: invert(25%) sepia(86%) saturate(1158%) hue-rotate(189deg) brightness(104%) contrast(92%);
+        }
+    }
+    .activityicon {
+        width: 32px;
+        height: 32px;
+    }
+}

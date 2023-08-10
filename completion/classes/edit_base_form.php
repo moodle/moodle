@@ -111,6 +111,19 @@ abstract class core_completion_edit_base_form extends moodleform {
             $moduleform->_form = $this->_form;
             if ($customcompletionelements = $moduleform->add_completion_rules()) {
                 $this->hascustomrules = true;
+                foreach ($customcompletionelements as $customcompletionelement) {
+                    // Instead of checking for the suffix at the end of the element name, we need to check for its presence
+                    // because some modules, like SCORM, are adding things at the end.
+                    if (!str_contains($customcompletionelement, $this->get_suffix())) {
+                        debugging(
+                            'Custom completion rule '  . $customcompletionelement . ' of module ' . $modnames[0] .
+                            ' has wrong suffix and has been removed from the form. This has to be fixed by the developer',
+                            DEBUG_DEVELOPER
+                        );
+                        $moduleform->_form->removeElement($customcompletionelement);
+                    }
+                }
+
             }
             return $customcompletionelements;
         } catch (Exception $e) {
@@ -198,7 +211,9 @@ abstract class core_completion_edit_base_form extends moodleform {
             $mform->addElement('static', 'qwerty', '', get_string('hiddenrules', 'completion', join(', ', $conflicts)));
         }
 
-        $this->add_action_buttons();
+        // Whether to show the cancel button or not in the form.
+        $displaycancel = $this->_customdata['displaycancel'] ?? true;
+        $this->add_action_buttons($displaycancel);
     }
 
     /**

@@ -27,6 +27,25 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
     /** @var array */
     protected $_modnames;
 
+    public function __construct(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
+        $this->modules = $customdata['modules'];
+        if ($modname = $this->get_module_name()) {
+            // Set the form suffix to the module name so that the form identifier is unique for each module type.
+            $this->set_suffix('_' . $modname);
+        }
+
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
+
     /**
      * Returns list of types of selected modules
      *
@@ -66,7 +85,7 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
             throw new \moodle_exception('noformdesc');
         }
 
-        list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($course, $modname, 0);
+        list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($course, $modname, 0, $this->get_suffix());
         $data->return = 0;
         $data->sr = 0;
         $data->add = $modname;
@@ -75,6 +94,7 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
         $mformclassname = 'mod_'.$modname.'_mod_form';
         $PAGE->start_collecting_javascript_requirements();
         $this->_moduleform = new $mformclassname($data, 0, $cmrec, $course);
+        $this->_moduleform->set_suffix('_' . $modname);
         $PAGE->end_collecting_javascript_requirements();
 
         return $this->_moduleform;
@@ -101,7 +121,12 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
             $modnames = array_keys($this->get_module_names());
             $modname = $modnames[0];
             // Pre-fill the form with the current completion rules of the first selected module type.
-            list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($this->course, $modname, 0);
+            list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data(
+                $this->course,
+                $modname,
+                0,
+                $this->get_suffix()
+            );
             $data = (array)$data;
             $modform->data_preprocessing($data);
             // Unset fields that will conflict with this form and set data to this form.
@@ -120,5 +145,13 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
      */
     protected function get_cm(): ?\stdClass {
         return null;
+    }
+
+    /**
+     * This method has been overridden because the form identifier must be unique for each module type.
+     * Otherwise, the form will display the same data for each module type once it's submitted.
+     */
+    protected function get_form_identifier() {
+        return parent::get_form_identifier() . $this->get_suffix();
     }
 }
