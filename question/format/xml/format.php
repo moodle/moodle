@@ -1447,10 +1447,8 @@ class qformat_xml extends qformat_default {
                     $expout .= "    <correctanswerlength>" .
                             $answer->correctanswerlength . "</correctanswerlength>\n";
                     $expout .= "    <feedback {$this->format($answer->feedbackformat)}>\n";
-                    $files = $fs->get_area_files($contextid, $component,
-                            'instruction', $question->id);
                     $expout .= $this->writetext($answer->feedback);
-                    $expout .= $this->write_files($answer->feedbackfiles);
+                    $expout .= $this->write_files($this->feedbackfiles[$answer->id]);
                     $expout .= "    </feedback>\n";
                     $expout .= "</answer>\n";
                 }
