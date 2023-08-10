@@ -230,8 +230,10 @@ export default class ColumnSearch extends search_combobox {
         switch (e.key) {
             case 'Tab':
                 if (e.target.closest(this.selectors.input)) {
-                    e.preventDefault();
-                    this.clearSearchButton.focus({preventScroll: true});
+                    if (!this.clearSearchButton.classList.contains('d-none')) {
+                        e.preventDefault();
+                        this.clearSearchButton.focus({preventScroll: true});
+                    }
                 }
                 break;
         }
@@ -505,6 +507,7 @@ export default class ColumnSearch extends search_combobox {
         // Add a small BS listener so that we can set the focus correctly on open.
         this.$component.on('shown.bs.dropdown', () => {
             this.searchInput.focus({preventScroll: true});
+            this.selectallEnable();
         });
     }
 
@@ -512,14 +515,21 @@ export default class ColumnSearch extends search_combobox {
      * Build the content then replace the node.
      */
     async renderDropdown() {
-        const form = this.component.querySelector(selectors.formDropdown);
-        const selectall = form.querySelector('[data-action="selectall"]');
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapseresults', {
             'results': this.getMatchedResults(),
             'searchTerm': this.getSearchTerm(),
         });
-        selectall.disabled = this.getMatchedResults().length === 0;
+        this.selectallEnable();
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+    }
+
+    /**
+     * Given we render the dropdown, Determine if we want to enable the select all checkbox.
+     */
+    selectallEnable() {
+        const form = this.component.querySelector(selectors.formDropdown);
+        const selectall = form.querySelector('[data-action="selectall"]');
+        selectall.disabled = this.getMatchedResults().length === 0;
     }
 
     /**
