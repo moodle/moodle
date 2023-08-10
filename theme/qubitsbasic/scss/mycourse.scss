@@ -67,6 +67,16 @@
 .qicon-tick-mark:before {
   content: "\e90d";
 }
+.qicon-notifications {
+  color: #9e9ea2;
+  font-size: 20px !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+.qicon-calendar {
+  color: #c6c7ca;
+}
 .success-tick {
   position: absolute;
   right: 0%;
@@ -80,8 +90,10 @@
   color: #78c466;
 }
 .navbar.fixed-top {
-  height: 88px !important;
+  height: 70px !important;
   z-index: 50 !important;
+  border-bottom: 0px !important;
+  box-shadow: 0px 15px 10px -15px rgba(0, 0, 0, 0.2) !important;
 }
 .pagetitle-left-alignment {
   margin-left: 280px;
@@ -139,6 +151,9 @@
     padding-left: 10px;
   }
   .coursecard {
+    .card-title {
+      margin-bottom: 0 !important;
+    }
     &:hover {
       // background-color: darken($colorbgcard, 20);
       color: var(--white);
@@ -176,7 +191,7 @@
       darken($colorbgcard, 10)
     );
     color: darken($colorbgcard, 45);
-    padding: 20px 20px 0 10px;
+    padding: 20px 20px 20px 10px;
     font-family: "Acme", sans-serif;
 
     &:hover {
@@ -284,12 +299,13 @@
   width: 260px;
   background: #f7f7f7;
   z-index: 106;
-  transition: all 0.5s ease;
+  transition: all 0.2s ease;
 
   .logo-details {
     width: 100%;
     display: flex;
     align-items: center;
+    height: 70px;
 
     i {
       height: 50px;
@@ -305,11 +321,8 @@
       transition-delay: 0.1s;
     }
     .main-logo {
-      width: 75%;
-      padding: 23px 10px 22px 10px;
-    }
-    .compact-logo {
-      padding: 15px 10px 14px 10px;
+      width: 65%;
+      margin-left: 15px;
     }
   }
   .arrow-left {
@@ -330,6 +343,7 @@
       position: relative;
       list-style: none;
       transition: all 0.4s ease;
+      margin-bottom: 20px;
 
       .sub-menu.blank {
         opacity: 1;
@@ -342,7 +356,7 @@
         padding-left: 4rem;
         a {
           font-size: $fontsize15;
-          padding: 15px 10px;
+          padding: 10px 10px;
           transition: all 0.3s ease;
         }
       }
@@ -359,7 +373,7 @@
         }
         .link_name {
           pointer-events: none;
-          font-size: $fontsize16;
+          font-size: 14px;
           font-weight: 600;
           white-space: nowrap;
           // / color: #585858; /
@@ -373,7 +387,7 @@
         }
       }
       .icon {
-        height: 50px;
+        height: 38px;
         min-width: 70px;
         text-align: center;
         line-height: 50px;
@@ -381,6 +395,9 @@
         font-size: $fontsize20;
         cursor: pointer;
         transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
       .icon-link {
         display: flex;
@@ -388,7 +405,7 @@
         justify-content: space-between;
       }
       .sub-menu {
-        padding: 0px 0px 14px 70px;
+        padding: 0px 0px 0px 70px;
         background: #f7f7f7;
         display: none;
 
@@ -427,7 +444,8 @@
   }
   .compact-logo {
     display: none;
-    width: 100%;
+    width: 65%;
+    margin: 0px auto;
   }
   .hr-line {
     background-color: #dedede;
@@ -447,7 +465,7 @@
     }
   }
   .link_name {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
     white-space: nowrap;
     transition: all 0.4s ease;
@@ -455,7 +473,7 @@
       background: #e2eaf2;
       color: var(--hovertextcolor);
     }
-    .active{
+    .active {
       background: #e2eaf2 !important;
       color: var(--hovertextcolor) !important;
     }
@@ -617,7 +635,8 @@
     li.showMenu {
       .sub-menu {
         display: block;
-        margin: 0 !important;
+        margin: 10px 0px 0px 0px !important;
+        
       }
       i.arrow {
         transform: rotate(-180deg);
@@ -913,7 +932,6 @@ button.close:focus,
 .breadcrumb-item.active {
   color: #333333 !important;
   font-size: 20px !important;
-  font-weight: 600 !important;
 }
 .breadcrumb-item + .breadcrumb-item::before {
   font-size: 14px !important;
@@ -959,7 +977,6 @@ ol {
   overflow-y: scroll;
 }
 
-
 .badge-secondary {
   background-color: #008195 !important;
   color: #ffffff !important;
@@ -972,9 +989,9 @@ ol {
 .usermenu .dropdown.show #user-action-menu {
   margin-top: 15px !important;
 }
-#page-content {
-  margin-top: 20px !important;
-}
+// #page-content {
+//   margin-top: 20px !important;
+// }
 .dropdown-item.active,
 .dropdown-item:active,
 .dropdown-item:hover,
@@ -995,7 +1012,7 @@ ol {
 .course_tooltip .tooltiptext {
   visibility: hidden;
   width: 330px;
-  background-color: #056DCC;
+  background-color: #056dcc;
   color: #fff;
   text-align: center;
   border-radius: 6px;
@@ -1003,7 +1020,7 @@ ol {
   position: absolute;
   z-index: 1;
   bottom: 150%;
-  }
+}
 
 .course_tooltip .tooltiptext::after {
   content: "";
@@ -1013,29 +1030,36 @@ ol {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #056DCC transparent transparent transparent;
+  border-color: #056dcc transparent transparent transparent;
 }
 
 .course_tooltip:hover .tooltiptext {
   visibility: visible;
 }
 
-.aalink.focus, a.focus.autolink, .aalink:focus, a.autolink:focus, #page-footer a:not([class]).focus, #page-footer a:not([class]):focus, .arrow_link.focus, .arrow_link:focus, a:not([class]).focus, a:not([class]):focus, .activityinstance>a.focus, .activityinstance>a:focus {
+.aalink.focus,
+a.focus.autolink,
+.aalink:focus,
+a.autolink:focus,
+#page-footer a:not([class]).focus,
+#page-footer a:not([class]):focus,
+.arrow_link.focus,
+.arrow_link:focus,
+a:not([class]).focus,
+a:not([class]):focus,
+.activityinstance > a.focus,
+.activityinstance > a:focus {
   box-shadow: none !important;
   transition: unset !important;
 }
 .previousnav {
-  color: #B3B3B3 !important;
+  color: #b3b3b3 !important;
 }
-
 
 // .input_input-form_2EIqD .sprite-info_sprite-input_IL2gd{
 //   width: 3rem !important;
 // }
 
-
 .input_input-small_1bkbs {
   width: 3rem !important;
 }
-
-
