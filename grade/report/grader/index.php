@@ -133,6 +133,9 @@ grade_regrade_final_grades_if_required($course);
 if ($sort && strcasecmp($sort, 'desc') !== 0) {
     $sort = 'asc';
 }
+// We have lots of hardcoded 'ASC' and 'DESC' strings in grade/report/grader.lib :(. So we need to uppercase the sort.
+$sort = strtoupper($sort);
+
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
 
 // We call this a little later since we need some info from the grader report.
