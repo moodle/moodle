@@ -46,12 +46,6 @@
 <div class="{{#parentclasses}}{{.}}{{/parentclasses}}"
     {{^usebutton}}
         tabindex="-1"
-        data-toggle="dropdown"
-        aria-expanded="false"
-        role="combobox"
-        aria-haspopup="dialog"
-        aria-controls="dialog-{{instance}}-{{uniqid}}"
-        aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
         data-input-element="input-{{uniqid}}"
     {{/usebutton}}>
 
@@ -63,7 +57,7 @@
              aria-haspopup="dialog"
              aria-controls="dialog-{{instance}}-{{uniqid}}"
              class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
-             aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
+             aria-label="{{#cleanstr}} aria-toggledropdown, core {{/cleanstr}}"
              data-input-element="input-{{uniqid}}">
             {{{buttoncontent}}}
         </div>
@@ -72,10 +66,12 @@
     {{^usebutton}}{{{buttoncontent}}}{{/usebutton}}
 
     <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}"
-         id="dialog-{{instance}}-{{uniqid}}"
-         role="dialog"
-         aria-modal="true"
-         aria-label="{{#cleanstr}} selectagroup, core {{/cleanstr}}"
+        id="dialog-{{instance}}-{{uniqid}}"
+        {{#usebutton}}
+            role="dialog"
+            aria-modal="true"
+            aria-label="{{#cleanstr}} aria-comboboxsearchdialogue, core {{/cleanstr}}"
+        {{/usebutton}}
     >
         <div class="w-100 p-3" data-region="placeholder">
             {{#renderlater}}

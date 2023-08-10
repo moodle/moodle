@@ -209,11 +209,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I wait until "Mobile phone" "option_role" exists
     And I press the tab key
     And the focused element is "Clear search input" "button" in the ".dropdown-menu.show" "css_element"
-    And I press the tab key
-    And I press the tab key
-    And I press the tab key
-    And I press the tab key
-    And the focused element is "Close" "button" in the ".dropdown-menu.show" "css_element"
+    And I press the escape key
     And I press the tab key
     # The course grade category menu.
     And the focused element is "Cell actions" "button"

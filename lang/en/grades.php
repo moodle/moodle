@@ -889,9 +889,6 @@ $string['xml'] = 'XML';
 $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
-$string['aria-toggledropdown'] = 'Toggle the following dropdown';
-$string['aria:dropdowngrades'] = 'Grade items found';
-
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';
 $string['dropdown'] = 'Drop-down menu';
@@ -924,3 +921,5 @@ $string['studentsperpage_help'] = 'This setting determines the number of student
 $string['grade'] = 'Grade';
 $string['gradeitemadvanced'] = 'Advanced grade item options';
 $string['gradeitemadvanced_help'] = 'Select all elements that should be displayed as advanced when editing grade items.';
+$string['aria-toggledropdown'] = 'Toggle the following dropdown';
+$string['aria:dropdowngrades'] = 'Grade items found';

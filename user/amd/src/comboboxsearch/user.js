@@ -54,6 +54,9 @@ export default class UserSearch extends search_combobox {
         const component = document.querySelector(this.componentSelector());
         this.courseID = component.querySelector(this.selectors.courseid).dataset.courseid;
         this.groupID = document.querySelector(this.selectors.groupid)?.dataset?.groupid;
+
+        // We need to render some content by default for ARIA purposes.
+        this.renderDefault();
     }
 
     static init() {
@@ -91,6 +94,23 @@ export default class UserSearch extends search_combobox {
      * Build the content then replace the node.
      */
     async renderDropdown() {
+        const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
+            users: this.getMatchedResults().slice(0, 5),
+            hasresults: this.getMatchedResults().length > 0,
+            matches: this.getMatchedResults().length,
+            searchterm: this.getSearchTerm(),
+            selectall: this.selectAllResultsLink(),
+        });
+        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+    }
+
+    /**
+     * Build the content then replace the node by default we want our form to exist.
+     */
+    async renderDefault() {
+        this.setMatchedResults(await this.filterDataset(await this.getDataset()));
+        this.filterMatchDataset();
+
         const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
             users: this.getMatchedResults().slice(0, 5),
             hasresults: this.getMatchedResults().length > 0,
@@ -193,7 +213,7 @@ export default class UserSearch extends search_combobox {
      * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
-        super.keyHandler(e);
+        // We don't call the super here because we want to let aria.js handle the key presses mostly.
 
         if (e.target === this.getHTMLElements().currentViewAll && (e.key === 'Enter' || e.key === 'Space')) {
             window.location = this.selectAllResultsLink();
@@ -203,6 +223,7 @@ export default class UserSearch extends search_combobox {
         switch (e.key) {
             case 'Enter':
             case ' ':
+                e.stopPropagation();
                 if (document.activeElement === this.getHTMLElements().searchInput) {
                     if (e.key === 'Enter' && this.selectAllResultsLink() !== null) {
                         window.location = this.selectAllResultsLink();
@@ -230,9 +251,6 @@ export default class UserSearch extends search_combobox {
                 // If the current focus is on clear search, then check if viewall exists then around tab to it.
                 if (e.target.closest(this.selectors.clearSearch)) {
                     if (this.currentViewAll && !e.shiftKey) {
-                        e.preventDefault();
-                        this.currentViewAll.focus({preventScroll: true});
-                    } else {
                         this.closeSearch();
                     }
                 }
@@ -249,11 +267,11 @@ export default class UserSearch extends search_combobox {
         if (on) {
             this.searchDropdown.classList.add('show');
             $(this.searchDropdown).show();
-            this.component.setAttribute('aria-expanded', 'true');
+            this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'true');
         } else {
             this.searchDropdown.classList.remove('show');
             $(this.searchDropdown).hide();
-            this.component.setAttribute('aria-expanded', 'false');
+            this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'false');
         }
     }
 

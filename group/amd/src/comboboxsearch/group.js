@@ -198,12 +198,6 @@ export default class GroupSearch extends search_combobox {
         super.keyHandler(e);
         // Switch the key presses to handle keyboard nav.
         switch (e.key) {
-            case 'Tab':
-                if (e.target.closest(this.selectors.input)) {
-                    e.preventDefault();
-                    this.clearSearchButton.focus({preventScroll: true});
-                }
-                break;
             case 'Escape':
                 if (document.activeElement.getAttribute('role') === 'option') {
                     e.stopPropagation();

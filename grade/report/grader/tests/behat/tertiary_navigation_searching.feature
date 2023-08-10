@@ -159,10 +159,9 @@ Feature: Within the grader report, test that we can search for users
     Given I click on "Turtle" in the "user" search widget
     # The search input remains in the field on reload this is in keeping with other search implementations.
     When the field "Search users" matches value "Turtle"
-    And I wait until "View all results (1)" "link" does not exist
     # Test if we can then further retain the turtle result set and further filter from there.
     Then I set the field "Search users" to "Turtle plagiarism"
-    And "Turtle Manatee" "list_item" should not exist
+    And "Turtle Manatee" "list_item" should not be visible
     And I should see "No results for \"Turtle plagiarism\""
 
   Scenario: A teacher can search for values besides the users' name
@@ -244,15 +243,15 @@ Feature: Within the grader report, test that we can search for users
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the end key
-    And the focused element is "View all results (5)" "option_role"
+    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the home key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
-    And the focused element is "View all results (5)" "option_role"
+    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the escape key
     And the focused element is "Search users" "field"
     Then I set the field "Search users" to "Goodmeme"
@@ -263,15 +262,14 @@ Feature: Within the grader report, test that we can search for users
     And I set the field "Search users" to "ABC"
     And I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
 
     # Lets check the tabbing order.
     And I set the field "Search users" to "ABC"
-    And I wait until "View all results (5)" "option_role" exists
+    And I click on "Search users" "field"
+    And I wait until "Turtle Manatee" "option_role" exists
     And I press the tab key
     And the focused element is "Clear search input" "button"
-    And I press the tab key
-    And the focused element is "View all results (5)" "option_role"
     And I press the tab key
     And ".groupsearchwidget" "css_element" should exist
     # Ensure we can interact with the input & clear search options with the keyboard.
@@ -289,15 +287,6 @@ Feature: Within the grader report, test that we can search for users
       | Teacher 1          |
       | Student 1          |
       | Turtle Manatee     |
-    # Sometimes with behat we get unattached nodes causing spurious failures.
-    And I wait "1" seconds
-    And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option_role" exists
-    And I press the tab key
-    And the focused element is "Clear search input" "button"
-    And I press the enter key
-    And I wait until the page is ready
-    And I confirm "Turtle Manatee" in "user" search within the gradebook widget does not exist
 
   Scenario: Once a teacher searches, it'll apply the currently set filters and inform the teacher as such
     # Set up a basic filtering case.

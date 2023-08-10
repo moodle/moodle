@@ -37,12 +37,15 @@
 <span class="d-none" data-region="groupid" data-groupid="{{group}}" aria-hidden="true"></span>
 {{#currentvalue}}
     {{< core/search_input_auto }}
-        {{$label}}{{#str}}
-            searchusers, core
-        {{/str}}{{/label}}
+        {{$label}}{{#str}}searchusers, core{{/str}}{{/label}}
         {{$value}}{{currentvalue}}{{/value}}
         {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="user-result-listbox"
             aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-label="{{#cleanstr}} aria-toggledropdown, core {{/cleanstr}}"
             data-input-element="user-input-{{uniqid}}"
         {{/additionalattributes}}
     {{/ core/search_input_auto }}
@@ -52,14 +55,15 @@
 {{/currentvalue}}
 {{^currentvalue}}
     {{< core/search_input_auto }}
-        {{$label}}{{#str}}
-            searchusers, core
-        {{/str}}{{/label}}
-        {{$placeholder}}{{#str}}
-            searchusers, core
-        {{/str}}{{/placeholder}}
+        {{$label}}{{#str}}searchusers, core{{/str}}{{/label}}
+        {{$placeholder}}{{#str}}searchusers, core{{/str}}{{/placeholder}}
         {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="false"
+            aria-controls="user-result-listbox"
             aria-autocomplete="list"
+            aria-haspopup="listbox"
+            aria-label="{{#cleanstr}} aria-toggledropdown, core {{/cleanstr}}"
             data-input-element="user-input-{{uniqid}}"
         {{/additionalattributes}}
     {{/ core/search_input_auto }}

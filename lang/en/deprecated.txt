@@ -142,3 +142,5 @@ gradeitemadvanced,core_grades
 gradeitemadvanced_help,core_grades
 to,core
 from,core
+aria-toggledropdown,core_grades
+aria:dropdowngrades,core_grades
