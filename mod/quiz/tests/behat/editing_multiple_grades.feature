@@ -26,6 +26,7 @@ Feature: Setup multiple grades for a quiz
       | activity | name   | course |
       | quiz     | Quiz 1 | C1     |
 
+  @javascript
   Scenario: Navigation to, and display of, grading setup
     Given the following "mod_quiz > grade items" exist:
       | quiz   | name              |
@@ -42,6 +43,9 @@ Feature: Setup multiple grades for a quiz
     And "Delete" "icon" should not exist in the "Intuition" "table_row"
     And "Delete" "icon" should not exist in the "Intelligence" "table_row"
     And "Delete" "icon" should exist in the "Unused grade item" "table_row"
+    And the field "Question A" matches value "Intuition"
+    And the field "Question B" matches value "Intelligence"
+    And the field "Question C" matches value "Intuition"
 
   @javascript
   Scenario: A grade item can be created and renamed

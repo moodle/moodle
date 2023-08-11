@@ -45,6 +45,19 @@ class edit_grading_page implements renderable, templatable {
     }
 
     public function export_for_template(renderer_base $output) {
+        global $PAGE;
+        /** @var edit_renderer $editrenderer */
+        $editrenderer = $PAGE->get_renderer('mod_quiz', 'edit');
+
+        // Get the list of grade items, but to be the choices for a slot, and the list to be edited.
+        $gradeitemchoices = [
+            0 => [
+                'id' => 0,
+                'choice' => get_string('gradeitemnoneselected', 'quiz'),
+                'isselected' => false,
+            ],
+        ];
+        $selectdgradeitemchoices = [];
         $gradeitems = [];
         foreach ($this->structure->get_grade_items() as $gradeitem) {
             $gradeitem = clone($gradeitem);
@@ -52,16 +65,50 @@ class edit_grading_page implements renderable, templatable {
             $gradeitem->displayname = format_string($gradeitem->name);
             $gradeitem->isused = $this->structure->is_grade_item_used($gradeitem->id);
             $gradeitems[] = $gradeitem;
+
+            $gradeitemchoices[$gradeitem->id] = (object) [
+                'id' => $gradeitem->id,
+                'choice' => $gradeitem->displayname,
+                'isselected' => false,
+            ];
+            $selectdgradeitemchoices[$gradeitem->id] = clone($gradeitemchoices[$gradeitem->id]);
+            $selectdgradeitemchoices[$gradeitem->id]->isselected = true;
         }
 
-        $slots = $this->structure->get_slots();
+        // Get the list of quiz sections.
+        $sections = [];
+        foreach ($this->structure->get_sections() as $section) {
+            $sections[$section->id] = (object) [
+                'displayname' => $section->heading ? format_string($section->heading) : get_string('sectionnoname', 'quiz'),
+                'slots' => [],
+            ];
+        }
+
+        // Add the relevant slots ot each section.
+        foreach ($this->structure->get_slots() as $slot) {
+            // Mark the right choice as selected.
+            $choices = $gradeitemchoices;
+            if ($slot->quizgradeitemid) {
+                $choices[$slot->quizgradeitemid] = $selectdgradeitemchoices[$slot->quizgradeitemid];
+            }
+
+            $sections[$slot->section->id]->slots[] = (object) [
+                'id' => $slot->id,
+                'displaynumber' => $this->structure->get_displayed_number_for_slot($slot->slot),
+                'displayname' => $editrenderer->get_question_name_for_slot(
+                        $this->structure, $slot->slot, $PAGE->url),
+                'choices' => array_values($choices),
+            ];
+        }
 
         return [
             'quizid' => $this->structure->get_quizid(),
             'gradeitems' => $gradeitems,
+            'sections' => array_values($sections),
             'hasgradeitems' => !empty($gradeitems),
             'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],
-            'slots' => $slots,
+            'hasslots' => $this->structure->has_questions(),
+            'noslots' => ['message' => get_string('gradeitemnoslots', 'quiz')],
         ];
     }
 }
