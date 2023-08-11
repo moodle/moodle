@@ -35,24 +35,4 @@ $functions = [
         'ajax' => true,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ],
-    'local_qubitsbook_create_assignment_service' => [
-        'classname' => 'local_qubitsbook_external',
-        'methodname' => 'create_assignment_service',
-        'classpath' => 'local/qubitsbook/classes/external.php',
-        'description' => 'Create New assignment',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ],
-    'local_qubitsbook_get_assignment_service' => [
-        'classname' => 'local_qubitsbook_external',
-        'methodname' => 'get_assignment_service',
-        'classpath' => 'local/qubitsbook/classes/external.php',
-        'description' => 'List assignment details using unique field',
-        'type' => 'write',
-        'ajax' => true,
-        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
-    ],
-    
-    
 ];

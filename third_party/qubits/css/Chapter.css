@@ -180,7 +180,9 @@ h6:target:before {
 .content main {
   margin-left: auto;
   margin-right: auto;
-  max-width: var(--content-max-width);
+  /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width); 
+  /* max-width: var(--content-max-width); */
+  max-width: 750px;
 }
 
 .content ol,
@@ -240,11 +242,16 @@ h6:target:before {
 
 blockquote {
   margin: 20px 0;
-  padding: 0 0 0 0 !important;
+  padding: 0 20px;
   color: #000;
   background-color: #f1f6f9;
   border-top: 0.1em solid #e0ecf1;
   border-bottom: 0.1em solid #e0ecf1;
+}
+
+blockquote p {
+  margin: 0 20px;
+  margin-top: 0px;
 }
 
 :root {
@@ -259,7 +266,6 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png) no-repeat;
   background-size: contain;
   width: 118px;
   height: 79px;
@@ -270,10 +276,14 @@ body {
 }
 
 .content h1:not(.menu-title) {
-  background-color: #47bbb6;
+  background-color: #1482e6;
   border-radius: 30px;
   position: relative;
   padding-left: 80px;
+}
+
+.content h1:not(.menu-title.heading-title) {
+  padding-left: 20px;
 }
 
 h1:target:before,
@@ -307,7 +317,6 @@ h6:target:before {
 }
 
 .content main {
-  background: #fef6db;
   padding: 20px;
   border-radius: 36px;
 }
@@ -558,9 +567,6 @@ code {
   min-height: 300px;
   overflow-y: scroll;
 }
-.rpv-core__textbox{
-  width: 100% !important;
-}
 
 .error404 {
   font-family: 'Calligraffitti', cursive;
@@ -599,7 +605,7 @@ code {
 }
 
 .react-pdf-Toolbar {
-  padding: 0px 2px
+  padding: 0px 2px;
 }
 
 .react-pdf-fullscreen {
@@ -609,7 +615,7 @@ code {
 
 .content .title a {
   color: white;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -641,4 +647,12 @@ code {
 .MuiButtonBase-root.ai-help-button:hover {
   color: #0f6cbf;
   border-color: #747474;
+}
+
+.ace-dracula .ace_print-margin {
+  background: none !important;
+}
+
+.rpv-core__textbox{
+  width: 100% !important;
 }

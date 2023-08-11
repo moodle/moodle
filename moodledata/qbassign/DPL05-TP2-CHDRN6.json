@@ -1,0 +1,35 @@
+{
+	"title" : "Challenge for 2.1 Conversation",
+	"instructions": "Write a sample program",
+	"additional_files": "",
+	"submission_type": "onlinetext",
+	"__comment__submission_type": "onlinetext/file/codeblock",
+	"online_text_limit":"",
+	"filesubmission_size":"",
+	"filesubmission_count":"",
+	"codeblock_mode": "automate",
+	"__comment__codeblock_mode": "manual/automate",
+	"grade_type":"scale",
+	"__comment__grade_type":"scale/point",
+	"grading_method": "direct",
+	"__comment__grading_method": "direct/rubric/marking_guide",
+	"grade_to_pass": "",
+	"language" : "python",
+	"type" : "onlinetext",
+	"uid": "DPL05-TP2-CHDRN6",
+	"duedate": "31-07-2023 09:30",
+	"submissionfrom": "31-07-2023 09:30",
+	"grade_duedate": "05-09-2023 09:30",
+	"grade":100,
+	"description":"Sum of 2 numbers",	
+	"submissionstatus": "no",
+	"wrdlimit":"0",
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

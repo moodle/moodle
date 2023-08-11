@@ -1,5 +1,6 @@
 <?php
 require('../../config.php');
+require_login();
 $elanguage      = optional_param('language', '', PARAM_TEXT);
 $clsname = 'page-editor-qubits-'.$elanguage;
 $PAGE->set_pagelayout('thirdparty');
@@ -22,13 +23,12 @@ echo $OUTPUT->header();
 	  "language": "<?php echo $elanguage; ?>"
 	},
 
-		"buildId": "G7GxyPIfk8vrAIEzQ0oJE",
+		"buildId": "TnhhvV0f6O-oLYUPPx3IU",
 		"isFallback": false,
 		"gsp": true,
 		"scriptLoader": []
 	}
 </script>
-
 <?php
 
 echo $OUTPUT->footer();

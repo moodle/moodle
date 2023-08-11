@@ -113,9 +113,9 @@
 .custom-control-input:focus:not(:checked) ~ .custom-control-label::before {
   border-color: transparent !important;
 }
-.custom-control-input:focus ~ .custom-control-label::before {
+/* .custom-control-input:focus ~ .custom-control-label::before {
   box-shadow: none !important;
-}
+} */
 .preference-table td,
 .preference-table th {
   border: 1px solid #dee2e6;
@@ -123,22 +123,23 @@
 .page-context-header {
   align-items: center;
 }
-
-.form-control:focus,
-.btn-primary:focus,
-.btn-secondary:focus,
-.custom-select:focus {
-  box-shadow: none !important;
+.pagelayout-course .moremenu {
+  padding: 0 !important;
 }
+.form-control:focus,
+.custom-select:focus {
+  box-shadow: 0 0 0 0.25rem rgba(15, 108, 191, 0.11) !important;
+}
+
 td,
 th {
   border: 1px solid #dee2e6 !important;
 }
 input[type="checkbox"] {
   accent-color: #1482e6 !important;
-border-radius: 4px !important;
-width: 18px;
-height: 18px;
+  border-radius: 4px !important;
+  width: 18px;
+  height: 18px;
 }
 #page-header {
   display: none !important;

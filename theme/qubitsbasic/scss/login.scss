@@ -6,17 +6,18 @@ $bg-primary: #f5f5f5;
 }
 .login-form-submit .btn {
   width: 126px;
-  font-size: 16px !important;
-  font-weight: 600 !important;
-  margin-top: 6px !important;
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 6px;
 }
 .login-form-username label,
 .login-form-password label {
-  font-size: 16px !important;
-  font-weight: 600 !important;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 24px;
 }
 .qubits-login-logo {
-  width: 40% !important;
+  width: 56%;
   margin-bottom: 30px;
 }
 .position-inherit {
@@ -30,6 +31,8 @@ $bg-primary: #f5f5f5;
 }
 .footer-copyright-text {
   bottom: 10px;
+  color: #333333;
+  position: absolute;
 }
 .bg-login-primary {
   background-color: $bg-primary !important;

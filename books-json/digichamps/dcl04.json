@@ -1,0 +1,277 @@
+[
+	{
+		"book": {
+			"name": "Computer Science and Programming",
+			"code": "DCL04",
+			"category": "DigiChamps",
+			"categorycode": "DC",
+			"summary": ".",
+			"otherfields": {
+				"level": "4",
+				"cardcolour": "#215caa"
+			},
+			"chapters": [
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 1: Computing Devices",
+					"type": "topic",
+					"uid": "DCL04-TP1-000",
+					"children": [
+						{
+							"title": "Unit 1 Summary",
+							"uid": "DCL04-TP1-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U01_Intro",
+							"type": "page"
+						},
+						{
+							"title": "1.1 - Troubleshooting",
+							"uid": "DCL04-TP1-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U01_S01",
+							"type": "page"
+						},
+						{
+							"title": "1.2 - Next Generation Technology",
+							"uid": "DCL04-TP1-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U01_S02",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP1-CHDRN4",							
+						  "fname":"DCL04-TP1-CHDRN4.json",
+						  "type": "assignment"
+						}
+					]
+				},
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 2: Internet and Network",
+					"type": "topic",
+					"uid": "DCL04-TP2-000",
+					"children": [
+						{
+							"title": "Unit 2 Summary",
+							"uid": "DCL04-TP2-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_Intro",
+							"type": "page"
+						},
+						{
+							"title": "2.1 - Sending Data Using Internet",
+							"uid": "DCL04-TP2-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_S01",
+							"type": "page"
+						},
+						{
+							"title": "2.2 - Cloud Service",
+							"uid": "DCL04-TP2-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_S02",
+							"type": "page"
+						},
+						{
+							"title": "2.3 - Responding To An Email",
+							"uid": "DCL04-TP2-CHDRN4",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_S03",
+							"type": "page"
+						},
+						{
+							"title": "2.4 - Sending Attchments WITH AN EMAIL",
+							"uid": "DCL04-TP2-CHDRN5",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_S04",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP2-CHDRN6",							
+						  "fname":"DCL04-TP2-CHDRN6.json",
+						  "type": "assignment"
+						}
+					]
+				},
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 3: Your First 3D Design",
+					"type": "topic",
+					"uid": "DCL04-TP3-000",
+					"children": [
+						{
+							"title": "Unit 3 Summary",
+							"uid": "DCL04-TP3-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_Intro",
+							"type": "page"
+						},
+						{
+							"title": "3.1 - Editing Shapes",
+							"uid": "DCL04-TP3-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S01",
+							"type": "page"
+						},
+						{
+							"title": "3.2 - Align",
+							"uid": "DCL04-TP3-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S02",
+							"type": "page"
+						},
+						{
+							"title": "3.3 - Ruler And 3D Text Tool",
+							"uid": "DCL04-TP3-CHDRN4",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S03",
+							"type": "page"
+						},
+						{
+							"title": "3.4 - 3D Printing",
+							"uid": "DCL04-TP3-CHDRN5",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S04",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP3-CHDRN6",							
+						  "fname":"DCL04-TP3-CHDRN6.json",
+						  "type": "assignment"
+						}
+					]
+				},
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 4: Icons and Shapes",
+					"type": "topic",
+					"uid": "DCL04-TP4-000",
+					"children": [
+						{
+							"title": "Unit 4 Summary",
+							"uid": "DCL04-TP4-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_Intro",
+							"type": "page"
+						},
+						{
+							"title": "4.1 - Icons",
+							"uid": "DCL04-TP4-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S01",
+							"type": "page"
+						},
+						{
+							"title": "4.2 - Duplicate Slides",
+							"uid": "DCL04-TP4-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S02",
+							"type": "page"
+						},
+						{
+							"title": "4.3 - Shape Format",
+							"uid": "DCL04-TP4-CHDRN4",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S03",
+							"type": "page"
+						},
+						{
+							"title": "4.4 - Adding Effects To Shapes",
+							"uid": "DCL04-TP4-CHDRN5",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S04",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP4-CHDRN6",							
+						  "fname":"DCL04-TP4-CHDRN6.json",
+						  "type": "assignment"
+						}
+					]
+				},
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 5: Tables and Templates in MS Word",
+					"type": "topic",
+					"uid": "DCL04-TP5-000",
+					"children": [
+						{
+							"title": "Unit 5 Summary",
+							"uid": "DCL04-TP5-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_Intro",
+							"type": "page"
+						},
+						{
+							"title": "5.1 - Tables In Documents",
+							"uid": "DCL04-TP5-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S01",
+							"type": "page"
+						},
+						{
+							"title": "5.2 - Borders And Line Spacing",
+							"uid": "DCL04-TP5-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S02",
+							"type": "page"
+						},
+						{
+							"title": "5.3 - Templates And Orientation",
+							"uid": "DCL04-TP5-CHDRN4",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S03",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP5-CHDRN5",							
+						  "fname":"DCL04-TP5-CHDRN5.json",
+						  "type": "assignment"
+						}
+					]
+				},
+				{
+					"route": "book/DCL04/DCL04-TP1-000.mdx",
+					"title": "Unit 6: Working with Data",
+					"type": "topic",
+					"uid": "DCL04-TP6-000",
+					"children": [
+						{
+							"title": "Unit 6 Summary",
+							"uid": "DCL04-TP6-CHDRN1",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_Intro",
+							"type": "page"
+						},
+						{
+							"title": "6.1 - Data At Work",
+							"uid": "DCL04-TP6-CHDRN2",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S01",
+							"type": "page"
+						},
+						{
+							"title": "6.2 - Prediction From Data",
+							"uid": "DCL04-TP6-CHDRN3",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S02",
+							"type": "page"
+						},
+						{
+							"title": "6.3 - Data Insight",
+							"uid": "DCL04-TP6-CHDRN4",
+							"description": "",
+							"route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S03",
+							"type": "page"
+						},
+						{
+						  "uid": "DCL04-TP6-CHDRN5",							
+						  "fname":"DCL04-TP6-CHDRN5.json",
+						  "type": "assignment"
+						}
+					]
+				}
+			]
+		}
+	}
+]
