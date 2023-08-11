@@ -20,6 +20,7 @@ use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 use mod_lti\reportbuilder\local\entities\tool_types;
 use core_reportbuilder\system_report;
+use stdClass;
 
 /**
  * Course external tools list system report class implementation.
@@ -109,6 +110,7 @@ class course_external_tools_list extends system_report {
      */
     protected function add_columns(tool_types $tooltypesentity): void {
         $entitymainalias = $tooltypesentity->get_table_alias('lti_types');
+        $courseid = $this->course->id;
 
         $columns = [
             'tool_types:name',
@@ -128,6 +130,57 @@ class course_external_tools_list extends system_report {
             ->set_is_sortable(true)
             ->add_field("{$entitymainalias}.id")
             ->add_callback(fn() => $this->perrowtoolusage);
+
+        // Enable toggle column.
+        $this->add_column((new column(
+            'showinactivitychooser',
+            new \lang_string('showinactivitychooser', 'mod_lti'),
+            $tooltypesentity->get_entity_name()
+        ))
+            // Site tools can be overridden on course level.
+            ->add_join("LEFT JOIN {lti_coursevisible} lc ON lc.typeid = {$entitymainalias}.id AND lc.courseid = $courseid")
+            ->set_type(column::TYPE_INTEGER)
+            ->add_fields("{$entitymainalias}.id, {$entitymainalias}.coursevisible, lc.coursevisible as coursevisibleoverridden")
+            ->set_is_sortable(false)
+            ->set_callback(static function(int $id, stdClass $row): string {
+                global $PAGE, $COURSE;
+                $coursevisible = $row->coursevisible;
+                $courseid = $COURSE->id;
+                if (!empty($row->coursevisibleoverridden)) {
+                    $coursevisible = $row->coursevisibleoverridden;
+                }
+
+                if ($coursevisible == LTI_COURSEVISIBLE_ACTIVITYCHOOSER) {
+                    $coursevisible = true;
+                } else {
+                    $coursevisible = false;
+                }
+
+                $renderer = $PAGE->get_renderer('core_reportbuilder');
+                $attributes = [
+                    ['name' => 'id', 'value' => $row->id],
+                    ['name' => 'courseid', 'value' => $courseid],
+                    ['name' => 'action', 'value' => 'showinactivitychooser-toggle'],
+                    ['name' => 'state', 'value' => $coursevisible],
+                ];
+                $label = $coursevisible ? get_string('dontshowinactivitychooser', 'mod_lti')
+                    : get_string('showinactivitychooser', 'mod_lti');
+
+                $disabled = false;
+                if (!has_capability('mod/lti:addcoursetool', \context_course::instance($courseid))) {
+                    $disabled = true;
+                }
+
+                return $renderer->render_from_template('core/toggle', [
+                    'id' => 'showinactivitychooser-toggle-' . $row->id,
+                    'checked' => $coursevisible,
+                    'disabled' => $disabled,
+                    'dataattributes' => $attributes,
+                    'label' => $label,
+                    'labelclasses' => 'sr-only'
+                ]);
+            })
+        );
 
         // Attempt to create a dummy actions column, working around the limitations of the official actions feature.
         $this->add_column(new column(

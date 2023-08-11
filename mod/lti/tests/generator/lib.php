@@ -151,13 +151,14 @@ class mod_lti_generator extends testing_module_generator {
         }
 
         $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
-        $type['coursevisible'] = LTI_COURSEVISIBLE_ACTIVITYCHOOSER; // The default for course tools.
+        $type['coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
         $type['state'] = LTI_TOOL_STATE_CONFIGURED; // The default for course tools.
 
         // Sensible defaults permitting the tool type to be used in a launch.
         $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
 
         // Required for cartridge processing support.
         $type['lti_toolurl'] = $type['baseurl'];

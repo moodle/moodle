@@ -523,6 +523,8 @@ $string['share_roster_help'] = 'Specify whether the tool can access the list of 
 
 Note that this setting may be overridden in the tool configuration.';
 $string['show_in_course_activity_chooser'] = 'Show in activity chooser and as a preconfigured tool';
+$string['showinactivitychooser'] = 'Show in activity chooser';
+$string['dontshowinactivitychooser'] = 'Don\'t show in activity chooser';
 $string['show_in_course_lti1'] = 'Tool configuration usage';
 $string['show_in_course_lti1_help'] = 'This tool may be shown in the activity chooser for a teacher to select to add to a course. Alternatively, it may be shown in the preconfigured tool drop-down menu when adding an external tool to a course. A further option is for the tool configuration to only be used if the exact tool URL is entered when adding an external tool to a course.';
 $string['show_in_course_lti2'] = 'Tool configuration usage';

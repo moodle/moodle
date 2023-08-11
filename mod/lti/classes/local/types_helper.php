@@ -48,25 +48,36 @@ class types_helper {
         if (empty($coursevisible)) {
             $coursevisible = [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER];
         }
-        list($coursevisiblesql, $coursevisparams) = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
+        [$coursevisiblesql, $coursevisparams] = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
+        [$coursevisiblesql1, $coursevisparams1] = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
+        [$coursevisibleoverriddensql, $coursevisoverriddenparams] = $DB->get_in_or_equal(
+            $coursevisible,
+            SQL_PARAMS_NAMED,
+            'coursevisibleoverridden');
 
         $coursecond = implode(" OR ", ["t.course = :courseid", "t.course = :siteid"]);
         $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
-        $query = "SELECT t.*
-                FROM {lti_types} t
-           LEFT JOIN {lti_types_categories} tc ON t.id = tc.typeid
-               WHERE t.coursevisible $coursevisiblesql
-                 AND ($coursecond)
-                 AND t.state = :active
-                 AND (tc.id IS NULL OR tc.categoryid = :categoryid)
-            ORDER BY t.name ASC";
+        $query = "SELECT *
+                    FROM (SELECT t.*, c.coursevisible as coursevisibleoverridden
+                            FROM {lti_types} t
+                       LEFT JOIN {lti_types_categories} tc ON t.id = tc.typeid
+                       LEFT JOIN {lti_coursevisible} c ON c.typeid = t.id AND c.courseid = $courseid
+                           WHERE (t.coursevisible $coursevisiblesql OR c.coursevisible $coursevisiblesql1)
+                             AND ($coursecond)
+                             AND t.state = :active
+                             AND (tc.id IS NULL OR tc.categoryid = :categoryid)) tt
+                   WHERE tt.coursevisibleoverridden IS NULL
+                      OR tt.coursevisibleoverridden $coursevisibleoverriddensql";
 
-        return $DB->get_records_sql($query,
+        return $DB->get_records_sql(
+            $query,
             [
                 'siteid' => $SITE->id,
                 'courseid' => $courseid,
                 'active' => LTI_TOOL_STATE_CONFIGURED,
-                'categoryid' => $coursecategory
-            ] + $coursevisparams);
+                'categoryid' => $coursecategory,
+                'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            ] + $coursevisparams + $coursevisparams1 + $coursevisoverriddenparams
+        );
     }
 }
