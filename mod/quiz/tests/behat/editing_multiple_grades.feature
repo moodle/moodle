@@ -44,7 +44,7 @@ Feature: Setup multiple grades for a quiz
     And "Delete" "icon" should exist in the "Unused grade item" "table_row"
 
   @javascript
-  Scenario: A grade item can be created
+  Scenario: A grade item can be created and renamed
     Given quiz "Quiz 1" contains the following questions:
       | question   | page |
       | Question A | 1    |
@@ -52,6 +52,26 @@ Feature: Setup multiple grades for a quiz
     And I should see "This quiz does not yet have any grade items defined"
     And I press "Add grade item"
     Then "New grade item" "table_row" should exist
+    And I click on "Edit" "link" in the "New grade item" "table_row"
+    And I set the field "New name for grade item" to "Intelligence"
+    And I press enter
+    And I should not see "New grade item"
+    And "Intelligence" "table_row" should exist
+
+  @javascript
+  Scenario: Editing the name of a grade item can be cancelled
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name      |
+      | Quiz 1 | Intuition |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page |
+      | Question A | 1    |
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And I click on "Edit" "link" in the "Intuition" "table_row"
+    And I set the field "New name for grade item" to "Intelligence"
+    And I press the escape key
+    And I should not see "Intelligence"
+    And "Intuition" "table_row" should exist
 
   @javascript
   Scenario: Unused grade items can be deleted

@@ -442,6 +442,7 @@ $string['gradeessays'] = 'Grade essays';
 $string['gradehighest'] = 'Highest grade';
 $string['gradeitemdefaultname'] = 'New grade item';
 $string['gradeitemdelete'] = 'Delete grade item {$a}';
+$string['gradeitemedit'] = 'Edit name of grade item {$a}';
 $string['gradeitemnewname'] = 'New name for grade item {$a}';
 $string['gradeitems'] = 'Grade items';
 $string['gradeitemsetup'] = 'Quiz grading setup (advanced view)';

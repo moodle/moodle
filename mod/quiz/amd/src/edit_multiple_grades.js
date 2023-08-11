@@ -22,23 +22,40 @@
  */
 
 import {call as fetchMany} from 'core/ajax';
+import MoodleConfig from 'core/config';
 import {addIconToContainerRemoveOnCompletion} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {get_string as getString} from 'core/str';
 
 /**
- * Call the Ajax service to add a quiz grade item.
+ * Call the Ajax service to create a quiz grade item.
  *
  * @param {Number} quizId
  * @param {String} name
  * @return {Promise}
  */
-const addGradeItem = (quizId, name) => fetchMany([{
+const createGradeItem = (quizId, name) => fetchMany([{
     methodname: 'mod_quiz_create_grade_items',
     args: {
         quizid: quizId,
         quizgradeitems: [{name: name}],
+    }
+}])[0];
+
+/**
+ * Call the Ajax service to update a quiz grade item.
+ *
+ * @param {Number} quizId
+ * @param {Number} gradeItemId
+ * @param {String} newName
+ * @return {Promise}
+ */
+const updateGradeItem = (quizId, gradeItemId, newName) => fetchMany([{
+    methodname: 'mod_quiz_update_grade_items',
+    args: {
+        quizid: quizId,
+        quizgradeitems: [{id: gradeItemId, name: newName}],
     }
 }])[0];
 
@@ -75,10 +92,122 @@ const handleGradeItemDelete = (e) => {
 
     deleteGradeItem(quizId, gradeItemId)
         .then(() => pending.resolve())
-        .then(() => {
-            window.location.reload();
+        .then(() => window.location.reload())
+        .catch(Notification.exception);
+};
+
+/**
+ *
+ * @param {HTMLElement} editableSpan the editable to turn off.
+ */
+const stopEditingGadeItem = (editableSpan) => {
+    editableSpan.innerHTML = editableSpan.dataset.oldContent;
+    delete editableSpan.dataset.oldContent;
+
+    editableSpan.classList.remove('inplaceeditingon');
+    editableSpan.querySelector('[data-action-edit]').focus();
+};
+
+/**
+ * Handle click events on the start rename icon.
+ *
+ * @param {Event} e click event.
+ */
+const handleGradeItemEditStart = (e) => {
+    e.preventDefault();
+    const pending = new Pending('edit-quiz-grade-item-start');
+    const editableSpan = e.target.closest('span.inplaceeditable');
+
+    document.querySelectorAll('span.inplaceeditable.inplaceeditingon').forEach(stopEditingGadeItem);
+
+    editableSpan.dataset.oldContent = editableSpan.innerHTML;
+    getString('edittitleinstructions')
+        .then((instructions) => {
+            const uniqueId = 'gi-edit-input-' + editableSpan.closest('tr').dataset.quizGradeItemId;
+            editableSpan.innerHTML = '<span class="editinstructions">' + instructions + '</span>' +
+                    '<label class="sr-only" for="' + uniqueId + '">' + editableSpan.dataset.editLabel + '</label>' +
+                    '<input type="text" id="' + uniqueId + '" value="' + editableSpan.dataset.rawName +
+                            '" class="ignoredirty form-control">';
+
+            const inputElement = editableSpan.querySelector('input');
+            inputElement.focus();
+            inputElement.select();
+            editableSpan.classList.add('inplaceeditingon');
+            pending.resolve();
+            return null;
         })
         .catch(Notification.exception);
+};
+
+/**
+ * Handle key down in the editable.
+ *
+ * @param {Event} e key event.
+ */
+const handleGradeItemKeyDown = (e) => {
+    if (e.keyCode !== 13) {
+        return;
+    }
+
+    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
+    if (!editableSpan) {
+        return;
+    }
+
+    e.preventDefault();
+    const pending = new Pending('edit-quiz-grade-item-save');
+
+    const newName = editableSpan.querySelector('input').value;
+    const tableCell = e.target.closest('th');
+    addIconToContainerRemoveOnCompletion(tableCell, pending);
+
+    const tableRow = tableCell.closest('tr');
+    const quizId = tableRow.closest('table').dataset.quizId;
+    const gradeItemId = tableRow.dataset.quizGradeItemId;
+
+    updateGradeItem(quizId, gradeItemId, newName)
+        .then(() => pending.resolve())
+        .then(() => window.location.reload())
+        .catch(Notification.exception);
+};
+
+/**
+ * Handle key up in the editable.
+ *
+ * @param {Event} e key event.
+ */
+const handleGradeItemKeyUp = (e) => {
+    if (e.keyCode !== 27) {
+        return;
+    }
+
+    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
+    if (!editableSpan) {
+        return;
+    }
+
+    e.preventDefault();
+    stopEditingGadeItem(editableSpan);
+};
+
+/**
+ * Handle focus out of the editable.
+ *
+ * @param {Event} e event.
+ */
+const handleGradeItemFocusOut = (e) => {
+    if (MoodleConfig.behatsiterunning) {
+        // Behat triggers focusout too often so ignore.
+        return;
+    }
+
+    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
+    if (!editableSpan) {
+        return;
+    }
+
+    e.preventDefault();
+    stopEditingGadeItem(editableSpan);
 };
 
 /**
@@ -96,6 +225,10 @@ const handleGradeItemClick = (e) => {
     if (link.dataset.actionDelete) {
         handleGradeItemDelete(e);
     }
+
+    if (link.dataset.actionEdit) {
+        handleGradeItemEditStart(e);
+    }
 };
 
 /**
@@ -105,17 +238,15 @@ const handleGradeItemClick = (e) => {
  */
 const handleAddGradeItemClick = (e) => {
     e.preventDefault();
-    const pending = new Pending('delete-quiz-grade-item');
+    const pending = new Pending('create-quiz-grade-item');
     addIconToContainerRemoveOnCompletion(e.target.parentNode, pending);
 
     const quizId = e.target.dataset.quizId;
 
     getString('gradeitemdefaultname', 'quiz')
-        .then((name) => addGradeItem(quizId, name))
+        .then((name) => createGradeItem(quizId, name))
         .then(() => pending.resolve())
-        .then(() => {
-            window.location.reload();
-        })
+        .then(() => window.location.reload())
         .catch(Notification.exception);
 };
 
@@ -126,6 +257,9 @@ const registerEventListeners = () => {
     const gradeItemTable = document.getElementById('mod_quiz-grade-item-list');
     if (gradeItemTable) {
         gradeItemTable.addEventListener('click', handleGradeItemClick);
+        gradeItemTable.addEventListener('keydown', handleGradeItemKeyDown);
+        gradeItemTable.addEventListener('keyup', handleGradeItemKeyUp);
+        gradeItemTable.addEventListener('focusout', handleGradeItemFocusOut);
     }
 
     document.getElementById('mod_quiz-add_grade_item').addEventListener('click', handleAddGradeItemClick);
