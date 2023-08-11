@@ -40,20 +40,21 @@ Feature: A teacher can edit question with custom fields
     And I am on the "Test quiz name" "mod_quiz > question bank" page
 
   Scenario: Edit a previously created question and see the custom field in the overview table and in the question preview.
-    When I choose "Edit question" action for "First question" in the question bank
-    And I should see "Category for test"
+    When I am on the "First question" "core_question > edit" page
+    Then I should see "Category for test"
     And I click on "Expand all" "link" in the "region-main" "region"
     And I should see "Field 1"
     And I set the following fields to these values:
-      | Field 1 | custom field text |
+      | Question name | First question edited |
+      | Field 1       | custom field text     |
     And I press "id_submitbutton"
     And I should see "First question"
     And I should see "custom field text"
-    And I choose "Preview" action for "First question" in the question bank
+    And I am on the "First question edited" "core_question > preview" page
     And I should see "Field 1"
-    Then I should see "custom field text"
+    And I should see "custom field text"
 
   Scenario: Preview a previously created question with custom fields set with empty values
-    When I choose "Preview" action for "First question" in the question bank
-    And I should see "Field 1"
-    Then I should not see "custom field text"
+    When I am on the "First question" "core_question > preview" page
+    Then I should see "Field 1"
+    And I should not see "custom field text"
