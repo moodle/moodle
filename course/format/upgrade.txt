@@ -14,6 +14,8 @@ Some considerations about the activitybadge feature:
   - Optionally, any other extra HTML attributes to the badge element (for example, data attributes).
 * Protected function `core_courseformat\output\local\content\section\availability::availability_info()` has been deprecated,
 `core_courseformat\output\local\content\section\availability::get_availability_data()` should be used instead.
+* New course format output classes:
+  - core_courseformat\output\local\content\cm\groupmode output class to display the groupmode icon in the activity card.
 
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.
