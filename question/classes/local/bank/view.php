@@ -388,14 +388,7 @@ class view {
         $newpluginclasscolumns = [];
         $corequestionbankcolumns = [
             'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
-            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
-            'qbank_viewquestionname\question_name_idnumber_tags_column' . column_base::ID_SEPARATOR .
-                'question_name_idnumber_tags_column',
             'core_question\local\bank\edit_menu_column' . column_base::ID_SEPARATOR . 'edit_menu_column',
-            'qbank_editquestion\question_status_column' . column_base::ID_SEPARATOR . 'question_status_column',
-            'qbank_history\version_number_column' . column_base::ID_SEPARATOR . 'version_number_column',
-            'qbank_viewcreator\creator_name_column' . column_base::ID_SEPARATOR . 'creator_name_column',
-            'qbank_comment\comment_count_column' . column_base::ID_SEPARATOR . 'comment_count_column',
         ];
 
         if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
@@ -1417,7 +1410,7 @@ class view {
         // Start of the table.
         echo \html_writer::start_tag('table', [
             'id' => 'categoryquestions',
-            'class' => 'question-bank-table generaltable table-responsive',
+            'class' => 'question-bank-table generaltable',
             'data-defaultsort' => json_encode($this->sort),
         ]);
 

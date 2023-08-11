@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use advanced_testcase;
 use context_course;
+use core_question\local\bank\column_base;
 use core_question\local\bank\question_edit_contexts;
 use core_question\local\bank\view;
 use moodle_url;
@@ -71,9 +72,9 @@ class column_manager_test extends advanced_testcase {
         // Get current view columns.
         $this->columns = [];
         foreach ($this->questionbank->get_visiblecolumns() as $column) {
-            $this->columns[] = get_class($column);
+            $this->columns[] = $column->get_column_id();
         }
-        $this->columnmanager = new column_manager();
+        $this->columnmanager = new column_manager(true);
         $this->randomstring = random_string();
     }
 
@@ -114,7 +115,7 @@ class column_manager_test extends advanced_testcase {
         $data = $this->{$dataproperty};
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
-        column_manager::{$function}($data);
+        column_manager::{$function}($data, true);
         $expected = $csv ? implode(',', $data) : $data;
         $this->assertEquals($expected, get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
@@ -134,7 +135,7 @@ class column_manager_test extends advanced_testcase {
         $data = $this->{$dataproperty};
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
-        column_manager::{$function}($data, 'qbank_columnsortorder');
+        column_manager::{$function}($data);
         $expected = $csv ? implode(',', $data) : $data;
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEquals($expected, get_user_preferences('qbank_columnsortorder_' . $setting));
@@ -165,19 +166,17 @@ class column_manager_test extends advanced_testcase {
         shuffle($neworder);
         set_config('enabledcol', implode(',', $neworder), 'qbank_columnsortorder');
 
-        $this->columnmanager = new column_manager();
+        $this->columnmanager = new column_manager(true);
         $columnstosort = [];
-        foreach ($this->columns as $key => $column) {
-            $colname = explode('\\', $column);
-            $columnstosort[end($colname)] = $column;
+        foreach ($this->columns as $column) {
+            $columnstosort[$column] = $column;
         }
 
         $sortedcolumns = $this->columnmanager->get_sorted_columns($columnstosort);
 
-        $expectedorder = ['checkbox_column' => 0];
-        foreach ($neworder as $key => $column) {
-            $colname = explode('\\', $column);
-            $expectedorder[end($colname)] = $column;
+        $expectedorder = ['core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column' => 0];
+        foreach ($neworder as $columnid) {
+            $expectedorder[$columnid] = $columnid;
         }
         $this->assertSame($expectedorder, $sortedcolumns);
     }
@@ -219,13 +218,14 @@ class column_manager_test extends advanced_testcase {
     public function test_plugin_enabled_disabled_observers(): void {
         $neworder = $this->columnmanager->get_sorted_columns($this->columns);
         shuffle($neworder);
-        set_columnbank_order::execute($neworder);
+        $this->columnmanager::set_column_order($neworder, true);
         // Get the list of enabled columns, excluding core columns (we can't disable those).
         $currentconfig = get_config('qbank_columnsortorder', 'enabledcol');
         $currentconfig = array_filter(explode(',', $currentconfig), fn($class) => !str_starts_with($class, 'core'));
         // Pick a column at random and get its plugin name.
-        $class = $currentconfig[array_rand($currentconfig, 1)];
-        $randomplugintodisable = explode('\\', $class)[0];
+        $randomcolumnid = $currentconfig[array_rand($currentconfig, 1)];
+        [$randomcolumnclass] = explode(column_base::ID_SEPARATOR, $randomcolumnid, 2);
+        [$randomplugintodisable] = explode('\\', $randomcolumnclass);
         $olddisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
         \core\event\qbank_plugin_disabled::create_for_plugin($randomplugintodisable)->trigger();
         $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
@@ -260,7 +260,7 @@ class column_manager_test extends advanced_testcase {
         set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
 
         // Enable one of the disabled plugins.
-        $this->columnmanager = new column_manager();
+        $this->columnmanager = new column_manager(true);
         $this->columnmanager->enable_columns($randomplugin1);
         // The enabledcol setting should now contain all columns except the remaining disabled plugin.
         $expectedenabled = array_filter($this->columns, fn($column) => !str_starts_with($column, $randomplugin2));
@@ -291,11 +291,12 @@ class column_manager_test extends advanced_testcase {
 
         set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
 
-        $this->columnmanager = new column_manager();
+        $this->columnmanager = new column_manager(true);
         $expecteddisablednames = [];
-        foreach ($disabledcols as $disabledcol) {
-            $columnobject = new $disabledcol($this->questionbank);
-            $expecteddisablednames[] = (object) [
+        foreach ($disabledcols as $disabledcolid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $disabledcolid, 2);
+            $columnobject = $columnclass::from_column_name($this->questionbank, $columnname);
+            $expecteddisablednames[$disabledcolid] = (object) [
                 'disabledname' => $columnobject->get_title(),
             ];
         }

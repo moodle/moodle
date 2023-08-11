@@ -14,18 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace qbank_columnsortorder\output;
+
 /**
- * Version information for qbank_columnsortorder.
+ * Output fragments for the column sort order interface
  *
- * @package    qbank_columnsortorder
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qbank_columnsortorder
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qbank_columnsortorder';
-$plugin->version   = 2023052201;
-$plugin->requires  = 2023041800;
-$plugin->maturity  = MATURITY_STABLE;
+class fragment {
+    /**
+     * Render the column sort UI with the current global config.
+     *
+     * @return string
+     */
+    public static function column_sort_ui(): string {
+        global $OUTPUT;
+        return $OUTPUT->render(new \qbank_columnsortorder\output\column_sort_ui());
+    }
+}

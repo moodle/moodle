@@ -67,9 +67,22 @@ class column_manager extends column_manager_base {
      */
     public function __construct(bool $globalsettings = false) {
         $this->columnorder = $this->setup_property('enabledcol', $globalsettings);
+        if (empty($this->columnorder)) {
+            $this->columnorder = [
+                'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+                'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
+                'qbank_viewquestionname\question_name_idnumber_tags_column' . column_base::ID_SEPARATOR .
+                'question_name_idnumber_tags_column',
+                    'core_question\local\bank\edit_menu_column' . column_base::ID_SEPARATOR . 'edit_menu_column',
+                'qbank_editquestion\question_status_column' . column_base::ID_SEPARATOR . 'question_status_column',
+                'qbank_history\version_number_column' . column_base::ID_SEPARATOR . 'version_number_column',
+                'qbank_viewcreator\creator_name_column' . column_base::ID_SEPARATOR . 'creator_name_column',
+                'qbank_comment\comment_count_column' . column_base::ID_SEPARATOR . 'comment_count_column',
+            ];
+        }
         $this->hiddencolumns = $this->setup_property('hiddencols', $globalsettings);
         $this->colsize = $this->setup_property('colsize', $globalsettings, 'json');
-        $this->disabledcolumns = $this->setup_property('disabledcol', $globalsettings);
+        $this->disabledcolumns = $this->setup_property('disabledcol', true); // No user preference for disabledcol.
 
         if ($this->columnorder) {
             $this->columnorder = array_flip($this->columnorder);
@@ -157,9 +170,16 @@ class column_manager extends column_manager_base {
         $course = (object) ['id' => 0];
         $context = context_system::instance();
         $contexts = new question_edit_contexts($context);
+        $category = question_make_default_categories($contexts->all());
+        $params = ['cat' => $category->id . ',' . $context->id];
         // Dummy call to get the objects without error.
-        $questionbank = new preview_view($contexts, new moodle_url('/question/bank/columnsortorder/sortcolumns.php'), $course,
-                null);
+        $questionbank = new preview_view(
+            $contexts,
+            new moodle_url('/question/bank/columnsortorder/sortcolumns.php'),
+            $course,
+            null,
+            $params
+        );
         return $questionbank;
     }
 
@@ -174,12 +194,11 @@ class column_manager extends column_manager_base {
             if ($column->get_name() === 'checkbox') {
                 continue;
             }
-            $classelements = explode('\\', $key);
             $columns[] = (object) [
                 'class' => get_class($column),
                 'name' => $column->get_title(),
-                'colname' => end($classelements),
-                'id' => implode(self::ID_SEPARATOR, [$column::class, $column->get_column_name()]),
+                'colname' => $column->get_column_name(),
+                'id' => $column->get_column_id(),
             ];
         }
         return $columns;
@@ -194,9 +213,9 @@ class column_manager extends column_manager_base {
         $disabled = [];
         if ($this->disabledcolumns) {
             foreach (array_keys($this->disabledcolumns) as $column) {
-                [$classname, $columnname] = explode(self::ID_SEPARATOR, $column);
+                [$classname, $columnname] = explode(column_base::ID_SEPARATOR, $column, 2);
                 $columnobject = $classname::from_column_name($this->get_questionbank(), $columnname);
-                $disabled[] = (object) [
+                $disabled[$column] = (object) [
                     'disabledname' => $columnobject->get_title(),
                 ];
             }
@@ -278,7 +297,7 @@ class column_manager extends column_manager_base {
     /**
      * Orders columns in the question bank view according to config_plugins table 'qbank_columnsortorder' config.
      *
-     * @param array $ordertosort Unordered array of columns
+     * @param array $ordertosort Unordered array of columns, [columnname => class]
      * @return array $properorder|$ordertosort Returns array ordered if 'qbank_columnsortorder' config exists.
      */
     public function get_sorted_columns($ordertosort): array {
@@ -295,10 +314,13 @@ class column_manager extends column_manager_base {
             }
             $properorder = array_merge($columnorder, $ordertosort);
             // Always have the checkbox at first column position.
-            if (isset($properorder['checkbox_column'])) {
-                $checkboxfirstelement = $properorder['checkbox_column'];
-                unset($properorder['checkbox_column']);
-                $properorder = array_merge(['checkbox_column' => $checkboxfirstelement], $properorder);
+            $checkboxid = 'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column';
+            if (isset($properorder[$checkboxid])) {
+                $checkboxfirstelement = $properorder[$checkboxid];
+                unset($properorder[$checkboxid]);
+                $properorder = array_merge([
+                        $checkboxid => $checkboxfirstelement
+                ], $properorder);
             }
             return $properorder;
         }
@@ -306,7 +328,7 @@ class column_manager extends column_manager_base {
     }
 
     /**
-     * Given an array of columns, set the isvisible attribute according to $this->hiddencolumns.
+     * Given an array of columns, set the isvisible attribute according to $this->hiddencolumns and $this->disabledcolumns.
      *
      * @param column_base[] $columns
      * @return array
@@ -316,7 +338,9 @@ class column_manager extends column_manager_base {
             if (!is_object($column)) {
                 continue;
             }
-            $column->isvisible = !in_array(get_class($column), $this->hiddencolumns);
+            $columnid = $column->get_column_id();
+
+            $column->isvisible = !in_array($columnid, $this->hiddencolumns) && !array_key_exists($columnid, $this->disabledcolumns);
         }
         return $columns;
     }
@@ -341,16 +365,17 @@ class column_manager extends column_manager_base {
      */
     public function get_hidden_columns(): array {
         return array_reduce($this->hiddencolumns, function($result, $hiddencolumn) {
-            $result[$hiddencolumn] = (new $hiddencolumn($this->get_questionbank()))->get_title();
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $hiddencolumn, 2);
+            $result[$hiddencolumn] = $columnclass::from_column_name($this->get_questionbank(), $columnname)->get_title();
             return $result;
         }, []);
     }
 
     public function get_column_width(column_base $column): string {
         $colsizemap = $this->get_colsize_map();
-        $columnclass = get_class($column);
-        if (array_key_exists($columnclass, $colsizemap)) {
-            return $colsizemap[$columnclass] . 'px';
+        $columnid = $column->get_column_id();
+        if (array_key_exists($columnid, $colsizemap)) {
+            return $colsizemap[$columnid] . 'px';
         }
         return parent::get_column_width($column);
     }

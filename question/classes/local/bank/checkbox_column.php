@@ -96,4 +96,7 @@ class checkbox_column extends column_base {
         return ['q.id'];
     }
 
+    public function get_default_width(): int {
+        return 25;
+    }
 }

@@ -15,17 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_columnsortorder.
+ * Standard callback functions for qbank_columnsortorder
  *
- * @package    qbank_columnsortorder
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * This file only exists for defining fragment callbacks. Do not include any other functions here.
+ *
+ * @package   qbank_columnsortorder
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->component = 'qbank_columnsortorder';
-$plugin->version   = 2023052201;
-$plugin->requires  = 2023041800;
-$plugin->maturity  = MATURITY_STABLE;
+/**
+ * Render the column sort UI. {@see \qbank_columnsortorder\output\fragment::column_sort_ui()}
+ *
+ * @param array $args
+ * @return string
+ */
+function qbank_columnsortorder_output_fragment_column_sort_ui(array $args): string {
+    return \qbank_columnsortorder\output\fragment::column_sort_ui();
+}

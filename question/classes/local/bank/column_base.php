@@ -34,7 +34,7 @@ namespace core_question\local\bank;
 abstract class column_base extends view_component {
 
     /**
-     * @const string A separator for joining column attributes together into a unique ID string.
+     * @var string A separator for joining column attributes together into a unique ID string.
      */
     const ID_SEPARATOR = '-';
 
@@ -101,7 +101,8 @@ abstract class column_base extends view_component {
     /**
      * Output the column header cell.
      *
-     * @params column_action_base[] A list of column actions to include in the header.
+     * @param column_action_base[] $columnactions A list of column actions to include in the header.
+     * @param string $width A CSS width property value.
      */
     public function display_header(array $columnactions = [], string $width = ''): void {
         global $PAGE;
@@ -253,7 +254,7 @@ abstract class column_base extends view_component {
         $tag = 'td';
         $attr = [
             'class' => $this->get_classes(),
-            'data-pluginname' => get_class($this),
+            'data-columnid' => $this->get_column_id(),
         ];
         if ($this->isheading) {
             $tag = 'th';
@@ -317,6 +318,15 @@ abstract class column_base extends view_component {
      */
     public function get_extra_classes(): array {
         return [];
+    }
+
+    /**
+     * Return the default column width in pixels.
+     *
+     * @return int
+     */
+    public function get_default_width(): int {
+        return 120;
     }
 
     /**

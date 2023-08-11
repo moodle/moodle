@@ -69,6 +69,6 @@ class column_manager_base {
      * @return string CSS width property value.
      */
     public function get_column_width(column_base $column): string {
-        return '';
+        return $column->get_default_width() . 'px';
     }
 }
