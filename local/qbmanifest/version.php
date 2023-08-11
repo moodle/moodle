@@ -35,6 +35,5 @@ $plugin->maturity = MATURITY_ALPHA;
 
 $plugin->dependencies = [    
     'mod_qubitspage' => ANY_VERSION,
-    'mod_qbassign' => ANY_VERSION,
-    'local_qubitsbook' => ANY_VERSION,
+    'mod_qbassign' => ANY_VERSION    
 ];
