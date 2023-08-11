@@ -497,9 +497,8 @@ class icon_system_fontawesome extends icon_system_font {
             $data['aria-hidden'] = $icon->attributes['aria-hidden'];
         }
 
-        // Define the orientation of the question mark in right-to-left languages.
-        $mirror = get_string('thisicondirection', 'langconfig');
-        if ($mirror == 'mirror' && (strpos($data['key'], 'fa-question') !== false)) {
+        // Flip the orientation of the question mark if the value of the `questionicondirection` lang config string is set to `rtl`.
+        if (strpos($data['key'], 'fa-question') !== false && get_string('questionicondirection', 'langconfig') === 'rtl') {
             $data['extraclasses'] = "fa-flip-horizontal";
         }
 
