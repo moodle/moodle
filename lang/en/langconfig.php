@@ -41,6 +41,8 @@ $string['oldcharset'] = 'ISO-8859-1';
 $string['parentlanguage'] = '';
 $string['pm'] = 'pm';
 $string['pmcaps'] = 'PM';
+// Direction of the question mark icon for this language. Set to 'rtl' if the language needs to display it in right-to-left.
+$string['questionicondirection'] = 'ltr';
 $string['strftimedate'] = '%d %B %Y';
 $string['strftimedatemonthabbr'] = '%d %b %Y';
 $string['strftimedatemonthtimeshort'] = '%d %b %Y, %I:%M';
@@ -64,7 +66,6 @@ $string['strftimetime12'] = '%I:%M %p';
 $string['strftimetime24'] = '%H:%M';
 $string['thisdirection'] = 'ltr';
 $string['thisdirectionvertical'] = 'btt';
-$string['thisicondirection'] = 'standard';
 $string['thislanguage'] = 'English';
 $string['thislanguageint'] = 'English';
 $string['thousandssep'] = ',';
