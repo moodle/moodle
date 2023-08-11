@@ -248,14 +248,24 @@ $functions = array(
             'capabilities'  => 'mod/qbassign:view',
             'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_create_assignment_service' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'create_assignment_service',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Create New assignment',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
         'mod_qbassign_get_assignment_service' => [
-            'classname' => 'mod_qbassign_external',
-            'methodname' => 'get_assignment_service',
-            'classpath' => 'mod/qbassign/externallib.php',
-            'description' => 'List assignment details using unique field',
-            'type' => 'write',
-            'ajax' => true,
-            'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'get_assignment_service',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'List assignment details using unique field',
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
         'mod_qbassign_save_studentsubmission' => [
                 'classname' => 'mod_qbassign_external',
@@ -264,6 +274,25 @@ $functions = array(
                 'description' => 'Save students submission',
                 'type' => 'write',
                 'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
+        'mod_qbassign_quiz_addition' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'quiz_addition',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Import Quiz from manifest file',
+                'type' => 'write',
+                'ajax' => true,
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
+        'mod_qbassign_remove_submission' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'remove_submission',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Remove student submission details using unique field',
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view',
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
 );

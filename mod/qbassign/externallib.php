@@ -26,9 +26,12 @@
 defined('MOODLE_INTERNAL') || die;
 
 require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->libdir/moodlelib.php");
+require_once("$CFG->libdir/enrollib.php");
 require_once("$CFG->dirroot/user/externallib.php");
+require_once("$CFG->dirroot/mod/qbassign/lib.php");
 require_once("$CFG->dirroot/mod/qbassign/locallib.php");
-
+require_once("$CFG->dirroot/mod/quiz/lib.php");
 /**
  * qbassign functions
  * @copyright 2012 Paul Charsley
@@ -3016,20 +3019,20 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
  
              //Get submission type details (file,onlinetex,codeblock)
-            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
-            $sql .= " AND name = :name AND value = :value ";
-            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
-            $getpluginconfig = $DB->get_records_sql($sql,
-            [
-                'qbdetid' => $get_assignmentdetails->id,
-                'subtype' => 'qbassignsubmission',
-                'name' => 'enabled',
-                'value' => '1',
-                'type1' => 'file',
-                'type2' => 'onlinetex',
-                'type3' => 'codeblock'
-            ]
-        );
+             $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+             $sql .= " AND name = :name AND value = :value ";
+             $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
+             $getpluginconfig = $DB->get_records_sql($sql,
+             [
+                 'qbdetid' => $get_assignmentdetails->id,
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'enabled',
+                 'value' => '1',
+                 'type1' => 'file',
+                 'type2' => 'onlinetex',
+                 'type3' => 'codeblock'
+             ]
+         );
              $countsql = count($getpluginconfig);
              if($countsql>0)
              { 
@@ -3079,6 +3082,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  'duedate' => $get_assignmentdetails->duedate,
                  'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
                  'assign_uniquefield' => $uniquefield,
+                 'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
+                 'submission_id' => $get_assignmentsubmission_details->id,
                  'submission_status' => ($get_assignmentsubmission_details->status=='new')?0:1,
                  'studentsubmitted_content' => $getonline_content->onlinetex,
                  'submissiontypes' => $submissintype
@@ -3132,6 +3137,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                      'duedate' => new external_value(PARAM_RAW, 'Last date',VALUE_OPTIONAL),
                                      'allowsubmissionsfromdate' => new external_value(PARAM_RAW, 'Start Submission date',VALUE_OPTIONAL),
                                      'assign_uniquefield' => new external_value(PARAM_RAW, 'Unique field',VALUE_OPTIONAL),
+                                     'last_submitted_date' => new external_value(PARAM_RAW, 'Last Submitted date',VALUE_OPTIONAL),
+                                     'submission_id' => new external_value(PARAM_INT, 'Submission ID',VALUE_OPTIONAL),
                                      'submission_status' => new external_value(PARAM_RAW, 'Submission Status (New,submitted)',VALUE_OPTIONAL),
                                      'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
                                      'submissiontypes' => new external_single_structure(
@@ -3146,138 +3153,953 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                  'Assignment Details', VALUE_OPTIONAL
                          )
                  );
- 
-  
-        
      }
-
-    public static function save_studentsubmission_parameters()
-    {
-        return new external_function_parameters(
-            array(
-            'qbassignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
-            'plugindata_text' => new external_value(PARAM_TEXT, 'Submission Text',VALUE_REQUIRED),
-            'plugindata_format' => new external_value(PARAM_TEXT, 'Submission Format',VALUE_REQUIRED),
-            'plugindata_type' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED)
-            )
-        );
-    }
-
-    public static function save_studentsubmission($qbassignmentid,$plugindata_text,$plugindata_format,$plugindata_type)
-    {
-        require_once('../../config.php');
-        global $DB,$CFG,$USER,$CONTEXT;
-        $currentuser = $USER->id;
-        if(empty($currentuser))
-        {
-            throw new moodle_exception('Required Login', 'error');
-        }
-        $assignid = $DB->get_record('qbassign', array('id' => $qbassignmentid));
-        if(!empty($assignid))
-        {
-            //Get activity Module details
-            $get_coursefield = $DB->get_record('course_modules', array('instance' => $qbassignmentid,'course' => $assignid->course));
-            $moduleid = $get_coursefield->id;
-
-            $contextsystem = context_module::instance($moduleid);
-
-            $enrolledcandidates = get_enrolled_users($contextsystem, 'mod/assign:submit');
-            $enrolstudents = array();
-            foreach($enrolledcandidates as $enrol)
-            {
-                $enrolstudents[] = $enrol->id;
-            }
-            if(!in_array($currentuser, $enrolstudents))
-            {
-                throw new moodle_exception('student not enrolled', 'error');
-            }
-            else
-            {
-                foreach($enrolledcandidates as $enrol)
-                {
-                    if($currentuser==$enrol->id)
-                    {                        
-                        $get_currentuser_submission = $DB->get_record('qbassign_user_mapping', array('qbassignment' => $qbassignmentid,'userid' => $currentuser));
-                        if($get_currentuser_submission->id!='')
-                        { 
-                            //do nothing
-                            $DB->set_field('qbassign_user_mapping', 'userid', $currentuser, array('id' => $get_currentuser_submission->id,'qbassignment'=>$qbassignmentid));
-                        }
-                        else
-                        {
-                            $add_submissionlvl =  array(
-                            'qbassignment' => $qbassignmentid,
-                            'userid' => $enrol->id
-                            );
-                            $insertid = $DB->insert_record('qbassign_user_mapping', $add_submissionlvl);
-                        }                    
-                    }                    
-                }
-            }
-            $check_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
-            if($check_submission->id=='')
-            {                
-                $add_submission =  array(
-                'qbassignment' => $qbassignmentid,
-                'userid' => $USER->id,
-                'timecreated' => time(),
-                'timemodified' => time(),
-                'status' => 'submitted',
-                'latest' => 1
-                );
-                $insertid = $DB->insert_record('qbassign_submission', $add_submission);
-                if($plugindata_type =='onlinetext')
-                {
-                    $add_textsubmission =  array(
-                    'qbassignment' => $qbassignmentid,
-                    'submission' => $insertid,
-                    'onlinetex' => $plugindata_text,
-                    'onlineformat' => $plugindata_format
-                    );
-                    $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
-                }
-            }
-            else
-            { 
-                $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id)); 
-                if($check_submissiontxt->id=='') // remove submission from students
-                { 
-                    $add_textsubmission =  array(
-                    'qbassignment' => $qbassignmentid,
-                    'submission' => $check_submission->id,
-                    'onlinetex' => $plugindata_text,
-                    'onlineformat' => $plugindata_format
-                    );
-                    $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
-
-                    $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
-                }   
-                else
-                { 
-                    $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
-                    $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
-                   
-                    $DB->set_field('qbassignsubmission_onlinetex', 'onlinetex', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
-
-                    $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
-                } 
-            }
-            $lti_updated = ['message'=>'sucess']; 
-            return $lti_updated; 
-        }
-        else
-        {
-            throw new moodle_exception('Assignment ID Wrong', 'error');
-        }
-
-    }
-
-    public static function save_studentsubmission_returns()
-    {
-        return new external_single_structure(
-                array(
-                    'message'=> new external_value(PARAM_TEXT, 'success message')
-                )
-            );
-    }
+ 
+     /**
+      * Create Assignment module details.
+      *
+      * @param int $courseid qbassign Course id
+      * @param text $uniquefield qbassign Unique field
+      * @return array of warnings and status result
+      * @since Moodle 3.2
+      */
+     public static function create_assignment_service_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED),
+             'siteid' => new external_value(PARAM_INT, 'Site Id'),
+             'chapterid' => new external_value(PARAM_INT, 'Section Id',VALUE_REQUIRED),
+             'title' => new external_value(PARAM_TEXT, 'Assignment Name',VALUE_REQUIRED),
+             'duedate' => new external_value(PARAM_TEXT, 'Due date',VALUE_OPTIONAL),
+             'submissionfrom' => new external_value(PARAM_TEXT, 'Submission From',VALUE_OPTIONAL),
+             'grade_duedate' => new external_value(PARAM_TEXT, 'Grade Due Date',VALUE_OPTIONAL),
+             'grade' => new external_value(PARAM_TEXT, 'Grade',VALUE_REQUIRED),
+             'question' => new external_value(PARAM_RAW, 'Description',VALUE_REQUIRED),
+             'submission_type' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED),
+             'submissionstatus' => new external_value(PARAM_TEXT, 'Submission Status',VALUE_OPTIONAL),
+             'online_text_limit' => new external_value(PARAM_TEXT, 'Word Limit',VALUE_OPTIONAL),            
+             'uid' => new external_value(PARAM_TEXT, 'Unique Field',VALUE_REQUIRED),
+             'maxfilesubmissions' => new external_value(PARAM_TEXT, 'max file submissions',VALUE_OPTIONAL),
+             'filetypeslist' => new external_value(PARAM_TEXT, 'file Type',VALUE_OPTIONAL),
+             'maxfilesubmissions_size' => new external_value(PARAM_TEXT, 'max file submissions Size',VALUE_OPTIONAL),
+             )
+         );
+     }
+ 
+    public static function create_assignment_service($courseid,$siteid,$chapterid,$title,$duedate,$submissionfrom,$grade_duedate,$grade,$question,$submission_type,$submissionstatus,$online_text_limit,$uid,$maxfilesubmissions,$filetypeslist,$maxfilesubmissions_size)
+     {
+         global $DB,$CFG;
+         $check_uniquefield = $DB->get_record('qbassign', array('uid' => $uid));
+         if($check_uniquefield->id!='')
+         {  
+             //Update assignment details if unique field already present
+             $check_coursemodulefield = $DB->get_record('course_modules', array('instance' => $check_uniquefield->id,'course'=>$courseid));
+ 
+             //PASS our web service values to the lib file
+             $formdata = (object) array(
+             'name' => $title,
+             'timemodified' => time(),
+             'duedate' => strtotime($duedate),
+             'course' => $courseid,
+             'introformat'=>'1',
+             'intro' => $question,
+             'coursemodule' => $check_coursemodulefield->id,
+             'submissiondrafts' =>0,
+             'requiresubmissionstatement' =>0,
+             'sendnotifications' => 0,
+             'sendlatenotifications' =>0,
+             'cutoffdate' => 0,
+             'gradingduedate' => strtotime($grade_duedate),
+             'allowsubmissionsfromdate' => strtotime($submissionfrom),
+             'grade' =>$grade,
+             'teamsubmission' =>0,
+             'requireallteammemberssubmit' =>0,
+             'blindmarking' => 0,
+             'markingworkflow' =>0,
+             'instance' => $check_uniquefield->id,
+             'add' => 0,
+             'update' => $check_coursemodulefield->id
+             );
+             $returnid = qbassign_update_instance($formdata,null);
+ 
+             $wrdlmit = ($online_text_limit!='')?$online_text_limit:'0';
+ 
+             if($submission_type == 'onlinetext')
+             {
+                 $sqlupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$check_uniquefield->id;
+                 $getpluginconfigtxt = $DB->execute($sqlupdate);
+                 $submission_status = ($submissionstatus=='yes')?1:0;
+ 
+                 $getwrd = $DB->get_record('qbassign_plugin_config', array('plugin' => 'onlinetex','subtype' => 'qbassignsubmission','name'=>'wordlimitenabled','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getwrd->id))
+                 {
+                     $sqlwrdupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=".$submission_status." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimitenabled' AND qbassignment=".$check_uniquefield->id;
+                     $updatewrd = $DB->execute($sqlwrdupdate);
+                 }
+                 else
+                 {
+                     $insertwrd =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'onlinetex',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'wordlimitenabled',
+                     'value' => $submission_status
+                     );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $insertwrd);
+                 }
+                 $getwrdlmt = $DB->get_record('qbassign_plugin_config', array('plugin' => 'onlinetex','subtype' => 'qbassignsubmission','name'=>'wordlimit','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getwrdlmt->id))
+                 {
+                     $sqlwrdmlmtupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=".$wrdlmit." WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='wordlimit' AND qbassignment=".$check_uniquefield->id;
+                     $updatewrdlmt = $DB->execute($sqlwrdmlmtupdate);
+                 }
+                 else
+                 {
+                     $insertwrdlmt =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'onlinetex',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'wordlimit',
+                     'value' => $wrdlmit
+                     );
+                     $onlinetext_lmtdefault = $DB->insert_record('qbassign_plugin_config', $insertwrdlmt);
+                 }
+                                                           
+             }   
+             if($submission_type == 'onlinefile') 
+             {
+                 $submission_filestatus = ($submissionstatus=='yes')?1:0;
+                 $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
+ 
+                 if(isset($getactive_online->id))
+                 {                
+                    $updateactivityonline = new stdClass();
+                    $updateactivityonline->id = $getactive_online->id;
+                    $updateactivityonline->value = $submission_filestatus;           
+                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                 }
+                 else
+                 { 
+                     $updateactivityonline =  array(
+                     'qbassignment' => $returnid,
+                     'plugin' => 'file',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'enabled',
+                     'value' => $submission_filestatus
+                     );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                 }
+                 $getfilesub = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'maxfilesubmissions','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getfilesub->id))
+                 {
+                     $DB->set_field('qbassign_plugin_config', 'value', $maxfilesubmissions, array('plugin'=>'file','subtype' => 'qbassignsubmission','name' => 'maxfilesubmissions','qbassignment' => $check_uniquefield->id));
+                 }
+                 else
+                 {
+                     $submissionfilelimit =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'file',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'maxfilesubmissions',
+                     'value' => $maxfilesubmissions
+                     );
+                     $onlinetext_flimit = $DB->insert_record('qbassign_plugin_config', $submissionfilelimit);
+                 }
+ 
+                 $getfiletype = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'filetypeslist','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getfiletype->id))
+                 {
+                     $DB->set_field('qbassign_plugin_config', 'value', $filetypeslist, array('plugin'=>'file','subtype' => 'qbassignsubmission','name' => 'filetypeslist','qbassignment' => $check_uniquefield->id));
+                 }
+                 else
+                 {
+                     $submissionfiletype =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'file',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'filetypeslist',
+                     'value' => $filetypeslist
+                     );
+                     $onlinetext_tyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfiletype);
+                 }
+ 
+                 $returnbytes = self::getbytevalue($maxfilesubmissions_size);
+                 $getfilesize = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'maxsubmissionsizebytes','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getfilesize->id))
+                 {
+                     $DB->set_field('qbassign_plugin_config', 'value', $returnbytes, array('plugin'=>'file','subtype' => 'qbassignsubmission','name' => 'maxsubmissionsizebytes','qbassignment' => $check_uniquefield->id));
+                 }
+                 else
+                 {
+                     $submissionfilebytetype =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'file',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'maxsubmissionsizebytes',
+                     'value' => $returnbytes
+                     );
+                     $onlinetext_tybyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfilebytetype);
+                 }
+             } 
+             if($submission_type == 'codeblock') 
+             {
+                 //CODE BLOCK
+                 $submission_codestatus = ($submissioncodestatus=='yes')?1:0;
+                 $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
+                 if(isset($getactive_online))
+                 {
+                    $updateactivityonline = new stdClass();
+                    $updateactivityonline->id = $getactive_online->id;
+                    $updateactivityonline->value = $submission_codestatus;           
+                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                 }
+                 else
+                 {
+                     $updateactivityonline =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'codeblock',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'enabled',
+                     'value' => $submission_codestatus
+                     );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                 }           
+             } 
+             purge_all_caches();
+             $lti_updated = [                        
+                         'message'=>'Success update here',
+                         'assignment_id' =>$check_uniquefield->id,
+                         'uniquefield' => $uid
+                         ];
+             return $lti_updated;
+         }        
+         else
+         {  
+             //Add assignment details if unique field not present
+             $getcoursemoduleslist_courses = get_coursemodules_in_course('qbassign', $courseid, '');
+             $getcoursemoduleslist_courses_last = end($getcoursemoduleslist_courses);
+             $sections = $DB->get_record('course_sections', array('course'=>$courseid,'section' => $chapterid));
+             $section_id = $sections->id;
+             $sequence_column = $sections->sequence;
+             
+             $sequencing = array();
+             $coursemodule = $getcoursemoduleslist_courses_last->id +1;
+ 
+             //Get QBassign Module
+             $get_modulelist = $DB->get_record('modules', array('name' => 'qbassign'));
+ 
+             //INSERT instance into course modules
+             $flags = array(
+             'course' => $courseid,
+             'module' => $get_modulelist->id,
+             'instance' => '',
+             'section' => $section_id,
+             'added' => time()
+             );       
+             $courseinsertid = $DB->insert_record('course_modules', $flags);
+ 
+             $updatedata = new stdClass();
+             $updatedata->id = $section_id;
+             if($sequence_column=='')
+             {
+                $updatedata->sequence = $courseinsertid;        
+             }
+             else
+             {
+                 $sequencing = explode(",",$sequence_column);
+                 array_push($sequencing,$courseinsertid);
+                 $updatedata->sequence = implode(',', $sequencing);
+             }
+             
+             $updatedata->section = $chapterid;        
+             $coursesectionupdate = $DB->update_record('course_sections', $updatedata);
+ 
+ 
+             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3));
+             $coursepath = $getcoursecontext->path;
+ 
+             $recorder =  array(
+                 'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80
+                 'instanceid' => $courseinsertid,
+                 'path' => $coursepath.'/',
+                 'depth' => 4,
+                 'locked' => 0
+             );
+             $coursecontextinsertid = $DB->insert_record('context', $recorder);
+ 
+             $getcoursecontextpath = $DB->get_record('context', array('id' => $coursecontextinsertid,'depth' => 4));
+ 
+             $updatecontextdata = new stdClass();
+             $updatecontextdata->id = $coursecontextinsertid;
+             $updatecontextdata->path = $getcoursecontextpath->path.$coursecontextinsertid; 
+             $coursesectionupdate = $DB->update_record('context', $updatecontextdata);
+ 
+             $gradeareas = array(
+                 'contextid' =>$coursecontextinsertid,
+                 'component' =>'mod_qbassign',
+                 'areaname' =>'submissions'
+             );
+             $grading_areasupdate = $DB->insert_record('grading_areas', $gradeareas);
+             
+             //PASS our web service values to the lib file
+             $formdata = (object) array(
+                 'name' => $title,
+                 'timemodified' => time(),
+                 'duedate' => strtotime($duedate),
+                 'course' => $courseid,
+                 'introformat'=>'1',
+                 'intro' => $question,
+                 'coursemodule' => $courseinsertid,
+                 'submissiondrafts' =>0,
+                 'requiresubmissionstatement' =>0,
+                 'sendnotifications' => 0,
+                 'sendlatenotifications' =>0,
+                 'cutoffdate' => 0,
+                 'gradingduedate' => strtotime($grade_duedate),
+                 'allowsubmissionsfromdate' => strtotime($submissionfrom),
+                 'grade' =>$grade,
+                 'teamsubmission' =>0,
+                 'requireallteammemberssubmit' =>0,
+                 'blindmarking' => 0,
+                 'markingworkflow' =>0,
+             );
+             $returnid = qbassign_add_instance($formdata,null);
+ 
+             //update assignment id into course modules
+             $updatecoursemoduledata = new stdClass();
+             $updatecoursemoduledata->id = $courseinsertid;
+             $updatecoursemoduledata->instance = $returnid;
+             $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata);
+ 
+             $wrdlmit = (isset($online_text_limit))?$online_text_limit:'';
+ 
+             if($submission_type == 'onlinetext')
+             {
+                $sqlupdate = "UPDATE ".$CFG->prefix."qbassign_plugin_config SET value=1 WHERE plugin='onlinetex' AND subtype='qbassignsubmission' AND name='enabled' AND qbassignment=".$returnid;
+                 $getpluginconfigtxt = $DB->execute($sqlupdate);
+                 $submission_status = ($submissionstatus=='yes')?1:0;
+                 $submissionlimit =  array(
+                 'qbassignment' => $returnid,
+                 'plugin' => 'onlinetex',
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'wordlimit',
+                 'value' => $wrdlmit
+                 );
+                 $onlinetext_limit = $DB->insert_record('qbassign_plugin_config', $submissionlimit);
+                 $submissionlimits =  array(
+                 'qbassignment' => $returnid,
+                 'plugin' => 'onlinetex',
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'wordlimitenabled',
+                 'value' => $submission_status
+                 );
+                 $onlinetext_limiter = $DB->insert_record('qbassign_plugin_config', $submissionlimits);                                   
+             }   
+             if($submission_type == 'onlinefile') 
+             {               
+                 $submission_filestatus = ($submissionstatus=='yes')?1:0;
+                 $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
+ 
+                 if(isset($getactive_online->id))
+                 {                
+                    $updateactivityonline = new stdClass();
+                    $updateactivityonline->id = $getactive_online->id;
+                    $updateactivityonline->value = $submission_filestatus;           
+                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                 }
+                 else
+                 { 
+                     $updateactivityonline =  array(
+                     'qbassignment' => $returnid,
+                     'plugin' => 'file',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'enabled',
+                     'value' => $submission_filestatus
+                     );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                 }
+                
+                 $submissionfilelimit =  array(
+                 'qbassignment' => $returnid,
+                 'plugin' => 'file',
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'maxfilesubmissions',
+                 'value' => $maxfilesubmissions
+                 );
+                 $onlinetext_flimit = $DB->insert_record('qbassign_plugin_config', $submissionfilelimit);
+ 
+                 $submissionfiletype =  array(
+                 'qbassignment' => $returnid,
+                 'plugin' => 'file',
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'filetypeslist',
+                 'value' => $filetypeslist
+                 );
+                 $onlinetext_tyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfiletype);
+ 
+                 $returnbytes = self::getbytevalue($maxfilesubmissions_size);
+ 
+                 $submissionfilebytetype =  array(
+                 'qbassignment' => $returnid,
+                 'plugin' => 'file',
+                 'subtype' => 'qbassignsubmission',
+                 'name' => 'maxsubmissionsizebytes',
+                 'value' => $returnbytes
+                 );
+                 $onlinetext_tybyflimit = $DB->insert_record('qbassign_plugin_config', $submissionfilebytetype);
+             } 
+             if($submission_type == 'codeblock') 
+             {
+                 //CODE BLOCK
+                 $submission_codestatus = ($submissioncodestatus=='yes')?1:0;
+                 $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
+                 if(isset($getactive_online))
+                 {
+                    $updateactivityonline = new stdClass();
+                    $updateactivityonline->id = $getactive_online->id;
+                    $updateactivityonline->value = $submission_codestatus;           
+                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                 }
+                 else
+                 {
+                     $updateactivityonline =  array(
+                     'qbassignment' => $returnid,
+                     'plugin' => 'codeblock',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'enabled',
+                     'value' => $submission_codestatus
+                     );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                 }           
+             }
+             purge_all_caches();
+             $DB->set_field('qbassign', 'uid', $uid, array('id' => $returnid));
+             $lti_updated = [                        
+                             'message'=>'Success here',
+                             'assignment_id' =>$returnid,
+                             'uniquefield' => $uid
+                             ];
+             return $lti_updated;
+         }
+     }
+ 
+     public static function create_assignment_service_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'assignment_id' => new external_value(PARAM_TEXT, 'assignment id'),
+                     'message'=> new external_value(PARAM_TEXT, 'success message'),
+                     'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field')
+                 )
+             );
+     }
+ 
+     public static function getbytevalue($val)
+     {
+         $bytearray = array('41943040'=>'40mb','20mb'=>'20971520','10485760'=>'10mb','5242880'=>'5mb','2097152'=>'2mb','1048576'=>'1mb','512000'=>'500kb','102400'=>'100kb','51200'=>'50kb','10240'=>'10kb');
+         $byteval = array_search($val,$bytearray);
+         return $byteval;
+     }
+ 
+     public static function getnameofmodule($name)
+     {
+         global $DB;
+         $moduleName = $DB->get_record('modules', array('name'=>$name,'visible'=>1));
+         return $moduleName;
+     }
+ 
+     /**
+      * Save Assignment Submission module details.
+      *
+      * @param int $qbassignmentid qbassign id
+      * @param text $plugindata_text qbassign Submission text 
+      * @return array of warnings and status result
+      * @since Moodle 3.2
+      */
+     public static function save_studentsubmission_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'qbassignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
+             'plugindata_text' => new external_value(PARAM_RAW, 'Submission Text',VALUE_REQUIRED),
+             'plugindata_format' => new external_value(PARAM_TEXT, 'Submission Format',VALUE_REQUIRED),
+             'plugindata_type' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED)
+             )
+         );
+     }
+ 
+     public static function save_studentsubmission($qbassignmentid,$plugindata_text,$plugindata_format,$plugindata_type)
+     {
+         require_once('../../config.php');
+         global $DB,$CFG,$USER,$CONTEXT;
+         $currentuser = $USER->id;
+         if(empty($currentuser))
+         {
+             throw new moodle_exception('Required Login', 'error');
+         }
+         $assignid = $DB->get_record('qbassign', array('id' => $qbassignmentid));
+         if(!empty($assignid))
+         {
+             //Get activity Module details
+             $get_coursefield = $DB->get_record('course_modules', array('instance' => $qbassignmentid,'course' => $assignid->course));
+             $moduleid = $get_coursefield->id;
+ 
+             $contextsystem = context_module::instance($moduleid);
+ 
+             $enrolledcandidates = get_enrolled_users($contextsystem, 'mod/assign:submit');
+             $enrolstudents = array();
+             foreach($enrolledcandidates as $enrol)
+             {
+                 $enrolstudents[] = $enrol->id;
+             }
+             if(!in_array($currentuser, $enrolstudents))
+             {
+                 throw new moodle_exception('student not enrolled', 'error');
+             }
+             else
+             {
+                 foreach($enrolledcandidates as $enrol)
+                 {
+                     if($currentuser==$enrol->id)
+                     {                        
+                         $get_currentuser_submission = $DB->get_record('qbassign_user_mapping', array('qbassignment' => $qbassignmentid,'userid' => $currentuser));
+                         if($get_currentuser_submission->id!='')
+                         { 
+                             //do nothing
+                             $DB->set_field('qbassign_user_mapping', 'userid', $currentuser, array('id' => $get_currentuser_submission->id,'qbassignment'=>$qbassignmentid));
+                         }
+                         else
+                         {
+                             $add_submissionlvl =  array(
+                             'qbassignment' => $qbassignmentid,
+                             'userid' => $enrol->id
+                             );
+                             $insertid = $DB->insert_record('qbassign_user_mapping', $add_submissionlvl);
+                         }                    
+                     }                    
+                 }
+             }
+             $check_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
+             if($check_submission->id=='')
+             {                
+                 $add_submission =  array(
+                 'qbassignment' => $qbassignmentid,
+                 'userid' => $USER->id,
+                 'timecreated' => time(),
+                 'timemodified' => time(),
+                 'status' => 'submitted',
+                 'latest' => 1
+                 );
+                 $insertid = $DB->insert_record('qbassign_submission', $add_submission);
+                 $submissionID = $insertid;
+                 if($plugindata_type =='onlinetext')
+                 {
+                     $add_textsubmission =  array(
+                     'qbassignment' => $qbassignmentid,
+                     'submission' => $insertid,
+                     'onlinetex' => $plugindata_text,
+                     'onlineformat' => $plugindata_format
+                     );
+                     $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+                 }
+             }
+             else
+             { 
+                 $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id)); 
+                 if($check_submissiontxt->id=='') // remove submission from students
+                 { 
+                     $add_textsubmission =  array(
+                     'qbassignment' => $qbassignmentid,
+                     'submission' => $check_submission->id,
+                     'onlinetex' => $plugindata_text,
+                     'onlineformat' => $plugindata_format
+                     );
+                     $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+ 
+                     $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                     $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                     $submissionID = $check_submission->id;
+                 }   
+                 else
+                 { 
+                     $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                     $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
+                    
+                     $DB->set_field('qbassignsubmission_onlinetex', 'onlinetex', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+ 
+                     $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
+                     $submissionID = $check_submission->id;
+                 } 
+             }
+             $lti_updated = ['message'=>'sucess','submissionid'=>$submissionID]; 
+             return $lti_updated; 
+         }
+         else
+         {
+             throw new moodle_exception('Assignment ID Wrong', 'error');
+         }
+ 
+     }
+ 
+     public static function save_studentsubmission_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'message'=> new external_value(PARAM_TEXT, 'success message'),
+                     'submissionid'=> new external_value(PARAM_INT, 'Submission ID')
+                 )
+             );
+     }
+ 
+     /**
+      * Create Quiz module details.
+      *
+      * @param int $courseid quiz Course id
+      * @param text $uniquefield quiz Unique field
+      * @return array of warnings and status result
+      * @since Moodle 3.2
+      */
+ 
+     public static function quiz_addition_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED),
+             'siteid' => new external_value(PARAM_INT, 'Site Id'),
+             'chapterid' => new external_value(PARAM_INT, 'Section Id',VALUE_REQUIRED),
+             'quiz_name' => new external_value(PARAM_TEXT, 'Assignment Name',VALUE_REQUIRED),
+             'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field',VALUE_REQUIRED),
+             'description' => new external_value(PARAM_RAW, 'Description',VALUE_OPTIONAL),
+             'questions' => new external_value(PARAM_TEXT, 'Questions',VALUE_OPTIONAL)
+             )
+         );
+     }
+ 
+     public static function quiz_addition($courseid,$siteid,$chapterid,$quiz_name,$uniquefield,$description,$questions)
+     {
+         global $DB,$CFG,$CONTEXT; 
+         $check_uniquefield = $DB->get_record('quiz', array('uid'=>$uniquefield));
+         if(isset($check_uniquefield->id))
+         { 
+             //Update assignment details if unique field already present
+             $check_coursemodulefield = $DB->get_record('course_modules', array('instance' => $check_uniquefield->id,'course'=>$courseid));
+             //PASS our web service values to the lib file
+             $formdata = (object) array(
+                 'name' => $quiz_name,                
+                 'introformat'=>'1',
+                 'quizpassword' => '',
+                 'intro' => $description,
+                 'coursemodule' => $check_coursemodulefield->id,
+                 'course' => $courseid,
+                 'add' => 0,
+                 'instance' =>$check_uniquefield->id,
+                 'update' => $check_coursemodulefield->id               
+             );
+             quiz_update_instance($formdata,'');
+ 
+             $returnid = $check_uniquefield->id;
+             $quizModule = self::getnameofmodule('quiz');
+             $modl = $DB->get_record('course_modules', array('course' => $courseid,'instance'=>$check_uniquefield->id,'module'=>$quizModule->id));
+             $mod_id = $modl->id;
+ 
+             $contxtl = $DB->get_record('context', array('instanceid'=>$mod_id,'depth'=>4));
+             $moduleid = $contxtl->id;
+ 
+             // DELETE ALL the SLOTS AND REFERENCES for Update
+             quiz_delete_references($check_uniquefield->id);
+             $DB->delete_records('quiz_slots', array('quizid' => $check_uniquefield->id));
+ 
+             //Question sections
+             if(!empty($questions))
+             { 
+                 $exp_questions = explode(",",$questions);
+                 $questonscount = count($exp_questions);
+                 foreach($exp_questions as $eaches)
+                 { 
+                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                     if(isset($getquestion->id))
+                     { 
+                     
+                         $questionID = $getquestion->id;
+                         $question_mark = $getquestion->defaultmark;
+ 
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $questionbank_entry = $getquestion_versions->questionbankentryid;
+                        
+                         //INSERTION INTO SLOTS
+                         $sql = "SELECT * FROM {quiz_slots} WHERE quizid = ? ORDER BY id DESC LIMIT 1";
+                         $params[] = $returnid;
+                         $getslots = $DB->get_records_sql($sql, $params); 
+                         $countslot = count($getslots);
+                         if($countslot>0)
+                         {
+                             foreach($getslots as $sql1)
+                             {
+                                 $slot = $sql1->slot + 1;
+                             }
+                         }
+                         else
+                         {   
+                             $slot = 1;
+                         }
+                         
+                         $insertslot = array(
+                         'slot' => $slot,                
+                         'quizid'=> $returnid,
+                         'page' => $slot,
+                         'requireprevious' => 0,
+                         'maxmark' => $question_mark        
+                         );
+                         $insertslotid = $DB->insert_record('quiz_slots', $insertslot);
+ 
+                         //INSERT INTO REFRENCES
+                         $insert_reference = array(
+                         'usingcontextid' => $moduleid,                
+                         'component'=> 'mod_quiz',
+                         'questionarea' => 'slot',
+                         'itemid' => $insertslotid,
+                         'questionbankentryid' => $questionbank_entry        
+                         );
+                         $insert_refid = $DB->insert_record('question_references', $insert_reference);
+ 
+                         $slot ='';
+                     }
+                     else
+                     {                        
+                         return array('message'=>'Question Not found');
+                     }
+                 }
+             }
+             return array('message'=>'updated Success');
+         }
+         else
+         {
+             //Add assignment details if unique field not present
+             $getcoursemoduleslist_courses = get_coursemodules_in_course('quiz', $courseid, '');
+             $getcoursemoduleslist_courses_last = end($getcoursemoduleslist_courses);
+             $sections = $DB->get_record('course_sections', array('course'=>$courseid,'section' => $chapterid));
+             $section_id = $sections->id;
+             $sequence_column = $sections->sequence;
+             
+             $sequencing = array();
+             $coursemodule = $getcoursemoduleslist_courses_last->id +1;
+ 
+             //Get QBassign Module
+             $get_modulelist = $DB->get_record('modules', array('name' => 'quiz'));
+ 
+             //INSERT instance into course modules
+             $flags = array(
+             'course' => $courseid,
+             'module' => $get_modulelist->id,
+             'instance' => '',
+             'section' => $section_id,
+             'added' => time()
+             );       
+             $courseinsertid = $DB->insert_record('course_modules', $flags);
+ 
+             $updatedata = new stdClass();
+             $updatedata->id = $section_id;
+             if($sequence_column=='')
+             {
+                $updatedata->sequence = $courseinsertid;        
+             }
+             else
+             {
+                 $sequencing = explode(",",$sequence_column);
+                 array_push($sequencing,$courseinsertid);
+                 $updatedata->sequence = implode(',', $sequencing);
+             }
+             
+             $updatedata->section = $chapterid;        
+             $coursesectionupdate = $DB->update_record('course_sections', $updatedata);
+ 
+ 
+             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3));
+             $coursepath = $getcoursecontext->path;
+ 
+             $recorder =  array(
+                 'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80
+                 'instanceid' => $courseinsertid,
+                 'path' => $coursepath.'/',
+                 'depth' => 4,
+                 'locked' => 0
+             );
+             $coursecontextinsertid = $DB->insert_record('context', $recorder);
+ 
+             $getcoursecontextpath = $DB->get_record('context', array('id' => $coursecontextinsertid,'depth' => 4));
+ 
+             $updatecontextdata = new stdClass();
+             $updatecontextdata->id = $coursecontextinsertid;
+             $updatecontextdata->path = $getcoursecontextpath->path.$coursecontextinsertid; 
+             $coursesectionupdate = $DB->update_record('context', $updatecontextdata);
+             //PASS our web service values to the lib file
+             $formdata = (object) array(
+                 'name' => $quiz_name,                
+                 'introformat'=>'1',
+                 'quizpassword' => '',
+                 'intro' => $description,
+                 'coursemodule' => $courseinsertid,
+                 'course' => $courseid,
+                 'preferredbehaviour' => 'deferredfeedback',
+                 'overduehandling' => 'autosubmit'           
+             );
+             $returnid = quiz_add_instance($formdata); 
+             $quizModule = self::getnameofmodule('quiz');
+             $modl = $DB->get_record('course_modules', array('course' => $courseid,'instance'=>$returnid,'module'=>$quizModule->id));
+             $mod_id = $modl->id;
+            
+             $DB->set_field('quiz', 'uid', $uniquefield, array('id' => $returnid));
+ 
+             //update assignment id into course modules
+             $updatecoursemoduledata = new stdClass();
+             $updatecoursemoduledata->id = $courseinsertid;
+             $updatecoursemoduledata->instance = $returnid;
+             $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata);
+ 
+             //Question sections
+             if(!empty($questions))
+             { 
+                 $exp_questions = explode(",",$questions);
+                 $questonscount = count($exp_questions);
+                 foreach($exp_questions as $eaches)
+                 { 
+                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                     if(isset($getquestion->id))
+                     { 
+                         $questionID = $getquestion->id;
+                         $question_mark = $getquestion->defaultmark;
+ 
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $questionbank_entry = $getquestion_versions->questionbankentryid;
+                        
+                         //INSERTION INTO SLOTS
+                         $sql = "SELECT * FROM {quiz_slots} WHERE quizid = ? ORDER BY id DESC LIMIT 1";
+                         $params[] = $returnid;
+                         $getslots = $DB->get_records_sql($sql, $params); 
+                         $countslot = count($getslots);
+                         if($countslot>0)
+                         {
+                             foreach($getslots as $sql1)
+                             {
+                                 $slot = $sql1->slot + 1;
+                             }
+                         }
+                         else
+                         {   
+                             $slot = 1;
+                         }
+                         
+                         $insertslot = array(
+                         'slot' => $slot,                
+                         'quizid'=> $returnid,
+                         'page' => $slot,
+                         'requireprevious' => 0,
+                         'maxmark' => ($question_mark!='')?$question_mark:'0.000000'        
+                         );
+                         $insertslotid = $DB->insert_record('quiz_slots', $insertslot);
+                         //$context = context_course::instance($courseid);
+ 
+                         //INSERT INTO REFRENCES
+                         $insert_reference = array(
+                         'usingcontextid' => $coursecontextinsertid,                
+                         'component'=> 'mod_quiz',
+                         'questionarea' => 'slot',
+                         'itemid' => $insertslotid,
+                         'questionbankentryid' => $questionbank_entry        
+                         );
+                         $insert_refid = $DB->insert_record('question_references', $insert_reference);
+ 
+                         $slot ='';
+                     }
+                     else
+                     { 
+                         return array('message'=>'Question Not found');
+                     }
+                 }
+             }
+             return array('message'=>'Added Success');
+         }
+     }
+ 
+     public static function quiz_addition_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'message'=> new external_value(PARAM_TEXT, 'success message')
+                 )
+             );
+     }
+ 
+     /**
+      * Remove Student Submission module details.
+      *
+      * @param int $submissionid assignment submission id
+      * @param text $assignmentid assignment id
+      * @return array of warnings and status result
+      * @since Moodle 3.2
+      */
+ 
+     public static function remove_submission_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'submissionid' => new external_value(PARAM_INT, 'Submission Id',VALUE_REQUIRED),
+             'assignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
+             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED)
+             )
+         );
+     }
+ 
+     public static function remove_submission($submissionid,$assignmentid,$courseid)
+     {
+         global $DB,$USER,$CONTEXT;
+         //Get activity Module details
+         $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignmentid,'course' => $courseid));
+         if(isset($get_coursefield->id))
+         {
+             $moduleid = $get_coursefield->id;
+             $contextsystem = context_module::instance($moduleid);
+             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
+             if($checkenrol)
+             {
+                 $submissionid = $submissionid ? $submissionid : 0;
+                 $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $assignmentid,'userid'=>$USER->id,'id'=>$submissionid));
+                 if(isset($get_submission->id))
+                 {
+                     if ($submissionid) {
+                         $DB->delete_records('qbassignsubmission_onlinetex', array('submission' => $submissionid));
+                         $DB->set_field('qbassign_submission', 'status', 'new', array('userid' => $USER->id,'id'=>$submissionid));
+                         $lti_updated = ['message'=>'sucess']; 
+                         return $lti_updated;
+                     }
+                     else
+                     {
+                         throw new moodle_exception('Submission error', 'error');
+                     }
+                 }
+                 else
+                 {
+                     throw new moodle_exception('Invalid Submission ID', 'error');
+                 }
+             }
+             else
+             { 
+                 throw new moodle_exception('This user not enrolled', 'error');
+             }
+         }
+         else
+         { 
+             throw new moodle_exception('Invalid Assignment ID', 'error');
+         }
+     }
+ 
+     public static function remove_submission_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'message'=> new external_value(PARAM_TEXT, 'success message')
+                 )
+             );
+     }
 }

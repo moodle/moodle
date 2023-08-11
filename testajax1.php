@@ -2,7 +2,7 @@
 
 require("./config.php");
 
-echo $OUTPUT->header(); 
+echo $OUTPUT->header();
 
 echo "<div id='testcnt'>Jai Sree Hari</div>";
 
@@ -24,19 +24,18 @@ require(['jquery'], function($){
 	let payload = [
                 {
                     "index": 0,
-                    "methodname": "mod_qbassign_save_studentsubmission",
+                    "methodname": "mod_qbassign_remove_submission",
                     "args": {
-                        "qbassignmentid": 60,
-                        "plugindata_text": "My submission-mini",
-                        "plugindata_format": 1,
-                        "plugindata_type": "onlinetext"
+                        "submissionid":59,
+                        "assignmentid":60,
+                        "courseid":399 
                     }
                 }
             ];
 	let mkey = M.cfg.sesskey;
 	//mkey = "sjdhaksjda";
 	let aurl = M.cfg.wwwroot + "/lib/ajax/service-react.php?sesskey=" + mkey;
-	aurl += '&info=mod_qbassign_save_studentsubmission';
+	aurl += '&info=mod_qbassign_remove_submission';
 	$.ajax({
 		type: "POST",
 		url: aurl,
