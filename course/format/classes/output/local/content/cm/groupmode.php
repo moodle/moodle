@@ -74,7 +74,7 @@ class groupmode implements named_templatable, renderable {
         if (!$this->format->show_groupmode($this->mod)) {
             return null;
         }
-        if ($this->format->show_editor()) {
+        if ($this->format->show_editor() && $this->format->supports_components()) {
             return $this->build_editor_data($output);
         }
         // If the group mode is not editable, the no groups badge is not displayed.
@@ -152,7 +152,7 @@ class groupmode implements named_templatable, renderable {
      * Create a choice list for the dropdown.
      * @return choicelist the choice list
      */
-    protected function get_choice_list(): choicelist {
+    public function get_choice_list(): choicelist {
         $choice = new choicelist();
         $choice->add_option(
             NOGROUPS,

@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
+use core\output\local\action_menu\subpanel as action_menu_subpanel;
 
 require_once($CFG->libdir.'/completionlib.php');
 require_once($CFG->libdir.'/filelib.php');
@@ -1645,6 +1646,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     $modcontext = context_module::instance($mod->id);
     $courseformat = course_get_format($mod->get_course());
     $usecomponents = $courseformat->supports_components();
+    $sectioninfo = $mod->get_section_info();
 
     $editcaps = array('moodle/course:manageactivities', 'moodle/course:activityvisibility', 'moodle/role:assign');
     $dupecaps = array('moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport');
@@ -1664,10 +1666,8 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             ],
             'moodle'
         );
-        $str->assign         = get_string('assignroles', 'role');
-        $str->groupsnone     = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsnone"));
-        $str->groupsseparate = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsseparate"));
-        $str->groupsvisible  = get_string('clicktochangeinbrackets', 'moodle', get_string("groupsvisible"));
+        $str->assign = get_string('assignroles', 'role');
+        $str->groupmode = get_string('groupmode', 'group');
     }
 
     $baseurl = new moodle_url('/course/mod.php', array('sesskey' => sesskey()));
@@ -1759,9 +1759,9 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
 
     // Hide/Show/Available/Unavailable.
     if (has_capability('moodle/course:activityvisibility', $modcontext)) {
-        $allowstealth = !empty($CFG->allowstealth) && $courseformat->allow_stealth_module_visibility($mod, $mod->get_section_info());
+        $allowstealth = !empty($CFG->allowstealth) && $courseformat->allow_stealth_module_visibility($mod, $sectioninfo);
 
-        $sectionvisible = $mod->get_section_info()->visible;
+        $sectionvisible = $sectioninfo->visible;
         // The module on the course page may be in one of the following states:
         // - Available and displayed on the course page ($displayedoncoursepage);
         // - Not available and not displayed on the course page ($unavailable);
@@ -1857,6 +1857,19 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
             new pix_icon('t/assignroles', '', 'moodle', array('class' => 'iconsmall')),
             $str->assign,
             array('class' => 'editing_assign', 'data-action' => 'assignroles', 'data-sectionreturn' => $sr)
+        );
+    }
+
+    // Groupmode.
+    if ($courseformat->show_groupmode($mod) && $usecomponents) {
+        $groupmodeclass = $courseformat->get_output_classname('content\\cm\\groupmode');
+        /** @var core_courseformat\output\local\content\cm\groupmode */
+        $groupmode = new $groupmodeclass($courseformat, $sectioninfo, $mod);
+        $actions['groupmode'] = new action_menu_subpanel(
+            $str->groupmode,
+            $groupmode->get_choice_list(),
+            ['class' => 'editing_groupmode'],
+            new pix_icon('i/groupv', '', 'moodle', ['class' => 'iconsmall'])
         );
     }
 
@@ -3237,7 +3250,6 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'groupsnone',
             'groupsvisible',
             'groupsseparate',
-            'clicktochangeinbrackets',
             'markthistopic',
             'markedthistopic',
             'movesection',
