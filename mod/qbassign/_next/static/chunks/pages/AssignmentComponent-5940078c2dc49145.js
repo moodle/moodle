@@ -289,7 +289,7 @@
                 .concat(M.cfg.wwwroot, "/lib/ajax/service.php?sesskey=")
                 .concat(
                   M.cfg.sesskey,
-                  "&info=local_qubitsbook_get_assignment_service"
+                  "&info=mod_qbassign_get_assignment_service"
                 );
               console.log(n, "url"),
                 fetch(n, {
@@ -298,7 +298,7 @@
                   body: JSON.stringify([
                     {
                       index: 0,
-                      methodname: "local_qubitsbook_get_assignment_service",
+                      methodname: "mod_qbassign_get_assignment_service",
                       args: { uniquefield: r },
                     },
                   ]),
