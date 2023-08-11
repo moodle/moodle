@@ -42,6 +42,10 @@ This files describes API changes for code that uses the question API.
    Plugins can also define `plugin_features::get_question_bank_controls()` returning a list of renderables that will be displayed
    above the question bank table, to provide additional functionality on the question bank page.
 
+9) CSS selectors using #categoryquestions to address the table on the question bank page have now been changed to use
+  .question-bank-table. This applies to the same styles to preview on the qbank_columnsortorder admin screen. It is important
+  that the styles match on these pages so that the defaults have the expected result in the question bank.
+
 === 4.2 ===
 
 1) The question/qengine.js has been deprecated. We create core_question/question_engine

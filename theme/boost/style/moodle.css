@@ -32007,46 +32007,60 @@ a.ygtvspacer:hover {
   display: block;
 }
 
-#categoryquestions {
+table.question-bank-table {
   margin: 0;
+  background-color: #fff;
+  table-layout: fixed;
+  overflow-x: scroll;
+  width: min-content;
 }
-#categoryquestions td,
-#categoryquestions th {
-  padding: 0 0.2em;
+table.question-bank-table td,
+table.question-bank-table th {
   max-width: 40vw;
+  width: max-content;
 }
-#categoryquestions th {
+table.question-bank-table th {
   text-align: left;
-  font-weight: normal;
 }
-#categoryquestions > tbody > tr.r1 {
+table.question-bank-table > tbody > tr.r1 {
   background-color: rgba(0, 0, 0, 0.03);
 }
-#categoryquestions > tbody > tr.highlight {
+table.question-bank-table > tbody > tr.highlight {
   border: 1px solid #008196;
 }
-#categoryquestions .checkbox {
-  padding-left: 5px;
-}
-#categoryquestions .checkbox input[type=checkbox] {
+table.question-bank-table .checkbox input[type=checkbox] {
   margin-left: 0;
   float: none;
 }
-#categoryquestions .iconcol {
+table.question-bank-table .iconcol {
   padding: 3px;
   box-sizing: content-box;
 }
-#categoryquestions .iconcol .icon {
+table.question-bank-table .iconcol .icon {
   margin: 0;
   width: 12px;
   height: 12px;
 }
-#categoryquestions label {
+table.question-bank-table label {
   margin: 0;
   display: block;
 }
-#categoryquestions .header {
+table.question-bank-table .header {
   text-align: left;
+  min-width: min-content;
+}
+table.question-bank-table .header.sortable-list-current-position {
+  background-color: #a2cff8;
+}
+table.question-bank-table .header.sortable-list-is-dragged {
+  background-color: #fff;
+  opacity: 0.85;
+}
+table.question-bank-table .header .header-text > div {
+  display: inline-block;
+}
+table.question-bank-table .header .dropdown-toggle::after {
+  margin-left: 0;
 }
 
 #page-mod-quiz-edit div.questionbankwindow div.header {
@@ -32553,8 +32567,8 @@ body.path-question-type .mform fieldset.hidden {
   }
 }
 @media (max-width: 991.98px) {
-  #categoryquestions td,
-  #categoryquestions th {
+  .question-bank-table td,
+  .question-bank-table th {
     max-width: 75vw;
   }
 }
