@@ -41,8 +41,10 @@ $string['oldcharset'] = 'ISO-8859-1';
 $string['parentlanguage'] = '';
 $string['pm'] = 'pm';
 $string['pmcaps'] = 'PM';
-// Direction of the question mark icon for this language. Set to 'rtl' if the language needs to display it in right-to-left.
-$string['questionicondirection'] = 'ltr';
+// Whether the question icon follows the language direction.
+// E.g. In some RTL languages, like Arabic, it needs to be set to 'yes' so the question mark is flipped.
+// But for Hebrew, the question mark character is not flipped, so it needs to be set to 'no'.
+$string['questioniconfollowlangdirection'] = 'yes';
 $string['strftimedate'] = '%d %B %Y';
 $string['strftimedatemonthabbr'] = '%d %b %Y';
 $string['strftimedatemonthtimeshort'] = '%d %b %Y, %I:%M';
