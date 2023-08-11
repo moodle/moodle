@@ -53,10 +53,10 @@ class mod_instance_helper extends \mod_bigbluebuttonbn\local\extension\mod_insta
         if (empty($record)) {
             $record = new stdClass();
             $record->bigbluebuttonbnid = $bigbluebuttonbn->id;
-            $record->newfield = $bigbluebuttonbn->newfield;
+            $record->newfield = $bigbluebuttonbn->newfield ?? '';
             $DB->insert_record('bbbext_simple', $record);
         } else {
-            $record->newfield = $bigbluebuttonbn->newfield;
+            $record->newfield = $bigbluebuttonbn->newfield ?? '';
             $DB->update_record('bbbext_simple', $record);
         }
     }

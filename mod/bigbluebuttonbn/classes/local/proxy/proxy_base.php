@@ -52,11 +52,18 @@ abstract class proxy_base {
      * @param string $action
      * @param array $data
      * @param array $metadata
+     * @param int|null $instanceid
      * @return string
      */
-    protected static function action_url(string $action = '', array $data = [], array $metadata = []): string {
+    protected static function action_url(
+        string $action = '',
+        array $data = [],
+        array $metadata = [],
+        ?int $instanceid = null
+    ): string {
         $baseurl = self::sanitized_url() . $action . '?';
-        ['data' => $additionaldata, 'metadata' => $additionalmetadata] = extension::action_url_addons($action, $data, $metadata);
+        ['data' => $additionaldata, 'metadata' => $additionalmetadata] =
+            extension::action_url_addons($action, $data, $metadata, $instanceid);
         $data = array_merge($data, $additionaldata ?? []);
         $metadata = array_merge($metadata, $additionalmetadata ?? []);
 
@@ -168,12 +175,14 @@ abstract class proxy_base {
      * @param string $action
      * @param array $data
      * @param array $metadata
+     * @param int|null $instanceid
      * @return null|bool|\SimpleXMLElement
      */
     protected static function fetch_endpoint_xml(
         string $action,
         array $data = [],
-        array $metadata = []
+        array $metadata = [],
+        ?int $instanceid = null
     ) {
         if (PHPUNIT_TEST && !defined('TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER')) {
             return true; // In case we still use fetch and mock server is not defined, this prevents
@@ -181,7 +190,7 @@ abstract class proxy_base {
             // for example.
         }
         $curl = new curl();
-        return $curl->get(self::action_url($action, $data, $metadata));
+        return $curl->get(self::action_url($action, $data, $metadata, $instanceid));
     }
 
     /**
