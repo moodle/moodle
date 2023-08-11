@@ -75,6 +75,22 @@ const deleteGradeItem = (quizId, gradeItemId) => fetchMany([{
 }])[0];
 
 /**
+ * Call the Ajax service to update the quiz grade item used by a slot.
+ *
+ * @param {Number} quizId
+ * @param {Number} slotId
+ * @param {Number|null} gradeItemId
+ * @return {Promise}
+ */
+const updateSlotGradeItem = (quizId, slotId, gradeItemId) => fetchMany([{
+    methodname: 'mod_quiz_update_slots',
+    args: {
+        quizid: quizId,
+        slots: [{id: slotId, quizgradeitemid: gradeItemId}],
+    }
+}])[0];
+
+/**
  * Handle click events on the delete icon.
  *
  * @param {Event} e click event.
@@ -211,6 +227,33 @@ const handleGradeItemFocusOut = (e) => {
 };
 
 /**
+ * Handle when the selected grade item for a slot is changed.
+ *
+ * @param {Event} e event.
+ */
+const handleSlotGradeItemChanged = (e) => {
+    const select = e.target.closest('select[data-slot-id]');
+    if (!select) {
+        return;
+    }
+
+    e.preventDefault();
+    const pending = new Pending('edit-slot-grade-item-updated');
+
+    const slotId = select.dataset.slotId;
+    const newGradeItemId = select.value ? select.value : null;
+    const tableCell = e.target.closest('td');
+    addIconToContainerRemoveOnCompletion(tableCell, pending);
+
+    const quizId = tableCell.closest('table').dataset.quizId;
+
+    updateSlotGradeItem(quizId, slotId, newGradeItemId)
+        .then(() => pending.resolve())
+        .then(() => window.location.reload())
+        .catch(Notification.exception);
+};
+
+/**
  * Handle clicks in the table the shows the grade items.
  *
  * @param {Event} e click event.
@@ -263,6 +306,11 @@ const registerEventListeners = () => {
     }
 
     document.getElementById('mod_quiz-add_grade_item').addEventListener('click', handleAddGradeItemClick);
+
+    const slotTable = document.getElementById('mod_quiz-slot-list');
+    if (gradeItemTable) {
+        slotTable.addEventListener('change', handleSlotGradeItemChanged);
+    }
 };
 
 /**

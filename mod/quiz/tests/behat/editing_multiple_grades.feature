@@ -89,3 +89,20 @@ Feature: Setup multiple grades for a quiz
     And I follow "Delete grade item Unused grade item"
     Then I should not see "Unused grade item"
     And I should see "This quiz does not yet have any grade items defined"
+
+  @javascript
+  Scenario: Grade item for a slot can be changed
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name      |
+      | Quiz 1 | Intuition |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page |
+      | Question A | 1    |
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And "Delete" "icon" should exist in the "Intuition" "table_row"
+    And I set the field "Question A" to "Intuition"
+    Then  "Delete" "icon" should not exist in the "Intuition" "table_row"
+    And the field "Question A" matches value "Intuition"
+    And I set the field "Question A" to "[none]"
+    And "Delete" "icon" should exist in the "Intuition" "table_row"
+    And the field "Question A" matches value "[none]"

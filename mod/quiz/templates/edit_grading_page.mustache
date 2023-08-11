@@ -105,7 +105,7 @@
 {{/hasslots}}
 
 {{#hasslots}}
-    <table class="table table-striped table-responsive">
+    <table class="generaltable table-responsive" id="mod_quiz-slot-list" data-quiz-id="{{quizid}}">
         <thead>
             <tr>
                 <th scope="col">{{#str}} qnumberbrief, quiz {{/str}}</th>
@@ -126,7 +126,7 @@
                         <td>{{displaynumber}}</td>
                         <th scope="row"><label for="grade-item-choice-{{id}}">{{{displayname}}}</label></th>
                         <td>
-                            <select id="grade-item-choice-{{id}}">
+                            <select id="grade-item-choice-{{id}}" class="form-control" data-slot-id="{{id}}">
                                 {{#choices}}
                                     <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{choice}}</option>
                                 {{/choices}}
