@@ -276,7 +276,10 @@ class local_qbcourse extends external_api {
                         $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
                         
                         if(is_file($assfile)){
-                            self::createqbassignment($activities[$a],$assfile,$cid,$sid+1);
+                            $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }
                     }
                     elseif($activities[$a]->type == 'quiz'){                       
@@ -284,7 +287,10 @@ class local_qbcourse extends external_api {
                         $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
                         
                         if(is_file($quizfile)){
-                            self::createqbquiz($activities[$a],$quizfile,$cid,$sid+1);
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }
                     }
                 }
@@ -337,7 +343,10 @@ class local_qbcourse extends external_api {
                         $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
                         
                         if(is_file($assfile)){
-                            self::createqbassignment($activities[$a],$assfile,$cid,$sec->section);
+                           $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }                        
                     }
                     elseif($activities[$a]->type == 'quiz'){                       
@@ -345,7 +354,10 @@ class local_qbcourse extends external_api {
                         $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
                         
                         if(is_file($quizfile)){
-                            self::createqbquiz($activities[$a],$quizfile,$cid,$sec->section);
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }
                     }
                 }
@@ -438,7 +450,7 @@ class local_qbcourse extends external_api {
 
     public static function createqbassignment($section,$aFile,$cid,$secid){
         global $DB,$CFG;
-        return;
+        
         require_once($CFG->dirroot.'/mod/qbassign/externallib.php');
        
         $assData = file_get_contents($aFile);
@@ -446,12 +458,13 @@ class local_qbcourse extends external_api {
 
         $data = json_decode($assData, true);
 
-        $qa = new local_qubitsbook_external();
+        $qa = new mod_qbassign_external();
         
        try {
-            $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size']);
+          return  $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size']);
         }
         catch(Error $e) { 
+            return;
         }
     }
 
@@ -468,9 +481,10 @@ class local_qbcourse extends external_api {
         $qa = new mod_qbassign_external();
 
         try {
-        $qa->quiz_addition($cid,1,$secid,$data["name"],$data["uid"],$data["description"],$data["questions"]);
+        return $qa->quiz_addition($cid,1,$secid,$data["name"],$data["uid"],$data["description"],$data["questions"]);
         }
         catch(Error $e) {
+            return;
         }
     }
     
