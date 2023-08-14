@@ -1,4 +1,4 @@
-name: Production-CI
+name: Staging-CI
 
 # Trigger deployment only on push to master branch
 on:
@@ -20,10 +20,10 @@ jobs:
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.PROD_EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.PROD_HOST_DNS }}
-          REMOTE_USER: ${{ secrets.PROD_USERNAME }}
-          TARGET: ${{ secrets.PROD_TARGET_DIR }}
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.STAGING_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.STAGING_USERNAME }}
+          TARGET: ${{ secrets.STAGING_TARGET_DIR }}
 
       - name: PR Status
         if: github.event.pull_request.merged == true
