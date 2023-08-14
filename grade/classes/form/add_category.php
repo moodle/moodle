@@ -431,6 +431,7 @@ class add_category extends dynamic_form {
                     } else {
                         $element =& $mform->createElement('text', 'grade_item_aggregationcoef',
                             get_string($coefstring, 'grades'));
+                        $mform->setType('grade_item_aggregationcoef', PARAM_FLOAT);
                     }
                     $mform->insertElementBefore($element, 'parentcategory');
                     $mform->addHelpButton('grade_item_aggregationcoef', $coefstring, 'grades');

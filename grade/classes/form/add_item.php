@@ -303,6 +303,7 @@ class add_item extends dynamic_form {
                     $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
                 } else {
                     $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+                    $mform->setType('aggregationcoef', PARAM_FLOAT);
                 }
                 if ($mform->elementExists('parentcategory')) {
                     $mform->insertElementBefore($element, 'parentcategory');
