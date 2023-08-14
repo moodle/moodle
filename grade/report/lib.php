@@ -598,7 +598,8 @@ abstract class grade_report {
         $matrix = ['up' => 'desc', 'down' => 'asc'];
         $strsort = get_string($matrix[$direction], 'moodle');
         $arrow = $OUTPUT->pix_icon($pix[$direction], '', '', ['class' => 'sorticon']);
-        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort, 'data-collapse' => 'sort']);
+        return html_writer::link($sortlink, $arrow, ['title' => $strsort, 'aria-label' => $strsort, 'data-collapse' => 'sort',
+            'class' => 'arrow_link py-1']);
     }
 
     /**
