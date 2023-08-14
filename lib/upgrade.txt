@@ -71,6 +71,14 @@ information provided here is intended especially for developers.
 * The moodle-core-notification-confirm module, found under the M.core.confirm namespace, has been deprecated.
   Any code using it should be rewritten as an ESM and use the core/notification module instead.
   See MDL-77174 for further information.
+* New set of output generic components. Check the component library for more information:
+  - core\output\local\action_menu\subpanel to add subpanels to action menus.
+  - core\output\local\dropdown\dialog to display HTML inside a dropdown element.
+  - core\output\local\dropdown\status to render a user choice into a dropdown.
+  - core\output\choicelist class to render a list of user choices. It combines with dropdown status and action menu subpanels.
+* The behat step I choose "WHATEVER" in the open action menu is now compatible with action menus subpanels
+  using the ">" symbol to suparate the item link text and subitem one. For example:
+  - I choose "Group mode > Visible groups" in the open action menu
 
 === 4.2 ===
 

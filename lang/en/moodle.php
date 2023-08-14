@@ -265,7 +265,6 @@ $string['clearsearch'] = 'Clear search input';
 $string['clickhelpiconformoreinfo'] = '... continues ... Click on the help icon to read the full article';
 $string['clickhere'] = 'Click here ...';
 $string['clicktohideshow'] = 'Click to expand or collapse';
-$string['clicktochangeinbrackets'] = '{$a} (Click to change)';
 $string['closeblockdrawer'] = 'Close block drawer';
 $string['closecourseindex'] = 'Close course index';
 $string['closedrawer'] = 'Close drawer';
@@ -2450,3 +2449,6 @@ $string['deprecatedeventname'] = '{$a} (no longer in use)';
 $string['createuserandpass'] = 'Choose your username and password';
 $string['descriptiona'] = 'Description: {$a}';
 $string['supplyinfo'] = 'More details';
+
+// Deprecated since Moodle 4.3.
+$string['clicktochangeinbrackets'] = '{$a} (Click to change)';
