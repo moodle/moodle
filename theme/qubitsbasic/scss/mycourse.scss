@@ -654,8 +654,7 @@
   width: auto !important;
 }
 
-.card-text,
-.card-title {
+.my-course-section .card-text, .my-course-section .card-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -672,7 +671,7 @@
 // }
 .main-inner {
   position: relative;
-  height: 100vh;
+
   left: 140px;
   width: calc(100% - 260px) !important;
   transition: all 0.5s ease;
@@ -967,7 +966,7 @@ ol {
 }
 #page.drawers .main-inner {
   padding: 0 !important;
-  margin-top: 0px !important;
+  // margin-top: 0px !important;
 }
 #page.drawers {
   margin-top: 90px !important;
