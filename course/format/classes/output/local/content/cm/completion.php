@@ -110,6 +110,7 @@ class completion implements named_templatable, renderable {
         );
         $completioninfo->editurl = $editurl->out(false);
         $completioninfo->editing = $PAGE->user_is_editing();
+        $completioninfo->hasconditions = $completioninfo->ismanual || count($completioninfo->completiondetails) > 0;
         $dialogcontent = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
 
         $buttoncontent = get_string('completionmenuitem', 'completion');
