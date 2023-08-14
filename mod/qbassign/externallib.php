@@ -2979,7 +2979,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
         );
     }
 
-    /**
+   /**
      * List the Assignment module details.
      *
      * @param int $uniquefield qbassign unique field
@@ -2989,7 +2989,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
 
      public static function get_assignment_service_parameters()
      {
-          return new external_function_parameters(
+         return new external_function_parameters(
              array(
              'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field')
           )
@@ -3093,12 +3093,12 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
              if($checkenrol)
              { 
-                 $lti_updated = [                        
+                 $assign_updated = [                        
                          'message'=>'Assignment details',
                          'userdetails' => $userdetails,
                          'assignmentdetails' => $returnarray
                          ]; 
-                 return $lti_updated;                      
+                 return $assign_updated;                      
              }            
              else
              { 
@@ -3153,6 +3153,9 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                  'Assignment Details', VALUE_OPTIONAL
                          )
                  );
+ 
+  
+        
      }
  
      /**
@@ -3188,7 +3191,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
      }
  
     public static function create_assignment_service($courseid,$siteid,$chapterid,$title,$duedate,$submissionfrom,$grade_duedate,$grade,$question,$submission_type,$submissionstatus,$online_text_limit,$uid,$maxfilesubmissions,$filetypeslist,$maxfilesubmissions_size)
-     {
+     { 
          global $DB,$CFG;
          $check_uniquefield = $DB->get_record('qbassign', array('uid' => $uid));
          if($check_uniquefield->id!='')
@@ -3288,7 +3291,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'name' => 'enabled',
                      'value' => $submission_filestatus
                      );
-                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }
                  $getfilesub = $DB->get_record('qbassign_plugin_config', array('plugin' => 'file','subtype' => 'qbassignsubmission','name'=>'maxfilesubmissions','qbassignment'=>$check_uniquefield->id));
                  if(isset($getfilesub->id))
@@ -3366,16 +3369,16 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
                  }           
              } 
-             purge_all_caches();
-             $lti_updated = [                        
-                         'message'=>'Success update here',
+             
+             $assign_updated = [                        
+                         'message'=>'Successfuly updated assignment',
                          'assignment_id' =>$check_uniquefield->id,
                          'uniquefield' => $uid
                          ];
-             return $lti_updated;
+             return $assign_updated;
          }        
          else
-         {  
+         { 
              //Add assignment details if unique field not present
              $getcoursemoduleslist_courses = get_coursemodules_in_course('qbassign', $courseid, '');
              $getcoursemoduleslist_courses_last = end($getcoursemoduleslist_courses);
@@ -3397,31 +3400,27 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              'section' => $section_id,
              'added' => time()
              );       
-             $courseinsertid = $DB->insert_record('course_modules', $flags);
- 
+             $course_insert_id = $DB->insert_record('course_modules', $flags);
              $updatedata = new stdClass();
              $updatedata->id = $section_id;
              if($sequence_column=='')
              {
-                $updatedata->sequence = $courseinsertid;        
+                $updatedata->sequence = $course_insert_id;        
              }
              else
              {
                  $sequencing = explode(",",$sequence_column);
-                 array_push($sequencing,$courseinsertid);
+                 array_push($sequencing,$course_insert_id);
                  $updatedata->sequence = implode(',', $sequencing);
              }
              
              $updatedata->section = $chapterid;        
-             $coursesectionupdate = $DB->update_record('course_sections', $updatedata);
- 
- 
+             $coursesectionupdate = $DB->update_record('course_sections', $updatedata); 
              $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3));
              $coursepath = $getcoursecontext->path;
- 
              $recorder =  array(
-                 'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80
-                 'instanceid' => $courseinsertid,
+                 'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80,COURSE = 50
+                 'instanceid' => $course_insert_id,
                  'path' => $coursepath.'/',
                  'depth' => 4,
                  'locked' => 0
@@ -3434,14 +3433,13 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              $updatecontextdata->id = $coursecontextinsertid;
              $updatecontextdata->path = $getcoursecontextpath->path.$coursecontextinsertid; 
              $coursesectionupdate = $DB->update_record('context', $updatecontextdata);
- 
+             
              $gradeareas = array(
                  'contextid' =>$coursecontextinsertid,
                  'component' =>'mod_qbassign',
                  'areaname' =>'submissions'
              );
              $grading_areasupdate = $DB->insert_record('grading_areas', $gradeareas);
-             
              //PASS our web service values to the lib file
              $formdata = (object) array(
                  'name' => $title,
@@ -3450,7 +3448,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  'course' => $courseid,
                  'introformat'=>'1',
                  'intro' => $question,
-                 'coursemodule' => $courseinsertid,
+                 'coursemodule' => $course_insert_id,
                  'submissiondrafts' =>0,
                  'requiresubmissionstatement' =>0,
                  'sendnotifications' => 0,
@@ -3468,7 +3466,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
  
              //update assignment id into course modules
              $updatecoursemoduledata = new stdClass();
-             $updatecoursemoduledata->id = $courseinsertid;
+             $updatecoursemoduledata->id = $course_insert_id;
              $updatecoursemoduledata->instance = $returnid;
              $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata);
  
@@ -3517,7 +3515,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'name' => 'enabled',
                      'value' => $submission_filestatus
                      );
-                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }
                 
                  $submissionfilelimit =  array(
@@ -3570,17 +3568,18 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'name' => 'enabled',
                      'value' => $submission_codestatus
                      );
-                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }           
              }
-             purge_all_caches();
+            
              $DB->set_field('qbassign', 'uid', $uid, array('id' => $returnid));
-             $lti_updated = [                        
-                             'message'=>'Success here',
+             $assign_updated = [                        
+                             'message'=>'Successfully created assignment',
                              'assignment_id' =>$returnid,
-                             'uniquefield' => $uid
+                             'uniquefield' => $uid,
+                             'cm_id' => $course_insert_id
                              ];
-             return $lti_updated;
+             return $assign_updated;
          }
      }
  
@@ -3590,7 +3589,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  array(
                      'assignment_id' => new external_value(PARAM_TEXT, 'assignment id'),
                      'message'=> new external_value(PARAM_TEXT, 'success message'),
-                     'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field')
+                     'uniquefield'=> new external_value(PARAM_TEXT, 'Unique Field'),
+                     'cm_id' => new external_value(PARAM_INT, 'Course Module ID')
                  )
              );
      }
@@ -3732,8 +3732,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      $submissionID = $check_submission->id;
                  } 
              }
-             $lti_updated = ['message'=>'sucess','submissionid'=>$submissionID]; 
-             return $lti_updated; 
+             $save_updated = ['message'=>'sucess','submissionid'=>$submissionID]; 
+             return $save_updated; 
          }
          else
          {
@@ -3896,18 +3896,18 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              'section' => $section_id,
              'added' => time()
              );       
-             $courseinsertid = $DB->insert_record('course_modules', $flags);
+             $course_insert_id = $DB->insert_record('course_modules', $flags);
  
              $updatedata = new stdClass();
              $updatedata->id = $section_id;
              if($sequence_column=='')
              {
-                $updatedata->sequence = $courseinsertid;        
+                $updatedata->sequence = $course_insert_id;        
              }
              else
              {
                  $sequencing = explode(",",$sequence_column);
-                 array_push($sequencing,$courseinsertid);
+                 array_push($sequencing,$course_insert_id);
                  $updatedata->sequence = implode(',', $sequencing);
              }
              
@@ -3920,7 +3920,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
  
              $recorder =  array(
                  'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80
-                 'instanceid' => $courseinsertid,
+                 'instanceid' => $course_insert_id,
                  'path' => $coursepath.'/',
                  'depth' => 4,
                  'locked' => 0
@@ -3939,7 +3939,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  'introformat'=>'1',
                  'quizpassword' => '',
                  'intro' => $description,
-                 'coursemodule' => $courseinsertid,
+                 'coursemodule' => $course_insert_id,
                  'course' => $courseid,
                  'preferredbehaviour' => 'deferredfeedback',
                  'overduehandling' => 'autosubmit'           
@@ -3953,7 +3953,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
  
              //update assignment id into course modules
              $updatecoursemoduledata = new stdClass();
-             $updatecoursemoduledata->id = $courseinsertid;
+             $updatecoursemoduledata->id = $course_insert_id;
              $updatecoursemoduledata->instance = $returnid;
              $coursesectionupdate = $DB->update_record('course_modules', $updatecoursemoduledata);
  
@@ -4018,7 +4018,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      }
                  }
              }
-             return array('message'=>'Added Success');
+             return array('message'=>'Added Success','cm_id' => $course_insert_id);
          }
      }
  
@@ -4026,7 +4026,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
      {
          return new external_single_structure(
                  array(
-                     'message'=> new external_value(PARAM_TEXT, 'success message')
+                     'message'=> new external_value(PARAM_TEXT, 'success message'),
+                     'cm_id' => new external_value(PARAM_INT, 'Course Module ID')
                  )
              );
      }
@@ -4070,8 +4071,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      if ($submissionid) {
                          $DB->delete_records('qbassignsubmission_onlinetex', array('submission' => $submissionid));
                          $DB->set_field('qbassign_submission', 'status', 'new', array('userid' => $USER->id,'id'=>$submissionid));
-                         $lti_updated = ['message'=>'sucess']; 
-                         return $lti_updated;
+                         $remove_updated = ['message'=>'sucess']; 
+                         return $remove_updated;
                      }
                      else
                      {
