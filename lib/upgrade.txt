@@ -90,6 +90,8 @@ being forced open in all behat tests.
 * New method login_captcha_enabled() is created to check whether the login captcha is enabled or not.
 * New method validate_login_captcha() is created to validate the login captcha.
 * A new parameter $loginrecaptcha has been added to the authenticate_user_login() to check whether the login captcha is needed to verify or not. The default value is false.
+* A new parameter $compactmode has been added to the recaptcha_get_challenge_html() to define whether the reCaptcha element should be displayed in the compact mode or not.
+  Default value is false.
 
 === 4.2 ===
 
