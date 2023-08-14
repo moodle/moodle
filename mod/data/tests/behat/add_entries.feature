@@ -153,3 +153,42 @@ Feature: Users can add entries to database activities
       | user     |
       | teacher1 |
       | student1 |
+
+  @javascript @_file_upload
+  Scenario Outline: Users can't upload non-picture files into a picture field
+    Given the following "mod_data > fields" exist:
+      | database | type    | name         |
+      | data1    | picture | Test field 1 |
+    And I am on the "Test database name" "data activity" page logged in as student1
+    And I press "Add entry"
+    And I follow "Add..."
+    And I follow "Upload a file"
+    When I click on "Upload a file" "link" in the ".fp-repo-area" "css_element"
+    # Upload non-image files.
+    And I set the field "Attachment" to "<filepath>"
+    And I press "Upload this file"
+    # Confirm non-image files cannot be uploaded.
+    Then I should see "<errormessage>"
+
+    Examples:
+      | filepath                                                | errormessage                                        |
+      | #dirroot#/lib/tests/fixtures/empty.txt                  | Text file filetype cannot be accepted.              |
+      | #dirroot#/lib/tests/fixtures/timezonewindows.xml        | application/xml filetype cannot be accepted.        |
+      | #dirroot#/mod/data/tests/fixtures/behat_preset.zip      | Archive (ZIP) filetype cannot be accepted.          |
+      | #dirroot#/mod/data/tests/fixtures/test_data_content.csv | Comma-separated values filetype cannot be accepted. |
+
+  @javascript @_file_upload
+  Scenario: Users can upload picture files into a picture field
+    Given the following "mod_data > fields" exist:
+      | database | type    | name         |
+      | data1    | picture | Test field 1 |
+    And I am on the "Test database name" "data activity" page logged in as student1
+    And I press "Add entry"
+    And I follow "Add..."
+    And I follow "Upload a file"
+    When I click on "Upload a file" "link" in the ".fp-repo-area" "css_element"
+    # Confirm image files can be uploaded.
+    And I set the field "Attachment" to "#dirroot#/lib/tests/fixtures/gd-logo.png"
+    Then "Error" "dialogue" should not be visible
+    And I press "Upload this file"
+    And I should see "gd-logo.png"
