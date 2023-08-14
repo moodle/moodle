@@ -53,6 +53,8 @@ class login implements renderable, templatable {
     public $cookieshelpicon;
     /** @var string The error message, if any. */
     public $error;
+    /** @var string The info message, if any. */
+    public $info;
     /** @var moodle_url Forgot password URL. */
     public $forgotpasswordurl;
     /** @var array Additional identify providers, contains the keys 'url', 'name' and 'icon'. */
@@ -131,6 +133,15 @@ class login implements renderable, templatable {
         $this->error = $error;
     }
 
+    /**
+     * Set the info message.
+     *
+     * @param string $info The info message.
+     */
+    public function set_info(string $info): void {
+        $this->info = $info;
+    }
+
     public function export_for_template(renderer_base $output) {
 
         $identityproviders = \auth_plugin_base::prepare_identity_providers_for_output($this->identityproviders, $output);
@@ -142,6 +153,7 @@ class login implements renderable, templatable {
         $data->cansignup = $this->cansignup;
         $data->cookieshelpicon = $this->cookieshelpicon->export_for_template($output);
         $data->error = $this->error;
+        $data->info = $this->info;
         $data->forgotpasswordurl = $this->forgotpasswordurl->out(false);
         $data->hasidentityproviders = !empty($this->identityproviders);
         $data->hasinstructions = !empty($this->instructions) || $this->cansignup;
