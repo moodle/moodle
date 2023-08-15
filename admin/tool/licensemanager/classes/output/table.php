@@ -134,11 +134,22 @@ class table implements \renderable {
             }
 
             if ($license->custom == license_manager::CUSTOM_LICENSE) {
-                // Link url is added by the JS `delete_license` modal used for confirmation of deletion, to avoid
-                // link being usable before JavaScript loads on page.
-                $deletelicense = html_writer::link('#', $output->pix_icon('i/trash',
-                    get_string('deletelicensename', 'tool_licensemanager', $license->fullname)),
-                    ['class' => 'delete-license', 'data-license' => $license->shortname]);
+                $deletelink = new \moodle_url('/admin/tool/licensemanager/index.php', [
+                    'action' => 'delete',
+                    'license' => $license->shortname,
+                    'sesskey' => sesskey(),
+                ]);
+                $deletelicense = html_writer::link(
+                    url: '#',
+                    text: $output->pix_icon('i/trash', get_string('deletelicensename', 'tool_licensemanager', $license->fullname)),
+                    attributes: [
+                        'class' => 'delete-license',
+                        'data-modal' => 'confirmation',
+                        'data-modal-title-str' => json_encode(['deletelicense', 'tool_licensemanager']),
+                        'data-modal-content-str' => json_encode(['deletelicenseconfirmmessage', 'tool_licensemanager']),
+                        'data-modal-destination' => $deletelink->out(false),
+                    ],
+                );
             }
         }
         $hideshowcell = new html_table_cell($hideshow);

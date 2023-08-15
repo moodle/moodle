@@ -236,8 +236,6 @@ class manager {
     private function view_license_manager(string $message = null) : void {
         global $PAGE, $OUTPUT;
 
-        $PAGE->requires->js_call_amd('tool_licensemanager/delete_license');
-
         $renderer = $PAGE->get_renderer('tool_licensemanager');
         $html = $renderer->header();
         $html .= $renderer->heading(get_string('licensemanager', 'tool_licensemanager'));
