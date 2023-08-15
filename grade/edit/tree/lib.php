@@ -885,7 +885,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
                 'name' => $checkboxid,
                 'label' => $label,
                 'labelclasses' => 'accesshide',
-                'classes' => 'itemselect ignoredirty mr-2',
+                'classes' => 'itemselect ignoredirty',
             ]);
             $checkbox = $OUTPUT->render($checkbox);
         }

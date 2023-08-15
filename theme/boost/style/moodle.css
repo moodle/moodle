@@ -35689,6 +35689,9 @@ p.arrow_button {
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .small {
   font-size: 70%;
 }
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemselect {
+  margin-right: 0.7rem;
+}
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemicon {
   font-size: 18px;
   width: 18px;
