@@ -3332,10 +3332,6 @@ privatefiles,moodle|/user/files.php';
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023062700.01);
     }
-    if ($oldversion < 2023062700.06) {
-        upgrade_core_licenses();
-        upgrade_main_savepoint(true, 2023062700.06);
-    }
 
     if ($oldversion < 2023062900.01) {
 
@@ -3372,6 +3368,11 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023080100.00);
+    }
+
+    if ($oldversion < 2023081500.00) {
+        upgrade_core_licenses();
+        upgrade_main_savepoint(true, 2023081500.00);
     }
 
     return true;
