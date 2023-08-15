@@ -37,7 +37,8 @@ class course_external_tools_list extends system_report {
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
     protected function initialise(): void {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
         $this->course = get_course($this->get_context()->instanceid);
 
@@ -61,7 +62,7 @@ class course_external_tools_list extends system_report {
         $coursevisibleparam = database::generate_param_name();
         [$insql, $params] = $DB->get_in_or_equal([get_site()->id, $this->course->id], SQL_PARAMS_NAMED, "{$paramprefix}_");
         $wheresql = "{$entitymainalias}.course {$insql} AND {$entitymainalias}.coursevisible NOT IN (:{$coursevisibleparam})";
-        $params = array_merge($params, [$coursevisibleparam => 0]);
+        $params = array_merge($params, [$coursevisibleparam => LTI_COURSEVISIBLE_NO]);
         $this->add_base_condition_sql($wheresql, $params);
 
         $this->set_downloadable(false, get_string('pluginname', 'mod_lti'));
