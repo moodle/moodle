@@ -388,6 +388,16 @@ class user_table extends table_sql {
     }
 
     /**
+     * Generate the display of the user's last recorded modified time
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_modifiedtime($row) {
+        global $DB, $CFG;
+        return date($CFG->iomad_date_format, $row->modifiedtime);
+    }
+
+    /**
      * Generate the display of the user's course status
      * @param object $user the table row being output.
      * @return string HTML content to go inside the td.
@@ -509,7 +519,7 @@ class user_table extends table_sql {
                         <div class="progress-bar" style="width:' . $progress . '%;height:20px">' . $progress . '%</div>
                         </div>';
             } else {
-                return get_string('completion-alt-auto-y', 'completion', "$progress%") ."\r\n$tooltip";
+                return get_string('completion-alt-auto-y', 'completion', "$progress%");
             }
         }
     }
@@ -540,6 +550,73 @@ class user_table extends table_sql {
     public function col_coursename($row) {
 
         return format_string($row->coursename, true, 1);
+    }
+
+    /**
+     * You can override this method in a child class. See the description of
+     * build_table which calls this method.
+     */
+    function other_cols($column, $row) {
+        global $CFG, $DB;
+
+        if (isset($row->$column) && ($column === 'email' || $column === 'idnumber') &&
+                (!$this->is_downloading() || $this->export_class_instance()->supports_html())) {
+            // Columns email and idnumber may potentially contain malicious characters, escape them by default.
+            // This function will not be executed if the child class implements col_email() or col_idnumber().
+            return s($row->$column);
+        }
+
+        if (strpos($column, '_') === false ) {
+            return NULL;
+        } else {
+            list($type, $criteriaid) = explode('_', $column);
+            if ($type == "criteria" && empty($row->$column) && !empty($row->timecompleted)) {
+                return date($CFG->iomad_date_format, $row->timecompleted);
+            } else {
+                if ($type == 'criteria' ) {
+                    if (!empty($row->$column)) {
+                        return date($CFG->iomad_date_format, $row->$column);
+                    } else {
+                        return null;
+                    }
+                } else if ($type == 'grade') {
+                    if ($iomadcourse = $DB->get_record('iomad_courses', ['courseid' => $row->courseid, 'hasgrade' => 0])) {
+                        return NULL;
+                    }
+                    // Get the criteria record.
+                    $critrecord = $DB->get_record('course_completion_criteria', ['id' => $criteriaid]);
+
+                    // If it's the course grade then return that.
+                    if (empty($critrecord->module)) {
+                        if (!empty($row->timeenrolled) && $row->finalscore > 0) {
+                            return format_string(round($row->finalscore, $CFG->iomad_report_grade_places) . "%");
+                        } else {
+                            return null;
+                        }
+                    }
+
+                    $modinfo = get_coursemodule_from_id('', $critrecord->moduleinstance);
+                    $gradestring = "";
+                    if ($gradeinfo = $DB->get_record_sql("SELECT gg.* FROM {grade_grades} gg
+                                                          JOIN {grade_items} gi ON (gg.itemid = gi.id)
+                                                          JOIN {course_modules} cm ON (gi.courseid = cm.course AND gi.iteminstance = cm.instance)
+                                                          JOIN {modules} m ON (m.id = cm.module AND m.name = gi.itemmodule)
+                                                          WHERE gg.userid = :userid
+                                                          AND gi.courseid = :courseid
+                                                          AND cm.id = :moduleid",
+                                                          ['userid' => $row->userid,
+                                                           'courseid' => $row->courseid,
+                                                           'moduleid' => $modinfo->id])) {
+                        if (!empty($gradeinfo->finalgrade) && $gradeinfo->finalgrade != 0) {
+                            $gradestring = format_string(round($gradeinfo->finalgrade/$gradeinfo->rawgrademax * 100, $CFG->iomad_report_grade_places)."%");
+                        }
+                    }
+                    return $gradestring;
+                } else {
+                    return NULL;
+                }
+            }
+        }
     }
 
     /**

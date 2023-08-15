@@ -720,6 +720,40 @@ if (empty($courseid)) {
         $table->sort_default_column = 'coursename';
     }
 
+    // Set defaults for extra columns/headers.
+    $completionheaders = [];
+    $completioncolumns = [];
+    $gradeheaders = [];
+    $gradecolumns = [];
+    $completionids = [];
+    $completionsqlfrom = "";
+    $completionsqlselect = "";
+
+    // Get the completion information if we need it.
+    //if ($table->is_downloading() && $courseid != 1) {
+        // Get the course completion criteria.
+        $info = new completion_info(get_course($courseid));
+        $coursecompletioncrits = $info->get_criteria(null);
+
+        // Set up the additional columns.
+        if (!empty($coursecompletioncrits)) {
+            foreach ($coursecompletioncrits as $completioncrit) {
+                $modinfo = get_coursemodule_from_id('', $completioncrit->moduleinstance);
+                
+                $completionheaders[$completioncrit->id] = format_string($completioncrit->get_title() . " " . $modinfo->name);
+                $gradeheaders[$completioncrit->id] = format_string(get_string('grade') . " " . $modinfo->name);
+                $completioncolumns[$completioncrit->id] = "criteria_" . $completioncrit->id;
+                $gradecolumns[$completioncrit->id] = "grade_" . $completioncrit->id;
+                $completionids[] = $completioncrit->id;
+            }
+        }
+        foreach ($completionids as $completionid) {
+            $tag = "c" . $completionid;
+            $completionsqlselect .= ", $tag.timecompleted AS " . $completioncolumns[$completionid];
+            $completionsqlfrom .= " LEFT JOIN {course_completion_crit_compl} $tag ON (lit.userid = $tag.userid AND lit.courseid = $tag.course AND $tag.criteriaid = $completionid)";
+        }
+    //}
+
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid);
 
     // Deal with where we are on the department tree.
@@ -788,8 +822,8 @@ if (empty($courseid)) {
                   lit.companyid,
                   lit.coursecleared,
                   lit.modifiedtime
-                  {$fieldsql->selects}";
-    $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id)";
+                  {$fieldsql->selects} $completionsqlselect";
+    $fromsql = "{user} u JOIN {local_iomad_track} lit ON (u.id = lit.userid) JOIN {company_users} cu ON (u.id = cu.userid AND lit.userid = cu.userid AND lit.companyid = cu.companyid) JOIN {department} d ON (cu.departmentid = d.id) $completionsqlfrom";
     $wheresql = $searchinfo->sqlsearch . " AND 1=1 $departmentsql $companysql $datesql $coursesql $validsql";
     $sqlparams = $sqlparams + $searchinfo->searchparams;
 
@@ -893,6 +927,15 @@ if (empty($courseid)) {
         $columns[] = 'certificate';
         $headers[] = get_string('actions');
         $columns[] = 'actions';
+    //} else if ($courseid != 1) {
+        foreach ($completionids as $completionid) {
+            $headers[] = $completionheaders[$completionid];
+            $columns[] = $completioncolumns[$completionid];
+            $headers[] = $gradeheaders[$completionid];
+            $columns[] = $gradecolumns[$completionid];
+        }
+        $headers[] = get_string('lastmodified');
+        $columns[] = 'modifiedtime';
     }
 
     // Also for Summary courses user controls.
