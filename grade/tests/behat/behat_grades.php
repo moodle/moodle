@@ -57,6 +57,8 @@ class behat_grades extends behat_base {
      * | [report] view         | Course name  | The view page for the specified course and report |
      * | gradebook setup       | Course name  | The gradebook setup page for the specified course |
      * | course grade settings | Course name  | The grade settings page                           |
+     * | outcomes              | Course name  | The grade outcomes page                           |
+     * | scales                | Course name  | The grade scales page                             |
      *
      * @param string $type identifies which type of page this is - for example "Grader > View"
      * @param string $identifier identifies the particular page - for example "Course name"
@@ -104,6 +106,16 @@ class behat_grades extends behat_base {
             case 'course grade settings':
                 return new moodle_url(
                     "/grade/edit/settings/index.php",
+                    ['id' => $this->get_course_id($identifier)]
+                );
+            case 'outcomes':
+                return new moodle_url(
+                    "/grade/edit/outcome/course.php",
+                    ['id' => $this->get_course_id($identifier)]
+                );
+            case 'scales':
+                return new moodle_url(
+                    "/grade/edit/scale/index.php",
                     ['id' => $this->get_course_id($identifier)]
                 );
             default:

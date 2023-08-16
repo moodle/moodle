@@ -30,9 +30,7 @@ Feature: Within the grader report, test that we can search for users
       | assign   | C1     | a1       | Test assignment one |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I change window size to "large"
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: A teacher can view and trigger the user search
     # Check the placeholder text

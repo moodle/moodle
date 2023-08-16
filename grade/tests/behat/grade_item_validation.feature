@@ -31,8 +31,7 @@ Feature: Grade item validation
       | Name  | Letter scale                              |
       | Scale | Disappointing, Good, Very good, Excellent |
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | MI 1 |
@@ -62,7 +61,7 @@ Feature: Grade item validation
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
-    And I choose "Edit grade item" in the open action menu
+    When I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'Value')]" "xpath_element" should exist
 
@@ -89,7 +88,7 @@ Feature: Grade item validation
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
-    And I choose "Edit grade item" in the open action menu
+    When I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And I should see "Choose" in the "Rescale existing grades" "field"
     And the "Maximum grade" "field" should be disabled

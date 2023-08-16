@@ -9,14 +9,12 @@ Feature: We can use the user report
       | Course 1 | C1        | 0        | 1         |
 
   Scenario: Verify we can view a user grade report with no users enrolled.
-    Given I log in as "admin"
-    And I am on "Course 1" course homepage
-    When I navigate to "View > User report" in the course gradebook
+    When I am on the "Course 1" "grades > User report > View" page logged in as "admin"
     Then I should see "There are no students enrolled in this course."
 
   Scenario: Teacher sees his last viewed user report when navigating back to the gradebook user report.
     Given the following "users" exist:
-      | username | firstname  | lastname | email                |
+      | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
       | teacher2 | Teacher   | 2        | teacher2@example.com |
       | student1 | Student   | 1        | student1@example.com |
@@ -25,20 +23,14 @@ Feature: We can use the user report
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I should see "Select a user above to view their report" in the "region-main" "region"
     And I click on "Student 1" in the "user" search widget
     And I should see "Student 1" in the "region-main" "region"
-    And I am on "Course 1" course homepage
-    When I navigate to "View > User report" in the course gradebook
+    When I am on the "Course 1" "grades > User report > View" page
     Then I should not see "Select a user above to view their report" in the "region-main" "region"
     And I should see "Student 1" in the "region-main" "region"
-    And I log out
-    And I log in as "teacher2"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher2"
     And I should see "Select a user above to view their report" in the "region-main" "region"
 
   Scenario: Teacher sees his last viewed user report if the user is a part of the the current group.
@@ -58,9 +50,7 @@ Feature: We can use the user report
     And the following "group members" exist:
       | user     | group |
       | student2 | G1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I click on "Student 2" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
     And I click on "Group 1" in the "group" search widget
@@ -85,9 +75,7 @@ Feature: We can use the user report
     And the following "group members" exist:
       | user     | group |
       | student2 | G1    |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I click on "Student 1" in the "user" search widget
     And I navigate to "View > Grader report" in the course gradebook
     And I click on "Group 1" in the "group" search widget
@@ -106,9 +94,7 @@ Feature: We can use the user report
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
     And I click on "Student 1" in the "user" search widget
     And I should see "Student 1" in the "region-main" "region"
     And I navigate to course participants

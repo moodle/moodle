@@ -25,9 +25,7 @@ Feature: Group searching functionality within the user report.
       | student1 | dg    |
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
-    And I am on the "C1" "Course" page logged in as "teacher1"
-    And I change window size to "large"
-    And I navigate to "View > User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can see the 'group' search widget only when group mode is enabled in the course
     Given ".groupsearchwidget" "css_element" should exist

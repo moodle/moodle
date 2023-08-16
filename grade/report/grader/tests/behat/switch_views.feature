@@ -77,8 +77,7 @@ Feature: We can change what we are viewing on the grader report
     And the following "role capability" exists:
       | role                    | editingteacher |
       | moodle/grade:viewhidden | prevent        |
-    And I am on the "C1" "course" page logged in as "teacher1"
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     Then I should see "Test assignment name 1" in the "user-grades" "table"
     And I should see "Test assignment name 2" in the "user-grades" "table"
     And I should see "Manual grade"
