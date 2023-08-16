@@ -17,9 +17,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test locked category |
@@ -30,23 +28,16 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | Hidden | 1 |
       | Grade category | Test locked category |
     And I press "Save changes"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Hidden item"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Test locked category":
       | Locked | 1 |
-    And I press "Save changes"
-    And I log out
 
   Scenario: Hidden grade items in locked category is hidden for teacher
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > User report" in the course gradebook
+    Given I am on the "Course 1" "grades > User report > View" page logged in as teacher1
     And I select "Myself" from the "View report as" singleselect
     When I select "Student 1" from the "Select all or one user" singleselect
     Then the following should exist in the "user-grade" table:
@@ -55,9 +46,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | Course total | - | 50.00 | 0–100 | 50.00 % | - |
 
   Scenario: Hidden grade items in locked category is hidden for student
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I navigate to "User report" in the course gradebook
+    When I am on the "Course 1" "grades > User report > View" page logged in as student1
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Test locked category total | 100.00 % | - | 0–100 | - | - |
@@ -65,9 +54,7 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
     And I should not see "Hidden item"
 
   Scenario: Hidden grade items in overridden category should show
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    Given I am on the "Course 1" "grades > gradebook setup" page
     And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test overridden category B|
@@ -78,13 +65,9 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | Grade category | Test overridden category B |
     And I press "Save changes"
     When I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test overridden category B total"
     And I press "Save changes"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I navigate to "User report" in the course gradebook
+    And I am on the "Course 1" "grades > User report > View" page logged in as "student1"
     Then the following should exist in the "user-grade" table:
       | Grade item | Calculated weight | Grade | Range | Percentage | Contribution to course total |
       | Test locked category total | 50.00 % | - | 0–100 | - | - |
