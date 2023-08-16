@@ -2036,7 +2036,8 @@ class core_plugin_manager {
                 'h5p',
                 'media',
                 'recordrtc',
-                'link'
+                'link',
+                'html',
             ],
 
             'theme' => array(
