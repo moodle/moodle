@@ -36,23 +36,20 @@ Feature: We can use calculated grade totals
       | assign   | C1     | a8       | Test assignment eight | Submit something! | Sub category 2 & | 20    |
       | assign   | C1     | a9       | Test assignment nine  | Submit something! | Sub category 2 & | 10    |
       | assign   | C1     | 10       | Test assignment ten   | Submit nothing!   | Sub category 2 & | 15    |
+    And the following "grade grades" exist:
+      | gradeitem             | user     | grade |
+      | Test assignment one & | student1 | 60.00 |
+      | Test assignment two   | student1 | 20.00 |
+      | Test assignment three | student1 | 40.00 |
+      | Test assignment five  | student1 | 10.00 |
+      | Test assignment six   | student1 | 5.00  |
+      | Test assignment eight | student1 | 10.00 |
+      | Test assignment nine  | student1 | 5.00  |
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as teacher1
     And I turn editing mode on
-    And I change window size to "large"
-    And I give the grade "60.00" to the user "Student 1" for the grade item "Test assignment one &"
-    And I give the grade "20.00" to the user "Student 1" for the grade item "Test assignment two"
-    And I give the grade "40.00" to the user "Student 1" for the grade item "Test assignment three"
-    And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment five"
-    And I give the grade "5.00" to the user "Student 1" for the grade item "Test assignment six"
-    And I give the grade "10.00" to the user "Student 1" for the grade item "Test assignment eight"
-    And I give the grade "5.00" to the user "Student 1" for the grade item "Test assignment nine"
-    And I press "Save changes"
     And I set the following settings for grade item "Test assignment two":
       | Hidden | 1 |
     And I set the following settings for grade item "Test assignment five":
@@ -262,22 +259,16 @@ Feature: We can use calculated grade totals
     Then I should see "114.82 (18.27 %)" in the "overview-grade" "table"
     And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as teacher1
     And I set the following settings for grade item "Test outcome item one":
-     | Extra credit     | 1   |
+      | Extra credit     | 1   |
     And I log out
     And I log in as "student1"
     And I follow "Grades" in the user menu
     Then I should see "114.00 (18.39 %)" in the "overview-grade" "table"
     And I click on "Course 1" "link" in the "region-main" "region"
     And "Test outcome item one" row "Grade" column of "user-grade" table should contain "Excellent (100.00 %)"
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as teacher1
     And I set the following settings for grade item "Course 1":
       | Aggregation                     | Natural |
       | Include outcomes in aggregation | 0       |
@@ -306,8 +297,8 @@ Feature: We can use calculated grade totals
       | Include outcomes in aggregation | 1       |
       | Exclude empty grades            | 0       |
     And I set the following settings for grade item "Test outcome item one":
-     | Weight adjusted  | 1   |
-     | aggregationcoef2 | 100 |
+      | Weight adjusted  | 1   |
+      | aggregationcoef2 | 100 |
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "Excellent" to the user "Student 1" for the grade item "Test outcome item one"
     And I press "Save changes"
@@ -377,10 +368,7 @@ Feature: We can use calculated grade totals
       | Test assignment four | 30.93 % | - | 0–150 | 0.00 % |
 
   Scenario: Natural aggregation with drop lowest
-    When I log out
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    When I am on the "Course 1" "grades > Grader report > View" page logged in as admin
     And I turn editing mode on
     And I set the following settings for grade item "Sub category 1":
       | Aggregation          | Natural |

@@ -42,17 +42,13 @@ Feature: The activity results block displays student in visible groups scores
       | student5 | G3 |
       | student6 | G3 |
     And the following "activities" exist:
-      | activity | name             | intro           | course | idnumber | section | assignsubmission_file_enabled |
-      | assign   | Test assignment  | Test assignment | C1     | assign1  | 1       | 0                             |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "Test assignment"
-    And I navigate to "Settings" in current page administration
+      | activity | name             | course | idnumber | section | assignsubmission_file_enabled |
+      | assign   | Test assignment  | C1     | assign1  | 1       | 0                             |
+    And I am on the "Test assignment" "assign activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Group mode | Visible groups |
     And I press "Save and return to course"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > view" page
     And I turn editing mode on
     And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"

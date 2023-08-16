@@ -19,38 +19,18 @@ Feature: Editing a grade item
     And I log in as "admin"
     And the "multilang" filter is "on"
     And the "multilang" filter applies to "content and headings"
-    And I navigate to "Grades > Scales" in site administration
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> ABCDEF |
-      | Scale | F,E,D,C,B,A                                                                                   |
-    And I press "Save changes"
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name  | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Letter scale |
-      | Scale | Disappointing, Good, Very good, Excellent                                                           |
-    And I press "Save changes"
-    And I set the following administration settings values:
-      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add category"
-    And I set the following fields to these values:
-      | Category name | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Cat 1 |
-      | Aggregation   | Highest grade                                                                                |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Item 1 |
-      | Grade category | EN Cat 1                                                                                 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Item 2 |
-      | Grade category | EN Cat 1                                                                                 |
-    And I press "Save changes"
+    And the following "scales" exist:
+      | name                                                                                                | scale                                     |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> ABCDEF       | F,E,D,C,B,A                               |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Letter scale | Disappointing, Good, Very good, Excellent |
+    And the following "grade categories" exist:
+      | fullname                                                                                     | course | aggregation |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Cat 1 | C1     | 6           |
+    And the following "grade items" exist:
+      | itemname                                                                                      | course | category                                                                                     |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Item 1 | C1     | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Cat 1 |
+      | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Item 2 | C1     | <span lang="en" class="multilang">EN</span><span lang="fr" class="multilang">FR</span> Cat 1 |
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
 
   Scenario: Being able to change the grade type, scale and maximum grade for a grade category when there are no overridden grades
     When I click on "Edit settings" "link" in the "EN Cat 1" "table_row"

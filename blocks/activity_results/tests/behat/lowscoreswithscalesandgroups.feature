@@ -49,23 +49,16 @@ Feature: The activity results block displays students in groups low scores as sc
       | description                   | Offline text       |
       | assignsubmission_file_enabled | 0                  |
       | groupmode                     | 1                  |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Scales" in the course gradebook
-    And I press "Add a new scale"
-    And I set the following fields to these values:
-      | Name | My Scale |
-      | Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I follow "Test assignment"
-    And I navigate to "Settings" in current page administration
+    And the following "scales" exist:
+      | name     | scale                                                                |
+      | My Scale | Disappointing, Not good enough, Average, Good, Very good, Excellent! |
+    And I change window size to "large"
+    And I am on the "Test assignment" "assign activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | id_grade_modgrade_type | Scale |
       | id_grade_modgrade_scale | My Scale |
     And I press "Save and return to course"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page
     And I turn editing mode on
     And I give the grade "Excellent!" to the user "Student 1" for the grade item "Test assignment"
     And I give the grade "Very good" to the user "Student 2" for the grade item "Test assignment"
@@ -87,9 +80,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I press "Save changes"
     Then I should see "Group 3" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
-    And I log in as "student5"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student5
     And I should see "Student 6" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
 
@@ -106,9 +97,7 @@ Feature: The activity results block displays students in groups low scores as sc
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Group 3" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student3
     And I should see "Student 3" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -128,10 +117,8 @@ Feature: The activity results block displays students in groups low scores as sc
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
     # Students cannot see user identity fields.
-    And I log in as "student5"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student5
     And I should see "User" in the "Activity results" "block"
     And I should not see "User S5" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
@@ -150,9 +137,7 @@ Feature: The activity results block displays students in groups low scores as sc
     Then I should see "Group" in the "Activity results" "block"
     And I should see "Very good" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
-    And I log out
-    And I log in as "student5"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student5
     And I should see "User" in the "Activity results" "block"
     And I should see "Good" in the "Activity results" "block"
     And I should see "Average" in the "Activity results" "block"
