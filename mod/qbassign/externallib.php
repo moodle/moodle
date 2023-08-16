@@ -3416,7 +3416,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              
              $updatedata->section = $chapterid;        
              $coursesectionupdate = $DB->update_record('course_sections', $updatedata); 
-             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3));
+             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3,'contextlevel'=>50));
              $coursepath = $getcoursecontext->path;
              $recorder =  array(
                  'contextlevel' => 70, //CONTEXT_MODULE = 70,CONTEXT_SYSTEM = 10,CONTEXT_BLOCK = 80,COURSE = 50
@@ -3915,7 +3915,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              $coursesectionupdate = $DB->update_record('course_sections', $updatedata);
  
  
-             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3));
+             $getcoursecontext = $DB->get_record('context', array('instanceid' => $courseid,'depth'=> 3,'contextlevel'=>50));
              $coursepath = $getcoursecontext->path;
  
              $recorder =  array(

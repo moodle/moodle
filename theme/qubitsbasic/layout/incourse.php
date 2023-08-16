@@ -84,6 +84,29 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
+$path_params = parse_url($PAGE->url, PHP_URL_PATH);
+$is_showreact = false;
+$muid = '';
+if($path_params == "/mod/qbassign/view.php"){
+    global $DB;
+    $course_user_roles = enrol_get_course_users_roles($COURSE->id);
+    $student_id = 5;
+    $module_id = required_param('id', PARAM_INT);
+    foreach($course_user_roles as $k => $cu_role){
+        $cur_role_obj = current($cu_role);
+        if($cur_role_obj->roleid == $student_id && $cur_role_obj->userid == $USER->id && !is_siteadmin()){
+            $is_showreact = true;
+            $qbinstnce = $DB->get_record_sql("
+            SELECT qa.uid as uid
+            FROM {course_modules} cm
+            JOIN {qbassign} qa ON cm.instance = qa.id
+            WHERE cm.id = :moduleid ", [
+                'moduleid' => $module_id
+            ]);
+            $muid = ($qbinstnce->uid) ? $qbinstnce->uid : '';
+        }
+    }
+}
 
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -105,7 +128,9 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
-    'iscourseandmoddtlpage' => true
+    'iscourseandmoddtlpage' => true,
+    'is_showreact' => $is_showreact,
+    'muid' => $muid
 ];
 
 echo $OUTPUT->render_from_template('theme_qubitsbasic/incourse', $templatecontext);
