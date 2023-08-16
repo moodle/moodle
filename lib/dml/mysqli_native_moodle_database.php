@@ -398,6 +398,10 @@ class mysqli_native_moodle_database extends moodle_database {
         } else if ($this->get_row_format() !== 'Barracuda') {
             $this->compressedrowformatsupported = false;
 
+        } else if ($this->get_dbtype() === 'auroramysql') {
+            // Aurora MySQL doesn't support COMPRESSED and falls back to COMPACT if you try to use it.
+            $this->compressedrowformatsupported = false;
+
         } else {
             // All the tests passed, we can safely use ROW_FORMAT=Compressed in sql statements.
             $this->compressedrowformatsupported = true;

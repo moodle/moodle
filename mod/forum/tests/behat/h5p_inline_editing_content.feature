@@ -73,9 +73,13 @@ Feature: Inline editing H5P content in mod_forum
 
   @javascript @repository_contentbank
   Scenario: Edit H5P content from a forum post
+    Given the following "mod_forum > discussions" exist:
+      | user     | forum  | name                | message             |
+      | admin    | 1      | Forum post by admin | Forum post by admin |
     Given I am on the "ForumName1" "forum activity" page logged in as admin
+    And I follow "Forum post by admin"
+    And I click on "Edit" "link"
     # Add H5P content to a forum post as admin.
-    And I click on "Add discussion topic" "link"
     And I set the following fields to these values:
       | Subject | Forum post by admin |
     And I click on "Insert H5P" "button" in the "#fitem_id_message" "css_element"
@@ -84,8 +88,7 @@ Feature: Inline editing H5P content in mod_forum
     And I click on "Greeting card" "file" in repository content area
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I press "Post to forum"
-    And I follow "Forum post by admin"
+    And I press "Save changes"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
     And I should see "Hello world!"

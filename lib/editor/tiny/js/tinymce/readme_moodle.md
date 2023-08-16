@@ -5,12 +5,19 @@ Please note that we have a clone of the official TinyMCE repository which contai
 Each Moodle branch has a similar branch in the https://github.com/moodlehq/tinymce.
 The Moodle `master` branch is named as the upcoming STABLE branch name, for example during the development of Moodle 4.2.0, the upcoming STABLE branch name will be MOODLE_402_STABLE.
 
+## Patches included in this release
+
+- MDL-78714: Add support for disabling XSS Sanitisation (TINY-9600)
+
+Please note: TinyMCE issue numbers are related to bugs in their private issue
+tracker. See git history of their repository for relevant information.
+
 ## Upgrade procedure for TinyMCE Editor
 
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`
+MOODLEDIR=`pwd`../../
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
@@ -118,7 +125,7 @@ cat strings.php >> "${MOODLEDIR}/lang/en/editor_tiny.php"
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`
+MOODLEDIR=`pwd`../../
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.

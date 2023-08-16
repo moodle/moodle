@@ -970,15 +970,13 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
 
     $output = '';
     // Add a help dialogue box if provided.
-    if (isset($headerhelpidentifier)) {
+    if (isset($headerhelpidentifier) && !empty($heading)) {
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
-    } else {
-        if (isset($user)) {
-            $renderer = $PAGE->get_renderer('core_grades');
-            $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
-        } else {
-            $output = $OUTPUT->heading($heading);
-        }
+    } else if (isset($user)) {
+        $renderer = $PAGE->get_renderer('core_grades');
+        $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
+    } else if (!empty($heading)) {
+        $output = $OUTPUT->heading($heading);
     }
 
     if ($return) {

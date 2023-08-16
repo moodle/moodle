@@ -16,7 +16,6 @@
 
 namespace gradereport_grader\external;
 
-use coding_exception;
 use context_course;
 use core_user_external;
 use core_external\external_api;
@@ -26,9 +25,6 @@ use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
 use grade_report_grader;
-use invalid_parameter_exception;
-use moodle_exception;
-use restricted_context_exception;
 use user_picture;
 
 defined('MOODLE_INTERNAL') || die;
@@ -64,13 +60,10 @@ class get_users_in_report extends external_api {
      *
      * @param int $courseid Course ID to fetch the grader report for.
      * @return array Users and warnings to pass back to the calling widget.
-     * @throws coding_exception
-     * @throws invalid_parameter_exception
-     * @throws moodle_exception
-     * @throws restricted_context_exception
      */
-    protected static function execute(int $courseid): array {
+    public static function execute(int $courseid): array {
         global $PAGE;
+
         self::validate_parameters(
             self::execute_parameters(),
             [
@@ -81,6 +74,8 @@ class get_users_in_report extends external_api {
         $warnings = [];
         $context = context_course::instance($courseid);
         self::validate_context($context);
+
+        require_capability('gradereport/grader:view', $context);
 
         // Return tracking object.
         $gpr = new \grade_plugin_return(

@@ -148,7 +148,7 @@ class behat_general extends behat_base {
 
         } else if (!empty($url)) {
             // We redirect directly as we can not wait for an automatic redirection.
-            $this->getSession()->getDriver()->getClient()->request('get', $url);
+            $this->getSession()->getDriver()->getClient()->request('GET', $url);
 
         } else {
             // Reload the page if no URL was provided.

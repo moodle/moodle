@@ -27,6 +27,7 @@
         "icon": "../../../pix/help.svg",
         "iconclass": "",
         "pluginname": "File",
+        "showpluginname": 1,
         "textclasses": "",
         "purpose": "content",
         "modname": "resource",
@@ -48,14 +49,16 @@
     <div class="activity-instance d-flex flex-column">
         <div class="activitytitle media {{textclasses}} modtype_{{modname}} position-relative align-self-start">
             <div class="activityiconcontainer {{purpose}} courseicon align-self-start mr-3">
-                <img src="{{{icon}}}" class="activityicon {{iconclass}}" alt="{{{modname}}} icon">
+                <img src="{{{icon}}}" class="activityicon {{iconclass}}"
+                     alt="{{#cleanstr}} activityicon, moodle, {{{pluginname}}} {{/cleanstr}}"
+                >
             </div>
             <div class="media-body align-self-center">
-                {{#pluginname}}
+                {{#showpluginname}}
                 <div class="text-uppercase small">
                     {{{pluginname}}}
                 </div>
-                {{/pluginname}}
+                {{/showpluginname}}
                 <div class="activityname">
                     {{#activityname}}
                         {{$ core/inplace_editable }}
