@@ -42,26 +42,18 @@ Feature: The activity results block displays student in visible groups scores
       | student5 | G3 |
       | student6 | G3 |
     And the following "activities" exist:
-      | activity | name             | intro           | course | idnumber | section | assignsubmission_file_enabled |
-      | assign   | Test assignment  | Test assignment | C1     | assign1  | 1       | 0                             |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I am on the "Test assignment" "assign activity" page
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Group mode | Visible groups |
-    And I press "Save and return to course"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+      | activity | name             | course | idnumber | section | assignsubmission_file_enabled | groupmode |
+      | assign   | Test assignment  | C1     | assign1  | 1       | 0                             | 2         |
+    And the following "grade grades" exist:
+      | gradeitem       | user     | grade  |
+      | Test assignment | student1 | 100.00 |
+      | Test assignment | student2 | 90.00  |
+      | Test assignment | student3 | 90.00  |
+      | Test assignment | student4 | 80.00  |
+      | Test assignment | student5 | 80.00  |
+      | Test assignment | student6 | 70.00  |
+    And I am on the "Course 1" course page logged in as teacher1
     And I turn editing mode on
-    And I give the grade "100.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "90.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 5" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 6" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on the course page to show 1 high score
     Given I add the "Activity results" block to the default region with:
@@ -81,10 +73,8 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
-    And I should see "Group 1" in the "Activity results" "block"
+    And I am on the "Course 1" course page logged in as student1
+    Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 high score as a absolute numbers
@@ -94,9 +84,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00" in the "Activity results" "block"
 
@@ -108,9 +96,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 1" in the "Activity results" "block"
     And I should see "95%" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -125,9 +111,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00/100.00" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -142,9 +126,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -161,9 +143,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Percentages |
       | config_nameformat | Display only ID numbers |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group" in the "Activity results" "block"
     And I should see "95.00%" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"
@@ -176,9 +156,7 @@ Feature: The activity results block displays student in visible groups scores
       | config_gradeformat | Percentages |
       | config_nameformat | Anonymous results |
       | config_usegroups | Yes |
-    And I log out
-    Then I log in as "student1"
-    And I am on "Course 1" course homepage
+    Then I am on the "Course 1" course page logged in as student1
     And I should see "Group" in the "Activity results" "block"
     And I should see "95.00%" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"

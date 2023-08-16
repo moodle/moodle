@@ -32,18 +32,15 @@ Feature: The activity results block displays student scores
     And the following "activities" exist:
       | activity   | name                | content          | course | section | idnumber |
       | page       |  Test page name     | This is a page   | C1     | 1       | page1    |
+    And the following "grade grades" exist:
+      | gradeitem         | user     | grade |
+      | Test assignment 1 | student1 | 90.00 |
+      | Test assignment 1 | student2 | 80.00 |
+      | Test assignment 1 | student3 | 70.00 |
+      | Test assignment 1 | student4 | 60.00 |
+      | Test assignment 1 | student5 | 50.00 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I should see "Test page name"
-    And I navigate to "View > Grader report" in the course gradebook
-    And I change window size to "large"
-    And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment 1"
-    And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment 1"
-    And I give the grade "70.00" to the user "Student 3" for the grade item "Test assignment 1"
-    And I give the grade "60.00" to the user "Student 4" for the grade item "Test assignment 1"
-    And I give the grade "50.00" to the user "Student 5" for the grade item "Test assignment 1"
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on a non-graded activity to show 3 high scores
     Given I am on the "Test page name" "page activity" page
