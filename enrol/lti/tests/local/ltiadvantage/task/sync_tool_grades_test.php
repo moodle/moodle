@@ -149,48 +149,27 @@ class sync_tool_grades_test extends \lti_advantage_testcase {
     }
 
     /**
-     * Test the sync grades task works correct when platform responses with 200 status code.
+     * Data provider for test_grade_sync_positive_case.
      *
-     * @covers ::execute
+     * @return array
      */
-    public function test_grade_sync_positive_case_200() {
-        $this->test_grade_sync_positive_case('200');
-    }
-
-    /**
-     * Test the sync grades task works correct when platform responses with 201 status code.
-     *
-     * @covers ::execute
-     */
-    public function test_grade_sync_positive_case_201() {
-        $this->test_grade_sync_positive_case('201');
-    }
-
-    /**
-     * Test the sync grades task works correct when platform responses with 202 status code.
-     *
-     * @covers ::execute
-     */
-    public function test_grade_sync_positive_case_202() {
-        $this->test_grade_sync_positive_case('202');
-    }
-
-    /**
-     * Test the sync grades task works correct when platform responses with 204 status code.
-     *
-     * @covers ::execute
-     */
-    public function test_grade_sync_positive_case_204() {
-        $this->test_grade_sync_positive_case('204');
+    public static function grade_sync_positive_cases(): array {
+        return [
+            [200],
+            [201],
+            [202],
+            [204],
+        ];
     }
 
     /**
      * Test the sync grades task works correct when platform responses with given status code.
      *
      * @covers ::execute
-     * @param string $statuscode the response status code with which the job should work correct
+     * @param string $statuscode the response status code with which the job should work correctly
+     * @dataProvider grade_sync_positive_cases
      */
-    protected function test_grade_sync_positive_case($statuscode) {
+    public function test_grade_sync_positive_case($statuscode): void {
         $this->resetAfterTest();
 
         [$course, $resource] = $this->create_test_environment();
