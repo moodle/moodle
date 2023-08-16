@@ -2038,6 +2038,7 @@ class core_plugin_manager {
                 'recordrtc',
                 'link',
                 'html',
+                'noautolink',
             ],
 
             'theme' => array(
