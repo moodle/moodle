@@ -163,6 +163,10 @@ class course_summary_exporter extends \core\external\exporter {
                 'type' => PARAM_INT,
                 'optional' => true
             ),
+            'iscomplete' => array(
+                'type' => PARAM_BOOL,
+                'optional' => true
+            ),
             'hasprogress' => array(
                 'type' => PARAM_BOOL
             ),

@@ -1,8 +1,10 @@
-name: Push-to-EC2
+name: Staging-CI
 
 # Trigger deployment only on push to master branch
 on:
   pull_request:
+    branches:
+      - develop
     types:
       - closed
 
@@ -18,10 +20,10 @@ jobs:
       - name: Deploy to Server 1
         uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.HOST_DNS }}
-          REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+          SSH_PRIVATE_KEY: ${{ secrets.STAGING_EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.STAGING_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.STAGING_USERNAME }}
+          TARGET: ${{ secrets.STAGING_TARGET_DIR }}
 
       - name: PR Status
         if: github.event.pull_request.merged == true

@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_qbassign/grading_navigation
+
+    Actions panel at the bottom of the qbassignment grading UI.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * data-region, data-qbassignmentid, data-groupid
+
+    Context variables required for this template:
+    * see mod/qbassign/classes/output/grading_app.php
+
+    This template includes ajax functionality, so it cannot be shown in the template library.
+}}
+<div class="container-fluid">
+<div data-region="grading-navigation" class="row">
+
+{{!
+    There are three chunks, which appear side-by-side at large screen sizes.
+    A) qbassignment info, which has 3 rows:
+}}
+
+<div data-region="qbassignment-info" class="col-md-4">
+
+{{!
+    Row 1) course name & link.
+}}
+<a href="{{config.wwwroot}}/course/view.php?id={{courseid}}" title="{{coursename}}">{{coursename}}</a><br/>
+
+{{!
+    Row 2) qbassignment name & link, & edit settings.
+}}
+<a href="{{config.wwwroot}}/mod/qbassign/view.php?id={{cmid}}" title="{{name}}">{{name}}</a>
+
+{{#caneditsettings}}
+<a href="{{config.wwwroot}}/course/modedit.php?update={{cmid}}&return=1" aria-label="{{#str}}editsettings{{/str}}" title="{{#str}}editsettings{{/str}}">
+    {{#pix}}t/edit, core{{/pix}}
+</a>
+{{/caneditsettings}}
+
+<br/>
+
+{{!
+    Row 3) qbassignment grading & link, due date, with tool-tip thing.
+}}
+<a href="{{config.wwwroot}}/mod/qbassign/view.php?id={{cmid}}&action={{actiongrading}}">{{viewgrading}}</a>
+
+<div role="tooltip" id="tooltip-{{uniqid}}" class="accesshide">
+{{#duedate}}
+{{#str}}duedatecolon, mod_qbassign, {{duedatestr}}{{/str}}
+{{/duedate}}
+
+{{#cutoffdate}}
+<br>{{cutoffdatestr}}
+{{/cutoffdate}}
+
+{{#duedate}}
+<br>{{timeremainingstr}}
+{{/duedate}}
+</div>
+
+</div>
+
+{{!
+    B) Current user name and info.
+}}
+<div data-region="user-info" class="col-md-4" data-qbassignmentid="{{qbassignmentid}}" data-groupid="{{groupid}}">
+    {{> mod_qbassign/grading_navigation_user_info }}
+</div>
+
+{{!
+    C) User selector widget.
+}}
+<div data-region="user-selector" class="col-md-4">
+    <div class="alignment">
+        {{> mod_qbassign/grading_navigation_user_selector }}
+    </div>
+</div>
+</div>
+</div>
+{{#js}}
+require(['mod_qbassign/grading_navigation', 'core/tooltip'], function(GradingNavigation, ToolTip) {
+    new GradingNavigation('[data-region="user-selector"]');
+    new ToolTip('[data-region="qbassignment-tooltip"]');
+});
+{{/js}}

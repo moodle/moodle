@@ -1,0 +1,8 @@
+{
+    "moodle-mod_qbassign-history": {
+        "requires": [
+            "node",
+            "transition"
+        ]
+    }
+}

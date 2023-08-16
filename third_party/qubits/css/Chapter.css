@@ -1,0 +1,658 @@
+.hintstyle {
+  width: 80%;
+}
+
+.hintstyle ul {
+  margin-top: 20px;
+}
+
+.resultTextareaStyleerror {
+  background-color: #e2dfd2;
+  color: #000;
+}
+
+.resultTextareaStyle,
+.resultTextareaStyleerror {
+  width: "100%";
+  border: beige;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-family: var(--mono-font) !important;
+  font-size: var(--code-font-size);
+  padding: 10px;
+}
+
+.resultTextareaStyle {
+  background-color: #343232;
+  color: #fff;
+}
+
+:root {
+  --sidebar-width: 300px;
+  --page-padding: 15px;
+  --content-max-width: 100% !important;
+  --menu-bar-height: 50px;
+  --mono-font: Consolas, Menlo;
+  /* --code-font-size: 0.875em; */
+}
+
+.content html {
+  scrollbar-color: var(--scrollbar) var(--bg);
+}
+
+#searchresults a,
+.content a:link,
+a:visited,
+a>.hljs {
+  color: var(--links);
+}
+
+a:hover>.hljs {
+  text-decoration: underline;
+}
+
+pre {
+  position: relative;
+}
+
+pre>.buttons {
+  position: absolute;
+  z-index: 100;
+  right: 0;
+  top: 2px;
+  margin: 0;
+  padding: 2px 0;
+  cursor: pointer;
+  visibility: visible;
+  opacity: 1;
+  transition: visibility 0.1s linear, opacity 0.1s linear;
+}
+
+pre>.buttons i {
+  margin-left: 8px;
+}
+
+pre>.buttons button {
+  cursor: inherit;
+  margin: 0 5px;
+  padding: 3px 5px;
+  font-size: 14px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: var(--icons);
+  background-color: var(--theme-popup-bg);
+  transition: 0.1s;
+  transition-property: color, border-color, background-color;
+  color: var(--icons);
+}
+
+@media (pointer: coarse) {
+  pre>.buttons button {
+    padding: 0.3rem 1rem;
+  }
+}
+
+pre>code {
+  padding: 1rem;
+}
+
+.hljs.ace_editor {
+  padding: 0;
+}
+
+pre>.result {
+  margin-top: 10px;
+  background-color: #343232;
+  color: #fefefe;
+}
+
+/* :root {
+        font-size: 62.5%;
+      } */
+
+.content html {
+  font-family: Open Sans, sans-serif;
+  color: var(--fg);
+  background-color: var(--bg);
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+}
+
+.content p {
+  margin: 0;
+  font-size: 16px;
+  overflow-x: hidden;
+}
+
+.content h1 {
+  font-size: 1.6rem;
+}
+
+.content a {
+  font-size: 1rem;
+}
+
+.content code * {
+  font-family: var(--mono-font) !important;
+  font-size: 14px;
+}
+
+main {
+  overflow-wrap: break-word;
+}
+
+h1 code,
+h2 code,
+h3 code,
+h4 code,
+h5 code,
+h6 code {
+  font-size: unset;
+}
+
+h2,
+h3 {
+  margin-top: 2.5em;
+}
+
+h4,
+h5 {
+  margin-top: 2em;
+}
+
+h1:target:before,
+h2:target:before,
+h3:target:before,
+h4:target:before,
+h5:target:before,
+h6:target:before {
+  display: inline-block;
+  content: "»";
+  margin-left: -30px;
+  width: 30px;
+}
+
+:target {
+  scroll-margin-top: calc(var(--menu-bar-height) + 0.5em);
+}
+
+.content main {
+  margin-left: auto;
+  margin-right: auto;
+  /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width); 
+  /* max-width: var(--content-max-width); */
+  max-width: 750px;
+}
+
+.content ol,
+.content p,
+.content ul {
+  line-height: 1.45em;
+}
+
+.content h1 {
+  line-height: 1.8;
+  margin-bottom: 0;
+  margin-top: 23px;
+}
+
+.content * {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+}
+
+.inline-code {
+  font-family: var(--mono-font) !important;
+}
+
+.editor-container * {
+  font-family: var(--mono-font) !important;
+  line-height: 1.1;
+}
+
+.content p {
+  margin-top: 20px;
+}
+
+.content a {
+  text-decoration: none;
+}
+
+.content a:hover {
+  text-decoration: underline !important;
+  color: white !important;
+}
+
+.content img,
+.content video {
+  max-width: 100%;
+}
+
+.content .header:link,
+.content .header:visited {
+  color: var(--fg);
+}
+
+.content .header:link,
+.content .header:visited:hover {
+  text-decoration: none;
+}
+
+blockquote {
+  margin: 20px 0;
+  padding: 0 20px;
+  color: #000;
+  background-color: #f1f6f9;
+  border-top: 0.1em solid #e0ecf1;
+  border-bottom: 0.1em solid #e0ecf1;
+}
+
+blockquote p {
+  margin: 0 20px;
+  margin-top: 0px;
+}
+
+:root {
+  --link-color: #0f6cbf;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+.content h1:not(.menu-title):before {
+  content: "";
+  background-size: contain;
+  width: 118px;
+  height: 79px;
+  display: inline-block;
+  position: absolute;
+  left: -40px;
+  top: -23px;
+}
+
+.content h1:not(.menu-title) {
+  background-color: #1482e6;
+  border-radius: 30px;
+  position: relative;
+  padding-left: 80px;
+}
+
+.content h1:not(.menu-title.heading-title) {
+  padding-left: 20px;
+}
+
+h1:target:before,
+h2:target:before,
+h3:target:before,
+h4:target:before,
+h5:target:before,
+h6:target:before {
+  content: "";
+}
+
+.content .header:link:hover,
+.content .header:visited:hover {
+  color: var(--link-color);
+}
+
+.content h1 .header:not(.menu-title):link,
+.content h1 .header:not(.menu-title):visited {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 1.6rem;
+  position: relative;
+  top: -0.6rem;
+}
+
+.content h1 .header:not(.menu-title):link .sub-header,
+.content h1 .header:not(.menu-title):visited .sub-header {
+  color: #fcca1e;
+  font-weight: 700;
+}
+
+.content main {
+  padding: 20px;
+  border-radius: 36px;
+}
+
+pre {
+  margin: 0.4em 0;
+}
+
+pre~p {
+  margin-top: 2em;
+  margin-bottom: 0;
+}
+
+.hljs,
+.hljs.ace_editor {
+  padding: 8px 5px !important;
+}
+
+.noplayground.hljs:not(.result),
+.playground .hljs:not(.result) {
+  background-color: #f8f9fa;
+}
+
+.ace_editor.editable {
+  background-color: #fff;
+}
+
+.ace_editor.editable:hover {
+  outline: 2px solid #5babf2;
+}
+
+.ace_line:nth-child(2n) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.result-1,
+.result-2,
+.result-3,
+.result-4 {
+  display: none;
+}
+
+.chapter-title {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 400;
+  font-size: 1.55rem;
+  position: relative;
+  top: -0.3rem;
+}
+
+.inline-code {
+  display: block;
+  display: inline;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+
+.inline-code,
+code {
+  overflow-x: auto;
+  background: #f6f7f6;
+  color: #000;
+}
+
+code {
+  display: block;
+}
+
+.content pre {
+  color: white;
+}
+
+.menu-items {
+  display: flex;
+  padding: 1em;
+  width: 100%;
+}
+
+.Mui-selected.MuiMenuItem-root.MuiMenuItem-gutters.Mui-selected {
+  width: 100%;
+  background-color: #0f6cbf;
+  border-radius: 4px;
+  color: #fff;
+}
+
+.editor-container {
+  position: relative;
+  margin-top: 20px !important;
+}
+
+.tool-button {
+  min-width: 40px !important;
+  background-color: #fff;
+}
+
+.tool-button:hover {
+  background-color: #fff;
+}
+
+.reset-button {
+  position: absolute !important;
+  right: 105px;
+  top: 10px;
+  z-index: 9;
+}
+
+.traceBlockStyle {
+  width: "100%";
+  border: beige;
+  background-color: #fff;
+  color: #000;
+  margin-top: 10px;
+  border-radius: 4px;
+  padding: 10px;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
+    Helvetica Neue, Arial, Noto Sans, Liberation Sans, sans-serif,
+    Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji !important;
+}
+
+.tool-button span {
+  margin-left: 0;
+}
+
+.button-toolbar {
+  padding: 5px;
+  position: absolute;
+  top: 8px;
+  right: 5px;
+}
+
+.console-wrapper {
+  position: relative;
+  margin-top: 25px;
+}
+
+.ai-help-button {
+  z-index: 9;
+}
+
+.ai-help-button,
+.ai-console-wrapper.resultTextareaStyleerror.chatgptbtn {
+  position: absolute !important;
+  top: 5px;
+  right: 5px;
+  background-color: #fff !important;
+  min-width: 40px !important;
+}
+
+.chatgptbtn {
+  color: #000 !important;
+  font-weight: bold !important;
+  float: right;
+  font-size: 11px;
+  background-color: white;
+  height: 30px;
+}
+
+.ai-help-button span {
+  margin-left: 0;
+}
+
+.ace-tm .ace_print-margin {
+  width: 0 !important;
+}
+
+.hljs-comment,
+.hljs-quote {
+  color: #575757;
+}
+
+.hljs-attribute,
+.hljs-link,
+.hljs-name,
+.hljs-regexp,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-tag,
+.hljs-template-variable,
+.hljs-variable {
+  color: #d70025;
+}
+
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-meta,
+.hljs-number,
+.hljs-params,
+.hljs-type {
+  color: #b21e00;
+}
+
+.hljs-bullet,
+.hljs-string,
+.hljs-symbol {
+  color: #008200;
+}
+
+.hljs-section,
+.hljs-title {
+  color: #0030f2;
+}
+
+.hljs-keyword,
+.hljs-selector-tag {
+  color: #9d00ec;
+}
+
+.hljs {
+  display: block;
+  overflow-x: auto;
+  background: #f6f7f6;
+  color: #000;
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: 700;
+}
+
+.hljs-addition {
+  color: #22863a;
+  background-color: #f0fff4;
+}
+
+.hljs-deletion {
+  color: #b31d28;
+  background-color: #ffeef0;
+}
+
+::-webkit-scrollbar {
+  background: var(--bg);
+}
+
+.moremenu {
+  opacity: 1 !important;
+}
+
+#page-header {
+  display: none !important;
+}
+
+.standalone-editor {
+  min-height: 300px;
+  overflow-y: scroll;
+}
+
+.error404 {
+  font-family: 'Calligraffitti', cursive;
+  font-weight: 700;
+  font-size: 13rem !important;
+  text-shadow: -15px 5px 20px #ced0d3;
+  letter-spacing: 0.02em;
+  text-align: center;
+  color: #47BBB6;
+  text-shadow: 5px 5px 0px #FFB650,
+    10px 10px 0px #FFD662,
+    15px 15px 0px #FF80BF,
+    20px 20px 0px #EF5097,
+    25px 25px 0px #6868AC,
+    30px 30px 0px #90B1E0;
+}
+
+.notavailable {
+  text-align: center;
+  font-size: 35px !important;
+  color: #fff;
+  padding: 10px;
+  border-radius: 35px;
+  font-weight:600;
+  background-color: #47BBB6;
+}
+
+.react-pdf-viewer-Toolbar {
+  align-items: center;
+  display: flex;
+  width: 100%;
+}
+
+.react-pdf-viewer-style {
+  height: 750px;
+}
+
+.react-pdf-Toolbar {
+  padding: 0px 2px;
+}
+
+.react-pdf-fullscreen {
+  padding: 0px 2px;
+  margin-left: auto;
+}
+
+.content .title a {
+  color: white;
+  /* text-transform: uppercase; */
+  font-weight: normal;
+  font-size: 18px;
+  position: relative;
+  top: -0.2rem;
+}
+
+.MuiButtonBase-root.tool-button {
+  color: #747474;
+  border-color: #747474;
+  margin: 0px;
+  padding: 3px 2px;
+  border-radius: 4px;
+}
+
+.MuiButtonBase-root.tool-button:hover {
+  color: #0f6cbf;
+  border-color: #747474;
+}
+
+.MuiSvgIcon-fontSizeMedium {
+  margin-right: 4px;
+}
+
+.MuiButtonBase-root.ai-help-button {
+  color: #747474;
+  border-color: #747474;
+}
+
+.MuiButtonBase-root.ai-help-button:hover {
+  color: #0f6cbf;
+  border-color: #747474;
+}
+
+.ace-dracula .ace_print-margin {
+  background: none !important;
+}
+
+.rpv-core__textbox{
+  width: 100% !important;
+}

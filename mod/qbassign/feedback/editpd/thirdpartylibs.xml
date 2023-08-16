@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>fpdi</location>
+    <name>FPDI</name>
+    <description>Collection of PHP classes facilitating developers to read pages from existing PDF documents and use them as templates in FPDF.</description>
+    <version>2.3.6</version>
+    <license>MIT</license>
+    <repository>https://github.com/Setasign/FPDI</repository>
+    <copyrights>
+      <copyright>2020 Setasign GmbH &amp; Co. KG, https://www.setasign.com</copyright>
+    </copyrights>
+  </library>
+</libraries>

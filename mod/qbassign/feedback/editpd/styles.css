@@ -1,0 +1,432 @@
+.qbassignfeedback_editpd_widget .toolbar ul {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .toolbar li {
+    list-style-type: none;
+}
+
+.qbassignfeedback_editpd_widget .drawingcanvas {
+    position: relative;
+    min-width: 817px;
+    min-height: 400px;
+    background-repeat: no-repeat;
+    background-color: #ccc;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 20px rgba(0, 0, 0, .2);
+}
+
+.qbassignfeedback_editpd_widget .moodle-dialogue-bd .drawingregion {
+    position: inherit;
+}
+
+.qbassignfeedback_editpd_widget .drawingregion[data-currenttool=select] .commentdrawable textarea,
+.qbassignfeedback_editpd_widget .drawingregion[data-currenttool=select] .commentdrawable svg {
+    cursor: move;
+}
+
+.qbassignfeedback_editpd_widget .infoicon {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .warningmessages {
+    position: absolute;
+    margin-left: 20px;
+    margin-right: 20px;
+    bottom: 20px;
+}
+
+.qbassignfeedback_editpd_widget .drawingregion {
+    border: 1px solid #ccc;
+    left: 1em;
+    right: 1em;
+    top: 52px;
+    bottom: 0;
+    position: absolute;
+    overflow: auto;
+    background-color: #ccc;
+    touch-action: none;
+}
+
+.qbassignfeedback_editpd_widget {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+.qbassignfeedback_editpd_widget .pageheader {
+    background-color: #ebebeb;
+    border-bottom: 1px solid #ccc;
+    padding: 0;
+    padding-left: 20px;
+    padding-right: 20px;
+    min-height: 50px;
+    height: 52px;
+    overflow: auto;
+}
+
+.moodle-dialogue-base .moodle-dialogue.qbassignfeedback_editpd_widget .moodle-dialogue-bd {
+    padding: 0;
+}
+
+.yui3-colourpicker-hidden,
+.yui3-commentsearch-hidden,
+.yui3-commentmenu-hidden {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .pageheader button img {
+    padding-top: 3px;
+    vertical-align: top;
+}
+
+.qbassignfeedback_editpd_widget .pageheader button:active {
+    background-color: #ccc;
+}
+
+.qbassignfeedback_editpd_widget .pageheader select,
+.qbassignfeedback_editpd_widget .pageheader button {
+    background: none;
+    padding: 4px 7px;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: top;
+    cursor: pointer;
+}
+
+.qbassignfeedback_editpd_widget .pageheader select {
+    vertical-align: top;
+    -webkit-appearance: none;
+    -moz-appearance: menulist-text;
+    background-color: #fff;
+    padding: 0 10px;
+}
+
+.qbassignfeedback_editpd_widget .pageheader select::-ms-expand {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .pageheader .navigation button + button,
+.qbassignfeedback_editpd_widget .pageheader .toolbar button + button,
+.qbassignfeedback_editpd_widget .pageheader .navigation select + button,
+.qbassignfeedback_editpd_widget .pageheader .toolbar select + button {
+    border-left: 1px solid #ccc;
+    border-right: 0;
+}
+
+.qbassignfeedback_editpd_widget .pageheader .navigation button {
+    border-right: 1px solid #ccc;
+}
+
+.qbassignfeedback_editpd_widget .pageheader .toolbar,
+.qbassignfeedback_editpd_widget .pageheader .navigation-search,
+.qbassignfeedback_editpd_widget .pageheader .navigation-expcol,
+.qbassignfeedback_editpd_widget .pageheader .navigation {
+    border: 1px solid #ccc;
+    border-bottom-color: #b3b3b3;
+    border-radius: 4px;
+    margin: 10px 4px;
+    background-color: white;
+    height: 30px;
+    line-height: 30px;
+    padding: 0;
+}
+
+.qbassignfeedback_editpd_commentsearch ul {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 1em;
+}
+
+.qbassignfeedback_editpd_commentsearch ul li pre {
+    background-color: #efefef;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.qbassignfeedback_editpd_commentsearch ul li pre:hover {
+    background-color: #ddd;
+}
+
+.qbassignfeedback_editpd_commentsearch ul li {
+    margin: 2px;
+}
+
+.qbassignfeedback_editpd_commentsearch a pre {
+    font-family: helvetica;
+    margin: 0;
+    padding: 4px;
+}
+
+.qbassignfeedback_editpd_widget .navigation-search,
+.qbassignfeedback_editpd_widget .navigation-expcol,
+.qbassignfeedback_editpd_widget .navigation {
+    float: left;
+}
+
+.qbassignfeedback_editpd_widget .toolbar_group {
+    float: right;
+}
+
+.qbassignfeedback_editpd_widget .toolbar button {
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+}
+
+.qbassignfeedback_editpd_widget .toolbar > button.rotateleftbutton {
+    /*rtl:raw:
+    border-right: 1px solid #ccc;
+    border-left: 0;
+    */
+    /*rtl:ignore*/
+    float: left;
+}
+
+.qbassignfeedback_editpd_widget .toolbar > button.rotaterightbutton {
+    /*rtl:ignore*/
+    float: right;
+}
+
+.qbassignfeedback_editpd_widget .toolbar {
+    float: left;
+}
+
+.qbassignfeedback_editpd_widget .navigation,
+.qbassignfeedback_editpd_widget .navigation-search,
+.qbassignfeedback_editpd_widget .navigation-expcol,
+.qbassignfeedback_editpd_widget .toolbar {
+    display: inline-block;
+}
+
+.qbassignfeedback_editpd_colourpicker ul {
+    margin: 0;
+}
+
+.qbassignfeedback_editpd_dropdown li.quicklist_comment {
+    width: 200px;
+}
+
+.qbassignfeedback_editpd_dropdown li.quicklist_comment a {
+    white-space: nowrap;
+    display: inline-block;
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.qbassignfeedback_editpd_dropdown a.delete_quicklist_comment {
+    float: right;
+    width: 20px;
+}
+
+.qbassignfeedback_editpd_dropdown button {
+    border: 0;
+    background: none;
+    padding: 6px 7px;
+    border-radius: 0;
+    border-top: 1px solid #ccc;
+}
+
+.qbassignfeedback_editpd_dropdown li:first-child button {
+    border-top: 0;
+}
+
+.moodle-dialogue-base .moodle-dialogue.qbassignfeedback_editpd_dropdown .moodle-dialogue-wrap {
+    box-shadow: none;
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    border-radius: 4px;
+}
+
+.moodle-dialogue-base .moodle-dialogue.qbassignfeedback_editpd_dropdown .moodle-dialogue-bd {
+    padding: 0;
+}
+
+.moodle-dialogue-base .qbassignfeedback_editpd_dropdown .moodle-dialogue-wrap .moodle-dialogue-hd,
+.moodle-dialogue-base .qbassignfeedback_editpd_dropdown .moodle-dialogue-wrap .moodle-dialogue-ft {
+    display: none;
+}
+
+.qbassignfeedback_editpd_menu li hr {
+    margin: 0;
+}
+
+.qbassignfeedback_editpd_menu li a {
+    text-decoration: none;
+    color: #555;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+}
+
+ul.qbassignfeedback_editpd_search {
+    margin: 0;
+}
+
+.qbassignfeedback_editpd_search li {
+    list-style-type: none;
+}
+
+.qbassignfeedback_editpd_search li a {
+    text-decoration: none;
+    color: #555;
+}
+
+.qbassignfeedback_editpd_menu li:hover {
+    background-color: #ebebeb;
+}
+
+ul.qbassignfeedback_editpd_menu {
+    margin: 0;
+    max-height: 40vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.qbassignfeedback_editpd_menu li {
+    list-style-type: none;
+    margin: 0;
+    border-radius: 4px;
+}
+
+.qbassignfeedback_editpd_menu li img {
+    height: auto;
+}
+
+.qbassignfeedback_editpd_menu li button {
+    margin: 0;
+    background: none;
+}
+
+.qbassignfeedback_editpd_widget .pageheader button:hover {
+    background-color: #ebebeb;
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
+}
+
+.qbassignfeedback_editpd_widget .pageheader button.qbassignfeedback_editpd_selectedbutton:hover,
+.qbassignfeedback_editpd_widget .pageheader button.qbassignfeedback_editpd_selectedbutton {
+    background-color: #dfdfdf;
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable img {
+    padding: 1px;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable a {
+    float: right;
+    position: relative;
+    left: -17px;
+    top: 2px;
+    height: 14px;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    line-height: 14px;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable textarea {
+    padding: 4px;
+    padding-right: 20px;
+    resize: none;
+    overflow: hidden;
+    color: black;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-family: helvetica;
+    min-height: 1.2em;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable textarea:focus {
+    outline: thin dotted #333;
+    outline-color: -webkit-focus-ring-color;
+    outline-width: 5px;
+    outline-style: auto;
+    outline-offset: -2px;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable {
+    display: flex;
+    z-index: 52;
+    height: 0;
+}
+.qbassignfeedback_editpd_widget .annotation {
+    z-index: 51;
+}
+
+.qbassignfeedback_editpd_widget .deleteannotationbutton {
+    z-index: 51;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable label {
+    display: inline-block;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable svg {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable.commentcollapsed {
+    z-index: auto;
+    width: 24px;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable.commentcollapsed textarea,
+.qbassignfeedback_editpd_widget .commentdrawable.commentcollapsed a {
+    display: none;
+}
+
+.qbassignfeedback_editpd_widget .commentdrawable.commentcollapsed svg {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.qbassignfeedback_editpd_widget .drawingcanvas .loading .progressbarlabel {
+    text-align: center;
+}
+
+.hideoverflow {
+    overflow: hidden;
+    position: relative;
+}
+
+@media (max-width: 960px) {
+    .qbassignfeedback_editpd_widget .pageheader {
+        height: 104px;
+    }
+
+    .qbassignfeedback_editpd_widget .drawingregion {
+        top: 104px;
+    }
+}
+
+@media (max-width: 767px) {
+    .qbassignfeedback_editpd_widget .drawingregion {
+        position: relative;
+        margin-bottom: 1em;
+        top: 0;
+        max-height: 312px;
+    }
+
+    .qbassignfeedback_editpd_widget .pageheader {
+        height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .qbassignfeedback_editpd_widget .pageheader {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}

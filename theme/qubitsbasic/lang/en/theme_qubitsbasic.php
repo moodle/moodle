@@ -23,6 +23,7 @@
  */
 
 $string['pluginname'] = 'Qubits - Basic';
-$string['loginto'] = 'Sign in to {$a}';
+$string['loginto'] = 'Sign in';
 $string['login'] = 'Sign in';
 $string['mycourses'] = 'My Courses';
+$string['usernameemail'] = 'Username or Email';

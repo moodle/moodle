@@ -1,8 +1,8 @@
 {{#iscourseviewpage}}
-<i class="icon fa fa-chevron-left arrow-left previousnav cvormv" id="cvbkbtn" data-cid="{{courseid}}" role="button"></i>
+<i class="icon fa qicon-icon-back arrow-left previousnav cvormv" id="cvbkbtn" data-cid="{{courseid}}" role="button"></i>
 {{/iscourseviewpage}}
 {{#ismodulepage}}
-<i class="icon fa fa-chevron-left arrow-left previousnav cvormv" id="mvbkbtn" data-cid="{{courseid}}" role="button"></i>
+<i class="icon qicon-icon-back fa arrow-left previousnav cvormv" id="mvbkbtn" data-cid="{{courseid}}" role="button"></i>
 {{/ismodulepage}}
 
 <nav aria-label="breadcrumb">
@@ -12,13 +12,13 @@
         {{/ismycoursepage}}
         {{#iscourseviewpage}}
             <li class="breadcrumb-item"><a href="{{globals.config.wwwroot}}/my/courses.php" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{heading}}</li>
+            <li class="breadcrumb-item active" aria-current="page">{{heading}} ( {{ categoryname }} - {{ level }} )</li>
         {{/iscourseviewpage}}
         {{#ismodulepage}}
             <li class="breadcrumb-item"><a href="{{globals.config.wwwroot}}/my/courses.php" class="bc-items">{{#str}} mycourses, theme_qubitsbasic {{/str}}</a></li>
             <li class="breadcrumb-item bc-items" aria-current="page">
             <a href="{{globals.config.wwwroot}}/course/view.php?id={{courseid}}" class="bc-items">
-            {{coursefullname}}
+            {{coursefullname}} ( {{ categoryname }} - {{ level }} )
             </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">{{heading}}</li>

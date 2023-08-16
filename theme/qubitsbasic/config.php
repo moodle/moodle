@@ -29,7 +29,7 @@ require_once(__DIR__ . '/lib.php');
 $THEME->doctype = 'html5';
 $THEME->name = 'qubitsbasic';
 $THEME->parents = array('boost');
-$THEME->sheets = ['qubitsfonts','qubitsbasic', 'styles', 'temp'];
+$THEME->sheets = ['qubitsfonts','qubitsbasic', 'styles', 'temp', 'learnerscript'];
 $THEME->iconsystem = '\\theme_qubitsbasic\\output\\icon_system_fa_custom';
 $THEME->editor_sheets = [];
 $THEME->enable_dock = false;
@@ -118,4 +118,9 @@ $THEME->layouts = [
         'regions' => array('side-pre'),
         'defaultregion' => 'side-pre',
     ),
+    'thirdparty' => array(
+        'file' => 'thirdparty.php',
+        'regions' => array('side-pre'),
+        'defaultregion' => 'side-pre',
+    )
 ];
