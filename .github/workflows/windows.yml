@@ -3,7 +3,7 @@ name: Windows Testing
 on:
   workflow_dispatch
 env:
-  php: 8.1
+  php: 8.2
 
 jobs:
   Grunt:
@@ -46,13 +46,13 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            php: 8.1
+            php: 8.2
             # Ideally we should use mysql/mariadb, but they are 4x slower without tweaks and configuration
             # so let's run only postgres (1.5h vs 6h) only, If some day we want to improve the mysql runs,
             # this is the place to enable them.
             # db: mysqli
             db: pgsql
-            extensions: exif, fileinfo, gd, intl, pgsql, mysql, redis, soap, sodium
+            extensions: exif, fileinfo, gd, intl, pgsql, mysql, redis, soap, sodium, zip
           - os: windows-latest
             php: 8.0
             db: pgsql
