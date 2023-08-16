@@ -40,6 +40,12 @@ if ($form->is_cancelled()) {
 echo $OUTPUT->header();
 echo $OUTPUT->heading($headingtitle);
 
+// Displaying noemailever warning.
+if (!empty($CFG->noemailever)) {
+    $msg = get_string('noemaileverwarning', 'admin');
+    echo $OUTPUT->notification($msg, \core\output\notification::NOTIFY_ERROR);
+}
+
 $data = $form->get_data();
 if ($data) {
     $emailuser = new stdClass();
