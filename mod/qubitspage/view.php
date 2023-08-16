@@ -80,24 +80,28 @@ $PAGE->set_pagelayout('executablebook');
 echo $OUTPUT->header();
 $pageslug = trim(strip_tags($page->intro));
 $qmurl = $CFG->wwwroot . '/mod/qubitspage';
+$pq = parse_url($pageslug, PHP_URL_QUERY);
+parse_str(html_entity_decode($pq), $parsedpq);
 ?>
 
 <div id="__next"></div>
 <script id="__NEXT_DATA__" type="application/json">
-    {
-        "props": {
-            "pageProps": {}
-        },
-        "page": "<?php echo $pageslug; ?>",
+	{
+		"props": {
+			"pageProps": {},
+			"__N_SSG": true
+		},
 
-        "query": {},
-        "buildId": "KBNmaMY8_hUwQkFmcUMeO",
-        "nextExport": true,
-        "autoExport": true,
-        "isFallback": false,
-        "scriptLoader": []
-    }
+
+		"page": "/pdf",
+		"query": <?php echo json_encode($parsedpq); ?>,
+		"buildId": "G7GxyPIfk8vrAIEzQ0oJE",
+		"isFallback": false,
+		"gsp": true,
+		"scriptLoader": []
+	}
 </script>
+
 <?php
 echo $OUTPUT->footer();
 ?>

@@ -3,7 +3,7 @@
             <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-full-logo.svg" class="main-logo">
             <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-logo.svg" class="compact-logo">
 
-            <i class="icon fa fa-arrow-left arrow-left"></i>
+            <i class="icon fa qicon-icon-close-drawer arrow-left"></i>
 
         </div>
         {{{ output.qubits_left_navigation }}}
@@ -20,8 +20,15 @@ require(['jquery'], function($){
         $(this).find(".white-circle").removeClass("numbercolor");
     });
 
-    $(document).on("click", ".arrow", function(){
+    $(document).on("click", ".arrow, .sbicn", function(){
         $(this).parents(".nav-item").toggleClass("showMenu");
+    });
+
+    $(document).on("click", ".amlitms", function(){
+        let url = $(this).data("url");
+        $(this).parents(".nav-item").toggleClass("showMenu");
+        if(url)
+          $(location).attr("href", url);
     });
 
     $(window).on("resize", function (e) {
@@ -33,18 +40,18 @@ require(['jquery'], function($){
             function checkScreenSize() {
                 var newWindowWidth = $(window).width();
                 if (newWindowWidth < 578) {
-                    $(".fa-arrow-left").click(function () {
+                    $(".arrow-left").click(function () {
                         $(".sidebar").hide();
                         $(".sidebar-overlay").hide();
                         $(".qicon-menu").show();
                     });
                     $(".qicon-menu").click(function () {
-                        $(".sidebar").show().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });
+                        $(".sidebar").show();
                         $(".sidebar-overlay").show();
 
                     });
                     $(".sidebar-overlay").click(function () {
-                        $(".sidebar").hide().css({ "transition": "all 0.5s ease", "transition-delay": "3s" });;
+                        $(".sidebar").hide();
                         $(".sidebar-overlay").hide();
                         $(".qicon-menu").show();
                     });
@@ -54,7 +61,7 @@ require(['jquery'], function($){
                     });
                 }
                 else {
-                    $(".fa-arrow-left").click(function () {
+                    $(".arrow-left").click(function () {
                         $(".sidebar").addClass("close-bars");
                         $(".compact-logo").show();
                         $(".qicon-menu").show();

@@ -1,0 +1,184 @@
+.qicon-chevron-down-thin.arrow::after {
+  background: transparent !important;
+}
+body.reportdashboard,
+body.path-blocks-learnerscript {
+  background-color: #fff !important;
+}
+
+#widgetaction .htitle:hover .tooltiptext,
+.reportdashboard_header .htitle:hover .tooltiptext {
+  min-width: 170px !important;
+}
+body.reportdashboard span.coursefilter {
+  background: none !important;
+}
+#widgetaction a:hover {
+  background: none !important;
+  color: #fff !important;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu li:hover,
+body.path-blocks-reportdashboard ul.dropdown-content li:hover {
+  background: #1482e6 !important;
+  color: #fff !important;
+}
+
+.instancename:hover {
+  color: white !important;
+}
+
+.tiles_information h6,
+.tiles_information h1 {
+  margin-bottom: 0 !important;
+}
+
+body.reportdashboard .block_reporttiles .tiles_information table td {
+  padding-right: 15px !important;
+}
+
+body#page-blocks-learnerscript-viewreport #licenceresult span.dateicon,
+body#page-blocks-learnerscript-viewreport
+  #licenceresult
+  span.graphicon
+  > a.htitle {
+  background-color: #116cbf !important;
+}
+
+body .editreport.viewreport-active a,
+body .editreport.design-active a,
+body .editreport.permissions-active a,
+body .editreport.edit_icon-active a,
+body .editreport.schreportform-active a,
+body .editreport.editicon-active a,
+body .editreport.addgraphs:focus {
+  color: #116cbf !important;
+}
+body.reportdashboard
+  .block_reportdashboard
+  .dataTables_paginate
+  li.paginate_button.active {
+  background-color: #116cbf !important;
+}
+
+.spark-report svg {
+  vertical-align: top;
+}
+body.reportdashboard
+  .dataTables_wrapper
+  .dataTables_paginate
+  .paginate_button:hover {
+  background-color: #116cbf !important;
+}
+.ls-plotdata_container .editreport {
+  background-color: transparent !important;
+}
+.ls-plotdata_container .editreport:hover {
+  background-color: #d5d6d8 !important;
+}
+.searchreport:hover {
+  background-color: transparent !important;
+}
+body#page-blocks-rdDashboard,
+body.path-blocks-reporttiles,
+body.path-blocks-learnerscript {
+  background-color: #fff !important;
+}
+a:not([class]):focus {
+  background-color: transparent !important;
+}
+body.reportdashboard .block_reportdashboard .dataTable td {
+  vertical-align: middle !important;
+}
+body.path-blocks-reportdashboard
+  .dataTables_wrapper
+  .report_header_skew
+  .report_header_skew_content
+  .dataTables_length
+  select {
+  background-color: #1482e6 !important;
+  color: white !important;
+}
+
+body.reportdashboard.path-blocks-reportdashboard .reportdashboard_right {
+  float: right;
+  background-color: #dddbdb;
+  color: #000;
+  font-size: 14px !important;
+  line-height: 20px;
+  padding: 10px 20px !important;
+  border: 1px solid #e3e3e3;
+  border-top: 0 solid;
+  margin-top: 20px !important;
+  margin-right: 25px !important;
+  margin-bottom: 10px !important;
+  border-radius: 8px;
+  -webkit-border-radius: 8px !important;
+}
+
+body.reportdashboard.path-blocks-reportdashboard .reportdashboard_right:hover {
+  background-color: #b0afaf !important;
+}
+.pull-right .reportcolumnaction_columnsize {
+  margin-left: 3px !important;
+}
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button:active {
+  background-color: #116cbf !important;
+  background: #116cbf !important;
+}
+body.path-blocks-learnerscript a:hover {
+  text-decoration: underline !important;
+}
+.ls-plotdata_container {
+  text-align: left !important;
+}
+#licenceresult thead {
+  text-transform: uppercase;
+  height: 52px;
+}
+#licenceresult thead th {
+  vertical-align: middle;
+}
+body.path-blocks-learnerscript a:hover {
+  text-decoration: none !important;
+}
+.bulkupload button {
+  background-color: #1482e6;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  color: white;
+}
+.co_report_footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+body#page-blocks-learnerscript-viewreport
+  .dataTables_wrapper
+  .co_report_header
+  input:focus,
+.co_report_header input:focus {
+  border-color: #1482e6 !important;
+  outline: #1482e6 !important;
+  box-shadow: 0 0 0 0.2rem rgba(20, 130, 230, 0.5) !important;
+}
+#helpimg {
+  cursor: pointer;
+}
+body.reportdashboard.path-blocks-reportdashboard
+  .ui-dialog
+  .dashboard_widgets
+  #fitem_id_submitbutton,
+body.reportdashboard.path-blocks-reportdashboard
+  .ui-dialog
+  .reportslist.ui-dialog-content
+  .dashboard_widgets
+  > .row.form-group.fitem:last-child {
+  background-color: white !important;
+}
+
+option:not(:checked) {
+  background-color: #fff;
+  color: #1d2125;
+}

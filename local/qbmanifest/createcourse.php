@@ -97,10 +97,6 @@ class local_qbcourse extends external_api {
                             array(
                                 'shortname'=> 'cardcolour',
                                 'value' => trim($courses[0]['cardcolour'])
-                            ),
-                            array(
-                                'shortname'=> 'course001',
-                                'value' => trim($courses[0]['course001'])
                             )
                         )
                 
@@ -223,8 +219,16 @@ class local_qbcourse extends external_api {
             self::createpageactivity($cid,$sections,$s);
            }           
            else{
-            $DB->set_field('course_sections', 'name', trim($sections[$s]->title), array('uid' => trim($sections[$s]->uid)));
-            self::updatepageactivity($cid,$sections,$s);
+
+            $section = $DB->get_record('course_sections', array('uid' => trim($sections[$s]->uid)));
+            if($section){
+                $DB->set_field('course_sections', 'name', trim($sections[$s]->title), array('uid' => trim($sections[$s]->uid)));
+                self::updatepageactivity($cid,$sections,$s);
+            }
+            else{
+                $secid = self::createnewsection($cid,$sections[$s]);                
+                self::updatepageactivity($cid,$sections,$s);
+            }
            }
            
         }
@@ -244,20 +248,13 @@ class local_qbcourse extends external_api {
                 $DB->set_field('customfield_data', 'value', trim($otherfields->cardcolour), array('fieldid' => $cardcolour->id,'instanceid'=>$cid));
             }
             
-
-            $course001 = $DB->get_record('customfield_field', array('shortname' => 'course001'));
-            if($course001){
-                $DB->set_field('customfield_data', 'charvalue', trim($otherfields->course001), array('fieldid' => $course001->id,'instanceid'=>$cid));
-                $DB->set_field('customfield_data', 'value', trim($otherfields->course001), array('fieldid' => $course001->id,'instanceid'=>$cid));
-            }
-            
         }
         
     }
 
 
     public static function createpageactivity($cid,$sections,$sid) {
-        global  $DB;
+        global  $DB,$CFG;
 
            $sec = $DB->get_record('course_sections', array('course' => $cid,'section'=>$sid+1));
 
@@ -268,45 +265,33 @@ class local_qbcourse extends external_api {
 
                 for($a=0;$a<count($activities);$a++){
 
-                    if($activities[$a]->type == 'page'){
-                        $page = new stdClass();
-                        $page->course = $cid;
-                        $page->name = trim($activities[$a]->title);
+                    if($activities[$a]->type == 'page'){  
 
-                        if(empty($activities[$a]->description))
-                        $page->intro = '<p>.</p>';
-                        else
-                        $page->intro = $activities[$a]->description;
-
-                        $page->introformat = 1;
-
-                        if(empty($activities[$a]->content))
-                        $page->content = '<p>/</p>';
-                        else
-                        $page->content = $activities[$a]->content;
-
-                        $page->contentformat = 1;
-                        $page->legacyfiles = 0;
-                        $page->display = 5;
-                        $page->displayoptions = 'a:2:{s:10:"printintro";s:1:"0";s:17:"printlastmodified";s:1:"0";}';
-                        $page->revision = 1;
-                        $page->timemodified = time();
-                        $page->uid = $activities[$a]->uid;
-
-                        $page_id = $DB->insert_record('qubitspage', $page);
-
-                        $cm = new stdClass();
-
-                        $cm->course = $cid;
-                        $cm->module = self::qbget_module_id();
-                        $cm->instance = $page_id;
-                        $cm->section = $sec->id;
-                        $cm->added = time();
-                        $cm->completion = 1;
-                        
-                        $cm_id =  $DB->insert_record('course_modules', $cm);
+                        $cm_id = self::createqubitspage($cid,$activities[$a]->title,$activities[$a]->route, $activities[$a]->uid,$sec->id);   
 
                         $acts = $acts.','.$cm_id;
+                    }
+                    elseif($activities[$a]->type == 'assignment'){                       
+
+                        $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
+                        
+                        if(is_file($assfile)){
+                            $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }
+                    }
+                    elseif($activities[$a]->type == 'quiz'){                       
+
+                        $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
+                        
+                        if(is_file($quizfile)){
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }
                     }
                 }
 
@@ -320,28 +305,71 @@ class local_qbcourse extends external_api {
     }
 
     public static function updatepageactivity($cid,$sections,$sid) {
-        global  $DB;
+        global  $DB,$CFG;
 
         $activities = $sections[$sid]->children;
+        $acts = '';
+        $sec = $DB->get_record('course_sections', array('course' => $cid,'uid'=>$sections[$sid]->uid));
 
                 for($a=0;$a<count($activities);$a++){
                     if($activities[$a]->type == 'page'){
-                        
-                        $DB->set_field('qubitspage', 'name', trim($activities[$a]->title), array('uid' => $activities[$a]->uid));
 
-                        if(empty($activities[$a]->description))
-                        $DB->set_field('qubitspage', 'intro', '<p>.</p>', array('uid' => $activities[$a]->uid));                        
-                        else
-                        $DB->set_field('qubitspage', 'intro', $activities[$a]->description, array('uid' => $activities[$a]->uid));
-                       
-                        if(empty($activities[$a]->content))
-                        $DB->set_field('qubitspage', 'content', '<p>/</p>', array('uid' => $activities[$a]->uid));
-                        else
-                        $DB->set_field('qubitspage', 'content', $activities[$a]->content, array('uid' => $activities[$a]->uid));
+                        $rec = $DB->get_record('qubitspage', array('uid' => $activities[$a]->uid));
+
+                        if($rec){
                         
+                            $DB->set_field('qubitspage', 'name', trim($activities[$a]->title), array('uid' => $activities[$a]->uid));
+
+                            if(empty($activities[$a]->route))
+                            $DB->set_field('qubitspage', 'intro', '<p>.</p>', array('uid' => $activities[$a]->uid));                        
+                            else
+                            $DB->set_field('qubitspage', 'intro', $activities[$a]->route, array('uid' => $activities[$a]->uid));
+                        
+                            if(empty($activities[$a]->content))
+                            $DB->set_field('qubitspage', 'content', '<p>/</p>', array('uid' => $activities[$a]->uid));
+                            else
+                            $DB->set_field('qubitspage', 'content', $activities[$a]->content, array('uid' => $activities[$a]->uid));
+                        }
+                        else{
+
+                            $cm_id = self::createqubitspage($cid,$activities[$a]->title,$activities[$a]->route, $activities[$a]->uid,$sec->id); 
+
+                            $acts = $acts.','.$cm_id;
+                        }
 
                     }
-                 }
+                    elseif($activities[$a]->type == 'assignment'){                       
+
+                        $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
+                        
+                        if(is_file($assfile)){
+                           $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }                        
+                    }
+                    elseif($activities[$a]->type == 'quiz'){                       
+
+                        $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
+                        
+                        if(is_file($quizfile)){
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }
+                    }
+                }
+
+
+                 if($acts != ''){     
+                    if($sec->sequence != '')               
+                    $acts = $sec->sequence.$acts;
+                    else
+                    $acts = preg_replace('/,/', '', $acts, 1);
+                    $DB->set_field('course_sections', 'sequence', $acts, array('id' => $sec->id));
+                }
     }
 
     public static function qbget_module_id($module="qubitspage") {
@@ -354,5 +382,111 @@ class local_qbcourse extends external_api {
             return 0;
         }
     }
+
+    public static function createqubitspage($cid,$title,$route,$uid,$secid){
+        global $DB;
+                $page = new stdClass();
+                $page->course = $cid;
+                $page->name = trim($title);
+
+                if(empty($route))
+                $page->intro = '<p>.</p>';
+                else
+                $page->intro = $route;
+
+                $page->introformat = 1;
+
+                $page->content = '<p>.</p>';
+                
+
+                $page->contentformat = 1;
+                $page->legacyfiles = 0;
+                $page->display = 5;
+                $page->displayoptions = 'a:2:{s:10:"printintro";s:1:"0";s:17:"printlastmodified";s:1:"0";}';
+                $page->revision = 1;
+                $page->timemodified = time();
+                $page->uid = $uid;
+
+                $page_id = $DB->insert_record('qubitspage', $page);
+
+
+                $cm = new stdClass();
+
+                $cm->course = $cid;
+                $cm->module = self::qbget_module_id();
+                $cm->instance = $page_id;
+                $cm->section = $secid;
+                $cm->added = time();
+                $cm->completion = 1;
+                
+                $cm_id =  $DB->insert_record('course_modules', $cm);
+
+                
+
+                return $cm_id;
+    }
+
+    public static function createnewsection($cid,$section){
+        global $DB;
+        $secid = 0;
+
+        $sectiondb = $DB->get_record_sql("SELECT * FROM {course_sections} WHERE course=? order by id desc",[$cid]);
+        if($section){
+        $sectiondata = new stdClass();
+        $sectiondata->course = $cid;
+        $sectiondata->section = $sectiondb->section+1;
+        $sectiondata->name = trim($section->title);  
+        $sectiondata->summaryformat = 1;
+        $sectiondata->timemodified = time();
+        $sectiondata->uid = trim($section->uid);
+
+        $secid = $DB->insert_record('course_sections', $sectiondata);
+
+        }
+        
+        return $secid;
+
+    }
+
+    public static function createqbassignment($section,$aFile,$cid,$secid){
+        global $DB,$CFG;
+        
+        require_once($CFG->dirroot.'/mod/qbassign/externallib.php');
+       
+        $assData = file_get_contents($aFile);
+        $assData = stripslashes($assData);
+
+        $data = json_decode($assData, true);
+
+        $qa = new mod_qbassign_external();
+        
+       try {
+          return  $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size']);
+        }
+        catch(Error $e) { 
+            return;
+        }
+    }
+
+    public static function createqbquiz($section,$aFile,$cid,$secid){
+
+        global $DB,$CFG;
+        
+        require_once($CFG->dirroot.'/mod/qbassign/externallib.php');
+        $assData = file_get_contents($aFile);
+        $assData = stripslashes($assData);
+
+        $data = json_decode($assData, true);
+
+        $qa = new mod_qbassign_external();
+
+        try {
+        return $qa->quiz_addition($cid,1,$secid,$data["name"],$data["uid"],$data["description"],$data["questions"]);
+        }
+        catch(Error $e) {
+            return;
+        }
+    }
+    
 
 }

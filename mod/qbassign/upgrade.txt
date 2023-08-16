@@ -1,0 +1,179 @@
+This files describes API changes in the qbassign code.
+=== 4.1 ===
+* New method \qbassign::is_userid_filtered() has been implemented. It returns false if user id is filtered out by either
+  user preferences for grading table or submission status filter. Otherwise, returns true.
+* A new method was added to feedback/editpd/locallib.php - get_user_data_file_areas() This just returns the necessary file areas
+  for retrieving a complete feedback pdf.
+
+=== 4.0 ===
+* The method \qbassign::grading_disabled() now has optional $gradinginfo parameter to improve performance
+* Renderer (renderer.php) has been moved from mod root to classes/output/ to be more PSR compliant.
+* Class qbassign_header has been moved from renderable.php to classes/ouput/qbassign_header.php
+* Class qbassign_submion_status has been moved from renderable.php to classes/ouput/qbassign_submion_status.php
+* The external functions mod_qbassign_external::list_participants and mod_qbassign_external::get_participant now return a new field
+  "submissionstatus" indicating the submission status (new, draft, reopened or submitted). Empty when not submitted.
+
+=== 3.9 ===
+
+* The following functions, previously used (exclusively) by upgrade steps are not available anymore because of the upgrade cleanup performed for this version. See MDL-65809 for more info:
+    - get_qbassignments_with_rescaled_null_grades()
+
+=== 3.8 ===
+* The allow_image_conversion method has been added to the submissionplugins. It determines whether the submission plugin
+  allows image conversion or not. By default conversion is not allowed (except when overwritten in the submission plugin)
+* Webservice function mod_qbassign_get_submission_status, return value 'warnofungroupedusers', changed from PARAM_BOOL to PARAM_ALPHA. See the description for possible values.
+* The following functions have been finally deprecated and can not be used anymore:
+    * qbassign_scale_used()
+
+=== 3.7 ===
+* Submissions plugins should implement the "remove" function to remove data when "Remove submission" is used.
+
+=== 3.6 ===
+* The mod_qbassign_base_testcase unit test base class has been deprecated.
+  It encouraged poor unit test design and led to significant performance issues with unit tests. See MDL-55609 for
+  further information.
+* The function can_grade() now has optional $user parameter.
+* Feedback plugins can now specify whether or not they want to attach files to the
+  feedback that is stored in the gradebook via the new method files_for_gradebook().
+  An example of what this method would return is -
+  [
+      'contextid' => $modulecontext->id,
+      'component' => qbassignFEEDBACK_XYZ_COMPONENT,
+      'filearea' => qbassignFEEDBACK_XYZ_FILEAREA,
+      'itemid' => $grade->id
+  ]
+
+=== 3.5 ===
+* Functions qbassign:get_qbassign_grading_summary_renderable, qbassign:can_view_submission, qbassign:count_submissions_with_status,
+  qbassign:count_submissions_need_grading and mod_qbassign_external::get_submission_status now admit an additional group parameter.
+  This parameter can be used to force those functions to retrieve data only for the given group.
+
+=== 3.4 ===
+* qbassign::add_attempt requires that set_most_recent_team_submission() be called if attempting to use this function with a team
+  submission.
+
+=== 3.3.2 ===
+* qbassign_refresh_events() Now takes two additional parameters to refine the update to a specific instance. This function
+  now optionally takes the module instance object or ID, and the course module object or ID. Please try to send the full
+  objects instead of the ids to save DB calls.
+
+=== 3.3 ===
+* All pluginfile file serving functions now pass through the options to send_stored_file() (all qbassignment plugins should do
+  the same).
+* Fixed calendar event types for overridden due dates from 'close' to 'due'.
+* Removed calendar event type of 'open', since mod_qbassign only has the 'due' event type. No point in creating an override event
+for an event type that does not exist.
+
+=== 3.2 ===
+* External function mod_qbassign_external::get_qbassignments now returns additional optional fields:
+   - preventsubmissionnotingroup: Prevent submission not in group.
+   - submissionstatement and submissionstatementformat: When there is a submission statement defined.
+* Proper checking for empty submissions
+* Submission modification time checking - this will help students working in groups not clobber each others'
+  submissions
+* External functions that were returning file information now return the following file fields:
+  filename, filepath, mimetype, filesize, timemodified and fileurl.
+  Those fields are now marked as VALUE_OPTIONAL for backwards compatibility.
+  Please, note that previously the filename was part of the filepath field, now they are separated.
+* Submission and feedback plugins can now specify file areas related to their configuration data,
+  which will then be included in backup and restore; see qbassign_plugin::get_config_file_areas().
+* Submission and feedback plugins must now return the specific list of configs available for external functions,
+  this can be done implementing the new qbassign plugin method get_config_for_external()
+* Webservice function mod_qbassign_get_submissions returns a new field 'gradingstatus' from each submission.
+
+=== 3.1 ===
+* The feedback plugins now need to implement the is_feedback_modified() method. The default is to return true
+  for backwards compatibiltiy.
+* When downloading all submissions as a zip each students' files are in a separate folder, are no longer renamed
+  and the folder structure is kept intact.
+
+=== 3.0 ===
+* qbassign_submission_status renderable now requires $usergroups in its constructor
+* External function mod_qbassign_external::get_qbassignments now have a new optional parameter: includenotenrolledcourses.
+  Its default value is false, setting it to true will return qbassignments for courses a user can see even if it's not enroled.
+
+=== 2.9 ===
+* External parameter now returns PARAM_RAW instead of PARAM_TEXT for webservices using feedback comments.
+* External function mod_qbassign_external::get_qbassignments now returns additional optional fields:
+   - intro: qbassignment intro.
+   - introformat: Intro format.
+   - introattachments: Intro attachments files.
+
+=== 2.8 ===
+* Some DB changes were made to simplify the SQL required to query the latest attempt.
+  - The qbassign_submission table now has a column "latest" which is set to 1 for the latest submission attempt.
+  - There will always be a submission row if there is a grade (so the latest grade can be found by joining with the submission)
+  - There is a new submission status "new" for a submission that has never been attempted by a student (but the record exists purely
+    to mark the latest attempt number as 0). The function get_user_submission will create a record with the status set to "new"
+    by default (the previous default was "draft").
+
+=== 2.7 ===
+
+* Added setting sendstudentnotifications to qbassign DB table with admin defaults. This sets the default value for the
+  "Notify students" option on the grading forms. This setting can be retrieved via webservices.
+
+* Web service function mod_qbassign_save_grade has an additional optional parameter $advancedgradingdata which allows
+  advanced grading data to be used.
+* A new web service function mod_qbassign_save_grades has been added which allows multiple grades to be processed.
+* The event submission_updated() [mod/qbassign/classes/event/submission_updated.php] has been altered to now be an abstract class
+  for submission events in the submission plug-ins.
+
+=== 2.6.1 ===
+
+* format_text() is no longer used for formating qbassignment content to be used in events (qbassign_submission_onlinetex::save()) or
+  the word count (qbassign_submission_onlinetex::format_for_log()) in mod/qbassign/submission/onlinetex/locallib.php. format_text()
+  should only be used when displaying information to the screen. It was being used incorrectly before in these areas. Plugins using
+  the event assessable_uploaded() should use file_rewrite_pluginfile_urls() to translate the text back to the desired output.
+
+=== 2.6 ===
+* To see submission/grades of inactive users, user should have moodle/course:viewsuspendedusers capability.
+* count_* functions will return only active participants.
+* qbassign_submission_plugin->lock and unlock methods have an additional parameter for user flags. A user will not
+  always have a submission record when the submission is locked/unlocked.
+* Submission and feedback plugins can now participate in webservices. The plugin must implement get_external_parameters()
+  to describe the parameters it is expecting from the mod_qbassign_save_grade or mod_qbassign_save_submission functions. The
+  plugin will then handle the webservice via it's normal save() method with the extra data supplied in the $data argument.
+
+=== 2.5 ===
+
+* New feature - Attempt History
+
+    This adds settings so that a student can have build up a history of separate submission attempts and grades for the same
+    qbassignment.
+
+    Extra settings on the qbassign table are:
+    attemptreopenmethod - The way attempts can be reopened. One of:
+                            qbassign_ATTEMPT_REOPEN_METHOD_NONE - Attempts cannot be reopened (default)
+                            qbassign_ATTEMPT_REOPEN_METHOD_UNTIL_PASS - Attempts are reopened on grading until the gradebook
+                                                                      indicates this student has passed.
+                            qbassign_ATTEMPT_REOPEN_METHOD_MANUAL - Attempts are reopened on manually by the grader.
+    maxattempts - The maximum allowed number of attempts per student for this qbassign instance.
+
+    Extra settings on the submission and grade records:
+    attemptnumber - Starting from 0 until the latest attempt.
+
+    New table qbassign_user_flags holds user specific flags that were stored in the qbassign_grade table.  (contains qbassignment,
+    userid, extensionduedate, mailed and locked)
+
+    qbassign changes:
+        "get_user_grade" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_user_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        "get_group_submission" function has an extra optional parameter to retrieve a specific attempt number.
+        new "get_user_flags" function can retrieve the user flags for a specific user (extensionduedate, mailed and locked).
+        new "update_user_flags" function can update the user flags for a specific user (extensionduedate, mailed and locked).
+
+    qbassign_submission_plugin changes:
+        "precheck_submission" function now takes a submission record so you can determine which submission is being checked.
+        "submit_for_grading" function now takes a submission record so you can determine which submission is being submitted.
+        new function "copy_submission" can be implemented to copy submission data from one submission to a new one.
+
+    New renderable object "qbassign_attempt_history" for rendering the list of previous submissions.
+    New renderable object "qbassign_gradingmessage" for rendering a generic grading message.
+
+    qbassign_grading_table changes:
+        get_group_and_submission is now protected and should not be called from outside this class.
+
+
+=== Earlier changes ===
+
+* Were not documented in this way. Sorry.

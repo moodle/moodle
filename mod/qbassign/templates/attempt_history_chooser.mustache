@@ -1,0 +1,16 @@
+{{#submissioncount}}
+<div>
+    <a class="btn btn-secondary" href="#" data-region="attempt-chooser" data-submissions="submissions-list-{{uniqid}}">{{#str}}viewadifferentattempt, mod_qbassign{{/str}}</a>
+    <div class="hide" id="submissions-list-{{uniqid}}">
+        <div data-region="submissions-list">
+        {{#submissions}}
+            <label class="radio">
+                <input type="radio" name="select-attemptnumber" value="{{attemptnumber}}"/>
+                {{attemptsummary}}
+                <br><em>{{statussummary}}</em>
+            </label>
+        {{/submissions}}
+        </div>
+    </div>
+</div>
+{{/submissioncount}}

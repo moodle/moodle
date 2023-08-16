@@ -28,7 +28,12 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_qbmanifest';
-$plugin->version = 2022060100;
+$plugin->version = 2023080100;
 $plugin->release = 'v1.1';
 $plugin->requires = 2020061500;
 $plugin->maturity = MATURITY_ALPHA;
+
+$plugin->dependencies = [    
+    'mod_qubitspage' => ANY_VERSION,
+    'mod_qbassign' => ANY_VERSION    
+];
