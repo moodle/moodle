@@ -234,14 +234,14 @@ class renderer extends \plugin_renderer_base {
             $linktext = \html_writer::link($supportpage, $supportpage);
             $notification .= $linktext;
         }
-        $return = $this->output->notification($notification, 'notifyerror');
+        $return = $this->output->notification($notification, 'notifyerror', false);
 
         // Logout button.
         $url = new \moodle_url('/admin/tool/mfa/auth.php', ['logout' => 1]);
-        $btn = new \single_button($url, get_string('logout'), 'post', true);
+        $btn = new \single_button($url, get_string('logout'), 'post', \single_button::BUTTON_PRIMARY);
         $return .= $this->render($btn);
 
-        $return .= $this->guide_link();
+        $return .= $this->get_support_link();
 
         return $return;
     }
@@ -421,9 +421,9 @@ class renderer extends \plugin_renderer_base {
             $lockedusers = $DB->count_records_sql($sql, [$factor->name, $locklevel]);
             $enabled = $factor->is_enabled() ? \html_writer::tag('b', get_string('yes')) : get_string('no');
 
-            $actions = \html_writer::link( new moodle_url($this->page->url,
+            $actions = \html_writer::link( new \moodle_url($this->page->url,
                 ['reset' => $factor->name, 'sesskey' => sesskey()]), get_string('performbulk', 'tool_mfa'));
-            $lockedusers = \html_writer::link(new moodle_url($this->page->url, ['view' => $factor->name]), $lockedusers);
+            $lockedusers = \html_writer::link(new \moodle_url($this->page->url, ['view' => $factor->name]), $lockedusers);
 
             $table->data[] = [
                 $factor->get_display_name(),
@@ -439,13 +439,13 @@ class renderer extends \plugin_renderer_base {
     /**
      * Displays a table of all users with a locked instance of the given factor.
      *
-     * @param object $factor the factor class
+     * @param object_factor $factor the factor class
      * @return string the HTML for the table
      */
-    public function factor_locked_users_table(object $factor): string {
+    public function factor_locked_users_table(object_factor $factor): string {
         global $DB;
 
-        $table = new html_table();
+        $table = new \html_table();
         $table->attributes['class'] = 'generaltable table table-bordered w-auto';
         $table->attributes['style'] = 'width: auto; min-width: 50%';
         $table->head = [
@@ -477,25 +477,25 @@ class renderer extends \plugin_renderer_base {
 
         foreach ($records as $record) {
             // Construct profile link.
-            $proflink = \html_writer::link(new moodle_url('/user/profile.php',
+            $proflink = \html_writer::link(new \moodle_url('/user/profile.php',
                 ['id' => $record->id]), fullname($record));
 
             // IP link.
-            $creatediplink = \html_writer::link(new moodle_url('/iplookup/index.php',
+            $creatediplink = \html_writer::link(new \moodle_url('/iplookup/index.php',
                 ['ip' => $record->createdfromip]), $record->createdfromip);
-            $lastiplink = \html_writer::link(new moodle_url('/iplookup/index.php',
+            $lastiplink = \html_writer::link(new \moodle_url('/iplookup/index.php',
                 ['ip' => $record->lastip]), $record->lastip);
 
             // Deep link to logs.
             $logicon = $this->pix_icon('i/report', get_string('userlogs', 'tool_mfa'));
-            $actions = \html_writer::link(new moodle_url('/report/log/index.php', [
+            $actions = \html_writer::link(new \moodle_url('/report/log/index.php', [
                 'id' => 1, // Site.
                 'user' => $record->id,
             ]), $logicon);
 
-            $action = new confirm_action(get_string('resetfactorconfirm', 'tool_mfa', fullname($record)));
+            $action = new \confirm_action(get_string('resetfactorconfirm', 'tool_mfa', fullname($record)));
             $actions .= $this->action_link(
-                new moodle_url($this->page->url, ['reset' => $factor->name, 'id' => $record->id, 'sesskey' => sesskey()]),
+                new \moodle_url($this->page->url, ['reset' => $factor->name, 'id' => $record->id, 'sesskey' => sesskey()]),
                 $this->pix_icon('t/delete', get_string('resetconfirm', 'tool_mfa')),
                 $action
             );
@@ -514,17 +514,20 @@ class renderer extends \plugin_renderer_base {
     }
 
     /**
-     * Returns a html section render of the guide link template
+     * Returns a rendered support link.
+     * If the MFA guidance page is enabled, this is returned.
+     * Otherwise, the site support link is returned.
+     * If neither support link is configured, an empty string is returned.
      *
      * @return string
      */
-    public function guide_link(): string {
-        if (!get_config('tool_mfa', 'guidance')) {
-            return '';
+    public function get_support_link(): string {
+        // Try the guidance page link first.
+        if (get_config('tool_mfa', 'guidance')) {
+            return $this->render_from_template('tool_mfa/guide_link', []);
+        } else {
+            return $this->output->supportemail([], true);
         }
-        $html = $this->heading(get_string('needhelp', 'tool_mfa'), 3);
-        $html .= $this->render_from_template('tool_mfa/guide_link', []);
-        return $this->notification($html, 'info');
     }
 
     /**
@@ -532,17 +535,17 @@ class renderer extends \plugin_renderer_base {
      *
      * In certain situations, includes a script element which adds autosubmission behaviour.
      *
-     * @param \HTML_QuickForm_element $element element
+     * @param mixed $element element
      * @param bool $required if input is required field
      * @param bool $advanced if input is an advanced field
      * @param string|null $error error message to display
      * @param bool $ingroup True if this element is rendered as part of a group
      * @return mixed string|bool
      */
-    public function mform_element(HTML_QuickForm_element $element, bool $required,
+    public function mform_element(mixed $element, bool $required,
         bool $advanced, string|null $error, bool $ingroup): string|bool {
         $script = null;
-        if ($element instanceof tool_mfa\local\form\verification_field) {
+        if ($element instanceof \tool_mfa\local\form\verification_field) {
             if ($this->page->pagelayout === 'secure') {
                 $script = $element->secure_js();
             }
@@ -555,5 +558,86 @@ class renderer extends \plugin_renderer_base {
         }
 
         return $result;
+    }
+
+    /**
+     * Renders the verification form.
+     *
+     * @param object_factor $factor The factor to render the form for.
+     * @param login_form $form The login form object.
+     * @return string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function verification_form(object_factor $factor, login_form $form): string {
+        $allloginfactors = factor::get_all_user_login_factors();
+        $additionalfactors = [];
+        $disabledfactors = [];
+        $displaycount = 0;
+        $disablefactor = false;
+
+        foreach ($allloginfactors as $loginfactor) {
+            if ($loginfactor->name != $factor->name) {
+                $additionalfactor = [
+                        'name' => $loginfactor->name,
+                        'icon' => $loginfactor->get_icon(),
+                        'loginoption' => get_string('loginoption', 'factor_' . $loginfactor->name),
+                ];
+                // We mark the factor as disabled if it is locked.
+                // We store the disabled factors in a separate array so that they can be displayed at the bottom of the template.
+                if ($loginfactor->get_state() == factor::STATE_LOCKED) {
+                    $additionalfactor['loginoption'] = get_string('locked', 'tool_mfa', $additionalfactor['loginoption']);
+                    $additionalfactor['disable'] = true;
+                    $disabledfactors[] = $additionalfactor;
+                } else {
+                    $additionalfactors[] = $additionalfactor;
+                }
+                $displaycount++;
+            }
+        }
+
+        // We merge the additional factors placing the disabled ones last.
+        $alladitionalfactors = array_merge($additionalfactors, $disabledfactors);
+        $hasadditionalfactors = $displaycount > 0;
+        $authurl = new \moodle_url('/admin/tool/mfa/auth.php');
+
+        // Set the form to better display vertically.
+        $form->set_display_vertical();
+
+        // Check if we need to display a remaining attempts message.
+        $remattempts = $factor->get_remaining_attempts();
+        $verificationerror = $form->get_element_error('verificationcode');
+        if ($remattempts < get_config('tool_mfa', 'lockout') && !empty($verificationerror)) {
+            // Update the validation error for the code form field to include the remaining attempts.
+            $remattemptsstr = get_string('lockoutnotification', 'tool_mfa', $factor->get_remaining_attempts());
+            $updatederror = $verificationerror . '&nbsp;' . $remattemptsstr;
+            $form->set_element_error('verificationcode', $updatederror);
+        }
+
+        // If all attempts for this factor have been used, disable the form.
+        // This forces the user to choose another factor or cancel their login.
+        if ($remattempts <= 0) {
+            $disablefactor = true;
+            $form->freeze('verificationcode');
+
+            // Handle the trust factor if present.
+            if ($form->element_exists('factor_token_trust')) {
+                $form->freeze('factor_token_trust');
+            }
+        }
+
+        $context = [
+                'logintitle' => get_string('logintitle', 'factor_'.$factor->name),
+                'logindesc' => $factor->get_login_desc(),
+                'factoricon' => $factor->get_icon(),
+                'form' => $form->render(),
+                'hasadditionalfactors' => $hasadditionalfactors,
+                'additionalfactors' => $alladitionalfactors,
+                'authurl' => $authurl->out(),
+                'supportlink' => $this->get_support_link(),
+                'disablefactor' => $disablefactor
+        ];
+        return $this->render_from_template('tool_mfa/verification_form', $context);
     }
 }

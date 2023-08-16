@@ -22,15 +22,22 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-define([], function() {
-    return {
-        init: function() {
-            document.querySelector("#id_verificationcode").addEventListener('keyup', function() {
-                if (this.value.length == 6) {
-                    // Submits the closes form (parent).
-                    this.closest("form").submit();
-                }
-            });
+export const init = () => {
+    const codeInput = document.querySelector("#id_verificationcode");
+    const codeForm = codeInput.closest("form");
+    const submitButton = codeForm.querySelector("#id_submitbutton");
+
+    // Event listener for code input field.
+    codeInput.addEventListener('keyup', function() {
+        if (this.value.length >= 6) {
+            // Submits the closes form (parent).
+            codeForm.submit();
         }
-    };
-});
+    });
+
+    // Disable the submit button if the input field is disabled.
+    // This occurs if there are no more attempts left for the factor.
+    if (codeInput.disabled) {
+        submitButton.disabled = true;
+    }
+};
