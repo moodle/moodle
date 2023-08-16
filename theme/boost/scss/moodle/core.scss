@@ -42,6 +42,14 @@ $font-size-xs: ($font-size-base * .75) !default;
     }
 }
 
+@mixin optional-animation($animation) {
+    animation: $animation;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
@@ -382,9 +390,51 @@ img.resize {
 
     .dropdown-subpanel-content {
         max-width: $modal-sm;
+        box-shadow: 0 0 1rem rgba($black, .15);
 
         a:focus {
             outline: solid $primary;
+        }
+    }
+
+    .dropdown-subpanel-content.show {
+        @include optional-animation(0.15s animate-pop);
+    }
+
+    // Chevrons in sub panel items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            @extend .fa-solid;
+            content: fa-content($fa-var-chevron-right);
+        }
+        &::before {
+            display: none;
+        }
+    }
+}
+
+@keyframes animate-pop {
+    0% {
+        transform: scale(0.90, 0.90);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
+
+.dir-rtl .action-menu {
+    // Chevrons in subpanels items are always to end.
+    .dropdown-subpanel .dropdown-item {
+        &::after {
+            border: 0;
+            @extend .fa-solid;
+            content: fa-content($fa-var-chevron-left);
+        }
+
+        &::before {
+            display: none;
         }
     }
 }
