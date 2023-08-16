@@ -2067,6 +2067,8 @@
 }
 .fas,
 .fa-solid,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before,
 .moremenu .dropdown-item[aria-current=true]:before,
 .moremenu .dropdown-item.active:before,
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
@@ -2086,9 +2088,7 @@
 .dropup .dropdown-toggle::after,
 .dropright .dropdown-toggle::after,
 .dropleft .dropdown-toggle::before,
-.dropdown-toggle::after,
-.dropdown-item[aria-current=true]:before,
-.dropdown-item[aria-selected=true]:before {
+.dropdown-toggle::after {
   font-weight: 900;
 }
 
@@ -4926,6 +4926,8 @@
 .fa-sharp,
 .fas,
 .fa-solid,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before,
 .moremenu .dropdown-item[aria-current=true]:before,
 .moremenu .dropdown-item.active:before,
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
@@ -4946,8 +4948,6 @@
 .dropright .dropdown-toggle::after,
 .dropleft .dropdown-toggle::before,
 .dropdown-toggle::after,
-.dropdown-item[aria-current=true]:before,
-.dropdown-item[aria-selected=true]:before,
 .far,
 .fa-regular,
 .content-bank-container.view-grid .cb-unlisted::after,
@@ -4965,6 +4965,8 @@
 .fas,
 .fa-classic,
 .fa-solid,
+.dropdown-item[aria-current=true]:before,
+.dropdown-item[aria-selected=true]:before,
 .moremenu .dropdown-item[aria-current=true]:before,
 .moremenu .dropdown-item.active:before,
 .dir-rtl .navbar.fixed-top .usermenu .dropdown-menu .dropdown-item.carousel-navigation-link::after,
@@ -4985,8 +4987,6 @@
 .dropright .dropdown-toggle::after,
 .dropleft .dropdown-toggle::before,
 .dropdown-toggle::after,
-.dropdown-item[aria-current=true]:before,
-.dropdown-item[aria-selected=true]:before,
 .far,
 .fa-regular,
 .content-bank-container.view-grid .cb-unlisted::after {
@@ -25225,31 +25225,6 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   width: 112px;
 }
 
-.dropdown-item a {
-  display: block;
-  width: 100%;
-  color: #1d2125;
-}
-.dropdown-item.active, .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
-  outline: 0;
-  background-color: #0f6cbf;
-  color: #fff;
-}
-.dropdown-item.active a, .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
-  color: #fff;
-}
-.dropdown-item[aria-current=true], .dropdown-item[aria-selected=true] {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.dropdown-item[aria-current=true]:before, .dropdown-item[aria-selected=true]:before {
-  content: "\f00c";
-  position: absolute;
-  left: 0.4rem;
-  font-size: 0.7rem;
-}
-
 .competency-tree ul {
   padding-left: 1.5rem;
 }
@@ -38199,6 +38174,90 @@ div.editor_atto_toolbar button .icon {
 }
 .moodlenet-share-dialog .modal-footer .moodlenet-share-to {
   margin-right: auto;
+}
+
+/**
+ * Dropdown menu Moodle specific styles.
+ */
+.dropdown-item a {
+  display: block;
+  width: 100%;
+  color: #1d2125;
+}
+.dropdown-item.active, .dropdown-item:active, .dropdown-item:hover, .dropdown-item:focus, .dropdown-item:focus-within {
+  outline: 0;
+  background-color: #0f6cbf;
+  color: #fff;
+}
+.dropdown-item.active a, .dropdown-item:active a, .dropdown-item:hover a, .dropdown-item:focus a, .dropdown-item:focus-within a {
+  color: #fff;
+}
+.dropdown-item[aria-current=true], .dropdown-item[aria-selected=true] {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.dropdown-item[aria-current=true]:before, .dropdown-item[aria-selected=true]:before {
+  content: "\f00c";
+  position: absolute;
+  left: 0.4rem;
+  font-size: 0.7rem;
+}
+
+.dropdown-item.text-primary {
+  color: #0f6cbf;
+}
+.dropdown-item.text-primary:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-secondary {
+  color: #ced4da;
+}
+.dropdown-item.text-secondary:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-success {
+  color: #357a32;
+}
+.dropdown-item.text-success:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-info {
+  color: #008196;
+}
+.dropdown-item.text-info:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-warning {
+  color: #f0ad4e;
+}
+.dropdown-item.text-warning:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-danger {
+  color: #ca3120;
+}
+.dropdown-item.text-danger:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-light {
+  color: #f8f9fa;
+}
+.dropdown-item.text-light:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item.text-dark {
+  color: #343a40;
+}
+.dropdown-item.text-dark:hover {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 body {
