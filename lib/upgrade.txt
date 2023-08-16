@@ -79,6 +79,8 @@ information provided here is intended especially for developers.
 * The behat step I choose "WHATEVER" in the open action menu is now compatible with action menus subpanels
   using the ">" symbol to suparate the item link text and subitem one. For example:
   - I choose "Group mode > Visible groups" in the open action menu
+* addHelpButton() function has a new optional $a parameter to allow variables with translation strings.
+* help_icon constructor has a new optional $a parameter to allow variables with translation strings.
 
 === 4.2 ===
 

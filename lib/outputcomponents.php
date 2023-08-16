@@ -457,16 +457,24 @@ class help_icon implements renderable, templatable {
     public $linktext = null;
 
     /**
+     * @var mixed An object, string or number that can be used within translation strings
+     */
+    public $a = null;
+
+    /**
      * Constructor
      *
      * @param string $identifier string for help page title,
      *  string with _help suffix is used for the actual help text.
      *  string with _link suffix is used to create a link to further info (if it exists)
      * @param string $component
+     * @param string|object|array|int $a An object, string or number that can be used
+     *      within translation strings
      */
-    public function __construct($identifier, $component) {
+    public function __construct($identifier, $component, $a = null) {
         $this->identifier = $identifier;
         $this->component  = $component;
+        $this->a = $a;
     }
 
     /**
@@ -491,7 +499,7 @@ class help_icon implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG;
 
-        $title = get_string($this->identifier, $this->component);
+        $title = get_string($this->identifier, $this->component, $this->a);
 
         if (empty($this->linktext)) {
             $alt = get_string('helpprefix2', '', trim($title, ". \t"));
@@ -499,7 +507,7 @@ class help_icon implements renderable, templatable {
             $alt = get_string('helpwiththis');
         }
 
-        $data = get_formatted_help_string($this->identifier, $this->component, false);
+        $data = get_formatted_help_string($this->identifier, $this->component, false, $this->a);
 
         $data->alt = $alt;
         $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
