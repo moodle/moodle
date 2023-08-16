@@ -82,6 +82,11 @@
     border-radius: 0 200px 200px 0;
 }
 
+.path-mod-book.dir-rtl .btn-previous .icon,
+.path-mod-book.dir-rtl .btn-next .icon {
+    transform: scale(-1, -1); /* Flip the icons in RTL languages */
+}
+
 .path-mod-book .btn-previous .icon,
 .path-mod-book .btn-next .icon {
     font-size: 24px;
