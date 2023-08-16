@@ -53,8 +53,8 @@ require_once($CFG->dirroot.'/mod/lti/locallib.php');
 
 class mod_lti_mod_form extends moodleform_mod {
 
-    /** @var int|null the typeid or null if the instance form is being created for a manually configured tool instance.*/
-    protected ?int $typeid;
+    /** @var int the tool typeid, or 0 if the instance form is being created for a manually configured tool instance.*/
+    protected int $typeid;
 
     /** @var string|null type */
     protected ?string $type;
@@ -74,11 +74,13 @@ class mod_lti_mod_form extends moodleform_mod {
 
         // Setup some of the pieces used to control display in the form definition() method.
         // Type ID parameter being passed when adding an preconfigured tool from activity chooser.
-        $this->typeid = optional_param('typeid', null, PARAM_INT);
+        $this->typeid = optional_param('typeid', 0, PARAM_INT);
         $this->type = optional_param('type', null, PARAM_ALPHA);
 
         // Only permit construction if the form deals with editing an existing instance (current->id not empty), or creating an
-        // instance from a preconfigured tool type ($this->typeid not empty).
+        // instance from a preconfigured tool type ($this->typeid not empty). Make an exception for callers, such as core_completion
+        // which aren't instantiating the form with the expected data, by checking whether the page has been set up, which is the
+        // case for normal uses.
         global $PAGE;
         if ($PAGE->has_set_url() && str_contains($PAGE->url, '/course/modedit.php')) {
             if (empty($this->typeid) && empty($current->id)) {
@@ -89,11 +91,253 @@ class mod_lti_mod_form extends moodleform_mod {
         parent::__construct($current, $section, $cm, $course);
     }
 
+    /**
+     * Defines the form for legacy instances. Here tool config is frozen because the manual configuration method is deprecated.
+     *
+     * @param array $instancetypes the array of options for the legacy 'preconfigured tools' select.
+     * @return void
+     */
+    protected function legacy_instance_form_definition(array $instancetypes): void {
+        global $OUTPUT;
+
+        // The legacy form handles instances which are either entirely manually configured (current->typeid = 0), or which are
+        // manually configured and have been domain-matched to a preconfigured tool (current->typeid != 0).
+        $manualinstance = empty($this->current->typeid);
+        $matchestoolnotavailabletocourse = !$manualinstance;
+        $typeid = $manualinstance ? '0' : $this->current->typeid;
+
+        // Since 'mod/lti:addmanualinstance' capability is deprecated, determining which users may have had access to the certain
+        // form fields (the manual config fields) isn't straightforward. Users without 'mod/lti:addmanualinstance' would have only
+        // been permitted to edit the basic instance fields (name, etc.), so care must be taken not to display the config fields to
+        // these users. Users who can add/edit course tools (mod/lti:addcoursetool) are able to view tool information anyway, via
+        // the tool definitions, so this capability is used as a replacement, to control access to these tool config fields.
+        $canviewmanualconfig = has_capability('mod/lti:addcoursetool', $this->context);
+        $showtypes = has_capability('mod/lti:addpreconfiguredinstance', $this->context);
+
+        if ($manualinstance && !$canviewmanualconfig) {
+            // If you cannot add a manual instance and this is already a manual instance, then remove the 'types' selector.
+            $showtypes = false;
+        }
+
+        $mform =& $this->_form;
+
+        // Show the deprecation notice, regardless of whether the user can view the tool configuration details or not.
+        // They will still see locked privacy fields and should be informed as to why that is.
+        $mform->addElement('html', $OUTPUT->notification(
+            get_string('editmanualinstancedeprecationwarning', 'mod_lti', get_docs_url('External_tool')),
+            \core\output\notification::NOTIFY_WARNING, false)
+        );
+
+        // Adding the "general" fieldset, where all the common settings are shown.
+        $mform->addElement('html', "<div data-attribute='dynamic-import' hidden aria-hidden='true' role='alert'></div>");
+        $mform->addElement('header', 'general', get_string('general', 'form'));
+
+        // Adding the standard "name" field.
+        $mform->addElement('text', 'name', get_string('basicltiname', 'lti'), ['size' => '64']);
+        $mform->setType('name', PARAM_TEXT);
+        $mform->addRule('name', null, 'required', null, 'client');
+        $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
+        // Adding the optional "intro" and "introformat" pair of fields.
+        $this->standard_intro_elements(get_string('basicltiintro', 'lti'));
+        $mform->setAdvanced('introeditor');
+
+        // Display the label to the right of the checkbox so it looks better & matches rest of the form.
+        if ($mform->elementExists('showdescription')) {
+            $coursedesc = $mform->getElement('showdescription');
+            if (!empty($coursedesc)) {
+                $coursedesc->setText(' ' . $coursedesc->getLabel());
+                $coursedesc->setLabel('&nbsp');
+            }
+        }
+
+        $mform->setAdvanced('showdescription');
+
+        $mform->addElement('checkbox', 'showtitlelaunch', get_string('display_name', 'lti'));
+        $mform->setAdvanced('showtitlelaunch');
+        $mform->addHelpButton('showtitlelaunch', 'display_name', 'lti');
+
+        $mform->addElement('checkbox', 'showdescriptionlaunch', get_string('display_description', 'lti'));
+        $mform->setAdvanced('showdescriptionlaunch');
+        $mform->addHelpButton('showdescriptionlaunch', 'display_description', 'lti');
+
+        if ($showtypes) {
+            if ($manualinstance) {
+                // Legacy, manually configured instances: only freeze the element (not hardFreeze) so that disabledIf() still works.
+                // The data in the select is restricted so that only the current value is deemed valid, preventing DOM-edit changes,
+                // which are possible with frozen elements.
+                $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
+                $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
+                $manualinstanceoption = $instancetypes[0]; // The 'Automatic, based on tool URL' option.
+                $tooltypes->addOption($manualinstanceoption->name, 0, []);
+                $mform->freeze('typeid');
+            } else if ($matchestoolnotavailabletocourse) {
+                // Legacy instances domain-matched to site tools: use a hidden field for typeid and a static visual element when
+                // displaying these instances so that the string value of typeid is still visible when the element is frozen.
+                // This gets around the fact that a frozen select without a selected option will display nothing.
+                $mform->addElement('hidden', 'typeid', $typeid);
+                $mform->setType('typeid', PARAM_INT);
+
+                $manualinstanceoption = $instancetypes[0]; // The 'Automatic, based on tool URL' option.
+                $mform->addElement('static', 'typeiddisplayonly', get_string('external_tool_type', 'lti'),
+                    $manualinstanceoption->name);
+            }
+        } else {
+            // Need to submit these still, but hidden to avoid instructor modification.
+            $mform->addElement('hidden', 'typeid', $typeid);
+            $mform->setType('typeid', PARAM_INT);
+        }
+
+        // Disable the content selection button unconditionally. Freeze/hardFreeze is unsuitable for buttons.
+        $mform->addElement('button', 'selectcontent', get_string('selectcontent', 'lti'), ['disabled' => 'disabled']);
+        $mform->disabledIf('selectcontent', 'typeid', 'eq', $typeid);
+
+        if ($canviewmanualconfig) {
+            $mform->addElement('text', 'toolurl', get_string('launch_url', 'lti'), ['size' => '64']);
+            $mform->setType('toolurl', PARAM_URL);
+            $mform->addHelpButton('toolurl', 'launch_url', 'lti');
+
+            $mform->addElement('text', 'securetoolurl', get_string('secure_launch_url', 'lti'), ['size' => '64']);
+            $mform->setType('securetoolurl', PARAM_URL);
+            $mform->setAdvanced('securetoolurl');
+            $mform->addHelpButton('securetoolurl', 'secure_launch_url', 'lti');
+        } else {
+            // Need to submit these still, but hidden to avoid instructor modification.
+            $mform->addElement('hidden', 'toolurl', '', ['id' => 'id_toolurl']);
+            $mform->setType('toolurl', PARAM_URL);
+            $mform->addElement('hidden', 'securetoolurl', '', ['id' => 'id_securetoolurl']);
+            $mform->setType('securetoolurl', PARAM_URL);
+        }
+
+        $mform->addElement('hidden', 'lineitemresourceid', '', ['id' => 'id_lineitemresourceid']);
+        $mform->setType('lineitemresourceid', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'lineitemtag', '', ['id' => 'id_lineitemtag']);
+        $mform->setType('lineitemtag', PARAM_TEXT);
+
+        $mform->addElement('hidden', 'lineitemsubreviewurl', '', ['id' => 'id_lineitemsubreviewurl']);
+        $mform->setType('lineitemsubreviewurl', PARAM_URL);
+
+        $mform->addElement('hidden', 'lineitemsubreviewparams', '', ['id' => 'id_lineitemsubreviewparams']);
+        $mform->setType('lineitemsubreviewparams', PARAM_TEXT);
+
+        $launchoptions = [
+            LTI_LAUNCH_CONTAINER_DEFAULT => get_string('default', 'lti'),
+            LTI_LAUNCH_CONTAINER_EMBED => get_string('embed', 'lti'),
+            LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS => get_string('embed_no_blocks', 'lti'),
+            LTI_LAUNCH_CONTAINER_REPLACE_MOODLE_WINDOW => get_string('existing_window', 'lti'),
+            LTI_LAUNCH_CONTAINER_WINDOW => get_string('new_window', 'lti')
+        ];
+        $mform->addElement('select', 'launchcontainer', get_string('launchinpopup', 'lti'), $launchoptions);
+        $mform->addHelpButton('launchcontainer', 'launchinpopup', 'lti');
+        $mform->setAdvanced('launchcontainer');
+
+        if ($canviewmanualconfig) {
+            $mform->addElement('text', 'resourcekey', get_string('resourcekey', 'lti'));
+            $mform->setType('resourcekey', PARAM_TEXT);
+            $mform->setAdvanced('resourcekey');
+            $mform->addHelpButton('resourcekey', 'resourcekey', 'lti');
+            $mform->setForceLtr('resourcekey');
+
+            $mform->addElement('passwordunmask', 'password', get_string('password', 'lti'));
+            $mform->setType('password', PARAM_TEXT);
+            $mform->setAdvanced('password');
+            $mform->addHelpButton('password', 'password', 'lti');
+
+            $mform->addElement('textarea', 'instructorcustomparameters', get_string('custom', 'lti'), ['rows' => 4, 'cols' => 60]);
+            $mform->setType('instructorcustomparameters', PARAM_TEXT);
+            $mform->setAdvanced('instructorcustomparameters');
+            $mform->addHelpButton('instructorcustomparameters', 'custom', 'lti');
+            $mform->setForceLtr('instructorcustomparameters');
+
+            $mform->addElement('text', 'icon', get_string('icon_url', 'lti'), ['size' => '64']);
+            $mform->setType('icon', PARAM_URL);
+            $mform->setAdvanced('icon');
+            $mform->addHelpButton('icon', 'icon_url', 'lti');
+
+            $mform->addElement('text', 'secureicon', get_string('secure_icon_url', 'lti'), ['size' => '64']);
+            $mform->setType('secureicon', PARAM_URL);
+            $mform->setAdvanced('secureicon');
+            $mform->addHelpButton('secureicon', 'secure_icon_url', 'lti');
+        } else {
+            // Need to submit these still, but hidden to avoid instructor modification.
+            $mform->addElement('hidden', 'resourcekey', '', ['id' => 'id_resourcekey']);
+            $mform->setType('resourcekey', PARAM_TEXT);
+            $mform->addElement('hidden', 'password', '', ['id' => 'id_password']);
+            $mform->setType('password', PARAM_TEXT);
+            $mform->addElement('hidden', 'instructorcustomparameters', '', ['id' => 'id_instructorcustomparameters']);
+            $mform->setType('instructorcustomparameters', PARAM_TEXT);
+            $mform->addElement('hidden', 'icon', '', ['id' => 'id_icon']);
+            $mform->setType('icon', PARAM_URL);
+            $mform->addElement('hidden', 'secureicon', '', ['id' => 'id_secureicon']);
+            $mform->setType('secureicon', PARAM_URL);
+        }
+
+        // Add privacy preferences fieldset where users choose whether to send their data.
+        $mform->addElement('header', 'privacy', get_string('privacy', 'lti'));
+
+        $mform->addElement('advcheckbox', 'instructorchoicesendname', get_string('share_name', 'lti'));
+        $mform->addHelpButton('instructorchoicesendname', 'share_name', 'lti');
+
+        $mform->addElement('advcheckbox', 'instructorchoicesendemailaddr', get_string('share_email', 'lti'));
+        $mform->addHelpButton('instructorchoicesendemailaddr', 'share_email', 'lti');
+
+        $mform->addElement('advcheckbox', 'instructorchoiceacceptgrades', get_string('accept_grades', 'lti'));
+        $mform->addHelpButton('instructorchoiceacceptgrades', 'accept_grades', 'lti');
+
+        // Add standard course module grading elements.
+        $this->standard_grading_coursemodule_elements();
+
+        // Add standard elements, common to all modules.
+        $this->standard_coursemodule_elements();
+        $mform->setAdvanced('cmidnumber');
+
+        // Add standard buttons, common to all modules.
+        $this->add_action_buttons();
+
+        $mform->hardFreeze([
+            'toolurl',
+            'securetoolurl',
+            'launchcontainer',
+            'resourcekey',
+            'password',
+            'instructorcustomparameters',
+            'icon',
+            'secureicon',
+            'instructorchoicesendname',
+            'instructorchoicesendemailaddr',
+            'instructorchoiceacceptgrades'
+        ]);
+    }
+
     public function definition() {
         global $PAGE, $OUTPUT, $COURSE;
 
         if ($this->type) {
             component_callback("ltisource_$this->type", 'add_instance_hook');
+        }
+
+        // Determine whether this tool instance is a manually configure instance (now deprecated).
+        $manualinstance = empty($this->current->typeid) && empty($this->typeid);
+
+        // Determine whether this tool instance is using a domain-matched site tool which is not visible at the course level.
+        // In such a case, the instance has a typeid (the site tool) and toolurl (the url used to domain match the site tool) set,
+        // and the type still exists (is not deleted).
+        $instancetypes = lti_get_types_for_add_instance();
+        $matchestoolnotavailabletocourse = false;
+        if (!$manualinstance && !empty($this->current->toolurl)) {
+            if (lti_get_type_config($this->current->typeid)) {
+                $matchestoolnotavailabletocourse = !in_array($this->current->typeid, array_keys($instancetypes));
+            }
+        }
+
+        // Display the legacy form, presenting a read-only view of the configuration for unsupported (since 4.3) instances, which:
+        // - Are manually configured instances (no longer supported. course tools should be configured and used instead).
+        // - Are domain-matched to a hidden site level tool (no longer supported. to be replaced by URL-based course tool creation)
+        // Instances based on preconfigured tools and which are not domain matched as above, are still valid and will be shown using
+        // the non-legacy form.
+        if ($manualinstance || $matchestoolnotavailabletocourse) {
+            return $this->legacy_instance_form_definition($instancetypes);
         }
 
         // Since 'mod/lti:addmanualinstance' capability is deprecated, determining which users may have had access to the certain
@@ -102,41 +346,15 @@ class mod_lti_mod_form extends moodleform_mod {
         // these users. Users who can add/edit course tools (mod/lti:addcoursetool) are able to view tool information anyway, via
         // the tool definitions, so this capability is used as a replacement, to control access to these tool config fields.
         $canviewmanualconfig = has_capability('mod/lti:addcoursetool', $this->context);
-        $manualinstance = empty($this->current->typeid) && empty($this->typeid);
 
         // Show configuration details only if not preset (when new) or user has the capabilities to do so (when editing).
         if ($this->_instance) {
             $showtypes = has_capability('mod/lti:addpreconfiguredinstance', $this->context);
-            if ($manualinstance && !$canviewmanualconfig) {
-                // If you cannot add a manual instance and this is already a manual instance, then
-                // remove the 'types' selector.
-                $showtypes = false;
-            }
         } else {
-            $showtypes = !$this->typeid;
-        }
-
-        // Determine whether this tool instance is using a tool which is not visible at the course level, but which does exist.
-        // This indicates that the instance has either:
-        // - Been configured manually, and was domain matched to a site tool in the past.
-        // - Been configured using a preconfigured tool that is now no longer visible in the course.
-        // In the case of the domain matched tool, tool URL will be set.
-        $instancetypes = lti_get_types_for_add_instance();
-        $matchestoolnotavailabletocourse = false;
-        if (!$manualinstance && !empty($this->current->toolurl) && lti_get_type_config($this->current->typeid)) {
-            // Type was found, so it's likely been domain matched.
-            $matchestoolnotavailabletocourse = !in_array($this->current->typeid, array_keys($instancetypes));
+            $showtypes = false; // Never show the preconfigured tools selector for new instances.
         }
 
         $mform =& $this->_form;
-
-        // Show the deprecation notice when displaying any manually configured instance, regardless of whether the user can view
-        // the tool configuration details or not. They will still see locked privacy fields and should be told why that is.
-        if ($manualinstance || $matchestoolnotavailabletocourse) {
-            $mform->addElement('html', $OUTPUT->notification(
-                get_string('editmanualinstancedeprecationwarning', 'mod_lti', get_docs_url('External_tool')),
-                \core\output\notification::NOTIFY_WARNING, false));
-        }
 
         // Adding the "general" fieldset, where all the common settings are shown.
         $mform->addElement('html', "<div data-attribute='dynamic-import' hidden aria-hidden='true' role='alert'></div>");
@@ -147,6 +365,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
+
         // Adding the optional "intro" and "introformat" pair of fields.
         $this->standard_intro_elements(get_string('basicltiintro', 'lti'));
         $mform->setAdvanced('introeditor');
@@ -177,73 +396,52 @@ class mod_lti_mod_form extends moodleform_mod {
         $noncontentitemtypes = [];
 
         if ($showtypes) {
-            if ($manualinstance) {
-                // Legacy, manually configured instances: only freeze the element (not hardFreeze) so that disabledIf() still works.
-                // The data in the select is restricted so that only the current value is deemed valid, preventing DOM-edit changes,
-                // which are possible with frozen elements.
-                $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
-                $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
-                $manualinstanceoption = $instancetypes[0]; // The 'Automatic, based on tool URL' option.
-                $tooltypes->addOption($manualinstanceoption->name, 0, []);
-                $mform->freeze('typeid');
-            } else if ($matchestoolnotavailabletocourse) {
-                // Legacy instances domain-matched to site tools: use a hidden field for typeid and a static visual element when
-                // displaying these instances so that the string value of typeid is still visible when the element is frozen.
-                // This gets around the fact that a frozen select without a selected option will display nothing.
-                $mform->addElement('hidden', 'typeid', $this->current->typeid);
-                $mform->setType('typeid', PARAM_INT);
+            // To prevent the use of manually configured instances, existing instances which are using a preconfigured tool will
+            // not display the option "Automatic, based on tool URL" in the preconfigured tools select. This prevents switching
+            // from an instance configured using a preconfigured tool to an instance that is manually configured.
+            unset($instancetypes[0]);
 
-                $manualinstanceoption = $instancetypes[0]; // The 'Automatic, based on tool URL' option.
-                $mform->addElement('static', 'typeiddisplayonly', get_string('external_tool_type', 'lti'),
-                    $manualinstanceoption->name);
-            } else {
-                // To prevent the use of manually configured instances, existing instances which are using a preconfigured tool will
-                // not display the option "Automatic, based on tool URL" in the preconfigured tools select. This prevents switching
-                // from an instance configured using a preconfigured tool to an instance that is manually configured.
-                unset($instancetypes[0]);
+            $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
+            if ($this->typeid) {
+                $mform->getElement('typeid')->setValue($this->typeid);
+            }
+            $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
-                $tooltypes = $mform->addElement('select', 'typeid', get_string('external_tool_type', 'lti'));
-                if ($this->typeid) {
-                    $mform->getElement('typeid')->setValue($this->typeid);
+            foreach ($instancetypes as $id => $type) {
+                if (!empty($type->toolproxyid)) {
+                    $toolproxy[] = $type->id;
+                    $attributes = array('globalTool' => 1, 'toolproxy' => 1);
+                    $enabledcapabilities = explode("\n", $type->enabledcapability);
+                    if (!in_array('Result.autocreate', $enabledcapabilities) ||
+                        in_array('BasicOutcome.url', $enabledcapabilities)) {
+                        $attributes['nogrades'] = 1;
+                    }
+                    if (!in_array('Person.name.full', $enabledcapabilities) &&
+                        !in_array('Person.name.family', $enabledcapabilities) &&
+                        !in_array('Person.name.given', $enabledcapabilities)) {
+                        $attributes['noname'] = 1;
+                    }
+                    if (!in_array('Person.email.primary', $enabledcapabilities)) {
+                        $attributes['noemail'] = 1;
+                    }
+                } else if ($type->course == $COURSE->id) {
+                    $attributes = array('editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain);
+                } else if ($id != 0) {
+                    $attributes = array('globalTool' => 1, 'domain' => $type->tooldomain);
+                } else {
+                    $attributes = array();
                 }
-                $mform->addHelpButton('typeid', 'external_tool_type', 'lti');
 
-                foreach ($instancetypes as $id => $type) {
-                    if (!empty($type->toolproxyid)) {
-                        $toolproxy[] = $type->id;
-                        $attributes = array('globalTool' => 1, 'toolproxy' => 1);
-                        $enabledcapabilities = explode("\n", $type->enabledcapability);
-                        if (!in_array('Result.autocreate', $enabledcapabilities) ||
-                            in_array('BasicOutcome.url', $enabledcapabilities)) {
-                            $attributes['nogrades'] = 1;
-                        }
-                        if (!in_array('Person.name.full', $enabledcapabilities) &&
-                            !in_array('Person.name.family', $enabledcapabilities) &&
-                            !in_array('Person.name.given', $enabledcapabilities)) {
-                            $attributes['noname'] = 1;
-                        }
-                        if (!in_array('Person.email.primary', $enabledcapabilities)) {
-                            $attributes['noemail'] = 1;
-                        }
-                    } else if ($type->course == $COURSE->id) {
-                        $attributes = array('editable' => 1, 'courseTool' => 1, 'domain' => $type->tooldomain);
-                    } else if ($id != 0) {
-                        $attributes = array('globalTool' => 1, 'domain' => $type->tooldomain);
+                if ($id) {
+                    $config = lti_get_type_config($id);
+                    if (!empty($config['contentitem'])) {
+                        $attributes['data-contentitem'] = 1;
+                        $attributes['data-id'] = $id;
                     } else {
-                        $attributes = array();
+                        $noncontentitemtypes[] = $id;
                     }
-
-                    if ($id) {
-                        $config = lti_get_type_config($id);
-                        if (!empty($config['contentitem'])) {
-                            $attributes['data-contentitem'] = 1;
-                            $attributes['data-id'] = $id;
-                        } else {
-                            $noncontentitemtypes[] = $id;
-                        }
-                    }
-                    $tooltypes->addOption($type->name, $id, $attributes);
                 }
+                $tooltypes->addOption($type->name, $id, $attributes);
             }
         } else {
             $mform->addElement('hidden', 'typeid', $this->typeid);
@@ -270,16 +468,10 @@ class mod_lti_mod_form extends moodleform_mod {
         }
         $contentbuttonlabel = get_string('selectcontent', 'lti');
         $contentbutton = $mform->addElement('button', 'selectcontent', $contentbuttonlabel, $contentbuttonattributes);
-        // Disable select content button if the selected tool doesn't support content item or it's set to Automatic.
+        // Disable select content button if the selected tool doesn't support content item selection.
         if ($showtypes) {
             $allnoncontentitemtypes = $noncontentitemtypes;
-            $allnoncontentitemtypes[] = '0'; // Add option value for "Automatic, based on tool URL".
             $mform->disabledIf('selectcontent', 'typeid', 'in', $allnoncontentitemtypes);
-
-            // Always disable select content for legacy tool instances domain-matched to site tools.
-            if ($matchestoolnotavailabletocourse) {
-                $mform->disabledIf('selectcontent', 'typeid', 'in', [$this->current->typeid]);
-            }
         }
 
         if ($canviewmanualconfig) {
@@ -401,70 +593,54 @@ class mod_lti_mod_form extends moodleform_mod {
         // Add standard buttons, common to all modules.
         $this->add_action_buttons();
 
-        $editurl = new moodle_url('/mod/lti/instructor_edit_tool_type.php',
-                array('sesskey' => sesskey(), 'course' => $COURSE->id));
-        $ajaxurl = new moodle_url('/mod/lti/ajax.php');
-
         if (!empty($this->typeid)) {
             $mform->setAdvanced('typeid');
             $mform->setAdvanced('toolurl');
         }
 
-        if ($manualinstance || $matchestoolnotavailabletocourse) {
-            $mform->hardFreeze([
-                'toolurl',
-                'securetoolurl',
-                'launchcontainer',
-                'resourcekey',
-                'password',
-                'instructorcustomparameters',
-                'icon',
-                'secureicon',
-                'instructorchoicesendname',
-                'instructorchoicesendemailaddr',
-                'instructorchoiceacceptgrades'
-            ]);
-        } else {
-            // All these icon uses are incorrect. LTI JS needs updating to use AMD modules and templates so it can use
-            // the mustache pix helper - until then LTI will have inconsistent icons.
-            $jsinfo = (object)array(
-                'edit_icon_url' => (string)$OUTPUT->image_url('t/edit'),
-                'add_icon_url' => (string)$OUTPUT->image_url('t/add'),
-                'delete_icon_url' => (string)$OUTPUT->image_url('t/delete'),
-                'green_check_icon_url' => (string)$OUTPUT->image_url('i/valid'),
-                'warning_icon_url' => (string)$OUTPUT->image_url('warning', 'lti'),
-                'instructor_tool_type_edit_url' => $editurl->out(false),
-                'ajax_url' => $ajaxurl->out(true),
-                'courseId' => $COURSE->id
-            );
+        $editurl = new moodle_url('/mod/lti/instructor_edit_tool_type.php',
+            array('sesskey' => sesskey(), 'course' => $COURSE->id));
+        $ajaxurl = new moodle_url('/mod/lti/ajax.php');
 
-            $module = array(
-                'name' => 'mod_lti_edit',
-                'fullpath' => '/mod/lti/mod_form.js',
-                'requires' => array('base', 'io', 'querystring-stringify-simple', 'node', 'event', 'json-parse'),
-                'strings' => array(
-                    array('addtype', 'lti'),
-                    array('edittype', 'lti'),
-                    array('deletetype', 'lti'),
-                    array('delete_confirmation', 'lti'),
-                    array('cannot_edit', 'lti'),
-                    array('cannot_delete', 'lti'),
-                    array('global_tool_types', 'lti'),
-                    array('course_tool_types', 'lti'),
-                    array('using_tool_configuration', 'lti'),
-                    array('using_tool_cartridge', 'lti'),
-                    array('domain_mismatch', 'lti'),
-                    array('custom_config', 'lti'),
-                    array('tool_config_not_found', 'lti'),
-                    array('tooltypeadded', 'lti'),
-                    array('tooltypedeleted', 'lti'),
-                    array('tooltypenotdeleted', 'lti'),
-                    array('tooltypeupdated', 'lti'),
-                    array('forced_help', 'lti')
-                ),
-            );
-            $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
-        }
+        // All these icon uses are incorrect. LTI JS needs updating to use AMD modules and templates so it can use
+        // the mustache pix helper - until then LTI will have inconsistent icons.
+        $jsinfo = (object)array(
+            'edit_icon_url' => (string)$OUTPUT->image_url('t/edit'),
+            'add_icon_url' => (string)$OUTPUT->image_url('t/add'),
+            'delete_icon_url' => (string)$OUTPUT->image_url('t/delete'),
+            'green_check_icon_url' => (string)$OUTPUT->image_url('i/valid'),
+            'warning_icon_url' => (string)$OUTPUT->image_url('warning', 'lti'),
+            'instructor_tool_type_edit_url' => $editurl->out(false),
+            'ajax_url' => $ajaxurl->out(true),
+            'courseId' => $COURSE->id
+        );
+
+        $module = array(
+            'name' => 'mod_lti_edit',
+            'fullpath' => '/mod/lti/mod_form.js',
+            'requires' => array('base', 'io', 'querystring-stringify-simple', 'node', 'event', 'json-parse'),
+            'strings' => array(
+                array('addtype', 'lti'),
+                array('edittype', 'lti'),
+                array('deletetype', 'lti'),
+                array('delete_confirmation', 'lti'),
+                array('cannot_edit', 'lti'),
+                array('cannot_delete', 'lti'),
+                array('global_tool_types', 'lti'),
+                array('course_tool_types', 'lti'),
+                array('using_tool_configuration', 'lti'),
+                array('using_tool_cartridge', 'lti'),
+                array('domain_mismatch', 'lti'),
+                array('custom_config', 'lti'),
+                array('tool_config_not_found', 'lti'),
+                array('tooltypeadded', 'lti'),
+                array('tooltypedeleted', 'lti'),
+                array('tooltypenotdeleted', 'lti'),
+                array('tooltypeupdated', 'lti'),
+                array('forced_help', 'lti')
+            ),
+        );
+        $PAGE->requires->js_init_call('M.mod_lti.editor.init', array(json_encode($jsinfo)), true, $module);
     }
 
     /**
