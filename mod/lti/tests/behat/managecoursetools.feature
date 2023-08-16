@@ -119,12 +119,12 @@ Feature: Manage course tools
     And I navigate to "LTI External tools" in current page administration
     When I open the action menu in "Test tool" "table_row"
     And I choose "Delete" in the open action menu
-    Then I should see "Are you sure you want to delete this course tool?"
-    And I click on "Cancel" "button" in the "Delete a course tool" "dialogue"
+    Then I should see "This will delete Test tool from the available LTI tools in your course."
+    And I click on "Cancel" "button" in the "Delete Test tool" "dialogue"
     And I should see "Test tool" in the "reportbuilder-table" "table"
     And I open the action menu in "Test tool" "table_row"
     And I choose "Delete" in the open action menu
-    And I should see "Are you sure you want to delete this course tool?"
-    And I click on "Delete" "button" in the "Delete a course tool" "dialogue"
-    And I should see "Course tool deleted"
+    And I should see "This will delete Test tool from the available LTI tools in your course."
+    And I click on "Delete" "button" in the "Delete Test tool" "dialogue"
+    And I should see "Test tool removed"
     And I should not see "Test tool" in the "reportbuilder-table" "table"

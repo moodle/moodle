@@ -33,6 +33,9 @@ class course_external_tools_list extends system_report {
     /** @var \stdClass the course to constrain the report to. */
     protected \stdClass $course;
 
+    /** @var int the usage count for the tool represented in a row, and set by row_callback(). */
+    protected int $perrowtoolusage = 0;
+
     /**
      * Initialise report, we need to set the main table, load our entities and set columns/filters
      */
@@ -54,8 +57,13 @@ class course_external_tools_list extends system_report {
         $this->add_filters();
         $this->add_actions();
 
-        // We need id and course in the actions, without entity prefixes, so add these here.
-        $this->add_base_fields("{$entitymainalias}.id, {$entitymainalias}.course");
+        // We need id and course in the actions column, without entity prefixes, so add these here.
+        // We also need access to the tool usage count in a few places (the usage column as well as the actions column).
+        $ti = database::generate_param_name(); // Tool instance param.
+        $this->add_base_fields("{$entitymainalias}.id, {$entitymainalias}.course, ".
+            "(SELECT COUNT($ti.id)
+                FROM {lti} $ti
+                WHERE $ti.typeid = {$entitymainalias}.id) AS toolusage");
 
         // Scope the report to the course context only.
         $paramprefix = database::generate_param_name();
@@ -79,6 +87,10 @@ class course_external_tools_list extends system_report {
         return has_capability('mod/lti:addpreconfiguredinstance', $this->get_context());
     }
 
+    public function row_callback(\stdClass $row): void {
+        $this->perrowtoolusage = $row->toolusage;
+    }
+
     /**
      * Adds the columns we want to display in the report.
      *
@@ -97,12 +109,8 @@ class course_external_tools_list extends system_report {
 
         $this->add_columns_from_entities($columns);
 
-        // Tool usage column using a custom SQL subquery to count tool instances within the course.
+        // Tool usage column using a custom SQL subquery (defined in initialise method) to count tool instances within the course.
         // TODO: This should be replaced with proper column aggregation once that's added to system_report instances in MDL-76392.
-        $ti = database::generate_param_name(); // Tool instance param.
-        $sql = "(SELECT COUNT($ti.id)
-                FROM {lti} $ti
-                WHERE $ti.typeid = {$entitymainalias}.id)";
         $this->add_column(new column(
             'usage',
             new \lang_string('usage', 'mod_lti'),
@@ -110,7 +118,8 @@ class course_external_tools_list extends system_report {
         ))
             ->set_type(column::TYPE_INTEGER)
             ->set_is_sortable(true)
-            ->add_field($sql, 'usage');
+            ->add_field("{$entitymainalias}.id")
+            ->add_callback(fn() => $this->perrowtoolusage);
 
         // Attempt to create a dummy actions column, working around the limitations of the official actions feature.
         $this->add_column(new column(
@@ -120,7 +129,7 @@ class course_external_tools_list extends system_report {
             ->set_type(column::TYPE_TEXT)
             ->set_is_sortable(false)
             ->add_fields("{$entitymainalias}.id, {$entitymainalias}.course, {$entitymainalias}.name")
-            ->add_callback(static function($field, $row) {
+            ->add_callback(function($field, $row) {
                 global $OUTPUT;
 
                 // Lock actions for site-level preconfigured tools.
@@ -161,7 +170,8 @@ class course_external_tools_list extends system_report {
                     [
                         'data-action' => 'course-tool-delete',
                         'data-course-tool-id' => $row->id,
-                        'data-course-tool-name' => $row->name
+                        'data-course-tool-name' => $row->name,
+                        'data-course-tool-usage' => $this->perrowtoolusage
                     ],
                 ));
 

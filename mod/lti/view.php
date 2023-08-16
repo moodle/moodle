@@ -74,7 +74,10 @@ if (empty($typeid) && ($tool = lti_get_tool_by_url_match($lti->toolurl))) {
 }
 if ($typeid) {
     $toolconfig = lti_get_type_config($typeid);
-    $toolurl = $toolconfig['toolurl'];
+    $missingtooltype = empty($toolconfig);
+    if (!$missingtooltype) {
+        $toolurl = $toolconfig['toolurl'];
+    }
 } else {
     $toolconfig = array();
     $toolurl = $lti->toolurl;
@@ -93,6 +96,13 @@ if (!empty($foruserid) && (int)$foruserid !== (int)$USER->id) {
 
 $url = new moodle_url('/mod/lti/view.php', array('id' => $cm->id));
 $PAGE->set_url($url);
+
+
+if (!empty($missingtooltype)) {
+    $PAGE->set_pagelayout('incourse');
+    echo $OUTPUT->header();
+    throw new moodle_exception('tooltypenotfounderror', 'mod_lti');
+}
 
 $launchcontainer = lti_get_launch_container($lti, $toolconfig);
 
