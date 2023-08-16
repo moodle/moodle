@@ -96,6 +96,8 @@
                             text: text
                         };
 
+                        window.console.log(postData);
+
                         require(['mod_lti/contentitem'], function(contentitem) {
                             contentitem.init(contentItemUrl, postData, function(returnData) {
                                 if (!returnData.multiple) {

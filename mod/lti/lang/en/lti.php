@@ -61,6 +61,7 @@ $string['accept_grades_help'] = 'Specify whether the tool provider can add, upda
 Some tool providers support reporting grades back to Moodle based on actions taken within the tool, creating a more integrated experience.
 
 Note that this setting may be overridden in the tool configuration.';
+$string['accept_grades_from_tool'] = 'Allow {$a} to add grades in the gradebook';
 $string['action'] = 'Action';
 $string['activate'] = 'Activate';
 $string['activatetoadddescription'] = 'You will need to activate this tool before you can add a description.';
@@ -115,6 +116,7 @@ $string['contentitem_deeplinking'] = 'Supports Deep Linking (Content-Item Messag
 $string['contentitem_deeplinking_help'] = 'If ticked, the option \'Select content\' will be available when adding an external tool.';
 $string['contentitem_multiple_description'] = 'The following items will be added to your course:';
 $string['contentitem_multiple_graded'] = 'Graded activity (Maximum grade: {$a})';
+$string['contentselected'] = 'Content selected';
 $string['course_tool_types'] = 'Course tools';
 $string['courseactivitiesorresources'] = 'Course activities or resources';
 $string['courseexternaltooladd'] = 'Add new LTI External tool';
@@ -163,19 +165,10 @@ $string['deletecoursetool'] = 'Delete {$a}';
 $string['deletecoursetoolconfirm'] = 'This will delete {$a} from the available LTI tools in your course.';
 $string['deletecoursetoolwithusageconfirm'] = '{$a} is currently being used in at least one activity in your course. If you delete this tool, the activities that use it will no longer work.<br><br>Are you sure you want to delete {$a}?';
 $string['deletetype'] = 'Delete preconfigured tool';
-$string['display_description'] = 'Display activity description when launched';
-$string['display_description_help'] = 'If selected, the activity description (specified above) will display above the tool provider\'s content.
-
-The description may be used to provide additional instructions for launchers of the tool, but it is not required.
-
-The description is never displayed when the tool\'s launch container is in a new window.';
-$string['display_name'] = 'Display activity name when launched';
-$string['display_name_help'] = 'If selected, the activity name (specified above) will display above the tool provider\'s content.
-
-It is possible that the tool provider may also display the title. This option can prevent the activity title from
-being displayed twice.
-
-The title is never displayed when the tool\'s launch container is in a new window.';
+$string['display_description'] = 'Display activity description when students access the tool';
+$string['display_description_help'] = 'Content from this tool is displayed embedded in a page in the course. This setting determines if the activity description is shown in that page.';
+$string['display_name'] = 'Display activity name when students access the tool';
+$string['display_name_help'] = 'Content from this tool is displayed embedded in a page in the course. This setting determines if the activity name is shown in that page.';
 $string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configuration.';
 $string['donot'] = 'Do not send';
 $string['donotaccept'] = 'Do not accept';
@@ -493,6 +486,7 @@ $string['secure_launch_url_help'] = 'Similar to the tool URL, but used instead o
 
 The tool URL may also be set to an https address to force launching through SSL, and this field may be left blank.';
 $string['selectcontent'] = 'Select content';
+$string['selectcontentvalidationerror'] = 'You need to select content for this activity.';
 $string['send'] = 'Send';
 $string['services'] = 'Services';
 $string['services_help'] = 'Select those services which you wish to offer to the tool provider.  More than one service can be selected.';
