@@ -24,6 +24,7 @@ use grade_edit_tree;
 use grade_helper;
 use grade_item;
 use grade_plugin_return;
+use grade_scale;
 use moodle_url;
 
 defined('MOODLE_INTERNAL') || die();
@@ -131,7 +132,8 @@ class add_category extends dynamic_form {
 
         return [
             'gradecategory' => $gradecategory,
-            'categoryitem' => $category
+            'categoryitem' => $category,
+            'gradeitem' => $gradeitem
         ];
     }
 
@@ -144,7 +146,7 @@ class add_category extends dynamic_form {
      * @throws \moodle_exception
      */
     protected function definition(): void {
-        global $CFG;
+        global $CFG, $OUTPUT, $COURSE;
         $courseid = $this->optional_param('courseid', null, PARAM_INT);
         $id = $this->optional_param('category', 0, PARAM_INT);
         $gprplugin = $this->optional_param('gpr_plugin', '', PARAM_TEXT);
@@ -183,18 +185,6 @@ class add_category extends dynamic_form {
         $mform->addElement('checkbox', 'aggregateonlygraded', get_string('aggregateonlygraded', 'grades'));
         $mform->addHelpButton('aggregateonlygraded', 'aggregateonlygraded', 'grades');
 
-        $mform->addElement('float', 'grade_item_grademax', get_string('grademax', 'grades'));
-        $mform->addHelpButton('grade_item_grademax', 'grademax', 'grades');
-        $mform->hideIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
-        $mform->hideIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
-
-        if ((bool) get_config('moodle', 'grade_report_showmin')) {
-            $mform->addElement('float', 'grade_item_grademin', get_string('grademin', 'grades'));
-            $mform->addHelpButton('grade_item_grademin', 'grademin', 'grades');
-            $mform->hideIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
-            $mform->hideIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
-        }
-
         if (empty($CFG->enableoutcomes)) {
             $mform->addElement('hidden', 'aggregateoutcomes');
             $mform->setType('aggregateoutcomes', PARAM_INT);
@@ -214,6 +204,77 @@ class add_category extends dynamic_form {
 
         $mform->hideIf('keephigh', 'droplow', 'noteq', 0);
         $mform->hideIf('droplow', 'keephigh', 'noteq', 0);
+
+        if (!empty($category->id)) {
+            $gradeitem = $local['gradeitem'];
+            // If grades exist set a message so the user knows why they can not alter the grade type or scale.
+            // We could never change the grade type for external items, so only need to show this for manual grade items.
+            if ($gradeitem->has_overridden_grades()) {
+                // Set a message so the user knows why the can not alter the grade type or scale.
+                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                    $gradesexistmsg = get_string('modgradecategorycantchangegradetyporscalemsg', 'grades');
+                } else {
+                    $gradesexistmsg = get_string('modgradecategorycantchangegradetypemsg', 'grades');
+                }
+                $notification = new \core\output\notification($gradesexistmsg, \core\output\notification::NOTIFY_INFO);
+                $notification->set_show_closebutton(false);
+                $mform->addElement('static', 'gradesexistmsg', '', $OUTPUT->render($notification));
+            }
+        }
+
+        $options = [
+            GRADE_TYPE_NONE => get_string('typenone', 'grades'),
+            GRADE_TYPE_VALUE => get_string('typevalue', 'grades'),
+            GRADE_TYPE_SCALE => get_string('typescale', 'grades'),
+            GRADE_TYPE_TEXT => get_string('typetext', 'grades')
+        ];
+
+        $mform->addElement('select', 'grade_item_gradetype', get_string('gradetype', 'grades'), $options);
+        $mform->addHelpButton('grade_item_gradetype', 'gradetype', 'grades');
+        $mform->setDefault('grade_item_gradetype', GRADE_TYPE_VALUE);
+        $mform->hideIf('grade_item_gradetype', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+
+        $options = [0 => get_string('usenoscale', 'grades')];
+        if ($scales = grade_scale::fetch_all_local($COURSE->id)) {
+            foreach ($scales as $scale) {
+                $options[$scale->id] = $scale->get_name();
+            }
+        }
+        if ($scales = grade_scale::fetch_all_global()) {
+            foreach ($scales as $scale) {
+                $options[$scale->id] = $scale->get_name();
+            }
+        }
+        // Ugly BC hack - it was possible to use custom scale from other courses.
+        if (!empty($category->grade_item_scaleid) && !isset($options[$category->grade_item_scaleid])) {
+            if ($scale = grade_scale::fetch(['id' => $category->grade_item_scaleid])) {
+                $options[$scale->id] = $scale->get_name().' '.get_string('incorrectcustomscale', 'grades');
+            }
+        }
+        $mform->addElement('select', 'grade_item_scaleid', get_string('scale'), $options);
+        $mform->addHelpButton('grade_item_scaleid', 'typescale', 'grades');
+        $mform->hideIf('grade_item_scaleid', 'grade_item_gradetype', 'noteq', GRADE_TYPE_SCALE);
+        $mform->hideIf('grade_item_scaleid', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+
+        $choices = [];
+        $choices[''] = get_string('choose');
+        $choices['no'] = get_string('no');
+        $choices['yes'] = get_string('yes');
+        $mform->addElement('select', 'grade_item_rescalegrades', get_string('modgradecategoryrescalegrades', 'grades'), $choices);
+        $mform->addHelpButton('grade_item_rescalegrades', 'modgradecategoryrescalegrades', 'grades');
+        $mform->hideIf('grade_item_rescalegrades', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
+
+        $mform->addElement('float', 'grade_item_grademax', get_string('grademax', 'grades'));
+        $mform->addHelpButton('grade_item_grademax', 'grademax', 'grades');
+        $mform->hideIf('grade_item_grademax', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
+        $mform->hideIf('grade_item_grademax', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+
+        if ((bool) get_config('moodle', 'grade_report_showmin')) {
+            $mform->addElement('float', 'grade_item_grademin', get_string('grademin', 'grades'));
+            $mform->addHelpButton('grade_item_grademin', 'grademin', 'grades');
+            $mform->hideIf('grade_item_grademin', 'grade_item_gradetype', 'noteq', GRADE_TYPE_VALUE);
+            $mform->hideIf('grade_item_grademin', 'aggregation', 'eq', GRADE_AGGREGATE_SUM);
+        }
 
         // Hiding.
         // advcheckbox is not compatible with disabledIf!
@@ -377,6 +438,7 @@ class add_category extends dynamic_form {
             }
 
         } else {
+            // Adding new category
             // Remove unwanted aggregation options.
             if ($mform->elementExists('aggregation')) {
                 $allaggoptions = array_keys($this->aggregation_options);
@@ -389,6 +451,7 @@ class add_category extends dynamic_form {
                 }
             }
 
+            $mform->removeElement('grade_item_rescalegrades');
         }
 
         // Grade item.
@@ -401,10 +464,38 @@ class add_category extends dynamic_form {
                 $mform->setDefault('grade_item_hidden', $gradeitem->get_hidden());
             }
 
+            if ($gradeitem->has_overridden_grades()) {
+                // Can't change the grade type or the scale if there are grades.
+                $mform->hardFreeze('grade_item_gradetype, grade_item_scaleid');
+
+                // If we are using scales then remove the unnecessary rescale and grade fields.
+                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                    $mform->removeElement('grade_item_rescalegrades');
+                    $mform->removeElement('grade_item_grademax');
+                    if ($mform->elementExists('grade_item_grademin')) {
+                        $mform->removeElement('grade_item_grademin');
+                    }
+                } else {
+                    // Not using scale, so remove it.
+                    $mform->removeElement('grade_item_scaleid');
+                    $mform->hideIf('grade_item_grademax', 'grade_item_rescalegrades', 'eq', '');
+                    $mform->hideIf('grade_item_grademin', 'grade_item_rescalegrades', 'eq', '');
+                }
+            } else { // Remove the rescale element if there are no grades.
+                $mform->removeElement('grade_item_rescalegrades');
+            }
+
             // Remove the aggregation coef element if not needed.
             if ($gradeitem->is_course_item()) {
                 if ($mform->elementExists('grade_item_aggregationcoef')) {
                     $mform->removeElement('grade_item_aggregationcoef');
+                }
+
+                if ($mform->elementExists('grade_item_weightoverride')) {
+                    $mform->removeElement('grade_item_weightoverride');
+                }
+                if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                    $mform->removeElement('grade_item_aggregationcoef2');
                 }
             } else {
                 if ($gradeitem->is_category_item()) {
@@ -436,6 +527,19 @@ class add_category extends dynamic_form {
                     $mform->insertElementBefore($element, 'parentcategory');
                     $mform->addHelpButton('grade_item_aggregationcoef', $coefstring, 'grades');
                 }
+
+                // Remove fields used by natural weighting if the parent category is not using natural weighting.
+                // Or if the item is a scale and scales are not used in aggregation.
+                if ($parentcategory->aggregation != GRADE_AGGREGATE_SUM
+                    || (empty($CFG->grade_includescalesinaggregation) && $gradeitem->gradetype == GRADE_TYPE_SCALE)) {
+                    if ($mform->elementExists('grade_item_weightoverride')) {
+                        $mform->removeElement('grade_item_weightoverride');
+                    }
+                    if ($mform->elementExists('grade_item_aggregationcoef2')) {
+                        $mform->removeElement('grade_item_aggregationcoef2');
+                    }
+                }
+
             }
         }
     }
