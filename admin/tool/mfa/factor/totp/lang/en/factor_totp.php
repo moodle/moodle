@@ -41,12 +41,13 @@ eg. <ul><li><a href="https://authy.com/download/">Twilio Authy</a></li>
 <li><a href="https://www.microsoft.com/en-us/account/authenticator#getapp">Microsoft Authenticator</a></li>
 <li>Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></li></ul>
 <p>Note: Please ensure your device time and date has been set to "Auto" or "Network provided".</p>';
+$string['logindesc'] = 'Use the authenticator app in your mobile device to generate a code.';
+$string['loginoption'] = 'Use Authenticator application';
 $string['loginskip'] = 'I don\'t have my device';
-$string['loginsubmit'] = 'Verify code';
+$string['loginsubmit'] = 'Continue';
+$string['logintitle'] = 'Verify it\'s you by mobile app';
 $string['pluginname'] = 'Authenticator app';
 $string['privacy:metadata'] = 'The TOTP factor plugin does not store any personal data';
-$string['settings:secretlength'] = 'TOTP secret key length';
-$string['settings:secretlength_help'] = 'Generated TOTP secret key string length';
 $string['settings:totplink'] = 'Show mobile app setup link';
 $string['settings:totplink_help'] = 'If enabled the user will see a 3rd setup option with a direct otpauth:// link';
 $string['settings:window'] = 'TOTP verification window';
@@ -55,7 +56,6 @@ $string['settings:window_help'] = 'How long each code is valid for. You can set 
 $string['setupfactor'] = 'TOTP authenticator setup';
 $string['setupfactor:account'] = 'Account:';
 $string['setupfactor:enter'] = 'Enter details manually:';
-$string['setupfactor:enter_help'] = 'When manually adding the secret code, set the account name in the app to something that will help to identify this code to the platform, such as the site name. Ensure the selected mode is time-based.';
 $string['setupfactor:key'] = 'Secret key: ';
 $string['setupfactor:link'] = '<b> OR </b> open mobile app:';
 $string['setupfactor:link_help'] = 'If you are on a mobile device and already have an authenticator app installed this link may work. Note that using TOTP on the same device as you login on can weaken the benefits of MFA.';
