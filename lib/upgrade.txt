@@ -169,6 +169,8 @@ being forced open in all behat tests.
 * Added a new method called exceeds_password_length in moodlelib.php to validate the password length.
 * The core/modal_factory has been deprecated. From Moodle 4.3 onwards please instantiate new modals using the ModalType.create method instead.
   Please note that this method does not support the `trigger` option.
+* The method `\core_renderer->supportemail()` has an updated signature. It now allows a second optional parameter.
+  Set it to true if you want to embed the generated link in other inline content.
 
 === 4.2 ===
 
