@@ -338,10 +338,9 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
     /**
      * Test that a Quiz with only description questions wont break \quiz_statistics\task\recalculate.
      *
-     * @covers \quiz_statistics\task\recalculate::execute()
-     * @return void
+     * @covers \quiz_statistics\task\recalculate::execute
      */
-    public function test_quiz_with_description_questions_recalculate_statistics() {
+    public function test_quiz_with_description_questions_recalculate_statistics(): void {
         $this->resetAfterTest();
 
         // Create course with quiz module.
