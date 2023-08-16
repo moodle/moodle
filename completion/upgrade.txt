@@ -11,6 +11,8 @@ information provided here is intended especially for developers.
   to be added to the name of the completion rules.
 * The method manager::defaultcompletion() now has the $modules and $form parameters, to specify the modules that have been set
   through the form and the current form that has been sent.
+* Support for deprecated `[modname]_get_completion_state` callbacks has been removed, custom completion rules must be implemented
+  by appropriate `mod_[modname]\completion\custom_completion` class instead
 
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is
