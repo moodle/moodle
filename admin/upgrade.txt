@@ -1,5 +1,15 @@
 This files describes API changes in /admin/*.
 
+=== 4.3 ===
+
+* Removed admin setting cookiehttponly Moodle now defaults to HTTP only cookies for new installs only.
+  Existing sites will not be affected by this change. The setting can be changed in config.php if required.
+  To enable for upgraded sites set: $CFG->cookiehttponly = true;
+  To disable for new sites set: $CFG->cookiehttponly = false;
+
+  Existing cookies will not be affected by this change, until they are expired or deleted.
+
+
 === 4.2 ===
 
 * A new admin setting coursecreationguide allows admins to configure the URL of the Quickstart guide for admins and managers.
