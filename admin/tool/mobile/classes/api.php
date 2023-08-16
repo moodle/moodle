@@ -65,6 +65,12 @@ class api {
     const DEFAULT_ANDROID_APP_ID = 'com.moodle.moodlemobile';
     /** @var string Default iOS app id */
     const DEFAULT_IOS_APP_ID = '633359593';
+    /** @var int AUTOLOGOUT disabled value */
+    const AUTOLOGOUT_DISABLED = 0;
+    /** @var int AUTOLOGOUT type inmediate value */
+    const AUTOLOGOUT_INMEDIATE = 1;
+    /** @var int AUTOLOGOUT type custom value */
+    const AUTOLOGOUT_CUSTOM = 2;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -315,6 +321,8 @@ class api {
             $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
             $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
             $settings->tool_mobile_autologinmintimebetweenreq = $mintimereq;
+            $settings->tool_mobile_autologout = get_config('tool_mobile', 'autologout');
+            $settings->tool_mobile_autologouttime = get_config('tool_mobile', 'autologouttime');
         }
 
         if (empty($section) or $section == 'calendar') {

@@ -103,6 +103,18 @@ if ($hassiteconfig) {
                 new lang_string('typeoflogin_desc', 'tool_mobile'), 1, $options));
 
     $options = [
+        tool_mobile\api::AUTOLOGOUT_DISABLED => new lang_string('never'),
+        tool_mobile\api::AUTOLOGOUT_INMEDIATE => new lang_string('autologoutinmediate', 'tool_mobile'),
+        tool_mobile\api::AUTOLOGOUT_CUSTOM => new lang_string('autologoutcustom', 'tool_mobile'),
+    ];
+    $temp->add(new admin_setting_configselect('tool_mobile/autologout',
+        new lang_string('autologout', 'tool_mobile'),
+        new lang_string('autologout_desc', 'tool_mobile'), 0, $options));
+
+    $temp->add(new admin_setting_configduration('tool_mobile/autologouttime', '', '', DAYSECS));
+    $temp->hide_if('tool_mobile/autologouttime', 'tool_mobile/autologout', 'neq', tool_mobile\api::AUTOLOGOUT_CUSTOM);
+
+    $options = [
         tool_mobile\api::QR_CODE_DISABLED => new lang_string('qrcodedisabled', 'tool_mobile'),
         tool_mobile\api::QR_CODE_URL => new lang_string('qrcodetypeurl', 'tool_mobile'),
     ];
