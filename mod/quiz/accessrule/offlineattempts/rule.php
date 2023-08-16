@@ -114,6 +114,7 @@ class quizaccess_offlineattempts extends quiz_access_rule_base {
             $mform->setAdvanced('allowofflineattempts');
             $mform->disabledIf('allowofflineattempts', 'timelimit[number]', 'neq', 0);
             $mform->disabledIf('allowofflineattempts', 'subnet', 'neq', '');
+            $mform->disabledIf('allowofflineattempts', 'navmethod', 'eq', 'sequential');
         }
     }
 
@@ -126,9 +127,11 @@ class quizaccess_offlineattempts extends quiz_access_rule_base {
             // - The quiz uses a timer.
             // - The quiz is restricted by subnet.
             // - The question behaviour is not deferred feedback or deferred feedback with CBM.
-            if (!empty($data['allowofflineattempts']) and
-                    (!empty($data['timelimit']) or !empty($data['subnet']) or
-                    ($data['preferredbehaviour'] != 'deferredfeedback' and $data['preferredbehaviour'] != 'deferredcbm'))) {
+            // - The quiz uses the sequential navigation.
+            if (!empty($data['allowofflineattempts']) &&
+                (!empty($data['timelimit']) || !empty($data['subnet']) ||
+                $data['navmethod'] === 'sequential' ||
+                ($data['preferredbehaviour'] != 'deferredfeedback' && $data['preferredbehaviour'] != 'deferredcbm'))) {
 
                 $errors['allowofflineattempts'] = get_string('offlineattemptserror', 'quizaccess_offlineattempts');
             }
