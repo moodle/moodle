@@ -40,6 +40,7 @@ Feature: Within the grader report, test that we can collapse columns
       | assign   | C1     | a4       | Test assignment four  |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution,profile_field_enduro |
+    And I change window size to "large"
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: An admin collapses a user info column and then reloads the page to find the column still collapsed
