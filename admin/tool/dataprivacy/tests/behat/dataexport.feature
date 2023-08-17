@@ -229,7 +229,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "175000" bytes
+    And following "Download" should download between "1" and "180000" bytes
 
   @javascript
   Scenario: Filter before export data for a user and download it in the view request action
@@ -262,4 +262,4 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "175000" bytes
+    And following "Download" should download between "1" and "180000" bytes

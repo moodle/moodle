@@ -16,10 +16,10 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
       | activity | course | idnumber | name                |
       | assign   | C1     | a1       | Test assignment one |
       | assign   | C1     | a2       | Test assignment two |
+    And I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
 
   Scenario: A teacher can search for and find a grade item to view
-    Given I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
-    And I click on "Grade items" "link" in the ".page-toggler" "css_element"
+    Given I click on "Grade items" "link" in the ".page-toggler" "css_element"
     And I click on ".gradesearchwidget" "css_element"
     When I confirm "Test assignment one" in "grade" search within the gradebook widget exists
     And I confirm "Test assignment two" in "grade" search within the gradebook widget exists
@@ -37,8 +37,7 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
   @accessibility
   Scenario: A teacher can set focus and search using the input with a keyboard
     # Basic tests for the page.
-    Given I navigate to "View > Single view" in the course gradebook
-    And I click on "Grade items" "link" in the ".page-toggler" "css_element"
+    Given I click on "Grade items" "link" in the ".page-toggler" "css_element"
     And I click on ".gradesearchwidget" "css_element"
     And the page should meet accessibility standards
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
