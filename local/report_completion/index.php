@@ -922,7 +922,7 @@ if (empty($courseid)) {
         $columns[] = 'certificate';
         $headers[] = get_string('actions');
         $columns[] = 'actions';
-    //} else if ($courseid != 1) {
+    } else if ($courseid != 1) {
         foreach ($completionids as $completionid) {
             $headers[] = $completionheaders[$completionid];
             $columns[] = $completioncolumns[$completionid];
