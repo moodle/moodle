@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import Modal from 'core/modal';
+import Modal from './add_question_modal';
 import * as Notification from 'core/notification';
 import * as Fragment from 'core/fragment';
 import * as Templates from 'core/templates';
@@ -54,39 +54,58 @@ export default class ModalAddRandomQuestion extends Modal {
     static TEMPLATE = 'mod_quiz/modal_add_random_question';
 
     /**
+     * Create the add random question modal.
+     *
+     * @param  {Number} contextId Current context id.
+     * @param  {string} category Category id and category context id comma separated.
+     * @param  {string} returnUrl URL to return to after form submission.
+     * @param  {Number} cmid Current course module id.
+     * @param  {boolean} showNewCategory Display the New category tab when selecting random questions.
+     */
+    static init(contextId, category, returnUrl, cmid, showNewCategory = true) {
+        const selector = '.menu [data-action="addarandomquestion"]';
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest(selector);
+            if (!trigger) {
+                return;
+            }
+            e.preventDefault();
+
+            ModalAddRandomQuestion.create({
+                contextId,
+                category,
+                returnUrl,
+                cmid,
+
+                title: trigger.dataset.header,
+                addOnPage: trigger.dataset.addonpage,
+
+                templateContext: {
+                    hidden: showNewCategory,
+                },
+            });
+        });
+    }
+
+    /**
      * Constructor for the Modal.
      *
      * @param {object} root The root jQuery element for the modal
      */
     constructor(root) {
         super(root);
-        this.contextId = null;
-        this.addOnPageId = null;
         this.category = null;
         this.returnUrl = null;
         this.cmid = null;
         this.loadedForm = false;
     }
 
-    /**
-     * Save the Moodle context id that the question bank is being
-     * rendered in.
-     *
-     * @method setContextId
-     * @param {int} id
-     */
-    setContextId(id) {
-        this.contextId = id;
-    }
+    configure(modalConfig) {
+        this.setCategory(modalConfig.category);
+        this.setReturnUrl(modalConfig.returnUrl);
+        this.setCMID(modalConfig.cmid);
 
-    /**
-     * Retrieve the saved Moodle context id.
-     *
-     * @method getContextId
-     * @return {int}
-     */
-    getContextId() {
-        return this.contextId;
+        super.configure(modalConfig);
     }
 
     /**
@@ -97,18 +116,8 @@ export default class ModalAddRandomQuestion extends Modal {
      * @param {int} id
      */
     setAddOnPageId(id) {
-        this.addOnPageId = id;
+        super.setAddOnPageId(id);
         this.getBody().find(SELECTORS.ADD_ON_PAGE_FORM_ELEMENT).val(id);
-    }
-
-    /**
-     * Returns the saved page id for the question to be added to.
-     *
-     * @method getAddOnPageId
-     * @return {int}
-     */
-    getAddOnPageId() {
-        return this.addOnPageId;
     }
 
     /**
@@ -156,7 +165,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * Set the course module id for the form.
      *
      * @method setCMID
-     * @param {int} id
+     * @param {Number} id
      */
     setCMID(id) {
         this.cmid = id;
@@ -166,7 +175,7 @@ export default class ModalAddRandomQuestion extends Modal {
      * Returns the course module id for the form.
      *
      * @method getCMID
-     * @return {int}
+     * @return {Number}
      */
     getCMID() {
         return this.cmid;

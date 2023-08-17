@@ -111,11 +111,11 @@ class edit_renderer extends \plugin_renderer_base {
         // Include the contents of any other popups required.
         if ($structure->can_be_edited()) {
             $thiscontext = $contexts->lowest();
-            $this->page->requires->js_call_amd('mod_quiz/quizquestionbank', 'init', [
+            $this->page->requires->js_call_amd('mod_quiz/modal_quiz_question_bank', 'init', [
                 $thiscontext->id
             ]);
 
-            $this->page->requires->js_call_amd('mod_quiz/add_random_question', 'init', [
+            $this->page->requires->js_call_amd('mod_quiz/modal_add_random_question', 'init', [
                 $thiscontext->id,
                 $pagevars['cat'],
                 $pageurl->out_as_local_url(true),
