@@ -688,6 +688,12 @@ class theme_config {
     public $haseditswitch = false;
 
     /**
+     * Allows a theme to customise primary navigation by specifying the list of items to remove.
+     * @var array
+     */
+    public $removedprimarynavitems = [];
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -757,6 +763,7 @@ class theme_config {
             $baseconfig = $config;
         }
 
+        // Ensure that each of the configurable properties defined below are also defined at the class level.
         $configurable = [
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'usefallback',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
