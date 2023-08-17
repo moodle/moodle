@@ -612,7 +612,7 @@ class user_table extends table_sql {
                                                            'courseid' => $row->courseid,
                                                            'moduleid' => $modinfo->id])) {
                         if (!empty($gradeinfo->finalgrade) && $gradeinfo->finalgrade != 0) {
-                            $gradestring = format_string(round($gradeinfo->finalgrade/$gradeinfo->rawgrademax * 100, $CFG->iomad_report_grade_places)."%");
+                            $gradestring = format_string(round($gradeinfo->finalgrade, $CFG->iomad_report_grade_places)."%");
                         }
                     }
                     return $gradestring;
