@@ -1512,9 +1512,20 @@ class core_renderer extends renderer_base {
         // Provide some performance info if required
         $performanceinfo = '';
         if (MDL_PERF || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
-            $perf = get_performance_info();
             if (MDL_PERFTOFOOT || debugging() || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
-                $performanceinfo = $perf['html'];
+                if (NO_OUTPUT_BUFFERING) {
+                    // If the output buffer was off then we render a placeholder and stream the
+                    // performance debugging into it at the very end in the shutdown handler.
+                    $performanceinfo .= html_writer::tag('div',
+                        get_string('perfdebugdeferred', 'admin'),
+                        [
+                            'id' => 'perfdebugfooter',
+                            'style' => 'min-height: 30em',
+                        ]);
+                } else {
+                    $perf = get_performance_info();
+                    $performanceinfo = $perf['html'];
+                }
             }
         }
 
