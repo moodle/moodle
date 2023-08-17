@@ -23,8 +23,8 @@
  * @since      3.1
  */
 define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_events', 'core/notification',
-        'core/custom_interaction_events', 'core/templates'],
-    function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates) {
+        'core/custom_interaction_events', 'core/templates', 'core/pending'],
+    function($, Ajax, Str, ModalFactory, ModalEvents, Notification, CustomEvents, Templates, Pending) {
 
         /**
          * @type {String} the full name of the current user.
@@ -57,6 +57,7 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
          * @private
          */
         var setOverride = function(override) {
+            const pendingPromise = new Pending('report_progress/compeletion_override/setOverride');
             // Generate a loading spinner while we're working.
             Templates.render('core/loading', {}).then(function(html) {
                 // Append the loading spinner to the trigger element.
@@ -92,6 +93,10 @@ define(['jquery', 'core/ajax', 'core/str', 'core/modal_factory', 'core/modal_eve
                     return;
                 }).catch(Notification.exception);
 
+                return;
+            })
+            .then(() => {
+                pendingPromise.resolve();
                 return;
             }).catch(Notification.exception);
         };
