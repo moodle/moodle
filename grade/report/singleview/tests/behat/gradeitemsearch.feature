@@ -17,6 +17,7 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
       | assign   | C1     | a1       | Test assignment one |
       | assign   | C1     | a2       | Test assignment two |
     And I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
+    And I change window size to "large"
 
   Scenario: A teacher can search for and find a grade item to view
     Given I click on "Grade items" "link" in the ".page-toggler" "css_element"
