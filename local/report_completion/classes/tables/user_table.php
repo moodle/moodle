@@ -570,12 +570,16 @@ class user_table extends table_sql {
             return NULL;
         } else {
             list($type, $criteriaid) = explode('_', $column);
-            if ($type == "criteria" && empty($row->$column) && !empty($row->timecompleted)) {
+            if ($type == "criteria" && !empty($row->timecompleted)) {
                 return date($CFG->iomad_date_format, $row->timecompleted);
             } else {
                 if ($type == 'criteria' ) {
-                    if (!empty($row->$column)) {
-                        return date($CFG->iomad_date_format, $row->$column);
+                    if ($critrecord = $DB->get_record('course_completion_crit_compl', ['userid' => $row->userid, 'course' => $row->courseid, 'criteriaid' => $criteriaid])) {
+                        if (!empty($critrecord->timecompleted)) {
+                            return date($CFG->iomad_date_format, $critrecord->timecompleted);
+                        } else {
+                            return null;
+                        }
                     } else {
                         return null;
                     }

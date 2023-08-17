@@ -730,7 +730,7 @@ if (empty($courseid)) {
     $completionsqlselect = "";
 
     // Get the completion information if we need it.
-    //if ($table->is_downloading() && $courseid != 1) {
+    if ($table->is_downloading() && $courseid != 1) {
         // Get the course completion criteria.
         $info = new completion_info(get_course($courseid));
         $coursecompletioncrits = $info->get_criteria(null);
@@ -747,12 +747,7 @@ if (empty($courseid)) {
                 $completionids[] = $completioncrit->id;
             }
         }
-        foreach ($completionids as $completionid) {
-            $tag = "c" . $completionid;
-            $completionsqlselect .= ", $tag.timecompleted AS " . $completioncolumns[$completionid];
-            $completionsqlfrom .= " LEFT JOIN {course_completion_crit_compl} $tag ON (lit.userid = $tag.userid AND lit.courseid = $tag.course AND $tag.criteriaid = $completionid)";
-        }
-    //}
+    }
 
     $sqlparams = array('companyid' => $companyid, 'courseid' => $courseid);
 
