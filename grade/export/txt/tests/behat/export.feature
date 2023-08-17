@@ -23,7 +23,7 @@ Feature: I need to export grades as text
     And the following "grade grades" exist:
       | gradeitem            | user     | grade |
       | Test assignment name | student1 | 80.00 |
-    And I am on the "Course 1" course page logged in as teacher1
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   @javascript
   Scenario: Export grades as text
