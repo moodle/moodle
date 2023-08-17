@@ -237,7 +237,7 @@ class behat_grades extends behat_base {
      * @throws Exception
      */
     public function i_click_on_grade_item_menu(string $itemname, string $itemtype, string $page) {
-
+        $this->execute("behat_navigation::i_close_block_drawer_if_open");
         if ($itemtype == 'gradeitem') {
             $itemid = $this->get_grade_item_id($itemname);
         } else if ($itemtype == 'category') {
@@ -265,6 +265,8 @@ class behat_grades extends behat_base {
         } else {
             throw new Exception('Unknown page: ' . $page);
         }
+        $node = $this->get_selected_node("xpath_element", $this->escape($xpath));
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView({ block: "center", inline: "center" })');
         $this->execute("behat_general::i_click_on", [$this->escape($xpath), "xpath_element"]);
     }
 }

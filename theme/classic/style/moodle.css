@@ -29724,26 +29724,26 @@ body.drawer-ease {
 }
 
 .drawer {
-  transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
   background-color: #f8f9fa;
-  z-index: 1050;
+  z-index: 1030;
   position: fixed;
   height: 100vh;
   top: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  .drawer {
-    transition: none;
-  }
 }
 .drawer.not-initialized {
   display: none;
 }
 .drawer.drawer-right {
+  transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
   width: 315px;
   max-width: 315px;
   right: calc(-315px + -10px);
   visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer.drawer-right {
+    transition: none;
+  }
 }
 .drawer.drawer-right.show {
   right: 0;
@@ -29754,10 +29754,16 @@ body.drawer-ease {
   margin-right: 5px;
 }
 .drawer.drawer-left {
+  transition: left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
   width: 285px;
   max-width: 285px;
   left: calc(-285px + -10px);
   visibility: hidden;
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer.drawer-left {
+    transition: none;
+  }
 }
 .drawer.drawer-left.show {
   left: 0;
@@ -29776,13 +29782,10 @@ body.drawer-ease {
 
 @media (min-width: 992px) {
   .drawer {
-    z-index: inherit;
+    z-index: 999;
   }
   .drawer#theme_boost-drawers-blocks:focus-within {
-    position: absolute;
-  }
-  .drawer#theme_boost-drawers-blocks:focus-within .drawercontent {
-    z-index: auto;
+    z-index: 1031;
   }
   .drawer.not-initialized {
     display: block;
@@ -29807,35 +29810,35 @@ body.drawer-ease {
 @media (max-width: 991.98px) {
   .drawer-md {
     display: block;
-    transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     background-color: #f8f9fa;
-    z-index: 1050;
+    z-index: 1030;
     position: fixed;
     height: 100vh;
     top: 0;
   }
-}
-@media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
-  .drawer-md {
-    transition: none;
-  }
-}
-@media (max-width: 991.98px) {
   .drawer-md.not-initialized {
     display: none;
   }
-}
-@media (max-width: 991.98px) {
   .drawer-md.drawer-right {
+    transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
     max-width: 315px;
     right: calc(-315px + -10px);
     visibility: hidden;
   }
+}
+@media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
+  .drawer-md.drawer-right {
+    transition: none;
+  }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-right.show {
     right: 0;
     visibility: visible;
   }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-right .drawertoggle {
     margin-left: auto;
     margin-right: 5px;
@@ -29843,15 +29846,25 @@ body.drawer-ease {
 }
 @media (max-width: 991.98px) {
   .drawer-md.drawer-left {
+    transition: left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     width: 285px;
     max-width: 285px;
     left: calc(-285px + -10px);
     visibility: hidden;
   }
+}
+@media (max-width: 991.98px) and (prefers-reduced-motion: reduce) {
+  .drawer-md.drawer-left {
+    transition: none;
+  }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-left.show {
     left: 0;
     visibility: visible;
   }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-left .drawertoggle {
     margin-right: auto;
     margin-left: 5px;
@@ -29868,35 +29881,35 @@ body.drawer-ease {
 @media (max-width: 767.98px) {
   .drawer-sm {
     display: block;
-    transition: left 0.2s ease, right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     background-color: #f8f9fa;
-    z-index: 1050;
+    z-index: 1030;
     position: fixed;
     height: 100vh;
     top: 0;
   }
-}
-@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
-  .drawer-sm {
-    transition: none;
-  }
-}
-@media (max-width: 767.98px) {
   .drawer-sm.not-initialized {
     display: none;
   }
-}
-@media (max-width: 767.98px) {
   .drawer-sm.drawer-right {
+    transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
     max-width: 315px;
     right: calc(-315px + -10px);
     visibility: hidden;
   }
+}
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  .drawer-sm.drawer-right {
+    transition: none;
+  }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-right.show {
     right: 0;
     visibility: visible;
   }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-right .drawertoggle {
     margin-left: auto;
     margin-right: 5px;
@@ -29904,15 +29917,25 @@ body.drawer-ease {
 }
 @media (max-width: 767.98px) {
   .drawer-sm.drawer-left {
+    transition: left 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease;
     width: 285px;
     max-width: 285px;
     left: calc(-285px + -10px);
     visibility: hidden;
   }
+}
+@media (max-width: 767.98px) and (prefers-reduced-motion: reduce) {
+  .drawer-sm.drawer-left {
+    transition: none;
+  }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-left.show {
     left: 0;
     visibility: visible;
   }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-left .drawertoggle {
     margin-right: auto;
     margin-left: 5px;
@@ -35364,7 +35387,7 @@ p.arrow_button {
 }
 .path-grade-report-grader .gradeparent tr.heading {
   position: sticky;
-  top: 0;
+  top: 50px;
   z-index: 4;
 }
 .path-grade-report-grader .gradeparent tr.userrow th {
@@ -35782,7 +35805,7 @@ body {
   height: max(96px, 0.9375rem * 3);
   bottom: calc(max(96px, 0.9375rem * 3) * -1);
   transition: bottom 0.5s;
-  z-index: 1000;
+  z-index: 1030;
   overflow: hidden;
   box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
   font-size: calc(0.9375rem * 1.10);
@@ -36526,9 +36549,6 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   #page.drawers .main-inner {
     margin-top: 1.5rem;
   }
-  #page.drawers .drawer-right-toggle {
-    margin-right: 0.7rem;
-  }
 }
 @media (min-width: 768px) {
   #page.drawers {
@@ -36556,9 +36576,8 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   }
   #page.drawers {
     position: relative;
-    overflow-y: auto;
+    overflow-y: visible;
     transition: 0.2s;
-    height: calc(100vh - 50px);
     left: 0;
     right: 0;
   }
@@ -36593,7 +36612,7 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
 }
 @media (min-width: 992px) {
   #page.drawers.hasstickyfooter {
-    height: calc(100vh - 50px - max(96px, 0.9375rem * 3));
+    margin-bottom: max(96px, 0.9375rem * 3);
   }
 }
 .drawercontrolbuttons {

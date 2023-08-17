@@ -41,7 +41,7 @@ if (isloggedin()) {
     $blockdraweropen = false;
 }
 
-if (defined('BEHAT_SITE_RUNNING')) {
+if (defined('BEHAT_SITE_RUNNING') && get_user_preferences('behat_keep_drawer_closed') != 1) {
     $blockdraweropen = true;
 }
 

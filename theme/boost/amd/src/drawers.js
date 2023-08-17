@@ -40,15 +40,35 @@ const SELECTORS = {
     OPENBTN: '[data-toggler="drawers"][data-action="opendrawer"]',
     TOGGLEBTN: '[data-toggler="drawers"][data-action="toggle"]',
     DRAWERS: '[data-region="fixed-drawer"]',
-    CONTAINER: '#page.drawers',
     DRAWERCONTENT: '.drawercontent',
+    PAGECONTENT: '#page-content',
 };
 
 const CLASSES = {
     SCROLLED: 'scrolled',
     SHOW: 'show',
     NOTINITIALISED: 'not-initialized',
-    TOGGLERIGHT: '.drawer-right-toggle',
+};
+
+/**
+ * Pixel thresshold to auto-hide drawers.
+ *
+ * @type {Number}
+ */
+const THRESHOLD = 20;
+
+/**
+ * Try to get the drawer z-index from the page content.
+ *
+ * @returns {Number|null} the z-index of the drawer.
+ * @private
+ */
+const getDrawerZIndex = () => {
+    const drawer = document.querySelector(SELECTORS.DRAWERS);
+    if (!drawer) {
+        return null;
+    }
+    return parseInt(window.getComputedStyle(drawer).zIndex, 10);
 };
 
 /**
@@ -62,6 +82,10 @@ const getBackdrop = () => {
         backdropPromise = Templates.render('core/modal_backdrop', {})
         .then(html => new ModalBackdrop(html))
         .then(modalBackdrop => {
+            const drawerZindex = getDrawerZIndex();
+            if (drawerZindex) {
+                modalBackdrop.setZIndex(getDrawerZIndex() - 1);
+            }
             modalBackdrop.getAttachmentPoint().get(0).addEventListener('click', e => {
                 e.preventDefault();
                 Drawers.closeAllDrawers();
@@ -239,6 +263,12 @@ export default class Drawers {
      */
     drawerNode = null;
 
+    /**
+     * The drawer page bounding box dimensions.
+     * @var {DOMRect} boundingRect
+     */
+    boundingRect = null;
+
     constructor(drawerNode) {
         // Some behat tests may use fake drawer divs to test components in drawers.
         if (drawerNode.dataset.behatFakeDrawer !== undefined) {
@@ -415,6 +445,8 @@ export default class Drawers {
             page.classList.add(state);
         }
 
+        this.boundingRect = this.drawerNode.getBoundingClientRect();
+
         if (isSmall()) {
             getBackdrop().then(backdrop => {
                 backdrop.show();
@@ -486,7 +518,7 @@ export default class Drawers {
 
             if (isSmall()) {
                 const pageWrapper = document.getElementById('page');
-                pageWrapper.style.overflow = 'auto';
+                pageWrapper.style.overflow = 'visible';
             }
             return backdrop;
         })
@@ -519,6 +551,65 @@ export default class Drawers {
     }
 
     /**
+     * Displaces the drawer outsite the page.
+     *
+     * @param {Number} scrollPosition the page current scroll position
+     */
+    displace(scrollPosition) {
+        let displace = scrollPosition;
+        let openButton = getDrawerOpenButton(this.drawerNode.id);
+        if (scrollPosition === 0) {
+            this.drawerNode.style.transform = '';
+            if (openButton) {
+                openButton.style.transform = '';
+            }
+            return;
+        }
+        const state = this.drawerNode.dataset?.state;
+        const drawrWidth = this.drawerNode.offsetWidth;
+        let scrollThreshold = drawrWidth;
+        let direction = -1;
+        if (state === 'show-drawer-right') {
+            direction = 1;
+            scrollThreshold = THRESHOLD;
+        }
+        if (scrollPosition > scrollThreshold) {
+            displace = drawrWidth + THRESHOLD;
+        }
+        displace *= direction;
+        const transform = `translateX(${displace}px)`;
+        if (openButton) {
+            openButton.style.transform = transform;
+        }
+        this.drawerNode.style.transform = transform;
+    }
+
+    /**
+     * Prevent drawer from overlapping an element.
+     *
+     * @param {HTMLElement} currentFocus
+     */
+    preventOverlap(currentFocus) {
+        if (!this.isOpen) {
+            return;
+        }
+        const drawrWidth = this.drawerNode.offsetWidth;
+        const element = currentFocus.getBoundingClientRect();
+        const drawer = this.boundingRect;
+        const overlapping = (
+            (element.right + THRESHOLD) > drawer.left &&
+            (element.left - THRESHOLD) < drawer.right
+        );
+        if (overlapping) {
+            // Force drawer to displace out of the page.
+            this.displace(drawrWidth + 1);
+        } else {
+            // Reset drawer displacement.
+            this.displace(window.scrollX);
+        }
+    }
+
+    /**
      * Close all drawers.
      */
     static closeAllDrawers() {
@@ -541,41 +632,34 @@ export default class Drawers {
             drawerInstance.closeDrawer();
         });
     }
-}
 
-/**
- * Activate the scroller helper for the drawer layout.
- *
- * @private
- */
-const scroller = () => {
-    const body = document.querySelector('body');
-    const drawerLayout = document.querySelector(SELECTORS.CONTAINER);
-    if (drawerLayout) {
-        // If there is not visible scrollbar then remove extra margin from right drawer.
-        const drawerRight = document.querySelector(SELECTORS.CONTAINER + ' ' + CLASSES.TOGGLERIGHT);
-        if (!scrollbarVisible(drawerLayout) && drawerRight) {
-            drawerRight.style.marginRight = '0';
+    /**
+     * Prevent drawers from covering the focused element.
+     */
+    static preventCoveringFocusedElement() {
+        const currentFocus = document.activeElement;
+        // Focus on page layout elements should be ignored.
+        const pagecontent = document.querySelector(SELECTORS.PAGECONTENT);
+        if (!currentFocus || !pagecontent?.contains(currentFocus)) {
+            Drawers.displaceDrawers(window.scrollX);
+            return;
         }
-        drawerLayout.addEventListener("scroll", () => {
-            if (drawerLayout.scrollTop >= window.innerHeight) {
-                body.classList.add(CLASSES.SCROLLED);
-            } else {
-                body.classList.remove(CLASSES.SCROLLED);
-            }
+        drawerMap.forEach(drawerInstance => {
+            drawerInstance.preventOverlap(currentFocus);
         });
     }
-};
 
-/**
- * Check if there is a visible scrollbar in the given html element.
- *
- * @param {object} htmlNode The html element.
- * @returns {boolean} true if the scroll height is greater than client height.
- */
-const scrollbarVisible = (htmlNode) => {
-   return htmlNode.scrollHeight > htmlNode.clientHeight;
-};
+    /**
+     * Prevent drawer from covering the content when the page content covers the full page.
+     *
+     * @param {Number} displace
+     */
+    static displaceDrawers(displace) {
+        drawerMap.forEach(drawerInstance => {
+            drawerInstance.displace(displace);
+        });
+    }
+}
 
 /**
  * Set the last used attribute for the last used toggle button for a drawer.
@@ -684,10 +768,25 @@ const registerListeners = () => {
         }
     };
 
+    document.addEventListener('scroll', () => {
+        const body = document.querySelector('body');
+        if (window.scrollY >= window.innerHeight) {
+            body.classList.add(CLASSES.SCROLLED);
+        } else {
+            body.classList.remove(CLASSES.SCROLLED);
+        }
+        // Horizontal scroll listener to displace the drawers to prevent covering
+        // any possible sticky content.
+        Drawers.displaceDrawers(window.scrollX);
+    });
+
+    const preventOverlap = debounce(Drawers.preventCoveringFocusedElement, 100);
+    document.addEventListener('focusin', preventOverlap);
+    document.addEventListener('focusout', preventOverlap);
+
     window.addEventListener('resize', debounce(closeOnResizeListener, 400));
 };
 
-scroller();
 registerListeners();
 
 const drawers = document.querySelectorAll(SELECTORS.DRAWERS);
