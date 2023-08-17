@@ -19,6 +19,7 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
 
   Scenario: A teacher can search for and find a grade item to view
     Given I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
+    And I change window size to "large"
     And I click on "Grade items" "link" in the ".page-toggler" "css_element"
     When I click on ".search-widget[data-searchtype='grade']" "css_element"
     Then I confirm "Test assignment one" in "grade" search within the gradebook widget exists
