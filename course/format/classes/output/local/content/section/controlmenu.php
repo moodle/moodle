@@ -276,7 +276,7 @@ class controlmenu implements named_templatable, renderable {
                     'name' => $strdelete,
                     'pixattr' => ['class' => ''],
                     'attr' => [
-                        'class' => 'icon editing_delete',
+                        'class' => 'icon editing_delete text-danger',
                         'data-action' => 'deleteSection',
                         'data-id' => $section->id,
                     ],
