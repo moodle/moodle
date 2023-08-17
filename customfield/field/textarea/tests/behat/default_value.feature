@@ -28,7 +28,7 @@ Feature: Default value for the textarea custom field can contain images
       | user  | filepath                       | filename    |
       | admin | lib/tests/fixtures/gd-logo.png | gd-logo.png |
     And I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Text area" "link"
     And I set the following fields to these values:

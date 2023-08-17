@@ -9,7 +9,7 @@ Feature: Managers can manage course custom fields select
       | name              | component   | area   | itemid |
       | Category for test | core_course | course | 0      |
     And I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
 
   Scenario: Create a custom course select field
     When I click on "Add a new custom field" "link"

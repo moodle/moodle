@@ -6,7 +6,7 @@ Feature: Managers can manage categories for course custom fields
 
   Scenario: Create a category for custom course fields
     Given I log in as "admin"
-    When I navigate to "Courses > Course custom fields" in site administration
+    When I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I press "Add a new category"
     And I wait until the page is ready
     Then I should see "Other fields" in the "#customfield_catlist" "css_element"
@@ -18,7 +18,7 @@ Feature: Managers can manage categories for course custom fields
       | name              | component   | area   | itemid |
       | Category for test | core_course | course | 0      |
     And I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I set the field "Edit category name" in the "//div[contains(@class,'categoryinstance') and contains(.,'Category for test')]" "xpath_element" to "Good fields"
     Then I should not see "Category for test" in the "#customfield_catlist" "css_element"
     And "New value for Category for test" "field" should not exist
@@ -34,7 +34,7 @@ Feature: Managers can manage categories for course custom fields
       | name    | category          | type | shortname |
       | Field 1 | Category for test | text | f1        |
     And I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "[data-role='deletecategory']" "css_element"
     And I click on "Yes" "button" in the "Confirm" "dialogue"
     And I wait until the page is ready
@@ -54,7 +54,7 @@ Feature: Managers can manage categories for course custom fields
       | Field1 | Category1 | text | f1        |
       | Field2 | Category2 | text | f2        |
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     Then "Field1" "text" should appear after "Category1" "text"
     And "Category2" "text" should appear after "Field1" "text"
     And "Field2" "text" should appear after "Category2" "text"
@@ -65,7 +65,7 @@ Feature: Managers can manage categories for course custom fields
     And "Field1" "text" should appear after "Category2" "text"
     And "Field2" "text" should appear after "Field1" "text"
     And "Category3" "text" should appear after "Field2" "text"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And "Category2" "text" should appear after "Category1" "text"
     And "Field1" "text" should appear after "Category2" "text"
     And "Field2" "text" should appear after "Field1" "text"
@@ -84,7 +84,7 @@ Feature: Managers can manage categories for course custom fields
       | name   | category  | type | shortname |
       | Field1 | Category1 | text | f1        |
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     Then "Field1" "text" should appear after "Category1" "text"
     And "Category2" "text" should appear after "Field1" "text"
     And "Category3" "text" should appear after "Category2" "text"
@@ -93,7 +93,7 @@ Feature: Managers can manage categories for course custom fields
     And "Field1" "text" should appear after "Category1" "text"
     And "Category3" "text" should appear after "Field1" "text"
     And "Category2" "text" should appear after "Category3" "text"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And "Field1" "text" should appear after "Category1" "text"
     And "Category3" "text" should appear after "Field1" "text"
     And "Category2" "text" should appear after "Category3" "text"
