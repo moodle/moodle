@@ -81,6 +81,8 @@ information provided here is intended especially for developers.
   - I choose "Group mode > Visible groups" in the open action menu
 * addHelpButton() function has a new optional $a parameter to allow variables with translation strings.
 * help_icon constructor has a new optional $a parameter to allow variables with translation strings.
+* The random_bytes_emulate() function has been deprecated, because it's not required anymore. PHP native function random_bytes()
+  should be used instead.
 
 === 4.2 ===
 

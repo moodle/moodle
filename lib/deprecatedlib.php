@@ -3483,3 +3483,24 @@ function theme_get_locked_theme_for_device($device) {
     $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
     return $CFG->config_php_settings[$themeconfigname];
 }
+
+/**
+ * Try to generate cryptographically secure pseudo-random bytes.
+ *
+ * Note this is achieved by fallbacking between:
+ *  - PHP 7 random_bytes().
+ *  - OpenSSL openssl_random_pseudo_bytes().
+ *  - In house random generator getting its entropy from various, hard to guess, pseudo-random sources.
+ *
+ * @param int $length requested length in bytes
+ * @deprecated since 4.3.
+ * @return string binary data
+ */
+function random_bytes_emulate($length) {
+    debugging(
+            __FUNCTION__ . '() is deprecated.' .
+            'Please use random_bytes instead.',
+            DEBUG_DEVELOPER
+    );
+    return random_bytes($length);
+}
