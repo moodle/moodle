@@ -3501,5 +3501,19 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023082200.04);
     }
 
+    if ($oldversion < 2023082600.01) {
+        // Upgrade MIME type for existing PSD files.
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'image/vnd.adobe.photoshop',
+            $DB->sql_like('filename', '?', false),
+            ['%.psd']
+        );
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.01);
+    }
+
     return true;
 }

@@ -88,6 +88,6 @@ class tool_filetypes_test extends advanced_testcase {
      */
     public function test_get_file_icons() {
         $icons = utils::get_file_icons();
-        $this->assertCount(30, $icons);
+        $this->assertCount(31, $icons);
     }
 }
