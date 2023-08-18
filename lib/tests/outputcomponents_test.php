@@ -140,9 +140,6 @@ class outputcomponents_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        // Force SVG on so that we have predictable URL's.
-        $CFG->svgicons = true;
-
         // Verify new install contains expected defaults.
         $this->assertSame(theme_config::DEFAULT_THEME, $CFG->theme);
         $this->assertEquals(1, $CFG->slasharguments);
