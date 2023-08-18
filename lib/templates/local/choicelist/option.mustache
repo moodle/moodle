@@ -52,15 +52,10 @@
     class="d-flex flex-row align-items-start p-2 mb-1 {{!
         }} position-relative rounded dropdown-item-outline {{!
         }} {{#disabled}} dimmed_text {{/disabled}} {{!
-        }} {{#selected}} bg-light selected {{/selected}}"
+        }} {{#selected}} border bg-primary-light selected {{/selected}}"
     data-optionnumber="{{optionnumber}}"
     data-selected="{{selected}}"
 >
-    {{#icon}}
-    <div class="option-icon">
-        {{>core/pix_icon}}
-    </div>
-    {{/icon}}
     <div class="option-select-indicator">
         <span class="{{^selected}} d-none {{/selected}}" data-for="checkedIcon">
             {{#pix}} i/checkedcircle, core, {{#str}} selected, form {{/str}} {{/pix}}
@@ -69,11 +64,17 @@
             {{#pix}} i/uncheckedcircle{{/pix}}
         </span>
     </div>
+    {{#icon}}
+    <div class="option-icon">
+        {{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}
+    </div>
+    {{/icon}}
     <div class="option-name">
         <a
-            class="stretched-link text-wrap {{!
+            class="stretched-link text-wrap font-weight-bold {{!
+                }} {{^disabled}} text-dark {{/disabled}} {{!
                 }} {{#disabled}} disabled {{/disabled}} {{!
-                }} {{#selected}} selected disabled {{/selected}}"
+                }} {{#selected}} selected {{/selected}}"
             role="option"
             {{#selected}} aria-selected="true" {{/selected}}
             {{#description}} aria-describedby="{{optionuniqid}}" {{/description}}
@@ -89,7 +90,9 @@
             {{name}}
         </a>
         {{#description}}
-        <div id="{{optionuniqid}}" class="option-description small text-muted text-wrap">
+        <div
+            id="{{optionuniqid}}"
+            class="option-description small text-muted text-wrap">
             {{{description}}}
         </div>
         {{/description}}

@@ -257,6 +257,10 @@ button.close,
     color: map-get($theme-colors, 'info');
 }
 
+.bg-primary-light {
+    background-color: $primary-light-background;
+}
+
 .fitem.advanced .text-info {
     font-weight: bold;
 }
@@ -3178,18 +3182,11 @@ blockquote {
 
 /* Choice list component. */
 .choicelist {
-    min-width: $modal-sm;
-}
+    // Choicelist is designed to fit inside a small modal.
+    min-width: calc(#{$modal-sm} - 25px);
 
-[data-region="fixed-drawer"] {
-    .choicelist {
-        min-width: calc(#{$modal-sm} - 25px);
-    }
-}
-
-@include media-breakpoint-down(xs) {
-    // Modal small are larger than xs breakpoint.
-    .choicelist {
-        min-width: calc(#{$modal-sm} - 25px);
+    // Align the font based icons.
+    i.icon {
+        vertical-align: middle;
     }
 }
