@@ -1,318 +1,635 @@
 [
-	{
-	  "book": {
-		"name": "Computer Science and Programming",
-		"code": "DCL08",
-		"category": "DigiChamps",
-		"categorycode": "DC",
-		"summary": ".",
-		"otherfields": {
-		  "level": "8",
-		  "cardcolour": "#215caa"
-		},
-		"chapters": [
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 1: Computer and Us",
-			"type": "topic",
-			"uid": "DCL08-TP1-000",
-			"children": [
-			  {
-				"title": "Unit 1 Summary",
-				"uid": "DCL08-TP1-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "1.1 - Software Updates",
-				"uid": "DCL08-TP1-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "1.2 - Version History Of Cloud Documents",
-				"uid": "DCL08-TP1-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S02",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP1-CHDRN4",							
-				"fname":"DCL08-TP1-CHDRN4.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 2: Digital World",
-			"type": "topic",
-			"uid": "DCL08-TP2-000",
-			"children": [
-			   {
-				"title": "Unit 2 Summary",
-				"uid": "DCL08-TP2-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "2.1 - Cryptography",
-				"uid": "DCL08-TP2-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "2.2 - Social Engineering",
-				"uid": "DCL08-TP2-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "2.3 - Social Media And Digital Footprint",
-				"uid": "DCL08-TP2-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S03",
-				"type": "page"
-			  },
-			  {
-				"title": "2.4 - Active And Passive Collection",
-				"uid": "DCL08-TP2-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S04",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP2-CHDRN6",							
-				"fname":"DCL08-TP2-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 3: Basics of HTML",
-			"type": "topic",
-			"uid": "DCL08-TP3-000",
-			"children": [
-				{
-				"title": "Unit 3 Summary",
-				"uid": "DCL08-TP3-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "3.1 - Starting With HTML",
-				"uid": "DCL08-TP3-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "3.2 - Tags In HTML",
-				"uid": "DCL08-TP3-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "3.3 - Formatting In HTML",
-				"uid": "DCL08-TP3-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S03",
-				"type": "page"
-			  },
-			  {
-				"title": "3.4 - Attributes And Grouping",
-				"uid": "DCL08-TP3-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S04",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP3-CHDRN6",							
-				"fname":"DCL08-TP3-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 4: More on HTML",
-			"type": "topic",
-			"uid": "DCL08-TP4-000",
-			"children": [
-			  {
-				"title": "Unit 4 Summary",
-				"uid": "DCL08-TP4-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "4.1 - Images In HTML",
-				"uid": "DCL08-TP4-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "4.2 - Tables In HTML",
-				"uid": "DCL08-TP4-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "4.3 - Lists In HTML",
-				"uid": "DCL08-TP4-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S03",
-				"type": "page"
-			  },
-			  {
-				"title": "4.4 - Links In HTML",
-				"uid": "DCL08-TP4-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S04",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP4-CHDRN6",							
-				"fname":"DCL08-TP4-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 5: Paragraphs and Views in PowerPoint",
-			"type": "topic",
-			"uid": "DCL08-TP5-000",
-			"children": [
-			  {
-				"title": "Unit 5 Summary",
-				"uid": "DCL08-TP5-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "5.1 - Presentation",
-				"uid": "DCL08-TP5-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "5.2  Coll Aboration And Review",
-				"uid": "DCL08-TP5-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S02",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP5-CHDRN4",							
-				"fname":"DCL08-TP5-CHDRN4.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 6: Document Review",
-			"type": "topic",
-			"uid": "DCL08-TP4-000",
-			"children": [
-			  {
-				"title": "Unit 6 Summary",
-				"uid": "DCL08-TP6-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "6.1 - In Inserting Special Characters",
-				"uid": "DCL08-TP6-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "6.2 - Reviewing Documents",
-				"uid": "DCL08-TP6-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "6.3 - Collaboration",
-				"uid": "DCL08-TP6-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S03",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP6-CHDRN5",							
-				"fname":"DCL08-TP6-CHDRN5.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL08/DCL08-TP1-000.mdx",
-			"title": "Unit 7: Data and Computation",
-			"type": "topic",
-			"uid": "DCL08-TP7-000",
-			"children": [
-			  {
-				"title": "Unit 7 Summary",
-				"uid": "DCL08-TP7-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "7.1 - Bit In Qubit",
-				"uid": "DCL08-TP7-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "7.2 - Working With Data",
-				"uid": "DCL08-TP7-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "7.3 - Data Cleaning",
-				"uid": "DCL08-TP7-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S03",
-				"type": "page"
-			  },
-			  {
-				"title": "7.4 - Computational Models",
-				"uid": "DCL08-TP7-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S04",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL08-TP7-CHDRN6",							
-				"fname":"DCL08-TP7-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  }
-		]
-	  }
-	}
-  ]
+  {
+    "book": {
+      "name": "Computer Science and Programming",
+      "code": "DCL08",
+      "category": "DigiChamps",
+      "categorycode": "DC",
+      "summary": ".",
+      "otherfields": {
+        "level": "8",
+        "cardcolour": "#215caa"
+      },
+      "chapters": [
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 1: Computer and Us",
+          "type": "topic",
+          "uid": "DCL08-TP1-000",
+          "children": [
+            {
+              "title": "Unit 1 Summary",
+              "uid": "DCL08-TP1-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_Intro",
+              "type": "page"
+            },
+            {
+              "title": "1.1 - Software Updates",
+              "uid": "DCL08-TP1-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S01",
+              "type": "page"
+            },
+            {
+              "title": "1.2 - Version History Of Cloud Documents",
+              "uid": "DCL08-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S02",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP1-CHDRN4",
+              "fname": "DCL08-TP1-CHDRN4.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 2: Digital World",
+          "type": "topic",
+          "uid": "DCL08-TP2-000",
+          "children": [
+            {
+              "title": "Unit 2 Summary",
+              "uid": "DCL08-TP2-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_Intro",
+              "type": "page"
+            },
+            {
+              "title": "2.1 - Cryptography",
+              "uid": "DCL08-TP2-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S01",
+              "type": "page"
+            },
+            {
+              "title": "2.2 - Social Engineering",
+              "uid": "DCL08-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S02",
+              "type": "page"
+            },
+            {
+              "title": "2.3 - Social Media And Digital Footprint",
+              "uid": "DCL08-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S03",
+              "type": "page"
+            },
+            {
+              "title": "2.4 - Active And Passive Collection",
+              "uid": "DCL08-TP2-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP2-CHDRN6",
+              "fname": "DCL08-TP2-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 3: Basics of HTML",
+          "type": "topic",
+          "uid": "DCL08-TP3-000",
+          "children": [
+            {
+              "title": "Unit 3 Summary",
+              "uid": "DCL08-TP3-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_Intro",
+              "type": "page"
+            },
+            {
+              "title": "3.1 - Starting With HTML",
+              "uid": "DCL08-TP3-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S01",
+              "type": "page"
+            },
+            {
+              "title": "3.2 - Tags In HTML",
+              "uid": "DCL08-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S02",
+              "type": "page"
+            },
+            {
+              "title": "3.3 - Formatting In HTML",
+              "uid": "DCL08-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S03",
+              "type": "page"
+            },
+            {
+              "title": "3.4 - Attributes And Grouping",
+              "uid": "DCL08-TP3-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP3-CHDRN6",
+              "fname": "DCL08-TP3-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 4: More on HTML",
+          "type": "topic",
+          "uid": "DCL08-TP4-000",
+          "children": [
+            {
+              "title": "Unit 4 Summary",
+              "uid": "DCL08-TP4-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_Intro",
+              "type": "page"
+            },
+            {
+              "title": "4.1 - Images In HTML",
+              "uid": "DCL08-TP4-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S01",
+              "type": "page"
+            },
+            {
+              "title": "4.2 - Tables In HTML",
+              "uid": "DCL08-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S02",
+              "type": "page"
+            },
+            {
+              "title": "4.3 - Lists In HTML",
+              "uid": "DCL08-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S03",
+              "type": "page"
+            },
+            {
+              "title": "4.4 - Links In HTML",
+              "uid": "DCL08-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP4-CHDRN6",
+              "fname": "DCL08-TP4-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 5: Paragraphs and Views in PowerPoint",
+          "type": "topic",
+          "uid": "DCL08-TP5-000",
+          "children": [
+            {
+              "title": "Unit 5 Summary",
+              "uid": "DCL08-TP5-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_Intro",
+              "type": "page"
+            },
+            {
+              "title": "5.1 - Presentation",
+              "uid": "DCL08-TP5-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S01",
+              "type": "page"
+            },
+            {
+              "title": "5.2  Coll Aboration And Review",
+              "uid": "DCL08-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S02",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP5-CHDRN4",
+              "fname": "DCL08-TP5-CHDRN4.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 6: Document Review",
+          "type": "topic",
+          "uid": "DCL08-TP4-000",
+          "children": [
+            {
+              "title": "Unit 6 Summary",
+              "uid": "DCL08-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_Intro",
+              "type": "page"
+            },
+            {
+              "title": "6.1 - In Inserting Special Characters",
+              "uid": "DCL08-TP6-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S01",
+              "type": "page"
+            },
+            {
+              "title": "6.2 - Reviewing Documents",
+              "uid": "DCL08-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S02",
+              "type": "page"
+            },
+            {
+              "title": "6.3 - Collaboration",
+              "uid": "DCL08-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S03",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP6-CHDRN5",
+              "fname": "DCL08-TP6-CHDRN5.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL08/DCL08-TP1-000.mdx",
+          "title": "Unit 7: Data and Computation",
+          "type": "topic",
+          "uid": "DCL08-TP7-000",
+          "children": [
+            {
+              "title": "Unit 7 Summary",
+              "uid": "DCL08-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_Intro",
+              "type": "page"
+            },
+            {
+              "title": "7.1 - Bit In Qubit",
+              "uid": "DCL08-TP7-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S01",
+              "type": "page"
+            },
+            {
+              "title": "7.2 - Working With Data",
+              "uid": "DCL08-TP7-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S02",
+              "type": "page"
+            },
+            {
+              "title": "7.3 - Data Cleaning",
+              "uid": "DCL08-TP7-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S03",
+              "type": "page"
+            },
+            {
+              "title": "7.4 - Computational Models",
+              "uid": "DCL08-TP7-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL08-TP7-CHDRN6",
+              "fname": "DCL08-TP7-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        }
+      ]
+    },
+    "chapters": [
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 1: Computer and Us",
+        "type": "topic",
+        "uid": "DCL08-TP1-000",
+        "children": [
+          {
+            "title": "Unit 1 Summary",
+            "uid": "DCL08-TP1-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_Intro",
+            "type": "page"
+          },
+          {
+            "title": "1.1 - Software Updates",
+            "uid": "DCL08-TP1-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S01",
+            "type": "page"
+          },
+          {
+            "title": "1.2 - Version History Of Cloud Documents",
+            "uid": "DCL08-TP1-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U01_S02",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP1-CHDRN4",
+            "fname": "DCL08-TP1-CHDRN4.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 2: Digital World",
+        "type": "topic",
+        "uid": "DCL08-TP2-000",
+        "children": [
+          {
+            "title": "Unit 2 Summary",
+            "uid": "DCL08-TP2-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_Intro",
+            "type": "page"
+          },
+          {
+            "title": "2.1 - Cryptography",
+            "uid": "DCL08-TP2-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S01",
+            "type": "page"
+          },
+          {
+            "title": "2.2 - Social Engineering",
+            "uid": "DCL08-TP2-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S02",
+            "type": "page"
+          },
+          {
+            "title": "2.3 - Social Media And Digital Footprint",
+            "uid": "DCL08-TP2-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S03",
+            "type": "page"
+          },
+          {
+            "title": "2.4 - Active And Passive Collection",
+            "uid": "DCL08-TP2-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U02_S04",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP2-CHDRN6",
+            "fname": "DCL08-TP2-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 3: Basics of HTML",
+        "type": "topic",
+        "uid": "DCL08-TP3-000",
+        "children": [
+          {
+            "title": "Unit 3 Summary",
+            "uid": "DCL08-TP3-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_Intro",
+            "type": "page"
+          },
+          {
+            "title": "3.1 - Starting With HTML",
+            "uid": "DCL08-TP3-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S01",
+            "type": "page"
+          },
+          {
+            "title": "3.2 - Tags In HTML",
+            "uid": "DCL08-TP3-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S02",
+            "type": "page"
+          },
+          {
+            "title": "3.3 - Formatting In HTML",
+            "uid": "DCL08-TP3-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S03",
+            "type": "page"
+          },
+          {
+            "title": "3.4 - Attributes And Grouping",
+            "uid": "DCL08-TP3-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S04",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP3-CHDRN6",
+            "fname": "DCL08-TP3-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 4: More on HTML",
+        "type": "topic",
+        "uid": "DCL08-TP4-000",
+        "children": [
+          {
+            "title": "Unit 4 Summary",
+            "uid": "DCL08-TP4-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_Intro",
+            "type": "page"
+          },
+          {
+            "title": "4.1 - Images In HTML",
+            "uid": "DCL08-TP4-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S01",
+            "type": "page"
+          },
+          {
+            "title": "4.2 - Tables In HTML",
+            "uid": "DCL08-TP4-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S02",
+            "type": "page"
+          },
+          {
+            "title": "4.3 - Lists In HTML",
+            "uid": "DCL08-TP4-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S03",
+            "type": "page"
+          },
+          {
+            "title": "4.4 - Links In HTML",
+            "uid": "DCL08-TP4-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U04_S04",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP4-CHDRN6",
+            "fname": "DCL08-TP4-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 5: Paragraphs and Views in PowerPoint",
+        "type": "topic",
+        "uid": "DCL08-TP5-000",
+        "children": [
+          {
+            "title": "Unit 5 Summary",
+            "uid": "DCL08-TP5-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_Intro",
+            "type": "page"
+          },
+          {
+            "title": "5.1 - Presentation",
+            "uid": "DCL08-TP5-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S01",
+            "type": "page"
+          },
+          {
+            "title": "5.2  Coll Aboration And Review",
+            "uid": "DCL08-TP5-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S02",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP5-CHDRN4",
+            "fname": "DCL08-TP5-CHDRN4.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 6: Document Review",
+        "type": "topic",
+        "uid": "DCL08-TP4-000",
+        "children": [
+          {
+            "title": "Unit 6 Summary",
+            "uid": "DCL08-TP6-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_Intro",
+            "type": "page"
+          },
+          {
+            "title": "6.1 - In Inserting Special Characters",
+            "uid": "DCL08-TP6-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S01",
+            "type": "page"
+          },
+          {
+            "title": "6.2 - Reviewing Documents",
+            "uid": "DCL08-TP6-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S02",
+            "type": "page"
+          },
+          {
+            "title": "6.3 - Collaboration",
+            "uid": "DCL08-TP6-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U06_S03",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP6-CHDRN5",
+            "fname": "DCL08-TP6-CHDRN5.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL08/DCL08-TP1-000.mdx",
+        "title": "Unit 7: Data and Computation",
+        "type": "topic",
+        "uid": "DCL08-TP7-000",
+        "children": [
+          {
+            "title": "Unit 7 Summary",
+            "uid": "DCL08-TP7-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_Intro",
+            "type": "page"
+          },
+          {
+            "title": "7.1 - Bit In Qubit",
+            "uid": "DCL08-TP7-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S01",
+            "type": "page"
+          },
+          {
+            "title": "7.2 - Working With Data",
+            "uid": "DCL08-TP7-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S02",
+            "type": "page"
+          },
+          {
+            "title": "7.3 - Data Cleaning",
+            "uid": "DCL08-TP7-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S03",
+            "type": "page"
+          },
+          {
+            "title": "7.4 - Computational Models",
+            "uid": "DCL08-TP7-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S04",
+            "type": "page"
+          },
+          {
+            "uid": "DCL08-TP7-CHDRN6",
+            "fname": "DCL08-TP7-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      }
+    ]
+  }
+]

@@ -1,297 +1,591 @@
 [
-	{
-	  "book": {
-		"name": "Computer Science and Programming",
-		"code": "DCL09",
-		"category": "DigiChamps",
-		"categorycode": "DC",
-		"summary": ".",
-		"otherfields": {
-		  "level": "9",
-		  "cardcolour": "#215caa"
-		},
-		"chapters": [
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 1: Computing Systems",
-			"type": "topic",
-			"uid": "DCL09-TP1-000",
-			"children": [
-			  {
-				"title": "Unit 1 Summary",
-				"uid": "DCL09-TP1-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-opener page - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "1.1 - Computers And Embedded Systems",
-				"uid": "DCL09-TP1-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.1 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "1.2 -Technology And Inequality",
-				"uid": "DCL09-TP1-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.2 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "1.3 - Scalable And Reliable Networks",
-				"uid": "DCL09-TP1-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.3 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "Exercise",
-				"uid": "DCL09-TP1-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Exercise - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP1-CHDRN6",							
-				"fname":"DCL09-TP1-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 2: Editing Images and Videos",
-			"type": "topic",
-			"uid": "DCL09-TP2-000",
-			"children": [
-			   {
-				"title": "Unit 2 Summary",
-				"uid": "DCL09-TP2-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Opener page - Google Docs"
-			  },
-			  {
-				"title": "2.1 - Getting Started With Gimp",
-				"uid": "DCL09-TP2-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.1 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "2.2 - Photo Editing Basics",
-				"uid": "DCL09-TP2-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.2 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "2.3 - Video Editing Basics",
-				"uid": "DCL09-TP2-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.3 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "Exercise",
-				"uid": "DCL09-TP2-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Exercise - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP2-CHDRN6",							
-				"fname":"DCL09-TP2-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 3: HTML and CSS",
-			"type": "topic",
-			"uid": "DCL09-TP3-000",
-			"children": [
-				{
-				"title": "Unit 3 Summary",
-				"uid": "DCL09-TP3-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-opener page - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "3.1 - HTML Forms",
-				"uid": "DCL09-TP3-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.1 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "3.2 - Styling With CSS",
-				"uid": "DCL09-TP3-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.2 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "Exercise",
-				"uid": "DCL09-TP3-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Exercise - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP3-CHDRN5",							
-				"fname":"DCL09-TP3-CHDRN5.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 4: Learning JavaScript",
-			"type": "topic",
-			"uid": "DCL09-TP4-000",
-			"children": [
-			  {
-				"title": "Unit 4 Summary",
-				"uid": "DCL09-TP4-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Opener Page - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "4.1 - Getting Started With JavaScript",
-				"uid": "DCL09-TP4-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.1 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "4.2 - Methods In JavaScript",
-				"uid": "DCL09-TP4-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.2 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "4.3 - Advanced Concepts In JavaScript",
-				"uid": "DCL09-TP4-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.3 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "Exercise",
-				"uid": "DCL09-TP4-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Exercise - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP4-CHDRN6",							
-				"fname":"DCL09-TP4-CHDRN6.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 5: Data Analysis and Storage",
-			"type": "topic",
-			"uid": "DCL09-TP5-000",
-			"children": [
-			  {
-				"title": "Unit 5 Summary",
-				"uid": "DCL09-TP5-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Opener Page - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "5.1 - Data Subsetting",
-				"uid": "DCL09-TP5-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.1 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "5.2 - Nested If",
-				"uid": "DCL09-TP5-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.2 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "5.3 - Data Summarization And Visualization",
-				"uid": "DCL09-TP5-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.3 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "5.4 - Data Storage",
-				"uid": "DCL09-TP5-CHDRN5",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.4 - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"title": "Exercise",
-				"uid": "DCL09-TP5-CHDRN6",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Exercise - Google Docs",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP5-CHDRN7",							
-				"fname":"DCL09-TP5-CHDRN7.json",
-				"type": "assignment"
-			  }
-			]
-		  },
-		  {
-			"route": "book/DCL09/DCL09-TP1-000.mdx",
-			"title": "Unit 6: Data and Computation",
-			"type": "topic",
-			"uid": "DCL09-TP4-000",
-			"children": [
-			  {
-				"title": "Unit 6 Summary",
-				"uid": "DCL09-TP6-CHDRN1",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_Intro",
-				"type": "page"
-			  },
-			  {
-				"title": "6.1 - Bits For Colors",
-				"uid": "DCL09-TP6-CHDRN2",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S01",
-				"type": "page"
-			  },
-			  {
-				"title": "6.2 - Working With Data",
-				"uid": "DCL09-TP6-CHDRN3",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S02",
-				"type": "page"
-			  },
-			  {
-				"title": "6.3 - Data Cleaning",
-				"uid": "DCL09-TP6-CHDRN4",
-				"description": "",
-				"route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
-				"type": "page"
-			  },
-			  {
-				"uid": "DCL09-TP6-CHDRN5",							
-				"fname":"DCL09-TP6-CHDRN5.json",
-				"type": "assignment"
-			  }
-			]
-		  }
-		]
-	  }
-	}
-  ]
+  {
+    "book": {
+      "name": "Computer Science and Programming",
+      "code": "DCL09",
+      "category": "DigiChamps",
+      "categorycode": "DC",
+      "summary": ".",
+      "otherfields": {
+        "level": "9",
+        "cardcolour": "#215caa"
+      },
+      "chapters": [
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 1: Computing Systems",
+          "type": "topic",
+          "uid": "DCL09-TP1-000",
+          "children": [
+            {
+              "title": "Unit 1 Summary",
+              "uid": "DCL09-TP1-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.1 - Computers And Embedded Systems",
+              "uid": "DCL09-TP1-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.2 -Technology And Inequality",
+              "uid": "DCL09-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.3 - Scalable And Reliable Networks",
+              "uid": "DCL09-TP1-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.3 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL09-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP1-CHDRN6",
+              "fname": "DCL09-TP1-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 2: Editing Images and Videos",
+          "type": "topic",
+          "uid": "DCL09-TP2-000",
+          "children": [
+            {
+              "title": "Unit 2 Summary",
+              "uid": "DCL09-TP2-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Opener page - Google Docs"
+            },
+            {
+              "title": "2.1 - Getting Started With Gimp",
+              "uid": "DCL09-TP2-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "2.2 - Photo Editing Basics",
+              "uid": "DCL09-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "2.3 - Video Editing Basics",
+              "uid": "DCL09-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.3 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL09-TP2-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP2-CHDRN6",
+              "fname": "DCL09-TP2-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 3: HTML and CSS",
+          "type": "topic",
+          "uid": "DCL09-TP3-000",
+          "children": [
+            {
+              "title": "Unit 3 Summary",
+              "uid": "DCL09-TP3-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.1 - HTML Forms",
+              "uid": "DCL09-TP3-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.2 - Styling With CSS",
+              "uid": "DCL09-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL09-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP3-CHDRN5",
+              "fname": "DCL09-TP3-CHDRN5.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 4: Learning JavaScript",
+          "type": "topic",
+          "uid": "DCL09-TP4-000",
+          "children": [
+            {
+              "title": "Unit 4 Summary",
+              "uid": "DCL09-TP4-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Opener Page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.1 - Getting Started With JavaScript",
+              "uid": "DCL09-TP4-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.2 - Methods In JavaScript",
+              "uid": "DCL09-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.3 - Advanced Concepts In JavaScript",
+              "uid": "DCL09-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.3 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL09-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP4-CHDRN6",
+              "fname": "DCL09-TP4-CHDRN6.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 5: Data Analysis and Storage",
+          "type": "topic",
+          "uid": "DCL09-TP5-000",
+          "children": [
+            {
+              "title": "Unit 5 Summary",
+              "uid": "DCL09-TP5-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Opener Page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.1 - Data Subsetting",
+              "uid": "DCL09-TP5-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.2 - Nested If",
+              "uid": "DCL09-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.3 - Data Summarization And Visualization",
+              "uid": "DCL09-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.3 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.4 - Data Storage",
+              "uid": "DCL09-TP5-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.4 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL09-TP5-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP5-CHDRN7",
+              "fname": "DCL09-TP5-CHDRN7.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DCL09/DCL09-TP1-000.mdx",
+          "title": "Unit 6: Data and Computation",
+          "type": "topic",
+          "uid": "DCL09-TP4-000",
+          "children": [
+            {
+              "title": "Unit 6 Summary",
+              "uid": "DCL09-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_Intro",
+              "type": "page"
+            },
+            {
+              "title": "6.1 - Bits For Colors",
+              "uid": "DCL09-TP6-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S01",
+              "type": "page"
+            },
+            {
+              "title": "6.2 - Working With Data",
+              "uid": "DCL09-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S02",
+              "type": "page"
+            },
+            {
+              "title": "6.3 - Data Cleaning",
+              "uid": "DCL09-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
+              "type": "page"
+            },
+            {
+              "uid": "DCL09-TP6-CHDRN5",
+              "fname": "DCL09-TP6-CHDRN5.json",
+              "type": "assignment"
+            }
+          ],
+          "teacheronly": "no"
+        }
+      ]
+    },
+    "chapters": [
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 1: Computing Systems",
+        "type": "topic",
+        "uid": "DCL09-TP1-000",
+        "children": [
+          {
+            "title": "Unit 1 Summary",
+            "uid": "DCL09-TP1-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-opener page - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "1.1 - Computers And Embedded Systems",
+            "uid": "DCL09-TP1-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.1 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "1.2 -Technology And Inequality",
+            "uid": "DCL09-TP1-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.2 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "1.3 - Scalable And Reliable Networks",
+            "uid": "DCL09-TP1-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Sprint1.3 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "Exercise",
+            "uid": "DCL09-TP1-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Exercise - Google Docs",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP1-CHDRN6",
+            "fname": "DCL09-TP1-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 2: Editing Images and Videos",
+        "type": "topic",
+        "uid": "DCL09-TP2-000",
+        "children": [
+          {
+            "title": "Unit 2 Summary",
+            "uid": "DCL09-TP2-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Opener page - Google Docs"
+          },
+          {
+            "title": "2.1 - Getting Started With Gimp",
+            "uid": "DCL09-TP2-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.1 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "2.2 - Photo Editing Basics",
+            "uid": "DCL09-TP2-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.2 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "2.3 - Video Editing Basics",
+            "uid": "DCL09-TP2-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.3 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "Exercise",
+            "uid": "DCL09-TP2-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Exercise - Google Docs",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP2-CHDRN6",
+            "fname": "DCL09-TP2-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 3: HTML and CSS",
+        "type": "topic",
+        "uid": "DCL09-TP3-000",
+        "children": [
+          {
+            "title": "Unit 3 Summary",
+            "uid": "DCL09-TP3-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-opener page - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "3.1 - HTML Forms",
+            "uid": "DCL09-TP3-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.1 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "3.2 - Styling With CSS",
+            "uid": "DCL09-TP3-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Sprint3.2 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "Exercise",
+            "uid": "DCL09-TP3-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Exercise - Google Docs",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP3-CHDRN5",
+            "fname": "DCL09-TP3-CHDRN5.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 4: Learning JavaScript",
+        "type": "topic",
+        "uid": "DCL09-TP4-000",
+        "children": [
+          {
+            "title": "Unit 4 Summary",
+            "uid": "DCL09-TP4-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Opener Page - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "4.1 - Getting Started With JavaScript",
+            "uid": "DCL09-TP4-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.1 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "4.2 - Methods In JavaScript",
+            "uid": "DCL09-TP4-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.2 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "4.3 - Advanced Concepts In JavaScript",
+            "uid": "DCL09-TP4-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Sprint4.3 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "Exercise",
+            "uid": "DCL09-TP4-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Exercise - Google Docs",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP4-CHDRN6",
+            "fname": "DCL09-TP4-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 5: Data Analysis and Storage",
+        "type": "topic",
+        "uid": "DCL09-TP5-000",
+        "children": [
+          {
+            "title": "Unit 5 Summary",
+            "uid": "DCL09-TP5-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Opener Page - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "5.1 - Data Subsetting",
+            "uid": "DCL09-TP5-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.1 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "5.2 - Nested If",
+            "uid": "DCL09-TP5-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.2 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "5.3 - Data Summarization And Visualization",
+            "uid": "DCL09-TP5-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.3 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "5.4 - Data Storage",
+            "uid": "DCL09-TP5-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Sprint5.4 - Google Docs",
+            "type": "page"
+          },
+          {
+            "title": "Exercise",
+            "uid": "DCL09-TP5-CHDRN6",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Exercise - Google Docs",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP5-CHDRN7",
+            "fname": "DCL09-TP5-CHDRN7.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DCL09/DCL09-TP1-000.mdx",
+        "title": "Unit 6: Data and Computation",
+        "type": "topic",
+        "uid": "DCL09-TP4-000",
+        "children": [
+          {
+            "title": "Unit 6 Summary",
+            "uid": "DCL09-TP6-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_Intro",
+            "type": "page"
+          },
+          {
+            "title": "6.1 - Bits For Colors",
+            "uid": "DCL09-TP6-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S01",
+            "type": "page"
+          },
+          {
+            "title": "6.2 - Working With Data",
+            "uid": "DCL09-TP6-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S02",
+            "type": "page"
+          },
+          {
+            "title": "6.3 - Data Cleaning",
+            "uid": "DCL09-TP6-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
+            "type": "page"
+          },
+          {
+            "uid": "DCL09-TP6-CHDRN5",
+            "fname": "DCL09-TP6-CHDRN5.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      }
+    ]
+  }
+]
