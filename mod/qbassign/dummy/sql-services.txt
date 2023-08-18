@@ -1,0 +1,6 @@
+INSERT INTO "qbs_external_functions" ("name", "classname", "methodname", "classpath", "component", "capabilities", "services") VALUES
+('mod_qbassign_remove_submission',	'mod_qbassign_external',	'remove_submission',	'mod/qbassign/externallib.php',	'mod_qbassign',	'',	'moodle_mobile_app');
+
+
+INSERT INTO "qbs_external_services_functions" ("externalserviceid", "functionname") VALUES
+(1,	'mod_qbassign_remove_submission');
