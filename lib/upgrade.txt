@@ -86,6 +86,7 @@ information provided here is intended especially for developers.
 * New behat behat_navigation::i_close_block_drawer_if_open() and behat_navigation::i_keep_block_drawer_closed()
 to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
 being forced open in all behat tests.
+* The core_useragent::get_device_type_list() function has been deprecated. Use core_useragent::devicetypes instead as a replacement.
 
 === 4.2 ===
 

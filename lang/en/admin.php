@@ -235,7 +235,6 @@ $string['configdeleteunconfirmed'] = 'For certain authentication methods, such a
 $string['configdenyemailaddresses'] = 'To deny email addresses from particular domains list them here in the same way.  All other domains will be accepted. To deny subdomains add the domain with a preceding \'.\'. eg <strong>hotmail.com yahoo.co.uk .live.com</strong>';
 $string['configenableanalytics'] = 'Analytics models, such as \'Students at risk of dropping out\' or \'Upcoming activities due\', can generate predictions, send insight notifications and offer further actions such as messaging users.';
 $string['configenableblogs'] = 'This switch provides all site users with their own blog.';
-$string['configenabledevicedetection'] = 'Enables detection of mobiles, smartphones, tablets or default devices (desktop PCs, laptops, etc) for the application of themes and other features.';
 $string['configdisableuserimages'] = 'Disable the ability for users to change user profile images.';
 $string['configdisplayloginfailures'] = 'This will display information to users about previous failed logins.';
 $string['configdndallowtextandlinks'] = 'Enable or disable the dragging and dropping of text and links onto a course page, alongside the dragging and dropping of files. Note that the dragging of text into Firefox or between different browsers is unreliable and may result in no data being uploaded, or corrupted text being uploaded.';
@@ -595,7 +594,6 @@ $string['enablecourserequests'] = 'Enable course requests';
 $string['enabled'] = 'Enabled';
 $string['enabledashboard'] = 'Enable Dashboard';
 $string['enabledashboard_help'] = 'The Dashboard shows Timeline, Calendar and Recently accessed items by default. You can set a different default Dashboard for everyone and allow users to customise their own Dashboard. If disabled, you need to set \'Start page for users\' to a value other than Dashboard.';
-$string['enabledevicedetection'] = 'Enable device detection';
 $string['enableglobalsearch'] = 'Enable global search';
 $string['enableglobalsearch_desc'] = 'If enabled, data will be indexed and synchronised by a scheduled task.';
 $string['enablegravatar'] = 'Enable Gravatar';
@@ -1624,6 +1622,8 @@ $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without
 $string['blockunprotect'] = 'Unprotect';
 
 // Deprecated since Moodle 4.3.
+$string['configenabledevicedetection'] = 'Enables detection of mobiles, smartphones, tablets or default devices (desktop PCs, laptops, etc) for the application of themes and other features.';
+$string['enabledevicedetection'] = 'Enable device detection';
 $string['selectdevice'] = 'Select device';
 $string['selecttheme'] = 'Select theme for {$a} device';
 $string['themenoselected'] = 'No theme selected';

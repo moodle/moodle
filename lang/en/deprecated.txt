@@ -84,3 +84,5 @@ backpackemail,core_badges
 backpackemail_help,core_badges
 editcoursecompletionsettings,core_completion
 clicktochangeinbrackets,core
+configenabledevicedetection,core_admin
+enabledevicedetection,core_admin

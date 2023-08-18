@@ -9,6 +9,7 @@ This files describes API changes in /admin/*.
 
   Existing cookies will not be affected by this change, until they are expired or deleted.
 
+* Theme setting "Enable device detection" (enabledevicedetection) and related to it has been removed.
 
 === 4.2 ===
 

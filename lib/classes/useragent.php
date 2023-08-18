@@ -176,11 +176,6 @@ class core_useragent {
      * @return string
      */
     protected function guess_device_type() {
-        global $CFG;
-        if (empty($CFG->enabledevicedetection)) {
-            $this->devicetype = self::DEVICETYPE_DEFAULT;
-            return $this->devicetype;
-        }
         foreach ($this->devicetypecustoms as $value => $regex) {
             if (preg_match($regex, $this->useragent)) {
                 $this->devicetype = $value;
