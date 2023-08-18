@@ -1054,6 +1054,12 @@ class user extends grade_report {
                 if (!is_null($content)) {
                     $rowcell = new \html_table_cell($content);
 
+                    // Grade item names and cateogry names are referenced in the `headers` attribute of table cells.
+                    // These table cells should be set to <th> tags.
+                    if ($tablecolumn === 'itemname') {
+                        $rowcell->header = true;
+                    }
+
                     if (isset($rowdata[$tablecolumn]['class'])) {
                         $rowcell->attributes['class'] = $rowdata[$tablecolumn]['class'];
                     }
