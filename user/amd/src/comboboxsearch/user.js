@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import search_combobox from 'core/comboboxsearch/search_combobox';
-import {get_strings as getStrings} from 'core/str';
+import {getStrings} from 'core/str';
 import {renderForPromise, replaceNodeContents} from 'core/templates';
 import $ from 'jquery';
 import Notification from 'core/notification';

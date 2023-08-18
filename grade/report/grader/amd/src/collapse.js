@@ -25,7 +25,7 @@ import search_combobox from 'core/comboboxsearch/search_combobox';
 import {renderForPromise, replaceNodeContents, replaceNode} from 'core/templates';
 import {debounce} from 'core/utils';
 import $ from 'jquery';
-import {get_strings as getStrings} from 'core/str';
+import {getStrings} from 'core/str';
 import CustomEvents from "core/custom_interaction_events";
 import storage from 'core/localstorage';
 import {addIconToContainer} from 'core/loadingicon';

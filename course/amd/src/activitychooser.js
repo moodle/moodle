@@ -27,7 +27,7 @@ import selectors from 'core_course/local/activitychooser/selectors';
 import CustomEvents from 'core/custom_interaction_events';
 import * as Templates from 'core/templates';
 import * as ModalFactory from 'core/modal_factory';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 
 // Set up some JS module wide constants that can be added to in the future.

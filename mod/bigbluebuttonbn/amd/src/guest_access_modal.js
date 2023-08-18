@@ -20,7 +20,7 @@
  * @copyright   2022 Blindside Networks Inc
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import ModalForm from 'core_form/modalform';
 import {add as toastAdd, addToastRegion} from 'core/toast';
 import {

@@ -13,7 +13,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-import {get_strings as getStrings} from 'core/str';
+import {getStrings} from 'core/str';
 import {saveCancelPromise, alert as displayAlert} from "core/notification";
 import MoodleConfig from 'core/config';
 

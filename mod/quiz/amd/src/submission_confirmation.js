@@ -25,7 +25,7 @@
 import {saveCancelPromise} from 'core/notification';
 import Prefetch from 'core/prefetch';
 import Templates from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const SELECTOR = {
     attemptSubmitButton: '.path-mod-quiz .btn-finishattempt button',

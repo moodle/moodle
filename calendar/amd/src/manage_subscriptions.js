@@ -28,7 +28,7 @@ import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
 import {exception as displayException, addNotification, fetchNotifications} from 'core/notification';
 import Prefetch from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {eventTypes} from 'core/local/inplace_editable/events';
 
 /**

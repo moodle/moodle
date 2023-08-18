@@ -31,7 +31,7 @@ import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import SummaryModal from 'core_calendar/summary_modal';
 import CustomEvents from 'core/custom_interaction_events';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 

@@ -25,7 +25,7 @@
 import {BaseComponent} from 'core/reactive';
 import {disableStickyFooter, enableStickyFooter} from 'core/sticky-footer';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import {

@@ -27,7 +27,7 @@ import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/ful
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
 import {addNotification} from 'core/notification';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import {debounce} from 'core/utils';

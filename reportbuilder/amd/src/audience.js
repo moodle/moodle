@@ -28,7 +28,7 @@ import Templates from 'core/templates';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import DynamicForm from 'core_form/dynamicform';
 import {add as addToast} from 'core/toast';
 import {deleteAudience} from 'core_reportbuilder/local/repository/audiences';
