@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
 It is recommended that add-on filter developers use early formatting stages to prevent security issues caused by
 modification of already sanitised text.
 
+* The moodle-filter_mathjaxloader-loader yui module has been deprecated. We create amd filter_mathjaxloader/loader to replace it.
+
 === 4.0 ===
 
 * The Word censorship (filter_censor) filter has been completely removed from core. It has been moved to the plugins database
