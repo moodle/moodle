@@ -45,4 +45,4 @@ if ($thumbnailavailable) {
 
 // Send default icon for the file type.
 $fileicon = file_extension_icon($source);
-send_file($CFG->dirroot . '/pix/' . $fileicon . '.png', basename($fileicon) . '.png');
+send_file($CFG->dirroot . '/pix/' . $fileicon . '.png', basename($fileicon) . '.svg');
