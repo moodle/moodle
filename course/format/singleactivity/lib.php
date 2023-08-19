@@ -157,7 +157,16 @@ class format_singleactivity extends core_courseformat\base {
             foreach (array_keys($availabletypes) as $activity) {
                 $capability = "mod/{$activity}:addinstance";
                 if (!has_capability($capability, $testcontext)) {
-                    unset($availabletypes[$activity]);
+                    if (!$this->categoryid) {
+                        unset($availabletypes[$activity]);
+                    } else {
+                        // We do not have a course yet, so we guess if the user will have the capability to add the activity after
+                        // creating the course.
+                        $categorycontext = \context_coursecat::instance($this->categoryid);
+                        if (!guess_if_creator_will_have_course_capability($capability, $categorycontext)) {
+                            unset($availabletypes[$activity]);
+                        }
+                    }
                 }
             }
         }
