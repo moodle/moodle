@@ -25,5 +25,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['helplinktext'] = 'HTML format helper';
 $string['pluginname'] = 'TinyMCE HTML formatter';
 $string['privacy:metadata'] = 'The HTML formatter plugin for TinyMCE does not store any personal data.';
