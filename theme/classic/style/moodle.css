@@ -23252,6 +23252,12 @@ img.resize {
   white-space: nowrap;
   display: inline;
 }
+.action-menu .dropdown-toggle.no-caret::after {
+  display: none;
+}
+.action-menu .dropdown-toggle.no-caret::before {
+  display: none;
+}
 .action-menu .dropdown.downleft .dropdown-subpanel-content {
   right: 0;
   left: auto;
@@ -29246,9 +29252,6 @@ span.editinstructions .alert-link {
 }
 .activity-item .activity-actions .actions {
   position: relative;
-}
-.activity-item .activity-actions .dropdown-toggle::after {
-  display: none;
 }
 .activity-item .activity-actions .action-menu .btn.btn-icon {
   height: 31px;

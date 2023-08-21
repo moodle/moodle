@@ -1534,9 +1534,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         .actions {
             position: relative;
         }
-        .dropdown-toggle::after {
-            display: none;
-        }
         // Override '.btn.btn-icon' styles from buttons.scss to make action menu buttons smaller.
         .action-menu .btn.btn-icon {
             height: ($icon-width + 15px);

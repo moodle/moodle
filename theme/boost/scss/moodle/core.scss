@@ -379,6 +379,16 @@ img.resize {
     white-space: nowrap;
     display: inline;
 
+    // Kebab action menus do no show chevrons or extra dropdown icons.
+    .dropdown-toggle.no-caret {
+        &::after {
+            display: none;
+        }
+        &::before {
+            display: none;
+        }
+    }
+
     .dropdown.downleft .dropdown-subpanel-content {
         right: 0;
         left: auto;
