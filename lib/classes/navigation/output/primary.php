@@ -72,18 +72,31 @@ class primary implements renderable, templatable {
     /**
      * Get the primary nav object and standardize the output
      *
+     * @param \navigation_node|null $parent used for nested nodes, by default the primarynav node
      * @return array
      */
-    protected function get_primary_nav(): array {
+    protected function get_primary_nav($parent = null): array {
+        if ($parent === null) {
+            $parent = $this->page->primarynav;
+        }
         $nodes = [];
-        foreach ($this->page->primarynav->children as $node) {
+        foreach ($parent->children as $node) {
+            $children = $this->get_primary_nav($node);
+            $activechildren = array_filter($children, function($child) {
+                return !empty($child['isactive']);
+            });
+            if ($node->preceedwithhr && count($nodes) && empty($nodes[count($nodes) - 1]['divider'])) {
+                $nodes[] = ['divider' => true];
+            }
             $nodes[] = [
                 'title' => $node->get_title(),
                 'url' => $node->action(),
                 'text' => $node->text,
                 'icon' => $node->icon,
-                'isactive' => $node->isactive,
+                'isactive' => $node->isactive || !empty($activechildren),
                 'key' => $node->key,
+                'children' => $children,
+                'haschildren' => !empty($children) ? 1 : 0,
             ];
         }
 
