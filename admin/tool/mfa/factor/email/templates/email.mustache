@@ -21,21 +21,45 @@
 
     Example context (json):
     {
-        "title": "Your verification code",
         "message": "Your verification code is 123456.",
-        "ipinformation": "IP Information",
         "ip": "The IP was 127.0.0.1",
         "geoinfo": "Request originated from Brisbane, Australia",
-        "uadescription": "User agent",
         "ua": "The user agent is Firefox 70",
         "linkstring": "If this wasn't you, click here"
     }
 }}
-<h2>{{title}}</h2>
-    <p>{{{message}}}</p>
-<h3>{{ipinformation}}</h3>
-    <p>{{ip}}</p>
-    <p>{{geoinfo}}</p>
-<h3>{{uadescription}}</h3>
-    <p>{{ua}}</p>
-    <p>{{{linkstring}}}</p>
+<div style="font-family: Arial, sans-serif; font-size: 18px">
+    {{#logo}}
+        <table style="width: 600px; margin-bottom: 10px;">
+            <tr>
+                <td></td>
+                <td style="text-align: right;">
+                    <img src="{{{logo}}}" alt="{{sitename}}" />
+                </td>
+            </tr>
+        </table>
+    {{/logo}}
+    <p>{{#str}} email:greeting, factor_email, {{name}}{{/str}}</p>
+    <p>
+        {{#str}} email:message, factor_email, {"sitename":{{#quote}}{{sitename}}{{/quote}}, "siteurl":{{#quote}}{{siteurl}}{{/quote}} }{{/str}}
+    </p>
+    <h2 style="letter-spacing: 5px;">{{code}}</h2>
+    <p>
+        {{#str}} email:validity, factor_email, {{validity}}{{/str}}
+        <br/>
+        {{{authlink}}}
+    </p>
+    <br/>
+    <p>{{{revokelink}}}</p>
+    <br/>
+    <div style="font-family: Arial, sans-serif; font-size: 12px">
+        <p><strong>{{#str}} email:ipinfo, factor_email {{/str}}</strong></p>
+        <p>{{#str}} email:originatingip, factor_email, {{ip}} {{/str}}</p>
+        {{#geocountry}}
+            <p> {{#str}} email:geoinfo, factor_email {{/str}}{{#geocity}}{{geocity}},{{/geocity}} {{geocountry}}</p>
+        {{/geocountry}}
+        <p><strong>{{#str}} email:uadescription, factor_email {{/str}}</strong></p>
+        <p>{{ua}}</p>
+        <p>{{{linkstring}}}</p>
+    </div>
+</div>

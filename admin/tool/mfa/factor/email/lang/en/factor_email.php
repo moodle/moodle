@@ -26,17 +26,20 @@
 $string['email:accident'] = 'If you did not request this email, click continue to attempt to invalidate the login attempt.
     If you clicked this link by accident, click cancel, and no action will be taken.';
 $string['email:browseragent'] = 'The browser details for this request are: \'{$a}\'';
-$string['email:geoinfo'] = 'This request appears to have originated from approximately {$a->city}, {$a->country}.';
-$string['email:ipinfo'] = 'IP Information';
-$string['email:link'] = 'this link';
-$string['email:message'] = 'You are trying to log in to Moodle. Your confirmation code is \'{$a->secret}\'.
-     Alternatively you can click {$a->link} from the same device to authorise this session.';
+$string['email:geoinfo'] = 'This request appears to have originated from approximately:';
+$string['email:greeting'] = 'Hello {$a} &#128075;';
+$string['email:ipinfo'] = 'Login request details:';
+$string['email:link'] = 'this verification link';
+$string['email:loginlink'] = 'Or, if you\'re on the same device, use {$a}.';
+$string['email:message'] = 'Here\'s your verification code for {$a->sitename} ({$a->siteurl}).';
 $string['email:originatingip'] = 'This login request was made from \'{$a}\'';
-$string['email:revokelink'] = 'If this wasn\'t you, follow {$a} to stop this login attempt.';
+$string['email:revokelink'] = 'If this wasn\'t you, you can {$a}.';
 $string['email:revokesuccess'] = 'This code has been successfully revoked. All sessions for {$a} have been ended.
     Email will not be usable as a factor until account security has been verified.';
-$string['email:subject'] = 'Your confirmation code';
+$string['email:subject'] = 'Here\'s your verification code';
+$string['email:stoploginlink'] = 'stop this login attempt';
 $string['email:uadescription'] = 'Browser identity for this request:';
+$string['email:validity'] = 'The code can only be used once and is valid for {$a}.';
 $string['error:badcode'] = 'Code was not found. This may be an old link, a new code may have been emailed, or the login attempt with this code was successful.';
 $string['error:parameters'] = 'Incorrect page parameters.';
 $string['error:wrongverification'] = 'Incorrect verification code';
