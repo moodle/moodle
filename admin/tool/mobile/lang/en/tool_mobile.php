@@ -36,6 +36,7 @@ $string['autologout'] = 'Enforce auto logout for your users';
 $string['autologout_desc'] = 'For security reasons, you can enforce automatic logout for your users when they leave or close the app, or it goes to background. Users will have to log in again when they return to the app.';
 $string['autologoutcustom'] = 'Custom time after users leave or close the app';
 $string['autologoutinmediate'] = 'Immediately after users leave or close the app';
+$string['autologouttime'] = 'Auto logout timer';
 $string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
 $string['cachedef_subscriptiondata'] = 'This stores the Moodle app subscription information.';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
