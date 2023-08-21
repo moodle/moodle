@@ -163,6 +163,8 @@ being forced open in all behat tests.
   but a subset can be specified instead.
 * core/form-autocomplete now supports disabled options in the source select list. These will be displayed in the autocomplete
   options with the aria-disabled attribute, and will not be selectable.
+* Added a new constant called MAX_PASSWORD_CHARACTERS in moodlelib.php to hold a length of accepted password.
+* Added a new method called exceeds_password_length in moodlelib.php to validate the password length.
 
 === 4.2 ===
 

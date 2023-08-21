@@ -501,6 +501,7 @@ $string['opensslsignerror'] = 'OpenSSL unable to sign data';
 $string['opensslsealerror'] = 'OpenSSL unable to seal data';
 $string['pagenotexisttitle'] = '404 Error: File not found';
 $string['pagenotexist'] = '<p>An unusual error occurred trying to view a page that does not exist:</p>{$a}';
+$string['passwordexceeded'] = 'Password cannot be more than {$a} characters!';
 $string['pathdoesnotstartslash'] = 'No valid arguments supplied, path does not start with slash!';
 $string['pleasereport'] = 'If you have time, please let us know what you were trying to do when the error occurred:';
 $string['pluginrequirementsnotmet'] = 'Plugin "{$a->pluginname}" ({$a->pluginversion}) could not be installed.  It requires a newer version of Moodle (currently you are using {$a->currentmoodle}, you need {$a->requiremoodle}).';
