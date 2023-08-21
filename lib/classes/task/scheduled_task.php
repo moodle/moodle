@@ -132,12 +132,59 @@ abstract class scheduled_task extends task_base {
     }
 
     /**
-     * Has this task been changed from it's default config?
+     * Set customised for this scheduled task.
      *
      * @param bool
      */
     public function set_customised($customised) {
         $this->customised = $customised;
+    }
+
+    /**
+     * Determine if this task is using its default configuration changed from the default. Returns true
+     * if it is and false otherwise. Does not rely on the customised field.
+     *
+     * @return bool
+     */
+    public function has_default_configuration(): bool {
+        $defaulttask = \core\task\manager::get_default_scheduled_task($this::class);
+        if ($defaulttask->get_minute() !== $this->get_minute()) {
+            return false;
+        }
+        if ($defaulttask->get_hour() != $this->get_hour()) {
+            return false;
+        }
+        if ($defaulttask->get_month() != $this->get_month()) {
+            return false;
+        }
+        if ($defaulttask->get_day_of_week() != $this->get_day_of_week()) {
+            return false;
+        }
+        if ($defaulttask->get_day() != $this->get_day()) {
+            return false;
+        }
+        if ($defaulttask->get_disabled() != $this->get_disabled()) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Disable the task.
+     */
+    public function disable(): void {
+        $this->set_disabled(true);
+        $this->set_customised(!$this->has_default_configuration());
+        \core\task\manager::configure_scheduled_task($this);
+    }
+
+    /**
+     * Enable the task.
+     */
+    public function enable(): void {
+        $this->set_disabled(false);
+        $this->set_customised(!$this->has_default_configuration());
+        \core\task\manager::configure_scheduled_task($this);
     }
 
     /**
