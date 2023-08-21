@@ -55,13 +55,15 @@ const selectors = {
  * Our initial hook into the module which will eventually allow us to handle the dropdown initials bar form.
  *
  * @param {String} callingLink The link to redirect upon form submission.
+ * @param {Null|Number} userid The user id to filter by.
+ * @param {Null|String} searchvalue The search value to filter by.
  */
-export const init = (callingLink) => {
+export const init = (callingLink, userid = null, searchvalue = null) => {
     if (registered) {
         return;
     }
     const pendingPromise = new Pending();
-    registerListenerEvents(callingLink);
+    registerListenerEvents(callingLink, userid, searchvalue);
     // BS events always bubble so, we need to listen for the event higher up the chain.
     $(selectors.parentDomNode).on('shown.bs.dropdown', () => {
         document.querySelector(selectors.pageClickableItem).focus({preventScroll: true});
@@ -74,8 +76,10 @@ export const init = (callingLink) => {
  * Register event listeners.
  *
  * @param {String} callingLink The link to redirect upon form submission.
+ * @param {Null|Number} userid The user id to filter by.
+ * @param {Null|String} searchvalue The search value to filter by.
  */
-const registerListenerEvents = (callingLink) => {
+const registerListenerEvents = (callingLink, userid = null, searchvalue = null) => {
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -121,11 +125,16 @@ const registerListenerEvents = (callingLink) => {
                 if (e.target.dataset.action === selectors.formItems.save) {
                     // Ensure we strip out the value (All) as it messes with the PHP side of the initials bar.
                     // Then we will redirect the user back onto the page with new filters applied.
-                    window.location = Url.relativeUrl(callingLink, {
+                    const params = {
                         'id': e.target.closest(selectors.formDropdown).dataset.courseid,
+                        'searchvalue': searchvalue !== null ? searchvalue : '',
                         'sifirst': sifirst.parentElement.classList.contains('initialbarall') ? '' : sifirst.value,
                         'silast': silast.parentElement.classList.contains('initialbarall') ? '' : silast.value,
-                    });
+                    };
+                    if (userid !== null) {
+                        params.userid = userid;
+                    }
+                    window.location = Url.relativeUrl(callingLink, params);
                 }
                 if (e.target.dataset.action === selectors.formItems.cancel) {
                     $(`.${selectors.targetButton}`).dropdown('toggle');

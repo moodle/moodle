@@ -117,6 +117,8 @@ class core_grades_renderer extends plugin_renderer_base {
     ): stdClass {
         global $SESSION, $COURSE;
         // User search.
+        $searchvalue = optional_param('searchvalue', null, PARAM_NOTAGS);
+        $userid = optional_param('userid', null, PARAM_INT);
         $url = new moodle_url($slug, ['id' => $course->id]);
         $firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
         $lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
@@ -133,7 +135,7 @@ class core_grades_renderer extends plugin_renderer_base {
             $currentfilter = get_string('filterlastactive', 'grades', ['last' => $lastinitial]);
         }
 
-        $this->page->requires->js_call_amd('core_grades/searchwidget/initials', 'init', [$slug]);
+        $this->page->requires->js_call_amd('core_grades/searchwidget/initials', 'init', [$slug, $userid, $searchvalue]);
 
         $formdata = (object) [
             'courseid' => $COURSE->id,
