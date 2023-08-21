@@ -44,12 +44,6 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
     $ADMIN->add('courses',
-        new admin_externalpage('course_customfield', new lang_string('course_customfield', 'admin'),
-            $CFG->wwwroot . '/course/customfield.php',
-            array('moodle/course:configurecustomfields')
-        )
-    );
-    $ADMIN->add('courses',
         new admin_externalpage('addcategory', new lang_string('addcategory', 'admin'),
             new moodle_url('/course/editcategory.php', array('parent' => 0)),
             array('moodle/category:manage')
@@ -68,6 +62,49 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         )
     );
 
+    // Download course content.
+    $downloadcoursedefaulturl = new moodle_url('/admin/settings.php', ['section' => 'coursesettings']);
+    $temp = new admin_settingpage('downloadcoursecontent', new lang_string('downloadcoursecontent', 'course'));
+    $temp->add(new admin_setting_configcheckbox('downloadcoursecontentallowed',
+            new lang_string('downloadcoursecontentallowed', 'admin'),
+            new lang_string('downloadcoursecontentallowed_desc', 'admin', $downloadcoursedefaulturl->out()), 0));
+
+    // 50MB default maximum size per file when downloading course content.
+    $defaultmaxdownloadsize = 50 * filesize::UNIT_MB;
+    $temp->add(new filesize('maxsizeperdownloadcoursefile', new lang_string('maxsizeperdownloadcoursefile', 'admin'),
+            new lang_string('maxsizeperdownloadcoursefile_desc', 'admin'), $defaultmaxdownloadsize, filesize::UNIT_MB));
+    $temp->hide_if('maxsizeperdownloadcoursefile', 'downloadcoursecontentallowed');
+
+    $ADMIN->add('courses', $temp);
+
+    // "courserequests" settingpage.
+    $temp = new admin_settingpage('courserequest', new lang_string('courserequest'));
+    $temp->add(new admin_setting_configcheckbox('enablecourserequests',
+        new lang_string('enablecourserequests', 'admin'),
+        new lang_string('configenablecourserequests', 'admin'), 1));
+    $temp->add(new admin_settings_coursecat_select('defaultrequestcategory',
+        new lang_string('defaultrequestcategory', 'admin'),
+        new lang_string('configdefaultrequestcategory', 'admin'), 1));
+    $temp->add(new admin_setting_configcheckbox('lockrequestcategory',
+        new lang_string('lockrequestcategory', 'admin'),
+        new lang_string('configlockrequestcategory', 'admin'), 0));
+    $temp->add(new admin_setting_users_with_capability(
+        'courserequestnotify',
+        new lang_string('courserequestnotify', 'admin'),
+        new lang_string('configcourserequestnotify2', 'admin'),
+        [],
+        'moodle/site:approvecourse'
+    ));
+    $ADMIN->add('courses', $temp);
+
+    // Pending course requests.
+    if (!empty($CFG->enablecourserequests)) {
+        $ADMIN->add('courses', new admin_externalpage('coursespending', new lang_string('pendingrequests'),
+                $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
+    }
+
+    // Add a category for the course Default settings.
+    $ADMIN->add('courses', new admin_category('coursedefaultsettings', new lang_string('defaultsettingscategory', 'course')));
     // Course Default Settings Page.
     // NOTE: these settings must be applied after all other settings because they depend on them.
 
@@ -226,42 +263,32 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('coursecommunication_desc', 'course'),
         $defaulprovider, $communicationproviders));
 
-    $ADMIN->add('courses', $temp);
+    $ADMIN->add('coursedefaultsettings', $temp);
+    $ADMIN->add('coursedefaultsettings', new admin_externalpage(
+        'course_customfield',
+        new lang_string('course_customfield', 'admin'),
+        $CFG->wwwroot . '/course/customfield.php',
+        ['moodle/course:configurecustomfields'])
+    );
 
-    // Download course content.
-    $downloadcoursedefaulturl = new moodle_url('/admin/settings.php', ['section' => 'coursesettings']);
-    $temp = new admin_settingpage('downloadcoursecontent', new lang_string('downloadcoursecontent', 'course'));
-    $temp->add(new admin_setting_configcheckbox('downloadcoursecontentallowed',
-            new lang_string('downloadcoursecontentallowed', 'admin'),
-            new lang_string('downloadcoursecontentallowed_desc', 'admin', $downloadcoursedefaulturl->out()), 0));
-
-    // 50MB default maximum size per file when downloading course content.
-    $defaultmaxdownloadsize = 50 * filesize::UNIT_MB;
-    $temp->add(new filesize('maxsizeperdownloadcoursefile', new lang_string('maxsizeperdownloadcoursefile', 'admin'),
-            new lang_string('maxsizeperdownloadcoursefile_desc', 'admin'), $defaultmaxdownloadsize, filesize::UNIT_MB));
-    $temp->hide_if('maxsizeperdownloadcoursefile', 'downloadcoursecontentallowed');
-
-    $ADMIN->add('courses', $temp);
-
-    // "courserequests" settingpage.
-    $temp = new admin_settingpage('courserequest', new lang_string('courserequest'));
-    $temp->add(new admin_setting_configcheckbox('enablecourserequests',
-        new lang_string('enablecourserequests', 'admin'),
-        new lang_string('configenablecourserequests', 'admin'), 1));
-    $temp->add(new admin_settings_coursecat_select('defaultrequestcategory',
-        new lang_string('defaultrequestcategory', 'admin'),
-        new lang_string('configdefaultrequestcategory', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('lockrequestcategory',
-        new lang_string('lockrequestcategory', 'admin'),
-        new lang_string('configlockrequestcategory', 'admin'), 0));
-    $temp->add(new admin_setting_users_with_capability('courserequestnotify', new lang_string('courserequestnotify', 'admin'), new lang_string('configcourserequestnotify2', 'admin'), array(), 'moodle/site:approvecourse'));
-    $ADMIN->add('courses', $temp);
-
-    // Pending course requests.
-    if (!empty($CFG->enablecourserequests)) {
-        $ADMIN->add('courses', new admin_externalpage('coursespending', new lang_string('pendingrequests'),
-                $CFG->wwwroot . '/course/pending.php', array('moodle/site:approvecourse')));
-    }
+    $temp = new admin_settingpage('activitychoosersettings', new lang_string('activitychoosersettings', 'course'));
+    // Tab mode for the activity chooser.
+    $temp->add(
+        new admin_setting_configselect(
+            'activitychoosertabmode',
+            new lang_string('activitychoosertabmode', 'course'),
+            new lang_string('activitychoosertabmode_desc', 'course'),
+            3,
+            [
+                3 => new lang_string('activitychoosertabmodefour', 'course'),
+                4 => new lang_string('activitychoosertabmodefive', 'course'),
+                5 => new lang_string('activitychoosertabmodesix', 'course'),
+                0 => new lang_string('activitychoosertabmodeone', 'course'),
+                1 => new lang_string('activitychoosertabmodetwo', 'course'),
+                2 => new lang_string('activitychoosertabmodethree', 'course'),
+            ]
+        )
+    );
 
     // Add a category for the Activity Chooser.
     $ADMIN->add('courses', new admin_category('activitychooser', new lang_string('activitychoosercategory', 'course')));
