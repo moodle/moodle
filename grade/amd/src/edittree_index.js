@@ -62,6 +62,7 @@ const registerListenerEvents = (courseId, userId) => {
         const toggle = e.target.closest(SELECTORS.CATEGORY_TOGGLE);
         // Collapse or expand the grade category when the visibility toggle button is activated.
         if (toggle) {
+            e.preventDefault();
             toggleCategory(toggle, courseId, userId, true);
         }
     });
