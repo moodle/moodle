@@ -364,6 +364,7 @@ class behat_grade extends behat_base {
      */
     public function i_navigate_to_export_page_in_the_course_gradebook($gradeexportoption) {
         $this->i_navigate_to_in_the_course_gradebook("More > Export");
+        $this->wait_for_pending_js();
         $this->select_in_gradebook_navigation_selector($gradeexportoption, 'gradesexportactionselect');
     }
 
