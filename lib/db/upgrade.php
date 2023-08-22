@@ -60,13 +60,13 @@ defined('MOODLE_INTERNAL') || die();
  *     // Explanation of the update step, linking to issue in the Tracker if necessary
  *     upgrade_set_timeout(XX); // Optional for big tasks
  *     // Code to execute goes here, usually the XMLDB Editor will
- *     // help you here. See {@link http://docs.moodle.org/dev/XMLDB_editor}.
+ *     // help you here. See {@link https://moodledev.io/general/development/tools/xmldb}.
  *     upgrade_main_savepoint(true, XXXXXXXXXX.XX);
  * }
  *
  * All plugins within Moodle (modules, blocks, reports...) support the existence of
  * their own upgrade.php file, using the "Frankenstyle" component name as
- * defined at {@link http://docs.moodle.org/dev/Frankenstyle}, for example:
+ * defined at {@link https://moodledev.io/general/development/policies/codingstyle/frankenstyle}, for example:
  *     - {@link xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
  *     - {@link xmldb_auth_manual_upgrade($oldversion)}.
  *     - {@link xmldb_workshopform_accumulative_upgrade($oldversion)}.
@@ -78,8 +78,8 @@ defined('MOODLE_INTERNAL') || die();
  * about what can be used within it.
  *
  * For more information, take a look to the documentation available:
- *     - Data definition API: {@link http://docs.moodle.org/dev/Data_definition_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Data definition API: {@link https://moodledev.io/docs/apis/core/dml/ddl}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @param int $oldversion
  * @return bool always true

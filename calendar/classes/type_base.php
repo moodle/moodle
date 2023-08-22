@@ -165,7 +165,7 @@ abstract class type_base {
      * @param int $time the timestamp in UTC, as obtained from the database
      * @param string $format strftime format
      * @param int|float|string $timezone the timezone to use
-     *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     *        {@link https://moodledev.io/docs/apis/subsystems/time#timezone}
      * @param bool $fixday if true then the leading zero from %d is removed,
      *        if false then the leading zero is maintained
      * @param bool $fixhour if true then the leading zero from %I is removed,
@@ -180,7 +180,7 @@ abstract class type_base {
      *
      * @param int $time timestamp in GMT
      * @param float|int|string $timezone the timezone to use to calculate the time
-     *        {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     *        {@link https://moodledev.io/docs/apis/subsystems/time#timezone}
      * @return array an array that represents the date in user time
      */
     public abstract function timestamp_to_date_array($time, $timezone = 99);
