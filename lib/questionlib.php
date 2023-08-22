@@ -352,11 +352,12 @@ function question_delete_question($questionid): void {
                    qv.version,
                    qbe.id as entryid,
                    qc.id as categoryid,
-                   qc.contextid as contextid
+                   ctx.id as contextid
               FROM {question} q
               LEFT JOIN {question_versions} qv ON qv.questionid = q.id
               LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+              LEFT JOIN {context} ctx ON ctx.id = qc.contextid
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
