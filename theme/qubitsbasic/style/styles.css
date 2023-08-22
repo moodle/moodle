@@ -95,7 +95,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Arial";
+  font-family: Arial, Helvetica, sans-serif;
 }
 .sidebar {
   position: fixed;
@@ -105,7 +105,6 @@
   width: 260px;
   background: #f7f7f7;
   z-index: 106;
- 
 }
 
 /* .test:hover {

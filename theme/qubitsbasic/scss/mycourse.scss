@@ -330,11 +330,15 @@
     color: var(--hovertextcolor);
     font-size: $fontsize15;
   }
+  .nav-item ul.sub-menu {
+    margin: 0;
+  }
   .nav-links {
     height: 100%;
     padding: 0 0 150px 0;
     overflow: auto;
     margin: 0 !important;
+    margin-top: 10px !important;
     .nav-item .arrow {
       font-size: 13px !important;
     }
@@ -399,6 +403,9 @@
         align-items: center;
         justify-content: center;
       }
+      .icon.qicon-code-editor {
+        font-size: 16px;
+      }
       .icon-link {
         display: flex;
         align-items: center;
@@ -445,7 +452,7 @@
   .compact-logo {
     display: none;
     width: 52.3%;
-    margin-left:20px;
+    margin-left: 20px;
   }
   .hr-line {
     background-color: #dedede;
@@ -572,7 +579,8 @@
         position: absolute;
         left: 100%;
         top: -10px;
-        margin-top: 0;
+        margin: 0;
+
         padding: 0px;
         white-space: nowrap;
         border-radius: 0 6px 6px 0;
@@ -635,8 +643,7 @@
     li.showMenu {
       .sub-menu {
         display: block;
-        margin: 10px 0px 0px 0px !important;
-        
+        // margin: 10px 0px 0px 0px !important;
       }
       i.arrow {
         transform: rotate(-180deg);
@@ -654,7 +661,8 @@
   width: auto !important;
 }
 
-.my-course-section .card-text, .my-course-section .card-title {
+.my-course-section .card-text,
+.my-course-section .card-title {
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
@@ -928,9 +936,14 @@ button.close:focus,
 .breadcrumb {
   align-items: center;
 }
-.breadcrumb-item.active {
+.pagetitle-left-alignment nav .breadcrumb-item.active {
   color: #333333 !important;
-  font-size: 20px !important;
+  font-size: 20px;
+  font-weight: 600;
+  opacity: 0.6;
+  @include breakpoint(xs) {
+    font-size: 16px;
+  }
 }
 .breadcrumb-item + .breadcrumb-item::before {
   font-size: 14px !important;
@@ -967,9 +980,18 @@ ol {
 #page.drawers .main-inner {
   padding: 0 !important;
   // margin-top: 0px !important;
+  @include breakpoint(xs) {
+    padding: 0.75rem !important;
+  }
 }
 #page.drawers {
   margin-top: 90px !important;
+  @include breakpoint(xs) {
+    margin-top: 66px !important;
+  }
+  @include breakpoint(sm) {
+    margin-top: 66px !important;
+  }
 }
 .sidebar.close-bars .nav-links li .sub-menu {
   height: 200px;
@@ -1061,4 +1083,10 @@ a:not([class]):focus,
 
 .input_input-small_1bkbs {
   width: 3rem !important;
+}
+#page-footer .btn-footer-popover {
+  display: none;
+}
+.footer-popover {
+  display: none;
 }
