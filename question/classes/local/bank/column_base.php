@@ -34,6 +34,11 @@ namespace core_question\local\bank;
 abstract class column_base extends view_component {
 
     /**
+     * @const string A separator for joining column attributes together into a unique ID string.
+     */
+    const ID_SEPARATOR = '-';
+
+    /**
      * @var view $qbank the question bank view we are helping to render.
      */
     protected $qbank;
@@ -43,6 +48,20 @@ abstract class column_base extends view_component {
 
     /** @var bool determine whether the column is visible */
     public $isvisible = true;
+
+    /**
+     * Return an instance of this column, based on the column name.
+     *
+     * In the case of the base class, we don't actually use the column name since the class represents one specific column.
+     * However, sub-classes may use the column name as an additional constructor to the parameter.
+     *
+     * @param view $view Question bank view
+     * @param string $columnname The column name for this instance, as returned by {@see get_column_name()}
+     * @return column_base An instance of this class.
+     */
+    public static function from_column_name(view $view, string $columnname): column_base {
+        return new static($view);
+    }
 
     /**
      * Set the column as heading
@@ -121,6 +140,7 @@ abstract class column_base extends view_component {
         }
 
         $data['colname'] = $this->get_column_name();
+        $data['columnid'] = $this->get_column_id();
         $data['name'] = $title;
         $data['class'] = $name;
         $data['width'] = $width;
@@ -270,6 +290,24 @@ abstract class column_base extends view_component {
      */
     public function get_column_name() {
         return (new \ReflectionClass($this))->getShortName();
+    }
+
+    /**
+     * Return a unique ID for this column object.
+     *
+     * This is constructed using the class name and get_column_name(), which must be unique.
+     *
+     * The combination of these attributes allows the object to be reconstructed, by splitting the ID into its constituent
+     * parts then calling {@see from_column_name()}, like this:
+     * [$class, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+     * $column = $class::from_column_name($qbank, $columnname);
+     * Including 2 as the $limit parameter for explode() is a good idea for safely, in case a plugin defines a column with the
+     * ID_SEPARATOR in the column name.
+     *
+     * @return string The column ID.
+     */
+    final public function get_column_id(): string {
+        return implode(self::ID_SEPARATOR, [static::class, $this->get_column_name()]);
     }
 
     /**

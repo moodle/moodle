@@ -21,7 +21,6 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/questionlib.php');
 
 use context_system;
-use core_question\local\bank\column_action_base;
 use core_question\local\bank\column_base;
 use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_edit_contexts;
@@ -29,6 +28,7 @@ use core_question\local\bank\view;
 use qbank_columnsortorder\local\bank\column_action_move;
 use qbank_columnsortorder\local\bank\column_action_remove;
 use qbank_columnsortorder\local\bank\column_action_resize;
+use qbank_columnsortorder\local\bank\preview_view;
 use moodle_url;
 
 /**
@@ -158,7 +158,8 @@ class column_manager extends column_manager_base {
         $context = context_system::instance();
         $contexts = new question_edit_contexts($context);
         // Dummy call to get the objects without error.
-        $questionbank = new view($contexts, new moodle_url('/question/bank/columnsortorder/sortcolumns.php'), $course, null);
+        $questionbank = new preview_view($contexts, new moodle_url('/question/bank/columnsortorder/sortcolumns.php'), $course,
+                null);
         return $questionbank;
     }
 
@@ -178,6 +179,7 @@ class column_manager extends column_manager_base {
                 'class' => get_class($column),
                 'name' => $column->get_title(),
                 'colname' => end($classelements),
+                'id' => implode(self::ID_SEPARATOR, [$column::class, $column->get_column_name()]),
             ];
         }
         return $columns;
@@ -191,20 +193,12 @@ class column_manager extends column_manager_base {
     public function get_disabled_columns(): array {
         $disabled = [];
         if ($this->disabledcolumns) {
-            foreach ($this->disabledcolumns as $class => $value) {
-                if (strpos($class, 'qbank_customfields\custom_field_column') !== false) {
-                    $class = explode('\\', $class);
-                    $disabledname = array_pop($class);
-                    $class = implode('\\', $class);
-                    $disabled[] = (object) [
-                        'disabledname' => $disabledname,
-                    ];
-                } else {
-                    $columnobject = new $class($this->get_questionbank());
-                    $disabled[] = (object) [
-                        'disabledname' => $columnobject->get_title(),
-                    ];
-                }
+            foreach (array_keys($this->disabledcolumns) as $column) {
+                [$classname, $columnname] = explode(self::ID_SEPARATOR, $column);
+                $columnobject = $classname::from_column_name($this->get_questionbank(), $columnname);
+                $disabled[] = (object) [
+                    'disabledname' => $columnobject->get_title(),
+                ];
             }
         }
         return $disabled;
@@ -271,17 +265,10 @@ class column_manager extends column_manager_base {
         }
 
         foreach ($allcolumns as $column) {
-            if (strpos($column->class, $plugin) !== false) {
-                if ($column->class === 'qbank_customfields\custom_field_column') {
-                    $disabledcolumns[$column->class . '\\' . $column->colname] = $column->class . '\\' . $column->colname;
-                    if (isset($enabledcolumns[$column->class . '\\' . $column->colname])) {
-                        unset($enabledcolumns[$column->class. '\\' . $column->colname]);
-                    }
-                } else {
-                    $disabledcolumns[$column->class] = $column->class;
-                    if (isset($enabledcolumns[$column->class])) {
-                        unset($enabledcolumns[$column->class]);
-                    }
+            if (str_contains($column->class, $plugin)) {
+                $disabledcolumns[$column->id] = $column->id;
+                if (isset($enabledcolumns[$column->id])) {
+                    unset($enabledcolumns[$column->id]);
                 }
             }
         }
@@ -301,21 +288,9 @@ class column_manager extends column_manager_base {
             $columnsortorder = $this->columnorder;
             asort($columnsortorder);
             $columnorder = [];
-            foreach ($columnsortorder as $classname => $colposition) {
-                $colname = explode('\\', $classname);
-                if (strpos($classname, 'qbank_customfields\custom_field_column') !== false) {
-                    unset($colname[0]);
-                    $classname = implode('\\', $colname);
-                    // Checks if custom column still exists.
-                    if (array_key_exists($classname, $ordertosort)) {
-                        $columnorder[$classname] = $colposition;
-                    } else {
-                        $configtounset = str_replace('\\', '\\\\', $classname);
-                        // Cleans config db.
-                        unset_config($configtounset, 'column_sortorder');
-                    }
-                } else {
-                    $columnorder[end($colname)] = $colposition;
+            foreach ($columnsortorder as $columnid => $colposition) {
+                if (array_key_exists($columnid, $ordertosort)) {
+                    $columnorder[$columnid] = $colposition;
                 }
             }
             $properorder = array_merge($columnorder, $ordertosort);
@@ -375,7 +350,7 @@ class column_manager extends column_manager_base {
         $colsizemap = $this->get_colsize_map();
         $columnclass = get_class($column);
         if (array_key_exists($columnclass, $colsizemap)) {
-            return $colsizemap[$columnclass];
+            return $colsizemap[$columnclass] . 'px';
         }
         return parent::get_column_width($column);
     }

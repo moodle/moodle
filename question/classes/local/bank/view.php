@@ -383,66 +383,49 @@ class view {
      *
      * @return array
      */
-    protected function get_class_for_columns(): array {
-        $this->corequestionbankcolumns = [
-            'checkbox_column',
-            'question_type_column',
-            'question_name_idnumber_tags_column',
-            'edit_menu_column',
-            'export_xml_action_column',
-            'question_status_column',
-            'version_number_column',
-            'creator_name_column',
-            'comment_count_column',
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $newpluginclasscolumns = [];
+        $corequestionbankcolumns = [
+            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
+            'qbank_viewquestionname\question_name_idnumber_tags_column' . column_base::ID_SEPARATOR .
+                'question_name_idnumber_tags_column',
+            'core_question\local\bank\edit_menu_column' . column_base::ID_SEPARATOR . 'edit_menu_column',
+            'qbank_editquestion\question_status_column' . column_base::ID_SEPARATOR . 'question_status_column',
+            'qbank_history\version_number_column' . column_base::ID_SEPARATOR . 'version_number_column',
+            'qbank_viewcreator\creator_name_column' . column_base::ID_SEPARATOR . 'creator_name_column',
+            'qbank_comment\comment_count_column' . column_base::ID_SEPARATOR . 'comment_count_column',
         ];
 
         if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
-            $this->corequestionbankcolumns[] = 'question_text_row';
+            $corequestionbankcolumns[] = 'qbank_viewquestiontext\question_text_row' . column_base::ID_SEPARATOR .
+                'question_text_row';
         }
 
-        $questionbankclasscolumns = [];
-        foreach ($this->corequestionbankcolumns as $fullname) {
-            $shortname = $fullname;
-            if (class_exists('core_question\\local\\bank\\' . $fullname)) {
-                $fullname = 'core_question\\local\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else {
-                $questionbankclasscolumns[$shortname] = '';
+        foreach ($corequestionbankcolumns as $columnid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+            if (class_exists($columnclass)) {
+                $questionbankclasscolumns[$columnid] = $columnclass::from_column_name($this, $columnname);
             }
         }
-        return $questionbankclasscolumns;
-    }
 
-    /**
-     * Get the list of qbank plugins with available objects for features.
-     *
-     * @return array
-     */
-    protected function get_question_bank_plugins(): array {
-        $newpluginclasscolumns = [];
-        $questionbankclasscolumns = $this->get_class_for_columns();
-
-        $plugins = $this->plugins;
-        foreach ($this->plugins as $componentname => $plugin) {
+        foreach ($this->plugins as $plugin) {
             $plugincolumnobjects = $plugin->get_question_columns($this);
             foreach ($plugincolumnobjects as $columnobject) {
-                $columnname = $columnobject->get_column_name();
-                foreach ($this->corequestionbankcolumns as $key => $corequestionbankcolumn) {
-                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-                        unset($questionbankclasscolumns[$columnname]);
-                        continue;
-                    }
+                $columnid = $columnobject->get_column_id();
+                foreach ($corequestionbankcolumns as $corequestionbankcolumn) {
                     // Check if it has custom preference selector to view/hide.
                     if ($columnobject->has_preference()) {
                         if (!$columnobject->get_preference()) {
                             continue;
                         }
                     }
-                    if ($corequestionbankcolumn === $columnname) {
-                        $questionbankclasscolumns[$columnname] = $columnobject;
+                    if ($corequestionbankcolumn === $columnid) {
+                        $questionbankclasscolumns[$columnid] = $columnobject;
                     } else {
                         // Any community plugin for column/action.
-                        $newpluginclasscolumns[$columnname] = $columnobject;
+                        $newpluginclasscolumns[$columnid] = $columnobject;
                     }
                 }
             }

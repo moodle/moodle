@@ -70,6 +70,7 @@ class checkbox_column extends column_base {
         $data['tip'] = $this->get_title_tip();
 
         $data['colname'] = $this->get_column_name();
+        $data['columnid'] = $this->get_column_id();
         $data['name'] = get_string('selectall');
         $data['class'] = $name;
         $data['width'] = $width;
