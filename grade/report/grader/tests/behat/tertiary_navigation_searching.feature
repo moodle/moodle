@@ -327,7 +327,7 @@ Feature: Within the grader report, test that we can search for users
     And the following should exist in the "user-grades" table:
       | -1-                |
       | Turtle Manatee     |
-    And I press "Filter by name"
+    And I click on "Filter by name" "combobox"
     And I select "T" in the "First name" "core_grades > initials bar"
     And I select "M" in the "Last name" "core_grades > initials bar"
     And the following should exist in the "user-grades" table:
