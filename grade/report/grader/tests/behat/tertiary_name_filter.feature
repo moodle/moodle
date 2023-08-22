@@ -155,53 +155,53 @@ Feature: Within the grader report, test that we can open our generic filter drop
     When I press "Apply"
     And the field "Search users" matches value "Student 1"
     Then the following should exist in the "user-grades" table:
-      | -1-                |
-      | Student 1          |
+      | -1-                | -1-                  | -3- |
+      | Student 1          | student1@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Dummy User         |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+      | -1-                | -1-                  | -3- |
+      | Teacher 1          | teacher1@example.com | -   |
+      | Dummy User         | student2@example.com | -   |
+      | User Example       | student3@example.com | -   |
+      | User Test          | student4@example.com | -   |
+      | Turtle Manatee     | student5@example.com | -   |
     And I click on "First (S)" "combobox"
     And I select "M" in the "First name" "core_grades > initials bar"
     And I press "Apply"
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | Dummy User         |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+      | -1-                | -1-                  | -3- |
+      | Student 1          | student1@example.com | -   |
+      | Teacher 1          | teacher1@example.com | -   |
+      | Dummy User         | student2@example.com | -   |
+      | User Example       | student3@example.com | -   |
+      | User Test          | student4@example.com | -   |
+      | Turtle Manatee     | student5@example.com | -   |
 
   Scenario: A teacher can search for all users then filter with the initials bar
     Given I set the field "Search users" to "User"
     And I click on "View all results (3)" "option_role"
     And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-      | User Example       |
-      | User Test          |
+      | -1-                | -1-                  | -3- |
+      | User Example       | student3@example.com | -   |
+      | User Test          | student4@example.com | -   |
+      | Dummy User         | student2@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | Turtle Manatee     |
+      | -1-                | -1-                  | -3- |
+      | Student 1          | student1@example.com | -   |
+      | Teacher 1          | teacher1@example.com | -   |
+      | Turtle Manatee     | student5@example.com | -   |
     When I click on "Filter by name" "combobox"
     And I select "E" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
     Then the following should exist in the "user-grades" table:
-      | -1-                |
-      | User Example       |
+      | -1-                | -1-                  | -3- |
+      | User Example       | student3@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | Dummy User         |
-      | User Test          |
-      | Turtle Manatee     |
+      | -1-                | -1-                  | -3- |
+      | Student 1          | student1@example.com | -   |
+      | Teacher 1          | teacher1@example.com | -   |
+      | Dummy User         | student2@example.com | -   |
+      | User Test          | student4@example.com | -   |
+      | Turtle Manatee     | student5@example.com | -   |
 
   # This can be expanded for left/right/home & end keys but will have to be done in conjunction with the non mini render.
   @accessibility
