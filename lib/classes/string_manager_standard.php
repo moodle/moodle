@@ -394,7 +394,7 @@ class core_string_manager_standard implements core_string_manager {
                 $normcomponent = $pluginname ? ($plugintype . '_' . $pluginname) : $plugintype;
                 debugging("String [{$identifier},{$normcomponent}] is deprecated. ".
                     'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
-                    'Please refer to https://docs.moodle.org/dev/String_deprecation', DEBUG_DEVELOPER);
+                    'Please refer to https://moodledev.io/general/projects/api/string-deprecation', DEBUG_DEVELOPER);
             }
         }
 

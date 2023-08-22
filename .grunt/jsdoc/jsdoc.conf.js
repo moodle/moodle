@@ -114,7 +114,7 @@ module.exports = {
         ],
         "menu": {
             "Developer Docs": {
-                href: "https://docs.moodle.org/dev",
+                href: "https://moodledev.io",
                 target: "_blank",
                 "class": "menu-item",
                 id: "devdocs"
