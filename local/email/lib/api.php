@@ -495,7 +495,8 @@ class EmailTemplate {
                                $email->subject,
                                html_to_text($email->body),
                                $email->body,
-                               $attachment)) {
+                               $attachment,
+                               $email->companyid)) {
                 return false;
             }
             // Send to all of the to user emails.
@@ -508,7 +509,8 @@ class EmailTemplate {
                                            $email->subject,
                                            html_to_text($email->body),
                                            $email->body,
-                                           $attachment)) {
+                                           $attachment,
+                                           $email->companyid)) {
                             return false;
                         }
                     }
@@ -525,7 +527,8 @@ class EmailTemplate {
                                            $email->subject,
                                            html_to_text($email->body),
                                            $email->body,
-                                           $attachment)) {
+                                           $attachment,
+                                           $email->companyid)) {
                             return false;
                         }
                     }
@@ -542,7 +545,8 @@ class EmailTemplate {
                                                 $email->subject,
                                                 html_to_text($email->body),
                                                 $email->body,
-                                                $attachment)) {
+                                                $attachment,
+                                                $email->companyid)) {
                             return false;
                         }
                     }
@@ -559,7 +563,8 @@ class EmailTemplate {
                                                 $email->subject,
                                                 html_to_text($email->body),
                                                 $email->body,
-                                                $attachment)) {
+                                                $attachment,
+                                                $email->companyid)) {
                             return false;
                         }
                     }
@@ -579,7 +584,8 @@ class EmailTemplate {
                                                         $email->subject,
                                                         html_to_text($email->body),
                                                         $email->body,
-                                                        $attachment)) {
+                                                        $attachment,
+                                                        $email->companyid)) {
                                     return false;
                                 }
                             }
@@ -597,7 +603,8 @@ class EmailTemplate {
                                                     $email->subject,
                                                     html_to_text($email->body),
                                                     $email->body,
-                                                    $attachment)) {
+                                                    $attachment,
+                                                    $email->companyid)) {
                                 return false;
                             }
                         }
@@ -716,14 +723,16 @@ class EmailTemplate {
                                $supportuser,
                                 $email->subject,
                                 html_to_text($email->body),
-                                $email->body);
+                                $email->body,
+                                $this->companyid);
         } else {
             self::email_direct($user->email,
                                 $supportuser,
                                 $email->subject,
                                 html_to_text($email->body),
                                 $email->body,
-                                $this->attachment);
+                                $this->attachment,
+                                $this->companyid);
         }
 
         $this->email_supervisor;
@@ -764,38 +773,9 @@ class EmailTemplate {
         // Do we have a supervisor?
         if ($supervisoremails = company::get_usersupervisor($this->user->id)) {
             $mail = get_mailer();
-            if ($CFG->smtphosts == 'qmail') {
-                // Use Qmail system.
-                $mail->isQmail();
-
-            } else if (empty($CFG->smtphosts)) {
-                // Use PHP mail() = sendmail.
-                $mail->isMail();
-
-            } else {
-                // Use SMTP directly.
-                $mail->isSMTP();
-                if (!empty($CFG->debugsmtp)) {
-                    $mail->SMTPDebug = true;
-                }
-                // Specify main and backup servers.
-                $mail->Host          = $CFG->smtphosts;
-                // Specify secure connection protocol.
-                $mail->SMTPSecure    = $CFG->smtpsecure;
-                // Use previous keepalive.
-
-                if ($CFG->smtpuser) {
-                    // Use SMTP authentication.
-                    $mail->SMTPAuth = true;
-                    $mail->Username = $CFG->smtpuser;
-                    $mail->Password = $CFG->smtppass;
-                }
-            }
+            company::set_company_mailer($mail, $this->companyid);
 
             foreach ($supervisoremails as $supervisoremail) {
-                $mail->Sender = $CFG->noreplyaddress;
-                $mail->FromName = $supportuser->firstname;
-                $mail->From     = $CFG->noreplyaddress;
                 if (empty($CFG->divertallemailsto)) {
                     $mail->Subject = substr($subject, 0, 900);
                 } else {
@@ -830,43 +810,17 @@ class EmailTemplate {
      *
      *
      **/
-    private static function email_direct($emailaddress, $supportuser, $subject, $messagetext, $messagehtml = '', $attachment = null) {
+    private static function email_direct($emailaddress, $supportuser, $subject, $messagetext, $messagehtml = '', $attachment = null, $companyid) {
         global $USER, $CFG;
 
         $mail = get_mailer();
-        if ($CFG->smtphosts == 'qmail') {
-            // Use Qmail system.
-            $mail->isQmail();
-
-        } else if (empty($CFG->smtphosts)) {
-            // Use PHP mail() = sendmail.
-            $mail->isMail();
-
-        } else {
-            // Use SMTP directly.
-            $mail->isSMTP();
-            if (!empty($CFG->debugsmtp)) {
-                $mail->SMTPDebug = true;
-            }
-            // Specify main and backup servers.
-            $mail->Host          = $CFG->smtphosts;
-            // Specify secure connection protocol.
-            $mail->SMTPSecure    = $CFG->smtpsecure;
-            // Use previous keepalive.
-
-            if ($CFG->smtpuser) {
-                // Use SMTP authentication.
-                $mail->SMTPAuth = true;
-                $mail->Username = $CFG->smtpuser;
-                $mail->Password = $CFG->smtppass;
-            }
-        }
+        company::set_company_mailer($mail, $companyid);
 
         if (!empty($supportuser->customheaders['From'])) {
             $mail->From = $supportuser->customheaders['From'];
             unset($supportuser->customheaders['Reply-to']);
         } else {
-            $mail->From = $CFG->noreplyaddress;
+            $mail->From = $mail->noreplyaddress;
         }
 
         if (!empty($supportuser->customheaders['Reply-to'])) {
@@ -877,7 +831,7 @@ class EmailTemplate {
             $mail->addCustomHeader($value);
         }
 
-        $mail->Sender = $CFG->noreplyaddress;
+        $mail->Sender = $mail->noreplyaddress;
         $mail->FromName = $supportuser->firstname;
         if (empty($CFG->divertallemailsto)) {
             $mail->Subject = substr($subject, 0, 900);

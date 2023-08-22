@@ -153,9 +153,16 @@ class moodle_phpmailer extends \PHPMailer\PHPMailer\PHPMailer {
         global $CFG;
 
         require_once($CFG->libdir . '/phpmailer/moodle_phpmailer_oauth.php');
-        if (!empty($CFG->smtpoauthservice)) {
+        // IOMAD
+        $smtpoauthservice = '';
+        if (!empty($this->smtpoauthservice)) {
+            $smtpoauthservice = $this->smtpoauthservice;
+        } else if (!empty($CFG->smtpoauthservice)) {
+            $smtpoauthservice = $this->smtpoauthservice;
+        }
+        if (!empty($smtpoauthservice)) {
             // Get the issuer.
-            $issuer = \core\oauth2\api::get_issuer($CFG->smtpoauthservice);
+            $issuer = \core\oauth2\api::get_issuer($smtpoauthservice);
             // Validate the issuer and check if it is enabled or not.
             if ($issuer && $issuer->get('enabled')) {
                 // Get the OAuth Client.
@@ -165,7 +172,7 @@ class moodle_phpmailer extends \PHPMailer\PHPMailer\PHPMailer {
                         'clientId' => $oauthclient->get_clientid(),
                         'clientSecret' => $oauthclient->get_clientsecret(),
                         'refreshToken' => $oauthclient->get_refresh_token(),
-                        'userName' => $CFG->smtpuser,
+                        'userName' => $this->Username,
                     ]);
                     // Set the OAuth.
                     $this->setOAuth($oauth);

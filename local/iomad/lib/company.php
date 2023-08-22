@@ -3816,6 +3816,76 @@ class company {
         return true;
     }
 
+    /**
+     * Set the company SMTP settings.
+     * @param mailer moodle_php_mailer object
+     *
+     * Returns the same.
+     */
+    public static function set_company_mailer($mailer, $companyid = 0) {
+        global $CFG;
+
+        if (empty($companyid)) {
+            $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        }
+
+        // Did we get anything?
+        if (empty($companyid)) {
+            return $mailer;
+        }
+
+        // Deal withe the potential settings that could be changed.
+        $possiblesettings = ['type' => 'smtphosts',
+                             'SMTPDebug' => 'debugsmtp',
+                             'SMTPSecure' => 'smtpsecure',
+                             'AuthType' => 'smtpauthtype',
+                             'smtpoauthservice' => 'smtpoauthservice',
+                             'Username' => 'smtpuser',
+                             'Password' => 'smtppass',
+                             'smtpmaxbulk' => 'smtpmaxbulk',
+                             'noreplyaddress' => 'noreplyaddress',
+                             'DKIM_selector' => 'emaildkimselector'];
+
+        // Make the changes.
+        foreach ($possiblesettings as $name => $possiblesetting) {
+            $settingfield = $possiblesetting . $companyid;
+            if (!empty($CFG->$settingfield)) {
+                if ($name != 'type' ) {
+                    if ($name == 'Username' && !(empty($possiblesetting) || empty($CFG->smtpuser))) {
+                        $mailer->SMTPAuth = true;
+                    }
+                    $mailer->$name = $CFG->$settingfield;
+                } else {
+                    if ($possiblesetting == 'qmail') {
+                        // Use Qmail system.
+                        $mailer->isQmail();
+
+                    } else if (empty($possiblesetting) && empty($CFG->smpthosts)) {
+                        // Use PHP mail() = sendmail.
+                        $mailer->isMail();
+
+                    } else {
+                        // Use SMTP directly.
+                        $mailer->isSMTP();
+                        if (!empty($CFG->debugsmtp) && (!empty($CFG->debugdeveloper))) {
+                            $mailer->SMTPDebug = 3;
+                        }
+
+                        // Specify mail server.
+                        $mailer->Host = $CFG->$settingfield;
+                    }
+                }
+            }
+        }
+
+        if (empty($mailer->noreplyaddress)) {
+            $noreplyaddressdefault = 'noreply@' . get_host_from_url($CFG->wwwroot);
+            $mailer->noreplyaddress = empty($CFG->noreplyaddress) ? $noreplyaddressdefault : $CFG->noreplyaddress;
+        }
+
+        return $mailer;
+    }
+
     /***  Event Handlers  ***/
 
     /**

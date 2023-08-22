@@ -5962,6 +5962,9 @@ function get_mailer($action='get') {
             }
         }
 
+        // IOMAD - get company mailer settings if there are any.
+        company::set_company_mailer($mailer);
+
         return $mailer;
     }
 
@@ -6165,9 +6168,14 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
     $temprecipients = array();
     $tempreplyto = array();
 
-    // Make sure that we fall back onto some reasonable no-reply address.
-    $noreplyaddressdefault = 'noreply@' . get_host_from_url($CFG->wwwroot);
-    $noreplyaddress = empty($CFG->noreplyaddress) ? $noreplyaddressdefault : $CFG->noreplyaddress;
+    //  IOMAD
+    if (!empty($mail->noreplyaddress)) {
+        $noreplyaddress = $mail->noreplyaddress;
+    } else {
+        // Make sure that we fall back onto some reasonable no-reply address.
+        $noreplyaddressdefault = 'noreply@' . get_host_from_url($CFG->wwwroot);
+        $noreplyaddress = empty($CFG->noreplyaddress) ? $noreplyaddressdefault : $CFG->noreplyaddress;
+    }
 
     if (!validate_email($noreplyaddress)) {
         debugging('email_to_user: Invalid noreply-email '.s($noreplyaddress));
@@ -6420,9 +6428,14 @@ function email_to_user($user, $from, $subject, $messagetext, $messagehtml = '', 
         $mail->addReplyTo($values[0], $values[1]);
     }
 
-    if (!empty($CFG->emaildkimselector)) {
+    // IOMAD
+    $emaildkimselector = $CFG->emaildkimselector;
+    if (!empty($mail->emaildkimselector)) {
+        $emaildkimselector = $mail->emaildkimselector;
+    }
+    if (!empty($emaildkimselector)) {
         $domain = substr(strrchr($mail->From, "@"), 1);
-        $pempath = "{$CFG->dataroot}/dkim/{$domain}/{$CFG->emaildkimselector}.private";
+        $pempath = "{$CFG->dataroot}/dkim/{$domain}/{$emaildkimselector}.private";
         if (file_exists($pempath)) {
             $mail->DKIM_domain      = $domain;
             $mail->DKIM_private     = $pempath;
