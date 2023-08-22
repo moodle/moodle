@@ -27037,7 +27037,10 @@ body {
 }
 
 .navbar .popover-region-container {
-  top: 60px;
+  top: 48px;
+}
+.btn-footer-popover{
+  display: none;
 }
 
 .content-item-container {
