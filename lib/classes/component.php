@@ -121,6 +121,7 @@ class core_component {
         'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
         'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
         'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
+        'Aws' => 'lib/aws-sdk/src',
     ];
 
     /**

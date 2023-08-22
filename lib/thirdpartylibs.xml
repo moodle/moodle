@@ -716,4 +716,13 @@ All rights reserved.</copyright>
       <license>MIT</license>
       <repository>https://github.com/lbuchs/WebAuthn</repository>
   </library>
+  <library>
+    <location>aws-sdk</location>
+    <name>AWS SDK for PHP</name>
+    <description>The AWS SDK for PHP library</description>
+    <version>3.277.11</version>
+    <license>Apache</license>
+    <licenseversion>2.0</licenseversion>
+    <repository>https://github.com/aws/aws-sdk-php</repository>
+  </library>
 </libraries>
