@@ -50,7 +50,7 @@ here is intended especially for developers.
 === 3.1 ===
 
 * Each plugin must define the tag areas it uses in plugindir/db/tag.php
-  See https://docs.moodle.org/dev/Tag_API for more details.
+  See https://moodledev.io/docs/apis/subsystems/tag/ for more details.
 * When adding a 'tags' form element the component and itemtype must be specified
   in the element attributes.
 * Tag name is no longer a unique field in 'tag' table, tags may be separated in

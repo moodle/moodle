@@ -655,7 +655,7 @@ defined or can't be applied.
 * Legacy cron has been deprecated and will be removed in Moodle 4.1. This includes the functions:
   - cron_execute_plugin_type()
   - cron_bc_hack_plugin_functions()
-  Please, use the Task API instead: https://docs.moodle.org/dev/Task_API
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
 * Introduce new hooks for plugin developers:
     - <component>_can_course_category_delete($category)
     - <component>_can_course_category_delete_move($category, $newcategory)
@@ -976,7 +976,7 @@ the groupid field.
 
 * There is a new privacy API that every subsystem and plugin has to implement so that the site can become GDPR
   compliant. Plugins use this API to report what information they store or process regarding users, and provide ability
-  to export and delete personal data. See https://docs.moodle.org/dev/Privacy_API for guidelines on how to implement the
+  to export and delete personal data. See https://moodledev.io/docs/apis/subsystems/privacy for guidelines on how to implement the
   privacy API in your plugin.
 * The cron runner now sets up a fresh PAGE and OUTPUT between each task.
 * The core_renderer methods notify_problem(), notify_success(), notify_message() and notify_redirect() that were
@@ -994,7 +994,7 @@ the groupid field.
 * Add recaptchalib_v2.php for support of reCAPTCHA v2.
 * Plugins can define class 'PLUGINNAME\privacy\local\sitepolicy\handler' if they implement an alternative mechanisms for
   site policies managements and agreements. Administrators can define which component is to be used for handling site
-  policies and agreements. See https://docs.moodle.org/dev/Site_policy_handler
+  policies and agreements.
 * Scripts can define a constant NO_SITEPOLICY_CHECK and set it to true before requiring the main config.php file. It
   will make the require_login() skipping the test for the user's policyagreed status. This is useful for plugins that
   act as a site policy handler.
@@ -1076,8 +1076,7 @@ the groupid field.
 
 === 3.3 ===
 
-* Behat compatibility changes are now being documented at
-  https://docs.moodle.org/dev/Acceptance_testing/Compatibility_changes
+* Behat compatibility changes are now being documented at https://moodledev.io
 * PHPUnit's bootstrap has been changed to use HTTPS wwwroot (https://www.example.com/moodle) from previous HTTP version. Any
   existing test expecting the old HTTP URLs will need to be switched to the new HTTPS value (reference: MDL-54901).
 * The information returned by the idp list has changed. This is usually only rendered by the login page and login block.
@@ -1305,7 +1304,7 @@ the groupid field.
   only to courses the user is enrolled in, and are visible to them.
 * External functions that are not calling external_api::validate_context are buggy and will now generate
   exceptions. Previously they were only generating warnings in the webserver error log.
-  See https://docs.moodle.org/dev/External_functions_API#Security
+  See https://moodledev.io/docs/apis/subsystems/external/security
 * The moodle/blog:associatecourse and moodle/blog:associatemodule capabilities has been removed.
 * The following functions has been finally deprecated and can not be used any more:
     - profile_display_badges()
@@ -1373,7 +1372,7 @@ the groupid field.
   is consistent with web services.
 * Several changes in Moodle core, standard plugins and third party libraries to
   ensure compatibility with PHP7. All plugins are recommended to perform testing
-  against PHP7 as well. Refer to https://docs.moodle.org/dev/Moodle_and_PHP7 for more
+  against PHP7 as well. Refer to https://moodledev.io/general/development/policies/php for more
   information. The following changes may affect you:
   * Class moodleform, moodleform_mod and some module classes have been changed to use
     __construct() for the constructor. Calling parent constructors by the class
@@ -1395,7 +1394,7 @@ the groupid field.
   respected. Users of this function should output their own feedback if required.
 * Number of changes to Tags API, see tag/upgrade.txt for more details
 * The previous events API handlers are being deprecated in favour of events 2 API, debugging messages are being displayed if
-  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers
+  there are 3rd party plugins using it. Switch to events 2 API please, see https://docs.moodle.org/dev/Events_API#Event_dispatching_and_observers
   Note than you will need to bump the plugin version so moodle is aware that you removed the plugin's event handlers.
 * mforms validation functions are not available in the global JS namespace anymore, event listeners
   are assigned to fields and buttons through a self-contained JS function.
@@ -1442,7 +1441,7 @@ the groupid field.
 * External functions can be called without a session if they define 'loginrequired' => true in db/services.php.
 * All plugins are required to declare their frankenstyle component name via
   the $plugin->component property in their version.php file. See
-  https://docs.moodle.org/dev/version.php for details (MDL-48494).
+  https://moodledev.io/docs/apis/commonfiles/version.php for details (MDL-48494).
 * PHPUnit is upgraded to 4.7. Some tests using deprecated assertions etc may need changes to work correctly.
 * Users of the text editor API to manually create a text editor should call set_text before calling use_editor.
 * Javascript - SimpleYUI and the Y instance used for modules have been merged. Y is now always the same instance of Y.
@@ -1974,7 +1973,7 @@ YUI:
 Event triggering and event handlers:
     * All existing events and event handlers should be replaced by new
       event classes and matching new event observers.
-    * See http://docs.moodle.org/dev/Event_2 for more information.
+    * See https://docs.moodle.org/dev/Events_API for more information.
     * The following events will be entirely removed, though they can still
       be captured using handlers, but they should not be used any more.
       * groups_members_removed          -> \core\event\group_member_removed
@@ -2037,7 +2036,6 @@ Event triggering and event handlers:
   print_remote_host(), print_whole_category_list(), print_category_info(), get_course_category_tree(),
   print_courses(), print_course(), get_category_courses_array(), get_category_courses_array_recursively(),
   get_courses_wmanagers()
-  See http://docs.moodle.org/dev/Courses_lists_upgrade_to_2.5
 * $core_renderer->block_move_target() changed to support more verbose move-block-here descriptions.
 * Additional (optional) param $onlyactive has been added to get_enrolled_users, count_enrolled_users
   functions to get information for only active (excluding suspended enrolments) users. Included two
@@ -2128,13 +2126,13 @@ API changes:
 === 2.0 ===
 
 API changes:
-* new DML API - http://docs.moodle.org/dev/DML_functions
-* new DDL API - http://docs.moodle.org/dev/DDL_functions
-* new file API - http://docs.moodle.org/dev/File_API
+* new DML API - https://moodledev.io/docs/apis/core/dml
+* new DDL API - https://moodledev.io/docs/apis/core/dml/ddl
+* new file API - https://moodledev.io/docs/apis/subsystems/files
 * new $PAGE and $OUTPUT API
 * new navigation API
-* new theme API - http://docs.moodle.org/dev/Theme_changes_in_2.0
-* new javascript API - http://docs.moodle.org/dev/JavaScript_usage_guide
+* new theme API
+* new javascript API - https://moodledev.io/docs/guides/javascript
 * new portfolio API
 * new local plugin type
 * new translation support - http://lang.moodle.org

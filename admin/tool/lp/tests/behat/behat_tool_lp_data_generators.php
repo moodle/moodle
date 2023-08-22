@@ -94,7 +94,7 @@ class behat_tool_lp_data_generators extends behat_base {
     );
 
     /**
-     * Creates the specified element. More info about available elements in http://docs.moodle.org/dev/Acceptance_testing#Fixtures.
+     * Creates the specified element. More info about available elements in https://moodledev.io/general/development/tools/behat.
      *
      * @Given /^the following lp "(?P<element_string>(?:[^"]|\\")*)" exist:$/
      *

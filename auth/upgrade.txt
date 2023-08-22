@@ -21,7 +21,7 @@ information provided here is intended especially for developers.
 * The auth_db and auth_ldap plugins' implementations of update_user_record() have been removed and both now
   call the new implementation added in the base class.
 * Self registration plugins should use core_privacy\local\sitepolicy\manager instead of directly checking
-  $CFG->sitepolicy , especially in custom signup forms. See https://docs.moodle.org/dev/Site_policy_handler
+  $CFG->sitepolicy , especially in custom signup forms.
 
 === 3.3 ===
 

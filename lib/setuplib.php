@@ -1451,7 +1451,7 @@ function redirect_if_major_upgrade_required() {
  *
  * To be inserted in the core functions that can not be called by pluigns during upgrade.
  * Core upgrade should not use any API functions at all.
- * See {@link http://docs.moodle.org/dev/Upgrade_API#Upgrade_code_restrictions}
+ * See {@link https://moodledev.io/docs/guides/upgrade#upgrade-code-restrictions}
  *
  * @throws moodle_exception if executed from inside of upgrade script and $warningonly is false
  * @param bool $warningonly if true displays a warning instead of throwing an exception

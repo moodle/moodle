@@ -16,4 +16,4 @@ Moodle - the world's open source learning platform
 This generated documentation includes API documentation for JavaScript written in the AMD and ES2015 module formats within Moodle.
 
 ## Related information
-See [https://docs.moodle.org/dev](https://docs.moodle.org/dev) for other related Developer Documentation.
+See [https://moodledev.io](https://moodledev.io) for other related Developer Documentation.

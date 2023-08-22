@@ -6,7 +6,7 @@ of developers, designers, teachers, testers, translators and other users. We
 work in universities, schools, companies and other places. You are very welcome
 to join us and contribute to the project.
 
-See <https://docs.moodle.org/dev/Contributing_to_Moodle> for the many ways you
+See <https://moodledev.io/general/community/contribute> for the many ways you
 can help, not only with coding.
 
 Moodle is open to community contributions to core, though all code must go
@@ -35,7 +35,7 @@ submitted patches has evolved.
 * New features are developed on the master branch. Bug fixes are also
   backported to currently supported maintenance (stable) branches.
 
-For further details, see <https://docs.moodle.org/dev/Process>.
+For further details, see <https://moodledev.io/general/development/process>.
 
 Moodle plugins
 --------------
@@ -53,4 +53,4 @@ be easily installed and updated via the Moodle administration interface.
   the plugins directory. We do not pull from your code repository; you must do
   it explicitly.
 
-For further details, see <https://docs.moodle.org/dev/Plugin_contribution>.
+For further details, see <https://moodledev.io/general/community/plugincontribution>.

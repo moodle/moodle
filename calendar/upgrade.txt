@@ -30,7 +30,7 @@ information provided here is intended especially for developers.
 === 3.9 ===
 * Plugins can now create their own calendar events, both standard and action ones. To do it they need to specify
   $event->component when creating an event. Component events can not be edited or deleted manually.
-  See https://docs.moodle.org/dev/Calendar_API#Component_events
+  See https://moodledev.io/docs/apis/core/calendar#component-events
 * The following functions have been deprecated because they were no longer used:
   - calendar_add_event_metadata()
   - core_calendar_renderer::event()
