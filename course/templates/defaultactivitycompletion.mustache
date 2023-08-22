@@ -32,12 +32,17 @@
                 "string": "Manual",
                 "icon": "https://raw.githubusercontent.com/moodle/moodle/master/pix/i/completion-manual-enabled.png"
             }
-        }]
+        }],
+        "issite": true
     }
 }}
 <div class="container-fluid">
     <div class="row my-5 defaultactivitycompletion-header">
-        <div class="col">{{#str}}defaultactivitycompletion, core_completion{{/str}}</div>
+        <div class="col">
+            {{#issite}}{{#str}}defaultactivitycompletionsite, core_completion{{/str}}{{/issite}}
+            {{^issite}}{{#str}}defaultactivitycompletioncourse, core_completion{{/str}}{{/issite}}
+        </div>
+
     </div>
 
     <div class="modules pt-3">
