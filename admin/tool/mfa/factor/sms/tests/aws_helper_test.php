@@ -15,30 +15,31 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * local_aws unit tests.
+ * factor_sms unit tests.
  *
- * @package   local_aws
+ * @package   factor_sms
  * @author    Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \local_aws\local\aws_helper
+ * @covers    \factor_sms\local\aws_helper
  */
 
-namespace local_aws;
+namespace factor_sms;
 
-use local_aws\local\aws_helper;
+use factor_sms\local\aws_helper;
 
 /**
  * Testcase for the AWS helper.
  *
- * @package    local_aws
+ * @package    factor_sms
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \factor_sms\classes\local\aws_helper
  */
 class aws_helper_test extends \advanced_testcase {
 
-    public function test_get_proxy_string() {
+    public function test_get_proxy_string():void {
         global $CFG;
         $this->resetAfterTest();
         // Confirm with no config an empty string is returned.

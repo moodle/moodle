@@ -49,7 +49,7 @@ class factor extends object_factor_base {
      * E-Mail Factor implementation.
      *
      * @param \MoodleQuickForm $mform Form to inject global elements into.
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      */
     public function login_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm {
         $this->generate_and_email_code();

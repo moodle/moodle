@@ -24,15 +24,24 @@
  */
 
 $string['action:revoke'] = 'Revoke mobile phone number';
-$string['addnumber'] = 'Enter mobile phone number';
-$string['awssdkrequired'] = 'The local_aws plugin leveraging the AWS SDK is required to use this factor. Please install local_aws.';
+$string['addnumber'] = 'Mobile number';
+$string['clientnotfound'] = 'AWS Service client not found. Client must be fully qualified classname e.g. \Aws\S3\S3Client';
+$string['editphonenumber'] = 'Edit phone number';
+$string['editphonenumberinfo'] = "If you didn't get the code or entered the wrong number, please edit number and try again.";
+$string['errorawsconection'] = 'Error connecting to AWS server: {$a}';
+$string['errorsmssent'] = 'Error sending a SMS message containing your verification code.';
+$string['error:wrongphonenumber'] = 'The phone number you provided is not in a valid format.';
+$string['error:wrongverification'] = 'Wrong code. Try again.';
 $string['event:smssent'] = 'SMS Message sent';
-$string['info'] = '<p>Setup a mobile phone number to receive SMS one-time security codes on.</p>';
+$string['event:smssentdescription'] = 'The user with id {$a->userid} had a verification code sent to them via SMS <br> Information: {$a->debuginfo}';
+$string['info'] = '<p>Setup Mobile phone to receive authentication code.</p>';
+$string['logindesc'] = 'We\'ve just sent an SMS containing a 6-digit code to your mobile number: {$a}';
+$string['loginoption'] = 'Have a code sent to you mobile phone';
 $string['loginskip'] = "I didn't receive a code";
-$string['loginsubmit'] = 'Verify code';
-$string['phonehelp'] = 'Enter your local mobile phone number, or an international phone number starting with \'+\'.';
-$string['phoneplaceholder'] = '04xx xxx xxx or +61 4xx xxx xxx';
-$string['pluginname'] = 'Mobile phone SMS';
+$string['loginsubmit'] = 'Continue';
+$string['logintitle'] = 'Enter the verification code sent to your mobile';
+$string['phonehelp'] = 'Enter your mobile number (including country code) to receive a verification code.';
+$string['pluginname'] = 'SMS Mobile phone';
 $string['privacy:metadata'] = 'The mobile phone SMS	factor plugin does not store any personal data';
 $string['settings:aws'] = 'AWS SNS';
 $string['settings:aws:key'] = 'Key';
@@ -50,17 +59,11 @@ $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
 $string['settings:gateway'] = 'SMS Gateway';
 $string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
-$string['settings:modica'] = 'Modica Mobile Gateway';
-$string['settings:modica:application'] = 'Rest Application Name';
-$string['settings:modica:application_help'] = 'Mobile Gateway (API) Application name';
-$string['settings:modica:password'] = 'Password';
-$string['settings:modica:password_help'] = 'Mobile Gateway (API) Password';
-$string['settings:modica:url'] = 'API URL';
-$string['settings:modica:url_help'] = 'Can be left blank in most cases';
-$string['setupfactor'] = 'Setup mobile number';
-$string['smssent'] = 'An SMS message containing your verification code was sent to {$a}.';
+$string['setupfactor'] = 'SMS Setup';
+$string['setupfactorbutton'] = 'Setup SMS';
+$string['setupsubmitcode'] = 'Save';
+$string['setupsubmitphone'] = 'Send code';
 $string['smsstring'] = '{$a->code} is your {$a->fullname} one-time security code.
 
 @{$a->url} #{$a->code}';
 $string['summarycondition'] = 'Using an SMS one-time security code';
-$string['wrongcode'] = 'Invalid security code.';

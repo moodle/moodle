@@ -16,7 +16,9 @@
 
 namespace factor_sms\local\smsgateway;
 
+use factor_sms\admin_settings_aws_region;
 use factor_sms\event\sms_sent;
+use factor_sms\local\aws_helper;
 
 /**
  * AWS SNS SMS Gateway class
@@ -33,7 +35,9 @@ class aws_sns implements gateway_interface {
      */
     public function __construct() {
         global $CFG;
-        require_once($CFG->dirroot . '/local/aws/sdk/aws-autoloader.php');
+        require_once($CFG->libdir . '/aws-sdk/src/functions.php');
+        require_once($CFG->libdir . '/guzzlehttp/guzzle/src/functions_include.php');
+        require_once($CFG->libdir . '/guzzlehttp/promises/src/functions_include.php');
     }
 
     /**
@@ -52,7 +56,7 @@ class aws_sns implements gateway_interface {
         $params = [
             'version' => 'latest',
             'region' => $config->api_region,
-            'http' => ['proxy' => \local_aws\local\aws_helper::get_proxy_string()],
+            'http' => ['proxy' => aws_helper::get_proxy_string()],
         ];
         if (!$config->usecredchain) {
             $params['credentials'] = [
@@ -72,16 +76,16 @@ class aws_sns implements gateway_interface {
         // We have to truncate the senderID to 11 chars.
         $senderid = substr($senderid, 0, 11);
 
-        // These messages need to be transactional.
-        $client->SetSMSAttributes([
-            'attributes' => [
-                'DefaultSMSType' => 'Transactional',
-                'DefaultSenderID' => $senderid,
-            ],
-        ]);
-
-        // Actually send the message.
         try {
+            // These messages need to be transactional.
+            $client->SetSMSAttributes([
+                'attributes' => [
+                    'DefaultSMSType' => 'Transactional',
+                    'DefaultSenderID' => $senderid,
+                ],
+            ]);
+
+            // Actually send the message.
             $result = $client->publish([
                 'Message' => $messagecontent,
                 'PhoneNumber' => $phonenumber,
@@ -101,8 +105,8 @@ class aws_sns implements gateway_interface {
             $event->trigger();
 
             return true;
-        } catch (\Exception $e) {
-            return false;
+        } catch (\Aws\Exception\AwsException $e) {
+            throw new \moodle_exception('errorawsconection', 'factor_sms', '', $e->getAwsErrorMessage());
         }
     }
 
@@ -112,39 +116,28 @@ class aws_sns implements gateway_interface {
      * @param \admin_settingpage $settings
      * @return void
      */
-    public static function add_settings($settings) {
-        global $CFG, $OUTPUT;
+    public static function add_settings(\admin_settingpage $settings): void {
+        global $CFG;
 
-        if (file_exists($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php')) {
-            require_once($CFG->dirroot . '/local/aws/classes/admin_settings_aws_region.php');
-            $reqs = true;
-        } else {
-            $reqs = false;
+        require_once($CFG->dirroot . '/admin/tool/mfa/factor/sms/classes/admin_settings_aws_region.php');
+        $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
+            get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
+
+        if (!get_config('factor_sms', 'usecredchain')) {
+            // AWS Settings.
+            $settings->add(new \admin_setting_configtext('factor_sms/api_key',
+                get_string('settings:aws:key', 'factor_sms'),
+                get_string('settings:aws:key_help', 'factor_sms'), ''));
+
+            $settings->add(new \admin_setting_configpasswordunmask('factor_sms/api_secret',
+                get_string('settings:aws:secret', 'factor_sms'),
+                get_string('settings:aws:secret_help', 'factor_sms'), ''));
         }
 
-        if (!$reqs) {
-            $warning = $OUTPUT->notification(get_string('awssdkrequired', 'factor_sms'), 'notifyerror');
-            $settings->add(new \admin_setting_heading('factor_sms/awssdkwarning', '', $warning));
-        } else {
-            $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
-                get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
-
-            if (!get_config('factor_sms', 'usecredchain')) {
-                // AWS Settings.
-                $settings->add(new \admin_setting_configtext('factor_sms/api_key',
-                    get_string('settings:aws:key', 'factor_sms'),
-                    get_string('settings:aws:key_help', 'factor_sms'), ''));
-
-                $settings->add(new \admin_setting_configpasswordunmask('factor_sms/api_secret',
-                    get_string('settings:aws:secret', 'factor_sms'),
-                    get_string('settings:aws:secret_help', 'factor_sms'), ''));
-            }
-
-            $settings->add(new \local_aws\admin_settings_aws_region('factor_sms/api_region',
-                get_string('settings:aws:region', 'factor_sms'),
-                get_string('settings:aws:region_help', 'factor_sms'),
-                'ap-southeast-2'));
-        }
+        $settings->add(new admin_settings_aws_region('factor_sms/api_region',
+            get_string('settings:aws:region', 'factor_sms'),
+            get_string('settings:aws:region_help', 'factor_sms'),
+            'ap-southeast-2'));
     }
 
     /**
@@ -153,10 +146,6 @@ class aws_sns implements gateway_interface {
      * @return  bool
      */
     public static function is_gateway_enabled(): bool {
-        global $CFG;
-        if (!file_exists($CFG->dirroot . '/local/aws/version.php')) {
-            return false;
-        }
         return true;
     }
 }

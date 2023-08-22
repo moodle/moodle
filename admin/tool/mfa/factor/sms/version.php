@@ -26,9 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version      = 2021081300;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2022041908; // Support Moodle 4.0 and higher.
-$plugin->component    = 'factor_sms';
-$plugin->release      = 'v0.1';
+$plugin->version      = 2023080300;      // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires     = 2023042400.00;   // Requires this Moodle version.
+$plugin->component    = 'factor_sms';   // Full name of the plugin (used for diagnostics).
 $plugin->maturity     = MATURITY_STABLE;
-$plugin->dependencies = ['tool_mfa' => 2019102400];

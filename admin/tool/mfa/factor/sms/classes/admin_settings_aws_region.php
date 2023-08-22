@@ -17,13 +17,13 @@
 /**
  * Admin setting for AWS regions.
  *
- * @package    local_aws
+ * @package    factor_sms
  * @author     Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_aws;
+ namespace factor_sms;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/lib/adminlib.php');
 /**
  * Admin setting for a list of AWS regions.
  *
- * @package    local_aws
+ * @package    factor_sms
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -46,13 +46,11 @@ class admin_settings_aws_region extends \admin_setting_configtext {
      * @return string
      */
     public function output_html($data, $query='') {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $default = $this->get_defaultsetting();
-
         $options = [];
-
-        $all = require($CFG->dirroot . '/local/aws/sdk/Aws/data/endpoints.json.php');
+        $all = require_once($CFG->dirroot . '/lib/aws-sdk/src/data/endpoints.json.php');
         $ends = $all['partitions'][0]['regions'];
         if ($ends) {
             foreach ($ends as $key => $value) {
@@ -63,25 +61,15 @@ class admin_settings_aws_region extends \admin_setting_configtext {
             }
         }
 
-        $inputparams = array(
-            'type' => 'text',
+        $context = [
             'list' => $this->get_full_name(),
             'name' => $this->get_full_name(),
+            'id' => $this->get_id(),
             'value' => $data,
             'size' => $this->size,
-            'id' => $this->get_id(),
-            'class' => 'form-control text-ltr',
-        );
-
-        $element = \html_writer::start_tag('div', array('class' => 'form-text defaultsnext'));
-        $element .= \html_writer::empty_tag('input', $inputparams);
-        $element .= \html_writer::start_tag('datalist', array('id' => $this->get_full_name()));
-        foreach ($options as $option) {
-            $element .= \html_writer::tag('option', $option['label'], array('value' => $option['value']));
-        }
-        $element .= \html_writer::end_tag('datalist');
-        $element .= \html_writer::end_tag('div');
-
+            'options' => $options,
+        ];
+        $element = $OUTPUT->render_from_template('factor_sms/setting_aws_region', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }

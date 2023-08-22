@@ -41,6 +41,7 @@ $string['error:actionnotfound'] = 'Action \'{$a}\' not supported';
 $string['error:directaccess'] = 'This page shouldn\'t be accessed directly';
 $string['error:factornotenabled'] = 'Multi-factor authentication factor \'{$a}\' not enabled';
 $string['error:factornotfound'] = 'Multi-factor authentication factor \'{$a}\' not found';
+$string['error:isguestuser'] = 'Guests are not allowed here.';
 $string['error:notenoughfactors'] = 'Unable to authenticate';
 $string['error:reauth'] = 'We couldn\'t confirm your identity sufficiently to meet the site authentication security policy.<br>This may be due to: <br> 1) Steps being locked - please wait a few minutes and try again.
      <br> 2) Steps being failed - please double check the details for each step. <br> 3) Steps were skipped - please reload this page or try logging in again.';

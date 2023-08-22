@@ -17,13 +17,13 @@
 /**
  * AWS helper class. Contains useful functions when interacting with the SDK.
  *
- * @package    local_aws
+ * @package    factor_sms
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_aws\local;
+namespace factor_sms\local;
 
 use Aws\CommandInterface;
 use Aws\AwsClient;
@@ -42,7 +42,7 @@ class aws_helper {
      *
      * @return string the string to use for proxy settings.
      */
-    public static function get_proxy_string() {
+    public static function get_proxy_string(): string {
         global $CFG;
         $proxy = '';
         if (empty($CFG->proxytype)) {

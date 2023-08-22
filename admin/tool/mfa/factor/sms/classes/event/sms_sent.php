@@ -39,9 +39,14 @@ class sms_sent extends \core\event\base {
      *
      * @return string
      */
-    public function get_description() {
-        return "The user with id '{$this->other['userid']}'" .
-            " had a verification code sent to them via SMS <br> Information: {$this->other['debug']}";
+    public function get_description(): string {
+
+        $content = [
+            'userid' => $this->other['userid'],
+            'debuginfo' => is_array($this->other['debug']) ? json_encode($this->other['debug']) : $this->other['debug'],
+        ];
+
+        return get_string('event:smssentdescription', 'factor_sms', $content);
     }
 
     /**
@@ -51,7 +56,7 @@ class sms_sent extends \core\event\base {
      *
      * @return string
      */
-    public static function get_name() {
+    public static function get_name(): string {
         return get_string('event:smssent', 'factor_sms');
     }
 }

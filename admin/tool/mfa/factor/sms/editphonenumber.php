@@ -15,25 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * factor_sms upgrade.
+ * Edit phonenumber redirect
  *
- * @package    factor_sms
- * @copyright  Alex Morris <alex.morris@catalyst.net.nz>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package     factor_sms
+ * @copyright   2023 Raquel Ortega <raquel.ortega@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Factor sms upgrade helper function
- *
- * Sets the config of the gateway to aws_sns for factor sms
- *
- * @param int $oldversion
- */
-function xmldb_factor_sms_upgrade($oldversion) {
-    if ($oldversion < 2021081300) {
-        set_config('gateway', 'aws_sns', 'factor_sms');
-        upgrade_plugin_savepoint(true, 2021081300, 'factor', 'sms');
-    }
+require_once(__DIR__ . '../../../../../../config.php');
 
-    return true;
+require_login(null, false);
+if (isguestuser()) {
+    throw new require_login_exception('error:isguestuser', 'tool_mfa');
 }
+
+$sesskey = optional_param('sesskey', false, PARAM_TEXT);
+require_sesskey();
+
+// Remove session phone number.
+unset($SESSION->tool_mfa_sms_number);
+
+redirect(new \moodle_url('/admin/tool/mfa/action.php', [
+    'action' => 'setup',
+    'factor' => 'sms',
+]));

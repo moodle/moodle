@@ -51,7 +51,6 @@ $settings->add(new admin_setting_configtext('factor_sms/countrycode',
 
 $gateways = [
     'aws_sns' => get_string('settings:aws', 'factor_sms'),
-    'modica' => get_string('settings:modica', 'factor_sms'),
 ];
 
 $settings->add(new admin_setting_configselect('factor_sms/gateway',

@@ -17,14 +17,14 @@
 /**
  * AWS Client factory. Retrieves a client with moodle specific HTTP configuration.
  *
- * @package    local_aws
+ * @package    factor_sms
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2022 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_aws\local;
-use \Aws\AwsClient;
+namespace factor_sms\local;
+use Aws\AwsClient;
 
 /**
  * AWS Client factory. Retrieves a client with moodle specific HTTP configuration.
@@ -45,7 +45,7 @@ class client_factory {
         // Modify the opts to add HTTP timeouts.
         if (empty($opts['http'])) {
             $opts['http'] = ['connect_timeout' => HOURSECS];
-        } else if (is_array($opts['http'] && !array_key_exists('connect_timeout', $opts['http']))) {
+        } else if (!array_key_exists('connect_timeout', $opts['http'])) {
             // Try not to override existing settings.
             $opts['http']['connect_timeout'] = HOURSECS;
         }
@@ -53,7 +53,7 @@ class client_factory {
         // Blindly trust the call here. If it exceptions, the raw message is the most useful.
         $client = new $class($opts);
         if (!$client instanceof \Aws\AwsClient) {
-            throw new \moodle_exception('clientnotfound', 'local_aws');
+            throw new \moodle_exception('clientnotfound', 'factor_sms');
         }
 
         // Now we can configure the proxy with the routing aware middleware.

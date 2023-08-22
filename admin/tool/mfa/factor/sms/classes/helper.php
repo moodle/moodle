@@ -38,34 +38,30 @@ class helper {
         $phonenumber = preg_replace('/[ \(\)-]/', '', $phonenumber);
 
         // Number is already in international format. Do nothing.
-        if (strpos($phonenumber, '+') === 0) {
+        if (str_starts_with ($phonenumber, '+')) {
             return $phonenumber;
         }
 
         // Strip leading 0 if found.
-        if (strpos($phonenumber, '0') === 0) {
+        if (str_starts_with ($phonenumber, '0')) {
             $phonenumber = substr($phonenumber, 1);
         }
 
         // Prepend country code.
         $countrycode = get_config('factor_sms', 'countrycode');
-        $phonenumber = '+' . $countrycode . $phonenumber;
+        $phonenumber = !empty($countrycode) ? '+' . $countrycode . $phonenumber : $phonenumber;
 
         return $phonenumber;
     }
 
     /**
-     * Redact the phone number for displaying on screen.
+     * Validate phone number with E.164 format. https://en.wikipedia.org/wiki/E.164
      *
-     * @param string $phonenumber the phone number
-     * @return string the redacted phone number
+     * @param string $phonenumber from the given user input
+     * @return bool
      */
-    public static function redact_phonenumber(string $phonenumber): string {
-        // Create partial num for display.
-        $len = strlen($phonenumber);
-        // Keep last 3 characters.
-        $redacted = str_repeat('x', $len - 3);
-        $redacted .= substr($phonenumber, -3);
-        return $redacted;
+    public static function is_valid_phonenumber(string $phonenumber) : bool {
+        $phonenumber = self::format_number($phonenumber);
+        return (preg_match("/^\+[1-9]\d{1,14}$/", $phonenumber)) ? true : false;
     }
 }
