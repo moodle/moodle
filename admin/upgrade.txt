@@ -9,6 +9,10 @@ This files describes API changes in /admin/*.
 
   Existing cookies will not be affected by this change, until they are expired or deleted.
 
+* Theme setting "Enable device detection" (enabledevicedetection) and related to it has been removed.
+* Theme setting "Device detection regular expressions" (devicedetectregex) and related to it has been removed.
+* Class adminpresets_admin_setting_devicedetectregex has been deprecated.
+* The admin_setting_devicedetectregex class has been deprecated.
 
 === 4.2 ===
 
