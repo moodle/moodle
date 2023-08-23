@@ -1118,7 +1118,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         $eventtable .= "</tr></table>";
         $eventtable .= "<table>";
-        $eventtable .= "<tr><th>" . get_string('location', 'trainingevent') . "</th><td>" . $location->name . "</td></tr>";
+        $eventtable .= "<tr><th>" . get_string('location', 'trainingevent') . "</th><td>" . format_text($location->name) . "</td></tr>";
 
         if (!empty($location->description)) {
             $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
