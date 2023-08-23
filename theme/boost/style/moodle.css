@@ -26166,8 +26166,8 @@ blockquote {
 }
 
 .activityiconcontainer {
-  width: 50px;
-  height: 50px;
+  width: 52px;
+  height: 52px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -26182,16 +26182,16 @@ blockquote {
   width: 24px;
 }
 .activityiconcontainer.small {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
 }
 .activityiconcontainer.smaller {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
 }
 .activityiconcontainer.smaller .activityicon {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
 }
 
 .activityiconcontainer.administration {

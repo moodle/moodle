@@ -134,7 +134,7 @@ class wikimedia {
                 $short_path = str_replace($commons_main_dir, '', $image_url);
                 $extension = strtolower(pathinfo($short_path, PATHINFO_EXTENSION));
                 if (strcmp($extension, 'gif') == 0) {  //no thumb for gifs
-                    return $OUTPUT->image_url(file_extension_icon('.gif', $thumb_width))->out(false);
+                    return $OUTPUT->image_url(file_extension_icon('.gif'))->out(false);
                 }
                 $dir_parts = explode('/', $short_path);
                 $file_name = end($dir_parts);

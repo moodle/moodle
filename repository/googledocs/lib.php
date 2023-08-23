@@ -389,7 +389,7 @@ class repository_googledocs extends repository {
                     'title' => $gfile->name,
                     'path' => $this->build_node_path($gfile->id, $gfile->name, $path),
                     'date' => strtotime($gfile->modifiedTime),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     'children' => array()

@@ -798,11 +798,11 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
 
             if ($file->is_directory()) {
                 $item->filesize = 0;
-                $item->icon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
+                $item->icon = $OUTPUT->image_url(file_folder_icon())->out(false);
                 $item->type = 'folder';
                 $foldername = explode('/', trim($item->filepath, '/'));
                 $item->fullname = trim(array_pop($foldername), '/');
-                $item->thumbnail = $OUTPUT->image_url(file_folder_icon(90))->out(false);
+                $item->thumbnail = $OUTPUT->image_url(file_folder_icon())->out(false);
             } else {
                 // do NOT use file browser here!
                 $item->mimetype = get_mimetype_description($file);
@@ -813,8 +813,8 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
                 }
                 $itemurl = moodle_url::make_draftfile_url($draftitemid, $item->filepath, $item->filename);
                 $item->url = $itemurl->out();
-                $item->icon = $OUTPUT->image_url(file_file_icon($file, 24))->out(false);
-                $item->thumbnail = $OUTPUT->image_url(file_file_icon($file, 90))->out(false);
+                $item->icon = $OUTPUT->image_url(file_file_icon($file))->out(false);
+                $item->thumbnail = $OUTPUT->image_url(file_file_icon($file))->out(false);
 
                 // The call to $file->get_imageinfo() fails with an exception if the file can't be read on the file system.
                 // We still want to add such files to the list, so the owner can view and delete them if needed. So, we only call
@@ -1811,7 +1811,7 @@ function mimeinfo($element, $filename) {
  * the other way around.
  *
  * @category files
- * @param string $element Desired information ('extension', 'icon', 'icon-24', etc.)
+ * @param string $element Desired information ('extension', 'icon', etc.)
  * @param string $mimetype MIME type we're looking up
  * @return string Requested piece of information from array
  */
@@ -1860,10 +1860,14 @@ function mimeinfo_from_type($element, $mimetype) {
  *
  * @param stored_file|file_info|stdClass|array $file (in case of object attributes $file->filename
  *     and $file->mimetype are expected)
- * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
+ * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
-function file_file_icon($file, $size = null) {
+function file_file_icon($file, $unused = null) {
+    if ($unused !== null) {
+        debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+    }
+
     if (!is_object($file)) {
         $file = (object)$file;
     }
@@ -1888,14 +1892,14 @@ function file_file_icon($file, $size = null) {
         $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if ($extension && !empty($mimetypes[$extension])) {
             // if file name has known extension, return icon for this extension
-            return file_extension_icon($filename, $size);
+            return file_extension_icon($filename);
         }
     }
-    return file_mimetype_icon($mimetype, $size);
+    return file_mimetype_icon($mimetype);
 }
 
 /**
- * Return the relative icon path for a folder image
+ * Return the relative icon path for a folder image.
  *
  * Usage:
  * <code>
@@ -1904,28 +1908,20 @@ function file_file_icon($file, $size = null) {
  * </code>
  * or
  * <code>
- * echo $OUTPUT->pix_icon(file_folder_icon(32), '');
+ * echo $OUTPUT->pix_icon(file_folder_icon(), '');
  * </code>
  *
- * @param int $iconsize The size of the icon. Defaults to 16 can also be 24, 32, 48, 64, 72, 80, 96, 128, 256
+ * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
-function file_folder_icon($iconsize = null) {
+function file_folder_icon($unused = null) {
     global $CFG;
-    static $iconpostfixes = array(256=>'-256', 128=>'-128', 96=>'-96', 80=>'-80', 72=>'-72', 64=>'-64', 48=>'-48', 32=>'-32', 24=>'-24', 16=>'');
-    static $cached = array();
-    $iconsize = max(array(16, (int)$iconsize));
-    if (!array_key_exists($iconsize, $cached)) {
-        foreach ($iconpostfixes as $size => $postfix) {
-            $fullname = $CFG->dirroot.'/pix/f/folder'.$postfix;
-            if ($iconsize >= $size &&
-                    (file_exists($fullname.'.svg') || file_exists($fullname.'.png') || file_exists($fullname.'.gif'))) {
-                $cached[$iconsize] = 'f/folder'.$postfix;
-                break;
-            }
-        }
+
+    if ($unused !== null) {
+        debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
     }
-    return $cached[$iconsize];
+
+    return 'f/folder';
 }
 
 /**
@@ -1944,11 +1940,11 @@ function file_folder_icon($iconsize = null) {
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
  * @param string $mimetype The mimetype to fetch an icon for
- * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
+ * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string The relative path to the icon
  */
-function file_mimetype_icon($mimetype, $size = NULL) {
-    return 'f/'.mimeinfo_from_type('icon'.$size, $mimetype);
+function file_mimetype_icon($mimetype, $unused = null) {
+    return 'f/'.mimeinfo_from_type('icon', $mimetype);
 }
 
 /**
@@ -1968,11 +1964,14 @@ function file_mimetype_icon($mimetype, $size = NULL) {
  * @todo MDL-31074 Implement $size
  * @category files
  * @param string $filename The filename to get the icon for
- * @param int $size The size of the icon. Defaults to 16 can also be 24, 32, 64, 128, 256
+ * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
-function file_extension_icon($filename, $size = NULL) {
-    return 'f/'.mimeinfo('icon'.$size, $filename);
+function file_extension_icon($filename, $unused = null) {
+    if ($unused !== null) {
+        debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+    }
+    return 'f/'.mimeinfo('icon', $filename);
 }
 
 /**
@@ -2675,14 +2674,14 @@ function send_file($path, $filename, $lifetime = null , $filter=0, $pathisstring
  *      Note: it's up to the consumer to set it properly i.e. when serving a "versioned" URL.
  *
  * @category files
- * @param stored_file $stored_file local file object
+ * @param stored_file $storedfile local file object
  * @param int $lifetime Number of seconds before the file should expire from caches (null means $CFG->filelifetime)
  * @param int $filter 0 (default)=no filtering, 1=all files, 2=html files only
  * @param bool $forcedownload If true (default false), forces download of file rather than view in browser/plugin
  * @param array $options additional options affecting the file serving
  * @return null script execution stopped unless $options['dontdie'] is true
  */
-function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownload=false, array $options=array()) {
+function send_stored_file($storedfile, $lifetime=null, $filter=0, $forcedownload=false, array $options=array()) {
     global $CFG, $COURSE;
 
     static $recursion = 0;
@@ -2706,22 +2705,15 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
     if (!empty($options['preview'])) {
         // replace the file with its preview
         $fs = get_file_storage();
-        $preview_file = $fs->get_file_preview($stored_file, $options['preview']);
-        if (!$preview_file) {
-            // unable to create a preview of the file, send its default mime icon instead
-            if ($options['preview'] === 'tinyicon') {
-                $size = 24;
-            } else if ($options['preview'] === 'thumb') {
-                $size = 90;
-            } else {
-                $size = 256;
-            }
-            $fileicon = file_file_icon($stored_file, $size);
-            send_file($CFG->dirroot.'/pix/'.$fileicon.'.png', basename($fileicon).'.png');
+        $previewfile = $fs->get_file_preview($storedfile, $options['preview']);
+        if (!$previewfile) {
+            // Unable to create a preview of the file, send its default mime icon instead.
+            $fileicon = file_file_icon($storedfile);
+            send_file($CFG->dirroot.'/pix/'.$fileicon.'.svg', basename($fileicon).'.svg');
         } else {
             // preview images have fixed cache lifetime and they ignore forced download
             // (they are generated by GD and therefore they are considered reasonably safe).
-            $stored_file = $preview_file;
+            $storedfile = $previewfile;
             $lifetime = DAYSECS;
             $filter = 0;
             $forcedownload = false;
@@ -2729,7 +2721,7 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
     }
 
     // handle external resource
-    if ($stored_file && $stored_file->is_external_file() && !isset($options['sendcachedexternalfile'])) {
+    if ($storedfile && $storedfile->is_external_file() && !isset($options['sendcachedexternalfile'])) {
 
         // Have we been here before?
         $recursion++;
@@ -2737,22 +2729,22 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
             throw new coding_exception('Recursive file serving detected');
         }
 
-        $stored_file->send_file($lifetime, $filter, $forcedownload, $options);
+        $storedfile->send_file($lifetime, $filter, $forcedownload, $options);
         die;
     }
 
-    if (!$stored_file or $stored_file->is_directory()) {
-        // nothing to serve
+    if (!$storedfile || $storedfile->is_directory()) {
+        // Nothing to serve.
         if ($dontdie) {
             return;
         }
         die;
     }
 
-    $filename = is_null($filename) ? $stored_file->get_filename() : $filename;
+    $filename = is_null($filename) ? $storedfile->get_filename() : $filename;
 
     // Use given MIME type if specified.
-    $mimetype = $stored_file->get_mimetype();
+    $mimetype = $storedfile->get_mimetype();
 
     // Allow cross-origin requests only for Web Services.
     // This allow to receive requests done by Web Workers or webapps in different domains.
@@ -2760,7 +2752,7 @@ function send_stored_file($stored_file, $lifetime=null, $filter=0, $forcedownloa
         header('Access-Control-Allow-Origin: *');
     }
 
-    send_file($stored_file, $filename, $lifetime, $filter, false, $forcedownload, $mimetype, $dontdie, $options);
+    send_file($storedfile, $filename, $lifetime, $filter, false, $forcedownload, $mimetype, $dontdie, $options);
 }
 
 /**
