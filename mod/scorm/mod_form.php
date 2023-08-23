@@ -502,39 +502,35 @@ class mod_scorm_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $suffix = $this->get_suffix();
         $mform =& $this->_form;
-        $items = array();
+        $items = [];
 
         // Require score.
         $group = [];
         $completionscorerequiredel = 'completionscorerequired' . $suffix;
+        $group[] =& $mform->createElement(
+            'checkbox',
+            'completionscoredisabled',
+            null,
+            get_string('completionscorerequired', 'scorm')
+        );
         $group[] =& $mform->createElement('text', $completionscorerequiredel, '', ['size' => 5]);
-        $group[] =& $mform->createElement('checkbox', 'completionscoredisabled', null, get_string('disable'));
         $mform->setType($completionscorerequiredel, PARAM_INT);
         $completionscoregroupel = 'completionscoregroup' . $suffix;
-        $mform->addGroup($group, $completionscoregroupel, get_string('completionscorerequired', 'scorm'), '', false);
-        $mform->addHelpButton($completionscoregroupel, 'completionscorerequired', 'scorm');
-        $mform->disabledIf($completionscorerequiredel, 'completionscoredisabled', 'checked');
+        $mform->addGroup($group, $completionscoregroupel, '', '', false);
+        $mform->hideIf($completionscorerequiredel, 'completionscoredisabled', 'notchecked');
         $mform->setDefault($completionscorerequiredel, 0);
 
         $items[] = $completionscoregroupel;
 
         // Require status.
-        $first = true;
-        $firstkey = null;
         $completionstatusrequiredel = 'completionstatusrequired' . $suffix;
         foreach (scorm_status_options(true) as $key => $value) {
-            $name = null;
             $key = $completionstatusrequiredel . '['.$key.']';
-            if ($first) {
-                $name = get_string('completionstatusrequired', 'scorm');
-                $first = false;
-                $firstkey = $key;
-            }
-            $mform->addElement('checkbox', $key, $name, $value);
+            $mform->addElement('checkbox', $key, '', $value);
             $mform->setType($key, PARAM_BOOL);
+            $mform->hideIf($key, $completionstatusrequiredel, 'notchecked');
             $items[] = $key;
         }
-        $mform->addHelpButton($firstkey, 'completionstatusrequired', 'scorm');
 
         $completionstatusallscosel = 'completionstatusallscos' . $suffix;
         $mform->addElement('checkbox', $completionstatusallscosel, get_string('completionstatusallscos', 'scorm'));

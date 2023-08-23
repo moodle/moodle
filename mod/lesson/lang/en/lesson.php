@@ -118,7 +118,6 @@ $string['completiondetail:reachend'] = 'Go through the activity to the end';
 $string['completiondetail:timespent'] = 'Spend at least {$a} on this activity';
 $string['completionendreached'] = 'Require end reached';
 $string['completionendreached_desc'] = 'Student must reach the end of lesson page to complete this activity';
-$string['completiontimespent'] = 'Student must do this activity at least for';
 $string['completiontimespentdesc'] = 'Student must do this activity for at least {$a}';
 $string['completiontimespentgroup'] = 'Require time spent';
 $string['conditionsfordependency'] = 'Condition(s) for the dependency';
@@ -612,3 +611,6 @@ $string['youranswer'] = 'Your answer';
 $string['yourcurrentgradeis'] = 'Your current grade is {$a}';
 $string['yourcurrentgradeisoutof'] = 'Your current grade is {$a->grade} out of {$a->total}';
 $string['youshouldview'] = 'You should answer at least: {$a}';
+
+// Deprecated since 4.3.
+$string['completiontimespent'] = 'Student must do this activity at least for';

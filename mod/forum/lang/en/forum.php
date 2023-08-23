@@ -111,18 +111,14 @@ $string['closegrader'] = 'Close grader';
 $string['completiondetail:discussions'] = 'Start discussions: {$a}';
 $string['completiondetail:replies'] = 'Post replies: {$a}';
 $string['completiondetail:posts'] = 'Make forum posts: {$a}';
-$string['completiondiscussions'] = 'Student must create discussions:';
+$string['completiondiscussions'] = 'Start discussions';
 $string['completiondiscussionsdesc'] = 'Student must create at least {$a} discussion(s)';
-$string['completiondiscussionsgroup'] = 'Require discussions';
-$string['completiondiscussionshelp'] = 'requiring discussions to complete';
-$string['completionposts'] = 'Student must post discussions or replies:';
+$string['completionpostsinforums'] = 'Post in forums';
+$string['completionposts'] = 'Start discussions or post replies';
 $string['completionpostsdesc'] = 'Student must post at least {$a} discussion(s) or reply/replies';
-$string['completionpostsgroup'] = 'Require posts';
 $string['completionpostshelp'] = 'requiring discussions or replies to complete';
-$string['completionreplies'] = 'Student must post replies:';
+$string['completionreplies'] = 'Post replies';
 $string['completionrepliesdesc'] = 'Student must post at least {$a} reply/replies';
-$string['completionrepliesgroup'] = 'Require replies';
-$string['completionreplieshelp'] = 'requiring replies to complete';
 $string['configcleanreadtime'] = 'The hour of the day to clean old posts from the \'read\' table.';
 $string['configdigestmailtime'] = 'People who choose to have emails sent to them in digest form will be emailed the digest daily. This setting controls which time of day the daily mail will be sent (the next cron that runs after this hour will send it).';
 $string['configdisplaymode'] = 'The default display mode for discussions if one isn\'t set.';
@@ -795,3 +791,10 @@ $string['viewgrades'] = 'View grades';
 $string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
 
 To reply click on this link: {$a->replylink}';
+
+// Deprecated since Moodle 4.3.
+$string['completionpostsgroup'] = 'Require posts';
+$string['completiondiscussionsgroup'] = 'Require discussions';
+$string['completiondiscussionshelp'] = 'requiring discussions to complete';
+$string['completionrepliesgroup'] = 'Require replies';
+$string['completionreplieshelp'] = 'requiring replies to complete';

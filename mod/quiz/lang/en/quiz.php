@@ -185,12 +185,11 @@ $string['comments'] = 'Comments';
 $string['completedon'] = 'Completed on';
 $string['completiondetail:minattempts'] = 'Make attempts: {$a}';
 $string['completiondetail:passorexhaust'] = 'Receive a pass grade or complete all available attempts';
-$string['completionminattempts'] = 'Minimum number of attempts:';
+$string['completionminattempts'] = 'Minimum attempts';
 $string['completionminattemptsdesc'] = 'Minimum number of attempts required: {$a}';
-$string['completionminattemptsgroup'] = 'Require attempts';
 $string['completionminattemptserror'] = 'Minimum number of attempts must be lower or equal to attempts allowed.';
 $string['completionpassorattemptsexhausteddesc'] = 'Student must achieve a passing grade, or exhaust all available attempts to complete this activity';
-$string['completionattemptsexhausted'] = 'Or all available attempts completed';
+$string['completionattemptsexhausted'] = 'Passing grade and all available attempts completed';
 $string['completionattemptsexhausted_help'] = 'Mark quiz complete when the student has exhausted the maximum number of attempts.';
 $string['configadaptive'] = 'If you choose Yes for this option then the student will be allowed multiple responses to a question even within the same attempt at the quiz.';
 $string['configattemptsallowed'] = 'Restriction on the number of attempts students are allowed at the quiz.';
@@ -1093,3 +1092,7 @@ $string['completionpass_help'] = 'If enabled, this activity is considered comple
 $string['completiondetail:passgrade'] = 'Receive a pass grade';
 $string['gradetopassnotset'] = 'This quiz does not yet have a grade to pass set. It may be set in the Grade section of the quiz settings.';
 $string['basicideasofquiz'] = 'The basic ideas of quiz-making';
+
+// Deprecated since Moodle 4.3.
+$string['completionminattemptsgroup'] = 'Require attempts';
+

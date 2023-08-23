@@ -1,0 +1,4 @@
+completionview,mod_bigbluebuttonbn
+completionview_desc,mod_bigbluebuttonbn
+completionattendancegroup_help,mod_bigbluebuttonbn
+completionengagementgroup_help,mod_bigbluebuttonbn

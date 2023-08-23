@@ -774,8 +774,8 @@ class lib_test extends \advanced_testcase {
         $moddefaults->completion = 2;
 
         $activeruledescriptions = [
-            get_string('completionendreached_desc', 'lesson'),
-            get_string('completiontimespentdesc', 'lesson', format_time(3600)),
+            get_string('completionendreached', 'lesson'),
+            get_string('completiontimespentgroup', 'lesson', format_time(3600)),
         ];
         $this->assertEquals(mod_lesson_get_completion_active_rule_descriptions($cm1), $activeruledescriptions);
         $this->assertEquals(mod_lesson_get_completion_active_rule_descriptions($cm2), []);
