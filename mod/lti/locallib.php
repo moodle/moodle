@@ -2242,25 +2242,29 @@ function lti_get_tools_by_domain($domain, $state = null, $courseid = null) {
     $coursefilter = '';
 
     if ($state) {
-        $statefilter = 'AND state = :state';
+        $statefilter = 'AND t.state = :state';
     }
 
     if ($courseid && $courseid != $SITE->id) {
-        $coursefilter = 'OR course = :courseid';
+        $coursefilter = 'OR t.course = :courseid';
     }
 
-    $query = "SELECT *
-                FROM {lti_types}
-               WHERE tooldomain = :tooldomain
-                 AND (course = :siteid $coursefilter)
-                 $statefilter";
+    $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
+    $query = "SELECT t.*
+                FROM {lti_types} t
+           LEFT JOIN {lti_types_categories} tc on t.id = tc.typeid
+               WHERE t.tooldomain = :tooldomain
+                 AND (t.course = :siteid $coursefilter)
+                 $statefilter
+                 AND tc.id IS NULL OR tc.categoryid = :categoryid";
 
-    return $DB->get_records_sql($query, array(
-        'courseid' => $courseid,
-        'siteid' => $SITE->id,
-        'tooldomain' => $domain,
-        'state' => $state
-    ));
+    return $DB->get_records_sql($query, [
+            'courseid' => $courseid,
+            'siteid' => $SITE->id,
+            'tooldomain' => $domain,
+            'state' => $state,
+            'categoryid' => $coursecategory
+        ]);
 }
 
 /**
@@ -2321,24 +2325,32 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
     list($coursevisiblesql, $coursevisparams) = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
     $courseconds = [];
     if (has_capability('mod/lti:addmanualinstance', context_course::instance($courseid))) {
-        $courseconds[] = "course = :courseid";
+        $courseconds[] = "t.course = :courseid";
     }
     if (has_capability('mod/lti:addpreconfiguredinstance', context_course::instance($courseid))) {
-        $courseconds[] = "course = :siteid";
+        $courseconds[] = "t.course = :siteid";
     }
     if (!$courseconds) {
         return [];
     }
     $coursecond = implode(" OR ", $courseconds);
-    $query = "SELECT *
-                FROM {lti_types}
-               WHERE coursevisible $coursevisiblesql
+    $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
+    $query = "SELECT t.*
+                FROM {lti_types} t
+           LEFT JOIN {lti_types_categories} tc on t.id = tc.typeid
+               WHERE t.coursevisible $coursevisiblesql
                  AND ($coursecond)
-                 AND state = :active
-            ORDER BY name ASC";
+                 AND t.state = :active
+                 AND tc.id IS NULL OR tc.categoryid = :categoryid
+            ORDER BY t.name ASC";
 
     return $DB->get_records_sql($query,
-        array('siteid' => $SITE->id, 'courseid' => $courseid, 'active' => LTI_TOOL_STATE_CONFIGURED) + $coursevisparams);
+        [
+            'siteid' => $SITE->id,
+            'courseid' => $courseid,
+            'active' => LTI_TOOL_STATE_CONFIGURED,
+            'categoryid' => $coursecategory
+        ] + $coursevisparams);
 }
 
 /**
@@ -2550,6 +2562,7 @@ function lti_delete_type($id) {
 
     $DB->delete_records('lti_types', array('id' => $id));
     $DB->delete_records('lti_types_config', array('typeid' => $id));
+    $DB->delete_records('lti_types_categories', array('typeid' => $id));
 }
 
 function lti_set_state_for_type($id, $state) {
@@ -2851,6 +2864,10 @@ function lti_update_type($type, $config) {
             $type->toolproxyid = null;
             $DB->update_record('lti_types', $type);
         }
+        $DB->delete_records('lti_types_categories', ['typeid' => $type->id]);
+        if (isset($config->lti_coursecategories) && !empty($config->lti_coursecategories)) {
+            lti_type_add_categories($type->id, $config->lti_coursecategories);
+        }
         require_once($CFG->libdir.'/modinfolib.php');
         if ($clearcache) {
             $sql = "SELECT cm.id, cm.course
@@ -2872,6 +2889,21 @@ function lti_update_type($type, $config) {
                 rebuild_course_cache($courseid, false, true);
             }
         }
+    }
+}
+
+/**
+ * Add LTI Type course category.
+ *
+ * @param int $typeid
+ * @param string $lticoursecategories Comma separated list of course categories.
+ * @return void
+ */
+function lti_type_add_categories(int $typeid, string $lticoursecategories = '') : void {
+    global $DB;
+    $coursecategories = explode(',', $lticoursecategories);
+    foreach ($coursecategories as $coursecategory) {
+        $DB->insert_record('lti_types_categories', ['typeid' => $typeid, 'categoryid' => $coursecategory]);
     }
 }
 
@@ -2925,6 +2957,9 @@ function lti_add_type($type, $config) {
 
                 lti_add_config($record);
             }
+        }
+        if (isset($config->lti_coursecategories) && !empty($config->lti_coursecategories)) {
+            lti_type_add_categories($id, $config->lti_coursecategories);
         }
     }
 
