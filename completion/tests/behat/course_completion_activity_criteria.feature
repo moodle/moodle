@@ -1,4 +1,4 @@
-@block @block_completionstatus @javascript
+@block @block_completionstatus @core_completion @javascript
 Feature: Course completion state should match completion criteria
   In order to understand the configuration or status of an course's completion
   As a user
@@ -36,10 +36,10 @@ Feature: Course completion state should match completion criteria
     And I press "Save changes"
     And I am on the "Test assignment name" "assign activity editing" page
     And I set the following fields to these values:
-      | Completion tracking       | Show activity as complete when conditions are met |
-      | completionusegrade        | 1                                                 |
-      | completionpassgrade       | 1                                                 |
-      | gradepass                 | 70                                                |
+      | Add requirements | 1  |
+      | Receive a grade  | 1  |
+      | Passing grade    | 1  |
+      | gradepass        | 70 |
     And I press "Save and return to course"
 
   Scenario: Completion status show match completion criteria when passgrage condition is set.
@@ -98,7 +98,7 @@ Feature: Course completion state should match completion criteria
   Scenario: Completion status show match completion criteria when passgrage condition is not set.
     Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Completion tracking       | Show activity as complete when conditions are met |
+      | Add requirements         | 1                  |
       | completionusegrade        | 1                                                 |
       | completionpassgrade       | 0                                                 |
       | gradepass                 | 70                                                |

@@ -254,7 +254,7 @@ Feature: Initials bar
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I am on the "assign1" "assign Activity editing" page logged in as "admin"
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "1"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I click on "Save and return to course" "button"
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets

@@ -23,7 +23,8 @@ Feature: View activity completion information in the Workshop activity
         | workshop | Music history | C1     | 1                  | 2          | 1              |
     And I am on the "Music history" "workshop activity editing" page logged in as teacher1
     And I set the following fields to these values:
-      | Require grade       | Submission                                        |
+      | Receive a grade       | Submission                                        |
+      | Any grade             | 1                                                 |
     And I press "Save and return to course"
     And I edit assessment form in workshop "Music history" as:
       | id_description__idx_0_editor | Aspect1 |
@@ -69,7 +70,7 @@ Feature: View activity completion information in the Workshop activity
     Given I am on the "Music history" "workshop activity" page
     And I am on the "Music history" "workshop activity editing" page
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view
     And the manual completion button for "Music history" should be disabled

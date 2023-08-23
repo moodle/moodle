@@ -28,7 +28,7 @@ Feature: Set time spent as a completion condition for a lesson
     And I press "Save and display"
     And I am on the "Test lesson" "lesson activity editing" page
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
+      | Add requirements         | 1                  |
       | completionview                | 0 |
       | completiontimespentenabled    | 1 |
       | completiontimespent[timeunit] | 1 |

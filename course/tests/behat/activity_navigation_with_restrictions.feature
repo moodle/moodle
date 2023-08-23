@@ -28,10 +28,10 @@ Feature: Activity navigation involving activities with access restrictions
     And I open "Page 2" actions menu
     And I click on "Edit settings" "link" in the "Page 2" activity
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
+    And I set the field "Add requirements" to "1"
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity   | 1                                                 |
     And I press "Save and return to course"
     # Require Page 2 to be completed first before Page 3 can be accessed.
     And I open "Page 3" actions menu

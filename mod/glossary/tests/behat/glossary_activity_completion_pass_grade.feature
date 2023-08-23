@@ -39,10 +39,10 @@ Feature: Pass grade completion in the glossary activity
       | scale[modgrade_type]     | Point                                             |
       | scale[modgrade_point]    | 100                                               |
       | Ratings > Grade to pass  | 50                                                |
-      | Completion tracking      | Show activity as complete when conditions are met |
-      | Require view             | 1                                                 |
-      | Require grade            | 1                                                 |
-      | completionpassgrade      | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity        | 1                                                 |
+      | Receive a grade          | 1                                                 |
+      | Passing grade            | 1                                                 |
       | completionentriesenabled | 1                                                 |
       | completionentries        | 1                                                 |
     And I press "Save and display"
