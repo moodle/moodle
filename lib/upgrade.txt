@@ -119,6 +119,10 @@ being forced open in all behat tests.
     - help
     - move
     - parent
+* The signature of the static method `can_user_share` in the `core\moodlenet\local\can_share_manager` class has been updated to include an additional parameter `$type`.
+  This parameter specifies the type of resource being checked for sharing capabilities, which can either be 'activity' or 'course'.
+* The method 'share_activity' in 'core\moodlenet\activity_sender' class has been deprecated and renamed to 'share_resource'. The method signature is the same as before and
+  the new method is coming from the base class 'core\moodlenet\resource_sender'.
 
 === 4.2 ===
 

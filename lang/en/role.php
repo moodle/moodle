@@ -313,6 +313,7 @@ $string['managerdescription'] = 'Managers can access courses and modify them, bu
 $string['manageroles'] = 'Manage roles';
 $string['maybeassignedin'] = 'Context types where this role may be assigned';
 $string['moodlenet:shareactivity'] = 'Share activities to MoodleNet';
+$string['moodlenet:sharecourse'] = 'Share course to MoodleNet';
 $string['morethan'] = 'More than {$a}';
 $string['multipleroles'] = 'Multiple roles';
 $string['my:manageblocks'] = 'Manage Dashboard page blocks';

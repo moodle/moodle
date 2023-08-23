@@ -30,21 +30,20 @@ use stdClass;
 use testing_data_generator;
 
 /**
- * Unit tests for {@see activity_sender}.
+ * Test coverage for moodlenet course sender.
  *
- * @coversDefaultClass \core\moodlenet\activity_sender
- * @package core
- * @copyright 2023 Huong Nguyen <huongnv13@gmail.com>
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @copyright 2023 Safat Shahin <safat.shahin@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core\moodlenet\course_sender
  */
-class activity_sender_test extends \advanced_testcase {
+class course_sender_test extends \advanced_testcase {
 
     /** @var testing_data_generator Data generator. */
     private testing_data_generator $generator;
     /** @var stdClass Course object. */
     private stdClass $course;
-    /** @var stdClass Activity object, */
-    private stdClass $moduleinstance;
+
     /** @var context_course Course context instance. */
     private context_course $coursecontext;
     /** @var issuer $issuer Dummy issuer. */
@@ -68,8 +67,7 @@ class activity_sender_test extends \advanced_testcase {
         // Get data generator.
         $this->generator = $this->getDataGenerator();
         // Create course.
-        $this->course = $this->generator->create_course();
-        $this->moduleinstance = $this->generator->create_module('assign', ['course' => $this->course->id]);
+        $this->course = $this->generator->create_course(['shortname' => 'testcourse']);
         $this->coursecontext = context_course::instance($this->course->id);
         // Create mock issuer.
         $this->issuer = helpers::get_mock_issuer(1);
@@ -90,27 +88,34 @@ class activity_sender_test extends \advanced_testcase {
         global $USER;
         $this->setAdminUser();
 
-        $httpclient = new http_client();
-        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
-
         // Set get_file method accessibility.
-        $method = new ReflectionMethod(activity_sender::class, 'prepare_share_contents');
+        $method = new ReflectionMethod(course_sender::class, 'prepare_share_contents');
         $method->setAccessible(true);
 
         // Test with invalid share format.
         $this->expectException(\moodle_exception::class);
         $this->expectExceptionMessage(get_string('moodlenet:invalidshareformat', 'error'));
-        $package = $method->invoke(new activity_sender(
-            $this->moduleinstance->cmid,
+
+        $httpclient = new http_client();
+        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
+        $coursesender = new course_sender(
+            random_int(5, 30),
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
             random_int(5, 30)
+        );
+        $coursesender = $method->invoke(new course_sender(
+            $this->course->id,
+            $USER->id,
+            $moodlenetclient,
+            $this->mockoauthclient,
+            resource_sender::SHARE_FORMAT_BACKUP
         ));
 
         // Test with valid share format and invalid course module.
-        $package = $method->invoke(new activity_sender(
-            random_int(5, 30),
+        $package = $method->invoke(new course_sender(
+            $this->course->id,
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
@@ -119,8 +124,8 @@ class activity_sender_test extends \advanced_testcase {
         $this->assertEmpty($package);
 
         // Test with valid share format and valid course module.
-        $package = $method->invoke(new activity_sender(
-            $this->moduleinstance->cmid,
+        $package = $method->invoke(new course_sender(
+            $this->course->id,
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
@@ -141,9 +146,8 @@ class activity_sender_test extends \advanced_testcase {
         global $USER;
         $this->setAdminUser();
 
-        $activity = $this->generator->create_module('assign', [
-            'course' => $this->course->id,
-            'intro' => '<p>This is an example Moodle activity description.</p>
+        $course = $this->generator->create_course([
+            'summary' => '<p>This is an example Moodle course description.</p>
 <p>&nbsp;</p>
 <p>This is a formatted intro</p>
 <p>&nbsp;</p>
@@ -152,23 +156,22 @@ class activity_sender_test extends \advanced_testcase {
 <p>The last word of this sentence is in <strong>bold</strong></p>'
         ]);
 
-        $httpclient = new http_client();
-        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
-
         // Set get_resource_description method accessibility.
-        $method = new ReflectionMethod(activity_sender::class, 'get_resource_description');
+        $method = new ReflectionMethod(course_sender::class, 'get_resource_description');
         $method->setAccessible(true);
 
         // Test the processed description.
-        $processeddescription = $method->invoke(new activity_sender(
-            $activity->cmid,
+        $httpclient = new http_client();
+        $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
+        $processeddescription = $method->invoke(new course_sender(
+            $course->id,
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
             resource_sender::SHARE_FORMAT_BACKUP
         ), $this->coursecontext);
 
-        $this->assertEquals('This is an example Moodle activity description.
+        $this->assertEquals('This is an example Moodle course description.
  
 This is a formatted intro
  
@@ -215,10 +218,10 @@ The last word of this sentence is in bold', $processeddescription);
         // Create events sink.
         $sink = $this->redirectEvents();
 
-        // Create activity sender.
+        // Create sender.
         $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
-        $activitysender = new activity_sender(
-            $this->moduleinstance->cmid,
+        $coursesender = new course_sender(
+            $this->course->id,
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
@@ -230,7 +233,7 @@ The last word of this sentence is in bold', $processeddescription);
             $this->expectExceptionMessage($expected['exception']);
         }
         // Call the API.
-        $result = $activitysender->share_resource();
+        $result = $coursesender->share_resource();
 
         // Verify the result.
         $this->assertEquals($expected['response_code'], $result['responsecode']);
@@ -238,16 +241,17 @@ The last word of this sentence is in bold', $processeddescription);
 
         // Verify the events.
         $events = $sink->get_events();
-        $event = reset($events);
+
+        $event = end($events);
         $this->assertInstanceOf('\core\event\moodlenet_resource_exported', $event);
         $this->assertEquals($USER->id, $event->userid);
 
         if ($result['responsecode'] == 201) {
-            $description = "The user with id '{$USER->id}' successfully shared activities to MoodleNet with the " .
-                "following course module ids, from context with id '{$this->coursecontext->id}': '{$this->moduleinstance->cmid}'.";
+            $description = "The user with id '{$USER->id}' successfully shared course to MoodleNet with the " .
+                "following course id, from context with id '{$this->coursecontext->id}': '{$this->course->id}'.";
         } else {
-            $description = "The user with id '{$USER->id}' failed to share activities to MoodleNet with the " .
-                "following course module ids, from context with id '{$this->coursecontext->id}': '{$this->moduleinstance->cmid}'.";
+            $description = "The user with id '{$USER->id}' failed to share course to MoodleNet with the " .
+                "following course id, from context with id '{$this->coursecontext->id}': '{$this->course->id}'.";
         }
         $this->assertEquals($description, $event->get_description());
     }
@@ -264,12 +268,12 @@ The last word of this sentence is in bold', $processeddescription);
                     201,
                     ['Content-Type' => 'application/json'],
                     json_encode([
-                        'homepage' => 'https://moodlenet.example.com/drafts/view/activity_backup_1.mbz',
+                        'homepage' => 'https://moodlenet.example.com/drafts/view/testcourse_backup_1.mbz',
                     ]),
                 ),
                 'expected' => [
                     'response_code' => 201,
-                    'resource_url' => 'https://moodlenet.example.com/drafts/view/activity_backup_1.mbz',
+                    'resource_url' => 'https://moodlenet.example.com/drafts/view/testcourse_backup_1.mbz',
                 ],
             ],
             'Fail with 200 status code' => [
@@ -277,12 +281,12 @@ The last word of this sentence is in bold', $processeddescription);
                     200,
                     ['Content-Type' => 'application/json'],
                     json_encode([
-                        'homepage' => 'https://moodlenet.example.com/drafts/view/activity_backup_2.mbz',
+                        'homepage' => 'https://moodlenet.example.com/drafts/view/testcourse_backup_2.mbz',
                     ]),
                 ),
                 'expected' => [
                     'response_code' => 200,
-                    'resource_url' => 'https://moodlenet.example.com/drafts/view/activity_backup_2.mbz',
+                    'resource_url' => 'https://moodlenet.example.com/drafts/view/testcourse_backup_2.mbz',
                 ],
             ],
             'Fail with 401 status code' => [
@@ -311,4 +315,6 @@ The last word of this sentence is in bold', $processeddescription);
             ],
         ];
     }
+
+
 }

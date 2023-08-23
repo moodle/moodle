@@ -2724,4 +2724,14 @@ $capabilities = array(
             'manager' => CAP_ALLOW,
         ]
     ],
+
+    // Allow users to share courses to MoodleNet.
+    'moodle/moodlenet:sharecourse' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        ]
+    ],
 );
