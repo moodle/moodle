@@ -231,6 +231,12 @@ abstract class moodleform_mod extends moodleform {
             $default_values['ratingtime']=
                 ($default_values['assesstimestart'] && $default_values['assesstimefinish']) ? 1 : 0;
         }
+
+        // Amend completion settings.
+        if (isset($default_values['completiongradeitemnumber']) &&
+            !is_null($default_values['completiongradeitemnumber'])) {
+            $default_values['receiveagrade'] = 1;
+        }
     }
 
     /**
@@ -811,6 +817,15 @@ abstract class moodleform_mod extends moodleform {
      */
     function completion_rule_enabled($data) {
         return false;
+    }
+
+    /**
+     * Add completion grading elements to the form and return the list of element ids.
+     *
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completiongrade_rules(): array {
+        return [];
     }
 
     function standard_hidden_coursemodule_elements(){

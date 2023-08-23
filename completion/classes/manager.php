@@ -519,6 +519,9 @@ class manager {
         if (!array_key_exists('completionpassgrade', $data)) {
             $data['completionpassgrade'] = 0;
         }
+        if ($data['completionusegrade'] == 0) {
+            $data['completionpassgrade'] = 0;
+        }
 
         if ($updatecustomrules) {
             $customdata = array_diff_key($data, $defaults);

@@ -97,3 +97,9 @@ dateintervaldayshoursmins,core_langconfig
 completiondefault,core_completion
 configcompletiondefault,core_completion
 aria:courseimage,core_course
+completionview,core_completion
+completionview,mod_bigbluebuttonbn
+completionview_desc,mod_bigbluebuttonbn
+activitygradenotrequired,core_completion
+completionpassgrade_help,core_completion
+completionusegrade_help,core_completion

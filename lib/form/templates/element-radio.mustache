@@ -10,7 +10,7 @@
     }
 
 }}
-<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.parentclasses}}}">
     <div class="col-md-3 col-form-label pb-0 pt-0">
         {{#text}}
             <label class="d-inline word-break" for="{{element.id}}">
@@ -19,7 +19,7 @@
         {{/text}}
     </div>
     <div class="col-md-9 checkbox">
-        <div class="form-check d-flex">
+        <div class="form-check d-flex {{{element.extraclasses}}}">
                 <label class="form-check-label">
                     {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
                         <input type="hidden" name="{{element.name}}" value="{{element.value}}">
