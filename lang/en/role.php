@@ -220,6 +220,7 @@ $string['customrolename_help'] = 'Names of standard roles are localised automati
 $string['defaultrole'] = 'Default role';
 $string['defaultx'] = 'Default: {$a}';
 $string['defineroles'] = 'Define roles';
+$string['definitionofrolex'] = 'Definition of role \'{$a}\'';
 $string['deletecourseoverrides'] = 'Delete all overrides in course';
 $string['deletelocalroles'] = 'Delete all local role assignments';
 $string['deleterolesure'] = '<p>Are you sure that you want to delete role "{$a->name} ({$a->shortname})"?</p><p>Currently this role is assigned to {$a->count} users.</p>';
