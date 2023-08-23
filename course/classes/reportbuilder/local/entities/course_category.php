@@ -199,6 +199,17 @@ class course_category extends base {
                 return format_text($description, $category->descriptionformat, ['context' => $context->id]);
             });
 
+        // Course count column.
+        $columns[] = (new column(
+            'coursecount',
+            new lang_string('coursecount', 'core_course'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_fields("{$tablealias}.coursecount")
+            ->set_is_sortable(true);
+
         return $columns;
     }
 
@@ -251,7 +262,7 @@ class course_category extends base {
      *
      * @return string
      */
-    private function get_context_join(): string {
+    public function get_context_join(): string {
         $coursecategories = $this->get_table_alias('course_categories');
         $context = $this->get_table_alias('context');
         return "LEFT JOIN {context} {$context} ON {$context}.instanceid = {$coursecategories}.id
