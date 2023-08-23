@@ -18,6 +18,21 @@ img.userpicture {
     }
 }
 
+.path-mod-book {
+    #mod_book-chaptersnavigation {
+        margin-left: -5px;
+        margin-right: -5px;
+
+        @include media-breakpoint-down(md) {
+            top: calc(100% - 150px);
+        }
+    }
+
+    .book_content {
+        margin: 0 30px;
+    }
+}
+
 .tertiary-navigation {
 
     &.full-width-bottom-border {
