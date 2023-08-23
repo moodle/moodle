@@ -2256,7 +2256,7 @@ function lti_get_tools_by_domain($domain, $state = null, $courseid = null) {
                WHERE t.tooldomain = :tooldomain
                  AND (t.course = :siteid $coursefilter)
                  $statefilter
-                 AND tc.id IS NULL OR tc.categoryid = :categoryid";
+                 AND (tc.id IS NULL OR tc.categoryid = :categoryid)";
 
     return $DB->get_records_sql($query, [
             'courseid' => $courseid,
@@ -2341,7 +2341,7 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
                WHERE t.coursevisible $coursevisiblesql
                  AND ($coursecond)
                  AND t.state = :active
-                 AND tc.id IS NULL OR tc.categoryid = :categoryid
+                 AND (tc.id IS NULL OR tc.categoryid = :categoryid)
             ORDER BY t.name ASC";
 
     return $DB->get_records_sql($query,
