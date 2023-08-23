@@ -24,18 +24,39 @@ use advanced_testcase;
  * @package   mod_bigbluebuttonbn
  * @copyright 2019 onwards, Blindside Networks Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \mod_bigbluebuttonbn\task\send_notification
- * @coversDefaultClass \mod_bigbluebuttonbn\task\send_notification
+ * @covers \mod_bigbluebuttonbn\task\base_send_notification
+ * @coversDefaultClass \mod_bigbluebuttonbn\task\base_send_notification
  */
-class send_notification_test extends advanced_testcase {
+class base_send_notification_test extends advanced_testcase {
     /**
-     * Test that the debug message is correctly output.
+     * Check if set instance ID works correctly
      *
      */
-    public function test_generate_message() {
+    public function test_set_instance_id(): void {
         $this->resetAfterTest();
-        $task = new send_notification();
-        $message = $task->generate_message();
-        $this->assertEquals("Attempted to run deprecated implementation of send_notification task.", $message);
+        $stub = $this->getMockForAbstractClass(
+            base_send_notification::class,
+            [],
+            '',
+            true,
+            true,
+            true,
+            []
+        );
+
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $instancedata = $generator->create_module('bigbluebuttonbn', [
+            'course' => $course->id,
+        ]);
+
+        $stub->set_instance_id($instancedata->id);
+
+        $rc = new \ReflectionClass(base_send_notification::class);
+        $rcm = $rc->getMethod('get_instance');
+        $rcm->setAccessible(true);
+        $instance = $rcm->invoke($stub);
+
+        $this->assertEquals($instancedata->id, $instance->get_instance_id());
     }
 }
