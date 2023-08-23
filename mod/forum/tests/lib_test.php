@@ -2814,6 +2814,40 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test the logic for forum_get_user_posted_mailnow where the user can select if qanda forum post should be sent without delay
+     *
+     * @covers ::forum_get_user_posted_mailnow
+     */
+    public function test_forum_get_user_posted_mailnow() {
+        $this->resetAfterTest();
+
+        // Create a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $author = $this->getDataGenerator()->create_user();
+        $authorid = $author->id;
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        // Create a discussion.
+        $record = new \stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $authorid;
+        $discussion = $generator->create_discussion($record);
+        $did = $discussion->id;
+
+        // Return False if no post exists with 'mailnow' selected.
+        $generator->create_post(['userid' => $authorid, 'discussion' => $did, 'forum' => $forum->id, 'mailnow' => 0]);
+        $result = forum_get_user_posted_mailnow($did, $authorid);
+        $this->assertFalse($result);
+
+        // Return True only if any post has 'mailnow' selected.
+        $generator->create_post(['userid' => $authorid, 'discussion' => $did, 'forum' => $forum->id, 'mailnow' => 1]);
+        $result = forum_get_user_posted_mailnow($did, $authorid);
+        $this->assertTrue($result);
+    }
+
+    /**
      * Tests the mod_forum_myprofile_navigation() function.
      */
     public function test_mod_forum_myprofile_navigation() {

@@ -3471,6 +3471,19 @@ function forum_user_has_posted($forumid, $did, $userid) {
 }
 
 /**
+ * Returns true if user posted with mailnow in given discussion
+ * @param int $did Discussion id
+ * @param int $userid User id
+ * @return bool
+ */
+function forum_get_user_posted_mailnow(int $did, int $userid): bool {
+    global $DB;
+
+    $postmailnow = $DB->get_field('forum_posts', 'MAX(mailnow)', ['userid' => $userid, 'discussion' => $did]);
+    return !empty($postmailnow);
+}
+
+/**
  * Returns creation time of the first user's post in given discussion
  * @global object $DB
  * @param int $did Discussion id
@@ -3848,12 +3861,17 @@ function forum_user_can_see_post($forum, $discussion, $post, $user = null, $cm =
     }
 
     if ($forum->type == 'qanda') {
+
         if (has_capability('mod/forum:viewqandawithoutposting', $modcontext, $user->id) || $post->userid == $user->id
                 || (isset($discussion->firstpost) && $discussion->firstpost == $post->id)) {
             return true;
         }
         $firstpost = forum_get_firstpost_from_discussion($discussion->id);
         if ($firstpost->userid == $user->id) {
+            return true;
+        }
+        $userpostmailnow = forum_get_user_posted_mailnow($discussion->id, $user->id);
+        if ($userpostmailnow) {
             return true;
         }
         $userfirstpost = forum_get_user_posted_time($discussion->id, $user->id);
