@@ -25,50 +25,52 @@ require(['jquery'], function($){
           $(location).attr("href", url);
     });
     $(window).on("resize", function (e) {
-                checkScreenSize();
-            });
-            checkScreenSize();
-            function checkScreenSize() {
-                var newWindowWidth = $(window).width();
-                if (newWindowWidth < 578) {
-                    $(".arrow-left").click(function () {
-                        $(".sidebar").hide();
-                        $(".sidebar-overlay").hide();
-                        $(".qicon-menu").show();
-                    });
-                    $(".qicon-menu").click(function () {
-                        $(".sidebar").show();
-                        $(".sidebar-overlay").show();
+        checkScreenSize();
+    });
+    checkScreenSize();
+	function checkScreenSize() {
+		var newWindowWidth = $(window).width();
+		if (newWindowWidth < 578) {
+			$(".arrow-left").click(function () {
+				$(".sidebar").hide();
+				$(".sidebar-overlay").hide();
+				$(".qicon-menu").show();
+			});
+			
+			$(".qicon-menu").click(function () {
+				$(".sidebar").show();
+				$(".sidebar-overlay").show();
 
-                    });
-                    $(".sidebar-overlay").click(function () {
-                        $(".sidebar").hide();
-                        $(".sidebar-overlay").hide();
-                        $(".qicon-menu").show();
-                    });
-                                        $(".nav-item").hover(function(){
-                        $(".white-circle").toggleClass("numbercolor");
-                    });
-                }
-                else {
-                    $(".arrow-left").click(function () {
-                        $(".sidebar").addClass("close-bars");
-                        $(".compact-logo").show();
-                        $(".qicon-menu").show();
-                        $(".pagetitle-left-alignment").addClass("closebar-left-alignment");
-                        $(".main-inner").addClass("leftnav");
-                        $(".previousnav").hide();
-                    });
-                    $(".qicon-menu").click(function () {
-                        $(".sidebar").removeClass("close-bars");
-                        $(".compact-logo").hide();
-                        $(".qicon-menu").hide();
-                        $(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
-                         $(".main-inner").removeClass("leftnav");
-                         $(".previousnav").show();
-                    });
-                    }
-            }
+			});
+			
+			$(".sidebar-overlay").click(function () {
+				$(".sidebar").hide();
+				$(".sidebar-overlay").hide();
+				$(".qicon-menu").show();
+			});
+			
+			$(".nav-item").hover(function(){
+				$(".white-circle").toggleClass("numbercolor");
+			});
+		} else {
+			$(".arrow-left").click(function () {
+				$(".sidebar").addClass("close-bars");
+				$(".compact-logo").show();
+				$(".qicon-menu").show();
+				$(".pagetitle-left-alignment").addClass("closebar-left-alignment");
+				$(".main-inner").addClass("leftnav");
+				$(".previousnav").hide();
+			});
+			$(".qicon-menu").click(function () {
+				$(".sidebar").removeClass("close-bars");
+				$(".compact-logo").hide();
+				$(".qicon-menu").hide();
+				$(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
+				$(".main-inner").removeClass("leftnav");
+				$(".previousnav").show();
+			});
+		}
+	}
 });
 {{/js}}
 
