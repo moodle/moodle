@@ -2657,137 +2657,23 @@ function cron_run_single_task() {
 }
 
 /**
- * Executes cron functions for a specific type of plugin.
- *
- * @param string $plugintype Plugin type (e.g. 'report')
- * @param string $description If specified, will display 'Starting (whatever)'
- *   and 'Finished (whatever)' lines, otherwise does not display
- *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
-function cron_execute_plugin_type($plugintype, $description = null) {
-    global $DB;
-
-    // Get list from plugin => function for all plugins.
-    $plugins = get_plugin_list_with_function($plugintype, 'cron');
-
-    // Modify list for backward compatibility (different files/names).
-    $plugins = cron_bc_hack_plugin_functions($plugintype, $plugins);
-
-    // Return if no plugins with cron function to process.
-    if (!$plugins) {
-        return;
-    }
-
-    if ($description) {
-        mtrace('Starting '.$description);
-    }
-
-    foreach ($plugins as $component => $cronfunction) {
-        $dir = core_component::get_component_directory($component);
-
-        // Get cron period if specified in version.php, otherwise assume every cron.
-        $cronperiod = 0;
-        if (file_exists("$dir/version.php")) {
-            $plugin = new stdClass();
-            include("$dir/version.php");
-            if (isset($plugin->cron)) {
-                $cronperiod = $plugin->cron;
-            }
-        }
-
-        // Using last cron and cron period, don't run if it already ran recently.
-        $lastcron = get_config($component, 'lastcron');
-        if ($cronperiod && $lastcron) {
-            if ($lastcron + $cronperiod > time()) {
-                // Do not execute cron yet.
-                continue;
-            }
-        }
-
-        mtrace('Processing cron function for ' . $component . '...');
-        debugging("Use of legacy cron is deprecated ($cronfunction). Please use scheduled tasks.", DEBUG_DEVELOPER);
-        \core\cron::trace_time_and_memory();
-        $pre_dbqueries = $DB->perf_get_queries();
-        $pre_time = microtime(true);
-
-        $cronfunction();
-
-        mtrace("done. (" . ($DB->perf_get_queries() - $pre_dbqueries) . " dbqueries, " .
-                round(microtime(true) - $pre_time, 2) . " seconds)");
-
-        set_config('lastcron', time(), $component);
-        core_php_time_limit::raise();
-    }
-
-    if ($description) {
-        mtrace('Finished ' . $description);
-    }
+function cron_execute_plugin_type() {
+    throw new coding_exception(
+        'cron_execute_plugin_type() has been removed. Please, use the Task API instead: ' .
+        'https://moodledev.io/docs/apis/subsystems/task.'
+    );
 }
 
 /**
- * Used to add in old-style cron functions within plugins that have not been converted to the
- * new standard API. (The standard API is frankenstyle_name_cron() in lib.php; some types used
- * cron.php and some used a different name.)
- *
- * @param string $plugintype Plugin type e.g. 'report'
- * @param array $plugins Array from plugin name (e.g. 'report_frog') to function name (e.g.
- *   'report_frog_cron') for plugin cron functions that were already found using the new API
- * @return array Revised version of $plugins that adds in any extra plugin functions found by
- *   looking in the older location
- *
  * @deprecated since Moodle 3.9 MDL-52846. Please use new task API.
- * @todo MDL-61165 This will be deleted in Moodle 4.1.
  */
-function cron_bc_hack_plugin_functions($plugintype, $plugins) {
-    global $CFG; // Mandatory in case it is referenced by include()d PHP script.
-
-    if ($plugintype === 'report') {
-        // Admin reports only - not course report because course report was
-        // never implemented before, so doesn't need BC.
-        foreach (core_component::get_plugin_list($plugintype) as $pluginname => $dir) {
-            $component = $plugintype . '_' . $pluginname;
-            if (isset($plugins[$component])) {
-                // We already have detected the function using the new API.
-                continue;
-            }
-            if (!file_exists("$dir/cron.php")) {
-                // No old style cron file present.
-                continue;
-            }
-            include_once("$dir/cron.php");
-            $cronfunction = $component . '_cron';
-            if (function_exists($cronfunction)) {
-                $plugins[$component] = $cronfunction;
-            } else {
-                debugging("Invalid legacy cron.php detected in $component, " .
-                        "please use lib.php instead");
-            }
-        }
-    } else if (strpos($plugintype, 'grade') === 0) {
-        // Detect old style cron function names.
-        // Plugin gradeexport_frog used to use grade_export_frog_cron() instead of
-        // new standard API gradeexport_frog_cron(). Also applies to gradeimport, gradereport.
-        foreach (core_component::get_plugin_list($plugintype) as $pluginname => $dir) {
-            $component = $plugintype.'_'.$pluginname;
-            if (isset($plugins[$component])) {
-                // We already have detected the function using the new API.
-                continue;
-            }
-            if (!file_exists("$dir/lib.php")) {
-                continue;
-            }
-            include_once("$dir/lib.php");
-            $cronfunction = str_replace('grade', 'grade_', $plugintype) . '_' .
-                    $pluginname . '_cron';
-            if (function_exists($cronfunction)) {
-                $plugins[$component] = $cronfunction;
-            }
-        }
-    }
-
-    return $plugins;
+function cron_bc_hack_plugin_functions() {
+    throw new coding_exception(
+        'cron_bc_hack_plugin_functions() has been removed. Please, use the Task API instead: ' .
+        'https://moodledev.io/docs/apis/subsystems/task.'
+    );
 }
 
 /**
