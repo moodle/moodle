@@ -73,27 +73,35 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
      * @return array
      */
     public function execute_editor_provider(): array {
+        $pluginmanager = \core_plugin_manager::instance();
+        $allplugins = array_keys($pluginmanager->get_plugins_of_type('editor'));
+
+        // Disabled editors are listed alphabetically at the end.
+        $getorder = function (array $plugins) use ($allplugins) {
+            return array_merge(
+                $plugins,
+                array_diff($allplugins, array_values($plugins)),
+            );
+        };
         return [
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_textarea',
                 'direction' => 1, // DOWN.
-                'expected' => [
+                'expected' => $getorder([
                     'tiny',
                     'textarea',
-                    'atto',
-                ],
+                ]),
                 'newtexteditors' => 'tiny,textarea',
             ],
             [
                 'initialstate' => 'textarea,tiny',
                 'pluginname' => 'editor_textarea',
                 'direction' => -1, // UP.
-                'expected' => [
+                'expected' => $getorder([
                     'textarea',
                     'tiny',
-                    'atto',
-                ],
+                ]),
                 'newtexteditors' => 'textarea,tiny',
             ],
             [
@@ -101,11 +109,10 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
                 'pluginname' => 'editor_tiny',
                 'direction' => 1, // DOWN.
                 // Tiny is already at the bottom of the list of enabled plugins.
-                'expected' => [
+                'expected' => $getorder([
                     'textarea',
                     'tiny',
-                    'atto',
-                ],
+                ]),
                 'newtexteditors' => 'textarea,tiny',
             ],
             [
@@ -113,11 +120,10 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
                 'pluginname' => 'editor_atto',
                 'direction' => 1, // DOWN.
                 // Atto is not enabled. Disabled editors are listed lexically after enabled editors.
-                'expected' => [
+                'expected' => $getorder([
                     'textarea',
                     'tiny',
-                    'atto',
-                ],
+                ]),
                 'newtexteditors' => 'textarea,tiny',
             ],
         ];
