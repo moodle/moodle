@@ -51,6 +51,7 @@ $string['audiencemultiselectpostfix'] = '{$a->elements} plus {$a->morecount} mor
 $string['audiencenotsaved'] = 'Audience not saved';
 $string['audiencesaved'] = 'Audience saved';
 $string['audienceupdated'] = 'Audience updated';
+$string['audienceusedbyschedule'] = 'This audience is used in a schedule for this report';
 $string['cardview'] = 'Card view';
 $string['cardview_help'] = 'Card view allows you to define the layout of your report when viewed on narrow devices. Columns will collapse beyond the limit set here, with a toggle to expand the card to view all report data.';
 $string['cardviewfirstcolumntitle'] = 'First column title';
