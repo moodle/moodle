@@ -513,6 +513,12 @@ class manager {
         ];
 
         $data = (array)$data;
+        if (!array_key_exists('completionusegrade', $data)) {
+            $data['completionusegrade'] = 0;
+        }
+        if (!array_key_exists('completionpassgrade', $data)) {
+            $data['completionpassgrade'] = 0;
+        }
 
         if ($updatecustomrules) {
             $customdata = array_diff_key($data, $defaults);
