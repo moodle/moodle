@@ -2010,6 +2010,42 @@ EOF;
             ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
         $this->assertSame($text, $result->some);
     }
+
+    /**
+     * Tests for file_get_typegroup to check that both arrays, and string values are accepted.
+     *
+     * @dataProvider file_get_typegroup_provider
+     * @param string|array $group
+     * @param string $expected
+     */
+    public function test_file_get_typegroup(
+        string|array $group,
+        string $expected,
+    ): void {
+        $result = file_get_typegroup('type', $group);
+        $this->assertContains($expected, $result);
+    }
+
+    public static function file_get_typegroup_provider(): array {
+        return [
+            'Array of values' => [
+                ['.html', '.htm'],
+                'text/html',
+            ],
+            'String of comma-separated values' => [
+                '.html, .htm',
+                'text/html',
+            ],
+            'String of colon-separated values' => [
+                '.html : .htm',
+                'text/html',
+            ],
+            'String of semi-colon-separated values' => [
+                '.html ; .htm',
+                'text/html',
+            ],
+        ];
+    }
 }
 
 /**
