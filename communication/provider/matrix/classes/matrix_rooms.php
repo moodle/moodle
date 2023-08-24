@@ -136,9 +136,9 @@ class matrix_rooms {
     /**
      * Get the matrix room topic.
      *
-     * @return string|null
+     * @return string
      */
-    public function get_topic(): ?string {
-        return $this->record->topic;
+    public function get_topic(): string {
+        return $this->record->topic ?? '';
     }
 }

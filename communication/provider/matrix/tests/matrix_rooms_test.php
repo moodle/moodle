@@ -50,6 +50,16 @@ class matrix_rooms_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         $room = matrix_rooms::create_room_record(
+            processorid: 10000,
+            topic: null,
+        );
+        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertEquals(10000, $room->get_processor_id());
+        $this->assertNotNull('', $room->get_topic());
+        $this->assertEquals('', $room->get_topic());
+        $this->assertNull($room->get_room_id());
+
+        $room = matrix_rooms::create_room_record(
             processorid: 12345,
             topic: 'The topic of this room is thusly',
         );
