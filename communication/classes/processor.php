@@ -104,24 +104,29 @@ class processor {
     }
 
     /**
-     * Update communication instance.
+     * Update the communication instance with any changes.
      *
-     * @param string $provider The communication provider
-     * @param string $roomname The room name
+     * @param null|string $provider The communication provider
+     * @param null|string $roomname The room name
      */
     public function update_instance(
-        string $provider,
-        string $roomname,
+        ?string $provider = null,
+        ?string $roomname = null,
     ): void {
-
         global $DB;
-        if ($provider === self::PROVIDER_NONE) {
-            $this->instancedata->active = self::PROVIDER_INACTIVE;
-        } else {
-            $this->instancedata->provider = $provider;
-            $this->instancedata->active = self::PROVIDER_ACTIVE;
+
+        if ($provider !== null) {
+            if ($provider === self::PROVIDER_NONE) {
+                $this->instancedata->active = self::PROVIDER_INACTIVE;
+            } else {
+                $this->instancedata->provider = $provider;
+                $this->instancedata->active = self::PROVIDER_ACTIVE;
+            }
         }
-        $this->instancedata->roomname = $roomname;
+
+        if ($roomname !== null) {
+            $this->instancedata->roomname = $roomname;
+        }
 
         $DB->update_record('communication', $this->instancedata);
     }
@@ -470,7 +475,7 @@ class processor {
     /**
      * Get communication instance for form feature.
      *
-     * @return bool
+     * @return form_provider
      */
     public function get_form_provider(): form_provider {
         $this->requires_form_features();
@@ -584,7 +589,7 @@ class processor {
             $this->instancedata->avatarfilename,
         );
 
-        return $file ? $file : null;
+        return $file ?: null;
     }
 
 
@@ -595,7 +600,9 @@ class processor {
      */
     public function set_avatar_filename(?string $filename): void {
         global $DB;
-        $DB->update_record('communication', ['id' => $this->instancedata->id, 'avatarfilename' => $filename]);
+
+        $this->instancedata->avatarfilename = $filename;
+        $DB->set_field('communication', 'avatarfilename', $filename, ['id' => $this->instancedata->id]);
     }
 
     /**
@@ -613,7 +620,7 @@ class processor {
      * @return bool
      */
     public function is_avatar_synced(): bool {
-        return (bool)$this->instancedata->avatarsynced;
+        return (bool) $this->instancedata->avatarsynced;
     }
 
     /**
@@ -623,8 +630,9 @@ class processor {
      */
     public function set_avatar_synced_flag(bool $synced): void {
         global $DB;
-        $DB->update_record('communication', ['id' => $this->instancedata->id, 'avatarsynced' => (int)$synced]);
-        $this->instancedata->avatarsynced = (int)$synced;
+
+        $this->instancedata->avatarsynced = (int) $synced;
+        $DB->set_field('communication', 'avatarsynced', (int) $synced, ['id' => $this->instancedata->id]);
     }
 
     /**

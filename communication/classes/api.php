@@ -85,6 +85,62 @@ class api {
     }
 
     /**
+     * Reload in the internal instance data.
+     */
+    public function reload(): void {
+        $this->communication = processor::load_by_instance(
+            $this->component,
+            $this->instancetype,
+            $this->instanceid,
+        );
+    }
+
+    /**
+     * Return the underlying communication processor object.
+     *
+     * @return processor
+     */
+    public function get_processor(): processor {
+        return $this->communication;
+    }
+
+    /**
+     * Return the room provider.
+     *
+     * @return \core_communication\room_chat_provider
+     */
+    public function get_room_provider(): \core_communication\room_chat_provider {
+        return $this->communication->get_room_provider();
+    }
+
+    /**
+     * Return the user provider.
+     *
+     * @return \core_communication\user_provider
+     */
+    public function get_user_provider(): \core_communication\user_provider {
+        return $this->communication->get_user_provider();
+    }
+
+    /**
+     * Return the room user provider.
+     *
+     * @return \core_communication\room_user_provider
+     */
+    public function get_room_user_provider(): \core_communication\room_user_provider {
+        return $this->communication->get_room_user_provider();
+    }
+
+    /**
+     * Return the form provider.
+     *
+     * @return \core_communication\form_provider
+     */
+    public function get_form_provider(): \core_communication\form_provider {
+        return $this->communication->get_form_provider();
+    }
+
+    /**
      * Check if the communication api is enabled.
      */
     public static function is_available(): bool {
@@ -197,24 +253,38 @@ class api {
     }
 
     /**
+     * Get the avatar file.
+     *
+     * @return null|\stored_file
+     */
+    public function get_avatar(): ?\stored_file {
+        $filename = $this->communication->get_avatar_filename();
+        if ($filename === null) {
+            return null;
+        }
+        $fs = get_file_storage();
+        $args = (array) $this->get_avatar_filerecord($filename);
+        return $fs->get_file(...$args) ?: null;
+    }
+
+    /**
      * Get the avatar file record for the avatar for filesystem.
      *
      * @param string $filename The filename of the avatar
      * @return stdClass
      */
-    public function get_avatar_filerecord(string $filename): stdClass {
+    protected function get_avatar_filerecord(string $filename): stdClass {
         return (object) [
-            'contextid' => \context_system::instance()->id,
+            'contextid' => \core\context\system::instance()->id,
             'component' => 'core_communication',
             'filearea' => 'avatar',
-            'filename' => $filename,
-            'filepath' => '/',
             'itemid' => $this->communication->get_id(),
+            'filepath' => '/',
+            'filename' => $filename,
         ];
     }
 
     /**
-     *
      * Get the avatar file.
      *
      * If null is set, then delete the old area file and set the avatarfilename to null.
@@ -229,8 +299,8 @@ class api {
             return false;
         }
 
-        $currentfilerecord = $this->communication->get_avatar();
-        if ($avatar && !empty($currentfilerecord)) {
+        $currentfilerecord = $this->get_avatar();
+        if ($avatar && $currentfilerecord) {
             $currentfilehash = $currentfilerecord->get_contenthash();
             $updatedfilehash = $avatar->get_contenthash();
 
@@ -240,7 +310,7 @@ class api {
             }
         }
 
-        $context = \context_system::instance();
+        $context = \core\context\system::instance();
 
         $fs = get_file_storage();
         $fs->delete_area_files(
@@ -264,6 +334,15 @@ class api {
         $this->communication->set_avatar_synced_flag(false);
 
         return true;
+    }
+
+    /**
+     * A helper to fetch the room name
+     *
+     * @return string
+     */
+    public function get_room_name(): string {
+        return $this->communication->get_room_name();
     }
 
     /**
@@ -344,20 +423,33 @@ class api {
      * @param \stdClass|null $instance The actual instance object
      */
     public function update_room(
-        string $selectedprovider,
-        string $communicationroomname,
+        ?string $selectedprovider = null,
+        ?string $communicationroomname = null,
         ?\stored_file $avatar = null,
         ?\stdClass $instance = null,
     ): void {
-
         // Existing object found, let's update the communication record and associated actions.
         if ($this->communication !== null) {
             // Get the previous data to compare for update.
-            $previousroomname = $this->communication->get_room_name();
             $previousprovider = $this->communication->get_provider();
+            if ($previousprovider === $selectedprovider) {
+                // If the provider is the same, unset it.
+                $selectedprovider = null;
+            }
 
-            // Update communication record.
-            $this->communication->update_instance($selectedprovider, $communicationroomname);
+            $previousroomname = $this->communication->get_room_name();
+            if ($previousroomname === $communicationroomname) {
+                // If the room name is the same, we don't need to update the room.
+                $communicationroomname = null;
+            }
+
+            if ($selectedprovider !== null || $communicationroomname !== null) {
+                // Something to update. Update communication record.
+                $this->communication->update_instance(
+                    provider: $selectedprovider,
+                    roomname: $communicationroomname,
+                );
+            }
 
             // Update provider record from form data.
             if ($instance !== null) {
@@ -365,7 +457,8 @@ class api {
             }
 
             // Update the avatar.
-            $imageupdaterequired = $this->set_avatar($avatar);
+            // If the value is `null`, then unset the avatar.
+            $this->set_avatar($avatar);
 
             // If the provider is none, we don't need to do anything from room point of view.
             if ($this->communication->get_provider() === processor::PROVIDER_NONE) {

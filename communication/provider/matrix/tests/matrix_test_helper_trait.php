@@ -16,6 +16,8 @@
 
 namespace communication_matrix;
 
+use GuzzleHttp\Psr7\Response;
+
 /**
  * Trait matrix_helper_trait to generate initial setup for matrix mock and associated helpers.
  *
@@ -112,9 +114,12 @@ trait matrix_test_helper_trait {
      * @return \stdClass
      */
     public function get_matrix_room_data(string $roomid): \stdClass {
-        $matrixeventmanager = new matrix_events_manager($roomid);
-        $response = $matrixeventmanager->request()->get($matrixeventmanager->get_room_info_endpoint());
-        return json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
+        $rooms = $this->backoffice_get_all_rooms();
+        foreach ($rooms as $room) {
+            if ($room->room_id === $roomid) {
+                return $room;
+            }
+        }
     }
 
     /**
@@ -125,9 +130,41 @@ trait matrix_test_helper_trait {
      * @return \stdClass
      */
     public function get_matrix_user_data(string $roomid, string $matrixuserid): \stdClass {
-        $matrixeventmanager = new matrix_events_manager($roomid);
-        $response = $matrixeventmanager->request()->get($matrixeventmanager->get_user_info_endpoint($matrixuserid));
-        return json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
+        $users = $this->backoffice_get_all_users();
+
+        foreach ($users as $user) {
+            if ($user->userid === $matrixuserid) {
+                return $user;
+            }
+        }
+    }
+
+    /**
+     * A backoffice call to get all registered users from our mock server.
+     *
+     * @return array
+     */
+    public function backoffice_get_all_users(): array {
+        $client = new \core\http_client();
+
+        return json_decode($client->get($this->get_backoffice_uri('users'))->getBody())->users;
+    }
+
+    /**
+     * A backoffice method to create users and rooms on our mock server.
+     *
+     * @param array $users
+     * @param array $rooms
+     */
+    public function backoffice_create_users_and_rooms(
+        array $users = [],
+        array $rooms = [],
+    ): Response {
+        $client = new \core\http_client();
+        return $client->put($this->get_backoffice_uri('create'), ['json' => [
+            'users' => $users,
+            'rooms' => $rooms,
+        ]]);
     }
 
     /**
@@ -138,7 +175,7 @@ trait matrix_test_helper_trait {
      * @return \core\http_client
      */
     public function request(array $jsonarray = [], array $headers = []): \core\http_client {
-        $response = new  \core\http_client([
+        $response = new \core\http_client([
             'headers' => $headers,
             'json' => $jsonarray,
         ]);

@@ -14,27 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace communication_matrix\privacy;
+namespace communication_matrix\local\spec\features\matrix;
 
-use core_privacy\local\metadata\null_provider;
+use communication_matrix\local\command;
+use GuzzleHttp\Psr7\Response;
 
 /**
- * Privacy Subsystem for communication_matrix implementing null_provider.
+ * Matrix API feature to create an mxc Media URI.
+ *
+ * https://spec.matrix.org/v1.1/client-server-api/#post_matrixmediav3upload
  *
  * @package    communication_matrix
- * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @codeCoverageIgnore
+ * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
-class provider implements null_provider {
+trait media_create_v1 {
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Create a media URI.
      *
-     * @return  string
+     * @return Response
      */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
+    public function media_create(): Response {
+        return $this->execute(new command(
+            $this,
+            method: 'POST',
+            endpoint: '_matrix/media/v1/create',
+        ));
     }
 }

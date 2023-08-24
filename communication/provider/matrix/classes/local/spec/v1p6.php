@@ -14,27 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace communication_matrix\privacy;
-
-use core_privacy\local\metadata\null_provider;
+namespace communication_matrix\local\spec;
 
 /**
- * Privacy Subsystem for communication_matrix implementing null_provider.
+ * Matrix API to support version v1.6 of the Matrix specification.
+ *
+ * https://spec.matrix.org/v1.6/client-server-api/
+ * https://spec.matrix.org/v1.6/changelog/#api-changes
  *
  * @package    communication_matrix
- * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @codeCoverageIgnore
  */
-class provider implements null_provider {
-
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return  string
-     */
-    public static function get_reason(): string {
-        return 'privacy:metadata';
-    }
+class v1p6 extends v1p5 {
 }
