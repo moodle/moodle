@@ -74,6 +74,8 @@ if (has_capability('moodle/grade:manage', $systemcontext)
 
         $temp->add(new admin_setting_special_gradeexport());
 
+        $temp->add(new admin_setting_special_gradeexportdefault());
+
         $temp->add(new admin_setting_special_gradelimiting());
 
         $temp->add(new admin_setting_configcheckbox('grade_report_showmin',
