@@ -2,18 +2,13 @@
         <div class="logo-details">
             <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-full-logo.svg" class="main-logo">
             <img src="{{globals.config.wwwroot}}/theme/qubitsbasic/pix/qubits-logo.svg" class="compact-logo">
-
             <i class="icon fa qicon-icon-close-drawer arrow-left"></i>
-
         </div>
         {{{ output.qubits_left_navigation }}}
 </div>
-
 <div class="sidebar-overlay"></div>
-
 {{#js}}
 require(['jquery'], function($){
-
     $(document).on("mouseenter", ".coursecard", function(){
         $(this).find(".white-circle").addClass("numbercolor");
     }).on("mouseleave", ".coursecard", function(){
@@ -23,20 +18,16 @@ require(['jquery'], function($){
     $(document).on("click", ".arrow, .sbicn", function(){
         $(this).parents(".nav-item").toggleClass("showMenu");
     });
-
     $(document).on("click", ".amlitms", function(){
         let url = $(this).data("url");
         $(this).parents(".nav-item").toggleClass("showMenu");
         if(url)
           $(location).attr("href", url);
     });
-
     $(window).on("resize", function (e) {
                 checkScreenSize();
             });
-
             checkScreenSize();
-
             function checkScreenSize() {
                 var newWindowWidth = $(window).width();
                 if (newWindowWidth < 578) {
@@ -55,8 +46,7 @@ require(['jquery'], function($){
                         $(".sidebar-overlay").hide();
                         $(".qicon-menu").show();
                     });
-                    
-                    $(".nav-item").hover(function(){
+                                        $(".nav-item").hover(function(){
                         $(".white-circle").toggleClass("numbercolor");
                     });
                 }
@@ -77,8 +67,7 @@ require(['jquery'], function($){
                          $(".main-inner").removeClass("leftnav");
                          $(".previousnav").show();
                     });
-                    
-                }
+                    }
             }
 });
 {{/js}}
