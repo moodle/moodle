@@ -46,16 +46,23 @@ class task_logs_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $this->generate_task_log_data(true, 3, 2, 1654038000, 1654038060);
+        $this->generate_task_log_data(false, 5, 1, 1654556400, 1654556700);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Tasks', 'source' => task_logs::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
+        $this->assertCount(2, $content);
 
-        // Default columns are name, starttime, duration, result.
+        // Default columns are name, start time, duration, result. Sorted by start time descending.
         [$name, $timestart, $duration, $result] = array_values($content[0]);
+        $this->assertStringContainsString(send_schedules::class, $name);
+        $this->assertEquals('7/06/22, 07:00:00', $timestart);
+        $this->assertEquals('5 mins', $duration);
+        $this->assertEquals('Fail', $result);
+
+        [$name, $timestart, $duration, $result] = array_values($content[1]);
         $this->assertStringContainsString(send_schedules::class, $name);
         $this->assertEquals('1/06/22, 07:00:00', $timestart);
         $this->assertEquals('1 min', $duration);

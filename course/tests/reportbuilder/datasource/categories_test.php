@@ -53,7 +53,7 @@ class categories_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);
 
-        // Default columns are name, idnumber, coursecount. Sorted by name descending.
+        // Default columns are name, idnumber, coursecount. Sorted by name ascending.
         $this->assertEquals([
             [get_string('defaultcategoryname'), '', 0],
             [$category->get_formatted_name(), $category->idnumber, 1],

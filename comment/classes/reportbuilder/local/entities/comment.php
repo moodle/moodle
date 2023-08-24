@@ -172,7 +172,8 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$commentalias}.component");
+            ->add_fields("{$commentalias}.component")
+            ->set_is_sortable(true);
 
         // Area.
         $columns[] = (new column(
@@ -182,7 +183,8 @@ class comment extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$commentalias}.commentarea");
+            ->add_fields("{$commentalias}.commentarea")
+            ->set_is_sortable(true);
 
         // Item ID.
         $columns[] = (new column(
@@ -193,6 +195,7 @@ class comment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$commentalias}.itemid")
+            ->set_is_sortable(true)
             ->set_disabled_aggregation_all();
 
         // Time created.

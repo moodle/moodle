@@ -20,7 +20,6 @@ namespace core_files\reportbuilder\datasource;
 
 use context_course;
 use context_user;
-use core_collator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
@@ -67,13 +66,8 @@ class files_test extends core_reportbuilder_testcase {
 
         $this->assertCount(2, $content);
 
-        // Consistent order (course, user), just in case.
-        core_collator::asort_array_of_arrays_by_key($content, 'c0_ctxid');
-        $content = array_values($content);
-
-        // First row (course summary file).
+        // Default columns are context, user, name, type, size, time created. Sorted by context and time created.
         [$contextname, $userfullname, $filename, $mimetype, $filesize, $timecreated] = array_values($content[0]);
-
         $this->assertEquals($coursecontext->get_context_name(), $contextname);
         $this->assertEquals(fullname($user), $userfullname);
         $this->assertEquals('Hello.txt', $filename);
@@ -81,9 +75,7 @@ class files_test extends core_reportbuilder_testcase {
         $this->assertEquals("5\xc2\xa0bytes", $filesize);
         $this->assertNotEmpty($timecreated);
 
-        // Second row (user draft file).
         [$contextname, $userfullname, $filename, $mimetype, $filesize, $timecreated] = array_values($content[1]);
-
         $this->assertEquals($usercontext->get_context_name(), $contextname);
         $this->assertEquals(fullname($user), $userfullname);
         $this->assertEquals('Hello.txt', $filename);
@@ -332,7 +324,7 @@ class files_test extends core_reportbuilder_testcase {
     }
 
     /**
-     * Helper method to generate some test files for reporting on
+     * Helper method to generate some test files (a user draft and course summary file) for reporting on
      *
      * @param context_course $context
      * @return int Draft item ID

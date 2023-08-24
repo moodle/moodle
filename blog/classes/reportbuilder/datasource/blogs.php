@@ -144,6 +144,18 @@ class blogs extends datasource {
     }
 
     /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+            'blog:timecreated' => SORT_ASC,
+        ];
+    }
+
+    /**
      * Return the filters that will be added to the report upon creation
      *
      * @return string[]
