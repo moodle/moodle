@@ -20,7 +20,7 @@ namespace core\reportbuilder\local\entities;
 
 use core\context_helper;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\select;
+use core_reportbuilder\local\filters\{select, text};
 use core_reportbuilder\local\report\{column, filter};
 use html_writer;
 use lang_string;
@@ -81,6 +81,8 @@ class context extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
+        global $DB;
+
         $contextalias = $this->get_table_alias('context');
 
         // Name.
@@ -145,6 +147,49 @@ class context extends base {
                 return context_helper::get_level_name($level);
             });
 
+        // Path.
+        $columns[] = (new column(
+            'path',
+            new lang_string('path'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$contextalias}.path")
+            ->set_is_sortable(true);
+
+        // Parent (note we select the parent path in SQL, so that aggregation/grouping is on the parent data itself).
+        $columns[] = (new column(
+            'parent',
+            new lang_string('contextparent'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            // The "path" column looks like "/1/2/3", for context ID 3. In order to select/group by the parent context, we
+            // concatenate a trailing slash (to prevent partial matches, e.g. "/1/2/31"), then replace "/3/" with empty string.
+            ->add_field("
+                REPLACE(
+                    " . $DB->sql_concat("{$contextalias}.path", "'/'") . ",
+                    " . $DB->sql_concat("'/'", $DB->sql_cast_to_char("{$contextalias}.id"), "'/'") . ",
+                    ''
+                )", 'parent'
+            )
+            // Sorting may not order alphabetically, but will at least group contexts together.
+            ->set_is_sortable(true)
+            ->add_callback(static function (?string $parent): string {
+
+                // System level (no parent) or null.
+                if ($parent === '' || $parent === null) {
+                    return '';
+                }
+
+                $contextids = explode('/', $parent);
+                $contextid = (int) array_pop($contextids);
+
+                return context_helper::instance_by_id($contextid)->get_context_name();
+            });
+
         return $columns;
     }
 
@@ -172,6 +217,16 @@ class context extends base {
                     return $levelclass::get_level_name();
                 }, $levels);
             });
+
+        // Path.
+        $filters[] = (new filter(
+            text::class,
+            'path',
+            new lang_string('path'),
+            $this->get_entity_name(),
+            "{$contextalias}.path"
+        ))
+            ->add_joins($this->get_joins());
 
         return $filters;
     }
