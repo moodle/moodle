@@ -28,6 +28,8 @@ Information provided here is intended especially for developers.
 * If a non-default column is specified in a datasource `get_default_column_sorting` method, a coding exception will be thrown
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception
 * The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
+* The report helper methods `add_report_[condition|filter]` now throw an exception when trying to add duplicate conditions or
+  filters to a report
 * Two new methods:
   - `get_default_no_results_notice` and
   - `set_default_no_results_notice`

@@ -4610,6 +4610,9 @@
         <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="report-filter" UNIQUE="true" FIELDS="reportid, uniqueidentifier, iscondition"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="reportbuilder_audience" COMMENT="Defines report audience">
       <FIELDS>
