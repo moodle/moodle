@@ -47,7 +47,7 @@ Feature: Set availability dates for an assignment
   Scenario: Student cannot submit an assignment prior to the 'allow submissions from' date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Allow submissions from' to tomorrow at noon.
     And I set the field "Allow submissions from" to "##tomorrow noon##"
     And I press "Save and return to course"
@@ -79,7 +79,7 @@ Feature: Set availability dates for an assignment
   Scenario: Student can submit an assignment before the due date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Allow submissions from' to now.
     And I set the field "Allow submissions from" to "##now##"
     # Set 'Due date' to 2 days 5 hours 30 minutes in the future.
@@ -107,7 +107,7 @@ Feature: Set availability dates for an assignment
   Scenario: Student can submit an assignment after the due date and the submission is marked as late
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Allow submissions from' to 3 days ago.
     And I set the field "Allow submissions from" to "##3 days ago##"
     # Set 'Due date' to 2 days 5 hours 30 minutes ago.
@@ -144,7 +144,7 @@ Feature: Set availability dates for an assignment
     And I log out
     And I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Time limit' to 20 seconds.
     And I set the field "timelimit[enabled]" to "1"
     And I set the field "timelimit[number]" to "20"
@@ -173,7 +173,7 @@ Feature: Set availability dates for an assignment
     And I log out
     And I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Time limit' to 5 seconds.
     And I set the field "timelimit[enabled]" to "1"
     And I set the field "timelimit[number]" to "5"
@@ -198,7 +198,7 @@ Feature: Set availability dates for an assignment
   Scenario: Student cannot submit an assignment after the cut-off date
     Given I am on the "Assignment name" Activity page logged in as teacher1
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Allow submissions from' to 3 days ago.
     And I set the field "Allow submissions from" to "##3 days ago##"
     # Set 'Due date' to 2 days 5 hours 30 minutes ago.
@@ -222,7 +222,7 @@ Feature: Set availability dates for an assignment
   Scenario: Late submission will be calculated only when the student starts the assignment
     Given I am on the "Test late assignment with time limit" Activity page logged in as admin
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     # Set 'Time limit' to 5 seconds.
     And I set the field "timelimit[enabled]" to "1"
     And I set the field "timelimit[number]" to "5"

@@ -45,6 +45,7 @@ $string['cmmove_info'] = 'Move {$a} after';
 $string['cmsmove_title'] = 'Move selected activities';
 $string['cmsmove_info'] = 'Move {$a} activities after';
 $string['courseindex'] = 'Course index';
+$string['courseindexoptions'] = 'Course index options';
 $string['nobulkaction'] = 'No bulk actions available';
 $string['preference:coursesectionspreferences'] = 'Section user preferences for course {$a}';
 $string['privacy:metadata:preference:coursesectionspreferences'] = 'Section user preferences like collapsed and expanded.';

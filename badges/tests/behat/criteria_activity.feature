@@ -83,7 +83,7 @@ Feature: Award badges based on activity completion
     And I follow "Course Badge"
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Activity completion"
-    And I click on "Expand all" "link"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Quiz - Test quiz name" to "1"
     And I set the field "<aggregationcriteria>" to "1"
     And I press "Save"

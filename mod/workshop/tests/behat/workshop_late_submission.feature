@@ -43,7 +43,7 @@ Feature: Workshop 'Late submissions are allowed' task
     When I am on the "TestWorkshop1" "workshop activity" page logged in as teacher1
     Then I should see "Late submissions are allowed"
     And I navigate to "Settings" in current page administration
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "id_submissionend_day" to "1"
     And I set the field "id_submissionend_month" to "January"
     And I set the field "id_submissionend_year" to "2018"
