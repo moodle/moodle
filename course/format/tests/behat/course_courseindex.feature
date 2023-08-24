@@ -76,7 +76,7 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage with editing mode on
     And I hide section "2"
     And I open "Activity sample 3" actions menu
-    And I click on "Hide" "link" in the "Activity sample 3" activity
+    And I choose "Availability > Hide on course page" in the open action menu
     And I log out
     And I log in as "teacher1"
     When I am on "Course 1" course homepage
@@ -93,7 +93,7 @@ Feature: Course index depending on role
     And I am on "Course 1" course homepage with editing mode on
     And I hide section "2"
     And I open "Activity sample 3" actions menu
-    And I click on "Hide" "link" in the "Activity sample 3" activity
+    And I choose "Availability > Hide on course page" in the open action menu
     And I log out
     And I log in as "student1"
     When I am on "Course 1" course homepage

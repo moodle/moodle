@@ -27,14 +27,14 @@ Feature: Verify activity visibility interface.
   Scenario: Teacher can hide an activity using the actions menu.
     Given I should not see "Hidden from students" in the "Activity sample 1" "activity"
     When I open "Activity sample 1" actions menu
-    And I click on "Hide" "link" in the "Activity sample 1" "activity"
-    Then I should see "Hidden from students" in the "Activity sample 1" "activity"
+    And I choose "Availability > Hide on course page" in the open action menu
+    Then I should see "Hidden from students" in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Teacher can show an activity using the actions menu.
-    Given I should see "Hidden from students" in the "Activity sample 2" "activity"
+    Given I should see "Hidden from students" in the "Activity sample 2" "core_courseformat > Activity visibility"
     When I open "Activity sample 2" actions menu
-    And I click on "Show activity" "link" in the "Activity sample 2" "activity"
+    And I choose "Availability > Show on course page" in the open action menu
     Then I should not see "Hidden from students" in the "Activity sample 2" "activity"
 
   @javascript
@@ -42,17 +42,17 @@ Feature: Verify activity visibility interface.
     Given the following config values are set as admin:
       | allowstealth | 1 |
     And I reload the page
-    And I should see "Hidden from students" in the "Activity sample 2" "activity"
+    And I should see "Hidden from students" in the "Activity sample 2" "core_courseformat > Activity visibility"
     When I open "Activity sample 2" actions menu
-    And I click on "Make activity available" "link" in the "Activity sample 2" "activity"
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
     Then I should not see "Hidden from students" in the "Activity sample 2" "activity"
-    And I should see "Available but not shown on course page" in the "Activity sample 2" "activity"
+    And I should see "Available but not shown on course page" in the "Activity sample 2" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Teacher can show an activity using the visibility badge.
-    Given I should see "Hidden from students" in the "Activity sample 2" "activity"
-    When I click on "Hidden from students" "button" in the "Activity sample 2" "activity"
-    And I click on "Show on course page" "link" in the "Activity sample 2" "activity"
+    Given I should see "Hidden from students" in the "Activity sample 2" "core_courseformat > Activity visibility"
+    When I click on "Hidden from students" "button" in the "Activity sample 2" "core_courseformat > Activity visibility"
+    And I click on "Show on course page" "link" in the "Activity sample 2" "core_courseformat > Activity visibility"
     Then I should not see "Hidden from students" in the "Activity sample 2" "activity"
 
   @javascript
@@ -60,17 +60,17 @@ Feature: Verify activity visibility interface.
     Given the following config values are set as admin:
       | allowstealth | 1 |
     And I reload the page
-    When I click on "Hidden from students" "button" in the "Activity sample 2" "activity"
-    And I click on "Make available but don't show on course page" "link" in the "Activity sample 2" "activity"
+    When I click on "Hidden from students" "button" in the "Activity sample 2" "core_courseformat > Activity visibility"
+    And I click on "Make available but don't show on course page" "link" in the "Activity sample 2" "core_courseformat > Activity visibility"
     Then I should not see "Hidden from students" in the "Activity sample 2" "activity"
-    And I should see "Available but not shown on course page" in the "Activity sample 2" "activity"
+    And I should see "Available but not shown on course page" in the "Activity sample 2" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Make available but not shown is available only when stealth activities are enabled.
-    Given I click on "Hidden from students" "button" in the "Activity sample 2" "activity"
+    Given I click on "Hidden from students" "button" in the "Activity sample 2" "core_courseformat > Activity visibility"
     And I should not see "Make available but don't show on course page" in the "Activity sample 2" "activity"
     When the following config values are set as admin:
       | allowstealth | 1 |
     And I reload the page
-    And I click on "Hidden from students" "button" in the "Activity sample 2" "activity"
-    Then I should see "Make available but don't show on course page" in the "Activity sample 2" "activity"
+    And I click on "Hidden from students" "button" in the "Activity sample 2" "core_courseformat > Activity visibility"
+    Then I should see "Make available but don't show on course page" in the "Activity sample 2" "core_courseformat > Activity visibility"

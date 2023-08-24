@@ -84,6 +84,14 @@ class choicelist implements renderable, named_templatable {
     }
 
     /**
+     * Get the number of options added to the choice list.
+     * @return int
+     */
+    public function count_options(): int {
+        return count($this->options);
+    }
+
+    /**
      * Set the selected option.
      *
      * @param string $value The value of the selected option.

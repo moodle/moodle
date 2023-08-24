@@ -90,3 +90,5 @@ devicedetectregex,core_admin
 devicedetectregex_desc,core_admin
 devicedetectregexexpression,core_admin
 devicedetectregexvalue,core_admin
+modshowcmtitle,core
+makeavailablecmtitle,core

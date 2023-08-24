@@ -45,6 +45,8 @@ Some considerations about the activitybadge feature:
 * New core_courseformat\base::get_format_string() to get strings that can be overridden by the format plugin.
   The method will check first the string in the format_PLUGINNAME.php lang file and, if not, it will return the
   core_courseformat string instead.
+* New course format output classes:
+  - core_courseformat\output\local\content\cm\visibility to display the activity availability.
 
 === 4.1 ===
 * New \core_courseformat\stateupdates methods add_section_remove() and add_cm_remove() have been added to replace
