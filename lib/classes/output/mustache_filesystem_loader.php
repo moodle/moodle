@@ -72,7 +72,7 @@ class mustache_filesystem_loader extends \Mustache_Loader_FilesystemLoader {
      * @param string $name the template name
      * @return string Mustache Template source
      */
-    public function load($name): string {
+    public function load($name) {
         global $CFG;
         if (!empty($CFG->debugtemplateinfo)) {
             // We use many templates per page. We don't want to allocate more memory than necessary.
