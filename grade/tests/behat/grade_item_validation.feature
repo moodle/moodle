@@ -32,7 +32,7 @@ Feature: Grade item validation
       | Scale | Disappointing, Good, Very good, Excellent |
     And I press "Save changes"
     And I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"

@@ -25,27 +25,27 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I set the following administration settings values:
       | grade_minmaxtouse | Min and max grades as specified in grade item settings |
     And I am on the "C1" "grades > gradebook setup" page
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 1 |
       | Grade category | C1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 2 |
       | Grade category | C1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 3 |
       | Grade category | CAT1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 4 |
       | Grade category | CAT1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 5 |
       | Grade category | C1 |

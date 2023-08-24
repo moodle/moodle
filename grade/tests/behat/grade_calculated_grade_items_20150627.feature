@@ -23,12 +23,12 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
 
   @javascript
   Scenario: The max grade for a category item, with a calculation using Natural aggregation, can be changed
-    Given I press "Add category"
+    Given I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Calc cat |
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
@@ -51,12 +51,12 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
 
   @javascript
   Scenario: Changing max grade for a category item with a calculation that has existing grades will display the same points with the new max grade values immediately.
-    Given I press "Add category"
+    Given I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Calc cat |
     And I click on "Save" "button" in the "New category" "dialogue"
     And I wait until the page is ready
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
@@ -115,11 +115,11 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
 
   @javascript
   Scenario: Values in calculated grade items are not always out of one hundred
-    Given I press "Add grade item"
+    Given I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | calc item |
     And I click on "Save" "button" in the "New grade item" "dialogue"

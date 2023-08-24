@@ -27,7 +27,7 @@ Feature: Student and teacher's view of aggregated grade items is consistent when
       | assign   | C1     | a3       | Test assignment three | Submit something! | Sub category 2 | 100   |
       | assign   | C1     | a4       | Test assignment four  | Submit something! | Sub category 2 | 100   |
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | calculated |
     And I click on "Save" "button" in the "New grade item" "dialogue"

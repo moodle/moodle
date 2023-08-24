@@ -20,20 +20,20 @@ Feature: Extra credit contributions are normalised when going out of bounds
     And I set the following administration settings values:
       | grade_aggregations_visible | Simple weighted mean of grades,Mean of grades (with extra credits),Natural |
     And I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Maximum grade | 150 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 2 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 3 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 4 |
     And I click on "Save" "button" in the "New grade item" "dialogue"

@@ -26,38 +26,38 @@ Feature: We can use a minimum grade different than zero
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Minimum grade | -100 |
       | Grade category | Course 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 2 |
       | Minimum grade | 50 |
       | Grade category | Course 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 3 |
       | Maximum grade | 50 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 4 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 5 |
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 6 |
       | Minimum grade | 50 |
