@@ -56,16 +56,17 @@ Feature: Bulk enrolments
     And I click on "Select all" "checkbox"
     And I set the field "With selected users..." to "Delete selected user enrolments"
     Then I should see "User \"Teacher 1\" was removed from the selection."
-    And the following should exist in the "Delete selected user enrolments" table:
-      | Student 1 | student1@example.com |
-      | Student 2 | student2@example.com |
+    And the following should exist in the "generaltable" table:
+      | Name      | Status |
+      | Student 1 | Active |
+      | Student 2 | Active |
+    And I should not see "Teacher 1" in the "generaltable" "table"
     And I press "Unenrol users"
-    Then I should see "2 unenrolled users"
+    And I should see "2 unenrolled users"
     And I should see "User \"Teacher 1\" was removed from the selection."
-    And the following should exist in the "Enrolled users" table:
-      | Teacher 1 | teacher1@example.com |
-    And I should not see "Student 1"
-    And I should not see "Student 2"
+    And I should see "Teacher 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
 
   @javascript
   Scenario: Bulk edit enrolment for deleted user
