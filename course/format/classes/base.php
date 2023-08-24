@@ -743,7 +743,7 @@ abstract class base {
     /**
      * Return the old non-ajax activity action url.
      *
-     * Goutte behats tests cannot trigger javascript events,
+     * BrowserKit behats tests cannot trigger javascript events,
      * so we must translate to an old non-ajax url while non-ajax
      * course editing is still supported.
      *
