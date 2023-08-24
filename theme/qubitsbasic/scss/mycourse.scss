@@ -940,7 +940,7 @@ button.close:focus,
   color: #333333 !important;
   font-size: 20px;
   font-weight: 600;
-  opacity: 0.6;
+
   @include breakpoint(xs) {
     font-size: 16px;
   }
@@ -1090,9 +1090,9 @@ a:not([class]):focus,
 .footer-popover {
   display: none;
 }
-.card-body .card-body-overlay .w-70{
-  width:70%;
+.card-body .card-body-overlay .w-70 {
+  width: 70%;
 }
-.card-body .card-body-overlay .w-30{
+.card-body .card-body-overlay .w-30 {
   width: 30%;
 }
