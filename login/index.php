@@ -52,6 +52,7 @@ $PAGE->set_pagelayout('login');
 
 /// Initialize variables
 $errormsg = '';
+$infomsg = '';
 $errorcode = 0;
 
 // login page requested session test
@@ -270,6 +271,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
         // Discard any errors before the last redirect.
         unset($SESSION->loginerrormsg);
+        unset($SESSION->logininfomsg);
 
         // test the session actually works by redirecting to self
         $SESSION->wantsurl = $urltogo;
@@ -344,14 +346,17 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     $frm->password = "";
 }
 
-if (!empty($SESSION->loginerrormsg)) {
-    // We had some errors before redirect, show them now.
-    $errormsg = $SESSION->loginerrormsg;
+if (!empty($SESSION->loginerrormsg) || !empty($SESSION->logininfomsg)) {
+    // We had some messages before redirect, show them now.
+    $errormsg = $SESSION->loginerrormsg ?? '';
+    $infomsg = $SESSION->logininfomsg ?? '';
     unset($SESSION->loginerrormsg);
+    unset($SESSION->logininfomsg);
 
 } else if ($testsession) {
     // No need to redirect here.
     unset($SESSION->loginerrormsg);
+    unset($SESSION->logininfomsg);
 
 } else if ($errormsg or !empty($frm->password)) {
     // We must redirect after every password submission.
@@ -376,6 +381,7 @@ if (isloggedin() and !isguestuser()) {
 } else {
     $loginform = new \core_auth\output\login($authsequence, $frm->username);
     $loginform->set_error($errormsg);
+    $loginform->set_info($infomsg);
     echo $OUTPUT->render($loginform);
 }
 

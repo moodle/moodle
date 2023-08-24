@@ -4246,7 +4246,7 @@ function guest_user() {
  * @return stdClass|false A {@link $USER} object or false if error
  */
 function authenticate_user_login($username, $password, $ignorelockout=false, &$failurereason=null, $logintoken=false) {
-    global $CFG, $DB, $PAGE;
+    global $CFG, $DB, $PAGE, $SESSION;
     require_once("$CFG->libdir/authlib.php");
 
     if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
@@ -4351,6 +4351,8 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             $event->trigger();
 
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $SESSION->loginerrormsg = get_string('accountlocked', 'admin');
+
             return false;
         }
     } else {

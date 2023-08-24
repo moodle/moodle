@@ -1018,12 +1018,18 @@ function login_lock_account($user) {
  * Unlock user account and reset timers.
  *
  * @param stdClass $user
+ * @param bool $notify Notify the user their account has been unlocked.
  */
-function login_unlock_account($user) {
+function login_unlock_account($user, bool $notify = false) {
+    global $SESSION;
+
     unset_user_preference('login_lockout', $user);
     unset_user_preference('login_failed_count', $user);
     unset_user_preference('login_failed_last', $user);
 
+    if ($notify) {
+        $SESSION->logininfomsg = get_string('accountunlocked', 'admin');
+    }
     // Note: do not clear the lockout secret because user might click on the link repeatedly.
 }
 

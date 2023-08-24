@@ -24,6 +24,8 @@
 
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
+$string['accountunlocked'] = 'Your account has been unlocked successfully. You may now login below.';
+$string['accountlocked'] = 'Your account has been locked. An unlock link has been sent to the email address associated with your account.';
 $string['addcategory'] = 'Add a category';
 $string['additionalhtml'] = 'Additional HTML';
 $string['additionalhtml_heading'] = 'Additional HTML to be added to every page.';
