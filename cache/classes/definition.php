@@ -383,7 +383,7 @@ class cache_definition {
         }
         if (array_key_exists('requirelockingwrite', $definition)) {
             debugging('The cache option requirelockingwrite is deprecated and now has no effect. ' .
-                    'Consider removing the option, or using requirelockingbeforewrite.',
+                    "Consider removing the option, or using requirelockingbeforewrite for the $component:$area definition",
                     DEBUG_DEVELOPER);
         }
         if (array_key_exists('requirelockingbeforewrite', $definition)) {
