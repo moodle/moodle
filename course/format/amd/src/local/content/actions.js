@@ -83,7 +83,8 @@ export default class extends BaseComponent {
         };
         // Component css classes.
         this.classes = {
-            DISABLED: `disabled`,
+            DISABLED: `text-body`,
+            ITALIC: `font-italic`,
         };
     }
 
@@ -673,6 +674,7 @@ export default class extends BaseComponent {
         const targets = this.getElements(this.selectors.ADDSECTION);
         targets.forEach(element => {
             element.classList.toggle(this.classes.DISABLED, locked);
+            element.classList.toggle(this.classes.ITALIC, locked);
             this.setElementLocked(element, locked);
         });
     }
@@ -687,6 +689,7 @@ export default class extends BaseComponent {
             element.style.pointerEvents = 'none';
             element.style.userSelect = 'none';
             element.classList.add(this.classes.DISABLED);
+            element.classList.add(this.classes.ITALIC);
             element.setAttribute('aria-disabled', true);
             element.addEventListener('click', event => event.preventDefault());
         }
