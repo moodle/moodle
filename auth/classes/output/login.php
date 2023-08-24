@@ -73,6 +73,8 @@ class login implements renderable, templatable {
     public $logintoken;
     /** @var string Maintenance message, if Maintenance is enabled. */
     public $maintenance;
+    /** @var string ReCaptcha element HTML. */
+    public $recaptcha;
 
     /**
      * Constructor.
@@ -122,6 +124,12 @@ class login implements renderable, templatable {
         // Identity providers.
         $this->identityproviders = \auth_plugin_base::get_identity_providers($authsequence);
         $this->logintoken = \core\session\manager::get_login_token();
+
+        // ReCaptcha.
+        if (login_captcha_enabled()) {
+            require_once($CFG->libdir . '/recaptchalib_v2.php');
+            $this->recaptcha = recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey);
+        }
     }
 
     /**
@@ -166,6 +174,7 @@ class login implements renderable, templatable {
         $data->logintoken = $this->logintoken;
         $data->maintenance = format_text($this->maintenance, FORMAT_MOODLE);
         $data->languagemenu = $this->languagemenu;
+        $data->recaptcha = $this->recaptcha;
 
         return $data;
     }
