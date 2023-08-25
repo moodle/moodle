@@ -749,29 +749,29 @@ class behat_navigation extends behat_base {
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
-     * | Page type                            | Identifier meaning        | description                                                      |
-     * | Category                             | category idnumber         | List of courses in that category.                                |
-     * | Course                               | course shortname          | Main course home pag                                             |
-     * | Course editing                       | course shortname          | Edit settings page for the course                                |
-     * | Activity                             | activity idnumber         | Start page for that activity                                     |
-     * | Activity editing                     | activity idnumber         | Edit settings page for that activity                             |
-     * | [modname] Activity                   | activity name or idnumber | Start page for that activity                                     |
-     * | [modname] Activity editing           | activity name or idnumber | Edit settings page for that activity                             |
-     * | Backup                               | course shortname          | Course to backup                                                 |
-     * | Import                               | course shortname          | Course import from                                               |
-     * | Restore                              | course shortname          | Course to restore from                                           |
-     * | Reset                                | course shortname          | Course to reset                                                  |
-     * | Course copy                          | course shortname          | Course to copy                                                   |
-     * | Groups                               | course shortname          | Groups page for the course                                       |
-     * | Groups overview                      | course shortname          | Groups overview page for the course                              |
-     * | Groupings                            | course shortname          | Groupings page for the course                                    |
-     * | Permissions                          | course shortname          | Permissions page for the course                                  |
-     * | Enrolment methods                    | course shortname          | Enrolment methods for the course                                 |
-     * | Enrolled users                       | course shortname          | The main participants page                                       |
-     * | Other users                          | course shortname          | The course other users page                                      |
-     * | Course profile page                  | course shortname          | The current user's profile for this course                       |
-     * | Course profile editing page          | course shortname          | The current user's profile editing page for this course          |
-     * | Course profile advanced editing page | course shortname          | The current user's advanced profile editing page for this course |
+     * | Page type                       | Identifier meaning        | description                                                      |
+     * | Category                        | category idnumber         | List of courses in that category.                                |
+     * | Course                          | course shortname          | Main course home pag                                             |
+     * | Course editing                  | course shortname          | Edit settings page for the course                                |
+     * | Activity                        | activity idnumber         | Start page for that activity                                     |
+     * | Activity editing                | activity idnumber         | Edit settings page for that activity                             |
+     * | [modname] Activity              | activity name or idnumber | Start page for that activity                                     |
+     * | [modname] Activity editing      | activity name or idnumber | Edit settings page for that activity                             |
+     * | Backup                          | course shortname          | Course to backup                                                 |
+     * | Import                          | course shortname          | Course import from                                               |
+     * | Restore                         | course shortname          | Course to restore from                                           |
+     * | Reset                           | course shortname          | Course to reset                                                  |
+     * | Course copy                     | course shortname          | Course to copy                                                   |
+     * | Groups                          | course shortname          | Groups page for the course                                       |
+     * | Groups overview                 | course shortname          | Groups overview page for the course                              |
+     * | Groupings                       | course shortname          | Groupings page for the course                                    |
+     * | Permissions                     | course shortname          | Permissions page for the course                                  |
+     * | Enrolment methods               | course shortname          | Enrolment methods for the course                                 |
+     * | Enrolled users                  | course shortname          | The main participants page                                       |
+     * | Other users                     | course shortname          | The course other users page                                      |
+     * | Course profile                  | course shortname          | The current user's profile for this course                       |
+     * | Course profile editing          | course shortname          | The current user's profile editing page for this course          |
+     * | Course profile advanced editing | course shortname          | The current user's advanced profile editing page for this course |
      *
      * Examples:
      *
@@ -906,29 +906,29 @@ class behat_navigation extends behat_base {
                 }
                 return new moodle_url('/enrol/renameroles.php', ['id' => $courseid]);
 
-            case 'Course profile page':
+            case 'course profile':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw $coursenotfoundexception;
                 }
-                return new moodle_url('/course/user.php', ['course' => $courseid]);
+                return new moodle_url('/user/user.php', ['course' => $courseid]);
 
-            case 'Course profile editing page':
+            case 'course profile editing':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw $coursenotfoundexception;
                 }
-                return new moodle_url('/course/edit.php', [
+                return new moodle_url('/user/edit.php', [
                     'course' => $courseid,
                     'returnto' => 'profile',
                 ]);
 
-            case 'Course profile advanced editing page':
+            case 'course profile advanced editing':
                 $courseid = $this->get_course_id($identifier);
                 if (!$courseid) {
                     throw $coursenotfoundexception;
                 }
-                return new moodle_url('/course/editadvanced.php', [
+                return new moodle_url('/user/editadvanced.php', [
                     'course' => $courseid,
                     'returnto' => 'profile',
                 ]);
