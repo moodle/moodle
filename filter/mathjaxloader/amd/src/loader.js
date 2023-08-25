@@ -88,10 +88,12 @@ export const typeset = () => {
     if (!configured) {
         setLocale();
         const elements = document.getElementsByClassName('filter_mathjaxloader_equation');
-        for (let i = 0; i < elements.length; i++) {
-            if (typeof window.MathJax !== "undefined") {
-                window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, elements[i]]);
-            }
+        if (elements) {
+            elements.forEach((element) => {
+                if (typeof window.MathJax !== "undefined") {
+                    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
+                }
+            });
         }
     }
 };
@@ -106,7 +108,7 @@ export const contentUpdated = (event) => {
     if (typeof window.MathJax === "undefined") {
         return;
     }
-    const processdelay = window.MathJax.Hub.processSectionDelay;
+    const processDelay = window.MathJax.Hub.processSectionDelay;
     // Set the process section delay to 0 when updating the formula.
     window.MathJax.Hub.processSectionDelay = 0;
     // When content is updated never position to hash, it may cause unexpected document scrolling.
@@ -114,10 +116,10 @@ export const contentUpdated = (event) => {
     setLocale();
     // The list of HTMLElements in an Array.
     event.detail.nodes.forEach((node) => {
-        const mathjaxElements = node.querySelectorAll('.filter_mathjaxloader_equation');
+        const mathjaxElements = node.getElementsByClassName('filter_mathjaxloader_equation');
         mathjaxElements.forEach((node) => {
             window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node]);
         });
     });
-    window.MathJax.Hub.processSectionDelay = processdelay;
+    window.MathJax.Hub.processSectionDelay = processDelay;
 };
