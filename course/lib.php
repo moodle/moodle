@@ -3456,10 +3456,9 @@ function duplicate_module($course, $cm, int $sectionid = null, bool $changename 
         // triggering a lot of create/update duplicated events.
         $newcm = get_coursemodule_from_id($cm->modname, $newcmid, $cm->course);
         if ($changename) {
-            // Add ' (copy)' to duplicates. Note we don't cleanup or validate lengths here. It comes
-            // from original name that was valid, so the copy should be too.
+            // Add ' (copy)' language string postfix to duplicated module.
             $newname = get_string('duplicatedmodule', 'moodle', $newcm->name);
-            $DB->set_field($cm->modname, 'name', $newname, ['id' => $newcm->instance]);
+            set_coursemodule_name($newcm->id, $newname);
         }
 
         $section = $DB->get_record('course_sections', ['id' => $sectionid ?? $cm->section, 'course' => $cm->course]);
