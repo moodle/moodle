@@ -44,7 +44,7 @@ Feature: Lesson activity access can be restricted
     And I press "Save and return to course"
     # Confirm that student1 can see lesson but student2 can't
     When I am on the "Course 1" course page logged in as <user>
-    Then I <visibility> "Test lesson"
+    Then I <visibility> "Test lesson" in the "region-main" "region"
 
     Examples:
       | user     | visibility     |
