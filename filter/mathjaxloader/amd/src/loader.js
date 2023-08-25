@@ -116,6 +116,10 @@ export const contentUpdated = (event) => {
     setLocale();
     // The list of HTMLElements in an Array.
     event.detail.nodes.forEach((node) => {
+        if (!(node instanceof HTMLElement)) {
+            // We may have been passed a #text node.
+            return;
+        }
         const mathjaxElements = node.getElementsByClassName('filter_mathjaxloader_equation');
         mathjaxElements.forEach((node) => {
             window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node]);
