@@ -110,27 +110,33 @@ class notification_task extends \core\task\adhoc_task {
      * @return mixed final template string.
      */
     protected function replace_placeholders($template, subscription $subscription, $eventobj, $context) {
-        $template = str_replace('{link}', $eventobj->link, $template);
-        if ($eventobj->contextlevel >= CONTEXT_COURSE && !empty($eventobj->courseid) &&
-            (strpos($template, '{module') !== false || strpos($template, '{course') !== false)) {
-            $modinfo = get_fast_modinfo($eventobj->courseid);
-            $course = $modinfo->get_course();
-            $template = str_replace('{coursefullname}', $course->fullname, $template);
-            $template = str_replace('{courseshortname}', $course->shortname, $template);
-            if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid) &&
-                strpos($template, '{module') !== false) {
-                $cm = $modinfo->get_cm($eventobj->contextinstanceid);
-                $modulelink = $cm->url;
-                $modulename = $cm->get_name();
-                $template = str_replace('{modulelink}', $modulelink, $template);
-                $template = str_replace('{modulename}', $modulename, $template);
+        $replacements = [
+            '{link}' => $eventobj->link,
+            '{rulename}' => $subscription->get_name($context),
+            '{description}' => $subscription->get_description($context),
+            '{eventname}' => $subscription->get_event_name(),
+        ];
+
+        if ($eventobj->contextlevel >= CONTEXT_COURSE && !empty($eventobj->courseid)) {
+            $iscoursetemplate = str_contains($template, '{course');
+            $ismodtemplate = str_contains($template, '{module');
+            if ($iscoursetemplate || $ismodtemplate) {
+                $modinfo = get_fast_modinfo($eventobj->courseid);
+                $course = $modinfo->get_course();
+                $replacements['{coursefullname}'] = $course->fullname;
+                $replacements['{courseshortname}'] = $course->shortname;
+
+                if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid) && $ismodtemplate) {
+                    $cm = $modinfo->get_cm($eventobj->contextinstanceid);
+                    $replacements['{modulelink}'] = $cm->url;
+                    $replacements['{modulename}'] = $cm->get_name();
+                }
             }
         }
-
-        $template = str_replace('{rulename}', $subscription->get_name($context), $template);
-        $template = str_replace('{description}', $subscription->get_description($context), $template);
-        $template = str_replace('{eventname}', $subscription->get_event_name(), $template);
-
-        return $template;
+        return str_replace(
+            search: array_keys($replacements),
+            replace: array_values($replacements),
+            subject: $template,
+        );
     }
 }
