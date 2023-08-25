@@ -15,11 +15,14 @@
 /**
  * Mathjax JS Loader.
  *
- * @module filter_mathjaxloader
+ * @module filter_mathjaxloader/loader
  * @copyright 2014 Damyon Wiese  <damyon@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import {eventTypes} from 'core_filters/events';
+import {
+    eventTypes,
+    notifyFilterContentRenderingComplete,
+} from 'core_filters/events';
 
 /**
  * The users current language - this can't be set until MathJax is loaded - so we need to store it.
@@ -42,13 +45,12 @@ let configured = false;
  * This does not load MathJAX yet - it addes the configuration to the head incase it gets loaded later.
  * It also subscribes to the filter-content-updated event so MathJax can respond to content loaded by Ajax.
  *
- * @method configure
  * @param {Object} params List of configuration params containing mathjaxconfig (text) and lang
  */
 export const configure = (params) => {
     // Add a js configuration object to the head.
-    // See "http://docs.mathjax.org/en/latest/dynamic.html#ajax-mathjax"
-    let script = document.createElement("script");
+    // See "https://docs.mathjax.org/en/v2.7-latest/advanced/dynamic.html"
+    const script = document.createElement("script");
     script.type = "text/x-mathjax-config";
     script[(window.opera ? "innerHTML" : "text")] = params.mathjaxconfig;
     document.getElementsByTagName("head")[0].appendChild(script);
@@ -64,7 +66,6 @@ export const configure = (params) => {
 /**
  * Set the correct language for the MathJax menus. Only do this once.
  *
- * @method setLocale
  * @private
  */
 const setLocale = () => {
@@ -80,20 +81,44 @@ const setLocale = () => {
 };
 
 /**
- * Called by the filter when an equation is found while rendering the page.
+ * Add the node to the typeset queue.
  *
- * @method typeset
+ * @param {HTMLElement} node The Node to be processed by MathJax
+ * @private
+ */
+const typesetNode = (node) => {
+    if (!(node instanceof HTMLElement)) {
+        // We may have been passed a #text node.
+        // These cannot be formatted.
+        return;
+    }
+
+    // MathJax 2.X does not notify when complete. The best we can do, according to their docs, is to queue a callback.
+    // See https://docs.mathjax.org/en/v2.7-latest/advanced/typeset.html
+    // Note that the MathJax.Hub.Queue() method will return immediately, regardless of whether the typesetting has taken place
+    // or not, so you can not assume that the mathematics is visible after you make this call.
+    // That means that things like the size of the container for the mathematics may not yet reflect the size of the
+    // typeset mathematics. If you need to perform actions that depend on the mathematics being typeset, you should push those
+    // actions onto the MathJax.Hub.queue as well.
+    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node]);
+    window.MathJax.Hub.Queue([(node) => {
+        // The notifyFilterContentRenderingComplete event takes an Array of NodeElements or a NodeList.
+        // We cannot create a NodeList so we use an HTMLElement[].
+        notifyFilterContentRenderingComplete([node]);
+    }, node]);
+};
+
+/**
+ * Called by the filter when an equation is found while rendering the page.
  */
 export const typeset = () => {
     if (!configured) {
         setLocale();
         const elements = document.getElementsByClassName('filter_mathjaxloader_equation');
-        if (elements) {
-            elements.forEach((element) => {
-                if (typeof window.MathJax !== "undefined") {
-                    window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, element]);
-                }
-            });
+        for (const element of elements) {
+            if (typeof window.MathJax !== "undefined") {
+                typesetNode(element);
+            }
         }
     }
 };
@@ -101,7 +126,6 @@ export const typeset = () => {
 /**
  * Handle content updated events - typeset the new content.
  *
- * @method contentUpdated
  * @param {CustomEvent} event - Custom event with "nodes" indicating the root of the updated nodes.
  */
 export const contentUpdated = (event) => {
@@ -120,10 +144,8 @@ export const contentUpdated = (event) => {
             // We may have been passed a #text node.
             return;
         }
-        const mathjaxElements = node.getElementsByClassName('filter_mathjaxloader_equation');
-        mathjaxElements.forEach((node) => {
-            window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub, node]);
-        });
+        const mathjaxElements = node.querySelectorAll('.filter_mathjaxloader_equation');
+        mathjaxElements.forEach((node) => typesetNode(node));
     });
     window.MathJax.Hub.processSectionDelay = processDelay;
 };
