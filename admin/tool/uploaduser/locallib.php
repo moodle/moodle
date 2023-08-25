@@ -84,6 +84,8 @@ class uu_progress_tracker {
             'suspended' => get_string('suspended', 'auth'),
             'theme' => get_string('theme'),
             'deleted' => get_string('delete'),
+            'userclass' => 'User Class',
+            'usersection' => 'User Section'
         ];
         $this->columns = array_keys($this->headers);
     }
@@ -216,6 +218,7 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
         'type',
     ];
     $specialfieldsregex = "/^(" . implode('|', $acceptedfields) . ")\d+$/";
+    $qubitsaddflds = array("userclass", "usersection");
 
     foreach ($columns as $key=>$unused) {
         $field = $columns[$key];
@@ -237,7 +240,11 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
             // special fields for enrolments
             $newfield = $lcfield;
 
-        } else {
+        } else if(in_array($lcfield, $qubitsaddflds)){
+            // For Qubits Class and Sections
+            $newfield = $lcfield;
+        } 
+        else {
             $cir->close();
             $cir->cleanup();
             throw new \moodle_exception('invalidfieldname', 'error', $returnurl, $field);
@@ -519,4 +526,19 @@ function uu_check_custom_profile_data(&$data, array &$profilefieldvalues = []) {
         }
     }
     return $noerror;
+}
+
+function update_qubits_site_user($qsuser){
+    global $DB;
+    $qparams = ['user_id' => $qsuser->user_id, 
+        'site_id' => $qsuser->site_id,
+        'class_id' => $qsuser->class_id,
+        'section_id' => $qsuser->section_id
+     ];
+    if ($qsiteuser = $DB->get_record('local_qubits_siteusers', $qparams)) {
+        $qsuser->id = $qsiteuser->id;
+        $DB->update_record('local_qubits_siteusers', $qsuser);
+    } else {
+        $DB->insert_record('local_qubits_siteusers', $qsuser);
+    }
 }

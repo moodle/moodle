@@ -164,7 +164,8 @@ function local_qubitssite_create_site($data, $editoroptions = NULL){
     // Check if timecreated is given.
     $data->timecreated  = !empty($data->timecreated) ? $data->timecreated : time();
     $data->timemodified = $data->timecreated;
-    $data->cohortid = local_qubitssite_upsert_cohort($data->name, $data->hostname, "");
+    $cohortidnumber = local_qubitssite_url_title($data->name,null,true,null);
+    $data->cohortid = local_qubitssite_upsert_cohort($data->name, $cohortidnumber, "");
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -180,7 +181,8 @@ function local_qubitssite_update_site($data, $editoroptions = NULL){
 
     $data->hostname = local_qubitssite_parse_url($data->hostname);
     $data->timemodified = time();
-    local_qubitssite_upsert_cohort($data->name, $data->hostname, $data->cohortid);
+    $cohortidnumber = local_qubitssite_url_title($data->name,null,true,null);
+    local_qubitssite_upsert_cohort($data->name, $cohortidnumber, $data->cohortid);
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -217,4 +219,38 @@ function local_qubitssite_upsert_cohort($name, $cohortidnumber, $cohortid){
         cohort_update_cohort($cohort);
     }
     return $cohortid;
+}
+
+function local_qubitssite_url_title($str, $separator = '-', $lowercase = FALSE, $utf = TRUE)
+{
+    if ($separator === 'dash')
+    {
+        $separator = '-';
+    }
+    elseif ($separator === 'underscore')
+    {
+        $separator = '_';
+    }
+
+    $q_separator = preg_quote($separator, '#');
+
+    $trans = array(
+        '&.+?;'			=> '',
+        '[^\w\d _-]'		=> '',
+        '\s+'			=> $separator,
+        '('.$q_separator.')+'	=> $separator
+    );
+
+    $str = strip_tags($str);
+    foreach ($trans as $key => $val)
+    {
+        $str = preg_replace('#'.$key.'#i'.($utf ? 'u' : ''), $val, $str);
+    }
+
+    if ($lowercase === TRUE)
+    {
+        $str = strtolower($str);
+    }
+
+    return trim(trim($str, $separator));
 }

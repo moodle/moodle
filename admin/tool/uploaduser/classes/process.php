@@ -462,6 +462,12 @@ class process {
             return;
         }
 
+        $qsite_user = new \stdClass;
+        $userclsdata = $DB->get_record("local_qubits_classes", array("idnumber" => $user->userclass));
+        $usersecdata = $DB->get_record("local_qubits_sections", array("idnumber" => $user->usersection));
+        $qsite_user->class_id = $userclsdata->id;
+        $qsite_user->section_id = $usersecdata->id;
+        
         $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
         if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
             if (is_array($existinguser) && count($existinguser) !== 1) {
@@ -1042,11 +1048,14 @@ class process {
             }
         }
 
+        $qsite_user->user_id = $user->id;
+
         // Update user interests.
         if (isset($user->interests) && strval($user->interests) !== '') {
             useredit_update_interests($user, preg_split('/\s*,\s*/', $user->interests, -1, PREG_SPLIT_NO_EMPTY));
         }
 
+        $cohort_id = 0;
         // Add to cohort first, it might trigger enrolments indirectly - do NOT create cohorts here!
         foreach ($this->get_file_columns() as $column) {
             if (!preg_match('/^cohort\d+$/', $column)) {
@@ -1084,8 +1093,10 @@ class process {
 
                 if (is_object($this->cohorts[$addcohort])) {
                     $cohort = $this->cohorts[$addcohort];
+                    $cohort_id = $cohort->id;
                     if (!$DB->record_exists('cohort_members', ['cohortid' => $cohort->id, 'userid' => $user->id])) {
                         cohort_add_member($cohort->id, $user->id);
+                        $cohort_id = $cohort->id;
                         // We might add special column later, for now let's abuse enrolments.
                         $this->upt->track('enrolments', get_string('useradded', 'core_cohort', s($cohort->name)), 'info');
                     }
@@ -1095,6 +1106,8 @@ class process {
                 }
             }
         }
+
+        $qcourseids = [];
 
         // Find course enrolments, groups, roles/types and enrol periods
         // this is again a special case, we always do this for any updated or created users.
@@ -1112,6 +1125,7 @@ class process {
 
                     if (array_key_exists($sysrolename, $this->sysrolecache)) {
                         $sysroleid = $this->sysrolecache[$sysrolename]->id;
+                        $qsite_user->role_id = $sysroleid;
                     } else {
                         $this->upt->track('enrolments', get_string('unknownrole', 'error', s($sysrolename)), 'error');
                         continue;
@@ -1194,6 +1208,7 @@ class process {
                 $this->ccache[$shortname]->groups = null;
             }
             $courseid      = $this->ccache[$shortname]->id;
+            $qcourseids[] = $courseid;
             $coursecontext = \context_course::instance($courseid);
             if (!isset($this->manualcache[$courseid])) {
                 $this->manualcache[$courseid] = false;
@@ -1359,7 +1374,13 @@ class process {
                     continue;
                 }
             }
+
         }
+
+        $qsite_user->course_ids = implode(",", $qcourseids);
+        $qsite_user->site_id = $cohort_id;
+        update_qubits_site_user($qsite_user);
+
         if (($invalid = \core_user::validate($user)) !== true) {
             $this->upt->track('status', get_string('invaliduserdata', 'tool_uploaduser', s($user->username)), 'warning');
         }
