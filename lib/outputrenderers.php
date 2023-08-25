@@ -841,7 +841,7 @@ class core_renderer extends renderer_base {
             $output .= $this->box_start($errorclass . ' moodle-has-zindex maintenancewarning m-3 alert');
             $a = new stdClass();
             $a->hour = (int)($timeleft / 3600);
-            $a->min = (int)(($timeleft / 60) % 60);
+            $a->min = (int)(floor($timeleft / 60) % 60);
             $a->sec = (int)($timeleft % 60);
             if ($a->hour > 0) {
                 $output .= get_string('maintenancemodeisscheduledlong', 'admin', $a);
