@@ -173,6 +173,9 @@ class enrol_manual_plugin extends enrol_plugin {
                 }
             }
         }
+
+        $data->notifyall = $data->expirynotify == 2 ? 1 : 0;
+
         return parent::update_instance($instance, $data);
     }
 
