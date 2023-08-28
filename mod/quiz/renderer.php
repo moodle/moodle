@@ -1082,6 +1082,8 @@ class mod_quiz_renderer extends plugin_renderer_base {
         $table->head = array();
         $table->align = array();
         $table->size = array();
+        $table->caption = get_string('summaryofattempts', 'quiz');
+        $table->captionhide = true;
         if ($viewobj->attemptcolumn) {
             $table->head[] = get_string('attemptnumber', 'quiz');
             $table->align[] = 'center';
