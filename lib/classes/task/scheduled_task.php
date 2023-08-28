@@ -384,6 +384,11 @@ abstract class scheduled_task extends task_base {
                     return [];
                 }
                 if ($instep) {
+                    // Normalise range property, account for "5/10".
+                    $insteprange = $range[count($range) - 1];
+                    if (!is_array($insteprange)) {
+                        $range[count($range) - 1] = range($insteprange, $max);
+                    }
                     for ($i = 0; $i < count($range[count($range) - 1]); $i++) {
                         if (($i) % $match != 0) {
                             $range[count($range) - 1][$i] = -1;
