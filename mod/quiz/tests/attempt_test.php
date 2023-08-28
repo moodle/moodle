@@ -17,6 +17,7 @@
 namespace mod_quiz;
 
 use core_question\local\bank\question_version_status;
+use mod_quiz\output\view_page;
 use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
@@ -504,5 +505,57 @@ class attempt_test extends \advanced_testcase {
 
         $this->expectExceptionObject(new \moodle_exception('questiondraftonly', 'mod_quiz', '', $question->name));
         quiz_start_attempt_built_on_last($quba, $newattempt, $attempt);
+    }
+
+    /**
+     * Starting a new attempt and check the summary previous attempts table.
+     *
+     * @covers ::view_table()
+     */
+    public function test_view_table(): void {
+        global $PAGE;
+        $this->resetAfterTest();
+
+        $timenow = time();
+        // Create attempt object.
+        $attempt = $this->create_quiz_and_attempt_with_layout('1,1,0');
+        // Finish attempt.
+        $attempt->process_finish($timenow, false);
+
+        $quiz = $attempt->get_quiz();
+        $context = $attempt->get_context();
+
+        // Prepare view object.
+        $viewobj = new view_page();
+        $viewobj->attemptcolumn = true;
+        $viewobj->markcolumn = true;
+        $viewobj->gradecolumn = true;
+        $viewobj->canreviewmine = true;
+        $viewobj->mygrade = 0.00;
+        $viewobj->feedbackcolumn = false;
+        $viewobj->attempts = $attempt;
+        $viewobj->attemptobjs[] = new quiz_attempt($attempt->get_attempt(),
+            $quiz, $attempt->get_cm(), $attempt->get_course(), false);
+        $viewobj->accessmanager = new access_manager($attempt->get_quizobj(), $timenow,
+            has_capability('mod/quiz:ignoretimelimits', $context, null, false));
+
+        // Render summary previous attempts table.
+        $renderer = $PAGE->get_renderer('mod_quiz');
+        $table = $renderer->view_table($quiz, $context, $viewobj);
+        $captionpattern = '/<caption\b[^>]*>' . get_string('summaryofattempts', 'quiz') . '<\/caption>/';
+
+        // Check caption existed.
+        $this->assertMatchesRegularExpression($captionpattern, $table);
+        // Check column attempt.
+        $this->assertMatchesRegularExpression('/<td\b[^>]*>' . $attempt->get_attempt_number() . '<\/td>/', $table);
+        // Check column state.
+        $this->assertMatchesRegularExpression('/<td\b[^>]*>' . ucfirst($attempt->get_state()) . '.+?<\/td>/', $table);
+        // Check column marks.
+        $this->assertMatchesRegularExpression('/<td\b[^>]* c2.+?' .
+            quiz_format_grade($quiz, $attempt->get_sum_marks()) .'<\/td>/', $table);
+        // Check column grades.
+        $this->assertMatchesRegularExpression('/<td\b[^>]* c2.+?0\.00<\/td>/', $table);
+        // Check column review.
+        $this->assertMatchesRegularExpression('/<td\b[^>]*>.+?Review<\/a><\/td>/', $table);
     }
 }
