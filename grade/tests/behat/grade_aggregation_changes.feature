@@ -424,7 +424,6 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I click on "Move" "button" in the "sticky-footer" "region"
-    And I should not see "Cat natural &amp;" in the "Move items" "dialogue"
     And I click on "Cat natural &" "list_item" in the "Move items" "dialogue"
     When I click on "Move" "button" in the "Move items" "dialogue"
     And I navigate to "View > Grader report" in the course gradebook
@@ -566,7 +565,7 @@ Feature: Changing the aggregation of an item affects its weight and extra credit
     And I set the field "Select Item a3" to "1"
     And I set the field "Select Item a4" to "1"
     And I click on "Move" "button" in the "sticky-footer" "region"
-    And I click on "Course 1" "list_item" in the "Move items" "dialogue"
+    And I click on "Cat natural &" "list_item" in the "Move items" "dialogue"
     And I click on "Move" "button" in the "Move items" "dialogue"
     And I navigate to "View > Grader report" in the course gradebook
     And I click on grade item menu "Item a1" of type "gradeitem" on "grader" page

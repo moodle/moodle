@@ -831,12 +831,12 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
                 'id' => 'select_category_' . $category->id,
                 'name' => $togglegroup,
                 'value' => 1,
-                'classes' => 'itemselect ignoredirty mr-2',
+                'classes' => 'itemselect ignoredirty',
                 'label' => $masterlabel,
                 // Consistent label to prevent the select column from resizing.
                 'selectall' => $masterlabel,
                 'deselectall' => $masterlabel,
-                'labelclasses' => 'accesshide m-0',
+                'labelclasses' => 'accesshide',
             ]);
 
             $mastercheckbox = $OUTPUT->render($mastercheckbox);
