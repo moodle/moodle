@@ -32,9 +32,13 @@
  * @param    string          $name      the name of the user_perference we should allow to be updated by remote calls.
  * @param    integer         $paramtype one of the PARAM_{TYPE} constants, user to clean submitted values before set_user_preference is called.
  * @return   null
+ *
+ * @deprecated since Moodle 4.3
  */
 function user_preference_allow_ajax_update($name, $paramtype) {
     global $USER, $PAGE;
+
+    debugging(__FUNCTION__ . '() is deprecated. Please use the "core_user/repository" module instead.', DEBUG_DEVELOPER);
 
     // Record in the session that this user_preference is allowed to updated remotely.
     $USER->ajax_updatable_user_prefs[$name] = $paramtype;

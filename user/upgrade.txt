@@ -9,6 +9,10 @@ This files describes API changes for code that uses the user API.
 * The `core_user/repository` Javascript module now exports new methods for manipulating user preferences:
   - `[get|set]UserPreference`
   - `[get|set]UserPreferences`
+* The following user preference helpers have been deprecated, please use the `core_user/repository` module instead:
+  - `user_preference_allow_ajax_update`
+  - `M.util.set_user_preference`
+  - `lib/ajax/setuserpref.php`
 * The external `core_user_set_user_preferences` method will now default the `userid` property of each preference to
   that of the current user, if omitted
 * The following previously deprecated methods have been removed and can no longer be used:
