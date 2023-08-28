@@ -1,4 +1,4 @@
-@core
+@core @core_form
 Feature: Read-only forms should work
   In order to use certain forms on large Moodle installations
   As a user
