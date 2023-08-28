@@ -27,6 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/group/lib.php');
+require_once($CFG->dirroot . '/lib/grouplib.php');
 
 /**
  * Group lib testcase.
@@ -437,6 +438,95 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('groupings', array('id' => $grouping2->id, 'courseid' => $course->id)));
         $this->assertTrue($DB->record_exists('groupings', array('id' => $grouping1c2->id, 'courseid' => $course2->id)));
         $this->assertFalse($DB->record_exists('groupings_groups', array('groupid' => $group1->id, 'groupingid' => $grouping1->id)));
+    }
+
+    /**
+     * Test custom field for group.
+     * @covers ::groups_create_group
+     * @covers ::groups_get_group
+     */
+    public function test_groups_with_customfield() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course1 = self::getDataGenerator()->create_course();
+        $course2 = self::getDataGenerator()->create_course();
+
+        $groupfieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'group',
+        ]);
+        $groupcustomfield = self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupcustomfield1',
+            'type' => 'text',
+            'categoryid' => $groupfieldcategory->get('id'),
+        ]);
+        $groupingfieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'grouping',
+        ]);
+        $groupingcustomfield = self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupingcustomfield1',
+            'type' => 'text',
+            'categoryid' => $groupingfieldcategory->get('id'),
+        ]);
+
+        $group1 = self::getDataGenerator()->create_group([
+            'courseid' => $course1->id,
+            'customfield_testgroupcustomfield1' => 'Custom input for group1',
+        ]);
+        $group2 = self::getDataGenerator()->create_group([
+            'courseid' => $course2->id,
+            'customfield_testgroupcustomfield1' => 'Custom input for group2',
+        ]);
+        $grouping1 = self::getDataGenerator()->create_grouping([
+            'courseid' => $course1->id,
+            'customfield_testgroupingcustomfield1' => 'Custom input for grouping1',
+        ]);
+        $grouping2 = self::getDataGenerator()->create_grouping([
+            'courseid' => $course2->id,
+            'customfield_testgroupingcustomfield1' => 'Custom input for grouping2',
+        ]);
+
+        $grouphandler = \core_group\customfield\group_handler::create();
+        $data = $grouphandler->export_instance_data_object($group1->id);
+        $this->assertSame('Custom input for group1', $data->testgroupcustomfield1);
+        $data = $grouphandler->export_instance_data_object($group2->id);
+        $this->assertSame('Custom input for group2', $data->testgroupcustomfield1);
+
+        $groupinghandler = \core_group\customfield\grouping_handler::create();
+        $data = $groupinghandler->export_instance_data_object($grouping1->id);
+        $this->assertSame('Custom input for grouping1', $data->testgroupingcustomfield1);
+        $data = $groupinghandler->export_instance_data_object($grouping2->id);
+        $this->assertSame('Custom input for grouping2', $data->testgroupingcustomfield1);
+
+        $group1->customfield_testgroupcustomfield1 = 'Updated input for group1';
+        $group2->customfield_testgroupcustomfield1 = 'Updated input for group2';
+        groups_update_group($group1);
+        groups_update_group($group2);
+        $data = $grouphandler->export_instance_data_object($group1->id);
+        $this->assertSame('Updated input for group1', $data->testgroupcustomfield1);
+        $data = $grouphandler->export_instance_data_object($group2->id);
+        $this->assertSame('Updated input for group2', $data->testgroupcustomfield1);
+
+        $group = groups_get_group($group1->id, '*', IGNORE_MISSING, true);
+        $this->assertCount(1, $group->customfields);
+        $customfield = reset($group->customfields);
+        $this->assertSame('Updated input for group1', $customfield['value']);
+
+        $grouping1->customfield_testgroupingcustomfield1 = 'Updated input for grouping1';
+        $grouping2->customfield_testgroupingcustomfield1 = 'Updated input for grouping2';
+        groups_update_grouping($grouping1);
+        groups_update_grouping($grouping2);
+        $data = $groupinghandler->export_instance_data_object($grouping1->id);
+        $this->assertSame('Updated input for grouping1', $data->testgroupingcustomfield1);
+        $data = $groupinghandler->export_instance_data_object($grouping2->id);
+        $this->assertSame('Updated input for grouping2', $data->testgroupingcustomfield1);
+
+        $grouping = groups_get_grouping($grouping1->id, '*', IGNORE_MISSING, true);
+        $this->assertCount(1, $grouping->customfields);
+        $customfield = reset($grouping->customfields);
+        $this->assertSame('Updated input for grouping1', $customfield['value']);
     }
 
     public function test_groups_create_autogroups () {

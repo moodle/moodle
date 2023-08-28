@@ -261,6 +261,12 @@ class phpunit_util extends testing_util {
         if (class_exists('\core_cohort\customfield\cohort_handler')) {
             \core_cohort\customfield\cohort_handler::reset_caches();
         }
+        if (class_exists('\core_group\customfield\group_handler')) {
+            \core_group\customfield\group_handler::reset_caches();
+        }
+        if (class_exists('\core_group\customfield\grouping_handler')) {
+            \core_group\customfield\grouping_handler::reset_caches();
+        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {
