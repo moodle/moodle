@@ -4618,13 +4618,13 @@ function complete_user_login($user, array $extrauserinfo = []) {
 }
 
 /**
- * Check a password hash to see if it was hashed using the legacy hash algorithm (md5).
+ * Check a password hash to see if it was hashed using the legacy hash algorithm (bcrypt).
  *
  * @param string $password String to check.
- * @return boolean True if the $password matches the format of an md5 sum.
+ * @return bool True if the $password matches the format of a bcrypt hash.
  */
-function password_is_legacy_hash($password) {
-    return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool {
+    return (bool) preg_match('/^\$2y\$[\d]{2}\$[A-Za-z0-9\.\/]{53}$/', $password);
 }
 
 /**
@@ -4636,73 +4636,59 @@ function password_is_legacy_hash($password) {
  * @param string $password Plain text password.
  * @return bool True if password is valid.
  */
-function validate_internal_user_password($user, $password) {
-    global $CFG;
+function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] string $password): bool {
 
     if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
         // Internal password is not used at all, it can not validate.
         return false;
     }
 
-    // If hash isn't a legacy (md5) hash, validate using the library function.
-    if (!password_is_legacy_hash($user->password)) {
-        return password_verify($password, $user->password);
-    }
+    // First check if the password is valid, that is the password matches the stored hash.
+    $validated = password_verify($password, $user->password);
 
-    // Otherwise we need to check for a legacy (md5) hash instead. If the hash
-    // is valid we can then update it to the new algorithm.
-
-    $sitesalt = isset($CFG->passwordsaltmain) ? $CFG->passwordsaltmain : '';
-    $validated = false;
-
-    if ($user->password === md5($password.$sitesalt)
-            or $user->password === md5($password)
-            or $user->password === md5(addslashes($password).$sitesalt)
-            or $user->password === md5(addslashes($password))) {
-        // Note: we are intentionally using the addslashes() here because we
-        //       need to accept old password hashes of passwords with magic quotes.
-        $validated = true;
-
-    } else {
-        for ($i=1; $i<=20; $i++) { // 20 alternative salts should be enough, right?
-            $alt = 'passwordsaltalt'.$i;
-            if (!empty($CFG->$alt)) {
-                if ($user->password === md5($password.$CFG->$alt) or $user->password === md5(addslashes($password).$CFG->$alt)) {
-                    $validated = true;
-                    break;
-                }
-            }
-        }
-    }
-
-    if ($validated) {
-        // If the password matches the existing md5 hash, update to the
-        // current hash algorithm while we have access to the user's password.
+    // If the password is valid, next check if the hash is legacy (bcrypt).
+    // If it is, we update the hash to the new algorithm.
+    if ($validated && password_is_legacy_hash($user->password)) {
         update_internal_user_password($user, $password);
+        return true;
+    } else if ($validated) {
+        // If the password is valid, but the hash is not legacy, we can just return true.
+        return true;
+    } else {
+        // If the password is not valid, we return false.
+        return false;
     }
-
-    return $validated;
 }
 
 /**
  * Calculate hash for a plain text password.
  *
  * @param string $password Plain text password to be hashed.
- * @param bool $fasthash If true, use a low cost factor when generating the hash
- *                       This is much faster to generate but makes the hash
- *                       less secure. It is used when lots of hashes need to
- *                       be generated quickly.
+ * @param bool $fasthash If true, use a low number of rounds when generating the hash
+ *                       This is faster to generate but makes the hash less secure.
+ *                       It is used when lots of hashes need to be generated quickly.
  * @return string The hashed password.
  *
  * @throws moodle_exception If a problem occurs while generating the hash.
  */
-function hash_internal_user_password($password, $fasthash = false) {
-    global $CFG;
+function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false): string {
+    // Set the cost factor to 5000 for fast hashing, otherwise use default cost.
+    $rounds = $fasthash ? 5000 : 10000;
 
-    // Set the cost factor to 4 for fast hashing, otherwise use default cost.
-    $options = ($fasthash) ? array('cost' => 4) : array();
+    // First generate a cryptographically suitable salt.
+    $randombytes = random_bytes(16);
+    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
 
-    $generatedhash = password_hash($password, PASSWORD_DEFAULT, $options);
+    // Now construct the password string with the salt and number of rounds.
+    // The password string is in the format $algorithm$rounds$salt$hash. ($6 is the SHA512 algorithm).
+    $generatedhash = crypt($password, implode('$', [
+        '',
+        // The SHA512 Algorithm
+        '6',
+        "rounds={$rounds}",
+        $salt,
+        '',
+    ]));
 
     if ($generatedhash === false || $generatedhash === null) {
         throw new moodle_exception('Failed to generate password hash.');
@@ -4732,7 +4718,11 @@ function hash_internal_user_password($password, $fasthash = false) {
  *                       be generated quickly.
  * @return bool Always returns true.
  */
-function update_internal_user_password($user, $password, $fasthash = false) {
+function update_internal_user_password(
+        stdClass $user,
+        #[\SensitiveParameter] string $password,
+        bool $fasthash = false
+): bool {
     global $CFG, $DB;
 
     // Figure out what the hashed password should be.
@@ -4757,7 +4747,7 @@ function update_internal_user_password($user, $password, $fasthash = false) {
     } else if (isset($user->password)) {
         // If verification fails then it means the password has changed.
         $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        $algorithmchanged = password_is_legacy_hash($user->password);
     } else {
         // While creating new user, password in unset in $user object, to avoid
         // saving it with user_create()
