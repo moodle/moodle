@@ -17,15 +17,15 @@
 namespace communication_matrix;
 
 /**
- * Class matrix_rooms_test to test the matrix room data in db.
+ * Tests for the matrix_room class.
  *
  * @package    communication_matrix
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \communication_matrix\matrix_rooms
+ * @coversDefaultClass \communication_matrix\matrix_room
  */
-class matrix_rooms_test extends \advanced_testcase {
+class matrix_room_test extends \advanced_testcase {
 
     /**
      * Test for load_by_processor_id with no record.
@@ -33,7 +33,7 @@ class matrix_rooms_test extends \advanced_testcase {
      * @covers ::load_by_processor_id
      */
     public function test_load_by_processor_id_none(): void {
-        $this->assertNull(matrix_rooms::load_by_processor_id(999999999));
+        $this->assertNull(matrix_room::load_by_processor_id(999999999));
     }
 
     /**
@@ -49,38 +49,38 @@ class matrix_rooms_test extends \advanced_testcase {
     public function test_create_room_record(): void {
         $this->resetAfterTest();
 
-        $room = matrix_rooms::create_room_record(
+        $room = matrix_room::create_room_record(
             processorid: 10000,
             topic: null,
         );
-        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertInstanceOf(matrix_room::class, $room);
         $this->assertEquals(10000, $room->get_processor_id());
         $this->assertNotNull('', $room->get_topic());
         $this->assertEquals('', $room->get_topic());
         $this->assertNull($room->get_room_id());
 
-        $room = matrix_rooms::create_room_record(
+        $room = matrix_room::create_room_record(
             processorid: 12345,
             topic: 'The topic of this room is thusly',
         );
 
-        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertInstanceOf(matrix_room::class, $room);
         $this->assertEquals(12345, $room->get_processor_id());
         $this->assertEquals('The topic of this room is thusly', $room->get_topic());
         $this->assertNull($room->get_room_id());
 
-        $room = matrix_rooms::create_room_record(
+        $room = matrix_room::create_room_record(
             processorid: 54321,
             topic: 'The topic of this room is thusly',
             roomid: 'This is a roomid',
         );
 
-        $this->assertInstanceOf(matrix_rooms::class, $room);
+        $this->assertInstanceOf(matrix_room::class, $room);
         $this->assertEquals(54321, $room->get_processor_id());
         $this->assertEquals('The topic of this room is thusly', $room->get_topic());
         $this->assertEquals('This is a roomid', $room->get_room_id());
 
-        $reloadedroom = matrix_rooms::load_by_processor_id(54321);
+        $reloadedroom = matrix_room::load_by_processor_id(54321);
         $this->assertEquals(54321, $reloadedroom->get_processor_id());
         $this->assertEquals('The topic of this room is thusly', $reloadedroom->get_topic());
         $this->assertEquals('This is a roomid', $reloadedroom->get_room_id());
@@ -95,7 +95,7 @@ class matrix_rooms_test extends \advanced_testcase {
     public function test_update_room_record(): void {
         $this->resetAfterTest();
 
-        $room = matrix_rooms::create_room_record(
+        $room = matrix_room::create_room_record(
             processorid: 12345,
             topic: 'The topic of this room is that',
         );
@@ -130,13 +130,13 @@ class matrix_rooms_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $room = matrix_rooms::create_room_record(
+        $room = matrix_room::create_room_record(
             processorid: 12345,
             topic: 'The topic of this room is that',
         );
-        $this->assertCount(1, $DB->get_records('matrix_rooms'));
+        $this->assertCount(1, $DB->get_records('matrix_room'));
 
         $room->delete_room_record();
-        $this->assertCount(0, $DB->get_records('matrix_rooms'));
+        $this->assertCount(0, $DB->get_records('matrix_room'));
     }
 }
