@@ -115,6 +115,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  @include breakpoint(xs) {
+    margin: 0;
+  }
 }
 [role="button"]:focus {
   box-shadow: none !important;
@@ -191,7 +194,7 @@
       darken($colorbgcard, 10)
     );
     color: darken($colorbgcard, 45);
-    padding: 20px 20px 20px 10px;
+    padding: 20px 20px 30px 10px;
     font-family: "Acme", sans-serif;
 
     &:hover {
@@ -240,6 +243,7 @@
   }
   .card-text {
     font-size: $fontsize20;
+    margin-bottom: 0;
   }
   .card-text-size {
     @include breakpoint(xs) {
@@ -1095,4 +1099,7 @@ a:not([class]):focus,
 }
 .card-body .card-body-overlay .w-30 {
   width: 30%;
+}
+.pagetitle-left-alignment .breadcrumb-item + .breadcrumb-item {
+  padding: 0;
 }
