@@ -457,24 +457,19 @@ class process {
      */
     public function process_line(array $line) {
         global $DB, $CFG, $SESSION;
-
+//echo "<pre>"; print_r($line); exit;
         if (!$user = $this->prepare_user_record($line)) {
             return;
         }
 
         $qsite_user = new \stdClass;
-        $usersysrole = '';
+        $usersysrole = isset($user->sysrole1) ? $user->sysrole1 : '';
+        $usercohort = isset($user->cohort1) ? $user->cohort1 : '';
         $aclasses = [];
         $asections = [];
+        $aclasses1 = [];
+        $asections1 = [];
         $aclass_sections = [];
-        foreach ($this->get_file_columns() as $column) {
-            if (preg_match('/^sysrole\d+$/', $column)) {
-                $i = substr($column, 7);
-                if (!empty($user->$column)) {
-                    $usersysrole = $user->$column;
-                }
-            }
-        }
 
          // Find Userclass
          foreach ($this->get_file_columns() as $column) {
@@ -492,6 +487,7 @@ class process {
                 $userclsdata = $DB->get_record("local_qubits_classes", array("idnumber" => $userclass));
                 if($userclsdata){
                     $aclasses[] = $userclsdata->id;
+                    $aclasses1[] = $userclass;
                 } else {
                     $this->upt->track('status', 'userclass'.$i.' is not in Database', 'error');
                     $this->userserrors++;
@@ -516,6 +512,7 @@ class process {
                 $usersecdata = $DB->get_record("local_qubits_sections", array("idnumber" => $usersection));
                 if($usersecdata){
                     $asections[] = $usersecdata->id;
+                    $asections1[] = $usersection;
                 } else {
                     $this->upt->track('status', 'usersection'.$i.' is not in Database', 'error');
                     $this->userserrors++;
@@ -535,7 +532,41 @@ class process {
         }
 
         $qsite_user->class_sections = implode(",", $aclass_sections);
-        
+
+        $acourses = [];
+
+        foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^course\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 6);
+            if (!empty($user->{'course'.$i})) {
+                $acourses[] = $user->{'course'.$i};
+                unset($user->{'course'.$i});
+            }
+        }
+
+        $nflcolumns = [];
+        if(!empty($usersysrole) && !empty($usercohort)){
+           $ccnt = 1;
+           foreach($acourses as $ccode){
+               foreach($aclasses1 as $k => $cv){
+                   $csec = $asections1[$k];
+                   $user->{'course'.$ccnt} = $ccode;
+                   $user->{'role'.$ccnt} = $usersysrole;
+                   $user->{'group'.$ccnt} = $usercohort.$ccode.$cv.$csec;
+                   $nflcolumns[] = 'course'.$ccnt;
+                   $nflcolumns[] = 'role'.$ccnt;
+                   $nflcolumns[] = 'group'.$ccnt;
+                   $ccnt++;
+               }
+           }
+        }
+
+        $oldaflcolumns = $this->filecolumns;
+        $updflcolumns = array_unique(array_merge($oldaflcolumns, $nflcolumns), SORT_REGULAR);
+        $this->filecolumns = $updflcolumns;
+
         $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
         if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
             if (is_array($existinguser) && count($existinguser) !== 1) {
@@ -1445,8 +1476,12 @@ class process {
 
         }
 
+        $qcourseids = array_unique($qcourseids, SORT_REGULAR);
         $qsite_user->course_ids = implode(",", $qcourseids);
         $qsite_user->site_id = $cohort_id;
+        $qsite_user->grade_id = reset($aclasses);
+        $qsite_user->section_ids = implode(",", $asections);
+
         update_qubits_site_user($qsite_user);
 
         if (($invalid = \core_user::validate($user)) !== true) {

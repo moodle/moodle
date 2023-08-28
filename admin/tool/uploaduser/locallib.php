@@ -527,7 +527,8 @@ function uu_check_custom_profile_data(&$data, array &$profilefieldvalues = []) {
 function update_qubits_site_user($qsuser){
     global $DB;
     $qparams = ['user_id' => $qsuser->user_id, 
-        'site_id' => $qsuser->site_id
+        'site_id' => $qsuser->site_id,
+        'grade_id' => $qsuser->grade_id
      ];
     if ($qsiteuser = $DB->get_record('local_qubits_siteusers', $qparams)) {
         $qsuser->id = $qsiteuser->id;

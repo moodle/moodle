@@ -51,6 +51,8 @@
         <FIELD NAME="role_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="course_ids" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="class_sections" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="grade_id" TYPE="char" LENGTH="120" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="section_ids" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
