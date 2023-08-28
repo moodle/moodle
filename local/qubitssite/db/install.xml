@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/qubitssite/db" VERSION="20230824" COMMENT="XMLDB file for Moodle local/qubitssite"
+<XMLDB PATH="local/qubitssite/db" VERSION="20230828" COMMENT="XMLDB file for Moodle local/qubitssite"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -47,11 +47,10 @@
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="site_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false" COMMENT="Site ID"/>
-        <FIELD NAME="class_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
-        <FIELD NAME="section_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="user_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="role_id" TYPE="int" LENGTH="12" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="course_ids" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="class_sections" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

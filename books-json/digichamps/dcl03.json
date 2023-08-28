@@ -12,6 +12,147 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL03-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL03-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DigiChamps_L03_Teacher's Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Computing System",
+                  "uid": "DCL03-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit1&pdf=V2_DC L3 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Using the Computer",
+                  "uid": "DCL03-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit1&pdf=V2_DC L3 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 Internet",
+                  "uid": "DCL03-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit2&pdf=V2_DC L3 Sprint 2.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.2 Emailing",
+                  "uid": "DCL03-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit2&pdf=V2_DC L3 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 3D Printing",
+                  "uid": "DCL03-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit3&pdf=V2_DC L3 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Basic 3D Shapes in Tinkercad",
+                  "uid": "DCL03-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit3&pdf=V2_DC L3 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Views in Tinkercad",
+                  "uid": "DCL03-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit3&pdf=V2_DC L3 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.4 Basic Control",
+                  "uid": "DCL03-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit3&pdf=V2_DC L3 Sprint 3.4_Basic Control",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 Smart Art",
+                  "uid": "DCL03-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit4&pdf=V2_DC L3 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 SmartArt To Text And Vice Versa",
+                  "uid": "DCL03-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit4&pdf=V2_DC L3 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 SmartArt Process",
+                  "uid": "DCL03-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit4&pdf=V2_DC L3 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 unnumbered Lists",
+                  "uid": "DCL03-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit5&pdf=V2_DC L3 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Numbered Lists",
+                  "uid": "DCL03-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit5&pdf=V2_DC L3 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Icons And Styles",
+                  "uid": "DCL03-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit5&pdf=V2_DC L3 Sprint 5.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.4 3D Models And SmartART",
+                  "uid": "DCL03-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit5&pdf=V2_DC L3 Sprint 5.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.1 Plotting Data",
+                  "uid": "DCL03-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit6&pdf=V2_DC L3 Sprint 6.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.2 Data says something",
+                  "uid": "DCL03-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit6&pdf=V2_DC L3 Sprint 6.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.3 Are these related",
+                  "uid": "DCL03-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit6&pdf=V2_DC L3 Sprint 6.3",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL03/DCL03-TP1-000.mdx",
           "title": "Unit 1: Computing Devices",
           "type": "topic",

@@ -463,10 +463,78 @@ class process {
         }
 
         $qsite_user = new \stdClass;
-        $userclsdata = $DB->get_record("local_qubits_classes", array("idnumber" => $user->userclass));
-        $usersecdata = $DB->get_record("local_qubits_sections", array("idnumber" => $user->usersection));
-        $qsite_user->class_id = $userclsdata->id;
-        $qsite_user->section_id = $usersecdata->id;
+        $usersysrole = '';
+        $aclasses = [];
+        $asections = [];
+        $aclass_sections = [];
+        foreach ($this->get_file_columns() as $column) {
+            if (preg_match('/^sysrole\d+$/', $column)) {
+                $i = substr($column, 7);
+                if (!empty($user->$column)) {
+                    $usersysrole = $user->$column;
+                }
+            }
+        }
+
+         // Find Userclass
+         foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^userclass\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 9);
+            $userclass = $user->$column;
+            if($usersysrole=="student" && $i > 1 && !empty($userclass)){
+                $this->upt->track('status', 'Student can\'t assign more than one class', 'error');
+                $this->userserrors++;
+                return;
+            }
+            if(!empty($userclass)){
+                $userclsdata = $DB->get_record("local_qubits_classes", array("idnumber" => $userclass));
+                if($userclsdata){
+                    $aclasses[] = $userclsdata->id;
+                } else {
+                    $this->upt->track('status', 'userclass'.$i.' is not in Database', 'error');
+                    $this->userserrors++;
+                    return;
+                }
+            }
+        }
+
+        // Find Usersections
+        foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^usersection\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 11);
+            $usersection = $user->$column;
+            if($usersysrole=="student" && $i > 1 && !empty($usersection)){
+                $this->upt->track('status', 'Student can\'t assign more than one section', 'error');
+                $this->userserrors++;
+                return;
+            }
+            if(!empty($usersection)){
+                $usersecdata = $DB->get_record("local_qubits_sections", array("idnumber" => $usersection));
+                if($usersecdata){
+                    $asections[] = $usersecdata->id;
+                } else {
+                    $this->upt->track('status', 'usersection'.$i.' is not in Database', 'error');
+                    $this->userserrors++;
+                    return;
+                }
+            }
+        }
+        
+        if(count($aclasses) != count($asections)){
+            $this->upt->track('status', 'User classes and sections counts are mismatching', 'error');
+            $this->userserrors++;
+            return;
+        }
+
+        foreach($aclasses as $i => $v){
+            $aclass_sections[] = $aclasses[$i].'-'.$asections[$i];
+        }
+
+        $qsite_user->class_sections = implode(",", $aclass_sections);
         
         $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
         if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {

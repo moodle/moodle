@@ -12,6 +12,182 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL08-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL08-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DigiChamps_L08_Teacher's Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Software Updates",
+                  "uid": "DCL08-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit1&pdf=V2_DC L8 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Version History of Cloud Documents",
+                  "uid": "DCL08-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit1&pdf=V2_DC L8 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 Cryptography",
+                  "uid": "DCL08-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit2&pdf=V2_DC L8 Sprint 2.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.2 Social Engineering",
+                  "uid": "DCL08-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit2&pdf=V2_DC L8 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.3 Social Media and Digital Footprint",
+                  "uid": "DCL08-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit2&pdf=V2_DC L8 Sprint 2.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.4 Active and Passive Data Collection",
+                  "uid": "DCL08-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit2&pdf=V2_DC L8 Sprint 2.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Starting with HTML",
+                  "uid": "DCL08-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit3&pdf=DC L8 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Tags in HTML",
+                  "uid": "DCL08-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit3&pdf=DC L8 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Formatting in HTML",
+                  "uid": "DCL08-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit3&pdf=DC L8 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.4 Attributes and Grouping",
+                  "uid": "DCL08-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit3&pdf=DC L8 Sprint 3.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 Images in HTML",
+                  "uid": "DCL08-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit4&pdf=DC L8 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 Tables in HTML",
+                  "uid": "DCL08-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit4&pdf=DC L8 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 Lists in HTML",
+                  "uid": "DCL08-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit4&pdf=DC L8 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.4 Links in HTML",
+                  "uid": "DCL08-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit4&pdf=DC L8 Sprint 4.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Presentation",
+                  "uid": "DCL08-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit5&pdf=V2_DC L8 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Collaboration and Review",
+                  "uid": "DCL08-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit5&pdf=V2_DC L8 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.1 Inserting Special Character",
+                  "uid": "DCL08-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit6&pdf=DC L8 Sprint 6.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.2 Reviewing Documents",
+                  "uid": "DCL08-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit6&pdf=DC L8 Sprint 6.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.3 Collaboration",
+                  "uid": "DCL08-TP0-CHDRN20",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit6&pdf=DC L8 Sprint 6.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.1 Bit in Qubit",
+                  "uid": "DCL08-TP0-CHDRN21",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit7&pdf=DC L8 Sprint 7.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.2 Working with Data",
+                  "uid": "DCL08-TP0-CHDRN22",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit7&pdf=DC L8 Sprint 7.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.3 Data Cleaning",
+                  "uid": "DCL08-TP0-CHDRN23",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit7&pdf=DC L8 Sprint 7.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.4 Computational Models",
+                  "uid": "DCL08-TP0-CHDRN24",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level8&unit=Unit7&pdf=DC L8 Sprint 7.4",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL08/DCL08-TP1-000.mdx",
           "title": "Unit 1: Computer and Us",
           "type": "topic",

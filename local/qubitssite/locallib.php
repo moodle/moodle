@@ -23,6 +23,9 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
             $orderby = ($sortdir == 0) ? "order by s.hostname asc" : "order by s.hostname desc";
             break;
         case 2:
+            $orderby = ($sortdir == 0) ? "order by s.name asc" : "order by s.name desc";
+            break;
+        case 3:
             $orderby = ($sortdir == 0) ? "order by s.status asc" : "order by s.status desc";
             break;
         default:
@@ -41,6 +44,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
     $columns = array(
         "name",
         "hostname",
+        "cohortid",
         "status",
         "action"
     );
@@ -48,7 +52,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
     $i = 0;
     $columns1 = array();
     foreach ($columns as $column) {
-        if ($sortcolumn == 3) {
+        if ($sortcolumn == 4) {
             $columns1[] = $column;
         } else {
             if ($i == $sortcolumn) {
@@ -60,7 +64,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
                 $filters['sortdir'] = 0;
             }
             $filters['sortcolumn'] = $i;
-            if ($i == 3) {
+            if ($i == 4) {
                 $columns1[] = $column;
             } else {
                 $columns1[] = html_writer::link(new moodle_url($CFG->wwwroot . '/local/qubitssite/index.php', $filters), $column . $columnicon);
@@ -76,8 +80,8 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
 
     $tableheader = $columns1;
     $table->head = $tableheader;
-    $table->size = array('20%', '55%', '7%', '13%');
-    $table->align = array('left', 'left', 'center', 'center');
+    $table->size = array('20%', '35%', '20%', '7%', '13%');
+    $table->align = array('left', 'left', 'center' , 'center', 'center');
     $table->width = '90%';
     $table->id = 'sitelisting';
     if (count($sites) > 0) {
@@ -131,6 +135,7 @@ function local_qubits_render_site_data($sites, $filters) {
         $row = array(
             $site->name,
             $site->hostname,
+            local_qubitssite_url_title($site->name,null,true,null),
             $publish,
             implode(' ', $buttons)
         );

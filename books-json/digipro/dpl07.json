@@ -12,6 +12,161 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DPL07-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DPL07-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&pdf=DigiPro Level 7 Teacher Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Starting up with Python",
+                  "uid": "DPL07-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit1&pdf=DP L7 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 My first program",
+                  "uid": "DPL07-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit1&pdf=DP L7 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.3 Variables",
+                  "uid": "DPL07-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit1&pdf=DP L7 Sprint 1.3",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.4 Tokens of Python",
+                  "uid": "DPL07-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit1&pdf=DP L7 Sprint 1.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.1 Data Type and Conversion",
+                  "uid": "DPL07-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit2&pdf=DP L7 Sprint 2.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.2 Arithmetic operations on numbers",
+                  "uid": "DPL07-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit2&pdf=DP L7 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.3 Arithmetic operations using Python",
+                  "uid": "DPL07-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit2&pdf=DP L7 Sprint 2.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.4 More on Arithmetic Operations",
+                  "uid": "DPL07-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit2&pdf=DP L7 Sprint 2.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Strings",
+                  "uid": "DPL07-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit3&pdf=DP L7 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Working with Strings",
+                  "uid": "DPL07-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit3&pdf=DP L7 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Lists",
+                  "uid": "DPL07-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit3&pdf=DP L7 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.4 Draw Shapes",
+                  "uid": "DPL07-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit3&pdf=DP L7 Sprint 3.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 More on Python Operators",
+                  "uid": "DPL07-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit4&pdf=DP L7 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 If control structure",
+                  "uid": "DPL07-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit4&pdf=DP L7 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 For Loop in Python",
+                  "uid": "DPL07-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit4&pdf=DP L7 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.4 While Loop in Python",
+                  "uid": "DPL07-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit4&pdf=DP L7 Sprint 4.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Introduction to Web APIs",
+                  "uid": "DPL07-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit5&pdf=DP L7 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Camera and Database",
+                  "uid": "DPL07-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit5&pdf=DP L7 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Age and Gender detection app",
+                  "uid": "DPL07-TP0-CHDRN20",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit5&pdf=DP L7 Sprint 5.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.4 Emotion Detection app",
+                  "uid": "DPL07-TP0-CHDRN21",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit5&pdf=DP L7 Sprint 5.4",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DPL07/DPL07-TP1-000.mdx",
           "title": "Unit 1: Introduction to Python",
           "type": "topic",

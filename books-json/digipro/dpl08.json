@@ -12,6 +12,119 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DPL08-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DPL08-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&pdf=DigiPro Level 8 Teacher Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Introduction to Python",
+                  "uid": "DPL08-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit1&pdf=DP L8 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Variables and Input",
+                  "uid": "DPL08-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit1&pdf=DP L8 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.3 Operators In Python",
+                  "uid": "DPL08-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit1&pdf=DP L8 Sprint 1.3",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 If and If-else",
+                  "uid": "DPL08-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit2&pdf=DP L8 Sprint 2.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.2 If-elif-else",
+                  "uid": "DPL08-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit2&pdf=DP L8 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Introduction to Strings",
+                  "uid": "DPL08-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit3&pdf=DP L8 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Lists",
+                  "uid": "DPL08-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit3&pdf=DP L8 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Debugging in Python",
+                  "uid": "DPL08-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit3&pdf=DP L8 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 For Loop",
+                  "uid": "DPL08-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit4&pdf=L8 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 While Loop",
+                  "uid": "DPL08-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit3&pdf=DP L8 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 User-Defined Functions",
+                  "uid": "DPL08-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level7&unit=Unit4&pdf=_DP L8 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Speech Recognition",
+                  "uid": "DPL08-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit5&pdf=DP L8 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Functions In Thunkable",
+                  "uid": "DPL08-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit5&pdf=DP L8 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Image Recognition",
+                  "uid": "DPL08-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level8&unit=Unit5&pdf=DP L8 Sprint 5.3",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DPL08/DPL08-TP1-000.mdx",
           "title": "Unit 1: Basics Of Python",
           "type": "topic",
