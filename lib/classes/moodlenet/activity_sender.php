@@ -123,8 +123,6 @@ class activity_sender extends resource_sender {
             $responsebody = json_decode($response->getBody());
             $resourceurl = $responsebody->homepage ?? '';
 
-            // TODO: Store consumable information about completed share - to be completed in MDL-77296.
-
             // Delete the generated file now it is no longer required.
             // (It has either been sent, or failed - retries not currently supported).
             $filedata->delete();

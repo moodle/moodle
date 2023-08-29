@@ -3501,5 +3501,32 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023082200.04);
     }
 
+    if ($oldversion < 2023082600.01) {
+
+        // Define table moodlenet_share_progress to be created.
+        $table = new xmldb_table('moodlenet_share_progress');
+
+        // Adding fields to table moodlenet_share_progress.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('resourceurl', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+
+        // Adding keys to table moodlenet_share_progress.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for moodlenet_share_progress.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.01);
+    }
+
     return true;
 }
