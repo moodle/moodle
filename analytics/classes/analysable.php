@@ -38,7 +38,7 @@ interface analysable {
     /**
      * Max timestamp.
      */
-    const MAX_TIME = 9999999999;
+    const MAX_TIME = PHP_INT_MAX;
 
     /**
      * The analysable unique identifier in the site.
