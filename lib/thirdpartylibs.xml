@@ -698,4 +698,11 @@ All rights reserved.</copyright>
     <license>MIT</license>
     <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
   </library>
+  <library>
+      <location>webauthn/src</location>
+      <name>WebAuthn</name>
+      <version>2.0.1</version>
+      <license>MIT</license>
+      <repository>https://github.com/lbuchs/WebAuthn</repository>
+  </library>
 </libraries>
