@@ -87,8 +87,9 @@ class files_test extends core_reportbuilder_testcase {
      * Test datasource columns that aren't added by default
      */
     public function test_datasource_non_default_columns(): void {
+        global $OUTPUT;
+
         $this->resetAfterTest();
-        $this->setAdminUser();
 
         $category = $this->getDataGenerator()->create_category();
         $categorycontext = coursecat::instance($category->id);
@@ -115,6 +116,7 @@ class files_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'context:path']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'context:parent']);
 
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:icon']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:path']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:author']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:license']);
@@ -137,6 +139,8 @@ class files_test extends core_reportbuilder_testcase {
                 'Course',
                 $coursecontext->path,
                 $categorycontext->get_context_name(),
+                '<img class="icon iconsize-medium" alt="Directory" title="Directory" src="' .
+                    $OUTPUT->image_url('f/folder')->out() . '" />',
                 '/',
                 null,
                 '',
@@ -151,6 +155,8 @@ class files_test extends core_reportbuilder_testcase {
                 'Course',
                 $coursecontext->path,
                 $categorycontext->get_context_name(),
+                '<img class="icon iconsize-medium" alt="Text file" title="Text file" src="' .
+                    $OUTPUT->image_url('f/text')->out() . '" />',
                 '/',
                 null,
                 '',
@@ -165,6 +171,8 @@ class files_test extends core_reportbuilder_testcase {
                 'User',
                 $usercontext->path,
                 'System',
+                '<img class="icon iconsize-medium" alt="Directory" title="Directory" src="' .
+                    $OUTPUT->image_url('f/folder')->out() . '" />',
                 '/',
                 null,
                 '',
@@ -179,6 +187,8 @@ class files_test extends core_reportbuilder_testcase {
                 'User',
                 $usercontext->path,
                 'System',
+                '<img class="icon iconsize-medium" alt="Text file" title="Text file" src="' .
+                    $OUTPUT->image_url('f/text')->out() . '" />',
                 '/',
                 null,
                 '',
@@ -212,6 +222,14 @@ class files_test extends core_reportbuilder_testcase {
                 'file:size_operator' => number::GREATER_THAN,
                 'file:size_value1' => 2,
             ], 2],
+            'Filter type' => ['file:type', [
+                'file:type_operator' => select::EQUAL_TO,
+                'file:type_value' => 'text/plain',
+            ], 2],
+            'Filter type (non match)' => ['file:type', [
+                'file:type_operator' => select::EQUAL_TO,
+                'file:type_value' => 'image/png',
+            ], 0],
             'Filter license' => ['file:license', [
                 'file:license_operator' => select::EQUAL_TO,
                 'file:license_value' => 'unknown',
