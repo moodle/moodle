@@ -1253,6 +1253,10 @@ abstract class restore_dbops {
                 } else if ($userauth->isinternal and $userauth->canresetpwd) {
                     $user->password = 'restored';
                 }
+            } else if (self::password_should_be_discarded($user->password)) {
+                // Password is not empty and it is MD5 hashed. Generate a new random password for the user.
+                // We don't want MD5 hashes in the database and users won't be able to log in with the associated password anyway.
+                $user->password = hash_internal_user_password(base64_encode(random_bytes(24)));
             }
 
             // Creating new user, we must reset the policyagreed always
@@ -1903,6 +1907,17 @@ abstract class restore_dbops {
      */
     public static function delete_course_content($courseid, array $options = null) {
         return remove_course_contents($courseid, false, $options);
+    }
+
+    /**
+     * Checks if password stored in backup is a MD5 hash.
+     * Returns true if it is, false otherwise.
+     *
+     * @param string $password The password to check.
+     * @return bool
+     */
+    private static function password_should_be_discarded(#[\SensitiveParameter] string $password): bool {
+        return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
     }
 }
 
