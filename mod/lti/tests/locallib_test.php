@@ -631,36 +631,33 @@ class locallib_test extends mod_lti_testcase {
     public function test_lti_get_tools_by_domain() {
         $this->resetAfterTest();
 
-        $this->setAdminUser();
+        /** @var \mod_lti_generator $ltigenerator */
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
 
         // Create a tool type with good domain.
-        $type = new \stdClass();
-        $data = new \stdClass();
-        $data->lti_contentitem = true;
-        $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool 1";
-        $type->description = "Good example description";
-        $type->tooldomain = 'example.com';
-        $type->baseurl = 'https://example.com/i/am/?where=here';
-        $type->course = SITEID;
-        $typeid = lti_add_type($type, $data);
+        $ltigenerator->create_tool_types([
+            'name' => 'Test tool 1',
+            'description' => 'Good example description',
+            'tooldomain' => 'example.com',
+            'baseurl' => 'https://example.com/i/am/?where=here',
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
 
         // Create a tool type with bad domain.
-        $type = new \stdClass();
-        $data = new \stdClass();
-        $data->lti_contentitem = true;
-        $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool 2";
-        $type->description = "Bad example description";
-        $type->tooldomain = 'badexample.com';
-        $type->baseurl = 'https://badexample.com/i/am/?where=here';
-        $type->course = SITEID;
-        $typeid = lti_add_type($type, $data);
+        $ltigenerator->create_tool_types([
+            'name' => 'Test tool 2',
+            'description' => 'Bad example description',
+            'tooldomain' => 'badexample.com',
+            'baseurl' => 'https://badexample.com/i/am/?where=here',
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
 
-        $records = lti_get_tools_by_domain('example.com', LTI_TOOL_STATE_CONFIGURED, null);
-        foreach ($records as $record) {
-            $this->assertEquals('example.com', $record->tooldomain);
-        }
+        $records = lti_get_tools_by_domain('example.com', LTI_TOOL_STATE_CONFIGURED);
+        $this->assertCount(1, $records);
+        $this->assertEmpty(array_diff(
+            ['https://example.com/i/am/?where=here'],
+            array_column($records, 'baseurl')
+        ));
     }
 
     /**
@@ -671,45 +668,64 @@ class locallib_test extends mod_lti_testcase {
     public function test_lti_get_tools_by_domain_restrict_types_category() {
         $this->resetAfterTest();
 
-        $this->setAdminUser();
-
         $coursecat1 = $this->getDataGenerator()->create_category();
         $coursecat2 = $this->getDataGenerator()->create_category();
 
         $course1 = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
         $course2 = $this->getDataGenerator()->create_course(['category' => $coursecat2->id]);
 
+        /** @var \mod_lti_generator $ltigenerator */
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+
         // Create a tool type with domain restricting to a category1.
-        $type = new \stdClass();
-        $data = new \stdClass();
-        $data->lti_contentitem = true;
-        $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool 1";
-        $type->description = "Good example description";
-        $type->tooldomain = 'exampleone.com';
-        $type->baseurl = 'https://exampleone.com/i/am/?where=here';
-        $type->course = $course1->id;
-        $typeid = lti_add_type($type, $data);
-        $typecategoryid = lti_type_add_categories($typeid, $coursecat1->id);
+        $ltigenerator->create_tool_types([
+            'name' => 'Test tool 1',
+            'description' => 'Good example description',
+            'tooldomain' => 'exampleone.com',
+            'baseurl' => 'https://exampleone.com/tool/1',
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat1->id
+        ]);
+
+        // Create another tool type using the same domain, restricted to category2.
+        $ltigenerator->create_tool_types([
+            'name' => 'Test tool 1',
+            'description' => 'Good example description',
+            'tooldomain' => 'exampleone.com',
+            'baseurl' => 'https://exampleone.com/tool/2',
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat2->id
+        ]);
 
         // Create a tool type with domain restricting to a category2.
-        $type = new \stdClass();
-        $data = new \stdClass();
-        $data->lti_contentitem = true;
-        $type->state = LTI_TOOL_STATE_CONFIGURED;
-        $type->name = "Test tool 2";
-        $type->description = "Good example description";
-        $type->tooldomain = 'exampletwo.com';
-        $type->baseurl = 'https://exampletwo.com/i/am/?where=here';
-        $type->course = $course2->id;
-        $typeid = lti_add_type($type, $data);
-        $typecategoryid = lti_type_add_categories($typeid, $coursecat2->id);
+        $ltigenerator->create_tool_types([
+            'name' => 'Test tool 2',
+            'description' => 'Good example description',
+            'tooldomain' => 'exampletwo.com',
+            'baseurl' => 'https://exampletwo.com/tool/3',
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat2->id
+        ]);
 
+        // Get tool types for domain 'exampleone' in course 1 and verify only the one result under course category 1 is included.
         $records = lti_get_tools_by_domain('exampleone.com', LTI_TOOL_STATE_CONFIGURED, $course1->id);
-        foreach ($records as $record) {
-            $this->assertEquals('exampleone.com', $record->tooldomain);
-        }
+        $this->assertCount(1, $records);
+        $this->assertEmpty(array_diff(
+            ['https://exampleone.com/tool/1'],
+            array_column($records, 'baseurl')
+        ));
 
+        // Get tool types for domain 'exampleone' in course 2 and verify only the one result under course category 2 is included.
+        $records = lti_get_tools_by_domain('exampleone.com', LTI_TOOL_STATE_CONFIGURED, $course2->id);
+        $this->assertCount(1, $records);
+        $this->assertEmpty(array_diff(
+            ['https://exampleone.com/tool/2'],
+            array_column($records, 'baseurl')
+        ));
+
+        // Get tool types for domain 'exampletwo' in course 1 and verify that no results are found.
+        $records = lti_get_tools_by_domain('exampletwo.com', LTI_TOOL_STATE_CONFIGURED, $course1->id);
+        $this->assertCount(0, $records);
     }
 
     /**
