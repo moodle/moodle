@@ -6,7 +6,6 @@
                 {{/usermenu}}
             </li>
              <li class="nav-item d-block d-sm-none">
-
                 <a href="{{globals.config.wwwroot}}/message/output/popup/notifications.php" class="nav-hover">
                     <i class="qicon-notifications icon"></i>
                     <span class="link_name">Notifications</span>
@@ -15,8 +14,9 @@
             <div class="hr-line mb-5 d-block d-sm-none"></div>
             <li class="nav-item">
                 <div class="nav-hover" data-name="mycourses">
-                    <i class="qicon-my-courses icon sbicn"></i>
-                    <a data-url="{{globals.config.wwwroot}}/my/courses.php" href="javascript:;" class="link_name amlitms" data-name="mycourses">My Courses</a>
+                    <a data-url="{{globals.config.wwwroot}}/my/courses.php" href="javascript:;" class="amlitms" data-name="mycourses">
+                     <i class="qicon-my-courses icon sbicn"></i>
+                     <span class="link_name">My Courses</span></a>
                     <i class="qicon-chevron-down-thin arrow icon"></i>
                 </div>
                 <ul class="sub-menu">
@@ -24,35 +24,19 @@
                     <li><a href="{{{url}}}" class="lftcitm" data-id="{{id}}">{{ categoryname }} - {{ level }}</a></li>
                     {{/myenrolcourses}}
                 </ul>
-            </li>
-
-            <li class="nav-item">
-
-                <a href="{{globals.config.wwwroot}}/my" class="nav-hover" data-name="dashboard">
-                    <span class="qicon-dashboard icon"></span>
-                    <span class="link_name">Dashboard</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="javascript:;">
-                    <span class="qicon-assessment icon"></span>
-                    <span class="link_name">Assesments</span>
-                </a>
-            </li>
-			
+            </li>	
             <li class="nav-item">
                 <div class="nav-hover">
-                    <i class="qicon-my-courses icon sbicn"></i>
+                    <i class="qicon-code-editor icon sbicn"></i>
                     <a href="javascript:;" data-url="" class="link_name amlitms" id="extrnledtrs">Cloud IDE</a>
                     <i class="qicon-chevron-down-thin arrow icon"></i>
                 </div>
                 <ul class="sub-menu">
-                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=python" id="lnkpython">Python</a></li>
-                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=javascript" id="lnkjs">JavaScript</a></li>
-                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=sql" id="lnksql">SQL</a></li>
-                    <li><a href="{{globals.config.wwwroot}}/third_party/scratch" id="lnkscratch">Scratch</a></li>
-                    <li><a href="{{globals.config.wwwroot}}/third_party/webbuilder" id="lnkwebbuilder">Web Builder</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=python" id="lnkpython" target="_blank">Python</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=javascript" id="lnkjs" target="_blank">JavaScript</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/qubits/index.php?language=sql" id="lnksql" target="_blank">SQL</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/scratch" id="lnkscratch" target="_blank">Scratch</a></li>
+                    <li><a href="{{globals.config.wwwroot}}/third_party/webbuilder" id="lnkwebbuilder" target="_blank">Web Builder</a></li>
                 </ul>
             </li>
         </ul>

@@ -216,6 +216,7 @@ class local_qbcourse extends external_api {
 
             $DB->set_field('course_sections', 'name', trim($sections[$s]->title), array('course' => $cid,'section'=>$s+1));
             $DB->set_field('course_sections', 'uid', trim($sections[$s]->uid), array('course' => $cid,'section'=>$s+1));
+
             self::createpageactivity($cid,$sections,$s);
            }           
            else{
@@ -230,6 +231,9 @@ class local_qbcourse extends external_api {
                 self::updatepageactivity($cid,$sections,$s);
             }
            }
+
+           if(isset($sections[$s]->teacheronly))
+            self::setvisibility($cid,$sections[$s]->teacheronly,trim($sections[$s]->uid));
            
         }
 
@@ -276,7 +280,21 @@ class local_qbcourse extends external_api {
                         $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
                         
                         if(is_file($assfile)){
-                            self::createqbassignment($activities[$a],$assfile,$cid,$sid+1);
+                            $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']) and $cm_id['cm_id'] != '')
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }
+                    }
+                    elseif($activities[$a]->type == 'quiz'){                       
+
+                        $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
+                        
+                        if(is_file($quizfile)){
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sid+1);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']) and $cm_id['cm_id'] != '')
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }
                     }
                 }
@@ -329,8 +347,22 @@ class local_qbcourse extends external_api {
                         $assfile = $CFG->dataroot."/qbassign/".$activities[$a]->fname;
                         
                         if(is_file($assfile)){
-                            self::createqbassignment($activities[$a],$assfile,$cid,$sec->section);
+                           $cm_id = self::createqbassignment($activities[$a],$assfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
                         }                        
+                    }
+                    elseif($activities[$a]->type == 'quiz'){                       
+
+                        $quizfile = $CFG->dataroot."/qbquiz/".$activities[$a]->fname;
+                        
+                        if(is_file($quizfile)){
+                            $cm_id = self::createqbquiz($activities[$a],$quizfile,$cid,$sec->section);
+
+                            if(!empty($cm_id) and isset($cm_id['cm_id']))
+                            $acts = $acts.','.$cm_id['cm_id'];
+                        }
                     }
                 }
 
@@ -422,20 +454,56 @@ class local_qbcourse extends external_api {
 
     public static function createqbassignment($section,$aFile,$cid,$secid){
         global $DB,$CFG;
-        require_once($CFG->dirroot.'/local/qubitsbook/classes/external.php');
+        
+        require_once($CFG->dirroot.'/mod/qbassign/externallib.php');
+       
         $assData = file_get_contents($aFile);
         $assData = stripslashes($assData);
 
         $data = json_decode($assData, true);
 
-        $qa = new local_qubitsbook_external();
+        $qa = new mod_qbassign_external();
         
+       try {
+          return  $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size']);
+        }
+        catch(Error $e) { 
+            return;
+        }
+    }
+
+    public static function createqbquiz($section,$aFile,$cid,$secid){
+
+        global $DB,$CFG;
+        
+        require_once($CFG->dirroot.'/mod/qbassign/externallib.php');
+        $assData = file_get_contents($aFile);
+        $assData = stripslashes($assData);
+
+        $data = json_decode($assData, true);
+
+        $qa = new mod_qbassign_external();
+
         try {
-            $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['instructions'],$data['submission_type'],$data['submissionstatus'],$data['wrdlimit'],$data['uid']);
+        return $qa->quiz_addition($cid,1,$secid,$data["name"],$data["uid"],$data["description"],$data["questions"]);
         }
         catch(Error $e) {
+            return;
         }
-        
     }
+
+    public static function setvisibility($cid,$visiblefor,$uid){
+
+        global $DB;
+
+        $visible = NULL;
+
+        if($visiblefor == 'yes')
+        $visible = '{"op":"&","c":[{"type":"role","id":3}],"showc":[true]}'; 
+        
+        $DB->set_field('course_sections', 'availability', $visible, array('course' => $cid,'uid'=>$uid));
+
+    }
+    
 
 }

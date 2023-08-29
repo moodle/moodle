@@ -33,7 +33,7 @@
   --content-max-width: 100% !important;
   --menu-bar-height: 50px;
   --mono-font: Consolas, Menlo;
-  /* --code-font-size: 0.875em; */
+   /* --code-font-size: 0.875em;  */
 }
 
 .content html {
@@ -53,6 +53,7 @@ a:hover>.hljs {
 
 pre {
   position: relative;
+  color: #fff;
 }
 
 pre>.buttons {
@@ -180,9 +181,8 @@ h6:target:before {
 .content main {
   margin-left: auto;
   margin-right: auto;
-  /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width); 
-  /* max-width: var(--content-max-width); */
-  max-width: 750px;
+    /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width);   */
+   max-width: var(--content-max-width); 
 }
 
 .content ol,
@@ -212,10 +212,6 @@ h6:target:before {
   line-height: 1.1;
 }
 
-.content p {
-  margin-top: 20px;
-}
-
 .content a {
   text-decoration: none;
 }
@@ -242,7 +238,7 @@ h6:target:before {
 
 blockquote {
   margin: 20px 0;
-  padding: 0 20px;
+  padding: 20px 20px;
   color: #000;
   background-color: #f1f6f9;
   border-top: 0.1em solid #e0ecf1;
@@ -266,6 +262,7 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
+  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png) no-repeat;
   background-size: contain;
   width: 118px;
   height: 79px;
@@ -276,15 +273,17 @@ body {
 }
 
 .content h1:not(.menu-title) {
-  background-color: #1482e6;
+  background-color: #47bbb6;
   border-radius: 30px;
   position: relative;
   padding-left: 80px;
 }
 
-.content h1:not(.menu-title.heading-title) {
+/* .content h1:not(.menu-title.heading-title) {
   padding-left: 20px;
-}
+} */
+
+
 
 h1:target:before,
 h2:target:before,
@@ -317,6 +316,7 @@ h6:target:before {
 }
 
 .content main {
+  background: #fef6db;
   padding: 20px;
   border-radius: 36px;
 }
@@ -609,7 +609,6 @@ code {
 
 .content .title a {
   color: white;
-  /* text-transform: uppercase; */
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -645,4 +644,86 @@ code {
 
 .ace-dracula .ace_print-margin {
   background: none !important;
+}
+
+.standalone-editor-container h1:not(.menu-standalone-editor-title) {
+  background-color: #0f6cbf;
+  border-radius: 30px;
+  position: relative;
+  padding-left: 80px;
+}
+
+.standalone-editor-container h1:not(.menu-standalone-editor-title.standalone-editor-language-title) {
+  padding-left: 20px;
+}
+
+.standalone-editor-container .standalone-editor-title a {
+  color: white;
+  font-weight: normal;
+  font-size: 18px;
+  position: relative;
+  top: -0.5rem;
+}
+
+.standalone-editor-container a {
+  text-decoration: none;
+}
+
+.standalone-editor-container a:hover {
+  text-decoration: underline !important;
+  color: white !important;
+}
+
+.standalone-editor-container main {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--content-max-width); 
+}
+
+.iframe-container {
+  position: relative;
+  width: 100%;
+}
+
+.iframe {
+  width: 100%;
+  min-height: 300px;
+}
+
+.MuiButtonBase-root.run-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.MuiButtonBase-root.run-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.sql-table-style:nth-child(2){
+  width: 42%;
+}
+.sql-table-style:nth-child(3){
+  width: 33%;
+}
+.sql-table-style:nth-child(1){
+  width: 33%;
+}
+.sqlTableStyle table,thead{
+  text-align: left;
+  border: 1px solid gray;
+ }
+ .sqlTableStyle table{
+  width: 100%;
+  background-color: white;
+  color: #000;
+  border-collapse: collapse;
 }

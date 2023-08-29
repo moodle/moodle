@@ -80,6 +80,36 @@ function xmldb_local_qbmanifest_install() {
             $dbman->add_field($table, $field);
         }
 
+        $table = new xmldb_table('quiz');
+        $field = new xmldb_field('uid', XMLDB_TYPE_CHAR, "512", null, null, null, null);
+
+        // Conditionally launch add field forcedownload.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $cexists = $DB->get_record('question_categories', array("idnumber" => 'qbtopcat'));
+
+        if(empty($cexists)){
+                $cat = new stdClass();
+                $cat->parent = 5;
+                $cat->contextid = 1;
+                $cat->name = 'Qubits Question Bank';
+                $cat->info = 'Qubits default category';
+                $cat->infoformat = 1;
+                $cat->sortorder = 999;
+                $cat->stamp = make_unique_id_code();
+                $cat->idnumber = 'qbtopcat';
+                $categoryid = $DB->insert_record("question_categories", $cat);
+
+                // Log the creation of this category.
+                $category = new stdClass();
+                $category->id = $categoryid;
+                $category->contextid = 1;
+                $event = \core\event\question_category_created::create_from_question_category_instance($category);
+                $event->trigger();
+        }
+
         // course_sections savepoint reached.
      //   upgrade_mod_savepoint(true, 2023072501, 'course_sections');
    

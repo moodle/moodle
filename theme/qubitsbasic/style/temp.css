@@ -123,7 +123,9 @@
 .page-context-header {
   align-items: center;
 }
-
+.pagelayout-course .moremenu {
+  padding: 0 !important;
+}
 .form-control:focus,
 .custom-select:focus {
   box-shadow: 0 0 0 0.25rem rgba(15, 108, 191, 0.11) !important;

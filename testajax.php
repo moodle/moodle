@@ -1,10 +1,10 @@
-<?php 
+<?php
 
 require("./config.php");
 
-echo $OUTPUT->header();
+echo $OUTPUT->header(); 
 
-echo "<div id='testcnt'>TEST Page</div>";
+echo "<div id='testcnt'>Jai Sree Hari</div>";
 
 ?>
 
@@ -19,20 +19,24 @@ echo $OUTPUT->footer();
 <script>
 //<![CDATA[
 require(['jquery'], function($){
-	let offset = 0;
-	let limit = 6;
-	let payload ={
-                    "wstoken":"4dc910697d23e14c95c6085518482695",
-                    "moodlewsrestformat":"json",
-                    "wsfunction":"mod_qbassign_save_submission",
-                    "qbassignmentid":45,
-                    "plugindata":{"onlinetex_editor":{"text":"select * from table where name=mani","format":1,"itemid":1}}
+	let offset = 0
+	let limit = 6
+	let payload = [
+                {
+                    "index": 0,
+                    "methodname": "mod_qbassign_save_studentsubmission",
+                    "args": {
+                        "qbassignmentid": 60,
+                        "plugindata_text": "My submission-mini",
+                        "plugindata_format": 1,
+                        "plugindata_type": "onlinetext"
+                    }
                 }
-            
+            ];
 	let mkey = M.cfg.sesskey;
 	//mkey = "sjdhaksjda";
 	let aurl = M.cfg.wwwroot + "/lib/ajax/service-react.php?sesskey=" + mkey;
-	aurl += '&info=mod_qbassign_save_submission';
+	aurl += '&info=mod_qbassign_save_studentsubmission';
 	$.ajax({
 		type: "POST",
 		url: aurl,
@@ -40,7 +44,7 @@ require(['jquery'], function($){
         contentType : "application/json"
 	}).done(function(resp){
 		//let respObj = JSON.parse(resp);
-		//console.log("Sree Hari - Master is the greatest developer in the world")
+		console.log("Sree Hari - Master is the greatest developer in the world")
 		console.log(resp)
 	});
   

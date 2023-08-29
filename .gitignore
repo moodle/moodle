@@ -59,3 +59,4 @@ jsconfig.json
 
 /theme/qubitsalpha/pix/logo/*
 /local/qbmanifest/upload/*
+/mt-config/*

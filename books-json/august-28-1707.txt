@@ -1,0 +1,10 @@
+
+
+Teacher Name
+
+xyz, xyz@gmail.com
+
+G5, A,B,C,D - DCL05, DPL05
+G6, A,B,C,D - DCL06, DPL06
+
+Group Format -   Name of the Cohort(diamond)CourseCode(DCL01)Grade(G1),Sections(A,B,C,D)

@@ -3,16 +3,16 @@
                 <div class="card-body bg-wave p-0 card-border-radius card-text-color">
                     <div class="{{#iscomplete}}complete-card-overlay {{/iscomplete}}{{^iscomplete}}card-body-overlay {{/iscomplete}} card-body-border-radius" >
                         <p class="card-text">{{fullname}}</p>
-                        <div class="row align-items-center">
-                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-auto pr-0">{{coursecategory}}
+                        <div class="row align-items-center justify-content-between">
+                            <div class="card-title card-text-size col-lg-9 col-md-9 col-sm-8 w-70 pr-0">{{coursecategory}}
                             </div>
 
-                            <div class="col-lg-3 col-md-3 col-sm-4 w-auto my-2">
-                                <div class="row mx-0 justify-content-end">
+                            <div class="col-lg-3 col-md-3 col-sm-4 w-30">
+                                <div class="row mr-0 justify-content-end">
                                     {{#iscomplete}}
 									<i class="qicon-tick-mark success-tick"></i> 
 									{{/iscomplete}}
-                                    <div class="white-circle {{#iscomplete}}complete-text-color{{/iscomplete}} col-9 w-auto">{{level}}</div>
+                                    <div class="white-circle {{#iscomplete}}complete-text-color{{/iscomplete}} col-9">{{level}}</div>
                                 </div>
                             </div>
                         </div>

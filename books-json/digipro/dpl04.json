@@ -10,7 +10,127 @@
         "level": "4",
         "cardcolour": "#ff744d"
       },
-      "chapters": [
+      "chapters": [ 
+        {
+        "title" : "Teacher Resources",
+        "type": "topic",
+        "teacheronly": "yes",
+        "uid": "DPL04-TP0-000",
+        "children": [
+          {
+                "title": "Teacher Guide",
+                "uid": "DPL04-TP0-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&pdf=DigiPro Level 4 Teacher Guide",
+                "type": "page"
+              },
+        {
+                "title": "Sprint 1.1 Scratch and its Interface",
+                "uid": "DPL04-TP0-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit1&pdf=DP L4 sprint 1.1",
+                "type": "page"
+              },
+        {
+                "title": "Sprint 1.2 Save and Share",
+                "uid": "DPL04-TP0-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit1&pdf=DP L4 sprint 1.2",
+                "type": "page"
+              },
+        {
+                "title": "Sprint 1.3 The Stage",
+                "uid": "DPL04-TP0-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit1&pdf=DP L4 sprint 1.3",
+                "type": "page"
+              },
+        {
+                "title": "Sprint 2.1 Moving the Sprite",
+                "uid": "DPL04-TP0-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit2&pdf=DP L4 sprint 2.1",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 2.2 Loop the Action",
+                "uid": "DPL04-TP0-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit2&pdf=DP L4 sprint 2.2",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 2.3 Bounce off the edge",
+                "uid": "DPL04-TP0-CHDRN7",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit2&pdf=DP L4 sprint 2.3",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 2.4 Random Movement",
+                "uid": "DPL04-TP0-CHDRN8",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit2&pdf=DP L4 sprint 2.4",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 3.1 The Game Plan",
+                "uid": "DPL04-TP0-CHDRN9",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit3&pdf=DP L4 sprint 3.1",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 3.2 If-Else Conditions",
+                "uid": "DPL04-TP0-CHDRN10",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit3&pdf=DP L4 sprint 3.2",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 3.3 Costume and Sound",
+                "uid": "DPL04-TP0-CHDRN11",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit3&pdf=DP L4 sprint 3.3",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 3.4 Variables and Score",
+                "uid": "DPL04-TP0-CHDRN12",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit3&pdf=DP L4 sprint 3.4",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 3.5 The Enemy Sprite",
+                "uid": "DPL04-TP0-CHDRN13",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit3&pdf=DP L4 sprint 3.5",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 4.1 Emotion Detection",
+                "uid": "DPL04-TP0-CHDRN14",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit4&pdf=DP L4 sprint 4.1",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 4.2 Teachable Machine",
+                "uid": "DPL04-TP0-CHDRN15",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit4&pdf=DP L4 sprint 4.2",
+                "type": "page"
+              },
+              {
+                "title": "Sprint 4.3 Datasets and Training",
+                "uid": "DPL04-TP0-CHDRN16",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level4&unit=Unit4&pdf=DP L4 sprint 4.3",
+                "type": "page"
+              }
+        ]
+      },
         {
           "route": "book/DPL04/DPL04-TP1-000.mdx",
           "title": "Unit 1: Getting Started",
@@ -46,19 +166,20 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP1-CHDRN5",							
-              "fname":"DPL04-TP1-CHDRN5.json",
+              "uid": "DPL04-TP1-CHDRN5",
+              "fname": "DPL04-TP1-CHDRN5.json",
               "type": "assignment"
             }
-          ]
+          ],
+          "teacheronly": "no"
         },
-		{
-		  "route": "book/DPL04/DPL04-TP2-000.mdx",
+        {
+          "route": "book/DPL04/DPL04-TP2-000.mdx",
           "title": "Unit 2: Animate the Sprite",
           "type": "topic",
           "uid": "DPL04-TP2-000",
-		  "children" : [
-			{
+          "children": [
+            {
               "title": "Unit 2 Summary",
               "uid": "DPL04-TP2-CHDRN1",
               "description": "",
@@ -94,19 +215,20 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP2-CHDRN6",							
-              "fname":"DPL04-TP2-CHDRN6.json",
+              "uid": "DPL04-TP2-CHDRN6",
+              "fname": "DPL04-TP2-CHDRN6.json",
               "type": "assignment"
             }
-		  ]
-		},
-		{
-		  "route": "book/DPL04/DPL04-TP1-000.mdx",
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL04/DPL04-TP1-000.mdx",
           "title": "Unit 3: The Game",
           "type": "topic",
           "uid": "DPL04-TP3-000",
-		  "children" : [
-			{
+          "children": [
+            {
               "title": "Unit 3 Summary",
               "uid": "DPL04-TP3-CHDRN1",
               "description": "",
@@ -148,7 +270,7 @@
               "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S05",
               "type": "page"
             },
-			{
+            {
               "title": "Capstone Project - Escape and Collect Game",
               "uid": "DPL04-TP3-CHDRN7",
               "description": "",
@@ -156,18 +278,19 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP3-CHDRN8",							
-              "fname":"DPL04-TP3-CHDRN8.json",
+              "uid": "DPL04-TP3-CHDRN8",
+              "fname": "DPL04-TP3-CHDRN8.json",
               "type": "assignment"
             }
-		  ]
-		},
-		{
-		  "route": "book/DPL04/DPL04-TP1-000.mdx",
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL04/DPL04-TP1-000.mdx",
           "title": "Unit 4: Training a Machine",
           "type": "topic",
           "uid": "DPL04-TP4-000",
-		  "children" : [
+          "children": [
             {
               "title": "Unit 4 Summary",
               "uid": "DPL04-TP4-CHDRN1",
@@ -196,7 +319,7 @@
               "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S03",
               "type": "page"
             },
-			{
+            {
               "title": "Capstone Project - AI-Based Waste Segregation",
               "uid": "DPL04-TP4-CHDRN5",
               "description": "",
@@ -204,13 +327,219 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP4-CHDRN6",							
-              "fname":"DPL04-TP4-CHDRN6.json",
+              "uid": "DPL04-TP4-CHDRN6",
+              "fname": "DPL04-TP4-CHDRN6.json",
               "type": "assignment"
             }
-		  ]
-		}
+          ],
+          "teacheronly": "no"
+        }
       ]
-    }
+    },
+    "chapters": [
+      {
+        "route": "book/DPL04/DPL04-TP1-000.mdx",
+        "title": "Unit 1: Getting Started",
+        "type": "topic",
+        "uid": "DPL04-TP1-000",
+        "children": [
+          {
+            "title": "Unit 1 Summary",
+            "uid": "DPL04-TP1-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_Intro",
+            "type": "page"
+          },
+          {
+            "title": "1.1 - Scratch and its Interface",
+            "uid": "DPL04-TP1-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S01",
+            "type": "page"
+          },
+          {
+            "title": "1.2 - Save and Share",
+            "uid": "DPL04-TP1-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S02",
+            "type": "page"
+          },
+          {
+            "title": "1.3 - The Stage",
+            "uid": "DPL04-TP1-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U01_S03",
+            "type": "page"
+          },
+          {
+            "uid": "DPL04-TP1-CHDRN5",
+            "fname": "DPL04-TP1-CHDRN5.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DPL04/DPL04-TP2-000.mdx",
+        "title": "Unit 2: Animate the Sprite",
+        "type": "topic",
+        "uid": "DPL04-TP2-000",
+        "children": [
+          {
+            "title": "Unit 2 Summary",
+            "uid": "DPL04-TP2-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_Intro",
+            "type": "page"
+          },
+          {
+            "title": "2.1 - Moving The Sprite",
+            "uid": "DPL04-TP2-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S01",
+            "type": "page"
+          },
+          {
+            "title": "2.2 - Loop the actions",
+            "uid": "DPL04-TP2-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S02",
+            "type": "page"
+          },
+          {
+            "title": "2.3 - Bounce off the Edge",
+            "uid": "DPL04-TP2-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S03",
+            "type": "page"
+          },
+          {
+            "title": "2.4 - Random Movement",
+            "uid": "DPL04-TP2-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U02_S04",
+            "type": "page"
+          },
+          {
+            "uid": "DPL04-TP2-CHDRN6",
+            "fname": "DPL04-TP2-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DPL04/DPL04-TP1-000.mdx",
+        "title": "Unit 3: The Game",
+        "type": "topic",
+        "uid": "DPL04-TP3-000",
+        "children": [
+          {
+            "title": "Unit 3 Summary",
+            "uid": "DPL04-TP3-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Intro",
+            "type": "page"
+          },
+          {
+            "title": "3.1 - The Game Plan",
+            "uid": "DPL04-TP3-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S01",
+            "type": "page"
+          },
+          {
+            "title": "3.2 - If-Else Condtitions",
+            "uid": "DPL04-TP3-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S02",
+            "type": "page"
+          },
+          {
+            "title": "3.3 - Costume and Sound",
+            "uid": "DPL04-TP3-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S03",
+            "type": "page"
+          },
+          {
+            "title": "3.4 - Variables and Score",
+            "uid": "DPL04-TP3-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S04",
+            "type": "page"
+          },
+          {
+            "title": "3.5 - The Enemy Sprite",
+            "uid": "DPL04-TP3-CHDRN6",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_S05",
+            "type": "page"
+          },
+          {
+            "title": "Capstone Project - Escape and Collect Game",
+            "uid": "DPL04-TP3-CHDRN7",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Capstone",
+            "type": "page"
+          },
+          {
+            "uid": "DPL04-TP3-CHDRN8",
+            "fname": "DPL04-TP3-CHDRN8.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      },
+      {
+        "route": "book/DPL04/DPL04-TP1-000.mdx",
+        "title": "Unit 4: Training a Machine",
+        "type": "topic",
+        "uid": "DPL04-TP4-000",
+        "children": [
+          {
+            "title": "Unit 4 Summary",
+            "uid": "DPL04-TP4-CHDRN1",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Intro",
+            "type": "page"
+          },
+          {
+            "title": "4.1 - Emotion Detection",
+            "uid": "DPL04-TP4-CHDRN2",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S01",
+            "type": "page"
+          },
+          {
+            "title": "4.2 - Teachable Machine",
+            "uid": "DPL04-TP4-CHDRN3",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S02",
+            "type": "page"
+          },
+          {
+            "title": "4.3 - Datasets and Training",
+            "uid": "DPL04-TP4-CHDRN4",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_S03",
+            "type": "page"
+          },
+          {
+            "title": "Capstone Project - AI-Based Waste Segregation",
+            "uid": "DPL04-TP4-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Capstone",
+            "type": "page"
+          },
+          {
+            "uid": "DPL04-TP4-CHDRN6",
+            "fname": "DPL04-TP4-CHDRN6.json",
+            "type": "assignment"
+          }
+        ],
+        "teacheronly": "no"
+      }
+    ]
   }
 ]

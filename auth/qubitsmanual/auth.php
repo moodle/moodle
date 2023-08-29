@@ -86,11 +86,11 @@ class auth_plugin_qubitsmanual extends auth_plugin_base {
             set_user_preference('auth_forcepasswordchange', true, $user->id);
         }
         // Implemented Cohort based checking for multi-tenancy site
-        /* $cohortid = $CFG->cursitesettings->cohortid;
+        $cohortid = $CFG->cursitesettings->cohortid;
         $iscohortexist = $DB->record_exists('cohort_members', array('cohortid'=>$cohortid, 'userid'=>$user->id));
         if(empty($iscohortexist)){
             return false;
-        } */
+        }
 
         return true;
     }

@@ -23,6 +23,9 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
             $orderby = ($sortdir == 0) ? "order by s.hostname asc" : "order by s.hostname desc";
             break;
         case 2:
+            $orderby = ($sortdir == 0) ? "order by s.name asc" : "order by s.name desc";
+            break;
+        case 3:
             $orderby = ($sortdir == 0) ? "order by s.status asc" : "order by s.status desc";
             break;
         default:
@@ -41,6 +44,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
     $columns = array(
         "name",
         "hostname",
+        "cohortid",
         "status",
         "action"
     );
@@ -48,7 +52,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
     $i = 0;
     $columns1 = array();
     foreach ($columns as $column) {
-        if ($sortcolumn == 3) {
+        if ($sortcolumn == 4) {
             $columns1[] = $column;
         } else {
             if ($i == $sortcolumn) {
@@ -60,7 +64,7 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
                 $filters['sortdir'] = 0;
             }
             $filters['sortcolumn'] = $i;
-            if ($i == 3) {
+            if ($i == 4) {
                 $columns1[] = $column;
             } else {
                 $columns1[] = html_writer::link(new moodle_url($CFG->wwwroot . '/local/qubitssite/index.php', $filters), $column . $columnicon);
@@ -76,8 +80,8 @@ function local_qubits_site_render_list($search, $page, $perpage, $sortcolumn, $s
 
     $tableheader = $columns1;
     $table->head = $tableheader;
-    $table->size = array('20%', '55%', '7%', '13%');
-    $table->align = array('left', 'left', 'center', 'center');
+    $table->size = array('20%', '35%', '20%', '7%', '13%');
+    $table->align = array('left', 'left', 'center' , 'center', 'center');
     $table->width = '90%';
     $table->id = 'sitelisting';
     if (count($sites) > 0) {
@@ -131,6 +135,7 @@ function local_qubits_render_site_data($sites, $filters) {
         $row = array(
             $site->name,
             $site->hostname,
+            local_qubitssite_url_title($site->name,null,true,null),
             $publish,
             implode(' ', $buttons)
         );
@@ -164,7 +169,8 @@ function local_qubitssite_create_site($data, $editoroptions = NULL){
     // Check if timecreated is given.
     $data->timecreated  = !empty($data->timecreated) ? $data->timecreated : time();
     $data->timemodified = $data->timecreated;
-    $data->cohortid = local_qubitssite_upsert_cohort($data->name, $data->hostname, "");
+    $cohortidnumber = local_qubitssite_url_title($data->name,null,true,null);
+    $data->cohortid = local_qubitssite_upsert_cohort($data->name, $cohortidnumber, "");
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -180,7 +186,8 @@ function local_qubitssite_update_site($data, $editoroptions = NULL){
 
     $data->hostname = local_qubitssite_parse_url($data->hostname);
     $data->timemodified = time();
-    local_qubitssite_upsert_cohort($data->name, $data->hostname, $data->cohortid);
+    $cohortidnumber = local_qubitssite_url_title($data->name,null,true,null);
+    local_qubitssite_upsert_cohort($data->name, $cohortidnumber, $data->cohortid);
 
     if (!isset($data->status)) {
         // data not from form, add missing visibility info
@@ -217,4 +224,38 @@ function local_qubitssite_upsert_cohort($name, $cohortidnumber, $cohortid){
         cohort_update_cohort($cohort);
     }
     return $cohortid;
+}
+
+function local_qubitssite_url_title($str, $separator = '-', $lowercase = FALSE, $utf = TRUE)
+{
+    if ($separator === 'dash')
+    {
+        $separator = '-';
+    }
+    elseif ($separator === 'underscore')
+    {
+        $separator = '_';
+    }
+
+    $q_separator = preg_quote($separator, '#');
+
+    $trans = array(
+        '&.+?;'			=> '',
+        '[^\w\d _-]'		=> '',
+        '\s+'			=> $separator,
+        '('.$q_separator.')+'	=> $separator
+    );
+
+    $str = strip_tags($str);
+    foreach ($trans as $key => $val)
+    {
+        $str = preg_replace('#'.$key.'#i'.($utf ? 'u' : ''), $val, $str);
+    }
+
+    if ($lowercase === TRUE)
+    {
+        $str = strtolower($str);
+    }
+
+    return trim(trim($str, $separator));
 }

@@ -4,7 +4,7 @@ name: Production-QB-PGSQL
 on:
   pull_request:
     branches:
-      - develop
+      - production
     types:
       - closed
 

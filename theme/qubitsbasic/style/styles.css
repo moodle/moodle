@@ -1,11 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Acme&display=swap");
 @font-face {
   font-family: "qubits";
-  src: url("[[font:theme|qubits.eot]]?yz5onj");
-  src: url("[[font:theme|qubits.eot]]?yz5onj#iefix") format("embedded-opentype"),
-    url("[[font:theme|qubits.ttf]]?yz5onj") format("truetype"),
-    url("[[font:theme|qubits.woff]]?yz5onj") format("woff"),
-    url("[[font:theme|qubits.svg]]?yz5onj#qubits") format("svg");
+  src: url("fonts/qubits.eot?4pw03w");
+  src: url("fonts/qubits.eot?4pw03w#iefix") format("embedded-opentype"),
+    url("fonts/qubits.ttf?4pw03w") format("truetype"),
+    url("fonts/qubits.woff?4pw03w") format("woff"),
+    url("fonts/qubits.svg?4pw03w#qubits") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -26,6 +26,7 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 .qicon-anouncement:before {
   content: "\e900";
 }
@@ -68,6 +69,17 @@
 .qicon-tick-mark:before {
   content: "\e90d";
 }
+.qicon-code-editor:before {
+  content: "\e90e";
+}
+.qicon-icon-close-drawer:before {
+  content: "\e90f";
+}
+.qicon-icon-back:before {
+  content: "\e910";
+  color: #b3b3b3;
+}
+
 .success-tick {
   position: absolute;
   right: 0%;
@@ -83,7 +95,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Arial";
+  font-family: Arial, Helvetica, sans-serif;
 }
 .sidebar {
   position: fixed;
@@ -93,12 +105,6 @@
   width: 260px;
   background: #f7f7f7;
   z-index: 106;
-  transition: all 0.5s ease;
-}
-
-.navbar.fixed-top {
-  height: 88px !important;
-  z-index: 50 !important;
 }
 
 /* .test:hover {
