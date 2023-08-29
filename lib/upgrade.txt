@@ -140,6 +140,9 @@ being forced open in all behat tests.
 * A new parameter $compactmode has been added to the recaptcha_get_challenge_html() to define whether the reCaptcha element should be displayed in the compact mode or not.
   Default value is false.
 * A new native event in the `core_filters/events` AMD module eventTypes.filterContentRenderingComplete has been created to determine when the filter is complete the rendering.
+* New parameters for \get_time_interval_string():
+  - `$dropzeroes` - Passing `true` will exclude zero date/time units from the output.
+  - `$fullformat` - Passing `true` will return date/time units in full format (e.g. `1 day` instead of `1d`).
 
 === 4.2 ===
 
