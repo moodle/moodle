@@ -28,7 +28,7 @@ use license_manager;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\helpers\format;
-use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, filesize, select, text};
 use core_reportbuilder\local\report\{column, filter};
 
 /**
@@ -366,19 +366,13 @@ class file extends base {
 
         // Size.
         $filters[] = (new filter(
-            number::class,
+            filesize::class,
             'size',
             new lang_string('size'),
             $this->get_entity_name(),
             "{$filesalias}.filesize"
         ))
-            ->add_joins($this->get_joins())
-            ->set_limited_operators([
-                number::ANY_VALUE,
-                number::LESS_THAN,
-                number::GREATER_THAN,
-                number::RANGE,
-            ]);
+            ->add_joins($this->get_joins());
 
         // Type.
         $filters[] = (new filter(

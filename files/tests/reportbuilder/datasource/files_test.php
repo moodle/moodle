@@ -21,7 +21,7 @@ namespace core_files\reportbuilder\datasource;
 use core\context\{course, coursecat, user};
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{boolean_select, date, number, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, filesize, select, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -219,8 +219,9 @@ class files_test extends core_reportbuilder_testcase {
                 'file:name_value' => 'Hello.txt',
             ], 2],
             'Filter size' => ['file:size', [
-                'file:size_operator' => number::GREATER_THAN,
+                'file:size_operator' => filesize::GREATER_THAN,
                 'file:size_value1' => 2,
+                'file:size_unit' => filesize::SIZE_UNIT_BYTE,
             ], 2],
             'Filter type' => ['file:type', [
                 'file:type_operator' => select::EQUAL_TO,
