@@ -29,7 +29,7 @@ import {addIconToContainer} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Templates from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';
 import {init as columnsEditorInit} from 'core_reportbuilder/local/editor/columns';

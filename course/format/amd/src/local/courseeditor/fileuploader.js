@@ -36,7 +36,7 @@ import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {getFirst} from 'core/normalise';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {getCourseEditor} from 'core_courseformat/courseeditor';
 import {processMonitor} from 'core/process_monitor';
 import {debounce} from 'core/utils';

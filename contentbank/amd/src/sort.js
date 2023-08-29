@@ -22,7 +22,7 @@
  */
 
 import selectors from './selectors';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Prefetch from 'core/prefetch';
 import Notification from 'core/notification';
 import {setUserPreference} from 'core_user/repository';

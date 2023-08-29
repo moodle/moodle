@@ -30,7 +30,7 @@ import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {getFirst} from 'core/normalise';
 import {toggleBulkSelectionAction} from 'core_courseformat/local/content/actions/bulkselection';
 import * as CourseEvents from 'core_course/events';

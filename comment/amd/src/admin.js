@@ -27,7 +27,7 @@ import {dispatchEvent} from 'core/event_dispatcher';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {deleteComment, deleteComments} from 'core_comment/repository';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';

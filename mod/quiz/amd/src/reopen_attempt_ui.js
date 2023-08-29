@@ -28,7 +28,7 @@
 
 import {exception as displayException} from 'core/notification';
 import {call as fetchMany} from 'core/ajax';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {saveCancelPromise} from 'core/notification';
 
 /**
