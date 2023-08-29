@@ -211,7 +211,7 @@
   .white-circle {
     background-color: var(--white);
     height: 50px;
-    max-width: 50px !important;
+    width: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -247,10 +247,10 @@
   }
   .card-text-size {
     @include breakpoint(xs) {
-      font-size: $fontsize27;
+      font-size: $fontsize46;
     }
     @include breakpoint(md) {
-      font-size: $fontsize30;
+      font-size: $fontsize46;
     }
     @include breakpoint(lg) {
       font-size: $fontsize46;
@@ -381,7 +381,7 @@
         }
         .link_name {
           pointer-events: none;
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 600;
           white-space: nowrap;
           // / color: #585858; /
@@ -476,7 +476,7 @@
     }
   }
   .link_name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
     transition: all 0.4s ease;
