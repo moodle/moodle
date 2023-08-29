@@ -2656,8 +2656,16 @@ class core_renderer extends renderer_base {
         $alt = '';
         if ($userpicture->alttext) {
             if (!empty($user->imagealt)) {
-                $alt = $user->imagealt;
+                $alt = trim($user->imagealt);
             }
+        }
+
+        // If the user picture is being rendered as a link but without the full name, an empty alt text for the user picture
+        // would mean that the link displayed will not have any discernible text. This becomes an accessibility issue,
+        // especially to screen reader users. Use the user's full name by default for the user picture's alt-text if this is
+        // the case.
+        if ($userpicture->link && !$userpicture->includefullname && empty($alt)) {
+            $alt = fullname($user);
         }
 
         if (empty($userpicture->size)) {
