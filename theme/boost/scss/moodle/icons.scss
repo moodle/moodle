@@ -41,6 +41,12 @@ $iconsizes: map-merge((
         margin-right: 0;
     }
 
+    &.iconsize-medium {
+        font-size: $icon-medium-height;
+        width: $icon-medium-width;
+        height: $icon-medium-height;
+    }
+
     &.iconsize-big {
         width: $icon-big-width;
         height: $icon-big-height;

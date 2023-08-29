@@ -26108,6 +26108,11 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 .icon.spacer {
   margin-right: 0;
 }
+.icon.iconsize-medium {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
 .icon.iconsize-big {
   width: 64px;
   height: 64px;
