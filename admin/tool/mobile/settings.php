@@ -111,7 +111,8 @@ if ($hassiteconfig) {
         new lang_string('autologout', 'tool_mobile'),
         new lang_string('autologout_desc', 'tool_mobile'), 0, $options));
 
-    $temp->add(new admin_setting_configduration('tool_mobile/autologouttime', '', '', DAYSECS));
+    $temp->add(new admin_setting_configduration('tool_mobile/autologouttime',
+        new lang_string('autologouttime', 'tool_mobile'), '', DAYSECS));
     $temp->hide_if('tool_mobile/autologouttime', 'tool_mobile/autologout', 'neq', tool_mobile\api::AUTOLOGOUT_CUSTOM);
 
     $options = [
