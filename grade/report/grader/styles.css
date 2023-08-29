@@ -158,9 +158,8 @@
 }
 
 .path-grade-report-grader .gradeparent .sorticon {
-    margin-left: 5px;
     vertical-align: middle;
-    margin-right: 1px;
+    margin: 0;
 }
 
 .path-grade-report-grader .gradeparent td.grade_type_value,
