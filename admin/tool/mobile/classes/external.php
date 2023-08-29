@@ -318,7 +318,7 @@ class external extends external_api {
         $timenow = time();
         if ($timenow - $last < $mintimereq) {
             $minutes = $mintimereq / MINSECS;
-            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile', $minutes);
+            throw new moodle_exception('autologinkeygenerationlockout', 'tool_mobile', '', $minutes);
         }
         set_user_preference('tool_mobile_autologin_request_last', $timenow, $USER);
 
