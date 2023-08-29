@@ -154,29 +154,27 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Get array of the selected role name.
+     * Get roles information by given ids.
      *
-     * @param array $selectedroles
+     * @param array $selectedroles List of role ids.
      * @return array
      */
-    public function get_roles(array $selectedroles) : array {
+    public function get_roles(array $selectedroles): array {
         global $DB;
-
         $roles = [];
 
         // Checks for admin role and gets its role name.
-        if (($key = array_search('admin', $selectedroles)) !== false) {
+        if (in_array('admin', $selectedroles)) {
             $roles[] = get_string('administrator');
-            unset($selectedroles[$key]);
         }
+        $integerroles = array_map('intval', $selectedroles);
 
         // Gets role name for all non admin roles.
-        if (count($selectedroles) > 0) {
-            [$insql, $inparams] = $DB->get_in_or_equal($selectedroles);
+        if (!empty($integerroles)) {
+            [$insql, $inparams] = $DB->get_in_or_equal($integerroles);
             $otherroles = $DB->get_records_select('role', 'id ' . $insql, $inparams);
-            foreach ($otherroles as $role) {
-                $roles[] = role_get_name($role);
-            }
+            $otherrolenames = role_fix_names($otherroles, null, ROLENAME_ALIAS, true);
+            $roles = array_merge($roles, $otherrolenames);
         }
 
         return $roles;

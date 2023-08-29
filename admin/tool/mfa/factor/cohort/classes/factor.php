@@ -136,12 +136,12 @@ class factor extends object_factor_base {
     }
 
     /**
-     * Get array of the selected cohorts.
+     * Get cohorts information by given ids.
      *
-     * @param array $selectedcohorts
+     * @param array $selectedcohorts List of cohort ids.
      * @return array
      */
-    public function get_cohorts(array $selectedcohorts) : array {
+    public function get_cohorts(array $selectedcohorts): array {
         global $DB;
 
         [$insql, $inparams] = $DB->get_in_or_equal($selectedcohorts);

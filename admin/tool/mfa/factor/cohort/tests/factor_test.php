@@ -47,6 +47,7 @@ class factor_test extends \advanced_testcase {
 
         $selectedcohorts = get_config('factor_cohort', 'cohorts');
         $selectedcohorts = $cohortfactor->get_cohorts(explode(',', $selectedcohorts));
+        $this->assertArrayHasKey($cohort->id, $selectedcohorts);
         $this->assertStringContainsString(
             implode(', ', $selectedcohorts),
             $cohortfactor->get_summary_condition()

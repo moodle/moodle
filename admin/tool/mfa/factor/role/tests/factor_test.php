@@ -37,58 +37,80 @@ class factor_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
+        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $adminrolename = get_string('administrator');
+        $managerrolename = role_get_name($managerrole);
+        $teacherrolename = role_get_name($teacherrole);
+        $studentrolename = role_get_name($studentrole);
+
         set_config('enabled', 1, 'factor_role');
         $rolefactor = \tool_mfa\plugininfo\factor::get_factor('role');
 
         // Admin is disabled by default in this factor.
         $selectedroles = get_config('factor_role', 'roles');
         $selectedroles = $rolefactor->get_roles(explode(',', $selectedroles));
+        $this->assertContains($adminrolename, $selectedroles);
+        $this->assertNotContains($managerrolename, $selectedroles);
+        $this->assertNotContains($teacherrolename, $selectedroles);
+        $this->assertNotContains($studentrolename, $selectedroles);
         $this->assertStringContainsString(
             implode(', ', $selectedroles),
             $rolefactor->get_summary_condition()
         );
 
         // Disabled role factor for managers.
-        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
         set_config('roles', $managerrole->id, 'factor_role');
 
         $selectedroles = get_config('factor_role', 'roles');
         $selectedroles = $rolefactor->get_roles(explode(',', $selectedroles));
+        $this->assertNotContains($adminrolename, $selectedroles);
+        $this->assertContains($managerrolename, $selectedroles);
+        $this->assertNotContains($teacherrolename, $selectedroles);
+        $this->assertNotContains($studentrolename, $selectedroles);
         $this->assertStringContainsString(
             implode(', ', $selectedroles),
             $rolefactor->get_summary_condition()
         );
 
         // Disabled role factor for teachers.
-        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
         set_config('roles', $teacherrole->id, 'factor_role');
 
         $selectedroles = get_config('factor_role', 'roles');
         $selectedroles = $rolefactor->get_roles(explode(',', $selectedroles));
+        $this->assertNotContains($adminrolename, $selectedroles);
+        $this->assertNotContains($managerrolename, $selectedroles);
+        $this->assertContains($teacherrolename, $selectedroles);
+        $this->assertNotContains($studentrolename, $selectedroles);
         $this->assertStringContainsString(
             implode(', ', $selectedroles),
             $rolefactor->get_summary_condition()
         );
 
         // Disabled role factor for students.
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         set_config('roles', $studentrole->id, 'factor_role');
 
         $selectedroles = get_config('factor_role', 'roles');
         $selectedroles = $rolefactor->get_roles(explode(',', $selectedroles));
+        $this->assertNotContains($adminrolename, $selectedroles);
+        $this->assertNotContains($managerrolename, $selectedroles);
+        $this->assertNotContains($teacherrolename, $selectedroles);
+        $this->assertContains($studentrolename, $selectedroles);
         $this->assertStringContainsString(
             implode(', ', $selectedroles),
             $rolefactor->get_summary_condition()
         );
 
         // Disabled role factor for admins, managers, teachers and students.
-        $managerrole = $DB->get_record('role', ['shortname' => 'manager']);
-        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
         set_config('roles', "admin,$managerrole->id,$teacherrole->id,$studentrole->id", 'factor_role');
 
         $selectedroles = get_config('factor_role', 'roles');
         $selectedroles = $rolefactor->get_roles(explode(',', $selectedroles));
+        $this->assertContains($adminrolename, $selectedroles);
+        $this->assertContains($managerrolename, $selectedroles);
+        $this->assertContains($teacherrolename, $selectedroles);
+        $this->assertContains($studentrolename, $selectedroles);
         $this->assertStringContainsString(
             implode(', ', $selectedroles),
             $rolefactor->get_summary_condition()
