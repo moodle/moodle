@@ -128,7 +128,7 @@ class date extends base {
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'in', array_merge($typesnounit, [self::DATE_CURRENT]));
 
         // Unit selector for last and next operators.
-        $unitlabel = get_string('filterdurationunit', 'core_reportbuilder', $this->get_header());
+        $unitlabel = get_string('filterfieldunit', 'core_reportbuilder', $this->get_header());
         $units = [
             self::DATE_UNIT_HOUR => get_string('filterdatehours', 'core_reportbuilder'),
             self::DATE_UNIT_DAY => get_string('filterdatedays', 'core_reportbuilder'),

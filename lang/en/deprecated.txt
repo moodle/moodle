@@ -93,6 +93,7 @@ devicedetectregexexpression,core_admin
 devicedetectregexvalue,core_admin
 modshowcmtitle,core
 makeavailablecmtitle,core
+filterdurationunit,core_reportbuilder
 dateintervaldayshoursmins,core_langconfig
 completiondefault,core_completion
 configcompletiondefault,core_completion
