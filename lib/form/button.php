@@ -41,7 +41,9 @@ require_once('templatable_form_element.php');
  */
 class MoodleQuickForm_button extends HTML_QuickForm_button implements templatable
 {
-    use templatable_form_element;
+    use templatable_form_element {
+        export_for_template as export_for_template_base;
+    }
 
     /** @var string html for help button, if empty then no help */
     var $_helpbutton='';
@@ -50,15 +52,31 @@ class MoodleQuickForm_button extends HTML_QuickForm_button implements templatabl
     protected $_hiddenLabel = false;
 
     /**
+     * Any class apart from 'btn' would be overridden with this content.
+     *
+     * By default, buttons will utilize the btn-secondary class. However, there are cases where we
+     * require a button with different stylings (e.g. btn-primary). In these cases, $customclassoverride will override
+     * the defaults mentioned previously and utilize the provided class(es).
+     *
+     * @var null|string $customclassoverride Custom class override for the input element
+     */
+    protected $customclassoverride;
+
+    /**
      * constructor
      *
      * @param string $elementName (optional) name for the button
      * @param string $value (optional) value for the button
      * @param mixed $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
+     * @param array $options Options to further customise the button. Currently accepted options are:
+     *                  customclassoverride String The CSS class to use for the button instead of the standard
+     *                                             btn-primary and btn-secondary classes.
      */
-    public function __construct($elementName=null, $value=null, $attributes=null) {
+    public function __construct($elementName=null, $value=null, $attributes=null, $options = []) {
         parent::__construct($elementName, $value, $attributes);
+
+        $this->customclassoverride = $options['customclassoverride'] ?? null;
     }
 
     /**
@@ -100,5 +118,14 @@ class MoodleQuickForm_button extends HTML_QuickForm_button implements templatabl
      */
     public function setHiddenLabel($hiddenLabel) {
         $this->_hiddenLabel = $hiddenLabel;
+    }
+
+    public function export_for_template(renderer_base $output) {
+        $context = $this->export_for_template_base($output);
+
+        if ($this->customclassoverride) {
+            $context['customclassoverride'] = $this->customclassoverride;
+        }
+        return $context;
     }
 }
