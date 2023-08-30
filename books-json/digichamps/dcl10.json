@@ -12,6 +12,147 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL07-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL10-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DigiChamps_L10_Teacher's Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Systematic Troubleshooting",
+                  "uid": "DCL10-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit1&pdf=V2_DC L10 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Collaboration",
+                  "uid": "DCL10-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit1&pdf=V2_DC L10 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.3 Innovation and IP",
+                  "uid": "DCL10-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit1&pdf=V2_DC L10 Sprint 1.3",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.4 Data Privacy",
+                  "uid": "DCL10-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit1&pdf=V2_DC L10 Sprint 1.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 1.5 Network And Security",
+                  "uid": "DCL10-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit1&pdf=V2_DC L10 Sprint 1.5",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.1 Creative Photo Editing",
+                  "uid": "DCL10-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit2&pdf=V2_DC L10 Sprint 2.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.2 Advance Photo Editing",
+                  "uid": "DCL10-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit2&pdf=V2_DC L10 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.3 Advance Video Editing",
+                  "uid": "DCL10-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit2&pdf=V2_DC L10 Sprint 2.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Web Interface For The Game",
+                  "uid": "DCL10-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit3&pdf=V2_DC L10 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Styling The Game Page",
+                  "uid": "DCL10-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit3&pdf=V2_DC L10 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 Setting the Game Elements",
+                  "uid": "DCL10-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit4&pdf=V2_DC L10 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 Core Logic of the Game",
+                  "uid": "DCL10-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit4&pdf=V2_DC L10 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 Game Logic and Animations",
+                  "uid": "DCL10-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit4&pdf=V2_DC L10 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.4 Animations",
+                  "uid": "DCL10-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit4&pdf=V2_DC L10 Sprint 4.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Data Manipulation",
+                  "uid": "DCL10-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit5&pdf=V2_DC L10 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Creating Dashboards",
+                  "uid": "DCL10-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit5&pdf=V2_DC L10 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Data Visualization Using Sparklines",
+                  "uid": "DCL10-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit5&pdf=V2_DC L10 Sprint 5.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.4 Computational Model",
+                  "uid": "DCL10-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level10&unit=Unit5&pdf=V2_DC L10 Sprint 5.4",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL10/DCL10-TP1-000.mdx",
           "title": "Unit 1: Technology, IP and Security",
           "type": "topic",

@@ -427,7 +427,7 @@ class secondary extends view {
         $overflownode = $this->get_course_overflow_nodes($rootnode);
         if (!is_null($overflownode)) {
             $actionnode = $this->get_first_action_for_node($overflownode);
-            if ($actionnode) {
+            if ($actionnode && is_siteadmin()) {
                 // All additional nodes will be available under the 'Course reuse' page.
                 $text = get_string('coursereuse');
                 $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse',

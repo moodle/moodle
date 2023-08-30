@@ -434,7 +434,7 @@ class local_qbcourse extends external_api {
         global $DB;
         $secid = 0;
 
-        $sectiondb = $DB->get_record_sql("SELECT * FROM {course_sections} WHERE course=? order by id desc",[$cid]);
+        $sectiondb = $DB->get_record_sql("SELECT * FROM {course_sections} WHERE course=? order by section desc",[$cid]);
         if($section){
         $sectiondata = new stdClass();
         $sectiondata->course = $cid;

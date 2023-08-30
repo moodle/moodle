@@ -1,0 +1,3 @@
+username,firstname,lastname,email,password,cohort1,sysrole1,userclass1,usersection1,userclass2,usersection2,userclass3,usersection3,userclass4,usersection4,course1,course2
+xyz001,xyz,001,xyz001@gmail.com,test1234,diamond,editingteacher,G5,A,G5,B,G5,C,G5,D,DCL05,DPL05
+xyz001,xyz,001,xyz001@gmail.com,test1234,diamond,editingteacher,G6,A,G6,B,G6,C,G6,D,DCL06,DPL06

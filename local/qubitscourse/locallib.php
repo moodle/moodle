@@ -21,3 +21,16 @@ function local_qubitscourse_update_courses($data, $editoroptions = NULL){
     $qbitsassgncourses = $DB->get_record("local_qubits_course", array('id' => $updatequbitsassgncourseid));
     return $qbitsassgncourses;
 }
+
+function local_qubitscourse_get_ccdata($course_id){
+    $course_customdata = [];
+    $handler = core_course\customfield\course_handler::create();
+    if ($customfields = $handler->export_instance_data($course_id)) {
+        foreach ($customfields as $data) {
+            $shortname = $data->get_shortname();
+            $value = $data->get_data_controller()->get_value();
+            $course_customdata[$shortname] = $value;
+        }
+    }
+    return $course_customdata;
+}

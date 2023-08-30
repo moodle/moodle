@@ -43,19 +43,14 @@
 #searchresults a,
 .content a:link,
 a:visited,
-a>.hljs {
+a > .hljs {
   color: var(--links);
 }
-
-a:hover>.hljs {
-  text-decoration: underline;
-}
-
 pre {
   position: relative;
 }
 
-pre>.buttons {
+pre > .buttons {
   position: absolute;
   z-index: 100;
   right: 0;
@@ -68,11 +63,11 @@ pre>.buttons {
   transition: visibility 0.1s linear, opacity 0.1s linear;
 }
 
-pre>.buttons i {
+pre > .buttons i {
   margin-left: 8px;
 }
 
-pre>.buttons button {
+pre > .buttons button {
   cursor: inherit;
   margin: 0 5px;
   padding: 3px 5px;
@@ -88,12 +83,12 @@ pre>.buttons button {
 }
 
 @media (pointer: coarse) {
-  pre>.buttons button {
+  pre > .buttons button {
     padding: 0.3rem 1rem;
   }
 }
 
-pre>code {
+pre > code {
   padding: 1rem;
 }
 
@@ -101,7 +96,7 @@ pre>code {
   padding: 0;
 }
 
-pre>.result {
+pre > .result {
   margin-top: 10px;
   background-color: #343232;
   color: #fefefe;
@@ -177,14 +172,6 @@ h6:target:before {
   scroll-margin-top: calc(var(--menu-bar-height) + 0.5em);
 }
 
-.content main {
-  margin-left: auto;
-  margin-right: auto;
-  /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width); 
-  /* max-width: var(--content-max-width); */
-  max-width: 750px;
-}
-
 .content ol,
 .content p,
 .content ul {
@@ -221,7 +208,6 @@ h6:target:before {
 }
 
 .content a:hover {
-  text-decoration: underline !important;
   color: white !important;
 }
 
@@ -318,14 +304,13 @@ h6:target:before {
 
 .content main {
   padding: 20px;
-  border-radius: 36px;
 }
 
 pre {
   margin: 0.4em 0;
 }
 
-pre~p {
+pre ~ p {
   margin-top: 2em;
   margin-bottom: 0;
 }
@@ -569,19 +554,15 @@ code {
 }
 
 .error404 {
-  font-family: 'Calligraffitti', cursive;
+  font-family: "Calligraffitti", cursive;
   font-weight: 700;
   font-size: 13rem !important;
   text-shadow: -15px 5px 20px #ced0d3;
   letter-spacing: 0.02em;
   text-align: center;
-  color: #47BBB6;
-  text-shadow: 5px 5px 0px #FFB650,
-    10px 10px 0px #FFD662,
-    15px 15px 0px #FF80BF,
-    20px 20px 0px #EF5097,
-    25px 25px 0px #6868AC,
-    30px 30px 0px #90B1E0;
+  color: #47bbb6;
+  text-shadow: 5px 5px 0px #ffb650, 10px 10px 0px #ffd662, 15px 15px 0px #ff80bf,
+    20px 20px 0px #ef5097, 25px 25px 0px #6868ac, 30px 30px 0px #90b1e0;
 }
 
 .notavailable {
@@ -590,8 +571,8 @@ code {
   color: #fff;
   padding: 10px;
   border-radius: 35px;
-  font-weight:600;
-  background-color: #47BBB6;
+  font-weight: 600;
+  background-color: #47bbb6;
 }
 
 .react-pdf-viewer-Toolbar {
@@ -653,6 +634,6 @@ code {
   background: none !important;
 }
 
-.rpv-core__textbox{
+.rpv-core__textbox {
   width: 100% !important;
 }

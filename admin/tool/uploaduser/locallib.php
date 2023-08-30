@@ -83,7 +83,7 @@ class uu_progress_tracker {
             'enrolments' => get_string('enrolments', 'enrol'),
             'suspended' => get_string('suspended', 'auth'),
             'theme' => get_string('theme'),
-            'deleted' => get_string('delete'),
+            'deleted' => get_string('delete')
         ];
         $this->columns = array_keys($this->headers);
     }
@@ -214,8 +214,11 @@ function uu_validate_user_upload_columns(csv_import_reader $cir, $stdfields, $pr
         'role',
         'sysrole',
         'type',
+        'userclass',
+        'usersection',
     ];
     $specialfieldsregex = "/^(" . implode('|', $acceptedfields) . ")\d+$/";
+    //$qubitsaddflds = array("userclass", "usersection");
 
     foreach ($columns as $key=>$unused) {
         $field = $columns[$key];
@@ -519,4 +522,18 @@ function uu_check_custom_profile_data(&$data, array &$profilefieldvalues = []) {
         }
     }
     return $noerror;
+}
+
+function update_qubits_site_user($qsuser){
+    global $DB;
+    $qparams = ['user_id' => $qsuser->user_id, 
+        'site_id' => $qsuser->site_id,
+        'grade_id' => $qsuser->grade_id
+     ];
+    if ($qsiteuser = $DB->get_record('local_qubits_siteusers', $qparams)) {
+        $qsuser->id = $qsiteuser->id;
+        $DB->update_record('local_qubits_siteusers', $qsuser);
+    } else {
+        $DB->insert_record('local_qubits_siteusers', $qsuser);
+    }
 }

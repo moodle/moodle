@@ -12,6 +12,140 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL11-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL11-TP0-CHDRN1",
+                  "description": "",
+                  "route": "",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Computing Hardware",
+                  "uid": "DCL11-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit1&pdf=V2_DC L11 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Roles of an OS",
+                  "uid": "DCL11-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit1&pdf=V2_DC L11 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.3 Network Functionality",
+                  "uid": "DCL11-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit1&pdf=V2_DC L11 Sprint 1.3",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 Requirements, Analysis, and Design",
+                  "uid": "DCL11-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit2&pdf=V2_DC L11 Sprint 2.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.2 Version Control and Project Management",
+                  "uid": "DCL11-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit2&pdf=V2_DC L11 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.3 Git Workflows",
+                  "uid": "DCL11-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit2&pdf=V2_DC L11 Sprint 2.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.4 Bootstrap Your Project",
+                  "uid": "DCL11-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit2&pdf=V2_DC L11 Sprint 2.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Advanced JavaScript Concepts",
+                  "uid": "DCL11-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit3&pdf=V2_DC L11 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Web Applications Functionalities",
+                  "uid": "DCL11-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit3&pdf=V2_DC L11 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Testing and Deployement",
+                  "uid": "DCL11-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit3&pdf=V2_DC L11 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 Basics of R",
+                  "uid": "DCL11-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit4&pdf=V2_DC L11 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 Data Frames",
+                  "uid": "DCL11-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit4&pdf=V2_DC L11 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 Cleaning And Manipulating Data",
+                  "uid": "DCL11-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit4&pdf=V2_DC L11 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.4 Data Visualization in R",
+                  "uid": "DCL11-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit4&pdf=V2_DC L11 Sprint 4.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Computational innovations and their impacts",
+                  "uid": "DCL11-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit5&pdf=V2_DC L11 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 The digital divide",
+                  "uid": "DCL11-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit5&pdf=V2_DC L11 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Laws and regulations on software",
+                  "uid": "DCL11-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level11&unit=Unit5&pdf=V2_DC L11 Sprint 5.3",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL11/DCL11-TP1-000.mdx",
           "title": "Unit 1: Computing Systems and Networks",
           "type": "topic",

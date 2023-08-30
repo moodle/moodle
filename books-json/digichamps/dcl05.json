@@ -12,6 +12,147 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL05-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL05-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DigiChamps_L05_Teacher's Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Improving Technology",
+                  "uid": "DCL05-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit1&pdf=V2_DC L5 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Collaboration",
+                  "uid": "DCL05-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit1&pdf=V2_DC L5 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 Touch Typing",
+                  "uid": "DCL05-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit2&pdf=V2_DC L5 Sprint 2.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.2 File Management",
+                  "uid": "DCL05-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit2&pdf=V2_DC L5 Sprint 2.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.3-Online Protection",
+                  "uid": "DCL05-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit2&pdf=V2_DC L5 Sprint 2.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 2.4- Using a Web Browser",
+                  "uid": "DCL05-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit2&pdf=V2_DC L5 Sprint 2.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Introduction to Shape Generators",
+                  "uid": "DCL05-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit3&pdf=V2_DC L5 Sprint 3.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2-Scribble Tool",
+                  "uid": "DCL05-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit3&pdf=V2_DC L5 Sprint 3.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3- Remix Designs",
+                  "uid": "DCL05-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit3&pdf=V2_DC L5 Sprint 3.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1- Charts in Powerpoint",
+                  "uid": "DCL05-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit4&pdf=V2_DC L5 Sprint 4.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2- Transition and Sound Effects",
+                  "uid": "DCL05-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit4&pdf=V2_DC L5 Sprint 4.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3- Slideshow",
+                  "uid": "DCL05-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit4&pdf=V2_DC L5 Sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Shapes and WordArt",
+                  "uid": "DCL05-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit5&pdf=V2_DC L5 Sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Dictate and Read Aloud Tool",
+                  "uid": "DCL05-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit5&pdf=V2_DC L5 Sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Ruler, Margins, and Tabs",
+                  "uid": "DCL05-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit5&pdf=V2_DC L5 Sprint 5.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.1 Representing Data",
+                  "uid": "DCL05-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit6&pdf=V2_DC L5 Sprint 6.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.2 Data and Relationships",
+                  "uid": "DCL05-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit6&pdf=V2_DC L5 Sprint 6.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.3 Data for Creative Solutions",
+                  "uid": "DCL05-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level5&unit=Unit6&pdf=V2_DC L5 Sprint 6.3",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL05/DCL05-TP1-000.mdx",
           "title": "Unit 1: Impact of Computing",
           "type": "topic",

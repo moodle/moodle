@@ -28,7 +28,7 @@ function main_api_brandsettings() {
     //     }
     // }
     $abrandsettings = array(
-        "logo" => "https://test.qubitsedu.com/pluginfile.php/1/core_admin/logo/0x200/1674221642/Final%20logos%20combined-05.png",
+        "logo" => "http://production.myqubit.co/theme/qubitsbasic/pix/qubits-full-logo.svg",
         "favicon" => "",
         "colorprimary" => $defaultprimary,
         "colorsecondary" => $defaultsecondary,

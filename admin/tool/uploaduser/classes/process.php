@@ -457,10 +457,115 @@ class process {
      */
     public function process_line(array $line) {
         global $DB, $CFG, $SESSION;
-
+//echo "<pre>"; print_r($line); exit;
         if (!$user = $this->prepare_user_record($line)) {
             return;
         }
+
+        $qsite_user = new \stdClass;
+        $usersysrole = isset($user->sysrole1) ? $user->sysrole1 : '';
+        $usercohort = isset($user->cohort1) ? $user->cohort1 : '';
+        $aclasses = [];
+        $asections = [];
+        $aclasses1 = [];
+        $asections1 = [];
+        $aclass_sections = [];
+
+         // Find Userclass
+         foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^userclass\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 9);
+            $userclass = $user->$column;
+            if($usersysrole=="student" && $i > 1 && !empty($userclass)){
+                $this->upt->track('status', 'Student can\'t assign more than one class', 'error');
+                $this->userserrors++;
+                return;
+            }
+            if(!empty($userclass)){
+                $userclsdata = $DB->get_record("local_qubits_classes", array("idnumber" => $userclass));
+                if($userclsdata){
+                    $aclasses[] = $userclsdata->id;
+                    $aclasses1[] = $userclass;
+                } else {
+                    $this->upt->track('status', 'userclass'.$i.' is not in Database', 'error');
+                    $this->userserrors++;
+                    return;
+                }
+            }
+        }
+
+        // Find Usersections
+        foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^usersection\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 11);
+            $usersection = $user->$column;
+            if($usersysrole=="student" && $i > 1 && !empty($usersection)){
+                $this->upt->track('status', 'Student can\'t assign more than one section', 'error');
+                $this->userserrors++;
+                return;
+            }
+            if(!empty($usersection)){
+                $usersecdata = $DB->get_record("local_qubits_sections", array("idnumber" => $usersection));
+                if($usersecdata){
+                    $asections[] = $usersecdata->id;
+                    $asections1[] = $usersection;
+                } else {
+                    $this->upt->track('status', 'usersection'.$i.' is not in Database', 'error');
+                    $this->userserrors++;
+                    return;
+                }
+            }
+        }
+        
+        if(count($aclasses) != count($asections)){
+            $this->upt->track('status', 'User classes and sections counts are mismatching', 'error');
+            $this->userserrors++;
+            return;
+        }
+
+        foreach($aclasses as $i => $v){
+            $aclass_sections[] = $aclasses[$i].'-'.$asections[$i];
+        }
+
+        $qsite_user->class_sections = implode(",", $aclass_sections);
+
+        $acourses = [];
+
+        foreach ($this->get_file_columns() as $column) {
+            if (!preg_match('/^course\d+$/', $column)) {
+                continue;
+            }
+            $i = substr($column, 6);
+            if (!empty($user->{'course'.$i})) {
+                $acourses[] = $user->{'course'.$i};
+                unset($user->{'course'.$i});
+            }
+        }
+
+        $nflcolumns = [];
+        if(!empty($usersysrole) && !empty($usercohort)){
+           $ccnt = 1;
+           foreach($acourses as $ccode){
+               foreach($aclasses1 as $k => $cv){
+                   $csec = $asections1[$k];
+                   $user->{'course'.$ccnt} = $ccode;
+                   $user->{'role'.$ccnt} = $usersysrole;
+                   $user->{'group'.$ccnt} = $usercohort.$ccode.$cv.$csec;
+                   $nflcolumns[] = 'course'.$ccnt;
+                   $nflcolumns[] = 'role'.$ccnt;
+                   $nflcolumns[] = 'group'.$ccnt;
+                   $ccnt++;
+               }
+           }
+        }
+
+        $oldaflcolumns = $this->filecolumns;
+        $updflcolumns = array_unique(array_merge($oldaflcolumns, $nflcolumns), SORT_REGULAR);
+        $this->filecolumns = $updflcolumns;
 
         $matchparam = $this->get_match_on_email() ? ['email' => $user->email] : ['username' => $user->username];
         if ($existinguser = $DB->get_records('user', $matchparam + ['mnethostid' => $user->mnethostid])) {
@@ -1042,11 +1147,14 @@ class process {
             }
         }
 
+        $qsite_user->user_id = $user->id;
+
         // Update user interests.
         if (isset($user->interests) && strval($user->interests) !== '') {
             useredit_update_interests($user, preg_split('/\s*,\s*/', $user->interests, -1, PREG_SPLIT_NO_EMPTY));
         }
 
+        $cohort_id = 0;
         // Add to cohort first, it might trigger enrolments indirectly - do NOT create cohorts here!
         foreach ($this->get_file_columns() as $column) {
             if (!preg_match('/^cohort\d+$/', $column)) {
@@ -1084,8 +1192,10 @@ class process {
 
                 if (is_object($this->cohorts[$addcohort])) {
                     $cohort = $this->cohorts[$addcohort];
+                    $cohort_id = $cohort->id;
                     if (!$DB->record_exists('cohort_members', ['cohortid' => $cohort->id, 'userid' => $user->id])) {
                         cohort_add_member($cohort->id, $user->id);
+                        $cohort_id = $cohort->id;
                         // We might add special column later, for now let's abuse enrolments.
                         $this->upt->track('enrolments', get_string('useradded', 'core_cohort', s($cohort->name)), 'info');
                     }
@@ -1095,6 +1205,8 @@ class process {
                 }
             }
         }
+
+        $qcourseids = [];
 
         // Find course enrolments, groups, roles/types and enrol periods
         // this is again a special case, we always do this for any updated or created users.
@@ -1112,6 +1224,7 @@ class process {
 
                     if (array_key_exists($sysrolename, $this->sysrolecache)) {
                         $sysroleid = $this->sysrolecache[$sysrolename]->id;
+                        $qsite_user->role_id = $sysroleid;
                     } else {
                         $this->upt->track('enrolments', get_string('unknownrole', 'error', s($sysrolename)), 'error');
                         continue;
@@ -1194,6 +1307,7 @@ class process {
                 $this->ccache[$shortname]->groups = null;
             }
             $courseid      = $this->ccache[$shortname]->id;
+            $qcourseids[] = $courseid;
             $coursecontext = \context_course::instance($courseid);
             if (!isset($this->manualcache[$courseid])) {
                 $this->manualcache[$courseid] = false;
@@ -1359,7 +1473,17 @@ class process {
                     continue;
                 }
             }
+
         }
+
+        $qcourseids = array_unique($qcourseids, SORT_REGULAR);
+        $qsite_user->course_ids = implode(",", $qcourseids);
+        $qsite_user->site_id = $cohort_id;
+        $qsite_user->grade_id = reset($aclasses);
+        $qsite_user->section_ids = implode(",", $asections);
+
+        update_qubits_site_user($qsite_user);
+
         if (($invalid = \core_user::validate($user)) !== true) {
             $this->upt->track('status', get_string('invaliduserdata', 'tool_uploaduser', s($user->username)), 'warning');
         }
