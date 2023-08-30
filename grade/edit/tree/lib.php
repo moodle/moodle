@@ -271,6 +271,12 @@ class grade_edit_tree {
             $categoryrow->id = 'grade-item-' . $eid;
             $categoryrow->attributes['class'] = $courseclass . ' category ';
             $categoryrow->attributes['data-category'] = $eid;
+            if (!empty($parent_eid)) {
+                $categoryrow->attributes['data-parent-category'] = $parent_eid;
+            }
+            $categoryrow->attributes['data-aggregation'] = $category->aggregation;
+            $categoryrow->attributes['data-grademax'] = $category->grade_item->grademax;
+            $categoryrow->attributes['data-aggregationcoef'] = $category->grade_item->aggregationcoef;
             $categoryrow->attributes['data-itemid'] = $category->grade_item->id;
             $categoryrow->attributes['data-hidden'] = 'false';
             foreach ($rowclasses as $class) {
@@ -341,6 +347,10 @@ class grade_edit_tree {
             // collapsed and the aggregated max grade is not visible.
             if (!empty($categoryitemclass)) {
                 $gradeitemrow->attributes['data-aggregationforcategory'] = $parent_eid;
+            } else {
+                $gradeitemrow->attributes['data-parent-category'] = $parent_eid;
+                $gradeitemrow->attributes['data-grademax'] = $object->grademax;
+                $gradeitemrow->attributes['data-aggregationcoef'] = $object->aggregationcoef;
             }
             foreach ($rowclasses as $class) {
                 $gradeitemrow->attributes['class'] .= ' ' . $class;
