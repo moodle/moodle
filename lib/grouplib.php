@@ -328,7 +328,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
             $visibilityfrom = "LEFT JOIN {groups_members} gm ON gm.groupid = g.id AND gm.userid = ?";
         }
         [$insql, $inparams] = $DB->get_in_or_equal([GROUPS_VISIBILITY_MEMBERS, GROUPS_VISIBILITY_OWN]);
-        $visibilitywhere = "AND (g.visibility = ? OR (g.visibility $insql AND gm.id IS NOT NULL))";
+        $visibilitywhere = " AND (g.visibility = ? OR (g.visibility $insql AND gm.id IS NOT NULL))";
         $params = array_merge(
             $userids,
             $params,
@@ -429,7 +429,7 @@ function groups_get_my_groups() {
     $visibilitywhere = '';
     if (!$viewhidden) {
         $params['novisibility'] = GROUPS_VISIBILITY_NONE;
-        $visibilitywhere = 'AND g.visibility != :novisibility';
+        $visibilitywhere = ' AND g.visibility != :novisibility';
     }
 
     return $DB->get_records_sql("SELECT *
@@ -662,7 +662,7 @@ function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
         // or visibility is OWN and this is their membership.
         list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_member_visibility_where();
         $params = array_merge($params, $visibilityparams);
-        $where .= $visibilitywhere;
+        $where .= ' AND ' . $visibilitywhere;
     }
 
     $sql = implode(PHP_EOL, [$select, $from, $where, $order]);
@@ -1251,7 +1251,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
         $groupids = $groupids ? [$groupids] : [];
     }
 
-    $join = '';
+    $joins = [];
     $where = '';
     $param = [];
 
@@ -1260,14 +1260,31 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
         // Throw an exception if $context is empty or invalid because it's needed to get the users without any group.
         throw new coding_exception('Missing or wrong $context parameter in an attempt to get members without any group');
     }
+    // Can we view hidden groups within a course?
+    [$ualias] = explode('.', $useridcolumn);
+    $viewhidden = false;
+    if (!empty($coursecontext)) {
+        $viewhidden = \core_group\visibility::can_view_all_groups($coursecontext->instanceid);
+    }
 
     // Handle cases where we need to include/exclude users not in any groups.
     if (($nogroupskey = array_search(USERSWITHOUTGROUP, $groupids)) !== false) {
-        // Get members without any group.
-        $join .= "LEFT JOIN (
+        $visibilityjoin = '';
+        $visibilitywhere = '';
+
+        if (!$viewhidden) {
+            $visibilityjoin = 'JOIN {user} u ON u.id = m.userid';
+            [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where('g', 'm');
+            $param = array_merge($param, $visibilityparams);
+            $visibilitywhere = 'WHERE ' . $visibilitywhere;
+        }
+        // Get members without any group, or only in groups we cannot see membership of.
+        $joins[] = "LEFT JOIN (
                      SELECT g.courseid, m.groupid, m.userid
                        FROM {groups_members} m
                        JOIN {groups} g ON g.id = m.groupid
+                       {$visibilityjoin}
+                       {$visibilitywhere}
                   ) {$prefix}gm ON ({$prefix}gm.userid = {$useridcolumn} AND {$prefix}gm.courseid = :{$prefix}gcourseid)";
 
         // Join type 'None' when filtering by 'no groups' means match users in at least one group.
@@ -1278,7 +1295,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
             $where = "{$prefix}gm.userid IS NULL";
         }
 
-        $param = ["{$prefix}gcourseid" => $coursecontext->instanceid];
+        $param["{$prefix}gcourseid"] = $coursecontext->instanceid;
         unset($groupids[$nogroupskey]);
     }
 
@@ -1292,10 +1309,22 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                 foreach ($groupids as $groupid) {
                     $gmalias = "{$prefix}gm{$aliaskey}";
                     $aliaskey++;
-                    $join .= "LEFT JOIN {groups_members} {$gmalias}
+                    $joins[] = "LEFT JOIN {groups_members} {$gmalias}
                                      ON ({$gmalias}.userid = {$useridcolumn} AND {$gmalias}.groupid = :{$gmalias}param)";
                     $joinallwheres[] = "{$gmalias}.userid IS NOT NULL";
                     $param["{$gmalias}param"] = $groupid;
+                    if (!$viewhidden) {
+                        $galias = "{$prefix}g{$aliaskey}";
+                        $joins[] = "LEFT JOIN {groups} {$galias} ON {$gmalias}.groupid = {$galias}.id";
+                        [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
+                            $galias,
+                            $gmalias,
+                            $ualias,
+                            $prefix . $aliaskey . '_'
+                        );
+                        $joinallwheres[] = $visibilitywhere;
+                        $param = array_merge($param, $visibilityparams);
+                    }
                 }
 
                 // Members of all of the specified groups only.
@@ -1313,7 +1342,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                 // Handle matching any of the provided groups (logical OR).
                 list($groupssql, $groupsparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, $prefix);
 
-                $join .= "LEFT JOIN {groups_members} {$prefix}gm2
+                $joins[] = "LEFT JOIN {groups_members} {$prefix}gm2
                                  ON ({$prefix}gm2.userid = {$useridcolumn} AND {$prefix}gm2.groupid {$groupssql})";
                 $param = array_merge($param, $groupsparams);
 
@@ -1325,13 +1354,24 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                     $where = "({$where} OR {$prefix}gm2.userid IS NOT NULL)";
                 }
 
+                if (!$viewhidden) {
+                    $joins[] = "LEFT JOIN {groups} {$prefix}g2 ON {$prefix}gm2.groupid = {$prefix}g2.id";
+                    [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
+                        $prefix . 'g2',
+                        $prefix . 'gm2',
+                        $ualias
+                    );
+                    $where .= ' AND ' . $visibilitywhere;
+                    $param = array_merge($param, $visibilityparams);
+                }
+
                 break;
 
             case GROUPS_JOIN_NONE:
                 // Handle matching none of the provided groups (logical NOT).
                 list($groupssql, $groupsparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, $prefix);
 
-                $join .= "LEFT JOIN {groups_members} {$prefix}gm2
+                $joins[] = "LEFT JOIN {groups_members} {$prefix}gm2
                                  ON ({$prefix}gm2.userid = {$useridcolumn} AND {$prefix}gm2.groupid {$groupssql})";
                 $param = array_merge($param, $groupsparams);
 
@@ -1343,11 +1383,22 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                     $where = "({$where} AND {$prefix}gm2.userid IS NULL)";
                 }
 
+                if (!$viewhidden) {
+                    $joins[] = "LEFT JOIN {groups} {$prefix}g2 ON {$prefix}gm2.groupid = {$prefix}g2.id";
+                    [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
+                        $prefix . 'g2',
+                        $prefix . 'gm2',
+                        $ualias
+                    );
+                    $where .= ' OR NOT ' . $visibilitywhere;
+                    $param = array_merge($param, $visibilityparams);
+                }
+
                 break;
         }
     }
 
-    return new \core\dml\sql_join($join, $where, $param);
+    return new \core\dml\sql_join(implode("\n", $joins), $where, $param);
 }
 
 /**
@@ -1532,9 +1583,11 @@ function groups_user_groups_visible($course, $userid, $cm = null) {
 function groups_get_groups_members($groupsids, $extrafields=null, $sort='lastname ASC') {
     global $DB;
 
+    $wheres = [];
     $userfieldsapi = \core_user\fields::for_userpic()->including(...($extrafields ?? []));
     $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
     list($insql, $params) = $DB->get_in_or_equal($groupsids, SQL_PARAMS_NAMED);
+    $wheres[] = "gm.groupid $insql";
 
     $courseids = $DB->get_fieldset_sql("SELECT DISTINCT courseid FROM {groups} WHERE id $insql", $params);
 
@@ -1546,17 +1599,18 @@ function groups_get_groups_members($groupsids, $extrafields=null, $sort='lastnam
         $context = context_course::instance($courseid);
     }
 
-    $visibilitywhere = '';
     if (!has_capability('moodle/course:viewhiddengroups', $context)) {
         list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_member_visibility_where();
         $params = array_merge($params, $visibilityparams);
+        $wheres[] = $visibilitywhere;
     }
 
+    $where = implode(' AND ', $wheres);
     return $DB->get_records_sql("SELECT $userfields
                                    FROM {user} u
                                         JOIN {groups_members} gm ON u.id = gm.userid
                                         JOIN {groups} g ON g.id = gm.groupid
-                                  WHERE gm.groupid $insql $visibilitywhere
+                                  WHERE {$where}
                                GROUP BY $userfields
                                ORDER BY $sort", $params);
 }

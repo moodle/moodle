@@ -54,9 +54,7 @@ Feature: Private groups
       | student8 | N     |
 
   Scenario: Participants in "Visible to everyone" groups see their membership and other members:
-    Given I log in as "student1"
-    And I am on "Course 1" course homepage
-    When I follow "Participants"
+    Given I am on the "C1" "enrolled users" page logged in as "student1"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                         |
       | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
@@ -69,9 +67,7 @@ Feature: Private groups
       | Student 8            | No groups                                                      |
 
   Scenario: Participants in "Only visible to members" groups see their membership and other members, plus "Visible to everyone"
-    Given I log in as "student2"
-    And I am on "Course 1" course homepage
-    When I follow "Participants"
+    Given I am on the "C1" "enrolled users" page logged in as "student2"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
       | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
@@ -84,9 +80,7 @@ Feature: Private groups
       | Student 8            | No groups                                                              |
 
   Scenario: Participants in "Only see own membership" groups see their membership but not other members, plus "Visible to everyone"
-    Given I log in as "student3"
-    And I am on "Course 1" course homepage
-    When I follow "Participants"
+    Given I am on the "C1" "enrolled users" page logged in as "student3"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
       | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
@@ -99,9 +93,7 @@ Feature: Private groups
       | Student 8            | No groups                                                              |
 
   Scenario: Participants in "Not visible" groups do not see that group, do see "Visible to everyone"
-    Given I log in as "student4"
-    And I am on "Course 1" course homepage
-    When I follow "Participants"
+    Given I am on the "C1" "enrolled users" page logged in as "student4"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
       | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
@@ -114,9 +106,7 @@ Feature: Private groups
       | Student 8            | No groups                                                              |
 
   Scenario: View participants list as a teacher:
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    When I follow "Participants"
+    Given I am on the "C1" "enrolled users" page logged in as "teacher1"
     Then the following should exist in the "participants" table:
       | First name / Surname | Groups                                                                 |
       | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation         |
@@ -127,3 +117,60 @@ Feature: Private groups
       | Student 6            | Only visible to members/Non-Participation, Only visible to members/Participation |
       | Student 7            | Only see own membership                                                     |
       | Student 8            | Not visible                                                            |
+
+  @javascript
+  Scenario: Filtering by "Only see own membership" groups should not show other members.
+    Given I am on the "C1" "enrolled users" page logged in as "student3"
+    When I set the field "type" to "Groups"
+    And I set the field "Type or select..." to "Only see own membership"
+    And I click on "Apply filters" "button"
+    Then the following should exist in the "participants" table:
+      | First name / Surname | Groups                  |
+      | Student 3            | Only see own membership |
+    And the following should not exist in the "participants" table:
+      | First name / Surname | Groups                  |
+      | Student 7            | No groups               |
+
+  @javascript
+  Scenario: Filtering by "No group" should show all users whose memberships I cannot see
+    Given I am on the "C1" "enrolled users" page logged in as "student3"
+    When I set the field "type" to "Groups"
+    And I set the field "Type or select..." to "No group"
+    And I click on "Apply filters" "button"
+    Then the following should exist in the "participants" table:
+      | First name / Surname | Groups     |
+      | Student 2            | No groups  |
+      | Student 4            | No groups  |
+      | Student 6            | No groups  |
+      | Student 7            | No groups  |
+      | Student 8            | No groups  |
+
+  @javascript
+  Scenario: Filtering by not a member of "Only see own membership" groups I am a member of should show everyone except me
+    Given I am on the "C1" "enrolled users" page logged in as "student3"
+    When I set the field "Match" in the "Filter 1" "fieldset" to "None"
+    And I set the field "type" to "Groups"
+    And I set the field "Type or select..." to "Only see own membership"
+    And I click on "Apply filters" "button"
+    Then the following should exist in the "participants" table:
+      | First name / Surname | Groups                                                                   |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
+      | Student 2            | No groups                                                                |
+      | Student 4            | No groups                                                                |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
+      | Student 6            | No groups                                                                |
+      | Student 7            | No groups                                                                |
+      | Student 8            | No groups                                                                |
+
+  @javascript
+  Scenario: Filtering by not a member of "No group" should only show users whose memberships I can see
+    Given I am on the "C1" "enrolled users" page logged in as "student3"
+    When I set the field "Match" in the "Filter 1" "fieldset" to "None"
+    And I set the field "type" to "Groups"
+    And I set the field "Type or select..." to "No group"
+    And I click on "Apply filters" "button"
+    Then the following should exist in the "participants" table:
+      | First name / Surname | Groups                                                                   |
+      | Student 1            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
+      | Student 3            | Only see own membership                                                  |
+      | Student 5            | Visible to everyone/Non-Participation, Visible to everyone/Participation |
