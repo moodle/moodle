@@ -160,7 +160,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
             $report = new gradereport_user\report\user($courseid, $gpr, $context, $user->id, $viewasuser);
             $userheading = $gradesrenderer->user_heading($report->user, $courseid, false);
 
-            echo $OUTPUT->heading($userheading);
+            echo $userheading;
 
             if ($report->fill_table()) {
                 echo $report->print_table(true);
@@ -174,9 +174,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
         $report = new gradereport_user\report\user($courseid, $gpr, $context, $userid, $viewasuser);
         $actionbar = new \gradereport_user\output\action_bar($context, $userview, $report->user->id, $currentgroup);
 
-        print_grade_page_head($courseid, 'report', 'user',
-            $gradesrenderer->user_heading($report->user, $courseid),
-            false, false, true, null, null, null, $actionbar);
+        print_grade_page_head($courseid, 'report', 'user', false, false, false, true, null, null, $report->user, $actionbar);
 
         if ($currentgroup && !groups_is_member($currentgroup, $userid)) {
             echo $OUTPUT->notification(get_string('groupusernotmember', 'error'));
@@ -193,12 +191,9 @@ if (has_capability('moodle/grade:viewall', $context)) {
     // Students will see just their own report.
     // Create a report instance.
     $report = new gradereport_user\report\user($courseid, $gpr, $context, $userid ?? $USER->id);
-    $userheading = $gradesrenderer->user_heading($report->user, $courseid, false);
 
     // Print the page.
-    print_grade_page_head($courseid, 'report', 'user', ' ');
-
-    echo $OUTPUT->heading($userheading);
+    print_grade_page_head($courseid, 'report', 'user', false, false, false, true, null, null, $report->user);
 
     if ($report->fill_table()) {
         echo $report->print_table(true);
