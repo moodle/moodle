@@ -115,6 +115,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  @include breakpoint(xs) {
+    margin: 0;
+  }
 }
 [role="button"]:focus {
   box-shadow: none !important;
@@ -191,7 +194,7 @@
       darken($colorbgcard, 10)
     );
     color: darken($colorbgcard, 45);
-    padding: 20px 20px 20px 10px;
+    padding: 20px 20px 30px 10px;
     font-family: "Acme", sans-serif;
 
     &:hover {
@@ -208,7 +211,7 @@
   .white-circle {
     background-color: var(--white);
     height: 50px;
-    max-width: 50px !important;
+    width: 50px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -216,6 +219,7 @@
     font-size: $fontsize30;
     font-weight: 600;
     font-family: "Acme", sans-serif;
+    margin-left: 10px;
   }
   .bg-wave {
     background: url("[[pix:theme|bg-waves]]");
@@ -240,13 +244,14 @@
   }
   .card-text {
     font-size: $fontsize20;
+    margin-bottom: 0;
   }
   .card-text-size {
     @include breakpoint(xs) {
-      font-size: $fontsize27;
+      font-size: $fontsize46;
     }
     @include breakpoint(md) {
-      font-size: $fontsize30;
+      font-size: $fontsize46;
     }
     @include breakpoint(lg) {
       font-size: $fontsize46;
@@ -265,7 +270,9 @@
 .qicon-menu {
   display: none;
   cursor: pointer;
+  color: #116cbf;
 }
+
 .max-width {
   @include breakpoint(xs) {
     max-width: 90% !important;
@@ -377,7 +384,7 @@
         }
         .link_name {
           pointer-events: none;
-          font-size: 14px;
+          font-size: 16px;
           font-weight: 600;
           white-space: nowrap;
           // / color: #585858; /
@@ -472,7 +479,7 @@
     }
   }
   .link_name {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 600;
     white-space: nowrap;
     transition: all 0.4s ease;
@@ -985,13 +992,7 @@ ol {
   }
 }
 #page.drawers {
-  margin-top: 90px !important;
-  @include breakpoint(xs) {
-    margin-top: 66px !important;
-  }
-  @include breakpoint(sm) {
-    margin-top: 66px !important;
-  }
+  margin-top: 70px !important;
 }
 .sidebar.close-bars .nav-links li .sub-menu {
   height: 200px;
@@ -1095,4 +1096,7 @@ a:not([class]):focus,
 }
 .card-body .card-body-overlay .w-30 {
   width: 30%;
+}
+.pagetitle-left-alignment .breadcrumb-item + .breadcrumb-item {
+  padding: 0;
 }

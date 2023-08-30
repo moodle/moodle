@@ -33,7 +33,7 @@
   --content-max-width: 100% !important;
   --menu-bar-height: 50px;
   --mono-font: Consolas, Menlo;
-   /* --code-font-size: 0.875em;  */
+  /* --code-font-size: 0.875em; */
 }
 
 .content html {
@@ -43,20 +43,14 @@
 #searchresults a,
 .content a:link,
 a:visited,
-a>.hljs {
+a > .hljs {
   color: var(--links);
 }
-
-a:hover>.hljs {
-  text-decoration: underline;
-}
-
 pre {
   position: relative;
-  color: #fff;
 }
 
-pre>.buttons {
+pre > .buttons {
   position: absolute;
   z-index: 100;
   right: 0;
@@ -69,11 +63,11 @@ pre>.buttons {
   transition: visibility 0.1s linear, opacity 0.1s linear;
 }
 
-pre>.buttons i {
+pre > .buttons i {
   margin-left: 8px;
 }
 
-pre>.buttons button {
+pre > .buttons button {
   cursor: inherit;
   margin: 0 5px;
   padding: 3px 5px;
@@ -89,12 +83,12 @@ pre>.buttons button {
 }
 
 @media (pointer: coarse) {
-  pre>.buttons button {
+  pre > .buttons button {
     padding: 0.3rem 1rem;
   }
 }
 
-pre>code {
+pre > code {
   padding: 1rem;
 }
 
@@ -102,7 +96,7 @@ pre>code {
   padding: 0;
 }
 
-pre>.result {
+pre > .result {
   margin-top: 10px;
   background-color: #343232;
   color: #fefefe;
@@ -178,13 +172,6 @@ h6:target:before {
   scroll-margin-top: calc(var(--menu-bar-height) + 0.5em);
 }
 
-.content main {
-  margin-left: auto;
-  margin-right: auto;
-    /* once you proceed integration for moodle uncomment this line max-width: var(--content-max-width);   */
-   max-width: var(--content-max-width); 
-}
-
 .content ol,
 .content p,
 .content ul {
@@ -212,12 +199,15 @@ h6:target:before {
   line-height: 1.1;
 }
 
+.content p {
+  margin-top: 20px;
+}
+
 .content a {
   text-decoration: none;
 }
 
 .content a:hover {
-  text-decoration: underline !important;
   color: white !important;
 }
 
@@ -238,7 +228,7 @@ h6:target:before {
 
 blockquote {
   margin: 20px 0;
-  padding: 20px 20px;
+  padding: 0 20px;
   color: #000;
   background-color: #f1f6f9;
   border-top: 0.1em solid #e0ecf1;
@@ -262,7 +252,6 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(http://staging.myqubit.co/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png) no-repeat;
   background-size: contain;
   width: 118px;
   height: 79px;
@@ -273,17 +262,15 @@ body {
 }
 
 .content h1:not(.menu-title) {
-  background-color: #47bbb6;
+  background-color: #1482e6;
   border-radius: 30px;
   position: relative;
   padding-left: 80px;
 }
 
-/* .content h1:not(.menu-title.heading-title) {
+.content h1:not(.menu-title.heading-title) {
   padding-left: 20px;
-} */
-
-
+}
 
 h1:target:before,
 h2:target:before,
@@ -316,16 +303,14 @@ h6:target:before {
 }
 
 .content main {
-  background: #fef6db;
   padding: 20px;
-  border-radius: 36px;
 }
 
 pre {
   margin: 0.4em 0;
 }
 
-pre~p {
+pre ~ p {
   margin-top: 2em;
   margin-bottom: 0;
 }
@@ -571,7 +556,7 @@ code {
 .error404 {
   font-family: "Calligraffitti", cursive;
   font-weight: 700;
-  font-size: 13rem;
+  font-size: 13rem !important;
   text-shadow: -15px 5px 20px #ced0d3;
   letter-spacing: 0.02em;
   text-align: center;
@@ -582,10 +567,12 @@ code {
 
 .notavailable {
   text-align: center;
-  background-color: #47bbb6;
-  color: white;
+  font-size: 35px !important;
+  color: #fff;
   padding: 10px;
   border-radius: 35px;
+  font-weight: 600;
+  background-color: #47bbb6;
 }
 
 .react-pdf-viewer-Toolbar {
@@ -609,6 +596,7 @@ code {
 
 .content .title a {
   color: white;
+  /* text-transform: uppercase; */
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -646,84 +634,6 @@ code {
   background: none !important;
 }
 
-.standalone-editor-container h1:not(.menu-standalone-editor-title) {
-  background-color: #0f6cbf;
-  border-radius: 30px;
-  position: relative;
-  padding-left: 80px;
-}
-
-.standalone-editor-container h1:not(.menu-standalone-editor-title.standalone-editor-language-title) {
-  padding-left: 20px;
-}
-
-.standalone-editor-container .standalone-editor-title a {
-  color: white;
-  font-weight: normal;
-  font-size: 18px;
-  position: relative;
-  top: -0.5rem;
-}
-
-.standalone-editor-container a {
-  text-decoration: none;
-}
-
-.standalone-editor-container a:hover {
-  text-decoration: underline !important;
-  color: white !important;
-}
-
-.standalone-editor-container main {
-  margin-left: auto;
-  margin-right: auto;
-  max-width: var(--content-max-width); 
-}
-
-.iframe-container {
-  position: relative;
-  width: 100%;
-}
-
-.iframe {
-  width: 100%;
-  min-height: 300px;
-}
-
-.MuiButtonBase-root.run-button {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  z-index: 1;
-  padding: 10px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  cursor: pointer;
-  text-transform: capitalize;
-}
-
-.MuiButtonBase-root.run-button:hover {
-  background-color: #007bff;
-  color: white;
-}
-
-.sql-table-style:nth-child(2){
-  width: 42%;
-}
-.sql-table-style:nth-child(3){
-  width: 33%;
-}
-.sql-table-style:nth-child(1){
-  width: 33%;
-}
-.sqlTableStyle table,thead{
-  text-align: left;
-  border: 1px solid gray;
- }
- .sqlTableStyle table{
-  width: 100%;
-  background-color: white;
-  color: #000;
-  border-collapse: collapse;
+.rpv-core__textbox {
+  width: 100% !important;
 }
