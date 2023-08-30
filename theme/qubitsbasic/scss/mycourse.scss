@@ -219,6 +219,7 @@
     font-size: $fontsize30;
     font-weight: 600;
     font-family: "Acme", sans-serif;
+    margin-left: 10px;
   }
   .bg-wave {
     background: url("[[pix:theme|bg-waves]]");
@@ -269,7 +270,9 @@
 .qicon-menu {
   display: none;
   cursor: pointer;
+  color: #116cbf;
 }
+
 .max-width {
   @include breakpoint(xs) {
     max-width: 90% !important;
@@ -989,13 +992,7 @@ ol {
   }
 }
 #page.drawers {
-  margin-top: 90px !important;
-  @include breakpoint(xs) {
-    margin-top: 66px !important;
-  }
-  @include breakpoint(sm) {
-    margin-top: 66px !important;
-  }
+  margin-top: 70px !important;
 }
 .sidebar.close-bars .nav-links li .sub-menu {
   height: 200px;

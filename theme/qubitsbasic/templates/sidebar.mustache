@@ -30,7 +30,15 @@ require(['jquery'], function($){
     checkScreenSize();
 	function checkScreenSize() {
 		var newWindowWidth = $(window).width();
-		if (newWindowWidth < 578) {
+		if (newWindowWidth > 578) {
+				
+				
+				
+				$(".sidebar").show();
+				
+				$(".sidebar-overlay").hide();
+		}
+		else if (newWindowWidth < 546) {
 			$(".arrow-left").click(function () {
 				$(".sidebar").hide();
 				$(".sidebar-overlay").hide();
@@ -61,10 +69,12 @@ require(['jquery'], function($){
 				$(".sidebar").show();
 				$(".main-inner").addClass("leftnav");
 				$(".previousnav").hide();
+				$(".sidebar-overlay").hide();
 			});
 			$(".qicon-menu").click(function () {
 				$(".sidebar").removeClass("close-bars");
 				$(".compact-logo").hide();
+				$(".sidebar-overlay").hide();
 				$(".qicon-menu").hide();
 				$(".pagetitle-left-alignment").removeClass("closebar-left-alignment");
 				$(".sidebar").show();
