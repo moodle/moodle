@@ -3547,5 +3547,12 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023082600.03);
     }
 
+    if ($oldversion < 2023082600.05) {
+        unset_config('completiondefault');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.05);
+    }
+
     return true;
 }
