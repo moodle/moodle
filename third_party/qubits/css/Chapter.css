@@ -46,6 +46,7 @@ a:visited,
 a > .hljs {
   color: var(--links);
 }
+
 pre {
   position: relative;
 }
@@ -262,10 +263,10 @@ body {
 }
 
 .content h1:not(.menu-title) {
-  background-color: #1482e6;
-  border-radius: 30px;
-  position: relative;
-  padding-left: 80px;
+    background-color: #1482e6;
+    border-radius: 30px;
+    position: relative;
+    padding-left: 80px;
 }
 
 .content h1:not(.menu-title.heading-title) {
@@ -596,7 +597,6 @@ code {
 
 .content .title a {
   color: white;
-  /* text-transform: uppercase; */
   font-weight: normal;
   font-size: 18px;
   position: relative;
@@ -630,10 +630,196 @@ code {
   border-color: #747474;
 }
 
-.ace-dracula .ace_print-margin {
+.ace-crimson-editor .ace_print-margin {
   background: none !important;
 }
 
+.standalone-editor-container h1:not(.menu-standalone-editor-title) {
+  background-color: #0f6cbf;
+  border-radius: 30px;
+  position: relative;
+  padding-left: 80px;
+}
+
+.standalone-editor-container
+  h1:not(.menu-standalone-editor-title.standalone-editor-language-title) {
+  padding-left: 20px;
+}
+
+.standalone-editor-container .standalone-editor-title a {
+  color: white;
+  font-weight: normal;
+  font-size: 18px;
+  position: relative;
+  top: -0.5rem;
+}
+
+.standalone-editor-container a {
+  text-decoration: none;
+}
+
+.standalone-editor-container a:hover {
+  text-decoration: underline !important;
+  color: white !important;
+}
+
+.standalone-editor-container main {
+  margin-left: auto;
+  margin-right: auto;
+  max-width: var(--content-max-width);
+}
+
+.iframe-container {
+  position: relative;
+  width: 100%;
+}
+
+.iframe {
+  width: 100%;
+  min-height: 300px;
+  border: none;
+}
+
+.MuiButtonBase-root.run-button {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  z-index: 1;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+  text-transform: capitalize;
+}
+
+.MuiButtonBase-root.run-button:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+.sql-table-style:nth-child(2) {
+  width: 42%;
+}
+
+.sql-table-style:nth-child(3) {
+  width: 33%;
+}
+
+.sql-table-style:nth-child(1) {
+  width: 33%;
+}
+
+.sqlTableStyle table,
+thead {
+  text-align: left;
+  border: 1px solid gray;
+}
+
+.sqlTableStyle table {
+  width: 100%;
+  background-color: white;
+  color: #000;
+  border-collapse: collapse;
+}
+
+.console-container {
+  background-color: #000;
+  color: white;
+  padding: 10px;
+  margin: 10px 0;
+  position: relative;
+  width: 100%;
+  min-height: 100px;
+}
+
+.console-text {
+  position: absolute;
+}
+
+.top-pane {
+  background-color: lightgray;
+}
+
+.pane {
+  height: 50vh;
+  width: 100%;
+  display: flex;
+}
+
+.webide-container {
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  background-color: #060606;
+}
+
+.webide-wrapper {
+  flex-grow: 1;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.webide-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1d1e23;
+  color: white;
+  padding: 0.5rem;
+  padding-left: 1rem;
+  border-top-right-radius: 0.5rem;
+  border-top-left-radius: 0.5rem;
+}
+
+.webide-container.collapsed {
+  flex-grow: 0;
+}
+
+.webide-container.collapsed .cm-scroller {
+  position: absolute;
+  overflow: hidden;
+}
+
+.webide-btn {
+  background-color: hsl(255, 6%, 13%);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  font-size: 1.3rem;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.webide-btn:hover {
+  background-color: hsl(255, 6%, 23%);
+  color: aqua;
+}
+
+@media screen and (min-width: 300px) and (max-width: 800px) {
+  .top-pane {
+    flex-direction: column;
+    height: fit-content;
+  }
+
+  .webide-wrapper {
+    min-height: 10vh;
+  }
+}
+
+.css-3tmnuj {
+  color: red;
+}
+
 .rpv-core__textbox {
-  width: 100% !important;
+    width: 100% !important;
+}
+
+pre {
+	color: #fff;
 }

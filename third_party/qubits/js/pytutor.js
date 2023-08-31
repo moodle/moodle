@@ -4,7 +4,7 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
 function ExecutionVisualizer(domRootID, dat, params) {
-  this.curInputCode = dat.code.main_code; // kill trailing spaces
+  this.curInputCode =dat.code.main_code; // kill trailing spaces
   this.curTrace = dat.trace;
   this.sourceFiles = dat.code;
   this.curFile = "";
@@ -231,17 +231,13 @@ ExecutionVisualizer.prototype.render = function () {
   }
 
   var myViz = this; // to prevent confusion of 'this' inside of nested functions
-
   var codeDisplayHTML =
     '<div id="codeDisplayDiv">\
         <div id="langDisplayDiv"></div>\
-        <div id="pyCodeOutputDiv"/>\
-        <div id="editCodeLinkDiv"><a id="editBtn">Edit code</a>\
-        <span id="liveModeSpan" style="display: none;">| <a id="editLiveModeBtn" href="#">Live programming</a></a>\
-        </div>\
-        <div id="legendDiv"/>\
-        <div id="executionSlider" class="executionSlider"/>\
-        <div id="executionSliderFooter"/>\
+        <div id="pyCodeOutputDiv"></div>\
+        <div id="legendDiv"></div>\
+        <div id="executionSlider" class="executionSlider"></div>\
+        <div id="executionSliderFooter"></div>\
         <div id="vcrControls">\
         <button id="jmpFirstInstr", type="button">&lt;&lt; First</button>\
         <button id="jmpStepBack", type="button">&lt; Back</button>\
@@ -250,11 +246,11 @@ ExecutionVisualizer.prototype.render = function () {
         <div><span id="curInstr">Step ? of ?</span></div>\
         </div>\
         <div id="rawUserInputDiv">\
-        <span id="userInputPromptStr"/>\
+        <span id="userInputPromptStr"></span>\
         <input type="text" id="raw_input_textbox" size="30"/>\
         <button id="raw_input_submit_btn">Submit</button>\
         </div>\
-        <div id="errorOutput"/>\
+        <div id="errorOutput"></div>\
         <div id="stepAnnotationDiv">\
         <textarea class="annotationText" id="stepAnnotationEditor" cols="60" rows="3"></textarea>\
         <div class="annotationText" id="stepAnnotationViewer"></div>\
@@ -302,6 +298,7 @@ ExecutionVisualizer.prototype.render = function () {
         </div>';
 
   if (this.params.verticalStack) {
+    console.log("After VCR Control >>>> If >>>> ");
     this.domRoot.html(
       vizHeaderHTML +
         '<table border="0" class="visualizer"><tr><td class="vizLayoutTd" id="vizLayoutTdFirst"">' +
@@ -349,7 +346,7 @@ ExecutionVisualizer.prototype.render = function () {
     // do this only after adding to DOM
     this.domRoot
       .find("#pyStdout")
-      .width("100%")
+      .width("350px")
       .height(stdoutHeight)
       .resizable();
   }
@@ -893,9 +890,9 @@ ExecutionVisualizer.prototype.enterViewAnnotationsMode = function () {
 
   var stepAnnotationEditorVal = myViz.domRoot
     .find("#stepAnnotationEditor")
-    .val()
-    .trim();
+    .val();
   if (stepAnnotationEditorVal) {
+    stepAnnotationEditorVal = $.trim(stepAnnotationEditorVal);
     curEntry.stepAnnotation = stepAnnotationEditorVal;
   } else {
     delete curEntry.stepAnnotation; // go as far as to DELETE this field entirely
@@ -2140,7 +2137,7 @@ ExecutionVisualizer.prototype.precomputeCurTraceLayouts = function () {
           }
         });
       } else if (heapObj[0] == "INSTANCE" || heapObj[0] == "CLASS") {
-        jQuery.each(heapObj, function (ind, child) {
+        $.each(heapObj, function (ind, child) {
           var headerLength = heapObj[0] == "INSTANCE" ? 2 : 3;
           if (ind < headerLength) return;
 
@@ -3055,7 +3052,10 @@ ExecutionVisualizer.prototype.renderDataStructures = function (
         // (only if c.source actually belongs to a stackFrameDiv (i.e.,
         //  it originated from the stack). for instance, in C there are
         //  heap pointers, but we doen't use heapConnectionEndpointIDs)
-        c.setPaintStyle({ lineWidth: 1, strokeStyle: connectorInactiveColor });
+        c.setPaintStyle({
+          lineWidth: 1,
+          strokeStyle: connectorInactiveColor,
+        });
         c.endpoints[0].setPaintStyle({ fillStyle: connectorInactiveColor });
         //c.endpoints[1].setVisible(false, true, true); // JUST set right endpoint to be invisible
 
@@ -3583,7 +3583,7 @@ ExecutionVisualizer.prototype.renderCompoundObject = function (
           numCols += 1;
         }
 
-        jQuery.each(obj, function (ind, val) {
+        $.each(obj, function (ind, val) {
           if (ind < 1) return; // skip 'SET' tag
 
           if ((ind - 1) % numCols == 0) {

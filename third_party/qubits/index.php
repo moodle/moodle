@@ -23,7 +23,7 @@ echo $OUTPUT->header();
 	  "language": "<?php echo $elanguage; ?>"
 	},
 
-		"buildId": "TnhhvV0f6O-oLYUPPx3IU",
+		"buildId": "1ZAuSTIIzMcs6Ol2DXPM_",
 		"isFallback": false,
 		"gsp": true,
 		"scriptLoader": []
