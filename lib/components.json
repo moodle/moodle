@@ -120,6 +120,7 @@
         "user": "user",
         "userkey": "lib\/userkey",
         "webservice": "webservice",
-        "xapi": "lib\/xapi"
+        "xapi": "lib\/xapi",
+        "ltix": "ltix"
     }
 }
