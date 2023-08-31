@@ -20,7 +20,6 @@ use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\column;
 use mod_lti\reportbuilder\local\entities\tool_types;
 use core_reportbuilder\system_report;
-use stdClass;
 
 /**
  * Course external tools list system report class implementation.
@@ -110,7 +109,6 @@ class course_external_tools_list extends system_report {
      */
     protected function add_columns(tool_types $tooltypesentity): void {
         $entitymainalias = $tooltypesentity->get_table_alias('lti_types');
-        $courseid = $this->course->id;
 
         $columns = [
             'tool_types:name',
@@ -138,14 +136,14 @@ class course_external_tools_list extends system_report {
             $tooltypesentity->get_entity_name()
         ))
             // Site tools can be overridden on course level.
-            ->add_join("LEFT JOIN {lti_coursevisible} lc ON lc.typeid = {$entitymainalias}.id AND lc.courseid = $courseid")
+            ->add_join("LEFT JOIN {lti_coursevisible} lc ON lc.typeid = {$entitymainalias}.id AND lc.courseid = " . $this->course->id)
             ->set_type(column::TYPE_INTEGER)
             ->add_fields("{$entitymainalias}.id, {$entitymainalias}.coursevisible, lc.coursevisible as coursevisibleoverridden")
             ->set_is_sortable(false)
-            ->set_callback(static function(int $id, stdClass $row): string {
-                global $PAGE, $COURSE;
+            ->set_callback(function(int $id, \stdClass $row): string {
+                global $PAGE;
                 $coursevisible = $row->coursevisible;
-                $courseid = $COURSE->id;
+                $courseid = $this->course->id;
                 if (!empty($row->coursevisibleoverridden)) {
                     $coursevisible = $row->coursevisibleoverridden;
                 }
@@ -166,10 +164,7 @@ class course_external_tools_list extends system_report {
                 $label = $coursevisible ? get_string('dontshowinactivitychooser', 'mod_lti')
                     : get_string('showinactivitychooser', 'mod_lti');
 
-                $disabled = false;
-                if (!has_capability('mod/lti:addcoursetool', \context_course::instance($courseid))) {
-                    $disabled = true;
-                }
+                $disabled = !has_capability('mod/lti:addcoursetool', \context_course::instance($courseid));
 
                 return $renderer->render_from_template('core/toggle', [
                     'id' => 'showinactivitychooser-toggle-' . $row->id,

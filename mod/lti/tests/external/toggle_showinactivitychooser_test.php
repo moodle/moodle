@@ -16,6 +16,8 @@
 
 namespace mod_lti\external;
 
+use core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -57,20 +59,21 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
                 'lti_coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER
             ]
         );
-        toggle_showinactivitychooser::execute($typeid, $course->id, false);
-        $sql = "SELECT lt.coursevisible coursevisible1, ltc.value AS coursevisible2
-                  FROM {lti_types} lt
-             LEFT JOIN {lti_types_config} ltc ON lt.id = ltc.typeid
-                 WHERE lt.id = ?
-                   AND ltc.name = 'coursevisible'";
-        $actual = $DB->get_record_sql($sql, [$typeid]);
-        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible1);
-        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
+        $result = toggle_showinactivitychooser::execute($typeid, $course->id, false);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertTrue($result);
 
-        toggle_showinactivitychooser::execute($typeid, $course->id, true);
+        $sql = "SELECT lt.coursevisible coursevisible
+                  FROM {lti_types} lt
+                 WHERE lt.id = ?";
         $actual = $DB->get_record_sql($sql, [$typeid]);
-        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
+        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible);
+
+        $result = toggle_showinactivitychooser::execute($typeid, $course->id, true);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertTrue($result);
+        $actual = $DB->get_record_sql($sql, [$typeid]);
+        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible);
     }
 
     /**
@@ -91,24 +94,26 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
 
         $type = $this->generate_tool_type(123); // Creates a site tool.
 
-        toggle_showinactivitychooser::execute($type->id, $course->id, false);
-        $sql = "SELECT lt.coursevisible coursevisible1, ltc.value AS coursevisible2, lc.coursevisible AS coursevisible3
+        $result = toggle_showinactivitychooser::execute($type->id, $course->id, false);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertTrue($result);
+
+        $sql = "SELECT lt.coursevisible coursevisible1, lc.coursevisible AS coursevisible2
                   FROM {lti_types} lt
-             LEFT JOIN {lti_types_config} ltc ON lt.id = ltc.typeid
              LEFT JOIN {lti_coursevisible} lc ON lt.id = lc.typeid
                  WHERE lt.id = ?
-                   AND lc.courseid = ?
-                   AND ltc.name = 'coursevisible'";
+                   AND lc.courseid = ?";
         $actual = $DB->get_record_sql($sql, [$type->id, $course->id]);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
-        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible3);
+        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
 
-        toggle_showinactivitychooser::execute($type->id, $course->id, true);
+        $result = toggle_showinactivitychooser::execute($type->id, $course->id, true);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertTrue($result);
+
         $actual = $DB->get_record_sql($sql, [$type->id, $course->id]);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
-        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible3);
 
         $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
         $ltigenerator->create_tool_types([
@@ -119,11 +124,13 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
             'lti_coursecategories' => $coursecat1->id
         ]);
         $tool = $DB->get_record('lti_types', ['name' => 'site tool preconfigured and activity chooser, restricted to category 1']);
-        toggle_showinactivitychooser::execute($tool->id, $course->id, false);
+        $result = toggle_showinactivitychooser::execute($tool->id, $course->id, false);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertTrue($result);
+
         $actual = $DB->get_record_sql($sql, [$tool->id, $course->id]);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
-        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
-        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible3);
+        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible2);
 
         $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
         $ltigenerator->create_tool_types([
@@ -137,6 +144,19 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
         $this->expectException('moodle_exception');
         $this->expectExceptionMessage('You are not allowed to change this setting for this tool.');
         toggle_showinactivitychooser::execute($tool->id, $course->id, true);
+
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool dont show',
+            'baseurl' => 'http://example.com/tool/1',
+            'coursevisible' => LTI_COURSEVISIBLE_NO,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+        ]);
+        $tool = $DB->get_record('lti_types', ['name' => 'site tool dont show']);
+        $result = toggle_showinactivitychooser::execute($tool->id, $course->id, false);
+        $result = external_api::clean_returnvalue(toggle_showinactivitychooser::execute_returns(), $result);
+        $this->assertFalse($result);
+
     }
 
 }

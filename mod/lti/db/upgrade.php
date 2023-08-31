@@ -138,7 +138,7 @@ function xmldb_lti_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023081101) {
-        // Define communication table.
+        // Define table to override coursevisible for a tool on course level.
         $table = new xmldb_table('lti_coursevisible');
 
         // Adding fields to table lti_coursevisible.
@@ -150,7 +150,7 @@ function xmldb_lti_upgrade($oldversion) {
         // Add key.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Conditionally launch create table for communication.
+        // Conditionally launch create table for overriding coursevisible.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

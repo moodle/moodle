@@ -62,7 +62,8 @@ class types_helper {
                             FROM {lti_types} t
                        LEFT JOIN {lti_types_categories} tc ON t.id = tc.typeid
                        LEFT JOIN {lti_coursevisible} c ON c.typeid = t.id AND c.courseid = $courseid
-                           WHERE (t.coursevisible $coursevisiblesql OR c.coursevisible $coursevisiblesql1)
+                           WHERE (t.coursevisible $coursevisiblesql
+                                 OR (c.coursevisible $coursevisiblesql1 AND t.coursevisible NOT IN (:lticoursevisibleno)))
                              AND ($coursecond)
                              AND t.state = :active
                              AND (tc.id IS NULL OR tc.categoryid = :categoryid)) tt
@@ -77,7 +78,65 @@ class types_helper {
                 'active' => LTI_TOOL_STATE_CONFIGURED,
                 'categoryid' => $coursecategory,
                 'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+                'lticoursevisibleno' => LTI_COURSEVISIBLE_NO,
             ] + $coursevisparams + $coursevisparams1 + $coursevisoverriddenparams
         );
     }
+
+    /**
+     * Override coursevisible for a given tool on course level.
+     *
+     * @param int $tooltypeid Type ID
+     * @param int $courseid Course ID
+     * @param \core\context\course $context Course context
+     * @param bool $showinactivitychooser Show or not show in activity chooser
+     * @return bool True if the coursevisible was changed, false otherwise.
+     */
+    public static function override_type_showinactivitychooser(int $tooltypeid, int $courseid, \core\context\course $context, bool $showinactivitychooser): bool {
+        global $DB;
+
+        require_capability('mod/lti:addcoursetool', $context);
+
+        $ltitype = lti_get_type($tooltypeid);
+        if ($ltitype && ($ltitype->coursevisible != LTI_COURSEVISIBLE_NO)) {
+            $coursevisible = $showinactivitychooser ? LTI_COURSEVISIBLE_ACTIVITYCHOOSER : LTI_COURSEVISIBLE_PRECONFIGURED;
+            $ltitype->coursevisible = $coursevisible;
+
+            $config = new \stdClass();
+            $config->lti_coursevisible = $coursevisible;
+
+            if (intval($ltitype->course) != intval(get_site()->id)) {
+                // It is course tool - just update it.
+                lti_update_type($ltitype, $config);
+            } else {
+                $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
+                $sql = "SELECT COUNT(*) AS count
+                      FROM {lti_types_categories} tc
+                     WHERE tc.typeid = :typeid";
+                $restrictedtool = $DB->count_records_sql($sql, ['typeid' => $tooltypeid]);
+                if ($restrictedtool) {
+                    $record = $DB->get_record('lti_types_categories', ['typeid' => $tooltypeid, 'categoryid' => $coursecategory]);
+                    if (!$record) {
+                        throw new \moodle_exception('You are not allowed to change this setting for this tool.');
+                    }
+                }
+
+                // This is site tool, but we would like to have course level setting for it.
+                $lticoursevisible = $DB->get_record('lti_coursevisible', ['typeid' => $tooltypeid, 'courseid' => $courseid]);
+                if (!$lticoursevisible) {
+                    $lticoursevisible = new \stdClass();
+                    $lticoursevisible->typeid = $tooltypeid;
+                    $lticoursevisible->courseid = $courseid;
+                    $lticoursevisible->coursevisible = $coursevisible;
+                    $DB->insert_record('lti_coursevisible', $lticoursevisible);
+                } else {
+                    $lticoursevisible->coursevisible = $coursevisible;
+                    $DB->update_record('lti_coursevisible', $lticoursevisible);
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 }

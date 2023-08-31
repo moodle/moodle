@@ -28,18 +28,18 @@ import Ajax from 'core/ajax';
  *
  * @param {Number} tooltypeid Too type id
  * @param {Number} courseid Course ID
- * @param {Number} coursevisible coursevisible state
+ * @param {Number} showinactivitychooser showinactivitychooser state
  * @return {Promise}
  */
 export const toggleShowInActivityChooser = (
     tooltypeid,
     courseid,
-    coursevisible,
+    showinactivitychooser,
 ) => Ajax.call([{
     methodname: 'mod_lti_toggle_showinactivitychooser',
     args: {
         tooltypeid,
         courseid,
-        coursevisible,
+        showinactivitychooser,
     },
 }])[0];
