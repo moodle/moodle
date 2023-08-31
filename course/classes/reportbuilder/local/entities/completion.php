@@ -226,11 +226,11 @@ class completion extends base {
                 LEFT JOIN {grade_grades} {$grade}
                        ON ({$user}.id = {$grade}.userid AND {$gradeitem}.id = {$grade}.itemid)
             ")
-            ->set_type(column::TYPE_INTEGER)
+            ->set_type(column::TYPE_FLOAT)
             ->add_fields("{$grade}.finalgrade")
             ->set_is_sortable(true)
-            ->add_callback(function ($value) {
-                if (!$value) {
+            ->add_callback(function(?float $value): string {
+                if ($value === null) {
                     return '';
                 }
                 return format_float($value, 2);
