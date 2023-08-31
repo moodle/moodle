@@ -1,5 +1,5 @@
-@editor_tiny @qtype_essay @javascript
-Feature: Set tiny editor values when the editor is not in a form
+@editor @qtype @qtype_essay @javascript
+Feature: Set editor values when the editor is not in a form
     As an automated tester
     In order to use a non-form editor
     I need to set values
