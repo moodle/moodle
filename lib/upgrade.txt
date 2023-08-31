@@ -143,6 +143,8 @@ being forced open in all behat tests.
 * New parameters for \get_time_interval_string():
   - `$dropzeroes` - Passing `true` will exclude zero date/time units from the output.
   - `$fullformat` - Passing `true` will return date/time units in full format (e.g. `1 day` instead of `1d`).
+* The print_object function (for temporary debugging use only) can now be used on objects that have recursive references,
+  and has an improved display and other changes. (New parameters are available; see function documentation.)
 
 === 4.2 ===
 
