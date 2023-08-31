@@ -259,6 +259,14 @@ class externallib_test extends externallib_advanced_testcase {
         $expected[] = ['name' => 'timezone', 'value' => $CFG->timezone];
         $expected[] = ['name' => 'forcetimezone', 'value' => $CFG->forcetimezone];
 
+        $expected[] = ['name' => 'searchengine', 'value' => $CFG->searchengine];
+        $expected[] = ['name' => 'searchenablecategories', 'value' => $CFG->searchenablecategories];
+        $expected[] = ['name' => 'searchdefaultcategory', 'value' => $CFG->searchdefaultcategory];
+        $expected[] = ['name' => 'searchhideallcategory', 'value' => $CFG->searchhideallcategory];
+        $expected[] = ['name' => 'searchmaxtopresults', 'value' => $CFG->searchmaxtopresults];
+        $expected[] = ['name' => 'searchbannerenable', 'value' => $CFG->searchbannerenable];
+        $expected[] = ['name' => 'searchbanner', 'value' => $CFG->searchbanner];
+
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 

@@ -61,6 +61,7 @@ class engine extends \core_search\engine {
 
     public function execute_query($data, $usercontexts, $limit = 0) {
         // No need to implement.
+        return [];
     }
 
     public function delete($areaid = null) {
