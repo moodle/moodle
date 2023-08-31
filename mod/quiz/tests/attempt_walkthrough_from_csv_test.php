@@ -23,6 +23,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Quiz attempt walk through using data from csv file.
@@ -34,6 +35,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class attempt_walkthrough_from_csv_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * @var string[] names of the files which contain the test data.
@@ -134,7 +137,7 @@ class attempt_walkthrough_from_csv_test extends \advanced_testcase {
             if ($slotquestion['type'] !== 'random') {
                 quiz_add_quiz_question($slotquestion['id'], $this->quiz, 0, $slotquestion['mark']);
             } else {
-                quiz_add_random_questions($this->quiz, 0, $slotquestion['catid'], 1, 0);
+                $this->add_random_questions($this->quiz->id, 0, $slotquestion['catid'], 1);
                 $this->randqids[$slotno] = $qidsbycat[$slotquestion['catid']];
             }
         }

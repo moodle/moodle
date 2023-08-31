@@ -16,7 +16,12 @@
 
 namespace qbank_usage;
 
+defined('MOODLE_INTERNAL') || die();
+
 use mod_quiz\quiz_attempt;
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Helper test.
@@ -28,6 +33,8 @@ use mod_quiz\quiz_attempt;
  * @coversDefaultClass \qbank_usage\helper
  */
 class helper_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * @var \stdClass $quiz
@@ -133,7 +140,7 @@ class helper_test extends \advanced_testcase {
         $this->setAdminUser();
         $cat = $this->questiongenerator->create_question_category();
         $question = $this->questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
-        quiz_add_random_questions($this->quiz, 1, $cat->id, 1, false);
+        $this->add_random_questions($this->quiz->id, 1, $cat->id, 1);
 
         $qdef = \question_bank::load_question($question->id);
         $count = helper::get_question_entry_usage_count($qdef);
@@ -226,7 +233,7 @@ class helper_test extends \advanced_testcase {
         $this->setAdminUser();
         $cat = $this->questiongenerator->create_question_category();
         $question = $this->questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
-        quiz_add_random_questions($this->quiz, 1, $cat->id, 1, false);
+        $this->add_random_questions($this->quiz->id, 1, $cat->id, 1);
 
         $this->attempt_quiz();
 

@@ -101,12 +101,15 @@ const commentEvent = (questionId, courseID, contextId) => {
  * Entrypoint of the js.
  *
  * @method init
- * @param {string} questionSelector the question comment identifier.
  */
-export const init = (questionSelector) => {
-    const target = document.querySelector(questionSelector);
-    target.addEventListener('click', () => {
-        // Call for the event listener to listed for clicks in any comment count row.
-        commentEvent(target.dataset.questionid, target.dataset.courseid, target.dataset.contextid);
-    });
+export const init = () => {
+    const target = document.querySelector('#categoryquestions');
+    if (target !== null) {
+        target.addEventListener('click', (e) => {
+            if (e.target.dataset.target && e.target.dataset.target.includes('questioncommentpreview')) {
+                // Call for the event listener to listed for clicks in any comment count row.
+                commentEvent(e.target.dataset.questionid, e.target.dataset.courseid, e.target.dataset.contextid);
+            }
+        });
+    }
 };

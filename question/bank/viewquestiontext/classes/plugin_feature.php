@@ -17,6 +17,7 @@
 namespace qbank_viewquestiontext;
 
 use core_question\local\bank\plugin_features_base;
+use core_question\local\bank\view;
 
 /**
  * Class columns is the entrypoint for the columns.
@@ -31,6 +32,12 @@ class plugin_feature extends plugin_features_base {
     public function get_question_columns($qbank): array {
         return [
             new question_text_row($qbank)
+        ];
+    }
+
+    public function get_question_filters(view $qbank = null): array {
+        return [
+            new questiontext_condition($qbank),
         ];
     }
 }

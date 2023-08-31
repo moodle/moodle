@@ -31,12 +31,15 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/lib.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * @copyright  2008 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
 class lib_test extends \advanced_testcase {
+    use \quiz_question_helper_test_trait;
+
     public function test_quiz_has_grades() {
         $quiz = new \stdClass();
         $quiz->grade = '100.0000';
@@ -109,7 +112,7 @@ class lib_test extends \advanced_testcase {
         $standardq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         quiz_add_quiz_question($standardq->id, $quiz);
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz->id, 0, $cat->id, 1);
 
         // Get the random question.
         $randomq = $DB->get_record('question', ['qtype' => 'random']);

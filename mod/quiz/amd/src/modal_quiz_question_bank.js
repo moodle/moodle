@@ -31,9 +31,8 @@ const SELECTORS = {
     ADD_TO_QUIZ_CONTAINER: 'td.addtoquizaction',
     ANCHOR: 'a[href]',
     PREVIEW_CONTAINER: 'td.previewaction',
-    SEARCH_OPTIONS: '#advancedsearch',
-    DISPLAY_OPTIONS: '#displayoptions',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
+    SORTERS: '.sorters',
 };
 
 export default class ModalQuizQuestionBank extends Modal {
@@ -179,59 +178,6 @@ export default class ModalQuizQuestionBank extends Modal {
     }
 
     /**
-     * Reload the modal body with the new display options the user has selected.
-     *
-     * A query string is built using the form elements to be used to generate the
-     * new body content.
-     *
-     * @method handleDisplayOptionFormEvent
-     * @param {event} e A JavaScript event
-     */
-    handleDisplayOptionFormEvent(e) {
-        // Stop propagation to prevent other wild event handlers
-        // from submitting the form on change.
-        e.stopPropagation();
-        e.preventDefault();
-
-        const form = $(e.target).closest(SELECTORS.DISPLAY_OPTIONS);
-        const queryString = '?' + form.serialize();
-        this.reloadBodyContent(queryString);
-    }
-
-    /**
-     * Listen for changes to the display options form.
-     *
-     * This handles the user changing:
-     *      - The quiz category select box
-     *      - The tags to filter by
-     *      - Show/hide questions from sub categories
-     *      - Show/hide old questions
-     *
-     * @method registerDisplayOptionListeners
-     */
-    registerDisplayOptionListeners() {
-        // Listen for changes to the display options form.
-        this.getModal().on('change', SELECTORS.DISPLAY_OPTIONS, (e) => {
-            // Get the element that was changed.
-            const modifiedElement = $(e.target);
-            if (modifiedElement.attr('aria-autocomplete')) {
-                // If the element that was change is the autocomplete
-                // input then we should ignore it because that is for
-                // display purposes only.
-                return;
-            }
-
-            this.handleDisplayOptionFormEvent(e);
-        });
-
-        // Listen for the display options form submission because the tags
-        // filter will submit the form when it is changed.
-        this.getModal().on('submit', SELECTORS.DISPLAY_OPTIONS, (e) => {
-            this.handleDisplayOptionFormEvent(e);
-        });
-    }
-
-    /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
@@ -239,9 +185,6 @@ export default class ModalQuizQuestionBank extends Modal {
     registerEventListeners() {
         // Apply parent event listeners.
         super.registerEventListeners(this);
-
-        // Set up the event handlers for all of the display options.
-        this.registerDisplayOptionListeners();
 
         this.getModal().on('submit', SELECTORS.ADD_QUESTIONS_FORM, (e) => {
             // If the user clicks on the "Add selected questions to the quiz" button to add some questions to the page
@@ -270,9 +213,8 @@ export default class ModalQuizQuestionBank extends Modal {
                 return;
             }
 
-            // Click on expand/collaspse search-options. Has its own handler.
-            // We should not interfere.
-            if (anchorElement.closest(SELECTORS.SEARCH_OPTIONS).length) {
+            // Sorting links have their own handler.
+            if (anchorElement.closest(SELECTORS.SORTERS).length) {
                 return;
             }
 

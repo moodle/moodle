@@ -31,7 +31,7 @@ Feature: Use the qbank plugin manager page for question usage
   @javascript
   Scenario: Question usage modal should work without any usage data
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Test questions"
     And I should see "0" on the usage column
     When I click "0" on the usage column
@@ -46,7 +46,7 @@ Feature: Use the qbank plugin manager page for question usage
       | question       | page |
       | First question | 1    |
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Test questions"
     And I should see "1" on the usage column
     When I click "1" on the usage column
