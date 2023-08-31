@@ -108,6 +108,10 @@ class mod_lti_generator extends testing_module_generator {
             ARRAY_FILTER_USE_BOTH
         );
         $config = array_diff_key($data, $type);
+        // This is ugly - we store it in two places.
+        if (isset($data['coursevisible'])) {
+            $config['lti_coursevisible'] = $data['coursevisible'];
+        }
 
         return ['type' => (object) $type, 'config' => (object) $config];
     }

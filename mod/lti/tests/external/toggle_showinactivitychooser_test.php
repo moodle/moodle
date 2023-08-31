@@ -82,7 +82,10 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
 
         $this->resetAfterTest();
 
-        $course = $this->getDataGenerator()->create_course();
+        $coursecat1 = $this->getDataGenerator()->create_category();
+        $coursecat2 = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $coursecat1->id]);
+
         $editingteacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
         $this->setUser($editingteacher);
 
@@ -106,6 +109,34 @@ class toggle_showinactivitychooser_test extends \mod_lti_testcase {
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
         $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible3);
+
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool preconfigured and activity chooser, restricted to category 1',
+            'baseurl' => 'http://example.com/tool/1',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat1->id
+        ]);
+        $tool = $DB->get_record('lti_types', ['name' => 'site tool preconfigured and activity chooser, restricted to category 1']);
+        toggle_showinactivitychooser::execute($tool->id, $course->id, false);
+        $actual = $DB->get_record_sql($sql, [$tool->id, $course->id]);
+        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible1);
+        $this->assertEquals(LTI_COURSEVISIBLE_ACTIVITYCHOOSER, $actual->coursevisible2);
+        $this->assertEquals(LTI_COURSEVISIBLE_PRECONFIGURED, $actual->coursevisible3);
+
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool preconfigured and activity chooser, restricted to category 2',
+            'baseurl' => 'http://example.com/tool/1',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED,
+            'lti_coursecategories' => $coursecat2->id
+        ]);
+        $tool = $DB->get_record('lti_types', ['name' => 'site tool preconfigured and activity chooser, restricted to category 2']);
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage('You are not allowed to change this setting for this tool.');
+        toggle_showinactivitychooser::execute($tool->id, $course->id, true);
     }
 
 }

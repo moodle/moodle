@@ -88,6 +88,18 @@ class toggle_showinactivitychooser extends external_api {
             // It is course tool - just update it.
             lti_update_type($ltitype, $config);
         } else {
+            $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
+            $sql = "SELECT COUNT(*) AS count
+                      FROM {lti_types_categories} tc
+                     WHERE tc.typeid = :typeid";
+            $restrictedtool = $DB->get_record_sql($sql, ['typeid' => $tooltypeid]);
+            if ($restrictedtool->count) {
+                $record = $DB->get_record('lti_types_categories', ['typeid' => $tooltypeid, 'categoryid' => $coursecategory]);
+                if (!$record) {
+                    throw new \moodle_exception('You are not allowed to change this setting for this tool.');
+                }
+            }
+
             // This is site tool, but we would like to have course level setting for it.
             $lticoursevisible = $DB->get_record('lti_coursevisible', ['typeid' => $tooltypeid, 'courseid' => $courseid]);
             if (!$lticoursevisible) {
