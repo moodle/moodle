@@ -135,12 +135,12 @@ class instance {
      *
      * Used by self::get_from_id and self::get_cmid.
      *
-     * @param string $id The id to look for.
+     * @param int $id The id to look for.
      * @param int $idtype self::IDTYPE_CMID or self::IDTYPE_INSTANCEID
      * @return null|self
      * @throws \moodle_exception
      */
-    private static function get_instance_info_retriever(string $id, int $idtype = self::IDTYPE_INSTANCEID): ?self {
+    private static function get_instance_info_retriever(int $id, int $idtype = self::IDTYPE_INSTANCEID): ?self {
         global $DB;
 
         if (!in_array($idtype, [self::IDTYPE_CMID, self::IDTYPE_INSTANCEID])) {
