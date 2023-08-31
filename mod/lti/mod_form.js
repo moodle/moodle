@@ -354,6 +354,13 @@
                 if(courseOptions.size() > 0){
                     typeSelector.append(courseGroup);
                 }
+
+                // Fixes what is presumably a bug in YUI, in which the selected option is not properly set after reorganising the
+                // options into optgroups.
+                var selectedOption = typeSelector.one('[selected]');
+                if (selectedOption) {
+                    selectedOption.set('selected', true);
+                }
             }
         },
 

@@ -1,4 +1,4 @@
-@mod @mod_lti @javascript
+@mod @mod_lti
 Feature: Make an LTI only available to specific course categories
   In order to restrict which courses a tool can be used in
   As an administrator
@@ -24,48 +24,34 @@ Feature: Make an LTI only available to specific course categories
       | teacher1 | C1 | editingteacher |
       | teacher1 | C2 | editingteacher |
       | teacher1 | C3 | editingteacher |
-    And I log in as "admin"
-    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
-    And I follow "Manage preconfigured tools"
-    And I follow "Add preconfigured tool"
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Tool name | Teaching Tool 1 |
-      | Tool configuration usage | Show as preconfigured tool when adding an external tool |
-      | catb | 1 |
-    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
-    And I press "Save changes"
-    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
-    And I follow "Manage preconfigured tools"
-    And I follow "Add preconfigured tool"
-    And I expand all fieldsets
-    And I click on "cata" "link"
-    And I set the following fields to these values:
-      | Tool name | Teaching Tool 2 |
-      | Tool configuration usage | Show in activity chooser and as a preconfigured tool |
-      | catca | 1 |
-    And I set the field "Tool URL" to local url "/mod/lti/tests/fixtures/tool_provider.php"
-    And I press "Save changes"
+    And the following "mod_lti > tool types" exist:
+      | name            | description        | baseurl                                   | coursevisible | state | lti_coursecategories |
+      | Teaching Tool 1 | Tool 1 description | /mod/lti/tests/fixtures/tool_provider.php | 1             | 1     | catb                 |
+      | Teaching Tool 2 | Tool 2 description | /mod/lti/tests/fixtures/tool_provider.php | 2             | 1     | catca                |
 
   Scenario: Tool is set to "Show as preconfigured tool when adding an external tool" on parent category
-    Given I log in as "teacher1"
-    And I am on "Course 2" course homepage with editing mode on
-    And I add a "External tool" to section "1"
-    When I click on "Preconfigured tool" "select"
-    Then I should see "Teaching Tool 1"
+    Given I am on the "Course 2" course page logged in as teacher1
+    When I navigate to "LTI External tools" in current page administration
+    Then I should see "Teaching Tool 1" in the "reportbuilder-table" "table"
+    And I should not see "Teaching Tool 2" in the "reportbuilder-table" "table"
 
+  @javascript
   Scenario: Tool is set to "Show in activity chooser and as preconfigured tool" on child category
     Given I log in as "teacher1"
     When I am on "Course 3" course homepage with editing mode on
     And I open the activity chooser
     Then I should see "Teaching Tool 2" in the "Add an activity or resource" "dialogue"
+    And I should not see "Teaching Tool 1" in the "Add an activity or resource" "dialogue"
 
-  Scenario: Tool restrict access
+  @javascript
+  Scenario: View a course in a category in which no tools are available
     Given I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
     And I open the activity chooser
-    Then I should not see "Teaching Tool 2" in the "Add an activity or resource" "dialogue"
+    Then I should not see "Teaching Tool 1" in the "Add an activity or resource" "dialogue"
+    And I should not see "Teaching Tool 2" in the "Add an activity or resource" "dialogue"
 
+  @javascript
   Scenario: Editing and saving selected parent / child categories
     Given I log in as "admin"
     And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration

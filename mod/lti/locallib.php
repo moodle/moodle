@@ -2310,47 +2310,18 @@ function lti_filter_tool_types(array $tools, $state) {
 /**
  * Returns all lti types visible in this course
  *
+ * @deprecated since Moodle 4.3
  * @param int $courseid The id of the course to retieve types for
  * @param array $coursevisible options for 'coursevisible' field,
  *        default [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER]
  * @return stdClass[] All the lti types visible in the given course
  */
 function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
-    global $DB, $SITE;
+    debugging(__FUNCTION__ . '() is deprecated. Please use \mod_lti\local\types_helper::get_lti_types_by_course() instead.',
+        DEBUG_DEVELOPER);
 
-    if ($coursevisible === null) {
-        $coursevisible = [LTI_COURSEVISIBLE_PRECONFIGURED, LTI_COURSEVISIBLE_ACTIVITYCHOOSER];
-    }
-
-    list($coursevisiblesql, $coursevisparams) = $DB->get_in_or_equal($coursevisible, SQL_PARAMS_NAMED, 'coursevisible');
-    $courseconds = [];
-    if (has_capability('mod/lti:addmanualinstance', context_course::instance($courseid))) {
-        $courseconds[] = "t.course = :courseid";
-    }
-    if (has_capability('mod/lti:addpreconfiguredinstance', context_course::instance($courseid))) {
-        $courseconds[] = "t.course = :siteid";
-    }
-    if (!$courseconds) {
-        return [];
-    }
-    $coursecond = implode(" OR ", $courseconds);
-    $coursecategory = $DB->get_field('course', 'category', ['id' => $courseid]);
-    $query = "SELECT t.*
-                FROM {lti_types} t
-           LEFT JOIN {lti_types_categories} tc on t.id = tc.typeid
-               WHERE t.coursevisible $coursevisiblesql
-                 AND ($coursecond)
-                 AND t.state = :active
-                 AND (tc.id IS NULL OR tc.categoryid = :categoryid)
-            ORDER BY t.name ASC";
-
-    return $DB->get_records_sql($query,
-        [
-            'siteid' => $SITE->id,
-            'courseid' => $courseid,
-            'active' => LTI_TOOL_STATE_CONFIGURED,
-            'categoryid' => $coursecategory
-        ] + $coursevisparams);
+    global $USER;
+    return \mod_lti\local\types_helper::get_lti_types_by_course($courseid, $USER->id, $coursevisible ?? []);
 }
 
 /**
@@ -2359,15 +2330,13 @@ function lti_get_lti_types_by_course($courseid, $coursevisible = null) {
  * @return array Array of lti types
  */
 function lti_get_types_for_add_instance() {
-    global $COURSE;
-    $admintypes = lti_get_lti_types_by_course($COURSE->id);
+    global $COURSE, $USER;
 
-    $types = array();
-    if (has_capability('mod/lti:addmanualinstance', context_course::instance($COURSE->id))) {
-        $types[0] = (object)array('name' => get_string('automatic', 'lti'), 'course' => 0, 'toolproxyid' => null);
-    }
+    // Always return the 'manual' type option, despite manual config being deprecated, so that we have it for legacy instances.
+    $types = [(object) ['name' => get_string('automatic', 'lti'), 'course' => 0, 'toolproxyid' => null]];
 
-    foreach ($admintypes as $type) {
+    $preconfiguredtypes = \mod_lti\local\types_helper::get_lti_types_by_course($COURSE->id, $USER->id);
+    foreach ($preconfiguredtypes as $type) {
         $types[$type->id] = $type;
     }
 
@@ -2382,11 +2351,12 @@ function lti_get_types_for_add_instance() {
  * @return array Array of lti types. Each element is object with properties: name, title, icon, help, helplink, link
  */
 function lti_get_configured_types($courseid, $sectionreturn = 0) {
-    global $OUTPUT;
-    $types = array();
-    $admintypes = lti_get_lti_types_by_course($courseid, [LTI_COURSEVISIBLE_ACTIVITYCHOOSER]);
+    global $OUTPUT, $USER;
+    $types = [];
+    $preconfiguredtypes = \mod_lti\local\types_helper::get_lti_types_by_course($courseid, $USER->id,
+        [LTI_COURSEVISIBLE_ACTIVITYCHOOSER]);
 
-    foreach ($admintypes as $ltitype) {
+    foreach ($preconfiguredtypes as $ltitype) {
         $type           = new stdClass();
         $type->id       = $ltitype->id;
         $type->modclass = MOD_CLASS_ACTIVITY;
@@ -2642,6 +2612,8 @@ function lti_get_type_type_config($id) {
     $type->lti_typename = $basicltitype->name;
 
     $type->typeid = $basicltitype->id;
+
+    $type->course = $basicltitype->course;
 
     $type->toolproxyid = $basicltitype->toolproxyid;
 
