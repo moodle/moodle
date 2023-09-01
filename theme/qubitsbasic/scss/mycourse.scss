@@ -151,7 +151,7 @@
     padding-left: 10px;
   }
   .card-title {
-    margin-bottom: 0 !important;
+    margin-bottom: 0;
   }
   .coursecard {
     &:hover {
@@ -169,7 +169,7 @@
       background-color: var(--white);
 
       .text-grey {
-        color: #333333 !important;
+        color: #333333;
         opacity: 0.5;
         font-size: $fontsize12;
       }
@@ -179,10 +179,10 @@
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.09);
   }
   .card-body-border-radius {
-    border-radius: 8px 8px 0px 0px !important;
+    border-radius: 8px 8px 0px 0px;
   }
   .card-border {
-    border: 1px solid #cacaca !important;
+    border: 1px solid #cacaca;
   }
 
   .card-body-overlay {
@@ -203,7 +203,7 @@
     }
   }
   .card-border-radius {
-    border-radius: 8px !important;
+    border-radius: 8px;
   }
   .white-circle {
     background-color: var(--white);
@@ -227,17 +227,17 @@
     width: 33%;
     margin: 20px;
     @include breakpoint(xs) {
-      width: 90% !important;
+      width: 90%;
     }
     @include breakpoint(sm) {
-      width: 90% !important;
+      width: 90%;
     }
   }
   .success-color {
-    background-color: #78c466 !important;
+    background-color: #78c466;
   }
   .progress {
-    height: 4px !important;
+    height: 4px;
   }
   .card-text {
     font-size: $fontsize20;
@@ -272,27 +272,27 @@
 
 .max-width {
   @include breakpoint(xs) {
-    max-width: 90% !important;
+    max-width: 90%;
   }
   @include breakpoint(md) {
-    max-width: 45% !important;
+    max-width: 45%;
   }
   @include breakpoint(lg) {
-    max-width: 44% !important;
+    max-width: 44%;
   }
   @include breakpoint(xlg) {
-    max-width: 29% !important;
+    max-width: 29%;
   }
 }
 .flex-grow {
   @include breakpoint(md) {
-    flex: 0 0 43% !important;
+    flex: 0 0 43%;
   }
   @include breakpoint(lg) {
-    flex: 0 0 43% !important;
+    flex: 0 0 43%;
   }
   @include breakpoint(xlg) {
-    flex: 0 0 30% !important;
+    flex: 0 0 30%;
   }
 }
 .sidebar {
@@ -341,10 +341,10 @@
     height: 100%;
     padding: 0 0 150px 0;
     overflow: auto;
-    margin: 0 !important;
-    margin-top: 10px !important;
+    margin: 0;
+    margin-top: 10px;
     .nav-item .arrow {
-      font-size: 13px !important;
+      font-size: 13px;
     }
 
     li {
@@ -441,15 +441,15 @@
         }
       }
       .active {
-        background: #e2eaf2 !important;
-        color: var(--hovertextcolor) !important;
+        background: #e2eaf2;
+        color: var(--hovertextcolor);
       }
 
       &:hover {
-        background: #e2eaf2 !important;
+        background: #e2eaf2;
       }
       &:active {
-        background: #e2eaf2 !important;
+        background: #e2eaf2;
       }
     }
   }
@@ -485,8 +485,8 @@
       color: var(--hovertextcolor);
     }
     .active {
-      background: #e2eaf2 !important;
-      color: var(--hovertextcolor) !important;
+      background: #e2eaf2;
+      color: var(--hovertextcolor);
     }
   }
   &:hover {
@@ -496,7 +496,7 @@
 }
 .navbar.messageicon {
   .fa-comment-o {
-    display: none !important;
+    display: none;
   }
   .navbar-nav {
     align-items: center;
@@ -504,36 +504,36 @@
     .popover-region-notifications {
       border: 1px solid #e6e6e6;
       border-radius: 50%;
-      height: 50px !important;
-      width: 50px !important;
+      height: 50px;
+      width: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
   }
   .count-container {
-    padding: 4px !important;
-    border-radius: 8px !important;
+    padding: 4px;
+    border-radius: 8px;
     background-color: #ca3120;
     color: #fff;
-    font-size: $fontsize12 !important;
+    font-size: $fontsize12;
     line-height: 11px;
     position: absolute;
-    top: 30px !important;
-    right: -9px !important;
+    top: 30px;
+    right: -9px;
   }
 }
 .usermenu {
   .avatar {
     img {
-      width: 50px !important;
-      height: 50px !important;
+      width: 50px;
+      height: 50px;
     }
   }
 }
 .nav-tabs {
   .nav-link.active {
-    color: #116cbf !important;
+    color: #116cbf;
   }
 }
 
@@ -647,7 +647,7 @@
     li.showMenu {
       .sub-menu {
         display: block;
-        // margin: 10px 0px 0px 0px !important;
+        // margin: 10px 0px 0px 0px;
       }
       i.arrow {
         transform: rotate(-180deg);
@@ -662,7 +662,7 @@
 }
 
 .w-auto {
-  width: auto !important;
+  width: auto;
 }
 
 .my-course-section .card-text,
@@ -685,26 +685,26 @@
   position: relative;
 
   left: 140px;
-  width: calc(100% - 260px) !important;
+  width: calc(100% - 260px);
   transition: all 0.5s ease;
 
   .drawer-right-toggle {
-    display: none !important;
+    display: none;
   }
 
   @include breakpoint(xs) {
     left: 0px;
-    width: 100% !important;
+    width: 100%;
   }
   @include breakpoint(sm) {
     left: 0px;
-    width: 100% !important;
+    width: 100%;
   }
 }
 
 .navbar.messageicon {
   .fa-comment-o {
-    display: none !important;
+    display: none;
   }
   .navbar-nav {
     align-items: center;
@@ -712,30 +712,30 @@
     .popover-region-notifications {
       border: 1px solid #e6e6e6;
       border-radius: 50%;
-      height: 50px !important;
-      width: 50px !important;
+      height: 50px;
+      width: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
   }
   .count-container {
-    padding: 4px !important;
-    border-radius: 8px !important;
+    padding: 4px;
+    border-radius: 8px;
     background-color: #ca3120;
     color: #fff;
-    font-size: 12px !important;
+    font-size: 12px;
     line-height: 11px;
     position: absolute;
-    top: 30px !important;
-    right: -9px !important;
+    top: 30px;
+    right: -9px;
   }
 }
 .usermenu {
   .avatar {
     img {
-      width: 50px !important;
-      height: 50px !important;
+      width: 50px;
+      height: 50px;
     }
   }
 }
@@ -787,7 +787,7 @@ button.close:focus,
 }
 .navbar.messageicon {
   .fa-comment-o {
-    display: none !important;
+    display: none;
   }
   .navbar-nav {
     align-items: center;
@@ -795,69 +795,69 @@ button.close:focus,
     .popover-region-notifications {
       border: 1px solid #e6e6e6;
       border-radius: 50%;
-      height: 50px !important;
-      width: 50px !important;
+      height: 50px;
+      width: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
   }
   .count-container {
-    padding: 4px !important;
-    border-radius: 8px !important;
+    padding: 4px;
+    border-radius: 8px;
     background-color: #ca3120;
     color: #fff;
-    font-size: $fontsize12 !important;
+    font-size: $fontsize12;
     line-height: 11px;
     position: absolute;
-    top: 30px !important;
-    right: -9px !important;
+    top: 30px;
+    right: -9px;
   }
 }
 .leftnav {
-  left: 0 !important;
+  left: 0;
 }
 .drawer-left {
-  display: none !important;
+  display: none;
 }
 
 .secondary-navigation .navigation .nav-tabs .nav-link {
   color: #585858;
-  font-size: $fontsize16 !important;
+  font-size: $fontsize16;
 }
 .sidebar {
   .nav-links {
     .dropdown-item {
       .active {
-        background-color: #e2eaf2 !important;
+        background-color: #e2eaf2;
       }
       &:hover() {
-        background-color: #e2eaf2 !important;
+        background-color: #e2eaf2;
       }
       &:focus-within {
-        background-color: #e2eaf2 !important;
+        background-color: #e2eaf2;
       }
       &:active {
-        background-color: #e2eaf2 !important;
+        background-color: #e2eaf2;
       }
       &:focus() {
-        background-color: #e2eaf2 !important;
+        background-color: #e2eaf2;
       }
     }
   }
 }
 // a {
-//   // color: #1482e6 !important;
+//   // color: #1482e6;
 // }
 #page.drawers.show-drawer-left {
   @include breakpoint(md) {
-    margin-left: 0 !important;
+    margin-left: 0;
   }
   @include breakpoint(lg) {
-    margin-left: 0 !important;
+    margin-left: 0;
   }
   @include breakpoint(xlg) {
-    margin-left: 0 !important;
+    margin-left: 0;
   }
 }
 .sidebar-overlay {
@@ -893,17 +893,17 @@ button.close:focus,
 //Css need to change
 .flex-mobile {
   @include breakpoint(sm) {
-    flex-direction: column !important;
+    flex-direction: column;
   }
   @include breakpoint(xs) {
-    flex-direction: column !important;
+    flex-direction: column;
   }
 }
 @media screen and (min-width: 768px) {
   body.limitedwidth #page.drawers .main-inner,
   .header-maxwidth,
   .secondary-navigation .navigation .nav-tabs {
-    max-width: 100% !important;
+    max-width: 100%;
   }
 }
 
@@ -930,18 +930,18 @@ button.close:focus,
 }
 
 .bc-items {
-  color: #116cbf !important;
-  font-size: 14px !important;
-  text-decoration: underline !important;
+  color: #116cbf;
+  font-size: 14px;
+  text-decoration: underline;
 }
 .bg-none {
-  background-color: transparent !important;
+  background-color: transparent;
 }
 .breadcrumb {
   align-items: center;
 }
 .pagetitle-left-alignment nav .breadcrumb-item.active {
-  color: #333333 !important;
+  color: #333333;
   font-size: 20px;
   font-weight: 600;
 
@@ -950,7 +950,7 @@ button.close:focus,
   }
 }
 .breadcrumb-item + .breadcrumb-item::before {
-  font-size: 14px !important;
+  font-size: 14px;
 }
 
 .breadcrumb-item.active {
@@ -960,36 +960,36 @@ button.close:focus,
   display: none;
 }
 // .breadcrumb-item + .breadcrumb-item {
-//   padding: 0 !important;
+//   padding: 0;
 // }
 ol {
-  margin: 0px !important;
+  margin: 0px;
 }
 
 .sectionname {
-  font-size: 16px !important;
+  font-size: 16px;
 }
 .expanded-icon {
   .icon {
-    font-size: 13px !important;
-    color: #9e9ea2 !important;
+    font-size: 13px;
+    color: #9e9ea2;
   }
 }
 .collapsed-icon {
   .icon {
-    font-size: 13px !important;
-    color: #9e9ea2 !important;
+    font-size: 13px;
+    color: #9e9ea2;
   }
 }
 #page.drawers .main-inner {
-  padding: 0 !important;
-  // margin-top: 0px !important;
+  padding: 0;
+  // margin-top: 0px;
   @include breakpoint(xs) {
-    padding: 0.75rem !important;
+    padding: 0.75rem;
   }
 }
-#page.drawers {
-  margin-top: 70px !important;
+#page-wrapper .drawer #page.drawers {
+  margin-top: 70px;
 }
 .sidebar.close-bars .nav-links li .sub-menu {
   height: 200px;
@@ -997,19 +997,19 @@ ol {
 }
 
 .badge-secondary {
-  background-color: #008195 !important;
-  color: #ffffff !important;
-  box-shadow: none !important;
+  background-color: #008195;
+  color: #ffffff;
+  box-shadow: none;
 }
 .usermenu .userbutton .avatar .userinitials.size-35 {
   width: 50px;
   height: 50px;
 }
 .usermenu .dropdown.show #user-action-menu {
-  margin-top: 15px !important;
+  margin-top: 15px;
 }
 // #page-content {
-//   margin-top: 20px !important;
+//   margin-top: 20px;
 // }
 .dropdown-item.active,
 .dropdown-item:active,
@@ -1020,7 +1020,7 @@ ol {
 }
 .custom-select {
   background: #ffffff url("[[pix:theme|down-arrow]]") right 0.75rem center/8px
-    10px no-repeat !important;
+    10px no-repeat;
 }
 
 .course_tooltip {
@@ -1072,15 +1072,15 @@ a:not([class]):focus,
   transition: unset !important;
 }
 .previousnav {
-  color: #b3b3b3 !important;
+  color: #b3b3b3;
 }
 
 // .input_input-form_2EIqD .sprite-info_sprite-input_IL2gd{
-//   width: 3rem !important;
+//   width: 3rem;
 // }
 
 .input_input-small_1bkbs {
-  width: 3rem !important;
+  width: 3rem;
 }
 #page-footer .btn-footer-popover {
   display: none;
