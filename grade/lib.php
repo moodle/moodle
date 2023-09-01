@@ -889,7 +889,7 @@ class grade_plugin_info {
 function print_grade_page_head(int $courseid, string $active_type, ?string $active_plugin = null, string|bool $heading = false,
        bool $return = false, $buttons = false, bool $shownavigation = true, ?string $headerhelpidentifier = null,
        ?string $headerhelpcomponent = null, ?stdClass $user = null, ?action_bar $actionbar = null, $unused = null) {
-    global $CFG, $OUTPUT, $PAGE;
+    global $CFG, $OUTPUT, $PAGE, $USER;
 
     if ($unused !== null) {
         debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
@@ -960,7 +960,10 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
     } else if (isset($user)) {
         $renderer = $PAGE->get_renderer('core_grades');
-        $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
+        // If the user is viewing their own grade report, no need to show the "Message"
+        // and "Add to contact" buttons in the user heading.
+        $showuserbuttons = $user->id != $USER->id;
+        $output = $renderer->user_heading($user, $courseid, $showuserbuttons);
     } else if (!empty($heading)) {
         $output = $OUTPUT->heading($heading);
     }
