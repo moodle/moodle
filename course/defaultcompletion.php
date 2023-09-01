@@ -72,7 +72,10 @@ foreach ($allmodules->modules as $module) {
 
 $form = null;
 if (!empty($modules)) {
-    $form = new core_completion_defaultedit_form(null, ['course' => $course, 'modules' => $modules, 'displaycancel' => false]);
+    $form = new core_completion_defaultedit_form(
+        null,
+        ['course' => $course, 'modules' => $modules, 'displaycancel' => false, 'forceuniqueid' => true]
+    );
     if (!$form->is_cancelled() && $data = $form->get_data()) {
         $data->modules = $modules;
         $manager->apply_default_completion($data, $form->has_custom_completion_rules(), $form->get_suffix());
