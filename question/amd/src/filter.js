@@ -162,11 +162,13 @@ export const init = (
             bulkAction.formAction = actionUrl;
         });
         const editSwitch = document.querySelector(SELECTORS.EDIT_SWITCH);
-        const editSwitchUrlInput = document.querySelector(SELECTORS.EDIT_SWITCH_URL);
-        const editSwitchUrl = new URL(editSwitchUrlInput.value);
-        editSwitchUrl.searchParams.set('filter', filterQuery);
-        editSwitchUrlInput.value = editSwitchUrl;
-        editSwitch.dataset.pageurl = editSwitchUrl;
+        if (editSwitch) {
+            const editSwitchUrlInput = document.querySelector(SELECTORS.EDIT_SWITCH_URL);
+            const editSwitchUrl = new URL(editSwitchUrlInput.value);
+            editSwitchUrl.searchParams.set('filter', filterQuery);
+            editSwitchUrlInput.value = editSwitchUrl;
+            editSwitch.dataset.pageurl = editSwitchUrl;
+        }
     };
 
     /**
