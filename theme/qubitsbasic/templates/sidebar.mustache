@@ -30,15 +30,7 @@ require(['jquery'], function($){
     checkScreenSize();
 	function checkScreenSize() {
 		var newWindowWidth = $(window).width();
-		if (newWindowWidth > 578) {
-				
-				
-				
-				$(".sidebar").show();
-				
-				$(".sidebar-overlay").hide();
-		}
-		else if (newWindowWidth < 546) {
+		 if (newWindowWidth < 546) {
 			$(".arrow-left").click(function () {
 				$(".sidebar").hide();
 				$(".sidebar-overlay").hide();
