@@ -24,6 +24,7 @@
 
 $string['buttontitle'] = 'No auto-link';
 $string['errorinvalidurl'] = 'The selected content is not a URL. Please try again.';
+$string['helplinktext'] = 'No auto-link helper';
 $string['infoaddsuccess'] = 'Added the auto-link prevention.';
 $string['infoemptyselection'] = 'Select a URL and try again.';
 $string['inforemovesuccess'] = 'Removed the auto-link prevention.';
