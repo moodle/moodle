@@ -99,6 +99,7 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                 $module->formhtml = $modform->render();
             }
         }
+        $data->issite = $course->id == SITEID;
 
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }
