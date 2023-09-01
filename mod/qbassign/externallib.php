@@ -3871,7 +3871,9 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      }
                  }
              }
+             
              return array('message'=>'updated Success');
+             
          }
          else
          {

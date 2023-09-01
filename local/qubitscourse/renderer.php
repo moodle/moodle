@@ -26,6 +26,8 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
         $tenantcourses = array();
         foreach($allcourses as $onecourse){
             $onecourseid = $onecourse->id;
+            $category = core_course_category::get($onecourse->category);
+            $customdata = local_qubitscourse_get_ccdata($onecourse->id);
             if(in_array($onecourseid, $courseids) !== false){
                 $courseimage = course_summary_exporter::get_course_image($onecourse);
                 if (!$courseimage) {
@@ -39,7 +41,8 @@ class local_qubitscourse_renderer extends plugin_renderer_base {
                     'viewlink' => new moodle_url("/course/view.php", array("id" => $onecourse->id )),
                     "courseimage" => $courseimage,
                     "contextid" => $course_context->id,
-                    "siteid" =>  $siteid
+                    "siteid" =>  $siteid,
+                    'coursestr' => $onecourse->fullname.' ( '.$category->name.' - Level '.$customdata['level'].' ) '
                 );
             }
         }

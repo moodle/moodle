@@ -4,7 +4,7 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
 function ExecutionVisualizer(domRootID, dat, params) {
-  this.curInputCode = $.trim(dat.code.main_code); // kill trailing spaces
+  this.curInputCode =dat.code.main_code; // kill trailing spaces
   this.curTrace = dat.trace;
   this.sourceFiles = dat.code;
   this.curFile = "";

@@ -12,6 +12,161 @@
       },
       "chapters": [
         {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DCL02-TP0-000",
+          "children": [
+            {
+                  "title": "Teacher Guide",
+                  "uid": "DCL02-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DigiChamps_L02_Teacher's Guide",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.1 Introduction to Computing Devices",
+                  "uid": "DCL02-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit1&pdf=DC L2_V2_S1.1_Solving problems",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Parts of a Computer",
+                  "uid": "DCL02-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit1&pdf=V2_DC L2 sprint 1.2_Working with Information",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.1 Using Web Browsers",
+                  "uid": "DCL02-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit2&pdf=V2_DC L2 sprint 2.1 Using web browser",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 2.2 Online Safety",
+                  "uid": "DCL02-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit2&pdf=V2_DC L2 sprint 2.2 Online Safety",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.1 Lines",
+                  "uid": "DCL02-TP0-CHDRN6",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit3&pdf=DC L2 V2 sprint 3.1 Lines",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.2 Shapes",
+                  "uid": "DCL02-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit3&pdf=DC L2 V2 sprint 3.2 Shapes",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 3.3 Text and Labels",
+                  "uid": "DCL02-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit3&pdf=DC L2 V2 sprint 3.3 Text and Labels",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.1 Flip it!",
+                  "uid": "DCL02-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit4&pdf=V2_DC L2 sprint 4.1 Flip it",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.2 Magic Tool",
+                  "uid": "DCL02-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit4&pdf=V2_DC L2 sprint 4.2_Magic Tool",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.3 Pattern Painting",
+                  "uid": "DCL02-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit4&pdf=V2_DC L2 sprint 4.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 4.4 Picture Decorations",
+                  "uid": "DCL02-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit4&pdf=V2_DC L2 sprint 4.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.1 Adding Shapes",
+                  "uid": "DCL02-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit5&pdf=V2_DC L2 sprint 5.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.2 Themes and Color",
+                  "uid": "DCL02-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit5&pdf=V2_DC L2 sprint 5.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 5.3 Size of Shapes",
+                  "uid": "DCL02-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit5&pdf=V2_DC L2 sprint 5.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.1 Introduction to Microsoft Word",
+                  "uid": "DCL02-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit6&pdf=V2_DC L2 sprint 6.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.2 Picture and Picture Frame",
+                  "uid": "DCL02-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit6&pdf=V2_DC L2 sprint 6.2",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.3 Formatting Text",
+                  "uid": "DCL02-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit6&pdf=V2_DC L2 sprint 6.3",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 6.4 Formatting Images",
+                  "uid": "DCL02-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit6&pdf=V2_DC L2 sprint 6.4",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.1 Bar Graphs",
+                  "uid": "DCL02-TP0-CHDRN20",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit7&pdf=V2_DC L2 sprint 7.1",
+                  "type": "page"
+                },
+                {
+                  "title": "Sprint 7.2 Pie Charts",
+                  "uid": "DCL02-TP0-CHDRN21",
+                  "description": "",
+                  "route": "/pdf?course=DigiChamps&Level=Level2&unit=Unit7&pdf=V2_DC L2 sprint 7.2",
+                  "type": "page"
+                }
+          ]
+        },
+        {
           "route": "book/DCL02/DCL02-TP1-000.mdx",
           "title": "Unit 1: Computer and Us",
           "type": "topic",

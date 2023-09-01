@@ -54,12 +54,14 @@ class qubits_assigncourses_form extends moodleform {
         $mform->addElement('static','qubitssitename', get_string('qubitssitename', 'local_qubitssite'),'maxlength="254" size="50"');
         $mform->addHelpButton('qubitssitename', 'qubitssitename', 'local_qubitssite');
 
-        $allcourses = core_course_category::get(0)->get_courses(array('recursive' => true));
-                                                                  
-        $acourses = array();                                                                                                       
+        $allcourses = core_course_category::get(0)->get_courses(array('recursive' => true)); 
+        $acourses = array();                                                                                            
         foreach ($allcourses as $onecourse) {
-            $acourses[$onecourse->id] = $onecourse->fullname;
-        }                                                                                                               
+            $category = core_course_category::get($onecourse->category);
+            $customdata = local_qubitscourse_get_ccdata($onecourse->id);
+            $acourses[$onecourse->id] = $onecourse->fullname.' ( '.$category->name.' - Level '.$customdata['level'].' ) ';
+        }
+                                                                                                             
         $options = array(                                                                                                           
             'multiple' => true,                                                  
             'noselectionstring' => "Search Course",                                                                
@@ -86,4 +88,5 @@ class qubits_assigncourses_form extends moodleform {
         $this->set_data($qubitssite_courses);
         
     }
+
 }
