@@ -35,4 +35,11 @@ interface described_hook {
      * @return string
      */
     public static function get_hook_description(): string;
+
+    /**
+     * List of tags that describe this hook.
+     *
+     * @return string[]
+     */
+    public static function get_hook_tags(): array;
 }
