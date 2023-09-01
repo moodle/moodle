@@ -105,7 +105,8 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
-    'iscourseandmoddtlpage' => true
+    'iscourseandmoddtlpage' => true,
+    'issiteadmin' => is_siteadmin()
 ];
 
 echo $OUTPUT->render_from_template('theme_qubitsbasic/course', $templatecontext);
