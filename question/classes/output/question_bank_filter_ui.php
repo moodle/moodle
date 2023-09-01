@@ -30,41 +30,19 @@ use stdClass;
  */
 class question_bank_filter_ui extends datafilter {
 
-    /** @var array $searchconditions Searchconditions for the filter. */
-    protected $searchconditions = array();
-
     /** @var int $perpage number of records per page. */
     protected $perpage = 0;
 
-    /**
-     * @var string Component for calling the fragment callback.
-     */
-    protected $component;
-
-    /**
-     * @var string Fragment callback.
-     */
-    protected $callback;
-
-    /**
-     * @var string View class name.
-     */
-    protected $view;
-
-    /**
-     * @var int|null if in an activity, the cmid.
-     */
-    protected $cmid;
-
-    /**
-     * @var array Parameters for the page URL.
-     */
+    /** @var array Parameters for the page URL. */
     protected $pagevars;
 
-    /**
-     * @var array Additional parameters used by view classes.
-     */
-    protected $extraparams;
+    /** @var array $searchconditions Searchconditions for the filter. */
+    /** @var array $additionalparams Conditino objects for the current filter. */
+    /** @var string $component Component for calling the fragment callback. */
+    /** @var string $callback Fragment callback. */
+    /** @var string $view View class name. */
+    /** @var int|null $cmid if in an activity, the cmid. */
+    /** @var array $extraparams Additional parameters used by view classes. */
 
     /**
      * Create a new datafilter
@@ -82,24 +60,17 @@ class question_bank_filter_ui extends datafilter {
      */
     public function __construct(
         \context $context,
-        array $searchconditions,
-        array $additionalparams,
-        string $component,
-        string $callback,
-        string $view,
+        protected array $searchconditions,
+        protected array $additionalparams,
+        protected string $component,
+        protected string $callback,
+        protected string $view,
         ?string $tableregionid = null,
-        ?int $cmid = null,
+        protected ?int $cmid = null,
         array $pagevars = [],
-        array $extraparams = []
+        protected array $extraparams = []
     ) {
         parent::__construct($context, $tableregionid);
-        $this->searchconditions = $searchconditions;
-        $this->additionalparams = $additionalparams;
-        $this->component = $component;
-        $this->callback = $callback;
-        $this->view = $view;
-        $this->cmid = $cmid;
-        $this->extraparams = $extraparams;
         if (array_key_exists('sortData', $pagevars)) {
             foreach ($pagevars['sortData'] as $sortname => $sortorder) {
                 unset($pagevars['sortData'][$sortname]);
