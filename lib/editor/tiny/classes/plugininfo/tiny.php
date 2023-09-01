@@ -47,7 +47,7 @@ class tiny extends \core\plugininfo\base {
      */
     public static function get_manage_url(): moodle_url {
         return new moodle_url('/admin/settings.php', [
-            'section' => 'editosettingstiny',
+            'section' => 'editorsettingstiny',
         ]);
     }
 
