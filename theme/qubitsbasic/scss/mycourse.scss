@@ -67,10 +67,10 @@
 .qicon-tick-mark:before {
   content: "\e90d";
 }
-.qicon-notifications {
+.popover-region .popover-region-toggle .qicon-notifications {
   color: #9e9ea2;
-  font-size: 20px !important;
-  display: flex !important;
+  font-size: 20px;
+  display: flex;
   align-items: center;
   justify-content: center;
 }
@@ -89,11 +89,11 @@
   border: 3px solid var(--white);
   color: #78c466;
 }
-.navbar.fixed-top {
-  height: 70px !important;
-  z-index: 50 !important;
-  border-bottom: 0px !important;
-  box-shadow: 0px 15px 10px -15px rgba(0, 0, 0, 0.2) !important;
+#page-wrapper nav.navbar.fixed-top {
+  height: 70px;
+  z-index: 50;
+  border-bottom: 0px;
+  box-shadow: 0px 15px 10px -15px rgba(0, 0, 0, 0.2);
 }
 .pagetitle-left-alignment {
   margin-left: 280px;
@@ -118,9 +118,6 @@
   @include breakpoint(xs) {
     margin: 0;
   }
-}
-[role="button"]:focus {
-  box-shadow: none !important;
 }
 
 .my-course-section {
@@ -153,10 +150,10 @@
   .text {
     padding-left: 10px;
   }
+  .card-title {
+    margin-bottom: 0 !important;
+  }
   .coursecard {
-    .card-title {
-      margin-bottom: 0 !important;
-    }
     &:hover {
       // background-color: darken($colorbgcard, 20);
       color: var(--white);
@@ -922,9 +919,9 @@ button.close:focus,
   }
 }
 @media screen and (min-width: 250px) and (max-width: 576px) {
-  .navbar-nav .popover-region-notifications,
-  .navbar-nav .usermenu {
-    display: none !important;
+  .navbar #usernavigation .popover-region-notifications,
+  .navbar #usernavigation .usermenu {
+    display: none;
   }
 
   .sidebar.close-bars ~ .my-course-section {
@@ -1004,9 +1001,9 @@ ol {
   color: #ffffff !important;
   box-shadow: none !important;
 }
-.userinitials.size-35 {
-  width: 50px !important;
-  height: 50px !important;
+.usermenu .userbutton .avatar .userinitials.size-35 {
+  width: 50px;
+  height: 50px;
 }
 .usermenu .dropdown.show #user-action-menu {
   margin-top: 15px !important;
