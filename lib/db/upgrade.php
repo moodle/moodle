@@ -3502,16 +3502,15 @@ privatefiles,moodle|/user/files.php';
     }
 
     if ($oldversion < 2023082600.02) {
-
         // Get all the ids of users who still have md5 hashed passwords.
         if ($DB->sql_regex_supported()) {
             // If the database supports regex, we can add an exact check for md5.
             $condition = 'password ' . $DB->sql_regex() . ' :pattern';
-            $params = ['pattern'  => "^[a-fA-F0-9]{32}$"];
+            $params = ['pattern' => "^[a-fA-F0-9]{32}$"];
         } else {
             // Otherwise, we need to use a NOT LIKE condition and rule out bcrypt.
             $condition = $DB->sql_like('password', ':pattern', true, false, true);
-            $params = ['pattern'  => '$2y$%'];
+            $params = ['pattern' => '$2y$%'];
         }
 
         // Regardless of database regex support we check the hash length which should be enough.
@@ -3552,6 +3551,20 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023082600.05);
+    }
+
+    if ($oldversion < 2023090100.00) {
+        // Upgrade MIME type for existing PSD files.
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'image/vnd.adobe.photoshop',
+            $DB->sql_like('filename', '?', false),
+            ['%.psd']
+        );
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090100.00);
     }
 
     return true;
