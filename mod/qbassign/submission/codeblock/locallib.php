@@ -81,26 +81,48 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return void
      */
     public function get_settings(MoodleQuickForm $mform) {
-        global $CFG, $COURSE;
+        global $PAGE;
+        $PAGE->requires->jquery();
 
-        
-        $name = get_string('Choose', 'qbassignsubmission_codeblock');
+        $PAGE->requires->js('/mod/qbassign/submission/codeblock/js/custom.js', true);
+
+
+      //  echo '<pre>'; print_r($COURSE); exit;
+        $name = 'CodeBlock Type';//get_string('Choose', 'qbassignsubmission_codeblock');
         $mname = get_string('Manual', 'qbassignsubmission_codeblock');
         $aname = get_string('automatic', 'qbassignsubmission_codeblock');
+       
+        $savedtype = $this->get_config('type');
+        $savedlang = $this->get_config('lang');
 
-        // Create a text box that can be enabled/disabled for codeblock word limit.
         $wordlimitgrp = array();
        
-        $wordlimitgrp[] = $mform->createElement('checkbox', 'qbassignsubmission_codeblock_wordlimits',$mname);
+        $wordlimitgrp[] = $mform->createElement('radio', 'qbassignsubmission_codeblock_type','',$mname,1);
 
-        $wordlimitgrp[] = $mform->createElement('checkbox', 'qbassignsubmission_codeblock_wordlimits', $aname);
+        $wordlimitgrp[] = $mform->createElement('radio', 'qbassignsubmission_codeblock_type','', $aname,2);
 
-        $mform->addGroup($wordlimitgrp, 'qbassignsubmission_codeblock_wordlimits_group', $name, ' ', false);
+        $mform->addGroup($wordlimitgrp, 'qbassignsubmission_codeblock_type_group',$name, '', ' ', false);
 
-        $mform->setType('qbassignsubmission_codeblock_wordlimits', PARAM_INT);
-        $mform->hideIf('qbassignsubmission_codeblock_wordlimits_group',
+        $mform->setType('qbassignsubmission_codeblock_type', PARAM_INT);
+        $mform->hideIf('qbassignsubmission_codeblock_type_group',
                        'qbassignsubmission_codeblock_enabled',
                        'notchecked');
+
+        if(empty($savedtype))
+        $mform->setDefault('qbassignsubmission_codeblock_type_group[qbassignsubmission_codeblock_type]', 1);
+        else
+        $mform->setDefault('qbassignsubmission_codeblock_type_group[qbassignsubmission_codeblock_type]', $savedtype);
+
+        $mform->addElement('select', 'qbassignsubmission_codeblock_language', 'Language', array('python'=>'Python', 'sql'=>'SQL', 'javascript'=>'Javascript'));
+
+        $mform->hideIf('qbassignsubmission_codeblock_language',
+                       'qbassignsubmission_codeblock_enabled',
+                       'notchecked');
+        if(empty($savedlang))
+        $mform->setDefault('qbassignsubmission_codeblock_language', 'python');
+        else
+        $mform->setDefault('qbassignsubmission_codeblock_language', $savedlang);
+
     }
 
     /**
@@ -110,17 +132,23 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return bool
      */
     public function save_settings(stdClass $data) {
-        if (empty($data->qbassignsubmission_codeblock_wordlimits) || empty($data->qbassignsubmission_codeblock_wordlimits_enabled)) {
-            $wordlimit = 0;
-            $wordlimitenabled = 0;
+       // echo '<pre>'; print_r($data); exit;
+        if (empty($data->qbassignsubmission_codeblock_type_group['qbassignsubmission_codeblock_type']) || empty($data->qbassignsubmission_codeblock_enabled)) {
+            $type = 1;          
         } else {
-            $wordlimit = $data->qbassignsubmission_codeblock_wordlimits;
-            $wordlimitenabled = 1;
+            $type = $data->qbassignsubmission_codeblock_type_group['qbassignsubmission_codeblock_type'];            
         }
 
-        $this->set_config('wordlimit', $wordlimit);
-        $this->set_config('wordlimitenabled', $wordlimitenabled);
+        $this->set_config('type', $type);
 
+        if (empty($data->qbassignsubmission_codeblock_language)) {
+            $lang = 'python';          
+        } else {
+            $lang = $data->qbassignsubmission_codeblock_language;            
+        }
+
+        $this->set_config('lang', $lang);
+       
         return true;
     }
 
