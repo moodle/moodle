@@ -16,6 +16,7 @@
 
 namespace tool_mfa\plugininfo;
 
+use moodle_url;
 use stdClass;
 
 /**
@@ -291,5 +292,48 @@ class factor extends \core\plugininfo\base {
     public static function get_instance_from_id(int $factorid): stdClass|null {
         global $DB;
         return $DB->get_record('tool_mfa', ['id' => $factorid]);
+    }
+
+    /**
+     * Return URL used for management of plugins of this type.
+     *
+     * @return moodle_url
+     */
+    public static function get_manage_url(): moodle_url {
+        return new moodle_url('/admin/settings.php', [
+            'section' => 'managemfa',
+        ]);
+    }
+
+    /**
+     * These subplugins can be uninstalled.
+     *
+     * @return bool
+     */
+    public function is_uninstall_allowed(): bool {
+        return $this->name !== 'nosetup';
+    }
+
+    /**
+     * Pre-uninstall hook.
+     *
+     * This is intended for disabling of plugin, some DB table purging, etc.
+     *
+     * NOTE: to be called from uninstall_plugin() only.
+     * @private
+     */
+    public function uninstall_cleanup() {
+        global $DB, $CFG;
+
+        $DB->delete_records('tool_mfa', ['factor' => $this->name]);
+        $DB->delete_records('tool_mfa_secrets', ['factor' => $this->name]);
+
+        $order = explode(',', get_config('tool_mfa', 'factor_order'));
+        if (in_array($this->name, $order)) {
+            $order = array_diff($order, [$this->name]);
+            \tool_mfa\manager::set_factor_config(['factor_order' => implode(',', $order)], 'tool_mfa');
+        }
+
+        parent::uninstall_cleanup();
     }
 }
