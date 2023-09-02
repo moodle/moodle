@@ -3059,6 +3059,18 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                              'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
                              ); 
                      }
+                     if($config->plugin=='codeblock')
+                     {
+                         $get_typedetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'type','plugin'=>'codeblock'));
+ 
+                         $get_langdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'lang','plugin'=>'codeblock'));
+ 
+                            $submissintype = array(
+                             'type'=> $config->plugin,
+                             'operation' => ($config->plugin=='codeblock')?$get_typedetails->value:'1',
+                             'language' => ($config->plugin=='codeblock')?$get_langdetails->value:'python'                    
+                             ); 
+                     }
                  }
              }
              $context = context_course::instance($get_assignmentdetails->course);
@@ -3144,7 +3156,9 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                      'submissiontypes' => new external_single_structure(
                                          array(
                                           'type' => new external_value(PARAM_RAW, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
-                                          'wordlimit' =>new external_value(PARAM_RAW, 'Text Limit',VALUE_OPTIONAL)
+                                          'wordlimit' =>new external_value(PARAM_RAW, 'Text Limit',VALUE_OPTIONAL),
+                                          'operation' =>new external_value(PARAM_RAW, 'codeblock type',VALUE_OPTIONAL),
+                                          'language' =>new external_value(PARAM_RAW, 'Language',VALUE_OPTIONAL)
                                          )
                                      ),
                                      'Submission Type Details', VALUE_OPTIONAL
@@ -3703,12 +3717,27 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      );
                      $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
                  }
+                 elseif($plugindata_type =='codeblock'){
+                    $add_textsubmission =  array(
+                        'qbassignment' => $qbassignmentid,
+                        'submission' => $insertid,
+                        'codeblock' => $plugindata_text,
+                        'onlineformat' => $plugindata_format
+                        );
+                        $sub_insertid = $DB->insert_record('qbassignsubmission_codeblock', $add_textsubmission);
+                 }
              }
              else
              { 
-                 $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id)); 
+                if($plugindata_type =='codeblock'){
+                 $check_submissiontxt = $DB->get_record('qbassignsubmission_codeblock', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id));
+                }
+                else{
+                    $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id));
+                }
                  if($check_submissiontxt->id=='') // remove submission from students
                  { 
+                    if($plugindata_type =='onlinetext'){
                      $add_textsubmission =  array(
                      'qbassignment' => $qbassignmentid,
                      'submission' => $check_submission->id,
@@ -3716,6 +3745,16 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'onlineformat' => $plugindata_format
                      );
                      $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+                    }
+                    elseif($plugindata_type =='codeblock'){
+                        $add_textsubmission =  array(
+                            'qbassignment' => $qbassignmentid,
+                            'submission' => $check_submission->id,
+                            'codeblock' => $plugindata_text,
+                            'onlineformat' => $plugindata_format
+                            );
+                            $sub_insertid = $DB->insert_record('qbassignsubmission_codeblock', $add_textsubmission);
+                    }
  
                      $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
@@ -3726,7 +3765,12 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
                     
+                     if($plugindata_type =='codeblock'){
+                        $DB->set_field('qbassignsubmission_codeblock', 'codeblock', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+                     }                     
+                     else{
                      $DB->set_field('qbassignsubmission_onlinetex', 'onlinetex', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+                     }
  
                      $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $submissionID = $check_submission->id;
@@ -4049,12 +4093,13 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              array(
              'submissionid' => new external_value(PARAM_INT, 'Submission Id',VALUE_REQUIRED),
              'assignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
-             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED)
+             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED),
+             'submissiontype' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED)
              )
          );
      }
  
-     public static function remove_submission($submissionid,$assignmentid,$courseid)
+     public static function remove_submission($submissionid,$assignmentid,$courseid,$submissiontype)
      {
          global $DB,$USER,$CONTEXT;
          //Get activity Module details
@@ -4071,7 +4116,11 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  if(isset($get_submission->id))
                  {
                      if ($submissionid) {
+                        if($submissiontype == 'text')
                          $DB->delete_records('qbassignsubmission_onlinetex', array('submission' => $submissionid));
+                        elseif($submissiontype == 'codeblock')
+                        $DB->delete_records('qbassignsubmission_codeblock', array('submission' => $submissionid));
+
                          $DB->set_field('qbassign_submission', 'status', 'new', array('userid' => $USER->id,'id'=>$submissionid));
                          $remove_updated = ['message'=>'sucess']; 
                          return $remove_updated;
