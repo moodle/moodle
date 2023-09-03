@@ -21,6 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import {getString} from 'core/str';
+import {prefetchStrings} from 'core/prefetch';
+
 /**
  * Selectors.
  *
@@ -144,12 +147,11 @@ const recalculateNaturalWeights = (categoryElement) => {
     let overriddenTotal = 0;
     // Total up all the weights.
     for (const gradeItemDetail of Object.values(overrideArray)) {
-        // If the grade item has extra credit, then don't add it to normaliseTotal.
-        if (!gradeItemDetail.extraCredit) {
+        // Exclude grade items with extra credit or negative weights (which will be set to zero later).
+        if (!gradeItemDetail.extraCredit && gradeItemDetail.weight > 0) {
             normaliseTotal += gradeItemDetail.weight;
         }
-        // The overridden total comprises items that are set as overridden, are not extra credit, and have a value
-        // greater than zero.
+        // The overridden total includes items that are marked as overridden, not extra credit, and have a positive weight.
         if (gradeItemDetail.weightOverride && !gradeItemDetail.extraCredit && gradeItemDetail.weight > 0) {
             // Add overridden weights up to see if they are greater than 1.
             overriddenTotal += gradeItemDetail.weight;
@@ -178,6 +180,11 @@ const recalculateNaturalWeights = (categoryElement) => {
             continue;
         }
 
+        // Remove any error messages and classes.
+        weightInput.classList.remove('is-invalid');
+        const errorArea = weightInput.closest('td').querySelector('.invalid-feedback');
+        errorArea.textContent = '';
+
         if (!oldExtraCreditCalculation && itemAggregationCoefficient > 0 && !weightCheckbox.checked) {
             // For an item with extra credit ignore other weights and overrides.
             weightInput.value = totalGradeMax ? formatWeight(itemGradeMax * 100 / totalGradeMax) : 0;
@@ -191,16 +198,17 @@ const recalculateNaturalWeights = (categoryElement) => {
                 // then convert it to a proportion of the available non-overridden weight.
                 weightInput.value = formatWeight((itemGradeMax / totalNonOverriddenGradeMax) * (100 - totalOverriddenWeight));
             }
-        } else if ((!automaticGradeItemsPresent && normaliseTotal !== 100) || (requiresNormalising) ||
+        } else if ((!automaticGradeItemsPresent && normaliseTotal !== 100) || requiresNormalising ||
                 overrideArray[childElement.dataset.itemid].weight < 0) {
-            // Just divide the overridden weight for this item against the total weight override of all
-            // items in this category.
-            if (normaliseTotal === 0 || overrideArray[childElement.dataset.itemid].weight < 0) {
-                // If the normalised total equals zero, or the weight value is less than zero,
-                // set the weight for the grade item to zero.
+            if (overrideArray[childElement.dataset.itemid].weight < 0) {
                 weightInput.value = formatWeight(0);
             } else {
-                weightInput.value = formatWeight(100 * overrideArray[childElement.dataset.itemid].weight / normaliseTotal);
+                const error = normaliseTotal > 100 ? 'erroroverweight' : 'errorunderweight';
+                // eslint-disable-next-line promise/always-return,promise/catch-or-return
+                getString(error, 'core_grades').then((errorString) => {
+                    errorArea.textContent = errorString;
+                });
+                weightInput.classList.add('is-invalid');
             }
         }
     }
@@ -236,6 +244,7 @@ const parseWeight = (weightString) => {
 export const init = (decSep, oldCalculation) => {
     decimalSeparator = decSep;
     oldExtraCreditCalculation = oldCalculation;
+    prefetchStrings('core_grades', ['erroroverweight', 'errorunderweight']);
 
     document.addEventListener('change', e => {
         // Update the weights of all grade items in the category when the weight of any grade item in the category is changed.
@@ -250,6 +259,23 @@ export const init = (decSep, oldCalculation) => {
                 const weightElement = gradeItemRow.querySelector(selectors.weightOverrideInput);
                 weightElement.value = formatWeight(parseWeight(weightElement.value));
                 recalculateNaturalWeights(categoryElement);
+            }
+        }
+    });
+
+    document.addEventListener('submit', e => {
+        // If the form is being submitted, then we need to ensure that the weight input fields are all set to
+        // a valid value.
+        if (e.target.matches('#gradetreeform')) {
+            const firstInvalidWeightInput = e.target.querySelector('input.is-invalid');
+            if (firstInvalidWeightInput) {
+                const firstFocusableInvalidWeightInput = e.target.querySelector('input.is-invalid:enabled');
+                if (firstFocusableInvalidWeightInput) {
+                    firstFocusableInvalidWeightInput.focus();
+                } else {
+                    firstInvalidWeightInput.scrollIntoView({block: 'center'});
+                }
+                e.preventDefault();
             }
         }
     });
