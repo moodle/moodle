@@ -500,7 +500,7 @@ abstract class moodleform_mod extends moodleform {
      * Adds all the standard elements to a form to edit the settings for an activity module.
      */
     protected function standard_coursemodule_elements() {
-        global $COURSE, $CFG, $DB;
+        global $COURSE, $CFG, $DB, $OUTPUT;
         $mform =& $this->_form;
 
         $this->_outcomesused = false;
@@ -623,6 +623,13 @@ abstract class moodleform_mod extends moodleform {
                     get_string('accessrestrictions', 'availability'),
                     ['class' => 'd-none']
             );
+            // Availability loading indicator.
+            $loadingcontainer = $OUTPUT->container(
+                $OUTPUT->render_from_template('core/loading', []),
+                'd-flex justify-content-center py-5 icon-size-5',
+                'availabilityconditions-loading'
+            );
+            $mform->addElement('html', $loadingcontainer);
 
             // The _cm variable may not be a proper cm_info, so get one from modinfo.
             if ($this->_cm) {

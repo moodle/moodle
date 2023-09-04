@@ -17,7 +17,7 @@ require_once($CFG->libdir.'/gradelib.php');
 class editsection_form extends moodleform {
 
     function definition() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         $mform  = $this->_form;
         $course = $this->_customdata['course'];
@@ -60,6 +60,13 @@ class editsection_form extends moodleform {
                 get_string('accessrestrictions', 'availability'),
                 ['class' => 'd-none']
             );
+            // Availability loading indicator.
+            $loadingcontainer = $OUTPUT->container(
+                $OUTPUT->render_from_template('core/loading', []),
+                'd-flex justify-content-center py-5 icon-size-5',
+                'availabilityconditions-loading'
+            );
+            $mform->addElement('html', $loadingcontainer);
         }
 
         $mform->_registerCancelButton('cancel');
