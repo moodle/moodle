@@ -3653,6 +3653,7 @@ class navbar extends navigation_node {
         } else if ($this->hasitems !== false) {
             return true;
         }
+        $outcome = false;
         if (count($this->children) > 0 || count($this->prependchildren) > 0) {
             // There have been manually added items - there are definitely items.
             $outcome = true;
