@@ -247,27 +247,13 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
                     }
                 }
 
-                if ($DB->get_record_sql("SELECT ra.id FROM
-                                         {user_enrolments} ue
-                                         INNER JOIN {enrol} e ON (ue.enrolid = e.id AND e.status=0)
-                                         JOIN {role_assignments} ra ON (ue.userid = ra.userid)
-                                         JOIN {context} c ON (ra.contextid = c.id AND c.instanceid = e.courseid)
-                                         WHERE c.contextlevel = 50
-                                         AND ue.userid = :userid
-                                         AND e.courseid = :courseid
-                                         AND ra.roleid = :studentrole",
-                                         array('courseid' => $compuser->courseid,
-                                               'userid' => $compuser->userid,
-                                               'studentrole' => $studentrole->id))) {
-
-                    // Expire the user from the course.
-                    mtrace("Expiring $user->id from course id $course->id as a student");
-                    $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
-                                                                                                'courseid' => $course->id,
-                                                                                                'objectid' => $course->id,
-                                                                                                'userid' => $user->id));
-                    $event->trigger();
-                }
+                // Expire the user from the course.
+                mtrace("Expiring $user->id from course id $course->id as a student");
+                $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
+                                                                                            'courseid' => $course->id,
+                                                                                            'objectid' => $course->id,
+                                                                                            'userid' => $user->id));
+                $event->trigger();
 
                 // Get the company template info.
                 // Check against per company template repeat instead.
