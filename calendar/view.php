@@ -114,7 +114,9 @@ if ($iscoursecalendar && !empty($courseid)) {
     $PAGE->set_context(context_system::instance());
 }
 
-require_login($course, false);
+// Auto log in guests on frontpage.
+$autologinguest = !$iscoursecalendar;
+require_login($course, $autologinguest);
 
 $calendar = calendar_information::create($time, $courseid, $categoryid);
 
