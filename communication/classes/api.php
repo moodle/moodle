@@ -229,13 +229,11 @@ class api {
     /**
      * Set the form definitions for the plugins.
      *
-     * @param \MoodleQuickForm $mform
-     * @return void
+     * @param \MoodleQuickForm $mform The moodle form
+     * @param string $provider The provider name
      */
-    public function form_definition_for_provider(\MoodleQuickForm $mform): void {
-        $provider = $mform->getElementValue('selectedcommunication');
-
-        if ($provider[0] !== processor::PROVIDER_NONE) {
+    public function form_definition_for_provider(\MoodleQuickForm $mform, string $provider = processor::PROVIDER_NONE): void {
+        if ($provider !== processor::PROVIDER_NONE) {
             // Room name for the communication provider.
             $mform->insertElementBefore(
                 $mform->createElement(
@@ -247,7 +245,7 @@ class api {
             $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
             $mform->setType('communicationroomname', PARAM_TEXT);
 
-            processor::set_proider_form_definition($provider[0], $mform);
+            processor::set_proider_form_definition($provider, $mform);
         }
 
     }
