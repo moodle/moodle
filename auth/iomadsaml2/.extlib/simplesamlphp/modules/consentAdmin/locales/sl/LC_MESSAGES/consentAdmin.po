@@ -1,0 +1,159 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: sl\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 "
+"|| n%100==4 ? 2 : 3)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Status privolitve"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atributi"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Ponudnik storitve"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Privolitev razveljavljena"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Upravljanje s privolitvami"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Prikaži"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organizacija"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Vrinjen atribut"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "Prikaži/Skrij atribute"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Namen storitve: "
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Skrij"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(brez opisa)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Ponudniki storitev za"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Kako razveljavim dano privolitev?</h3> Odstranite kljukico pred "
+"SPjem, za katerega želite razveljaviti dano privolitev<h3>Povezave</h3> "
+"<ul> <li><a href=\"https://aai.arnes.si\">Start</a> </li> <li><a "
+"href=\"https://aai.arnes.si\">FAQ</a> </li> </ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Prijava"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Pregled in urejanje privolitev za posamezen SP."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Privolitev posodobljena"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Neznan..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Privolitev dodana"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identiteta"
+
+msgid "Injected attribut"
+msgstr "Vrinjen atribut"
+
+msgid "Show"
+msgstr "Prikaži"
+
+msgid "Consent Added"
+msgstr "Privolitev dodana"
+
+msgid "Consent Administration"
+msgstr "Upravljanje s privolitvami"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Pregled in urejanje privolitev za posamezen SP."
+
+msgid "Unknown ..."
+msgstr "Neznan..."
+
+msgid "Identity"
+msgstr "Identiteta"
+
+msgid "The purpose of the service is"
+msgstr "Namen storitve: "
+
+msgid "Hide"
+msgstr "Skrij"
+
+msgid "Service Provider"
+msgstr "Ponudnik storitve"
+
+msgid "Service Providers for"
+msgstr "Ponudniki storitev za"
+
+msgid "login"
+msgstr "Prijava"
+
+msgid "(name not specified)"
+msgstr "(brez naziva)"
+
+msgid "Consent Updated"
+msgstr "Privolitev posodobljena"
+
+msgid "Consent status"
+msgstr "Status privolitve"
+
+msgid "(no description)"
+msgstr "(brez opisa)"
+
+msgid "attributes"
+msgstr "atributi"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Kako razveljavim dano privolitev?</h3> Odstranite kljukico pred "
+"SPjem, za katerega želite razveljaviti dano privolitev<h3>Povezave</h3> "
+"<ul> <li><a href=\"https://aai.arnes.si\">Start</a> </li> <li><a "
+"href=\"https://aai.arnes.si\">FAQ</a> </li> </ul>"
+
+msgid "Consent Removed"
+msgstr "Privolitev razveljavljena"
+
+msgid "show/hide attributes"
+msgstr "Prikaži/Skrij atribute"
+
+msgid "Organisation"
+msgstr "Organizacija"
+

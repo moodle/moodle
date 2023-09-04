@@ -1,0 +1,13 @@
+{% autoescape false %}
+# {{ subject }}
+
+{{ text }}
+
+{% for name, values in data %}
+## {{ name }}
+{% for value in values %}
+- {{ value }}
+{% endfor %}
+
+{% endfor %}
+{% endautoescape %}

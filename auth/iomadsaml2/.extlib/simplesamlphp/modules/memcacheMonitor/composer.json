@@ -1,0 +1,46 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-memcachemonitor",
+    "description": "A module that is able display usage statistics of a memcache(d) store",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "memcachemonitor"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Andreas Åkre Solberg",
+            "email": "andreas.solberg@uninett.no"
+        },
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "simplesamlphp/simplesamlphp-test-framework": "~0.0.6"
+    },
+    "extra": {
+        "ssp-mixedcase-module-name": "memcacheMonitor"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-memcachemonitor/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-memcachemonitor"
+    }
+}

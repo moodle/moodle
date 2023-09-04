@@ -1,0 +1,84 @@
+{% set pagetitle = '{core:frontpage:page_title}'|trans %}
+{% set frontpage_section = 'federation' %}
+{% extends "base.twig" %}
+
+{% block content %}
+    {% include "@core/_frontpage_menu.twig" %}
+
+    {% if metaentries.hosted is iterable and metaentries.hosted is not empty %}
+    <h2>{% trans %}Hosted entities{% endtrans %}</h2>
+    <dl>
+    {% for key, set in metaentries.hosted %}
+        {% set metadataset = attribute(set, 'metadata-set') %}
+        <dt>{{ mtype[metadataset]|trans }}</dt>
+        <dd>
+        <p>Entity ID: <code>{{ set.entityid }}</code>
+            {% if set.deprecated is defined and set.deprecated %}
+            <br /><span class="entity-deprecated">Deprecated</span>
+            {% endif %}
+            {% if set.entityid != attribute(set, 'metadata-index') %}
+            <br />Index: {{ attribute(set, 'metadata-index') }}
+            {% endif %}
+            {% if set.name_translated is defined %}
+            <br /><span class="entity-name">{{ set.name_translated }}</span>
+            {% endif %}
+            {% if set.descr_translated is defined %}
+            <br /><span class="entity-name">{{ set.descr_translated }}</span>
+            {% endif %}
+            <br />[ <a href="{{ attribute(set, 'metadata-url') }}">{{'{core:frontpage:show_metadata}'|trans }}</a> ]
+        </p>
+        </dd>
+    {% endfor %}
+    </dl>
+    {% endif %}
+
+    {% if metaentries.remote is iterable and metaentries.remote is not empty %}
+    <h2>{% trans %}Trusted entities{% endtrans %}</h2>
+    {% for key, set in metaentries.remote %}
+    <fieldset class="fancyfieldset">
+        <legend>{{ mtype[key]|trans }} (Trusted)</legend>
+        <ul>
+        {% for entityid, entity in set %}
+            <li><a href="{{ (metadata_url ~ '?entityid=' ~ entity.entityid ~ '&set=' ~ key)|escape('html') }}">
+            {%- if entity.name_translated is defined %}
+            {{ entity.name_translated }}
+            {% elseif entity.organizationdisplayname_translated is defined %}
+            {{ entity.organizationdisplayname_translated }}
+            {% else %}{{ entity.entityid|escape('html') }}
+            {% endif -%}</a>
+
+            {%- if entity.expire is defined %}
+            {% if ((entity.expire - date().timestamp) < 0) %}
+            <span class="entity-expired"> (expired {{ ((date().timestamp - entity.expire) / 3600) | round(2) }} hours ago)</span>
+            {% else %} (expires in {{ ((entity.expire - date().timestamp) / 3600) | round(2) }} hours){% endif -%}{% endif %}
+            </li>
+        {% endfor %}
+        </ul>
+    </fieldset>
+    {% endfor %}
+    {% endif %}
+
+    <h2>{{ '{core:frontpage:tools}'|trans }}</h2>
+    <ul>
+        {% for key, link in links_federation %}
+        <li><a href="{{ link.href|escape('html') }}">{{ link.text|trans|escape('html') }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% if isadmin %}
+    <form action="{{ metadata_url }}" method="get" class="pure-form">
+        <p>Look up metadata for entity:
+            <select name="set">
+            {% if metaentries.remote is defined and metaentries.remote is not empty %}
+            {% for key, set in metaentries.remote %}
+                <option value="{{ key|escape('html') }}">{{ mtype[key]|trans }}</option>
+            {% endfor %}
+            {% endif %}
+            </select>
+            <input type="text" name="entityid" class="edge">
+            <button class="pure-button pure-button-red" type="submit">Lookup</button>
+        </p>
+    </form>
+    </fieldset>
+    {% endif %}
+{% endblock %}

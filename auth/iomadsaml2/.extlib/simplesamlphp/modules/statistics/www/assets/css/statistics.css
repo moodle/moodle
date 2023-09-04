@@ -1,0 +1,127 @@
+@media all {
+    div#content {
+        margin: .4em ! important;
+    }
+
+    .tableview {
+        border-collapse: collapse;
+        border: 1px solid #ccc;
+        margin: 1em;
+        width: 80%;
+    }
+
+    .tableview th, .tableview td {
+        border: 1px solid #ccc;
+        padding: 0px 5px;
+    }
+
+    .tableview th {
+        background: #e5e5e5;
+    }
+
+    .tableview tr.total td {
+        color: #500; font-weight: bold;
+    }
+
+    .tableview tr.even td {
+        background: #f5f5f5;
+        border-top: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .tableview th.value, .tableview td.value {
+        text-align: right;
+    }
+
+    table.timeseries tr.odd td {
+        background-color: #f4f4f4;
+    }
+
+    table.timeseries td {
+        padding-right: 2em; border: 1px solid #ccc
+    }
+
+    td.datacontent {
+        text-align: right;
+    }
+
+    table.selecttime {
+        width: 100%;
+        border: 1px solid #ccc;
+        background: #eee;
+        margin: 1px 0px; padding: 0px;
+    }
+
+    td.selecttime_icon {
+        width: 50px;
+        padding: 0px;
+    }
+
+    td.selecttime_icon img {
+        margin: 0px;
+    }
+
+    td.selecttime_link_grey {
+        color: #ccc;
+    }
+
+    td.td_right {
+        text-align: right;
+    }
+    td.td_next_right {
+        padding-right: 4px;
+    }
+    td.td_left {
+        text-align: left;
+    }
+
+    p.p_right {
+        text-align: right;
+    }
+
+    form {
+        display: inline;
+    }
+
+    table#statmeta {
+        width: 100%;
+    }
+
+    ul.tabset_tabs {
+        margin: 0px;
+        padding: 0px;
+        list-style: none;
+    }
+
+    ul.tabset_tabs li {
+        background: none;
+        color: #222;
+        display: inline-block;
+        padding: 10px 15px;
+        cursor: pointer;
+    }
+
+    ul.tabset_tabs li.current {
+        background: #ededed;
+        color: #222;
+    }
+
+    .tabset_content {
+        display: none;
+        background: #ededed;
+        padding: 15px;
+    }
+
+    .tabset_content.current {
+        display: inherit;
+    }
+
+    #graph img {
+        max-width: 77%;
+        height: auto;
+    }
+    #table img {
+        max-width: 77%;
+        height: auto;
+    }
+}

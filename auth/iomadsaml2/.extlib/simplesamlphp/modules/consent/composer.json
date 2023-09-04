@@ -1,0 +1,45 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-consent",
+    "description": "A module that will ask for user consent before releasing attributes",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "consent"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "lavmrk@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\consent\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7",
+        "webmozart/assert": "<1.6"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-consent/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-consent"
+    }
+}

@@ -1,0 +1,1375 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: he\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "מטא-מידע של סז מסוג SAML 2.0 "
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"או שלא נמצא משתמש בשם זה, או שהסיסמה לא הייתה נכונה. בדוק בבקשה את שם "
+"המשתמש ונסה שוב. "
+
+msgid "{logout:failed}"
+msgstr "התנתקות נכשלה"
+
+msgid "{status:attributes_header}"
+msgstr "התכונות שלך"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "ספק שירות מרוחק מסוג SAML 2.0"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "ההיזדהות נכשלה: הדפדפן לא שלח תעודה"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "שגיאה בעיבוד תגובה מספק הזהות"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "אבד מידע המצב"
+
+msgid "{login:username}"
+msgstr "שם משתמש"
+
+msgid "{errors:title_METADATA}"
+msgstr "שגיאה בטעינת המטא-מידע"
+
+msgid "{admin:metaconv_title}"
+msgstr "מנתח מטא-מידע"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "לא נמצאו שגיאות."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"המידע על פעולת ההתנתקות הנוכחית אבד. אתה צריך לחזור לשירות ממנו ניסית "
+"להתנתק ולנסות שוב. שגיאה זו יכולה להיגרם על ידי מידע התנתקות שפג תוקפו. "
+"מידע ההתנתקות מאוכסן לזמן מוגבל - בדרך כלל כמה שעות. פרק זמן ארוך בהרבה "
+"מכל בקשת התנתקות נורמלית, לכן שגיאה זו יכולה להגרם מהגדרות לא נכונות. אם "
+"הבעייה ממשיכה, צור קשר עם ספק השרות."
+
+msgid "{disco:previous_auth}"
+msgstr "בעבר בחרת להזדהות ב-"
+
+msgid "{admin:cfg_check_back}"
+msgstr "חזור אל רשימת הקבצים"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"אם אתה מדווח על התקלה, אנא דווח גם את מספר המעקב המאפשר לאתר את השיחה שלך"
+" ביומנים העומדים לרשות מנהל המערכת: "
+
+msgid "{login:change_home_org_title}"
+msgstr "החלף את אירגון הבית שלך"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "לא ניתן לאתר מטא-מידע עבור %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "מטא-מידע"
+
+msgid "{errors:report_text}"
+msgstr ""
+"לחלופין הזין את כתובת הדוא\"ל שלך, כדי שמנהל המערכת יוכל ליצור איתך קשר "
+"ולשאול שאלות נוספות על הבעייה:"
+
+msgid "{errors:report_header}"
+msgstr "דווח טעויות"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"בחרת את <b>%HOMEORG%</b> כאירגון הבית שלך. אם המידע מוטעה אתה יכול לבחור "
+"אירגון אחר."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "שגיאה בעיבוד תגובה מספק השרות"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "לא קיבלנו את התגובה שנשלחה מספק הזהות."
+
+msgid "{errors:debuginfo_header}"
+msgstr "מידע דבאג"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "כיוון שאתה במצב מבדיקת באגים, אתה רואה את תוכן ההודעה שאתה שולח:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr "ספק הזיהות החזיר שגיאה. (קוד המצב בתגובת ה SAML שונה מהצלחה)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "מטא-מידע של סז מסוג Shib 1.3"
+
+msgid "{login:help_text}"
+msgstr ""
+"חבל! - בלי שם המשתמש והסיסמה שלך אתה לא יכול להזדהות בכדי לגשת לשירות. "
+"יכול להיות שיש מישהו שיכול לעזור לך. פנה לתמיכה הטכנית באוניברסיטה שלך!"
+
+msgid "{logout:default_link_text}"
+msgstr "חזור לדף ההתקנה של SimpleSAMLphp"
+
+msgid "{errors:error_header}"
+msgstr "שגיאה ב SimpleSAMLphp"
+
+msgid "{login:help_header}"
+msgstr "הצילו! שכחתי את הסיסמה."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP הוא מסד הנתונים המכיל את המשתמשים, וכאשר אתה מנסה להתחבר, צריך "
+"להתחבר אליו. שגיאה קרתה בזמן ניסיון החיבור הנוכחי."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"ישנה בעייה בהגדרות של התקנת ה SimpleSAMLphp שלך. אם אתה מנהל המערכת של "
+"שירות זה, כדי שתוודא שהגדרות מהמטא-מידע שלך נכונות."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "התקבלה בקשה לא חוקית"
+
+msgid "{status:sessionsize}"
+msgstr "גודל שיחה: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "התנתקות מהמערכת"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "מטא-מידע בתבנית XML"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "השדות הבאים לא זוהו"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "שגיאה במקור ההזדהות"
+
+msgid "{login:select_home_org}"
+msgstr "בחר את אירגון הבית שלך"
+
+msgid "{logout:hold}"
+msgstr "בהשעייה"
+
+msgid "{admin:cfg_check_header}"
+msgstr "בדיקת הגדרות"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "שלח הודעה"
+
+msgid "{status:logout}"
+msgstr "התנתקות"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "הפרמטרים שנשלחו לשירות גילוי לא היו על פי מפרט."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "שגיאה אירעה בניסיון ליצור את בקשת ה- SAML."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "שדות רשות"
+
+msgid "{logout:return}"
+msgstr "חזרה לשרות"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "אתה יכול <a href=\"%METAURL%\">לקבל את המטא מידע בכתובת נפרדת</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "כן, כל השרותים"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"אתה יכול לכבות את מצב בדיקת הבאגים בקובץ בההגדרות הגלובלי של "
+"SimpleSAMLphp <tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "בחר"
+
+msgid "{logout:also_from}"
+msgstr "אתה מחובר גם לשרותים הבאים:"
+
+msgid "{login:login_button}"
+msgstr "כניסה"
+
+msgid "{logout:progress}"
+msgstr "מתנתק מהמערכת..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "סיסמה או שם משתמש לא נכונים."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "ספק שירות מרוחק מסוג Shib 1.3"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr "ספק זהות זה קיבל בקשת הזדהות מספק שירות, אולם קרתה שגיאה בזמן עיבוד הבקשה."
+
+msgid "{logout:logout_all_question}"
+msgstr "האם אתה רוצה להתנתק מכל השרותים המוזכרים למעלה?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "אין גישה"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"שלחת משהו לדף הכניסה למערכת, אבל בגלל סיבה כל שהיא הסיסמה לא נשלחה. בבקשה"
+" נסה שוב."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "אין RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "אבד מידע המצב, ואי אפשר להתחל מחדש את הבקשה"
+
+msgid "{login:password}"
+msgstr "סיסמה"
+
+msgid "{errors:debuginfo_text}"
+msgstr "יכול להיות שמידע הדבאג למטה יעניין את מנהל המערכת / תמיכה טכנית:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "אפשרויות חסרות מקובץ ההגדרות"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "הושלכה חריגה ללא טיפול"
+
+msgid "{general:yes}"
+msgstr "כן"
+
+msgid "{errors:title_CONFIG}"
+msgstr "שגיאה בהגדרות"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "שגיאה בעיבוד בקשת התנתקות"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "שגיאה ברשומת מטא-מידע זו"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "לא נמצא מטא-מידע"
+
+msgid "{login:contact_info}"
+msgstr "צור קשר"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "חריגה לא מטופלת "
+
+msgid "{status:header_saml20_sp}"
+msgstr "הדגמת דוגמה לס\"ש מסוג SAML 2.0"
+
+msgid "{login:error_header}"
+msgstr "שגיאה"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "ההיזדהות בוטלה"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"אחד או יותר מן השרותים שאתה מחובר אליהם <i>לא תומכים בהתנתקות</i> .כדי "
+"לוודא שהתנתקת מכל השירותים ממולץ <i>שתסגור את הדפדפן</i>"
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "מטא-מידע עבור SAML 2.0 בתבנית XML:"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "ספק זהות מרוחק מסוג SAML 2.0"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "ספק זהות מקומי מסוג SAML 2.0"
+
+msgid "{admin:metaover_required_found}"
+msgstr "שדות נדרשים"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "בחר קובץ הגדרות לבדיקה:"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "ההיזדהות נכשלה: התעודה שהדפדפן שלח לא ידועה"
+
+msgid "{logout:logging_out_from}"
+msgstr "מתנתק מהשרותים הבאים:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "%SP%-נותקת בהצלחה מ"
+
+msgid "{errors:errorreport_text}"
+msgstr "דוח השגיאה נשלח למנהל המערכת."
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "שגיאה בזמן  הניסיון לעבד את בקשת התנתקות."
+
+msgid "{logout:success}"
+msgstr "התנתקת בהצלחה מכל השרותים הכתובים למעלה"
+
+msgid "{admin:cfg_check_notices}"
+msgstr "הודעות"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "ההיזדהות בוטלה על ידי המשתמש"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "שגיאה בהתקשרות עם שרת שהם."
+
+msgid "{general:no}"
+msgstr "לא"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "מטא-מידע של סש מסוג SAML 2.0 "
+
+msgid "{admin:metaconv_converted}"
+msgstr "מטא-מידע מומר"
+
+msgid "{logout:completed}"
+msgstr "הסתיים"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"הסיסמה בהגדרות (auth.adminpassword)  לא שונתה מהערך ההתחלתי. אנא ערוך את "
+"קובץ ההגדרות."
+
+msgid "{general:service_provider}"
+msgstr "ספק שירות"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "ישנה שגיאה בבקשה לדף זה. הסיבה הייתה: %REASON%"
+
+msgid "{logout:no}"
+msgstr "לא"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[בחירה מעודפת]"
+
+msgid "{general:no_cancel}"
+msgstr "לא, בטל"
+
+msgid "{login:user_pass_header}"
+msgstr "הכנס שם משתמש וסיסמה"
+
+msgid "{errors:report_explain}"
+msgstr "הסבר מה עשית כשהתרחשה השגיאה..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "לא סופקה תגובת SAML"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"ניגשת לממשק שירות ההתנתקות הכללית, אבל לא סיפקת בקשת או תגובת התנתקות של "
+"SAML."
+
+msgid "{login:organization}"
+msgstr "אירגון"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "שם משתמש או סיסמה לא נכונים"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "השדות הדרושים הבאים לא נמצאו"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr "קצה זה אינו מופעל. בדוק את אפשריות ההפעלה בהגדרות  SimpleSAMLphp שלך."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "לא סופקו הודעות SAML"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr "ניגשת לממשק הכרזת שירות ללקוח, אבל לא סיפקת תגובת הזדהות SAML. "
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "אתה עומד לשלוח הודעה. לחץ על כפתור השליחה כדי להמשיך."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "שגיאה במקור הזדהות %AUTHSOURCE%. הסיבה הייתה: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "התרחשה שגיאה"
+
+msgid "{login:change_home_org_button}"
+msgstr "החלף אירגון בית"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "אפשרויות מיותרות בקובץ ההגדרות"
+
+msgid "{errors:report_email}"
+msgstr "כתובת דואל:"
+
+msgid "{errors:howto_header}"
+msgstr "איך לקבל עזרה"
+
+msgid "{errors:title_NOTSET}"
+msgstr "סיסמה לא מוגדרת"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr "יוזם הבקשה לא סיפק פרמטר RelayState המציין לאן ללכת ."
+
+msgid "{status:header_diagnostics}"
+msgstr "איבחון SimpleSAMLphp"
+
+msgid "{status:intro}"
+msgstr ""
+"שלום, זהו דף המצב של SimpleSAMLphp. כאן אפשר לראות אם השיחה הופסקה, כמה "
+"זמן היא תמשיך עד להפסקתה וכל התכונות המצורפות לשיחה."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "דף לא נמצא"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "שולח הודעה"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "התקבלה שגיאה מספק הזיהות"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "מטא-מידע של סש מסוג Shib 1.3"
+
+msgid "{admin:metaover_intro}"
+msgstr "כדי להסתכל על הפרטים של ישות SAML, לחץ על כותרת ישות הSAML "
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "תעודה לא-חוקית"
+
+msgid "{general:remember}"
+msgstr "זכור"
+
+msgid "{disco:selectidp}"
+msgstr "בחר את ספק הזהות שלך"
+
+msgid "{login:help_desk_email}"
+msgstr "שלח דואל לתיכה הטכנית"
+
+msgid "{login:help_desk_link}"
+msgstr "תמיכה טכנית"
+
+msgid "{errors:title_CASERROR}"
+msgstr "שגיאת שהם"
+
+msgid "{login:user_pass_text}"
+msgstr "שירות ביקש שתזדהה. אנא הכנס את שם המשתמש והסיסמה שלך בטופס מתחת."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "בקשה שגויה לשירות גילוי"
+
+msgid "{general:yes_continue}"
+msgstr "כן, המשך"
+
+msgid "{disco:remember}"
+msgstr "זכור את הבחירה שלי"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "ספק שירות מקומי מסוג SAML 2.0"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"בתבנית קובץ SimpleSAMLphp שטוח - למקרים בהם אתה משתמש בישות SimpleSAMLphp"
+" בצד השני: "
+
+msgid "{disco:login_at}"
+msgstr "כנס ל-"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "אין אפשרות ליצור תגובת הזדהות"
+
+msgid "{errors:errorreport_header}"
+msgstr "נשלח דוח שגיאה"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "שגיאה ביצירת הבקשה"
+
+msgid "{admin:metaover_header}"
+msgstr "סקירת מטא-מידע"
+
+msgid "{errors:report_submit}"
+msgstr "שלך דוח שגיאות"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "תעודה לא-חוקית"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "דף לא נמצא"
+
+msgid "{logout:logged_out_text}"
+msgstr "התנתקת מן המערכת"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "ספק שירות מקומי מסוג Shib 1.3"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "הורד את תעודות X509 כקבצי PEM-מקודד."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "הודעה"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "תעודה לא ידועה"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "שגיאת LDAP"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"אי אפשר להתנתק מאחד או יותר מהשרותים. כדי לוודא שהתנתקת <i>מומלץ לסגור את"
+" </i>.הדפדפן שלך"
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "הדף ההמבוקש לא נמצא. הכתובת היית: %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"שגיאה זו היא ככל הנראה בשל התנהגות בלתי צפויה או שגויה של SimpleSAMLphp. "
+"צור קשר עם מנהל המערכת של שירות ההתחברות הזה, ושלח לו את השגיאה למעלה."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "ספק זהות מקומי מסוג Shib 1.3"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "לא הצגת תעודה חוקית "
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "אתה עומד לשלוח הודעה. לחץ על כפתור השליחה כדי להמשיך."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "שדות הרשות הבאים לא נמצאו"
+
+msgid "{logout:logout_only}"
+msgstr "לא, רק %SP%"
+
+msgid "{login:next}"
+msgstr "הבא"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr "כאשר ספק הזהות ניסה ליצור תגובת הזדהות, אירעה שגיאה."
+
+msgid "{disco:selectidp_full}"
+msgstr "בחר את ספק הזיהות אליו אתה רוצה להיזדהות:"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "הדף הניתן לא נמצא. הסיבה הייתה %REASON% והכתובת הייתה %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "אין תעודה"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "מידע ההתנתקות אבד"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "ספק זהות מרוחק מסוג Shib 1.3"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "נראה ש SimpleSAMLphp לא מוגדר נכון"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"הנה המטא-מידע ש SimpleSAMLphp ייצר עבורך. אתה יכול לשלוח את מסמך "
+"המטא-מידע לשותפים מהימנים כדי ליצור איחוד מאובטח. "
+
+msgid "{admin:metadata_cert}"
+msgstr "תעודות"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr "ההיזדהות נכשלה: התעודה שהדפדפן שלח לא חוקית או לא ניתנת לקריאה"
+
+msgid "{status:header_shib}"
+msgstr "הדגמה ל- Shibboleth"
+
+msgid "{admin:metaconv_parse}"
+msgstr "נתח"
+
+msgid "Person's principal name at home organization"
+msgstr "השם העיקרי באירגון הבית"
+
+msgid "Superfluous options in config file"
+msgstr "אפשרויות מיותרות בקובץ ההגדרות"
+
+msgid "Mobile"
+msgstr "נייד"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "ספק שירות מקומי מסוג Shib 1.3"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP הוא מסד הנתונים המכיל את המשתמשים, וכאשר אתה מנסה להתחבר, צריך "
+"להתחבר אליו. שגיאה קרתה בזמן ניסיון החיבור הנוכחי."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"לחלופין הזין את כתובת הדוא\"ל שלך, כדי שמנהל המערכת יוכל ליצור איתך קשר "
+"ולשאול שאלות נוספות על הבעייה:"
+
+msgid "Display name"
+msgstr "הראה שם"
+
+msgid "Remember my choice"
+msgstr "זכור את הבחירה שלי"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "מטא-מידע של סש מסוג SAML 2.0 "
+
+msgid "Notices"
+msgstr "הודעות"
+
+msgid "Home telephone"
+msgstr "טלפון בבית"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"שלום, זהו דף המצב של SimpleSAMLphp. כאן אפשר לראות אם השיחה הופסקה, כמה "
+"זמן היא תמשיך עד להפסקתה וכל התכונות המצורפות לשיחה."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "הסבר מה עשית כשהתרחשה השגיאה..."
+
+msgid "An unhandled exception was thrown."
+msgstr "הושלכה חריגה ללא טיפול"
+
+msgid "Invalid certificate"
+msgstr "תעודה לא-חוקית"
+
+msgid "Service Provider"
+msgstr "ספק שירות"
+
+msgid "Incorrect username or password."
+msgstr "סיסמה או שם משתמש לא נכונים."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "ישנה שגיאה בבקשה לדף זה. הסיבה הייתה: %REASON%"
+
+msgid "E-mail address:"
+msgstr "כתובת דואל:"
+
+msgid "Submit message"
+msgstr "שלח הודעה"
+
+msgid "No RelayState"
+msgstr "אין RelayState"
+
+msgid "Error creating request"
+msgstr "שגיאה ביצירת הבקשה"
+
+msgid "Locality"
+msgstr "איזור"
+
+msgid "Unhandled exception"
+msgstr "חריגה לא מטופלת "
+
+msgid "The following required fields was not found"
+msgstr "השדות הדרושים הבאים לא נמצאו"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "הורד את תעודות X509 כקבצי PEM-מקודד."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "לא ניתן לאתר מטא-מידע עבור %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "מספר אירגוני"
+
+msgid "Password not set"
+msgstr "סיסמה לא מוגדרת"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "מטא-מידע של סז מסוג SAML 2.0 "
+
+msgid "Post office box"
+msgstr "תא דואר"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr "שירות ביקש שתזדהה. אנא הכנס את שם המשתמש והסיסמה שלך בטופס מתחת."
+
+msgid "CAS Error"
+msgstr "שגיאת שהם"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "יכול להיות שמידע הדבאג למטה יעניין את מנהל המערכת / תמיכה טכנית:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"או שלא נמצא משתמש בשם זה, או שהסיסמה לא הייתה נכונה. בדוק בבקשה את שם "
+"המשתמש ונסה שוב. "
+
+msgid "Error"
+msgstr "שגיאה"
+
+msgid "Next"
+msgstr "הבא"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "שם מזהה (DN) של היחידה באירגון הבית"
+
+msgid "State information lost"
+msgstr "אבד מידע המצב"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"הסיסמה בהגדרות (auth.adminpassword)  לא שונתה מהערך ההתחלתי. אנא ערוך את "
+"קובץ ההגדרות."
+
+msgid "Converted metadata"
+msgstr "מטא-מידע מומר"
+
+msgid "Mail"
+msgstr "דואר"
+
+msgid "No, cancel"
+msgstr "לא"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"בחרת את <b>%HOMEORG%</b> כאירגון הבית שלך. אם המידע מוטעה אתה יכול לבחור "
+"אירגון אחר."
+
+msgid "Error processing request from Service Provider"
+msgstr "שגיאה בעיבוד תגובה מספק השרות"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "שם מזהה (DN) של היחידה העיקרית באירגון הבית"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "כדי להסתכל על הפרטים של ישות SAML, לחץ על כותרת ישות הSAML "
+
+msgid "Enter your username and password"
+msgstr "הכנס שם משתמש וסיסמה"
+
+msgid "Login at"
+msgstr "כנס ל-"
+
+msgid "No"
+msgstr "לא"
+
+msgid "Home postal address"
+msgstr "כתובת דואר בבית"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "הדגמת דוגמה לס\"ש מסוג WS-Fed"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "ספק זהות מרוחק מסוג SAML 2.0"
+
+msgid "Error processing the Logout Request"
+msgstr "שגיאה בעיבוד בקשת התנתקות"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "האם אתה רוצה להתנתק מכל השרותים המוזכרים למעלה?"
+
+msgid "Select"
+msgstr "בחר"
+
+msgid "The authentication was aborted by the user"
+msgstr "ההיזדהות בוטלה על ידי המשתמש"
+
+msgid "Your attributes"
+msgstr "התכונות שלך"
+
+msgid "Given name"
+msgstr "שם פרטי"
+
+msgid "Identity assurance profile"
+msgstr "פרופיל הבטחת זהות"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "הדגמת דוגמה לס\"ש מסוג SAML 2.0"
+
+msgid "Logout information lost"
+msgstr "מידע ההתנתקות אבד"
+
+msgid "Organization name"
+msgstr "שם אירגון"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "ההיזדהות נכשלה: התעודה שהדפדפן שלח לא ידועה"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "אתה עומד לשלוח הודעה. לחץ על כפתור השליחה כדי להמשיך."
+
+msgid "Home organization domain name"
+msgstr "שם המתחם של אירגון הבית"
+
+msgid "Go back to the file list"
+msgstr "חזור אל רשימת הקבצים"
+
+msgid "Error report sent"
+msgstr "נשלח דוח שגיאה"
+
+msgid "Common name"
+msgstr "שם רווח "
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "בחר את ספק הזיהות אליו אתה רוצה להיזדהות:"
+
+msgid "Logout failed"
+msgstr "התנתקות נכשלה"
+
+msgid "Identity number assigned by public authorities"
+msgstr "מספר מזהה שניתן על ידי הרשויות הציבוריות"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "ספק זהות מרוחק מסוג איחוד-WS"
+
+msgid "Error received from Identity Provider"
+msgstr "התקבלה שגיאה מספק הזיהות"
+
+msgid "LDAP Error"
+msgstr "שגיאת LDAP"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"המידע על פעולת ההתנתקות הנוכחית אבד. אתה צריך לחזור לשירות ממנו ניסית "
+"להתנתק ולנסות שוב. שגיאה זו יכולה להיגרם על ידי מידע התנתקות שפג תוקפו. "
+"מידע ההתנתקות מאוכסן לזמן מוגבל - בדרך כלל כמה שעות. פרק זמן ארוך בהרבה "
+"מכל בקשת התנתקות נורמלית, לכן שגיאה זו יכולה להגרם מהגדרות לא נכונות. אם "
+"הבעייה ממשיכה, צור קשר עם ספק השרות."
+
+msgid "Some error occurred"
+msgstr "התרחשה שגיאה"
+
+msgid "Organization"
+msgstr "אירגון"
+
+msgid "No certificate"
+msgstr "אין תעודה"
+
+msgid "Choose home organization"
+msgstr "החלף אירגון בית"
+
+msgid "Persistent pseudonymous ID"
+msgstr "מזהה משתמש גלובלי"
+
+msgid "No SAML response provided"
+msgstr "לא סופקה תגובת SAML"
+
+msgid "No errors found."
+msgstr "לא נמצאו שגיאות."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "ספק שירות מקומי מסוג SAML 2.0"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "הדף ההמבוקש לא נמצא. הכתובת היית: %URL%"
+
+msgid "Configuration error"
+msgstr "שגיאה בהגדרות"
+
+msgid "Required fields"
+msgstr "שדות נדרשים"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "שגיאה אירעה בניסיון ליצור את בקשת ה- SAML."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"שגיאה זו היא ככל הנראה בשל התנהגות בלתי צפויה או שגויה של SimpleSAMLphp. "
+"צור קשר עם מנהל המערכת של שירות ההתחברות הזה, ושלח לו את השגיאה למעלה."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "השיחה שלך ברת-תוקף לעוד %remaining% שניות מעכשיו."
+
+msgid "Domain component (DC)"
+msgstr "מרכיב מתחם (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "ספק שירות מרוחק מסוג Shib 1.3"
+
+msgid "Password"
+msgstr "סיסמה"
+
+msgid "Nickname"
+msgstr "כינוי"
+
+msgid "Send error report"
+msgstr "שלך דוח שגיאות"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr "ההיזדהות נכשלה: התעודה שהדפדפן שלח לא חוקית או לא ניתנת לקריאה"
+
+msgid "The error report has been sent to the administrators."
+msgstr "דוח השגיאה נשלח למנהל המערכת."
+
+msgid "Date of birth"
+msgstr "תאריך לידה"
+
+msgid "Private information elements"
+msgstr "רכיבי המידע האישי"
+
+msgid "You are also logged in on these services:"
+msgstr "אתה מחובר גם לשרותים הבאים:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "איבחון SimpleSAMLphp"
+
+msgid "Debug information"
+msgstr "מידע דבאג"
+
+msgid "No, only %SP%"
+msgstr "לא, רק %SP%"
+
+msgid "Username"
+msgstr "שם משתמש"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "חזור לדף ההתקנה של SimpleSAMLphp"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "התנתקת בהצלחה מכל השרותים הכתובים למעלה"
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "%SP%-נותקת בהצלחה מ"
+
+msgid "Affiliation"
+msgstr "השתייכות"
+
+msgid "You have been logged out."
+msgstr "התנתקת מן המערכת"
+
+msgid "Return to service"
+msgstr "חזרה לשרות"
+
+msgid "Logout"
+msgstr "התנתקות"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "אבד מידע המצב, ואי אפשר להתחל מחדש את הבקשה"
+
+msgid "Error processing response from Identity Provider"
+msgstr "שגיאה בעיבוד תגובה מספק הזהות"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "ספק שירות מקומי מסוג איחוד-WS"
+
+msgid "Preferred language"
+msgstr "שפה מועדפת"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "ספק שירות מרוחק מסוג SAML 2.0"
+
+msgid "Surname"
+msgstr "שם משפחה"
+
+msgid "No access"
+msgstr "אין גישה"
+
+msgid "The following fields was not recognized"
+msgstr "השדות הבאים לא זוהו"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "שגיאה במקור הזדהות %AUTHSOURCE%. הסיבה הייתה: %REASON%"
+
+msgid "Bad request received"
+msgstr "התקבלה בקשה לא חוקית"
+
+msgid "User ID"
+msgstr "מזהה משתמש"
+
+msgid "JPEG Photo"
+msgstr "תמונה"
+
+msgid "Postal address"
+msgstr "כתובת דואר"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "שגיאה בזמן  הניסיון לעבד את בקשת התנתקות."
+
+msgid "Sending message"
+msgstr "שולח הודעה"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "מטא-מידע עבור SAML 2.0 בתבנית XML:"
+
+msgid "Logging out of the following services:"
+msgstr "מתנתק מהשרותים הבאים:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr "כאשר ספק הזהות ניסה ליצור תגובת הזדהות, אירעה שגיאה."
+
+msgid "Could not create authentication response"
+msgstr "אין אפשרות ליצור תגובת הזדהות"
+
+msgid "Labeled URI"
+msgstr "סיווג URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "נראה ש SimpleSAMLphp לא מוגדר נכון"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "ספק זהות מקומי מסוג Shib 1.3"
+
+msgid "Metadata"
+msgstr "מטא-מידע"
+
+msgid "Login"
+msgstr "כניסה"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr "ספק זהות זה קיבל בקשת הזדהות מספק שירות, אולם קרתה שגיאה בזמן עיבוד הבקשה."
+
+msgid "Yes, all services"
+msgstr "כן, כל השרותים"
+
+msgid "Logged out"
+msgstr "התנתקות מהמערכת"
+
+msgid "Postal code"
+msgstr "מיקוד"
+
+msgid "Logging out..."
+msgstr "מתנתק מהמערכת..."
+
+msgid "Metadata not found"
+msgstr "לא נמצא מטא-מידע"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "ספק זהות מקומי מסוג SAML 2.0"
+
+msgid "Primary affiliation"
+msgstr "השתייכות עיקרית"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"אם אתה מדווח על התקלה, אנא דווח גם את מספר המעקב המאפשר לאתר את השיחה שלך"
+" ביומנים העומדים לרשות מנהל המערכת: "
+
+msgid "XML metadata"
+msgstr "מטא-מידע בתבנית XML"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "הפרמטרים שנשלחו לשירות גילוי לא היו על פי מפרט."
+
+msgid "Telephone number"
+msgstr "מספר טלפון"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"אי אפשר להתנתק מאחד או יותר מהשרותים. כדי לוודא שהתנתקת <i>מומלץ לסגור את"
+" </i>.הדפדפן שלך"
+
+msgid "Bad request to discovery service"
+msgstr "בקשה שגויה לשירות גילוי"
+
+msgid "Select your identity provider"
+msgstr "בחר את ספק הזהות שלך"
+
+msgid "Entitlement regarding the service"
+msgstr "אישור הקשור לשירות"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "מטא-מידע של סש מסוג Shib 1.3"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "כיוון שאתה במצב מבדיקת באגים, אתה רואה את תוכן ההודעה שאתה שולח:"
+
+msgid "Certificates"
+msgstr "תעודות"
+
+msgid "Remember"
+msgstr "זכור"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "שם מזהה (DN) של אירגון הבית"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "אתה עומד לשלוח הודעה. לחץ על כפתור השליחה כדי להמשיך."
+
+msgid "Organizational unit"
+msgstr "יחידה בארגון"
+
+msgid "Authentication aborted"
+msgstr "ההיזדהות בוטלה"
+
+msgid "Local identity number"
+msgstr "מספר זהות מקומי"
+
+msgid "Report errors"
+msgstr "דווח טעויות"
+
+msgid "Page not found"
+msgstr "דף לא נמצא"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "מטא-מידע של סז מסוג Shib 1.3"
+
+msgid "Change your home organization"
+msgstr "החלף את אירגון הבית שלך"
+
+msgid "User's password hash"
+msgstr "הגיבוב של סיסמת המשתמש"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"בתבנית קובץ SimpleSAMLphp שטוח - למקרים בהם אתה משתמש בישות SimpleSAMLphp"
+" בצד השני: "
+
+msgid "Yes, continue"
+msgstr "כן, המשך"
+
+msgid "Completed"
+msgstr "הסתיים"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr "ספק הזיהות החזיר שגיאה. (קוד המצב בתגובת ה SAML שונה מהצלחה)"
+
+msgid "Error loading metadata"
+msgstr "שגיאה בטעינת המטא-מידע"
+
+msgid "Select configuration file to check:"
+msgstr "בחר קובץ הגדרות לבדיקה:"
+
+msgid "On hold"
+msgstr "בהשעייה"
+
+msgid "Error when communicating with the CAS server."
+msgstr "שגיאה בהתקשרות עם שרת שהם."
+
+msgid "No SAML message provided"
+msgstr "לא סופקו הודעות SAML"
+
+msgid "Help! I don't remember my password."
+msgstr "הצילו! שכחתי את הסיסמה."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"אתה יכול לכבות את מצב בדיקת הבאגים בקובץ בההגדרות הגלובלי של "
+"SimpleSAMLphp <tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "איך לקבל עזרה"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"ניגשת לממשק שירות ההתנתקות הכללית, אבל לא סיפקת בקשת או תגובת התנתקות של "
+"SAML."
+
+msgid "SimpleSAMLphp error"
+msgstr "שגיאה ב SimpleSAMLphp"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"אחד או יותר מן השרותים שאתה מחובר אליהם <i>לא תומכים בהתנתקות</i> .כדי "
+"לוודא שהתנתקת מכל השירותים ממולץ <i>שתסגור את הדפדפן</i>"
+
+msgid "Organization's legal name"
+msgstr "השם הרשמי של האירגון"
+
+msgid "Options missing from config file"
+msgstr "אפשרויות חסרות מקובץ ההגדרות"
+
+msgid "The following optional fields was not found"
+msgstr "שדות הרשות הבאים לא נמצאו"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "ההיזדהות נכשלה: הדפדפן לא שלח תעודה"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr "קצה זה אינו מופעל. בדוק את אפשריות ההפעלה בהגדרות  SimpleSAMLphp שלך."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "אתה יכול <a href=\"%METAURL%\">לקבל את המטא מידע בכתובת נפרדת</a>:"
+
+msgid "Street"
+msgstr "רחוב"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"ישנה בעייה בהגדרות של התקנת ה SimpleSAMLphp שלך. אם אתה מנהל המערכת של "
+"שירות זה, כדי שתוודא שהגדרות מהמטא-מידע שלך נכונות."
+
+msgid "Incorrect username or password"
+msgstr "שם משתמש או סיסמה לא נכונים"
+
+msgid "Message"
+msgstr "הודעה"
+
+msgid "Contact information:"
+msgstr "צור קשר"
+
+msgid "Unknown certificate"
+msgstr "תעודה לא ידועה"
+
+msgid "Legal name"
+msgstr "שם רשמי"
+
+msgid "Optional fields"
+msgstr "שדות רשות"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr "יוזם הבקשה לא סיפק פרמטר RelayState המציין לאן ללכת ."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "בעבר בחרת להזדהות ב-"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"שלחת משהו לדף הכניסה למערכת, אבל בגלל סיבה כל שהיא הסיסמה לא נשלחה. בבקשה"
+" נסה שוב."
+
+msgid "Fax number"
+msgstr "מס' פקס"
+
+msgid "Shibboleth demo"
+msgstr "הדגמה ל- Shibboleth"
+
+msgid "Error in this metadata entry"
+msgstr "שגיאה ברשומת מטא-מידע זו"
+
+msgid "Session size: %SIZE%"
+msgstr "גודל שיחה: %SIZE%"
+
+msgid "Parse"
+msgstr "נתח"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"חבל! - בלי שם המשתמש והסיסמה שלך אתה לא יכול להזדהות בכדי לגשת לשירות. "
+"יכול להיות שיש מישהו שיכול לעזור לך. פנה לתמיכה הטכנית באוניברסיטה שלך!"
+
+msgid "Metadata parser"
+msgstr "מנתח מטא-מידע"
+
+msgid "Choose your home organization"
+msgstr "בחר את אירגון הבית שלך"
+
+msgid "Send e-mail to help desk"
+msgstr "שלח דואל לתיכה הטכנית"
+
+msgid "Metadata overview"
+msgstr "סקירת מטא-מידע"
+
+msgid "Title"
+msgstr "תואר"
+
+msgid "Manager"
+msgstr "מנהל"
+
+msgid "You did not present a valid certificate."
+msgstr "לא הצגת תעודה חוקית "
+
+msgid "Authentication source error"
+msgstr "שגיאה במקור ההזדהות"
+
+msgid "Affiliation at home organization"
+msgstr "שייכות באירגון הבית"
+
+msgid "Help desk homepage"
+msgstr "תמיכה טכנית"
+
+msgid "Configuration check"
+msgstr "בדיקת הגדרות"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "לא קיבלנו את התגובה שנשלחה מספק הזהות."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "הדף הניתן לא נמצא. הסיבה הייתה %REASON% והכתובת הייתה %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "ספק זהות מרוחק מסוג Shib 1.3"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"הנה המטא-מידע ש SimpleSAMLphp ייצר עבורך. אתה יכול לשלוח את מסמך "
+"המטא-מידע לשותפים מהימנים כדי ליצור איחוד מאובטח. "
+
+msgid "[Preferred choice]"
+msgstr "[בחירה מעודפת]"
+
+msgid "Organizational homepage"
+msgstr "דף-בית של האירגון"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr "ניגשת לממשק הכרזת שירות ללקוח, אבל לא סיפקת תגובת הזדהות SAML. "
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"אתה נגש למערכת קדם-ייצור. תצורת ההיזדהות הזו היא לבדיקה ולאימות מערכת "
+"הקדם-ייצור בלבד. אם מישהו שלח לך קישור שהצביע לכאן, ואתה לא <i>בודק</i> "
+"כנראה קיבלת קידור לא נכון, ואתה לא אמור להיות כאן   "

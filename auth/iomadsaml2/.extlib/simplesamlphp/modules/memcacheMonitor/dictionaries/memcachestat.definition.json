@@ -1,0 +1,149 @@
+{
+	"pid": {
+		"en": "Process ID"
+	},
+	"uptime": {
+		"en": "Uptime"
+	},
+	"time": {
+		"en": "Current time"
+	},
+	"version": {
+		"en": "Version"
+	},
+	"rusage_user": {
+		"en": "CPU Seconds (User)"
+	},
+	"rusage_system": {
+		"en": "CPU Seconds (System)"
+	},
+	"curr_items": {
+		"en": "Currently number of items"
+	},
+	"total_items": {
+		"en": "Total items ever"
+	},
+	"bytes": {
+		"en": "Total bytes in use currently"
+	},
+	"curr_connections": {
+		"en": "Current open connections"
+	},
+	"total_connections": {
+		"en": "Total connections"
+	},
+	"connection_structures": {
+		"en": "Connection structures"
+	},
+	"cmd_get": {
+		"en": "Total GET commands"
+	},
+	"cmd_set": {
+		"en": "Total SET commands"
+	},
+	"cmd_flush": {
+		"en": "Total FLUSH commands"
+	},
+	"get_hits": {
+		"en": "Total GET commands (success)"
+	},
+	"get_misses": {
+		"en": "Total GET commands (failed)"
+	},
+	"bytes_read": {
+		"en": "Bytes in to the server"
+	},
+	"bytes_written": {
+		"en": "Bytes written by the server"
+	},
+	"limit_maxbytes": {
+		"en": "Total storage avail"
+	},
+	"pointer_size": {
+		"en": "Pointer size (bits)"
+	},
+	"delete_misses": {
+		"en": "Total DELETE commands (failed)"
+	},
+	"delete_hits": {
+		"en": "Total DELETE commands (success)"
+	},
+	"incr_misses": {
+		"en": "Total INCR commands (failed)"
+	},
+	"incr_hits": {
+		"en": "Total INCR commands (success)"
+	},
+	"decr_misses": {
+		"en": "Total DECR commands (failed)"
+	},
+	"decr_hits": {
+		"en": "Total DECR commands (success)"
+	},
+	"cas_misses": {
+		"en": "Total CAS commands (failed)"
+	},
+	"cas_hits": {
+		"en": "Total CAS commands (success)"
+	},
+	"cas_badval": {
+		"en": "Total bad CAS identifiers"
+	},
+	"auth_cmds": {
+		"en": "Total authentication commands processed"
+	},
+	"auth_errors": {
+		"en": "Total authentication commands failed"
+	},
+	"accepting_conns": {
+		"en": "Currently accepting new connections"
+	},
+	"listen_disabled_num": {
+		"en": "Total number of denied connections (connection limit)"
+	},
+	"threads": {
+		"en": "Number of available threads"
+	},
+	"conn_yields": {
+		"en": "Number of times the request limit was reached"
+	},
+	"evictions": {
+		"en": "Number of objects removed from cache (memory limit)"
+	},
+	"libevent": {
+		"en": "Libevent version"
+	},
+	"reserved_fds": {
+		"en": "Number of misc fds used internally"
+	},
+	"cmd_touch": {
+		"en": "Cumulative number of touch reqs"
+	},
+	"touch_hits": {
+		"en": "Number of keys that have been touched with a new expiration time"
+	},
+	"touch_misses": {
+		"en": "Number of items that have been touched and not found"
+	},
+	"hash_power_level": {
+		"en": "Current size multiplier for hash table"
+	},
+	"hash_bytes": {
+		"en": "Bytes currently used by hash tables"
+	},
+	"hash_is_expanding": {
+		"en": "Indicates if the hash table is being grown to a new size"
+	},
+	"expired_unfetched": {
+		"en": "Items pulled from LRU that were never touched before expiring"
+	},
+	"evicted_unfetched": {
+		"en": "Items pulled from LRU that were never touched"
+	},
+	"reclaimed": {
+		"en": "Number of times an entry was stored using memory from an expired entry"
+	},
+	"link_memcacheMonitor": {
+		"en": "Memcache statistics"
+	}
+}

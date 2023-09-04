@@ -1,0 +1,80 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{expirycheck:expwarning:access_denied}"
+msgstr "您沒有權限使用此服務"
+
+msgid "{expirycheck:expwarning:warning_today}"
+msgstr "警告，您的帳號 %NETID% 今天到期！"
+
+msgid "{expirycheck:expwarning:warning}"
+msgstr "警告，您的帳號 %NETID% 將於 %DAYSLEFT% %DAYS% 到期！"
+
+msgid "{expirycheck:expwarning:day}"
+msgstr "日"
+
+msgid "{expirycheck:expwarning:days}"
+msgstr "日"
+
+msgid "{expirycheck:expwarning:no_access_to}"
+msgstr "您的帳號 %NETID% 已過期，存取拒絕！"
+
+msgid "{expirycheck:expwarning:contact_home}"
+msgstr "存取您的組織所管理之服務。若有問題請聯絡您當地的 IT 支援窗口。"
+
+msgid "{expirycheck:expwarning:expiry_date_text}"
+msgstr "到期日："
+
+msgid "{expirycheck:expwarning:warning_header}"
+msgstr "警告，您的帳號 %NETID% 將於 %DAYSLEFT% %DAYS% 到期！"
+
+msgid "{expirycheck:expwarning:btn_continue}"
+msgstr "我知道了，繼續..."
+
+msgid "{expirycheck:expwarning:warning_header_today}"
+msgstr "警告，您的帳號 %NETID% 今天到期！"
+
+msgid "Expiration date:"
+msgstr "到期日："
+
+#, python-format
+msgid "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+msgstr "警告，您的帳號 %NETID% 將於 %DAYSLEFT% %DAYS% 到期！"
+
+msgid "Your account %NETID% has expired, access denied!"
+msgstr "您的帳號 %NETID% 已過期，存取拒絕！"
+
+msgid "Warning, your account %NETID% will expire today!"
+msgstr "警告，您的帳號 %NETID% 今天到期！"
+
+msgid "I am aware of this, continue..."
+msgstr "我知道了，繼續..."
+
+msgid "days"
+msgstr "日"
+
+msgid "day"
+msgstr "日"
+
+msgid ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+msgstr "存取您的組織所管理之服務。若有問題請聯絡您當地的 IT 支援窗口。"
+
+msgid "You do not have access to this service"
+msgstr "您沒有權限使用此服務"
+

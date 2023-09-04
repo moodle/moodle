@@ -1,0 +1,42 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-sanitycheck",
+    "description": "Perform sanity checks on configuration",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "sanitycheck"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Andreas Åkre Solberg",
+            "email": "andreas.solberg@uninett.no"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\sanitycheck\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "webmozart/assert": "~1.4"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-sanitycheck/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-sanitycheck"
+    }
+}

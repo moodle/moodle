@@ -1,0 +1,123 @@
+{% set pagetitle = 'Logging out...'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+
+    <link rel="preload" href="{{ asset('js/logout.js') }}" as="script">
+    {%- if type != "init" %}
+      {%- set content = '2' %}
+      {%- if remaining_services|length == 0 %}
+        {%- set content = '0; url=logout-iframe-done.php?id=' ~ auth_state %}
+      {%- endif %}
+
+    <meta http-equiv="refresh" content="{{ content }}">
+    {% endif %}
+{% endblock preload %}
+
+{% block content %}
+
+    <h1>{{ pagetitle }}</h1>
+  {%- if terminated_service %}
+    {%- set SP = terminated_service['name']|translateFromArray|default('the service'|trans)|e %}
+
+    <p>{% trans %}You are now successfully logged out from {{ SP }}.{% endtrans %}</p>
+  {%- endif %}
+  {%- if remaining_services %}
+    {%- set failed = false  %}
+    {%- set remaining = 0 %}
+    {%- if remaining_services|length > 0 %}
+
+    <p>{% trans %}You are also logged in on these services:{% endtrans %}</p>
+    {%- endif %}
+
+    <div class="custom-restricted-width">
+      <ul class="fa-ul">
+    {%- for key, sp in remaining_services %}
+      {%- set timeout = 5 %}
+      {%- set name = sp['metadata']['name']|translateFromArray|default(sp['entityID']) %}
+      {%- set icon = 'circle-o-notch'  %}
+      {%- if sp['status'] == 'completed' %}
+        {%- set icon = 'check-circle' %}
+      {%- elseif sp['status'] == 'failed' %}
+        {%- set icon = 'exclamation-circle' %}
+        {%- set failed = true %}
+      {%- elseif (sp['status'] == 'onhold' or sp['status'] == 'inprogress') %}
+        {%- set remaining = remaining + 1 %}
+      {%- endif %}
+      {%- if type == 'nojs' and sp['status'] == 'inprogress' %}
+        {%- set icon = icon ~ ' fa-spin' %}
+      {%- endif %}
+
+        <li id="sp-{{ key }}" data-id="{{ key }}" data-status="{{ sp['status'] }}"
+            {#- #} data-timeout="{{ timeout }}">
+          <span class="fa-li"><i id="icon-{{ key }}" class="fa fa-{{ icon }}"></i></span>
+          {{ name }}
+      {%- if sp['status'] != 'completed' and sp['status'] != 'failed' %}
+        {%- if type == 'nojs' %}
+
+          <iframe id="iframe-{{ key }}" class="hidden" src="{{ sp['logoutURL'] }}"></iframe>
+        {%- else %}
+
+          <iframe id="iframe-{{ key }}" class="hidden" data-url="{{ sp['logoutURL'] }}"></iframe>
+        {%- endif %}
+      {%- else %}
+        {%- if sp['status'] == 'failed' %}
+          ({% trans %}logout is not supported{% endtrans %})
+        {%- endif %}
+      {%- endif %}
+
+        </li>
+    {%- endfor %}
+
+      </ul>
+    </div>
+    <br>
+    <div id="error-message"{% if not failed or type == 'init' %} class="hidden"{% endif %}>
+      <div class="message-box error">
+        {% trans %}Unable to log out of one or more services. To ensure that all your
+        {#- #} sessions are closed, you are encouraged to <i>close your webbrowser</i>.{% endtrans %}
+      </div>
+    </div>
+    <form id="error-form" action="logout-iframe-done.php"
+          {%- if (not failed or type == 'init') and remaining %} class="hidden"{% endif %}>
+      <input type="hidden" name="id" value="{{ auth_state }}">
+      <button type="submit" id="btn-continue" name="ok" class="pure-button pure-button-red">
+        {%- trans %}Continue{% endtrans -%}
+      </button>
+    </form>
+    <div id="original-actions"{% if type != 'init' %} class="hidden"{% endif %}>
+      <p>{% trans %}Do you want to logout from all the services above?{% endtrans %}</p>
+      <div class="pure-button-group two-elements">
+        <form id="startform" action="logout-iframe.php">
+          <input type="hidden" name="id" value="{{ auth_state }}">
+          <noscript>
+            <input type="hidden" name="type" value="nojs" id="logout-type-selector">
+          </noscript>
+          <button type="submit" id="btn-all" name="ok" class="pure-button pure-button-red">
+            {%- trans %}Yes, all services{% endtrans -%}
+          </button>
+        </form>
+        <form action="logout-iframe-done.php">
+          <input type="hidden" name="id" value="{{ auth_state }}">
+          <input type="hidden" name="cancel" value="">
+          <button id="btn-cancel" class="pure-button" type="submit">
+            {%- if terminated_service %}{% trans %}No, only {{ SP }}{% endtrans %}
+            {%- else %}{% trans %}No{% endtrans %}{% endif -%}
+          </button>
+        </form>
+      </div>
+    </div>
+  {%- else %}
+    <form id="error-form" action="logout-iframe-done.php">
+      <input type="hidden" name="id" value="{{ auth_state }}">
+      <button type="submit" id="btn-continue" name="ok" class="pure-button pure-button-red">
+        {%- trans %}Continue{% endtrans -%}
+      </button>
+    </form>
+  {% endif %}
+{% endblock %}
+
+{% block postload %}
+
+    <script src="{{ asset('js/logout.js') }}"></script>
+{% endblock postload %}

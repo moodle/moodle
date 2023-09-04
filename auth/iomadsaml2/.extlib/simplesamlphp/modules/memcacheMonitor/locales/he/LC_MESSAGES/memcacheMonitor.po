@@ -1,0 +1,131 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: he\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{memcacheMonitor:memcachestat:total_connections}"
+msgstr "סך-כל החיבורים"
+
+msgid "{memcacheMonitor:memcachestat:version}"
+msgstr "גירסה"
+
+msgid "{memcacheMonitor:memcachestat:get_hits}"
+msgstr "סה\"כ פקודות GET מוצלחות"
+
+msgid "{memcacheMonitor:memcachestat:curr_items}"
+msgstr "מספר הפריטים הנוכחי"
+
+msgid "{memcacheMonitor:memcachestat:uptime}"
+msgstr "זמן למעלה"
+
+msgid "{memcacheMonitor:memcachestat:limit_maxbytes}"
+msgstr "סך הכל אחסון זמין"
+
+msgid "{memcacheMonitor:memcachestat:curr_connections}"
+msgstr "חיבורים שעכשיו פתוחים"
+
+msgid "{memcacheMonitor:memcachestat:rusage_system}"
+msgstr "שניות מעבד (מערכת)"
+
+msgid "{memcacheMonitor:memcachestat:rusage_user}"
+msgstr "שניות מעבד (משתמש)"
+
+msgid "{memcacheMonitor:memcachestat:pid}"
+msgstr "מזהה תהליך"
+
+msgid "{memcacheMonitor:memcachestat:cmd_get}"
+msgstr "סה\"כ פקודות GET"
+
+msgid "{memcacheMonitor:memcachestat:bytes_read}"
+msgstr "בטים שניכנסו לשרת"
+
+msgid "{memcacheMonitor:memcachestat:time}"
+msgstr "זמן נוכחי"
+
+msgid "{memcacheMonitor:memcachestat:get_misses}"
+msgstr "סה\"כ פקודות GET שנכשלו"
+
+msgid "{memcacheMonitor:memcachestat:bytes_written}"
+msgstr "בטים שנכתבו ע\"י השרת"
+
+msgid "{memcacheMonitor:memcachestat:connection_structures}"
+msgstr "מבני חיבורים"
+
+msgid "{memcacheMonitor:memcachestat:cmd_set}"
+msgstr "סה\"כ פקודות SET"
+
+msgid "{memcacheMonitor:memcachestat:total_items}"
+msgstr "מספר כל הפריטים"
+
+msgid "{memcacheMonitor:memcachestat:bytes}"
+msgstr "סך כל הבטים שכרגע בשימוש"
+
+msgid "Current time"
+msgstr "זמן נוכחי"
+
+msgid "Total items ever"
+msgstr "מספר כל הפריטים"
+
+msgid "Bytes written by the server"
+msgstr "בטים שנכתבו ע\"י השרת"
+
+msgid "Uptime"
+msgstr "זמן למעלה"
+
+msgid "Current open connections"
+msgstr "חיבורים שעכשיו פתוחים"
+
+msgid "Total storage avail"
+msgstr "סך הכל אחסון זמין"
+
+msgid "Version"
+msgstr "גירסה"
+
+msgid "Total GET commands (failed)"
+msgstr "סה\"כ פקודות GET שנכשלו"
+
+msgid "Total SET commands"
+msgstr "סה\"כ פקודות SET"
+
+msgid "Connection structures"
+msgstr "מבני חיבורים"
+
+msgid "Total GET commands (success)"
+msgstr "סה\"כ פקודות GET מוצלחות"
+
+msgid "Total bytes in use currently"
+msgstr "סך כל הבטים שכרגע בשימוש"
+
+msgid "Total GET commands"
+msgstr "סה\"כ פקודות GET"
+
+msgid "Bytes in to the server"
+msgstr "בטים שניכנסו לשרת"
+
+msgid "Process ID"
+msgstr "מזהה תהליך"
+
+msgid "Currently number of items"
+msgstr "מספר הפריטים הנוכחי"
+
+msgid "CPU Seconds (User)"
+msgstr "שניות מעבד (משתמש)"
+
+msgid "CPU Seconds (System)"
+msgstr "שניות מעבד (מערכת)"
+
+msgid "Total connections"
+msgstr "סך-כל החיבורים"
+

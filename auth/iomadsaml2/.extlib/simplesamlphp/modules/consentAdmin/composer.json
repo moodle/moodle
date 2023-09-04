@@ -1,0 +1,49 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-consentadmin",
+    "description": "A module that allows users to manage their consent",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "consentadmin"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Jacob Christiansen",
+            "email": "jach@wayf.dk"
+        },
+        {
+            "name": "Olav Morken",
+            "email": "olav.morken@uninett.no"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1",
+        "simplesamlphp/simplesamlphp-module-consent": "^0.9",
+        "webmozart/assert": "~1.4"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "extra": {
+        "ssp-mixedcase-module-name": "consentAdmin"
+    },
+    "support": {
+        "issues": "https://github.com/simplesamlphp/simplesamlphp-module-consentadmin/issues",
+        "source": "https://github.com/simplesamlphp/simplesamlphp-module-consentadmin"
+    }
+}

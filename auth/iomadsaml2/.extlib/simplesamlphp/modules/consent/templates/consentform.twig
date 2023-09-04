@@ -1,0 +1,38 @@
+{% set pagetitle = '{consent:consent:consent_header}'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+<link rel="stylesheet" href="/{{ baseurlpath }}module.php/consent/assets/css/consent.css">
+{% endblock %}
+
+{% block content %}
+<p>{{ consent_accept}}</p>
+
+{% if consent_purpose is defined %}
+    <p>{{ consent_purpose }}</p>
+{% endif %}
+
+<form id="consent_yes" action="{{ yesTarget }}">
+    {% if usestorage is defined %}
+    <input type="checkbox" name="saveconsent"{% if checked %} checked="checked"{% endif %} value="1" />
+    {{ '{consent:consent:remember}'|trans }}
+    {% endif %}
+
+    <input type="hidden" name="StateId" value="{{ stateId }}" />
+    <button type="submit" name="yes" class="btn" id="yesbutton"{%- if autofocus is defined and autofocus == 'yesbutton' %} autofocus{% endif -%}>{{ '{consent:consent:yes}'|trans }}</button>
+</form>
+
+<form id="consent_no" action="{{ noTarget }}">
+    <input type="hidden" name="StateId" value="{{ stateId }}" />
+    <button type="submit" class="btn" name="no" id="nobutton"{%- if autofocus is defined and autofocus == 'nobutton' %} autofocus{% endif -%}>{{ '{consent:consent:no}'|trans }}</button>
+</form>
+
+{% if sppp != false %}
+<p>{{ '{consent:consent:consent_privacypolicy}'|trans }}
+    <a target='_blank' href='{{ sppp|escape('html') }} '>{{ dstName }}</a>
+</p>
+{% endif %}
+
+<h3 id="attributeheader">{{ consent_attributes_header }}</h3>
+{{ attributes_html|raw }}
+{% endblock %}

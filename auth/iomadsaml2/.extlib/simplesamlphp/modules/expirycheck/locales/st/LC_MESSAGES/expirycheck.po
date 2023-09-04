@@ -1,0 +1,89 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2019-12-12 12:11+0200\n"
+"PO-Revision-Date: 2019-12-12 12:11+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "{expirycheck:expwarning:contact_home}"
+msgstr ""
+"Phihlello ho ditshebeletso e laolwa ke khampani ya heno. Ka kopo ikopanye"
+" le ba tshehetso ya IT ba heno ba lehae bakeng sa dipotso."
+
+msgid "{expirycheck:expwarning:access_denied}"
+msgstr "Ha o na phihlello ho tshebeletso ena"
+
+msgid "I am aware of this, continue..."
+msgstr "Ke lemohile ka sena, tswela pele..."
+
+msgid "You do not have access to this service"
+msgstr "Ha o na phihlello ho tshebeletso ena"
+
+msgid "{expirycheck:expwarning:days}"
+msgstr "matsatsi"
+
+msgid "days"
+msgstr "matsatsi"
+
+msgid "day"
+msgstr "letsatsi"
+
+msgid "{expirycheck:expwarning:warning_today}"
+msgstr "Tlhokomediso, akhaonto ya hao %NETID% e tla fellwa ke nako kajeno!"
+
+msgid "Expiration date:"
+msgstr "Letsatsi la phello:"
+
+msgid "{expirycheck:expwarning:no_access_to}"
+msgstr "Akhaonto ya hao %NETID% e feletswe ke nako, phihlello e hanetswe.!"
+
+msgid "{expirycheck:expwarning:expiry_date_text}"
+msgstr "Letsatsi la phello:"
+
+msgid "{expirycheck:expwarning:warning_header}"
+msgstr ""
+"Tlhokomediso, akhaonto ya hao %NETID% e tla fellwa ke nako nakong ya "
+"%DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:btn_continue}"
+msgstr "Ke lemohile ka sena, tswela pele..."
+
+msgid ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+msgstr ""
+"Phihlello ho ditshebeletso e laolwa ke khampani ya heno. Ka kopo ikopanye"
+" le ba tshehetso ya IT ba heno ba lehae bakeng sa dipotso."
+
+#, python-format
+msgid "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+msgstr ""
+"Tlhokomediso, akhoanto ya hao %NETID% e tla fellwa ke nako nakong ya "
+"%DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:warning}"
+msgstr ""
+"Tlhokomediso, akhoanto ya hao %NETID% e tla fellwa ke nako nakong ya "
+"%DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:day}"
+msgstr "letsatsi"
+
+msgid "Your account %NETID% has expired, access denied!"
+msgstr "Akhaonto ya hao %NETID% e feletswe ke nako, phihlello e hanetswe.!"
+
+msgid "{expirycheck:expwarning:warning_header_today}"
+msgstr "Tlhokomediso, akhaonto ya hao %NETID% e tla fellwa ke nako kajeno!"
+
+msgid "Warning, your account %NETID% will expire today!"
+msgstr "Tlhokomediso, akhaonto ya hao %NETID% e tla fellwa ke nako kajeno!"
+

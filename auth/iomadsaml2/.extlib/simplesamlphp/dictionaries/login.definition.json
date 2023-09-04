@@ -1,0 +1,71 @@
+{
+    "error_header": {
+        "en": "Error"
+    },
+    "user_pass_header": {
+        "en": "Enter your username and password"
+    },
+    "user_pass_text": {
+        "en": "A service has requested you to authenticate yourself. Please enter your username and password in the form below."
+    },
+    "login_button": {
+        "en": "Login"
+    },
+    "processing": {
+        "en": "Processing..."
+    },
+    "username": {
+        "en": "Username"
+    },
+    "organization": {
+        "en": "Organization"
+    },
+    "password": {
+        "en": "Password"
+    },
+    "help_header": {
+        "en": "Help! I don't remember my password."
+    },
+    "help_text": {
+        "en": "Without your username and password you cannot authenticate yourself for access to the service. There may be someone that can help you. Consult the help desk at your organization!"
+    },
+    "error_nopassword": {
+        "en": "You sent something to the login page, but for some reason the password was not sent. Try again please."
+    },
+    "error_wrongpassword": {
+        "en": "Incorrect username or password."
+    },
+    "select_home_org": {
+        "en": "Choose your home organization"
+    },
+    "next": {
+        "en": "Next"
+    },
+    "change_home_org_title": {
+        "en": "Change your home organization"
+    },
+    "change_home_org_text": {
+        "en": "You have chosen <b>%HOMEORG%<\/b> as your home organization. If this is wrong you may choose another one."
+    },
+    "change_home_org_button": {
+        "en": "Choose home organization"
+    },
+    "help_desk_link": {
+        "en": "Help desk homepage"
+    },
+    "help_desk_email": {
+        "en": "Send e-mail to help desk"
+    },
+    "contact_info": {
+        "en": "Contact information:"
+    },
+    "remember_username": {
+        "en": "Remember my username"
+    },
+    "remember_me": {
+        "en": "Remember me"
+    },
+    "remember_organization": {
+        "en": "Remember my organization"
+    }
+}

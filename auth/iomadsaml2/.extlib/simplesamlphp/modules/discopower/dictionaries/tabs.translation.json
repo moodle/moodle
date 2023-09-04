@@ -1,0 +1,172 @@
+{
+	"norway": {
+		"es": "Noruega",
+		"ru": "\u041d\u043e\u0440\u0432\u0435\u0433\u0438\u044f",
+		"zh-tw": "\u632a\u5a01",
+		"nl": "Noorwegen",
+		"gl": "Noruega",
+		"da": "Norge",
+		"af": "Noorwe\u00eb",
+		"el": "\u039d\u03bf\u03c1\u03b2\u03b7\u03b3\u03af\u03b1",
+		"xh": "Norowe",
+		"zu": "ENorway",
+		"ca": "Noruega"
+	},
+	"kalmar": {
+		"es": "Kalmar",
+		"ru": "\u041a\u0430\u043b\u044c\u043c\u0430\u0440",
+		"zh-tw": "\u5361\u723e\u99ac",
+		"nl": "Kalmar",
+		"da": "Kalmar",
+		"af": "Kalmar",
+		"el": "Kalmar",
+		"ca": "Kalmar"
+	},
+	"finland": {
+		"es": "Finlandia",
+		"ru": "\u0424\u0438\u043d\u043b\u044f\u043d\u0434\u0438\u044f",
+		"zh-tw": "\u82ac\u862d",
+		"nl": "Finland",
+		"gl": "Finlandia",
+		"da": "Finland",
+		"af": "Finland",
+		"el": "\u03a6\u03b9\u03bd\u03bb\u03b1\u03bd\u03b4\u03af\u03b1",
+		"xh": "Finlend",
+		"ca": "Finlàndia"
+	},
+	"sweden": {
+		"es": "Suecia",
+		"ru": "\u0428\u0432\u0435\u0446\u0438\u044f",
+		"zh-tw": "\u745e\u5178",
+		"nl": "Zweden",
+		"gl": "Suecia",
+		"da": "Sverige",
+		"af": "Swede",
+		"el": "\u03a3\u03bf\u03c5\u03b7\u03b4\u03af\u03b1",
+		"xh": "Swiden",
+		"zu": "Sweden",
+		"ca": "Suècia"
+	},
+	"iceland": {
+		"es": "Islandia",
+		"ru": "\u0418\u0441\u043b\u0430\u043d\u0434\u0438\u044f",
+		"zh-tw": "\u51b0\u5cf6",
+		"nl": "IJsland",
+		"gl": "Islandia",
+		"da": "Island",
+		"af": "Ysland",
+		"el": "\u0399\u03c3\u03bb\u03b1\u03bd\u03b4\u03af\u03b1",
+		"xh": "Ayisilend",
+		"zu": "I-Iceland",
+		"ca": "Islàndia"
+	},
+	"denmark": {
+		"es": "Dinamarca",
+		"ru": "\u0414\u0430\u043d\u0438\u044f",
+		"zh-tw": "\u4e39\u9ea5",
+		"nl": "Denemarken",
+		"gl": "Dinamarca",
+		"da": "Danmark",
+		"af": "Denmark",
+		"el": "\u0394\u03b1\u03bd\u03af\u03b1",
+		"xh": "Dominikha",
+		"ca": "Dinamarca"
+	},
+	"switzerland": {
+		"es": "Suiza",
+		"ru": "\u0428\u0432\u0435\u0439\u0446\u0430\u0440\u0438\u044f",
+		"zh-tw": "\u745e\u58eb",
+		"nl": "Zwitserland",
+		"gl": "Suiza",
+		"da": "Schweiz",
+		"af": "Switserland",
+		"el": "\u0395\u03bb\u03b2\u03b5\u03c4\u03af\u03b1",
+		"xh": "Swizalend",
+		"zu": "ESwitzerland",
+		"ca": "Suïssa"
+	},
+	"greece": {
+		"es": "Grecia",
+		"nl": "Griekenland",
+		"gl": "Grecia",
+		"ru": "\u0413\u0440\u0435\u0446\u0438\u044f",
+		"da": "Gr\u00e6kenland",
+		"af": "Griekeland",
+		"el": "\u0395\u03bb\u03bb\u03ac\u03b4\u03b1",
+		"xh": "Grisi",
+		"ca": "Grècia"
+	},
+		"netherlands": {
+				"en": "The Netherlands",
+				"nl": "Nederland",
+				"de": "Niederlande",
+				"fr": "Les Pays-Bas"
+		},
+	"southafrica": {
+		"es": "Sud\u00e1frica",
+		"ru": "\u042e\u0436\u043d\u0430\u044f \u0410\u0444\u0440\u0438\u043a\u0430",
+		"zh-tw": "\u5357\u975e",
+		"nl": "Zuid-Afrika",
+		"gl": "Sur\u00e1frica",
+		"da": "Sydafrika",
+		"af": "Suid-Afrika",
+		"el": "\u039d\u03cc\u03c4\u03b9\u03b1 \u0391\u03c6\u03c1\u03b9\u03ba\u03ae",
+		"xh": "uMzantsi Afrika",
+		"zu": "iNingizimu Afrika",
+		"st": "Afrika Boroa",
+		"ca": "Sud-Àfrica"
+	},
+	"edugain": {
+		"es": "Europa (eduGAIN)",
+		"ru": "\u0415\u0432\u0440\u043e\u043f\u0430 (eduGAIN)",
+		"zh-tw": "\u6b50\u6d32 (eduGAIN)",
+		"nl": "Europa (eduGAIN)",
+		"gl": "Europa (eduGAIN)",
+		"da": "Europa (eduGAIN)",
+		"af": "Europa (eduGAIN)",
+		"el": "\u0395\u03c5\u03c1\u03ce\u03c0\u03b7 (eduGAIN)",
+		"xh": "Yurophu (eduGAIN)",
+		"zu": "IYurophu (eduGAIN)",
+		"ca": "Europa (eduGAIN)"
+	},
+	"misc": {
+		"es": "Otros",
+		"ru": "\u0420\u0430\u0437\u043d\u043e\u0435",
+		"zh-tw": "\u96dc\u9805",
+		"nl": "Overige",
+		"gl": "Miscelanea",
+		"da": "Forskellige",
+		"af": "Verskeie",
+		"el": "\u0386\u03bb\u03bb\u03bf\u03b9 \u03c6\u03bf\u03c1\u03b5\u03af\u03c2",
+		"xh": "Ezahlukahlukeneyo",
+		"zu": "Ezihlukahlukene",
+		"st": "Fapakaneng",
+		"ca": "Altres"
+	},
+	"incommon": {
+		"es": "InCommon",
+		"zh-tw": "InCommon",
+		"nl": "InCommon",
+		"da": "InCommon",
+		"af": "InCommon",
+		"el": "InCommon",
+		"ca": "InCommon"
+	},
+	"ukacessfederation": {
+		"es": "Federaci&oacute;n de Acceso de Reino Unido",
+		"zh-tw": "\u82f1\u570b Access Management Federation for Education and Research.",
+		"nl": "UK Access Federation",
+		"da": "Storbritanniens adgangsf\u00f8deration",
+		"af": "UK Toegangs Federasie",
+		"el": "\u039f\u03bc\u03bf\u03c3\u03c0\u03bf\u03bd\u03b4\u03af\u03b1 UK Access",
+		"ca": "Federeació d'accès del Regne Unit"
+	},
+	"incremental_search": {
+		"af": "Inkrementele soektog...",
+		"nl": "Zoeken...",
+		"zu": "Ukucinga okukhulayo...",
+		"xh": "Ukhangelo oluqhubekayo...",
+		"st": "Patlo e Eketsang...",
+		"ca": "Cerca incremental..."
+	}
+}

@@ -1,0 +1,161 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ru\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Статус согласия"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "атрибуты"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Сервис провайдер"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Согласие отозвано"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Управление согласием"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Показать"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Организация"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Введенный атрибут"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "Показать/скрыть атрибуты"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Целью сервиса является"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Скрыть"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(описание отсутствует)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Сервис провайдеры для"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Как удалить ваше согласие</h3> Снимите выделение с сервис провайдера "
+"<h3>Ссылки</h3> <ul> <li><a href=\"https://www.wayf.dk\">Start</a> </li> "
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li> </ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Вход"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"В этом поле можно просмотреть и отредактировать текст вашего согласия для"
+" сервис провайдеров."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Согласие обновлено"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Неизвестно.."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Согласие добавлено"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Идентификационная информация"
+
+msgid "Injected attribut"
+msgstr "Введенный атрибут"
+
+msgid "Show"
+msgstr "Показать"
+
+msgid "Consent Added"
+msgstr "Согласие добавлено"
+
+msgid "Consent Administration"
+msgstr "Управление согласием"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"В этом поле можно просмотреть и отредактировать текст вашего согласия для"
+" сервис провайдеров."
+
+msgid "Unknown ..."
+msgstr "Неизвестно.."
+
+msgid "Identity"
+msgstr "Идентификационная информация"
+
+msgid "The purpose of the service is"
+msgstr "Целью сервиса является"
+
+msgid "Hide"
+msgstr "Скрыть"
+
+msgid "Service Provider"
+msgstr "Сервис провайдер"
+
+msgid "Service Providers for"
+msgstr "Сервис провайдеры для"
+
+msgid "login"
+msgstr "Вход"
+
+msgid "(name not specified)"
+msgstr "(имя не указано)"
+
+msgid "Consent Updated"
+msgstr "Согласие обновлено"
+
+msgid "Consent status"
+msgstr "Статус согласия"
+
+msgid "(no description)"
+msgstr "(описание отсутствует)"
+
+msgid "attributes"
+msgstr "атрибуты"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Как удалить ваше согласие</h3> Снимите выделение с сервис провайдера "
+"<h3>Ссылки</h3> <ul> <li><a href=\"https://www.wayf.dk\">Start</a> </li> "
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li> </ul>"
+
+msgid "Consent Removed"
+msgstr "Согласие отозвано"
+
+msgid "show/hide attributes"
+msgstr "Показать/скрыть атрибуты"
+
+msgid "Organisation"
+msgstr "Организация"
+

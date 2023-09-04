@@ -1,0 +1,16 @@
+{% set pagetitle = 'SimpleSAMLphp'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <h1>{{ '{core:short_sso_interval:warning_header}'|trans }}</h1>
+    <form style="display: inline; margin: 0px; padding: 0px" action="{{ moduleURL('core/short_sso_interval.php') }}">
+        {% for name, value in params %}
+            <input type="hidden" name="{{ name|escape('html') }}" value="{{ value|escape('html') }}">
+        {% endfor %}
+        <p>{{ '{core:short_sso_interval:warning}'|trans }}</p>
+        <div class="trackidtext">
+            <p>{{ '{errors:report_trackid}'|trans }}<span class="trackid">{{ trackId }}</span></p>
+        </div>
+        <input type="submit" name="continue" id="contbutton" value="'{core:short_sso_interval:retry}'|trans|escape('html') }}" autofocus>
+    </form>
+{% endblock %}

@@ -1,0 +1,145 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: pt_BR\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consent:consent:service_providers_for}"
+msgstr "Provedor de serviços para"
+
+msgid "{consent:consent:remember}"
+msgstr "Lembrar Consentimento"
+
+msgid "{consent:consent:login}"
+msgstr "login"
+
+msgid "{consent:consent:noconsent_goto_about}"
+msgstr "Ir para a Página de Informação do serviço"
+
+msgid "{consent:consent:consent_header}"
+msgstr "Consentimento sobre a liberação de informações pessoais"
+
+msgid "{consent:consent:show_hide_attributes}"
+msgstr "mostra/esconder Atributos"
+
+msgid "{consent:consent:table_caption}"
+msgstr "Informações do Usuário"
+
+msgid "{consent:consent:status_header}"
+msgstr "Status do Consentimento"
+
+msgid "{consent:consent:noconsent_title}"
+msgstr "Nenhum consentimento dado"
+
+msgid "{consent:consent:consent_accept}"
+msgstr ""
+"Você está prestes a acessar o serviço SPNAME. O serviço exige que as "
+"informações a seguir sejam transferidas do IDPNAME. Você aceita isso?"
+
+msgid "{consent:consent:table_summary}"
+msgstr ""
+"Liste as informações sobre você que está prestes a ser transmitida para o"
+" serviço que você está acessando"
+
+msgid "{consent:consent:service_provider_header}"
+msgstr "Provedor de Serviços"
+
+msgid "{consent:consent:show_attributes}"
+msgstr "Mostrar atributos"
+
+msgid "{consent:consent:show_attribute}"
+msgstr "Mostrar Conteúdo"
+
+msgid "{consent:consent:no}"
+msgstr "Não, não aceito"
+
+msgid "{consent:consent:consent_privacypolicy}"
+msgstr "Política de Privacidade deste serviço"
+
+msgid "{consent:consent:noconsent_text}"
+msgstr ""
+"Você não deu o consentimento para a transferência de seus atributos para "
+"o provedor de serviços."
+
+msgid "{consent:consent:noconsent_return}"
+msgstr "Retornar a página de consentimento"
+
+msgid "{consent:consent:yes}"
+msgstr "Sim, Aceito"
+
+msgid "Service Providers for"
+msgstr "Provedor de serviços para"
+
+msgid "Yes, continue"
+msgstr "Sim, Aceito"
+
+msgid "Return to consent page"
+msgstr "Retornar a página de consentimento"
+
+msgid "Consent status"
+msgstr "Status do Consentimento"
+
+msgid "Go to information page for the service"
+msgstr "Ir para a Página de Informação do serviço"
+
+msgid "Service Provider"
+msgstr "Provedor de Serviços"
+
+msgid "show/hide attributes"
+msgstr "mostra/esconder Atributos"
+
+msgid ""
+"List the information about you that is about to be transmitted to the "
+"service you are going to login to"
+msgstr ""
+"Liste as informações sobre você que está prestes a ser transmitida para o"
+" serviço que você está acessando"
+
+msgid "Consent about releasing personal information"
+msgstr "Consentimento sobre a liberação de informações pessoais"
+
+msgid "No consent given"
+msgstr "Nenhum consentimento dado"
+
+msgid "login"
+msgstr "login"
+
+msgid "You did not give consent for transfering your attributes to SPNAME."
+msgstr ""
+"Você não deu o consentimento para a transferência de seus atributos para "
+"o provedor de serviços."
+
+msgid "Remember"
+msgstr "Lembrar Consentimento"
+
+msgid "Show content"
+msgstr "Mostrar Conteúdo"
+
+msgid "SPNAME requires that the information below is transferred."
+msgstr ""
+"Você está prestes a acessar o serviço SPNAME. O serviço exige que as "
+"informações a seguir sejam transferidas do IDPNAME. Você aceita isso?"
+
+msgid "Privacypolicy for the service"
+msgstr "Política de Privacidade deste serviço"
+
+msgid "No, cancel"
+msgstr "Não, não aceito"
+
+msgid "Show attributes"
+msgstr "Mostrar atributos"
+
+msgid "User information"
+msgstr "Informações do Usuário"
+

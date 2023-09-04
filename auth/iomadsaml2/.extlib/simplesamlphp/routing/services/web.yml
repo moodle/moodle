@@ -1,0 +1,22 @@
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        public: false
+
+    controller_resolver:
+        class: Symfony\Component\HttpKernel\Controller\ContainerControllerResolver
+        arguments:
+            - '@service_container'
+
+    argument_metadata_factory:
+        class: Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadataFactory
+
+    argument_resolver:
+        class: Symfony\Component\HttpKernel\Controller\ArgumentResolver
+        arguments:
+            - '@argument_metadata_factory'
+            - ''
+    response_listener:
+        class: Symfony\Component\HttpKernel\EventListener\ResponseListener
+        arguments:
+            - 'UTF-8'

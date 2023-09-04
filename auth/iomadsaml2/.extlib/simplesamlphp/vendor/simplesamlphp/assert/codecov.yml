@@ -1,0 +1,11 @@
+coverage:
+  status:
+    project: yes
+    patch: off
+comment:
+  layout: "diff"
+  behavior: once
+  require_changes: true
+  require_base: no
+  require_head: yes
+  branches: null

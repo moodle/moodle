@@ -1,0 +1,65 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: es\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{authX509:X509warning:proceed}"
+msgstr "Continuar"
+
+msgid "{authX509:X509warning:renew}"
+msgstr "Por favor, renueve su certificado a tiempo."
+
+msgid "{authX509:X509error:certificate_text}"
+msgstr ""
+"Se requiere autenticación mediante certificado X509 para acceder a este "
+"servicio"
+
+msgid "{authX509:X509warning:renew_url}"
+msgstr "Por favor, <a href=‘%renewurl%’>renueve</a> su certificado a tiempo."
+
+msgid "{authX509:X509warning:warning_header}"
+msgstr "Su certificado está a punto de caducar."
+
+msgid "{authX509:X509error:certificate_header}"
+msgstr "Autenticación mediante certificado X509"
+
+msgid "{authX509:X509warning:warning}"
+msgstr "Su certificado caduca en %daysleft% días."
+
+msgid "Please renew your certificate in time."
+msgstr "Por favor, renueve su certificado a tiempo."
+
+#, python-format
+msgid "Your certificate will expire in %daysleft% days."
+msgstr "Su certificado caduca en %daysleft% días."
+
+msgid "X509 certificate authentication"
+msgstr "Autenticación mediante certificado X509"
+
+#, python-format
+msgid "Please <a href='%renewurl%'>renew your certificate</a> in time."
+msgstr "Por favor, <a href=‘%renewurl%’>renueve su certificado</a> a tiempo."
+
+msgid "Proceed"
+msgstr "Continuar"
+
+msgid "X509 certificate authentication is required to access this service."
+msgstr ""
+"Se requiere autenticación mediante certificado X509 para acceder a este "
+"servicio"
+
+msgid "Your certificate is about to expire."
+msgstr "Su certificado está a punto de caducar."
+

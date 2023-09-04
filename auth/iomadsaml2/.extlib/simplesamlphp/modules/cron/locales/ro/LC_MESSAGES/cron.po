@@ -1,0 +1,70 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: ro\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100"
+" < 20)) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{cron:cron:cron_report_title}"
+msgstr "Raport <i>cron</i>"
+
+msgid "{cron:cron:ran_text}"
+msgstr "<i>Cron</i> a fost executat la"
+
+msgid "{cron:cron:cron_suggestion}"
+msgstr "Sugestie pentru un fișier <i>crontab</i>:"
+
+msgid "{cron:cron:run_text}"
+msgstr "Executați <i>cron/<i>:"
+
+msgid "{cron:cron:cron_execution}"
+msgstr "Apăsați aici pentru a executa sarcinile din <i>cron/<i>:"
+
+msgid "{cron:cron:cron_info}"
+msgstr ""
+"<i>Cron</i> este o modalitate folosită pe sisteme UNIX pentru a executa "
+"diferite sarcini în mod periodic."
+
+msgid "{cron:cron:cron_result_title}"
+msgstr "Reezultatele executării sarcinilor din <i>cron</i>"
+
+msgid "{cron:cron:cron_header}"
+msgstr "Pagina cu rezultatele <i>cron</i>"
+
+msgid "Cron is a way to run things regularly on unix systems."
+msgstr ""
+"<i>Cron</i> este o modalitate folosită pe sisteme UNIX pentru a executa "
+"diferite sarcini în mod periodic."
+
+msgid "Run cron:"
+msgstr "Executați <i>cron/<i>:"
+
+msgid "Cron ran at"
+msgstr "<i>Cron</i> a fost executat la"
+
+msgid "Cron report"
+msgstr "Raport <i>cron</i>"
+
+msgid "Here is a suggestion for a crontab file:"
+msgstr "Sugestie pentru un fișier <i>crontab</i>:"
+
+msgid "Click here to run the cron jobs:"
+msgstr "Apăsați aici pentru a executa sarcinile din <i>cron/<i>:"
+
+msgid "Here are the result for the cron job execution:"
+msgstr "Reezultatele executării sarcinilor din <i>cron</i>"
+
+msgid "Cron result page"
+msgstr "Pagina cu rezultatele <i>cron</i>"
+

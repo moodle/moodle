@@ -1,0 +1,21 @@
+{
+  "name": "robrichards/xmlseclibs",
+  "description": "A PHP library for XML Security",
+  "license": "BSD-3-Clause",
+  "keywords": [
+    "xml",
+    "xmldsig",
+    "signature",
+    "security"
+  ],
+  "homepage": "https://github.com/robrichards/xmlseclibs",
+  "autoload": {
+    "psr-4": {
+      "RobRichards\\XMLSecLibs\\": "src"
+    }
+  },
+  "require": {
+    "php": ">= 5.4",
+    "ext-openssl": "*"
+  }
+}

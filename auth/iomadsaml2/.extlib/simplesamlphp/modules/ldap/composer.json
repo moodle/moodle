@@ -1,0 +1,52 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-ldap",
+    "description": "A module that provides authentication against LDAP stores",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "ldap"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Olav Morken",
+            "email": "olavmrk@gmail.com"
+        },
+        {
+            "name": "Tim van Dijen",
+            "email": "tvdijen@gmail.com"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        },
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "simplesamlphp/composer-module-installer": true
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\Module\\ldap\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=5.6",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.17",
+        "phpunit/phpunit": "~5.7"
+    },
+    "suggest": {
+        "ext-ldap": "Needed when using LDAP authentication in SimpleSAMLphp"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-ldap/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-ldap"
+    }
+}

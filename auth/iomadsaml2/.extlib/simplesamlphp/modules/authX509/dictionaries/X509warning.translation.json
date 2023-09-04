@@ -1,0 +1,37 @@
+{
+  "warning": {
+    "nl": "Je certificaat verloopt over %daysleft% dagen.",
+    "no": "Sertifikatet ditt vil utløpe om %daysleft% dager.",
+    "da": "Dit certifikat udløber om %daysleft% dage.",
+    "es": "Su certificado caduca en %daysleft% días.",
+    "el": "\u0397 \u03b9\u03c3\u03c7\u03cd\u03c2 \u03c4\u03bf\u03c5 \u03c0\u03b9\u03c3\u03c4\u03bf\u03c0\u03bf\u03b9\u03b7\u03c4\u03b9\u03ba\u03bf\u03cd \u03c3\u03b1\u03c2 \u03b8\u03b1 \u03bb\u03ae\u03be\u03b5\u03b9 \u03c3\u03b5 %daysleft%."
+  },
+  "warning_header": {
+    "nl": "Je certificaat verloopt binnenkort.",
+    "no": "Sertifikatet ditt vil snart utløpe.",
+    "da": "Dit certifikat udløber om kort tid",
+    "es": "Su certificado está a punto de caducar.",
+    "el": "\u0397 \u03b9\u03c3\u03c7\u03cd\u03c2 \u03c4\u03bf\u03c5 \u03c0\u03b9\u03c3\u03c4\u03bf\u03c0\u03bf\u03b9\u03b7\u03c4\u03b9\u03ba\u03bf\u03cd \u03c3\u03b1\u03c2 \u03c0\u03c1\u03cc\u03ba\u03b5\u03b9\u03c4\u03b1\u03b9 \u03bd\u03b1 \u03bb\u03ae\u03be\u03b5\u03b9."
+  },
+  "renew": {
+    "nl": "Vervang tijdig je certificaat.",
+    "no": "Vennligst forny sertifikatet ditt før det utløper.",
+    "da": "Forny venligst dit certifikat i tide.",
+    "es": "Por favor, renueve su certificado a tiempo.",
+    "el": "\u03a0\u03b1\u03c1\u03b1\u03ba\u03b1\u03bb\u03b5\u03af\u03c3\u03c4\u03b5 \u03bd\u03b1 \u03c0\u03c1\u03bf\u03c7\u03c9\u03c1\u03ae\u03c3\u03b5\u03c4\u03b5 \u03c3\u03b5 \u03b1\u03bd\u03b1\u03bd\u03ad\u03c9\u03c3\u03b7 \u03c4\u03bf\u03c5 \u03c0\u03b9\u03c3\u03c4\u03bf\u03c0\u03bf\u03b9\u03b7\u03c4\u03b9\u03ba\u03bf\u03cd \u03c3\u03b1\u03c2 \u03ad\u03b3\u03ba\u03b1\u03b9\u03c1\u03b1."
+  },
+  "renew_url": {
+    "nl": "<a href='%renewurl%'>Vervang<\/a> tijdig je certificaat.",
+    "no": "Vennligst <a href=‘%renewurl%’>forny<\/a> sertifikatet ditt før det utløper.",
+    "da": "<a href='%renewurl%'>Forny<\/a>, venligst dit certifikat før det udløber.",
+    "es": "Por favor, <a href=‘%renewurl%’>renueve<\/a> su certificado a tiempo.",
+    "el": "\u03a0\u03b1\u03c1\u03b1\u03ba\u03b1\u03bb\u03b5\u03af\u03c3\u03c4\u03b5 \u03bd\u03b1 \u03c0\u03c1\u03bf\u03c7\u03c9\u03c1\u03ae\u03c3\u03b5\u03c4\u03b5 \u03c3\u03b5 <a href=‘%renewurl%’>\u03b1\u03bd\u03b1\u03bd\u03ad\u03c9\u03c3\u03b7<\/a> \u03c4\u03bf\u03c5 \u03c0\u03b9\u03c3\u03c4\u03bf\u03c0\u03bf\u03b9\u03b7\u03c4\u03b9\u03ba\u03bf\u03cd \u03c3\u03b1\u03c2 \u03ad\u03b3\u03ba\u03b1\u03b9\u03c1\u03b1."
+  },
+  "proceed": {
+    "nl": "Verder",
+    "no": "Fortsett",
+    "da": "Fortsæt",
+    "es": "Continuar",
+    "el": "\u03a3\u03c5\u03bd\u03ad\u03c7\u03b5\u03b9\u03b1"
+  }
+}

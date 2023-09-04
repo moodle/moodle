@@ -1,0 +1,161 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: sr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Stanje dozvole"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atributi"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Davalac Servisa"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Dozvola uklonjena"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Administracija dozvola"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Prikaži"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Institucija"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Ubačeni atribut"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "prikaži/sakrij atribute"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Namena ovog servisa je"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Sakrij"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(nema opisa)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Davaoci Servisa za"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Kako obrisati dozvolu</h3> Uklonite kvačicu iz polja koje se odnosi "
+"na davaoca servisa <h3>Linkovi</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Početna stranica</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">Pitanja i odgovori</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Prijavi se"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Ovde možete pregledati i menjati vaše dozvole davaocima servisa."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Dozvola ažurirana"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Nepoznato ..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Dozvola dodata"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identitet"
+
+msgid "Injected attribut"
+msgstr "Ubačeni atribut"
+
+msgid "Show"
+msgstr "Prikaži"
+
+msgid "Consent Added"
+msgstr "Dozvola dodata"
+
+msgid "Consent Administration"
+msgstr "Administracija dozvola"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Ovde možete pregledati i menjati vaše dozvole davaocima servisa."
+
+msgid "Unknown ..."
+msgstr "Nepoznato ..."
+
+msgid "Identity"
+msgstr "Identitet"
+
+msgid "The purpose of the service is"
+msgstr "Namena ovog servisa je"
+
+msgid "Hide"
+msgstr "Sakrij"
+
+msgid "Service Provider"
+msgstr "Davalac Servisa"
+
+msgid "Service Providers for"
+msgstr "Davaoci Servisa za"
+
+msgid "login"
+msgstr "Prijavi se"
+
+msgid "(name not specified)"
+msgstr "(ime nije specificirano)"
+
+msgid "Consent Updated"
+msgstr "Dozvola ažurirana"
+
+msgid "Consent status"
+msgstr "Stanje dozvole"
+
+msgid "(no description)"
+msgstr "(nema opisa)"
+
+msgid "attributes"
+msgstr "atributi"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Kako obrisati dozvolu</h3> Uklonite kvačicu iz polja koje se odnosi "
+"na davaoca servisa <h3>Linkovi</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Početna stranica</a> </li> <li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">Pitanja i odgovori</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "Dozvola uklonjena"
+
+msgid "show/hide attributes"
+msgstr "prikaži/sakrij atribute"
+
+msgid "Organisation"
+msgstr "Institucija"
+

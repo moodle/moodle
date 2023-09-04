@@ -1,0 +1,20 @@
+table.statustable td, table.statustable th {
+    border: 1px solid #eee;
+    padding: 2px 6px;
+}
+
+table.statustable {
+    border-collapse: collapse;
+}
+
+.bmax {
+    border: 1px solid #555;
+    background: #eee;
+}
+
+.bused {
+    border-right: 1px solid #555;
+    border-bottom: 1px solid #555;
+    color: white;
+    background: #833;
+}

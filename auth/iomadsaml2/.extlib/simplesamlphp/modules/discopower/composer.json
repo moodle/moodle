@@ -1,0 +1,41 @@
+{
+    "name": "simplesamlphp/simplesamlphp-module-discopower",
+    "description": "Fancy tabbed discovery service with filtering capabilities where SPs can have different sets of metadata listed",
+    "type": "simplesamlphp-module",
+    "keywords": ["simplesamlphp", "discopower", "discovery"],
+    "license": "LGPL-2.1-or-later",
+    "authors": [
+        {
+            "name": "Andreas Åkre Solberg",
+            "email": "andreas.solberg@uninett.no"
+        }
+    ],
+    "config": {
+        "preferred-install": {
+            "simplesamlphp/simplesamlphp": "source",
+            "*": "dist"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SimpleSAML\\modules\\discopower\\": "lib/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SimpleSAML\\Test\\Utils\\": "vendor/simplesamlphp/simplesamlphp/tests/Utils"
+        }
+    },
+    "require": {
+        "php": ">=7.1",
+        "simplesamlphp/composer-module-installer": "~1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "^1.19",
+        "simplesamlphp/simplesamlphp-test-framework": "^0.1.2"
+    },
+    "support": {
+        "issues": "https://github.com/tvdijen/simplesamlphp-module-discopower/issues",
+        "source": "https://github.com/tvdijen/simplesamlphp-module-discopower"
+    }
+}

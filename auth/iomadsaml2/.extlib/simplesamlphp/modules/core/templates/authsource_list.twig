@@ -1,0 +1,11 @@
+{% set pagetitle = 'Test Authentication Sources'|trans %}
+{% extends "base.twig" %}
+
+{% block content %}
+    <h2>{{ pagetitle }} </h2>
+    <ul>
+    {% for key, name in sources %}
+        <li><a href="{{ moduleURL('core/login/' ~ name|escape('url')) }}">{{ name }}</a></li>
+    {% endfor %}
+    </ul>
+{% endblock %}

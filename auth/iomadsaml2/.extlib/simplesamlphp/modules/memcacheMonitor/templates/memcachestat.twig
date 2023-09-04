@@ -1,0 +1,40 @@
+{% set pagetitle = 'SimpleSAMLphp Memcache Monitor'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link href="/{{ baseurlpath }}module.php/memcacheMonitor/assets/css/memcacheMonitor.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <h2>{{ title }}</h2>
+    <table class="statustable">
+        <tr>
+            <th>&nbsp;</th>
+            {% for key, title in colTitles %}
+            <th>{{ title|escape('html') }}</th>
+            {% endfor %}
+        </tr>
+        {% for rowTitle, rowData in table %}
+        {% if rowTitles[rowTitle] is defined %}
+        <tr>
+            <th class="rowtitle" style="text-align: right">{{ rowTitles[rowTitle]|trans }}</th>
+            {% for key, colTitle in colTitles %}
+            {% if rowData[colTitle] is defined %}
+            <td>{{ rowData[colTitle]|escape('html') }}</td>
+            {% else %}
+            <td>&nbsp;</td>
+            {% endif %}
+            {% endfor %}
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+
+    {% if usage is defined %}
+    {% for key, value in usage %}
+    <h3>Storage usage on [{{ key }}]</h3>
+        <div class="bmax" style="width: {{ maxpix }}">
+            <div class="bused" style="width: {{ usage[key] }}">Used: {{ table.bytes[key] }}</div>Total available: {{ table.limit_maxbytes[key] }}</div>
+    {% endfor %}
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,164 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: it\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Stato del consenso"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "attributi"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Service Provider"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Consenso Rimosso"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Amministrazione del consenso"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Mostra"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organizzazione"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Attributo inserito"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "Mostra/nascondi attributi"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Lo scopo di questo servizio è"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Nascondi"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(nessuna descrizione)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Service provider per"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Come rimuovere il consenso></h3> Togliere il segno di spunta al "
+"corrispondente service provider<h3>Collegamenti</h3><ul><li><a "
+"href=\"https://www.wayf.dk\">Inizio</a></li><li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a></li></ul>"
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "connessione"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr ""
+"Qui è possibile vedere e modificare i consensi per i vari Service "
+"Provider."
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Consenso Aggiornato"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Sconosciuto..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Consenso Aggiunto"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Identità"
+
+msgid "Injected attribut"
+msgstr "Attributo inserito"
+
+msgid "Show"
+msgstr "Mostra"
+
+msgid "Consent Added"
+msgstr "Consenso Aggiunto"
+
+msgid "Consent Administration"
+msgstr "Amministrazione del consenso"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr ""
+"Qui è possibile vedere e modificare i consensi per i vari Service "
+"Provider."
+
+msgid "Unknown ..."
+msgstr "Sconosciuto..."
+
+msgid "Identity"
+msgstr "Identità"
+
+msgid "The purpose of the service is"
+msgstr "Lo scopo di questo servizio è"
+
+msgid "Hide"
+msgstr "Nascondi"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Service Providers for"
+msgstr "Service provider per"
+
+msgid "login"
+msgstr "connessione"
+
+msgid "(name not specified)"
+msgstr "(nome non specificato)"
+
+msgid "Consent Updated"
+msgstr "Consenso Aggiornato"
+
+msgid "Consent status"
+msgstr "Stato del consenso"
+
+msgid "(no description)"
+msgstr "(nessuna descrizione)"
+
+msgid "attributes"
+msgstr "attributi"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Come rimuovere il consenso></h3> Togliere il segno di spunta al "
+"corrispondente service provider<h3>Collegamenti</h3><ul><li><a "
+"href=\"https://www.wayf.dk\">Inizio</a></li><li><a "
+"href=\"https://www.wayf.dk/index.php/en/about-wayf/faq-frequently-asked-"
+"questions\">FAQ</a></li></ul>"
+
+msgid "Consent Removed"
+msgstr "Consenso Rimosso"
+
+msgid "show/hide attributes"
+msgstr "Mostra/nascondi attributi"
+
+msgid "Organisation"
+msgstr "Organizzazione"
+

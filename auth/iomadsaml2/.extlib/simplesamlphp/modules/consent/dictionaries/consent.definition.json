@@ -1,0 +1,68 @@
+{
+    "yes": {
+        "en": "Yes, continue"
+    },
+    "no": {
+        "en": "No, cancel"
+    },
+    "remember": {
+        "en": "Remember"
+    },
+    "consent_accept": {
+        "en": "SPNAME requires that the information below is transferred."
+    },
+    "login": {
+        "en": "login"
+    },
+    "service_providers_for": {
+        "en": "Service Providers for"
+    },
+    "service_provider_header": {
+        "en": "Service Provider"
+    },
+    "status_header": {
+        "en": "Consent status"
+    },
+    "show_hide_attributes": {
+        "en": "show\/hide attributes"
+    },
+    "consent_privacypolicy": {
+        "en": "Privacy policy for the service"
+    },
+    "noconsent_title": {
+        "en": "No consent given"
+    },
+    "noconsent_text": {
+        "en": "You did not give consent for transfering your attributes to SPNAME."
+    },
+    "noconsent_return": {
+        "en": "Return to consent page"
+    },
+    "consent_header": {
+        "en": "Consent about releasing personal information"
+    },
+    "consent_attributes_header": {
+        "en": "Information that will be sent to SPNAME"
+    },
+    "show_attributes": {
+        "en": "Show attributes"
+    },
+    "noconsent_goto_about": {
+        "en": "Go to information page for the service"
+    },
+    "consent_purpose": {
+        "en": "The purpose of SPNAME is SPDESC"
+    },
+    "table_caption": {
+        "en": "User information"
+    },
+    "table_summary": {
+        "en": "List the information about you that is about to be transmitted to the service you are going to login to"
+    },
+    "show_attribute": {
+        "en": "Show content"
+    },
+    "abort": {
+        "en": "Abort login to SPNAME"
+    }
+}

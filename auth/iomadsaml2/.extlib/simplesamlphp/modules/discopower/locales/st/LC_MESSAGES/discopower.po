@@ -1,0 +1,34 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2019-12-12 14:14+0200\n"
+"PO-Revision-Date: 2019-12-12 14:14+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+msgid "Incremental search..."
+msgstr "Patlo e Eketsang..."
+
+msgid "{discopower:tabs:incremental_search}"
+msgstr "Patlo e Eketsang..."
+
+msgid "{discopower:tabs:misc}"
+msgstr "Fapakaneng"
+
+msgid "{discopower:tabs:southafrica}"
+msgstr "Afrika Boroa"
+
+msgid "Miscellaneous"
+msgstr "Fapakaneng"
+
+msgid "South Africa"
+msgstr "Afrika Boroa"
+

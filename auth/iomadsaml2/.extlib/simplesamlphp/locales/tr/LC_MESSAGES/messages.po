@@ -1,0 +1,1311 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: tr\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Üstveri (Metadata)"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Ya bu kullanıcı adında bir kullanıcı bulunamadı, yada şifreniz yanlış. "
+"Lütfen kullanıcı adını kontrol edin ve yeniden deneyin."
+
+msgid "{logout:failed}"
+msgstr "Çıkış başarılamadı"
+
+msgid "{status:attributes_header}"
+msgstr "Bilgileriniz"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 Servis Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Kimlik sağlayıcıdan gelen cevabı işlerken hata"
+
+msgid "{login:username}"
+msgstr "Kullanıcı adı"
+
+msgid "{errors:title_METADATA}"
+msgstr "Üstveri (metadata) yüklenmesinde hata"
+
+msgid "{admin:metaconv_title}"
+msgstr "Üstveri (metadata) çözümleyici"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Hata bulunmadı."
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Yürürlükteki çıkış işlemi ile ilgili bilgi kayboldu. Çıkmak istediğiniz "
+"servise geri dönün ve yeniden çıkmayı denyin. Bu hata, çıkış bilgisinin "
+"süresi dolduğu için oluşmuş olabilir. Çıkış bilgisi belirli bir süre için"
+" tutulur - genellikle birkaç saat. Bu süre normal bir çıkış işleminin "
+"tutacağından daha fazla bir süredir; bu hata yapılandırma ile ilgili "
+"başka bir hatayı işaret ediyor olabilir. Eğer sorun devam ederse, servis "
+"sağlayıcınızla iletişime geçiniz."
+
+msgid "{admin:cfg_check_back}"
+msgstr "Dosya listesine geri dön"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Bu hatayı bildirirseniz, lütfen, sistem yöneticisi tarafından incelebilen"
+" kayıtlardan oturumunuzun belirlenebilmesini sağlayan izleme ID'sini de "
+"bildirin."
+
+msgid "{login:change_home_org_title}"
+msgstr "Organizasyonunuzu değiştirin"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Üstveri (metadata)"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Durumunuz hakkında ileride ortaya çıkabilecek sorularla ilgili "
+"yöneticilerin iletişim kurabilmesi için, isteğe bağlı olarak e-posta "
+"adresinizi girin."
+
+msgid "{errors:report_header}"
+msgstr "Hataları bildir"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"<b>%HOMEORG%</b>'u organizasyonunuz olarak seçtiniz. Eğer yanlış ise, "
+"başka bir tanesini seçebilirsiniz."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Servis Sağlayıcı'dan gelen isteği işlerken hata"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Kimlik Sağlayıcı'dan gelen cevabı kabul etmedik."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Hata ayıklama bilgisi"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"\"Debug\" modda olduğunuz için, gönderdiğiniz mesajın içeriğini "
+"göreceksiniz."
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Kimlik Sağlayıcı hatalı cevap verdi. (SAML Cevabı'ndaki durum kodu "
+"başarılamadı)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Üstveri (Metadata)"
+
+msgid "{login:help_text}"
+msgstr ""
+"Çok kötü! - Kullanıcı adınız ve şifreniz olmadan bu servisi "
+"kullanamazsınız. Size yardımcı olabilecek birileri olabilir. Kuruluşunuza"
+" danışın. "
+
+msgid "{logout:default_link_text}"
+msgstr "SimpleSAMLphp kurulum sayfasına geri dön"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp hatası"
+
+msgid "{login:help_header}"
+msgstr "Yardım! Şifremi hatırlamıyorum."
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP kullanıcı veritabanı ve siz giriş yapmaya çalışırken, LDAP "
+"veritabanına bağlanmamız gerekiyor. Bu seferlik denerken bir sorun "
+"oluştu."
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"SimpleSAMLphp kurulumunuzda bazı yanlış ayarlamalar sözkonusu. Eğer bu "
+"servisin yöneticisi sizseniz, üstveri (metadata) ayarlarınızın düzgün bir"
+" şekilde yapıldığından emin olun."
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Hatalı istek alındı"
+
+msgid "{status:sessionsize}"
+msgstr "Oturum büyüklüğü: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Çıktınız"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML üstverisi (metadata)"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Şu alanlar tanınmadı"
+
+msgid "{login:select_home_org}"
+msgstr "Organizasyonunuzu seçiniz"
+
+msgid "{logout:hold}"
+msgstr "Beklemede"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Konfigürasyon kontrolü"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Mesaj gönder"
+
+msgid "{status:logout}"
+msgstr "Çıkış"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "Tanıma servisine gönderilen parametreler tanımlananlara göre değildi."
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "SAML isteği oluşturmaya çalışırken bir hata meydana geldi"
+
+msgid "{admin:metaover_optional_found}"
+msgstr "İsteğe bağlı alanlar"
+
+msgid "{logout:return}"
+msgstr "Servise geri dön"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "<a href=\"%METAURL%\">Üstveri xml'ini bu bağlantıdan alabilirsiniz</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Evet, tüm servisler."
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"\"Debug\" modunu global SimpleSAMLphp konfigürasyon dosyasında "
+"<tt>config/config.php</tt> kapatabilirsiniz."
+
+msgid "{disco:select}"
+msgstr "Seç"
+
+msgid "{logout:also_from}"
+msgstr "Ayrıca şu servislere giriş yaptınız:"
+
+msgid "{login:login_button}"
+msgstr "Giriş"
+
+msgid "{logout:progress}"
+msgstr "Çıkıyor"
+
+msgid "{login:error_wrongpassword}"
+msgstr "Kullanıcı adı ve/veya şifre yanlış."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 Servis Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Bu Kimlik Sağlayıcı bir Servis Sağlayıcı'dan kimlik doğrulama isteği "
+"aldı, ancak bu isteği işlemeye çalışırken bir hata oluştu."
+
+msgid "{logout:logout_all_question}"
+msgstr "Yukarıdaki tüm servislerden çıkmak istiyor musunuz?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Giriş yok"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Giriş sayfasına birşeyler gönderdiniz, fakat bazı nedenlerden dolayı "
+"şifreniz gönderilemedi. Lütfen tekrar deneyiniz."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "RelayState verilmemiş."
+
+msgid "{login:password}"
+msgstr "Şifre"
+
+msgid "{errors:debuginfo_text}"
+msgstr ""
+"Aşağıdaki hata ayıklama bilgisi yöneticinin/yardım masasının ilgisini "
+"çekebilir:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Config dosyasındaki tercihler eksik"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Bir beklenmeyen durum gönderildi."
+
+msgid "{general:yes}"
+msgstr "Evet"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Yapılandırma hatası"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Çıkış İsteğini işlerken hata oluştu"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Üstveri (metadata) bilgisinde hata var"
+
+msgid "{login:contact_info}"
+msgstr "İletişim bilgileri:"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Beklenmeyen durum"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP Demo Örneği"
+
+msgid "{login:error_header}"
+msgstr "Hata"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Giriş yaptığınız bir yada daha fazla servis <i>çıkışı desteklemiyor</i>. "
+"Tüm oturumlarınızın kapatıldığından emin olmak için, <i>tarayıcınızı "
+"kapatmanız</i> önerilir."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "XML formatında SAML 2.0 SP Üstverisi (Metadata)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 Kimlik Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 Kimlik Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Gerekli alanlar"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Kontrol edilecek konfigürasyon dosyasını seç:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "%SP%'den başarıyla çıktınız."
+
+msgid "{errors:errorreport_text}"
+msgstr "Hata raporu yöneticilere gönderildi"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Çıkış İsteğini işlemeye çalışırken bir hata oluştu"
+
+msgid "{logout:success}"
+msgstr "Yukarıda listelenen tüm servislerden başarıyla çıktınız."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Notlar"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "CAS sunucusu ile iletişim kurarken hata"
+
+msgid "{general:no}"
+msgstr "Hayır"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP Üstveri (Metadata)"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Dönüştürülmüş üstveri (metadata)"
+
+msgid "{logout:completed}"
+msgstr "Tamamlandı"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Yapılandırmadaki (auth.adminpassword) şifrenin öntanımlı değeri "
+"değişmedi. Lütfen yapılandırma dosyasını düzeltin."
+
+msgid "{general:service_provider}"
+msgstr "Servis Sağlayıcı"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Bu sayfaya yapılan istekte bir hata var. Nedeni %REASON% idi."
+
+msgid "{logout:no}"
+msgstr "Hayır"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "[Tercih edilen seçenek]"
+
+msgid "{general:no_cancel}"
+msgstr "Hayır, iptal et"
+
+msgid "{login:user_pass_header}"
+msgstr "Kullanıcı adı ve şifrenizi giriniz"
+
+msgid "{errors:report_explain}"
+msgstr "Bu hatanın neden oluştuğunu açıklayın..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "SAML cevabı verilmemiş"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"TekliÇıkışServis (SingleLogoutService) arayüzüne giriş yaptınız, ancak "
+"bir SAML Çıkışİsteği ya da ÇıkışCevabı sağlamadınız."
+
+msgid "{login:organization}"
+msgstr "Organizasyon"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Geçersiz kullanıcı adı yada şifre"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Şu gerekli alanlar bulunamadı"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Bu kısım kullanımda değil. SimpleSAMLphp ayarlarınızın etkinleştirme "
+"seçeneklerini kontrol edin."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "SAML mesajı verilmemiş"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Onay Alıcı Servis (Assertion Consumer Service) arayüzüne giriş yaptınız, "
+"ancak SAML Kimlik Doğrulama Cevabı sağlamadınız."
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr ""
+"Mesaj göndermek üzeresiniz. Devam etmek için mesaj gönder linkine "
+"tıklayın."
+
+msgid "{status:some_error_occurred}"
+msgstr "Hata oluştu"
+
+msgid "{login:change_home_org_button}"
+msgstr "Organizasyon seçiniz"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Config dosyasındaki gereksiz tercihler"
+
+msgid "{errors:report_email}"
+msgstr "E-posta adresi:"
+
+msgid "{errors:howto_header}"
+msgstr "Nasıl yardım alınır"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Şifre atanmadı"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Bu isteğin başlatıcısı, bir sonraki gidiş yerini bildiren RelayState "
+"parametresini sağlamamış."
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp Kontroller"
+
+msgid "{status:intro}"
+msgstr ""
+"Merhaba, bu SimpleSAMLphp durum sayfasıdır. Oturumunuzun süresinin dolup "
+"dolmadığını, oturumunuzun ne kadar sürdüğünü ve oturumunuza ait tüm "
+"bilgileri buradan görebilirsiniz."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Sayfa bulunamadı"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Mesaj gönderiliyor"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Kimlik Sağlayıcıdan hata alındı."
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Üstveri (Metadata)"
+
+msgid "{admin:metaover_intro}"
+msgstr ""
+"Bir SAML elemanı hakkındaki detayları görmek için, SAML elemanı başlığına"
+" tıklayın."
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Geçerli olmayan sertifika"
+
+msgid "{general:remember}"
+msgstr "Hatırla"
+
+msgid "{disco:selectidp}"
+msgstr "Kimlik sağlayıcınızı seçiniz."
+
+msgid "{login:help_desk_email}"
+msgstr "Yardım'a e-posta gönderin"
+
+msgid "{login:help_desk_link}"
+msgstr "Yardım anasayfası"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS Hatası"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Bir servis kendinizi yetkilendirmenizi istedi. Lütfen aşağıdaki forma "
+"kullanıcı adınızı ve şifrenizi giriniz."
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Tanıma servisine giden hatalı istek"
+
+msgid "{general:yes_continue}"
+msgstr "Evet, devam et"
+
+msgid "{disco:remember}"
+msgstr "Seçimimi hatırla"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 Servis Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"Eğer diğer tarafta bir SimpleSAMLphp elemanını kullanıyorsanız, düz "
+"SimpleSAMLphp dosya biçiminde bunu kullanın:"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Kimlik doğrulama cevabı oluşturulamadı"
+
+msgid "{errors:errorreport_header}"
+msgstr "Hata raporu gönderildi"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "İstek oluşturmada hata"
+
+msgid "{admin:metaover_header}"
+msgstr "Üstveri (metada) genel görünümü"
+
+msgid "{errors:report_submit}"
+msgstr "Hata raporu gönder"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Sayfa bulunamadı"
+
+msgid "{logout:logged_out_text}"
+msgstr "Çıktınız"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 Servis Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Mesaj"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP hatası"
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Verilen sayfa bulunamadı. URL %URL% idi."
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Bu hata beklenmeyen bir durum ya da SimpleSAMLphp'nin yanlış düzenlenmesi"
+" ndeniyle oluşmuş olabilir. Bu oturum açma servisinin yöneticisi ile "
+"iletişim kurun ve yukarıdaki hata mesajını gönderin."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 Kimlik Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Geçerli bir sertifika sağlamadınız. "
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"Mesaj göndermek üzeresiniz. Devam etmek için mesaj gönder butonuna "
+"tıklayın."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Şu isteğe bağlı alanlar bulunamadı"
+
+msgid "{logout:logout_only}"
+msgstr "Hayır, sadece %SP%"
+
+msgid "{login:next}"
+msgstr "Sıradaki"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr "Bu kimlik sağlayıcı bir kimlik doğrulama cevabı oluşturuken hata oluştu."
+
+msgid "{disco:selectidp_full}"
+msgstr "Lütfen, kimlik doğrulaması yapacağınız kimlik sağlayıcıyı seçiniz: "
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "Verilen sayfa bulunamadı. Nedeni %REASON% idi. URL %URL% idi."
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Çıkış bilgisi kaybedildi"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 Kimlik Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp doğru yapılandırılmış gibi görünmüyor."
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"SimpleSAMLphp'nin sizin için ürettiği üstveri (metada). Bu üstveri "
+"dokümanını güvenilir bir federasyon kurmak için güvenilir paydaşlara "
+"gönderebilirsiniz."
+
+msgid "{status:header_shib}"
+msgstr "Shibboleth demo"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Çözümle"
+
+msgid "Person's principal name at home organization"
+msgstr "Kişinin bağlı olduğu kuruluştaki asıl adı"
+
+msgid "Superfluous options in config file"
+msgstr "Config dosyasındaki gereksiz tercihler"
+
+msgid "Mobile"
+msgstr "Cep telefonu numarası"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 Servis Sağlayıcı (Bu sistemde sunulan)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP kullanıcı veritabanı ve siz giriş yapmaya çalışırken, LDAP "
+"veritabanına bağlanmamız gerekiyor. Bu seferlik denerken bir sorun "
+"oluştu."
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Durumunuz hakkında ileride ortaya çıkabilecek sorularla ilgili "
+"yöneticilerin iletişim kurabilmesi için, isteğe bağlı olarak e-posta "
+"adresinizi girin."
+
+msgid "Display name"
+msgstr "Görüntülenen isim"
+
+msgid "Remember my choice"
+msgstr "Seçimimi hatırla"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP Üstveri (Metadata)"
+
+msgid "Notices"
+msgstr "Notlar"
+
+msgid "Home telephone"
+msgstr "Ev telefonu"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Merhaba, bu SimpleSAMLphp durum sayfasıdır. Oturumunuzun süresinin dolup "
+"dolmadığını, oturumunuzun ne kadar sürdüğünü ve oturumunuza ait tüm "
+"bilgileri buradan görebilirsiniz."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Bu hatanın neden oluştuğunu açıklayın..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Bir beklenmeyen durum gönderildi."
+
+msgid "Invalid certificate"
+msgstr "Geçerli olmayan sertifika"
+
+msgid "Service Provider"
+msgstr "Servis Sağlayıcı"
+
+msgid "Incorrect username or password."
+msgstr "Kullanıcı adı ve/veya şifre yanlış."
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Bu sayfaya yapılan istekte bir hata var. Nedeni %REASON% idi."
+
+msgid "E-mail address:"
+msgstr "E-posta adresi:"
+
+msgid "Submit message"
+msgstr "Mesaj gönder"
+
+msgid "No RelayState"
+msgstr "RelayState verilmemiş."
+
+msgid "Error creating request"
+msgstr "İstek oluşturmada hata"
+
+msgid "Locality"
+msgstr "Bölge"
+
+msgid "Unhandled exception"
+msgstr "Beklenmeyen durum"
+
+msgid "The following required fields was not found"
+msgstr "Şu gerekli alanlar bulunamadı"
+
+msgid "Organizational number"
+msgstr "Kurumsal numara"
+
+msgid "Password not set"
+msgstr "Şifre atanmadı"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Üstveri (Metadata)"
+
+msgid "Post office box"
+msgstr "Posta kutusu"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Bir servis kendinizi yetkilendirmenizi istedi. Lütfen aşağıdaki forma "
+"kullanıcı adınızı ve şifrenizi giriniz."
+
+msgid "CAS Error"
+msgstr "CAS Hatası"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr ""
+"Aşağıdaki hata ayıklama bilgisi yöneticinin/yardım masasının ilgisini "
+"çekebilir:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Ya bu kullanıcı adında bir kullanıcı bulunamadı, yada şifreniz yanlış. "
+"Lütfen kullanıcı adını kontrol edin ve yeniden deneyin."
+
+msgid "Error"
+msgstr "Hata"
+
+msgid "Next"
+msgstr "Sıradaki"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Kişinin bağlı olduğu birimin belirgin adı"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Yapılandırmadaki (auth.adminpassword) şifrenin öntanımlı değeri "
+"değişmedi. Lütfen yapılandırma dosyasını düzeltin."
+
+msgid "Converted metadata"
+msgstr "Dönüştürülmüş üstveri (metadata)"
+
+msgid "Mail"
+msgstr "Posta"
+
+msgid "No, cancel"
+msgstr "Hayır"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"<b>%HOMEORG%</b>'u organizasyonunuz olarak seçtiniz. Eğer yanlış ise, "
+"başka bir tanesini seçebilirsiniz."
+
+msgid "Error processing request from Service Provider"
+msgstr "Servis Sağlayıcı'dan gelen isteği işlerken hata"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Kişinin öncelikli Kurumsal Birimi'nin belirgin adı"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr ""
+"Bir SAML elemanı hakkındaki detayları görmek için, SAML elemanı başlığına"
+" tıklayın."
+
+msgid "Enter your username and password"
+msgstr "Kullanıcı adı ve şifrenizi giriniz"
+
+msgid "No"
+msgstr "Hayır"
+
+msgid "Home postal address"
+msgstr "Ev posta adresi"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP Demo Örneği"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 Kimlik Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "Error processing the Logout Request"
+msgstr "Çıkış İsteğini işlerken hata oluştu"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Yukarıdaki tüm servislerden çıkmak istiyor musunuz?"
+
+msgid "Select"
+msgstr "Seç"
+
+msgid "Your attributes"
+msgstr "Bilgileriniz"
+
+msgid "Given name"
+msgstr "Verilen isim"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP Demo Örneği"
+
+msgid "Logout information lost"
+msgstr "Çıkış bilgisi kaybedildi"
+
+msgid "Organization name"
+msgstr "Organizasyon adı"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"Mesaj göndermek üzeresiniz. Devam etmek için mesaj gönder butonuna "
+"tıklayın."
+
+msgid "Home organization domain name"
+msgstr "Ana kuruluş alan adı"
+
+msgid "Go back to the file list"
+msgstr "Dosya listesine geri dön"
+
+msgid "Error report sent"
+msgstr "Hata raporu gönderildi"
+
+msgid "Common name"
+msgstr "Ortak ad"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Lütfen, kimlik doğrulaması yapacağınız kimlik sağlayıcıyı seçiniz: "
+
+msgid "Logout failed"
+msgstr "Çıkış başarılamadı"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Kamu yetkilileri tarafından belirlenmiş kimlik numarası"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federasyon Kimlik Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "Error received from Identity Provider"
+msgstr "Kimlik Sağlayıcıdan hata alındı."
+
+msgid "LDAP Error"
+msgstr "LDAP hatası"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Yürürlükteki çıkış işlemi ile ilgili bilgi kayboldu. Çıkmak istediğiniz "
+"servise geri dönün ve yeniden çıkmayı denyin. Bu hata, çıkış bilgisinin "
+"süresi dolduğu için oluşmuş olabilir. Çıkış bilgisi belirli bir süre için"
+" tutulur - genellikle birkaç saat. Bu süre normal bir çıkış işleminin "
+"tutacağından daha fazla bir süredir; bu hata yapılandırma ile ilgili "
+"başka bir hatayı işaret ediyor olabilir. Eğer sorun devam ederse, servis "
+"sağlayıcınızla iletişime geçiniz."
+
+msgid "Some error occurred"
+msgstr "Hata oluştu"
+
+msgid "Organization"
+msgstr "Organizasyon"
+
+msgid "Choose home organization"
+msgstr "Organizasyon seçiniz"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Kalıcı takma adı ID"
+
+msgid "No SAML response provided"
+msgstr "SAML cevabı verilmemiş"
+
+msgid "No errors found."
+msgstr "Hata bulunmadı."
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 Servis Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Verilen sayfa bulunamadı. URL %URL% idi."
+
+msgid "Configuration error"
+msgstr "Yapılandırma hatası"
+
+msgid "Required fields"
+msgstr "Gerekli alanlar"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "SAML isteği oluşturmaya çalışırken bir hata meydana geldi"
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Bu hata beklenmeyen bir durum ya da SimpleSAMLphp'nin yanlış düzenlenmesi"
+" ndeniyle oluşmuş olabilir. Bu oturum açma servisinin yöneticisi ile "
+"iletişim kurun ve yukarıdaki hata mesajını gönderin."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Oturumunuz, şu andan itibaren %remaining% saniyeliğine geçerlidir."
+
+msgid "Domain component (DC)"
+msgstr "Alan bileşeni"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 Servis Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "Password"
+msgstr "Şifre"
+
+msgid "Nickname"
+msgstr "Takma ad"
+
+msgid "Send error report"
+msgstr "Hata raporu gönder"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Hata raporu yöneticilere gönderildi"
+
+msgid "Date of birth"
+msgstr "Doğum tarihi"
+
+msgid "Private information elements"
+msgstr "Özel bilgi elemanları"
+
+msgid "You are also logged in on these services:"
+msgstr "Ayrıca şu servislere giriş yaptınız:"
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp Kontroller"
+
+msgid "Debug information"
+msgstr "Hata ayıklama bilgisi"
+
+msgid "No, only %SP%"
+msgstr "Hayır, sadece %SP%"
+
+msgid "Username"
+msgstr "Kullanıcı adı"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "SimpleSAMLphp kurulum sayfasına geri dön"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Yukarıda listelenen tüm servislerden başarıyla çıktınız."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "%SP%'den başarıyla çıktınız."
+
+msgid "Affiliation"
+msgstr "Bağlantı"
+
+msgid "You have been logged out."
+msgstr "Çıktınız"
+
+msgid "Return to service"
+msgstr "Servise geri dön"
+
+msgid "Logout"
+msgstr "Çıkış"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Kimlik sağlayıcıdan gelen cevabı işlerken hata"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federasyon Servis Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "Preferred language"
+msgstr "Tercih edilen dil"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 Servis Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid "Surname"
+msgstr "Soyadı"
+
+msgid "No access"
+msgstr "Giriş yok"
+
+msgid "The following fields was not recognized"
+msgstr "Şu alanlar tanınmadı"
+
+msgid "Bad request received"
+msgstr "Hatalı istek alındı"
+
+msgid "User ID"
+msgstr "Kullanıcı ID"
+
+msgid "JPEG Photo"
+msgstr "JPEG fotoğraf"
+
+msgid "Postal address"
+msgstr "Posta adresi"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Çıkış İsteğini işlemeye çalışırken bir hata oluştu"
+
+msgid "Sending message"
+msgstr "Mesaj gönderiliyor"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "XML formatında SAML 2.0 SP Üstverisi (Metadata)"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr "Bu kimlik sağlayıcı bir kimlik doğrulama cevabı oluşturuken hata oluştu."
+
+msgid "Could not create authentication response"
+msgstr "Kimlik doğrulama cevabı oluşturulamadı"
+
+msgid "Labeled URI"
+msgstr "Etiketlenen URI"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp doğru yapılandırılmış gibi görünmüyor."
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 Kimlik Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "Metadata"
+msgstr "Üstveri (metadata)"
+
+msgid "Login"
+msgstr "Giriş"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Bu Kimlik Sağlayıcı bir Servis Sağlayıcı'dan kimlik doğrulama isteği "
+"aldı, ancak bu isteği işlemeye çalışırken bir hata oluştu."
+
+msgid "Yes, all services"
+msgstr "Evet, tüm servisler."
+
+msgid "Logged out"
+msgstr "Çıktınız"
+
+msgid "Postal code"
+msgstr "Posta kodu"
+
+msgid "Logging out..."
+msgstr "Çıkıyor"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 Kimlik Sağlayıcı (Bu sistemde sunulan)"
+
+msgid "Primary affiliation"
+msgstr "Öncelikli bağlantı"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Bu hatayı bildirirseniz, lütfen, sistem yöneticisi tarafından incelebilen"
+" kayıtlardan oturumunuzun belirlenebilmesini sağlayan izleme ID'sini de "
+"bildirin."
+
+msgid "XML metadata"
+msgstr "XML üstverisi (metadata)"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "Tanıma servisine gönderilen parametreler tanımlananlara göre değildi."
+
+msgid "Telephone number"
+msgstr "Telefon numarası"
+
+msgid "Bad request to discovery service"
+msgstr "Tanıma servisine giden hatalı istek"
+
+msgid "Select your identity provider"
+msgstr "Kimlik sağlayıcınızı seçiniz."
+
+msgid "Entitlement regarding the service"
+msgstr "Servise göre yetki"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Üstveri (Metadata)"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"\"Debug\" modda olduğunuz için, gönderdiğiniz mesajın içeriğini "
+"göreceksiniz."
+
+msgid "Remember"
+msgstr "Hatırla"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Kişinin bağlı olduğu kuruluşun belirgin adı"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr ""
+"Mesaj göndermek üzeresiniz. Devam etmek için mesaj gönder linkine "
+"tıklayın."
+
+msgid "Organizational unit"
+msgstr "Organizasyonel birim"
+
+msgid "Local identity number"
+msgstr "Yerel kimlik numarası"
+
+msgid "Report errors"
+msgstr "Hataları bildir"
+
+msgid "Page not found"
+msgstr "Sayfa bulunamadı"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Üstveri (Metadata)"
+
+msgid "Change your home organization"
+msgstr "Organizasyonunuzu değiştirin"
+
+msgid "User's password hash"
+msgstr "Kullanıcının şifre karması"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"Eğer diğer tarafta bir SimpleSAMLphp elemanını kullanıyorsanız, düz "
+"SimpleSAMLphp dosya biçiminde bunu kullanın:"
+
+msgid "Yes, continue"
+msgstr "Evet, devam et"
+
+msgid "Completed"
+msgstr "Tamamlandı"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Kimlik Sağlayıcı hatalı cevap verdi. (SAML Cevabı'ndaki durum kodu "
+"başarılamadı)"
+
+msgid "Error loading metadata"
+msgstr "Üstveri (metadata) yüklenmesinde hata"
+
+msgid "Select configuration file to check:"
+msgstr "Kontrol edilecek konfigürasyon dosyasını seç:"
+
+msgid "On hold"
+msgstr "Beklemede"
+
+msgid "Error when communicating with the CAS server."
+msgstr "CAS sunucusu ile iletişim kurarken hata"
+
+msgid "No SAML message provided"
+msgstr "SAML mesajı verilmemiş"
+
+msgid "Help! I don't remember my password."
+msgstr "Yardım! Şifremi hatırlamıyorum."
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"\"Debug\" modunu global SimpleSAMLphp konfigürasyon dosyasında "
+"<tt>config/config.php</tt> kapatabilirsiniz."
+
+msgid "How to get help"
+msgstr "Nasıl yardım alınır"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"TekliÇıkışServis (SingleLogoutService) arayüzüne giriş yaptınız, ancak "
+"bir SAML Çıkışİsteği ya da ÇıkışCevabı sağlamadınız."
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp hatası"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Giriş yaptığınız bir yada daha fazla servis <i>çıkışı desteklemiyor</i>. "
+"Tüm oturumlarınızın kapatıldığından emin olmak için, <i>tarayıcınızı "
+"kapatmanız</i> önerilir."
+
+msgid "Organization's legal name"
+msgstr "Organizasyonu'un resmi adı"
+
+msgid "Options missing from config file"
+msgstr "Config dosyasındaki tercihler eksik"
+
+msgid "The following optional fields was not found"
+msgstr "Şu isteğe bağlı alanlar bulunamadı"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Bu kısım kullanımda değil. SimpleSAMLphp ayarlarınızın etkinleştirme "
+"seçeneklerini kontrol edin."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "<a href=\"%METAURL%\">Üstveri xml'ini bu bağlantıdan alabilirsiniz</a>:"
+
+msgid "Street"
+msgstr "Sokak"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"SimpleSAMLphp kurulumunuzda bazı yanlış ayarlamalar sözkonusu. Eğer bu "
+"servisin yöneticisi sizseniz, üstveri (metadata) ayarlarınızın düzgün bir"
+" şekilde yapıldığından emin olun."
+
+msgid "Incorrect username or password"
+msgstr "Geçersiz kullanıcı adı yada şifre"
+
+msgid "Message"
+msgstr "Mesaj"
+
+msgid "Contact information:"
+msgstr "İletişim bilgileri:"
+
+msgid "Optional fields"
+msgstr "İsteğe bağlı alanlar"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Bu isteğin başlatıcısı, bir sonraki gidiş yerini bildiren RelayState "
+"parametresini sağlamamış."
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Giriş sayfasına birşeyler gönderdiniz, fakat bazı nedenlerden dolayı "
+"şifreniz gönderilemedi. Lütfen tekrar deneyiniz."
+
+msgid "Fax number"
+msgstr "Faks numarası"
+
+msgid "Shibboleth demo"
+msgstr "Shibboleth demo"
+
+msgid "Error in this metadata entry"
+msgstr "Üstveri (metadata) bilgisinde hata var"
+
+msgid "Session size: %SIZE%"
+msgstr "Oturum büyüklüğü: %SIZE%"
+
+msgid "Parse"
+msgstr "Çözümle"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Çok kötü! - Kullanıcı adınız ve şifreniz olmadan bu servisi "
+"kullanamazsınız. Size yardımcı olabilecek birileri olabilir. Kuruluşunuza"
+" danışın. "
+
+msgid "Metadata parser"
+msgstr "Üstveri (metadata) çözümleyici"
+
+msgid "Choose your home organization"
+msgstr "Organizasyonunuzu seçiniz"
+
+msgid "Send e-mail to help desk"
+msgstr "Yardım'a e-posta gönderin"
+
+msgid "Metadata overview"
+msgstr "Üstveri (metada) genel görünümü"
+
+msgid "Title"
+msgstr "Başlık"
+
+msgid "Manager"
+msgstr "Yönetici"
+
+msgid "You did not present a valid certificate."
+msgstr "Geçerli bir sertifika sağlamadınız. "
+
+msgid "Affiliation at home organization"
+msgstr "Bağlı olunan kuruluşla bağlantı"
+
+msgid "Help desk homepage"
+msgstr "Yardım anasayfası"
+
+msgid "Configuration check"
+msgstr "Konfigürasyon kontrolü"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Kimlik Sağlayıcı'dan gelen cevabı kabul etmedik."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "Verilen sayfa bulunamadı. Nedeni %REASON% idi. URL %URL% idi."
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 Kimlik Sağlayıcı (Uzak sistemde sunulan)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"SimpleSAMLphp'nin sizin için ürettiği üstveri (metada). Bu üstveri "
+"dokümanını güvenilir bir federasyon kurmak için güvenilir paydaşlara "
+"gönderebilirsiniz."
+
+msgid "[Preferred choice]"
+msgstr "[Tercih edilen seçenek]"
+
+msgid "Organizational homepage"
+msgstr "Kurumsal websayfası"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Onay Alıcı Servis (Assertion Consumer Service) arayüzüne giriş yaptınız, "
+"ancak SAML Kimlik Doğrulama Cevabı sağlamadınız."
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Şu anda tamamlanmamış bir sisteme giriyorsunuz. Bu doğrulama kurulumu "
+"sadece test ve tamamlanma öncesi onaylama amaçlıdır. Eğer birileri size "
+"burayı gösteren bir bağlantı gönderdiyse, ve siz <i>test edici</i> "
+"değilseniz, muhtemelen yanlış bir bağlantı aldınızı, ve şu anda <b>burada"
+" olmamalısınız</b>. "

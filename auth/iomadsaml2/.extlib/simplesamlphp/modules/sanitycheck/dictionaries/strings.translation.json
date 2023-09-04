@@ -1,0 +1,8 @@
+{
+  "link_sanitycheck": {
+    "es": "Comprobaciones básicas de la instalación",
+    "no": "Sjekk din installasjon",
+    "nn": "Sjekk din installasjon",
+    "ca": "Comprovació de la validesa de la vostra configuració de SimpleSAMLphp"
+  }
+}

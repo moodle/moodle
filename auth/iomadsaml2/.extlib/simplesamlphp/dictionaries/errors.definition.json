@@ -1,0 +1,239 @@
+{
+	"error_header": {
+		"en": "SimpleSAMLphp error"
+	},
+	"report_trackid": {
+		"en": "If you report this error, please also report this tracking number which makes it possible to locate your session in the logs available to the system administrator:"
+	},
+	"debuginfo_header": {
+		"en": "Debug information"
+	},
+	"debuginfo_text": {
+		"en": "The debug information below may be of interest to the administrator \/ help desk:"
+	},
+	"report_header": {
+		"en": "Report errors"
+	},
+	"report_text": {
+		"en": "Optionally enter your email address, for the administrators to be able contact you for further questions about your issue:"
+	},
+	"report_email": {
+		"en": "E-mail address:"
+	},
+	"report_explain": {
+		"en": "Explain what you did when this error occurred..."
+	},
+	"report_submit": {
+		"en": "Send error report"
+	},
+	"howto_header": {
+		"en": "How to get help"
+	},
+	"howto_text": {
+		"en": "This error probably is due to some unexpected behaviour or to misconfiguration of SimpleSAMLphp. Contact the administrator of this login service, and send them the error message above."
+	},
+	"title_CREATEREQUEST": {
+		"en": "Error creating request"
+	},
+	"descr_CREATEREQUEST": {
+		"en": "An error occurred when trying to create the SAML request."
+	},
+	"title_DISCOPARAMS": {
+		"en": "Bad request to discovery service"
+	},
+	"descr_DISCOPARAMS": {
+		"en": "The parameters sent to the discovery service were not according to specifications."
+	},
+	"title_GENERATEAUTHNRESPONSE": {
+		"en": "Could not create authentication response"
+	},
+	"descr_GENERATEAUTHNRESPONSE": {
+		"en": "When this identity provider tried to create an authentication response, an error occurred."
+	},
+	"title_LDAPERROR": {
+		"en": "LDAP Error"
+	},
+	"descr_LDAPERROR": {
+		"en": "LDAP is the user database, and when you try to login, we need to contact an LDAP database. An error occurred when we tried it this time."
+	},
+	"title_LOGOUTREQUEST": {
+		"en": "Error processing the Logout Request"
+	},
+	"descr_LOGOUTREQUEST": {
+		"en": "An error occurred when trying to process the Logout Request."
+	},
+	"title_METADATA": {
+		"en": "Error loading metadata"
+	},
+	"descr_METADATA": {
+		"en": "There is some misconfiguration of your SimpleSAMLphp installation. If you are the administrator of this service, you should make sure your metadata configuration is correctly setup."
+	},
+	"title_NOACCESS": {
+		"en": "No access"
+	},
+	"descr_NOACCESS": {
+		"en": "This endpoint is not enabled. Check the enable options in your configuration of SimpleSAMLphp."
+	},
+	"title_NORELAYSTATE": {
+		"en": "No RelayState"
+	},
+	"descr_NORELAYSTATE": {
+		"en": "The initiator of this request did not provide a RelayState parameter indicating where to go next."
+	},
+	"title_PROCESSASSERTION": {
+		"en": "Error processing response from Identity Provider"
+	},
+	"descr_PROCESSASSERTION": {
+		"en": "We did not accept the response sent from the Identity Provider."
+	},
+	"title_PROCESSAUTHNREQUEST": {
+		"en": "Error processing request from Service Provider"
+	},
+	"descr_PROCESSAUTHNREQUEST": {
+		"en": "This Identity Provider received an Authentication Request from a Service Provider, but an error occurred when trying to process the request."
+	},
+	"title_SLOSERVICEPARAMS": {
+		"en": "No SAML message provided"
+	},
+	"descr_SLOSERVICEPARAMS": {
+		"en": "You accessed the SingleLogoutService interface, but did not provide a SAML LogoutRequest or LogoutResponse. Please note that this endpoint is not intended to be accessed directly."
+	},
+	"title_ACSPARAMS": {
+		"en": "No SAML response provided"
+	},
+	"descr_ACSPARAMS": {
+		"en": "You accessed the Assertion Consumer Service interface, but did not provide a SAML Authentication Response. Please note that this endpoint is not intended to be accessed directly."
+	},
+    "title_SSOPARAMS": {
+        "en": "No SAML request provided"
+    },
+    "descr_SSOPARAMS": {
+        "en": "You accessed the Single Sign On Service interface, but did not provide a SAML Authentication Request. Please note that this endpoint is not intended to be accessed directly."
+    },
+    "title_ARSPARAMS": {
+        "en": "No SAML message provided"
+    },
+    "descr_ARSPARAMS": {
+        "en": "You accessed the Artifact Resolution Service interface, but did not provide a SAML ArtifactResolve message. Please note that this endpoint is not intended to be accessed directly."
+    },
+	"title_CASERROR": {
+		"en": "CAS Error"
+	},
+	"descr_CASERROR": {
+		"en": "Error when communicating with the CAS server."
+	},
+	"title_CONFIG": {
+		"en": "Configuration error"
+	},
+	"descr_CONFIG": {
+		"en": "SimpleSAMLphp appears to be misconfigured."
+	},
+	"title_NOTVALIDCERT": {
+		"en": "Invalid certificate"
+	},
+	"descr_NOTVALIDCERT": {
+		"en": "You did not present a valid certificate."
+	},
+	"title_NOTSET": {
+		"en": "Password not set"
+	},
+	"descr_NOTSET": {
+		"en": "The password in the configuration (auth.adminpassword) is not changed from the default value. Please edit the configuration file."
+	},
+	"errorreport_header": {
+		"en": "Error report sent"
+	},
+	"errorreport_text": {
+		"en": "The error report has been sent to the administrators."
+	},
+	"title_LOGOUTINFOLOST": {
+		"en": "Logout information lost"
+	},
+	"descr_LOGOUTINFOLOST": {
+		"en": "The information about the current logout operation has been lost. You should return to the service you were trying to log out from and try to log out again. This error can be caused by the logout information expiring. The logout information is stored for a limited amout of time - usually a number of hours. This is longer than any normal logout operation should take, so this error may indicate some other error with the configuration. If the problem persists, contact your service provider."
+	},
+	"title_UNHANDLEDEXCEPTION": {
+		"en": "Unhandled exception"
+	},
+	"descr_UNHANDLEDEXCEPTION": {
+		"en": "An unhandled exception was thrown."
+	},
+	"title_NOTFOUND": {
+		"en": "Page not found"
+	},
+	"descr_NOTFOUND": {
+		"en": "The given page was not found. The URL was: %URL%"
+	},
+	"title_NOTFOUNDREASON": {
+		"en": "Page not found"
+	},
+	"descr_NOTFOUNDREASON": {
+		"en": "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+	},
+	"title_BADREQUEST": {
+		"en": "Bad request received"
+	},
+	"descr_BADREQUEST": {
+		"en": "There is an error in the request to this page. The reason was: %REASON%"
+	},
+	"title_WRONGUSERPASS": {
+		"en": "Incorrect username or password"
+	},
+	"descr_WRONGUSERPASS": {
+		"en": "Either no user with the given username could be found, or the password you gave was wrong. Please check the username and try again."
+	},
+	"title_RESPONSESTATUSNOSUCCESS": {
+		"en": "Error received from Identity Provider"
+	},
+	"descr_RESPONSESTATUSNOSUCCESS": {
+		"en": "The Identity Provider responded with an error. (The status code in the SAML Response was not success)"
+	},
+	"title_NOCERT": {
+		"en": "No certificate"
+	},
+	"descr_NOCERT": {
+		"en": "Authentication failed: your browser did not send any certificate"
+	},
+	"title_INVALIDCERT": {
+		"en": "Invalid certificate"
+	},
+	"descr_INVALIDCERT": {
+		"en": "Authentication failed: the certificate your browser sent is invalid or cannot be read"
+	},
+	"title_UNKNOWNCERT": {
+		"en": "Unknown certificate"
+	},
+	"descr_UNKNOWNCERT": {
+		"en": "Authentication failed: the certificate your browser sent is unknown"
+	},
+	"title_USERABORTED": {
+		"en": "Authentication aborted"
+	},
+	"descr_USERABORTED": {
+		"en": "The authentication was aborted by the user"
+	},
+	"title_NOSTATE": {
+		"en": "State information lost"
+	},
+	"descr_NOSTATE": {
+		"en": "State information lost, and no way to restart the request"
+	},
+	"title_METADATANOTFOUND": {
+		"en": "Metadata not found"
+	},
+	"descr_METADATANOTFOUND": {
+		"en": "Unable to locate metadata for %ENTITYID%"
+	},
+	"title_AUTHSOURCEERROR": {
+		"en": "Authentication source error"
+	},
+	"descr_AUTHSOURCEERROR": {
+		"en": "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+	},
+	"title_MEMCACHEDOWN": {
+		"en": "Cannot retrieve session data"
+	},
+	"descr_MEMCACHEDOWN": {
+		"en": "Your session data cannot be retrieved right now due to technical difficulties. Please try again in a few minutes."
+	}
+}

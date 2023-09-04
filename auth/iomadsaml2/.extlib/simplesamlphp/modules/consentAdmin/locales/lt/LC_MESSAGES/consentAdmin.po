@@ -1,0 +1,159 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: lt\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{consentAdmin:consentadmin:status_header}"
+msgstr "Leidimo statusas"
+
+msgid "{consentAdmin:consentadmin:attributes_text}"
+msgstr "atributai"
+
+msgid "{consentAdmin:consentadmin:service_provider_header}"
+msgstr "Paslaugos tiekėjas"
+
+msgid "{consentAdmin:consentadmin:removed}"
+msgstr "Leidimas pašalintas"
+
+msgid "{consentAdmin:consentadmin:consentadmin_header}"
+msgstr "Leidimų administravimas"
+
+msgid "{consentAdmin:consentadmin:show}"
+msgstr "Parodyti"
+
+msgid "{consentAdmin:consentadmin:attribute_org}"
+msgstr "Organizacija"
+
+msgid "{consentAdmin:consentadmin:attribute_injected}"
+msgstr "Įterptas atributas"
+
+msgid "{consentAdmin:consentadmin:show_hide_attributes}"
+msgstr "Rodyti/slėpti atributus"
+
+msgid "{consentAdmin:consentadmin:consentadmin_purpose}"
+msgstr "Paslaugos paskirtis yra"
+
+msgid "{consentAdmin:consentadmin:hide}"
+msgstr "Paslėpti"
+
+msgid "{consentAdmin:consentadmin:sp_empty_description}"
+msgstr "(apibūdinimas nenurodytas)"
+
+msgid "{consentAdmin:consentadmin:service_providers_for}"
+msgstr "Paslaugos tiekėjai"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description2}"
+msgstr ""
+"<h3>Kaip pašalinti savo leidimą</h3> Panaikinkite pažymėjimą ties "
+"atitinkamu paslaugos teikėju <h3>Nuorodos</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Pradžia</a> </li> <li><a "
+"href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li> </ul> "
+
+msgid "{consentAdmin:consentadmin:login}"
+msgstr "Prisijungti"
+
+msgid "{consentAdmin:consentadmin:consentadmin_description1}"
+msgstr "Čia jūs galite peržiūrėti ir keisti savo leidimus paslaugų teikėjams"
+
+msgid "{consentAdmin:consentadmin:updated}"
+msgstr "Leidimas atnaujintas"
+
+msgid "{consentAdmin:consentadmin:unknown}"
+msgstr "Nežinoma..."
+
+msgid "{consentAdmin:consentadmin:added}"
+msgstr "Leidimas pridėtas"
+
+msgid "{consentAdmin:consentadmin:attribute_id}"
+msgstr "Tapatybė"
+
+msgid "Injected attribut"
+msgstr "Įterptas atributas"
+
+msgid "Show"
+msgstr "Parodyti"
+
+msgid "Consent Added"
+msgstr "Leidimas pridėtas"
+
+msgid "Consent Administration"
+msgstr "Leidimų administravimas"
+
+msgid "Here you can view and edit your consent for the Service Providers."
+msgstr "Čia jūs galite peržiūrėti ir keisti savo leidimus paslaugų teikėjams"
+
+msgid "Unknown ..."
+msgstr "Nežinoma..."
+
+msgid "Identity"
+msgstr "Tapatybė"
+
+msgid "The purpose of the service is"
+msgstr "Paslaugos paskirtis yra"
+
+msgid "Hide"
+msgstr "Paslėpti"
+
+msgid "Service Provider"
+msgstr "Paslaugos tiekėjas"
+
+msgid "Service Providers for"
+msgstr "Paslaugos tiekėjai"
+
+msgid "login"
+msgstr "Prisijungti"
+
+msgid "(name not specified)"
+msgstr "(pavadinimas nenurodytas)"
+
+msgid "Consent Updated"
+msgstr "Leidimas atnaujintas"
+
+msgid "Consent status"
+msgstr "Leidimo statusas"
+
+msgid "(no description)"
+msgstr "(apibūdinimas nenurodytas)"
+
+msgid "attributes"
+msgstr "atributai"
+
+msgid ""
+"\n"
+"<h3>How to delete your consent</h3>\n"
+"Uncheck the box corresponding to the service provider\n"
+"\n"
+"<h3>Links</h3>\n"
+"<ul>\n"
+"<li><a href=\"https://www.wayf.dk\">Start</a> </li>\n"
+"\n"
+"<li><a href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li>\n"
+"</ul>\n"
+msgstr ""
+"<h3>Kaip pašalinti savo leidimą</h3> Panaikinkite pažymėjimą ties "
+"atitinkamu paslaugos teikėju <h3>Nuorodos</h3> <ul> <li><a "
+"href=\"https://www.wayf.dk\">Pradžia</a> </li> <li><a "
+"href=\"https://www.wayf.dk/FAQ\">FAQ</a> </li> </ul> "
+
+msgid "Consent Removed"
+msgstr "Leidimas pašalintas"
+
+msgid "show/hide attributes"
+msgstr "Rodyti/slėpti atributus"
+
+msgid "Organisation"
+msgstr "Organizacija"
+

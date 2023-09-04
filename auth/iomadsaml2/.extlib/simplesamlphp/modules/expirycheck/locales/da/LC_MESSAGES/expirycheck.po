@@ -1,0 +1,84 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: da\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{expirycheck:expwarning:access_denied}"
+msgstr "Du har ikke adgang til denne tjeneste"
+
+msgid "{expirycheck:expwarning:warning_today}"
+msgstr "Advarsel: din konto %NETID% udløber i dag!"
+
+msgid "{expirycheck:expwarning:warning}"
+msgstr "Advarsel: din konto %NETID% udløber om %DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:day}"
+msgstr "dag"
+
+msgid "{expirycheck:expwarning:days}"
+msgstr "dage"
+
+msgid "{expirycheck:expwarning:no_access_to}"
+msgstr "Din konto %NETID% er udløbet, adgang nægtet!"
+
+msgid "{expirycheck:expwarning:contact_home}"
+msgstr ""
+"Adgang til tjenester styres af din hjemmeinstitution. Kontakt venligst "
+"din lokale it-support for hjælp."
+
+msgid "{expirycheck:expwarning:expiry_date_text}"
+msgstr "Udløbsdato:"
+
+msgid "{expirycheck:expwarning:warning_header}"
+msgstr "Advarsel: din konto %NETID% udløber om %DAYSLEFT% %DAYS%!"
+
+msgid "{expirycheck:expwarning:btn_continue}"
+msgstr "Jeg er opmærksom på dette, fortsæt..."
+
+msgid "{expirycheck:expwarning:warning_header_today}"
+msgstr "Advarsel: din konto %NETID% udløber i dag!"
+
+msgid "Expiration date:"
+msgstr "Udløbsdato:"
+
+#, python-format
+msgid "Warning, your account %NETID% will expire in %DAYSLEFT% %DAYS%!"
+msgstr "Advarsel: din konto %NETID% udløber om %DAYSLEFT% %DAYS%!"
+
+msgid "Your account %NETID% has expired, access denied!"
+msgstr "Din konto %NETID% er udløbet, adgang nægtet!"
+
+msgid "Warning, your account %NETID% will expire today!"
+msgstr "Advarsel: din konto %NETID% udløber i dag!"
+
+msgid "I am aware of this, continue..."
+msgstr "Jeg er opmærksom på dette, fortsæt..."
+
+msgid "days"
+msgstr "dage"
+
+msgid "day"
+msgstr "dag"
+
+msgid ""
+"Access to services is controlled by your home organization. Please "
+"contact your local IT support for questions."
+msgstr ""
+"Adgang til tjenester styres af din hjemmeinstitution. Kontakt venligst "
+"din lokale it-support for hjælp."
+
+msgid "You do not have access to this service"
+msgstr "Du har ikke adgang til denne tjeneste"
+

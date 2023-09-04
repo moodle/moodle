@@ -1,0 +1,18 @@
+{% set pagetile = 'SimpleSAMLphp Show Metadata'|trans %}
+{% extends 'base.twig' %}
+{% block content %}
+    <div class="code-box">
+        <div class="code-box-title">
+            <h3>{{ 'Metadata'|trans }}</h3>
+            <button data-clipboard-target="#metadata" class="pure-button right clipboard-btn copy">
+                <span class="fa fa-copy"></span>
+            </button>
+        </div>
+        <div class="code-box-content">
+            <pre id="metadata">$metadata[{{ entityid }}] => {{ metadata|escape }}</pre>
+        </div>
+    </div>
+    <div class="center">
+        <a href="{{ backlink }}" class="pure-button pure-button-red">{{ 'Back'|trans }}</a>
+    </div>
+{% endblock content %}

@@ -1,0 +1,225 @@
+{% set pagetitle = 'SimpleSAMLphp Statistics'|trans %}
+{% extends "base.twig" %}
+
+{% block preload %}
+    <link href="/{{ baseurlpath }}module.php/statistics/assets/css/statistics.css" rel="stylesheet">
+    <link rel="stylesheet" media="screen" href="/{{ baseurlpath }}module.php/statistics/assets/css/uitheme1.12.1/jquery-ui.min.css">
+{% endblock %}
+
+{% block postload %}
+<script src="/{{ baseurlpath }}module.php/statistics/assets/js/jquery-ui-1.12.1.min.js"></script>
+<script src="/{{ baseurlpath }}module.php/statistics/assets/js/statistics.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ current_rule.name }}</h1>
+    <p>{{ current_rule.descr }}</p>
+
+    <table class="selecttime">
+        <tr>
+            <td class="selecttime_icon">
+                <i class="fa fa-pie-chart"></i>
+            </td>
+            <td>
+                <form action="#">
+                    {% for key, value in post_rule %}
+                    <input type="hidden" name="{{ key|escape('html') }}" value="{{ value|escape('html') }}">
+                    {% endfor %}
+                    <select name="rule">
+                    {% for key, rule in available_rules %}
+                        {% if key == selected_rule %}
+                        <option selected="selected" value="{{ key }}">{{ rule.name }}</option>
+                        {% else %}
+                        <option value="{{ key }}">{{ rule.name }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                </form>
+            </td>
+            <td class="td_right">
+                <form action="#">
+                    {% for key, value in post_d %}
+                    <input type="hidden" name="{{ key|escape('html') }}" value="{{ value|escape('html') }}">
+                    {% endfor %}
+                    {% if availdelimiters %}
+                    <select name="d">
+                    {% for key, delim in availdelimiters %}
+                        {% set delimName = delim %}
+
+                        {% if delimiterPresentation[delim] is defined %}
+                        {% set delimName = delimiterPresentation[delim] %}
+                        {% endif %}
+
+                        {% if key == "_" %}
+                        <option value="_">Total</option>
+                        {% elseif request_d is defined and delim == request_d %}
+                        <option selected="selected" value="{{ delim|escape('html') }}">{{ delimName|escape('html') }}</option>
+                        {% else %}
+                        <option value="{{ delim|escape('html') }}">{{ delimName|escape('html') }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+    </table>
+
+    <table class="selecttime">
+        <tr>
+            <td class="selecttime_icon">
+                <i class="fa fa-calendar"></i>
+            </td>
+            {% if available_times_prev %}
+            <td><a href="{{ get_times_prev }}">&laquo; Previous</a></td>
+            {% else %}
+            <td class="selecttime_link_grey">&laquo; Previous</td>
+            {% endif %}
+            <td class="td_right">
+                <form action="#">
+                    {% for key, value in post_res %}
+                    <input type="hidden" name="{{ key|escape('html') }}" value="{{ value|escape('html') }}">
+                    {% endfor %}
+                    {% if available_timeres %}
+                    <select name="res">
+                    {% for key, timeresname in available_timeres %}
+                        {% if key == selected_timeres %}
+                        <option selected="selected" value="{{ key }}">{{ timeresname }}</option>
+                        {% else %}
+                        <option value="{{ key }}">{{ timeresname }}</option>
+                        {% endif %}
+                    {% endfor %}
+                    </select>
+                    {% endif %}
+                </form>
+            </td>
+            <td class="td_left">
+                <form action="#">
+                    {% for key, value in post_time %}
+                    <input type="hidden" name="{{ key|escape('html') }}" value="{{ value|escape('html') }}">
+                    {% endfor %}
+                    {% if available_times %}
+                    <select name="time">
+                    {% for key, timedescr in available_times %}
+                        {% if key == selected_time %}
+                        <option selected="selected" value="{{ key }}">{{ timedescr }}</option>
+                        {% else %}
+                        <option value="{{ key }}">{{ timedescr }}</option>
+                        {% endif%}
+                    {% endfor %}
+                    </select>
+                    {% endif %}
+                </form>
+            </td>
+            {% if available_times_next %}
+                <td class="td_right td_next_right"><a href="{{ get_times_next }}">Next &raquo;</a></td>
+            {% else %}
+                <td class="td_right selecttime_link_grey">Next &raquo;</td>
+            {% endif %}
+        </tr>
+    </table>
+
+    <div id="tabdiv">
+    {% if results %}
+        <ul class="tabset_tabs">
+            <li class="tab-link current" data-tab="graph"><a href="#graph">Graph</a></li>
+            <li class="tab-link" data-tab="table"><a href="#table">Summary table</a></li>
+            <li class="tab-link" data-tab="debug"><a href="#debug">Time serie</a></li>
+        </ul>
+
+        <div id="graph" class="tabset_content current">
+            <img src="{{ imgurl }}" alt="Graph" />
+            <form action="#">
+                <p class="p_right">Compare with total from this dataset
+                <select name="rule2">
+                    <option value="_">None</option>
+                    {% for key, rule in available_rules %}
+                    {% if key == selected_rule2 %}
+                    <option selected="selected" value="{{ key }}">{{ rule.name }}</option>
+                    {% else %}
+                    <option value="{{ key }}">{{ rule.name }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                </p>
+            </form>
+        </div>
+
+        <div id="table" class="tabset_content">
+            {% if pieimgurl is defined %}
+            <img src="{{ pieimgurl }}" alt="Pie chart" />
+            {% endif %}
+
+            <table class="tableview">
+                <tr>
+                    <th class="value">Value</th>
+                    <th class="category">Data range</th>
+                </tr>
+                {% for key, value in summaryDataset %}
+                {% if loop.index0 is even %}
+                    {% set class = 'even' %}
+                {% else %}
+                    {% set class = 'odd' %}
+                {% endif %}
+
+                {% set keyName = key %}
+                {% if delimiterPresentation[key] is defined %}
+                {% set keyName = delimiterPresentation[key] %}
+                {% endif %}
+
+                {% if key == "_" %}
+                <tr class="total {{ class }}">
+                    <td class="value">{{ value }}</td>
+                    <td class="category">{{ keyName }}</td>
+                </tr>
+                {% else %}
+                <tr class="{{ class }}">
+                    <td class="value">{{ value }}</td>
+                    <td class="category">{{ keyName }}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+
+        <div id="debug" class="tabset_content">
+            <table class="timeseries">
+                <tr>
+                    <th>Time</th>
+                    <th>Total</th>
+                    {% for key, value in topdelimiters %}
+                    {% set keyName = value %}
+                    {% if delimiterPresentation[value] is defined %}
+                        {% set keyName = delimiterPresentation[value] %}
+                    {% endif %}
+                    <th>{{ keyName }}</th>
+                    {% endfor %}
+                </tr>
+                {% for slot, dd in debugdata %}
+
+                {% if loop.index0 is even %}
+                    {% set class = 'even' %}
+                {% else %}
+                    {% set class = 'odd' %}
+                {% endif %}
+
+                <tr class="{{ class }}">
+                    <td>{{ dd[0] }}</td>
+                    <td class="datacontent">{{ dd[1] }}</td>
+                    {% for key, value in topdelimiters %}
+                    {% if results[slot] is defined and value == '_' %}
+                    <td class="datacontent">{{ results[slot][value] }}</td>
+                    {% else %}
+                    <td class="datacontent">&nbsp;</td>
+                    {% endif %}
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+    {% else %}
+        <h4 align="center">{{ error }}</h4>
+        <p align="center"><a href="showstats.php">Clear selection</a></p>
+    {% endif %}
+    </div>
+{% endblock %}

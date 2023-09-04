@@ -1,0 +1,1361 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: zh_Hant_TW\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr "找不到您所提供的使用者名稱之使用者，或您給了錯誤密碼。請檢查使用者並再試一次。"
+
+msgid "{logout:failed}"
+msgstr "登出失敗"
+
+msgid "{status:attributes_header}"
+msgstr "您的屬性值"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "SAML 2.0 服務提供者(遠端)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "認證錯誤：您的瀏覽器並未送出任何憑證"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "從驗證提供者取得錯誤執行回應"
+
+msgid "{errors:title_NOSTATE}"
+msgstr "遺失狀態資訊"
+
+msgid "{login:username}"
+msgstr "帳號"
+
+msgid "{errors:title_METADATA}"
+msgstr "錯誤載入詮釋資料"
+
+msgid "{admin:metaconv_title}"
+msgstr "Metadata 解析"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "沒有錯誤。"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"遺失正在登出的相關操作資訊，您可能要回到您準備登出的服務再登出一次。這個錯誤可能是因為登出資訊逾時。登出資訊僅能在有限的時間裡有效 - "
+"通常是幾小時。這已經大於正常的登出操作所需的時間，所以這個錯誤也許說明有些其他的錯誤被設定。如果這個錯誤持續存在，請連絡您的服務提供者。"
+
+msgid "{disco:previous_auth}"
+msgstr "您先前已選擇認證於"
+
+msgid "{admin:cfg_check_back}"
+msgstr "回到檔案清單"
+
+msgid "{errors:report_trackid}"
+msgstr "如果您回報這個錯誤，請同時回報這個追蹤數字，讓系統管理員可以藉由它在記錄裡找到您的連線："
+
+msgid "{login:change_home_org_title}"
+msgstr "變更您的預設組織"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "無法找到詮釋資料於 %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadata"
+
+msgid "{errors:report_text}"
+msgstr "選擇性的輸入您的 email，讓管理者針對您的問題在有進一步需要時連絡您："
+
+msgid "{errors:report_header}"
+msgstr "錯誤報告"
+
+msgid "{login:change_home_org_text}"
+msgstr "您已選擇 <b>%HOMEORG%<\\/b> 作為預設組織。如果錯誤，您隨時都可以重新選擇。"
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "從驗證提供者得到錯誤執行請求"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "我們無法於驗證提供者完成回應傳送。"
+
+msgid "{errors:debuginfo_header}"
+msgstr "除錯資訊"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr "當您在除錯模式，您可以看到您所傳遞的訊息內容："
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr "驗證提供者回應一個錯誤。(在 SAML 回應裡的狀態碼為不成功)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "{login:help_text}"
+msgstr "喔喔！如果您的帳號和密碼錯誤，系統將無法提供相關服務！"
+
+msgid "{logout:default_link_text}"
+msgstr "回到 SimpleSAMLphp 安裝頁面"
+
+msgid "{errors:error_header}"
+msgstr "SimpleSAMLphp 異常"
+
+msgid "{login:help_header}"
+msgstr "糟糕！忘記密碼了。"
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr "LDAP 是使用這資料庫，當您嘗試登入時，我們必須連結至一個 LDAP 資料庫。而在嘗試時有個錯誤發生。"
+
+msgid "{errors:descr_METADATA}"
+msgstr "有一些錯誤設定在您所安裝的 SimpleSAMLphp。如果您是這個服務的管理員，您可能需要確認您的詮釋資料設定是否正確地設置。"
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "錯誤請求"
+
+msgid "{status:sessionsize}"
+msgstr "Session 大小: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "標題"
+
+msgid "{admin:metaover_group_metadata.adfs-sp-remote}"
+msgstr "ADFS 服務提供者(遠端)"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "XML Metadata"
+
+msgid "{status:subject_format}"
+msgstr "格式"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "下列資料未經確認"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "認證來源錯誤"
+
+msgid "{login:select_home_org}"
+msgstr "選擇您的預設組織"
+
+msgid "{logout:hold}"
+msgstr "暫停"
+
+msgid "{admin:cfg_check_header}"
+msgstr "設定檢查"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "提交訊息"
+
+msgid "{status:logout}"
+msgstr "登出"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr "傳遞至搜尋服務的參數並非按照規格所訂。"
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "有個錯誤發生於您嘗試建立 SAML 請求。"
+
+msgid "{admin:metaover_optional_found}"
+msgstr "選擇性欄位"
+
+msgid "{logout:return}"
+msgstr "回到服務"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr "<a href=\"%METAURL%\"> 直接取得 Metadata XML 格式檔 </a>"
+
+msgid "{logout:logout_all}"
+msgstr "Yea，登出所有服務"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr "您可以 SimpleSAMLphp 的全域設定檔 <tt>config/config.php</tt> 裡關閉除錯模式。"
+
+msgid "{disco:select}"
+msgstr "選擇"
+
+msgid "{logout:also_from}"
+msgstr "您還持續登入下列服務："
+
+msgid "{login:login_button}"
+msgstr "登入"
+
+msgid "{logout:progress}"
+msgstr "登出中..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "錯誤的帳號或密碼。"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Shib 1.3 服務提供者(遠端)"
+
+msgid "{login:remember_username}"
+msgstr "記住我的使用者名稱"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr "這個驗證提供者收到一個服務提供者的認證請求，但在準備執行這個請求時發生錯誤。"
+
+msgid "{logout:logout_all_question}"
+msgstr "是否登出所有服務？"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "無法存取"
+
+msgid "{login:error_nopassword}"
+msgstr "您可能有傳送至網頁，但是密碼因為某些原因未傳送，請重新登入。"
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "沒有 RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "遺失狀態資訊，且無法重新請求"
+
+msgid "{login:password}"
+msgstr "密碼"
+
+msgid "{errors:debuginfo_text}"
+msgstr "管理員/服務台可能對下列除錯資訊有興趣："
+
+msgid "{admin:cfg_check_missing}"
+msgstr "設定檔缺少選項"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "發生了一個無法預期的例外"
+
+msgid "{general:yes}"
+msgstr "是"
+
+msgid "{errors:title_CONFIG}"
+msgstr "設定錯誤"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "登出請求為錯誤程序"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "有錯誤存在這個 Metadata 條目"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "找不到詮釋資料"
+
+msgid "{login:contact_info}"
+msgstr "聯絡資訊："
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "不可預期的例外"
+
+msgid "{status:header_saml20_sp}"
+msgstr "SAML 2.0 SP 展示範例"
+
+msgid "{login:error_header}"
+msgstr "錯誤"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "認證取消"
+
+msgid "{logout:incapablesps}"
+msgstr "您登入的服務中有一個或以上 <i>不支援登出<\\/i>。請確認您已關閉所有連線，並<i>關閉瀏覽器<\\/i>。"
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "在 SAML 2.0 Metadata XML 格式："
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "SAML 2.0 驗證提供者(遠端)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "SAML 2.0 驗證提供者(主機)"
+
+msgid "{status:subject_notset}"
+msgstr "未設定"
+
+msgid "{admin:metaover_required_found}"
+msgstr "必要欄位"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "選擇要檢查的設定檔："
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "認證錯誤：您的瀏覽器傳送了一個未知的憑證"
+
+msgid "{logout:logging_out_from}"
+msgstr "從下列服務登出："
+
+msgid "{logout:loggedoutfrom}"
+msgstr "您已成功從 %SP% 登出。"
+
+msgid "{errors:errorreport_text}"
+msgstr "錯誤報告已送給管理員。"
+
+msgid "{status:subject_header}"
+msgstr "SAML 主題"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "有個錯誤發生於準備進行登出請求時。"
+
+msgid "{logout:success}"
+msgstr "您已經成功登出了列表中所有服務。"
+
+msgid "{admin:cfg_check_notices}"
+msgstr "備註"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "使用者中斷認證"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "當連線至 CAS 主機時錯誤。"
+
+msgid "{general:no}"
+msgstr "不，取消"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "{admin:metaconv_converted}"
+msgstr "已轉換之 Metadata"
+
+msgid "{logout:completed}"
+msgstr "已完成"
+
+msgid "{errors:descr_NOTSET}"
+msgstr "設定檔裡的密碼(auth.adminpassword)還是預設值，請編輯設定檔。"
+
+msgid "{general:service_provider}"
+msgstr "服務提供者"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "這裡有個錯誤於此頁面的請求。原因為：%REASON%"
+
+msgid "{logout:no}"
+msgstr "取消"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "喜好選擇"
+
+msgid "{general:no_cancel}"
+msgstr "不，取消"
+
+msgid "{login:user_pass_header}"
+msgstr "請輸入您的帳號及密碼"
+
+msgid "{errors:report_explain}"
+msgstr "解釋當你發生錯誤時所做的事情..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "SAML 無回應"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr "您連結單一簽出服務界面，但是沒有提供一個 SAML 登出請求或登出回應。"
+
+msgid "{login:organization}"
+msgstr "組織"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "帳號或密碼錯誤"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "下列資料找不到必要欄位"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr "這個端點並未啟用。核取啟用選項於您的 SimpleSAMLphp 設定中。"
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "無法提供 SAML 訊息"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr "您連結消費者聲明服務界面，但是沒有提供一個 SAML 認證回應。"
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr "您正在傳送一則訊息，請點選提交訊息連結來繼續。"
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "認證錯誤來自 %AUTHSOURCE% 。原因為： %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "有錯誤發生"
+
+msgid "{login:change_home_org_button}"
+msgstr "選擇預設組織"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "多餘設定存在於設定檔"
+
+msgid "{errors:report_email}"
+msgstr "電子郵件:"
+
+msgid "{errors:howto_header}"
+msgstr "如何取得協助"
+
+msgid "{errors:title_NOTSET}"
+msgstr "密碼未設定"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr "初始化請求並未提供一個中繼狀態 RelayState 參數說明下一個步驟。"
+
+msgid "{status:header_diagnostics}"
+msgstr "SimpleSAMLphp 診斷工具"
+
+msgid "{status:intro}"
+msgstr ""
+"嘿，這是 SimpleSAMLphp "
+"狀態頁，在這邊您可以看到您的連線是否逾時，以及還有多久才逾時，所有屬性值(attributes)都會附加在你的連線裡(session)。"
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "找不到頁面"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "傳送訊息"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "從驗證提供者收到錯誤"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid "{admin:metaover_intro}"
+msgstr "點選 SAML 物件標題，可檢視 SAML 物件詳細資訊。"
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "無效憑證"
+
+msgid "{general:remember}"
+msgstr "記住"
+
+msgid "{disco:selectidp}"
+msgstr "選擇你的識別提供者(idp)"
+
+msgid "{login:help_desk_email}"
+msgstr "傳送 e-mail 尋求協助"
+
+msgid "{login:help_desk_link}"
+msgstr "協助頁面"
+
+msgid "{login:remember_me}"
+msgstr "記住我"
+
+msgid "{errors:title_CASERROR}"
+msgstr "CAS 錯誤"
+
+msgid "{login:user_pass_text}"
+msgstr "請使用帳號密碼登入，以便進入系統。"
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "無效的請求於搜尋服務"
+
+msgid "{general:yes_continue}"
+msgstr "是，繼續"
+
+msgid "{disco:remember}"
+msgstr "記住我的選擇"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "SAML 2.0 服務提供者(主機)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr "如果您需要於其他地方使用 SimpleSAMLphp 實體 - 請參閱 SimpleSAMLphp 平面文件格式："
+
+msgid "{admin:metadata_adfs-sp}"
+msgstr "ADFS 服務提供者 Metadata"
+
+msgid "{disco:login_at}"
+msgstr "登入至"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "無法建立認證回應"
+
+msgid "{errors:errorreport_header}"
+msgstr "錯誤報告送出"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "錯誤產生請求"
+
+msgid "{admin:metaover_header}"
+msgstr "Metadata 總覽"
+
+msgid "{errors:report_submit}"
+msgstr "傳送錯誤報告"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "無效憑證"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "找不到頁面"
+
+msgid "{logout:logged_out_text}"
+msgstr "您已登出"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Shib 1.3 服務提供者(主機)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "下載 PEM 格式之 X.509 憑證檔案"
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "訊息"
+
+msgid "{admin:metaover_group_metadata.adfs-idp-hosted}"
+msgstr "ADFS 驗證提供者(主機)"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "未知的憑證"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "LDAP 錯誤"
+
+msgid "{logout:failedsps}"
+msgstr "無法正常登出，請確認您已關閉所有連線，<i>同時關閉所有瀏覽器<\\/i>。"
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "找不到您所要存取的頁面，該網址是：%URL%"
+
+msgid "{errors:howto_text}"
+msgstr "這個問題可能是因為 SimpleSAMLphp 的某些例外的行為或無效設定。連絡這個登入服務的管理員，以及傳送這些錯誤訊息。"
+
+msgid "{admin:metadata_adfs-idp}"
+msgstr "ADFS 驗證提供者 Metadata"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Shib 1.3 驗證提供者(主機)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "您提供的憑證無效。"
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr "您正在傳送一則訊息，請點選提交訊息按鈕來繼續。"
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "下列資料找不到選擇性欄位"
+
+msgid "{logout:logout_only}"
+msgstr "不，只有 %SP%"
+
+msgid "{login:next}"
+msgstr "下一步"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr "當這個驗證提供者嘗試建立一個驗證回應時，有個錯誤發生。"
+
+msgid "{disco:selectidp_full}"
+msgstr "請選擇您所要前往認證的驗證提供者："
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr "找不到您所要存取的頁面，原因：%REASON%；網址：%URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "無憑證"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "登出訊息遺失"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Shib 1.3 驗證提供者(遠端)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp 出現無效設定。"
+
+msgid "{admin:metadata_intro}"
+msgstr "這是 SimpleSAMLphp 產生給您的 Metadata，您可以傳送此 Metadata 文件給您信任的合作夥伴來建立可信任的聯盟。"
+
+msgid "{admin:metadata_cert}"
+msgstr "憑證"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr "驗證失敗：您的瀏覽器傳送的憑證為無效或無法讀取"
+
+msgid "{status:header_shib}"
+msgstr "老調的展示"
+
+msgid "{admin:metaconv_parse}"
+msgstr "解析"
+
+msgid "Person's principal name at home organization"
+msgstr "家庭的個人主要名字"
+
+msgid "Superfluous options in config file"
+msgstr "多餘設定存在於設定檔"
+
+msgid "Mobile"
+msgstr "手機"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Shib 1.3 服務提供者(主機)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr "LDAP 是使用這資料庫，當您嘗試登入時，我們必須連結至一個 LDAP 資料庫。而在嘗試時有個錯誤發生。"
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr "選擇性的輸入您的 email，讓管理者針對您的問題在有進一步需要時連絡您："
+
+msgid "Display name"
+msgstr "顯示名稱"
+
+msgid "Remember my choice"
+msgstr "記住我的選擇"
+
+msgid "Format"
+msgstr "格式"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "SAML 2.0 SP Metadata"
+
+msgid "ADFS IdP Metadata"
+msgstr "ADFS 驗證提供者 Metadata"
+
+msgid "Notices"
+msgstr "備註"
+
+msgid "Home telephone"
+msgstr "住家電話"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"嘿，這是 SimpleSAMLphp "
+"狀態頁，在這邊您可以看到您的連線是否逾時，以及還有多久才逾時，所有屬性值(attributes)都會附加在你的連線裡(session)。"
+
+msgid "Explain what you did when this error occurred..."
+msgstr "解釋當你發生錯誤時所做的事情..."
+
+msgid "An unhandled exception was thrown."
+msgstr "發生了一個無法預期的例外"
+
+msgid "Invalid certificate"
+msgstr "無效憑證"
+
+msgid "Service Provider"
+msgstr "服務提供者"
+
+msgid "Incorrect username or password."
+msgstr "錯誤的帳號或密碼。"
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "這裡有個錯誤於此頁面的請求。原因為：%REASON%"
+
+msgid "E-mail address:"
+msgstr "電子郵件:"
+
+msgid "Submit message"
+msgstr "提交訊息"
+
+msgid "No RelayState"
+msgstr "沒有 RelayState"
+
+msgid "Error creating request"
+msgstr "錯誤產生請求"
+
+msgid "Locality"
+msgstr "位置"
+
+msgid "Unhandled exception"
+msgstr "不可預期的例外"
+
+msgid "The following required fields was not found"
+msgstr "下列資料找不到必要欄位"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "下載 PEM 格式之 X.509 憑證檔案"
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "無法找到詮釋資料於 %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "組織號碼"
+
+msgid "Password not set"
+msgstr "密碼未設定"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "SAML 2.0 IdP Metadata"
+
+msgid "Post office box"
+msgstr "郵政信箱"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr "請使用帳號密碼登入，以便進入系統。"
+
+msgid "CAS Error"
+msgstr "CAS 錯誤"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "管理員/服務台可能對下列除錯資訊有興趣："
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr "找不到您所提供的使用者名稱之使用者，或您給了錯誤密碼。請檢查使用者並再試一次。"
+
+msgid "Error"
+msgstr "錯誤"
+
+msgid "Next"
+msgstr "下一步"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Distinguished name (DN) 個人預設組織單位"
+
+msgid "State information lost"
+msgstr "遺失狀態資訊"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr "設定檔裡的密碼(auth.adminpassword)還是預設值，請編輯設定檔。"
+
+msgid "Converted metadata"
+msgstr "已轉換之 Metadata"
+
+msgid "Mail"
+msgstr "郵件"
+
+msgid "No, cancel"
+msgstr "不，取消"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr "您已選擇 <b>%HOMEORG%<\\/b> 作為預設組織。如果錯誤，您隨時都可以重新選擇。"
+
+msgid "Error processing request from Service Provider"
+msgstr "從驗證提供者得到錯誤執行請求"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Distinguished name (DN) of 個人主要組織單位"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "點選 SAML 物件標題，可檢視 SAML 物件詳細資訊。"
+
+msgid "Enter your username and password"
+msgstr "請輸入您的帳號及密碼"
+
+msgid "Login at"
+msgstr "登入至"
+
+msgid "No"
+msgstr "取消"
+
+msgid "Home postal address"
+msgstr "住家地址"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "WS-Fed SP 展示範例"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "SAML 2.0 驗證提供者(遠端)"
+
+msgid "Error processing the Logout Request"
+msgstr "登出請求為錯誤程序"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "是否登出所有服務？"
+
+msgid "Select"
+msgstr "選擇"
+
+msgid "The authentication was aborted by the user"
+msgstr "使用者中斷認證"
+
+msgid "Your attributes"
+msgstr "您的屬性值"
+
+msgid "Given name"
+msgstr "名"
+
+msgid "Identity assurance profile"
+msgstr "可靠驗證設定檔"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "SAML 2.0 SP 展示範例"
+
+msgid "Logout information lost"
+msgstr "登出訊息遺失"
+
+msgid "Organization name"
+msgstr "組織名稱"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "認證錯誤：您的瀏覽器傳送了一個未知的憑證"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr "您正在傳送一則訊息，請點選提交訊息按鈕來繼續。"
+
+msgid "Home organization domain name"
+msgstr "預設組織 domain name"
+
+msgid "Go back to the file list"
+msgstr "回到檔案清單"
+
+msgid "SAML Subject"
+msgstr "SAML 主題"
+
+msgid "Error report sent"
+msgstr "錯誤報告送出"
+
+msgid "Common name"
+msgstr "常用名字"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "請選擇您所要前往認證的驗證提供者："
+
+msgid "Logout failed"
+msgstr "登出失敗"
+
+msgid "Identity number assigned by public authorities"
+msgstr "身分證字號"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "WS-Federation 驗證提供者(遠端)"
+
+msgid "Error received from Identity Provider"
+msgstr "從驗證提供者收到錯誤"
+
+msgid "LDAP Error"
+msgstr "LDAP 錯誤"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"遺失正在登出的相關操作資訊，您可能要回到您準備登出的服務再登出一次。這個錯誤可能是因為登出資訊逾時。登出資訊僅能在有限的時間裡有效 - "
+"通常是幾小時。這已經大於正常的登出操作所需的時間，所以這個錯誤也許說明有些其他的錯誤被設定。如果這個錯誤持續存在，請連絡您的服務提供者。"
+
+msgid "Some error occurred"
+msgstr "有錯誤發生"
+
+msgid "Organization"
+msgstr "組織"
+
+msgid "No certificate"
+msgstr "無憑證"
+
+msgid "Choose home organization"
+msgstr "選擇預設組織"
+
+msgid "Persistent pseudonymous ID"
+msgstr "持續的匿名 ID"
+
+msgid "No SAML response provided"
+msgstr "SAML 無回應"
+
+msgid "No errors found."
+msgstr "沒有錯誤。"
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "SAML 2.0 服務提供者(主機)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "找不到您所要存取的頁面，該網址是：%URL%"
+
+msgid "Configuration error"
+msgstr "設定錯誤"
+
+msgid "Required fields"
+msgstr "必要欄位"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "有個錯誤發生於您嘗試建立 SAML 請求。"
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr "這個問題可能是因為 SimpleSAMLphp 的某些例外的行為或無效設定。連絡這個登入服務的管理員，以及傳送這些錯誤訊息。"
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "您的 session 從現在起還有 %remaining% 有效。"
+
+msgid "Domain component (DC)"
+msgstr "Domain component (DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Shib 1.3 服務提供者(遠端)"
+
+msgid "Password"
+msgstr "密碼"
+
+msgid "Nickname"
+msgstr "暱稱"
+
+msgid "Send error report"
+msgstr "傳送錯誤報告"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr "驗證失敗：您的瀏覽器傳送的憑證為無效或無法讀取"
+
+msgid "The error report has been sent to the administrators."
+msgstr "錯誤報告已送給管理員。"
+
+msgid "Date of birth"
+msgstr "生日"
+
+msgid "Private information elements"
+msgstr "個人資料"
+
+msgid "You are also logged in on these services:"
+msgstr "您還持續登入下列服務："
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "SimpleSAMLphp 診斷工具"
+
+msgid "Debug information"
+msgstr "除錯資訊"
+
+msgid "No, only %SP%"
+msgstr "不，只有 %SP%"
+
+msgid "Username"
+msgstr "帳號"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "回到 SimpleSAMLphp 安裝頁面"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "您已經成功登出了列表中所有服務。"
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "您已成功從 %SP% 登出。"
+
+msgid "Affiliation"
+msgstr "連絡方式"
+
+msgid "You have been logged out."
+msgstr "您已登出"
+
+msgid "Return to service"
+msgstr "回到服務"
+
+msgid "Logout"
+msgstr "登出"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "遺失狀態資訊，且無法重新請求"
+
+msgid "Error processing response from Identity Provider"
+msgstr "從驗證提供者取得錯誤執行回應"
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "WS-Federation 服務提供者(主機)"
+
+msgid "Remember my username"
+msgstr "記住我的使用者名稱"
+
+msgid "Preferred language"
+msgstr "喜好語言"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "SAML 2.0 服務提供者(遠端)"
+
+msgid "Surname"
+msgstr "姓"
+
+msgid "No access"
+msgstr "無法存取"
+
+msgid "The following fields was not recognized"
+msgstr "下列資料未經確認"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "認證錯誤來自 %AUTHSOURCE% 。原因為： %REASON%"
+
+msgid "Bad request received"
+msgstr "錯誤請求"
+
+msgid "User ID"
+msgstr "使用者 ID"
+
+msgid "JPEG Photo"
+msgstr "JPEG 圖片"
+
+msgid "Postal address"
+msgstr "郵寄地址"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "有個錯誤發生於準備進行登出請求時。"
+
+msgid "ADFS SP Metadata"
+msgstr "ADFS 服務提供者 Metadata"
+
+msgid "Sending message"
+msgstr "傳送訊息"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "在 SAML 2.0 Metadata XML 格式："
+
+msgid "Logging out of the following services:"
+msgstr "從下列服務登出："
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr "當這個驗證提供者嘗試建立一個驗證回應時，有個錯誤發生。"
+
+msgid "Could not create authentication response"
+msgstr "無法建立認證回應"
+
+msgid "Labeled URI"
+msgstr "標籤網址"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp 出現無效設定。"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Shib 1.3 驗證提供者(主機)"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Login"
+msgstr "登入"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr "這個驗證提供者收到一個服務提供者的認證請求，但在準備執行這個請求時發生錯誤。"
+
+msgid "Yes, all services"
+msgstr "Yea，登出所有服務"
+
+msgid "Logged out"
+msgstr "標題"
+
+msgid "Postal code"
+msgstr "郵遞區號"
+
+msgid "Logging out..."
+msgstr "登出中..."
+
+msgid "not set"
+msgstr "未設定"
+
+msgid "Metadata not found"
+msgstr "找不到詮釋資料"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "SAML 2.0 驗證提供者(主機)"
+
+msgid "Primary affiliation"
+msgstr "主要連絡方式"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr "如果您回報這個錯誤，請同時回報這個追蹤數字，讓系統管理員可以藉由它在記錄裡找到您的連線："
+
+msgid "XML metadata"
+msgstr "XML Metadata"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr "傳遞至搜尋服務的參數並非按照規格所訂。"
+
+msgid "Telephone number"
+msgstr "電話號碼"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr "無法正常登出，請確認您已關閉所有連線，<i>同時關閉所有瀏覽器<\\/i>。"
+
+msgid "Bad request to discovery service"
+msgstr "無效的請求於搜尋服務"
+
+msgid "Select your identity provider"
+msgstr "選擇你的識別提供者(idp)"
+
+msgid "Group membership"
+msgstr "群組成員"
+
+msgid "Entitlement regarding the service"
+msgstr "關於服務的權利"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Shib 1.3 SP Metadata"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr "當您在除錯模式，您可以看到您所傳遞的訊息內容："
+
+msgid "Certificates"
+msgstr "憑證"
+
+msgid "Remember"
+msgstr "記住"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Distinguished name (DN) 個人預設組織"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr "您正在傳送一則訊息，請點選提交訊息連結來繼續。"
+
+msgid "Organizational unit"
+msgstr "組織單位"
+
+msgid "Authentication aborted"
+msgstr "認證取消"
+
+msgid "Local identity number"
+msgstr "本地驗證碼"
+
+msgid "Report errors"
+msgstr "錯誤報告"
+
+msgid "Page not found"
+msgstr "找不到頁面"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Shib 1.3 IdP Metadata"
+
+msgid "Change your home organization"
+msgstr "變更您的預設組織"
+
+msgid "User's password hash"
+msgstr "使用者密碼編碼"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr "如果您需要於其他地方使用 SimpleSAMLphp 實體 - 請參閱 SimpleSAMLphp 平面文件格式："
+
+msgid "Yes, continue"
+msgstr "是，繼續"
+
+msgid "Completed"
+msgstr "已完成"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr "驗證提供者回應一個錯誤。(在 SAML 回應裡的狀態碼為不成功)"
+
+msgid "Error loading metadata"
+msgstr "錯誤載入詮釋資料"
+
+msgid "Select configuration file to check:"
+msgstr "選擇要檢查的設定檔："
+
+msgid "On hold"
+msgstr "暫停"
+
+msgid "ADFS Identity Provider (Hosted)"
+msgstr "ADFS 驗證提供者(主機)"
+
+msgid "Error when communicating with the CAS server."
+msgstr "當連線至 CAS 主機時錯誤。"
+
+msgid "No SAML message provided"
+msgstr "無法提供 SAML 訊息"
+
+msgid "Help! I don't remember my password."
+msgstr "糟糕！忘記密碼了。"
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr "您可以 SimpleSAMLphp 的全域設定檔 <tt>config/config.php</tt> 裡關閉除錯模式。"
+
+msgid "How to get help"
+msgstr "如何取得協助"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr "您連結單一簽出服務界面，但是沒有提供一個 SAML 登出請求或登出回應。"
+
+msgid "SimpleSAMLphp error"
+msgstr "SimpleSAMLphp 異常"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr "您登入的服務中有一個或以上 <i>不支援登出<\\/i>。請確認您已關閉所有連線，並<i>關閉瀏覽器<\\/i>。"
+
+msgid "Remember me"
+msgstr "記住我"
+
+msgid "Organization's legal name"
+msgstr "組織正式名稱"
+
+msgid "Options missing from config file"
+msgstr "設定檔缺少選項"
+
+msgid "The following optional fields was not found"
+msgstr "下列資料找不到選擇性欄位"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "認證錯誤：您的瀏覽器並未送出任何憑證"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr "這個端點並未啟用。核取啟用選項於您的 SimpleSAMLphp 設定中。"
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr "<a href=\"%METAURL%\"> 直接取得 Metadata XML 格式檔 </a>"
+
+msgid "Street"
+msgstr "街"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr "有一些錯誤設定在您所安裝的 SimpleSAMLphp。如果您是這個服務的管理員，您可能需要確認您的詮釋資料設定是否正確地設置。"
+
+msgid "Incorrect username or password"
+msgstr "帳號或密碼錯誤"
+
+msgid "Message"
+msgstr "訊息"
+
+msgid "Contact information:"
+msgstr "聯絡資訊："
+
+msgid "Unknown certificate"
+msgstr "未知的憑證"
+
+msgid "Legal name"
+msgstr "正式名字"
+
+msgid "Optional fields"
+msgstr "選擇性欄位"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr "初始化請求並未提供一個中繼狀態 RelayState 參數說明下一個步驟。"
+
+msgid "You have previously chosen to authenticate at"
+msgstr "您先前已選擇認證於"
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr "您可能有傳送至網頁，但是密碼因為某些原因未傳送，請重新登入。"
+
+msgid "Fax number"
+msgstr "傳真"
+
+msgid "Shibboleth demo"
+msgstr "老調的展示"
+
+msgid "Error in this metadata entry"
+msgstr "有錯誤存在這個 Metadata 條目"
+
+msgid "Session size: %SIZE%"
+msgstr "Session 大小: %SIZE%"
+
+msgid "Parse"
+msgstr "解析"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr "喔喔！如果您的帳號和密碼錯誤，系統將無法提供相關服務！"
+
+msgid "Metadata parser"
+msgstr "Metadata 解析"
+
+msgid "ADFS Service Provider (Remote)"
+msgstr "ADFS 服務提供者(遠端)"
+
+msgid "Choose your home organization"
+msgstr "選擇您的預設組織"
+
+msgid "Send e-mail to help desk"
+msgstr "傳送 e-mail 尋求協助"
+
+msgid "Metadata overview"
+msgstr "Metadata 總覽"
+
+msgid "Title"
+msgstr "標題"
+
+msgid "Manager"
+msgstr "管理員"
+
+msgid "You did not present a valid certificate."
+msgstr "您提供的憑證無效。"
+
+msgid "Authentication source error"
+msgstr "認證來源錯誤"
+
+msgid "Affiliation at home organization"
+msgstr "家庭連絡地址"
+
+msgid "Help desk homepage"
+msgstr "協助頁面"
+
+msgid "Configuration check"
+msgstr "設定檢查"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "我們無法於驗證提供者完成回應傳送。"
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr "找不到您所要存取的頁面，原因：%REASON%；網址：%URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Shib 1.3 驗證提供者(遠端)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr "這是 SimpleSAMLphp 產生給您的 Metadata，您可以傳送此 Metadata 文件給您信任的合作夥伴來建立可信任的聯盟。"
+
+msgid "[Preferred choice]"
+msgstr "喜好選擇"
+
+msgid "Organizational homepage"
+msgstr "組織首頁"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr "您連結消費者聲明服務界面，但是沒有提供一個 SAML 認證回應。"
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"您現在正在存取一個非正式上線系統。這個身分驗證環境僅是在測試及檢查非正式上線系統。如果有人傳遞這個連結給你，而你並非是 <i>測試人員</i> "
+"的話，你可能是取得一個錯誤連結，且您可能 <b>不適合在此</b>。"

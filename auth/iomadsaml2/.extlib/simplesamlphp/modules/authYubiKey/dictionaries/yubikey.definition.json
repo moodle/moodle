@@ -1,0 +1,8 @@
+{
+	"header": {
+		"en": "Login with YubiKey"
+	},
+	"intro": {
+		"en": "Some service requested authentication. To authenticate, click the button on your YubiKey. The field below should then automatically be filled out with a secure one-time-password."
+	}
+}

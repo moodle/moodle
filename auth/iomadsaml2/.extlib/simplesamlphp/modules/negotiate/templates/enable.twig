@@ -1,0 +1,9 @@
+{% extends "base.twig" %}
+
+{% block content %}
+    <h1>{{ '{negotiate:negotiate:enable_title}'|trans }}</h1>
+    <br />
+    {{ '{negotiate:negotiate:enable_info_pre}'|trans({'%URL%': url}, "app")|raw }}
+    <br />
+    {{ '{negotiate:negotiate:info_post}'|trans|raw }}
+{% endblock %}

@@ -1,0 +1,39 @@
+.caSPName {
+    font-weight: bold;
+}
+td.caSPName {
+    vertical-align: top;
+}
+td.caAllowed {
+    vertical-align: top;
+}
+td.caAttributes {
+}
+tr.row0 td {
+    background-color: #888888;
+    color: black;
+}
+tr.row1 td {
+    background-color: #aaaaaa;
+    color: black;
+}
+a.orange {
+    color: #ffd633;
+}
+
+span.show_hide {
+    font-size: 80%;
+}
+
+a.serviceUrl {
+    color: black;
+    font-weight: bold;
+}
+
+span[id^='hiding_'], span[id*='hiding_'] {
+    display: none;
+}
+
+div[id^='attributes_'], div[id*='attributes_'] {
+    display: none;
+}

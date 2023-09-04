@@ -1,0 +1,1454 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:31+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: id\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{admin:metadata_saml20-idp}"
+msgstr "Metadata SAML 2.0 IdP"
+
+msgid "{errors:descr_WRONGUSERPASS}"
+msgstr ""
+"Username yang diberikan tidak dapat ditemukan, atau password yang Anda "
+"berikan salah. Silahkan periksa username dan coba lagi."
+
+msgid "{logout:failed}"
+msgstr "Log out gagal"
+
+msgid "{status:attributes_header}"
+msgstr "Attribut Anda"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-remote}"
+msgstr "Service Provider SAML 2.0 (Remote)"
+
+msgid "{errors:descr_NOCERT}"
+msgstr "Autentifikasi gagal: Browser anada tidak mengirim sertifikat"
+
+msgid "{errors:title_PROCESSASSERTION}"
+msgstr "Error memproses response dari Identity Provider."
+
+msgid "{errors:title_NOSTATE}"
+msgstr "Informasi state hilang"
+
+msgid "{login:username}"
+msgstr "Username"
+
+msgid "{errors:title_METADATA}"
+msgstr "Error meload metadata"
+
+msgid "{admin:metaconv_title}"
+msgstr "Parser metadata"
+
+msgid "{admin:cfg_check_noerrors}"
+msgstr "Tidak ada error yang ditemukan"
+
+msgid "{errors:descr_LOGOUTINFOLOST}"
+msgstr ""
+"Informasi tentang operasi logout saat ini telah hilang. Anda harus "
+"kembali ke layanan tempat Anda mencoba logout dan mencoba melakukan "
+"proses logout kembali. Error ini dapat disebabakan oleh informasi logout "
+"yang telah kadaluarsa. Informasi logout disimpan untuk waktu yang "
+"terbatas - biasanya dalam bilangan jam. Waktu ini lebih lama dari operasi"
+" logout normal umumnya, jadi error ini mungkin mengindikasikan beberapa "
+"erro lain pada konfigurasi. Jika masalah tetap terjadi, hubungi service "
+"provider Anda."
+
+msgid "{disco:previous_auth}"
+msgstr "Sebelumnya anda telah memilih untuk melakukan autentifikasi di "
+
+msgid "{admin:cfg_check_back}"
+msgstr "Kembali ke daftar file"
+
+msgid "{errors:report_trackid}"
+msgstr ""
+"Jika Anda melaporkan error ini, tolong laporkan juga nomor pelacakan "
+"sehingga memungkinkan untuk lokasi session anda pada log tersedia untuk "
+"system administrator:"
+
+msgid "{login:change_home_org_title}"
+msgstr "Ubah basis organisasi anda"
+
+msgid "{errors:descr_METADATANOTFOUND}"
+msgstr "Tidak dapat menemukan metadata untuk %ENTITYID%"
+
+msgid "{admin:metadata_metadata}"
+msgstr "Metadata"
+
+msgid "{errors:report_text}"
+msgstr ""
+"Opsional, masukkan alamat email Anda, agar administrator dapat "
+"menghubungi Anda untuk pertanyaan lebih lanjut tentang masalah Anda:"
+
+msgid "{errors:report_header}"
+msgstr "Laporakan error"
+
+msgid "{login:change_home_org_text}"
+msgstr ""
+"Anda telah memilih  <b>%HOMEORG%</b> sebagai basis organisasi anda. Jika "
+"ini salah anda dapat memilih yang lain."
+
+msgid "{errors:title_PROCESSAUTHNREQUEST}"
+msgstr "Error memproses request dari Service Provider"
+
+msgid "{errors:descr_PROCESSASSERTION}"
+msgstr "Kami tidak menerima response yang dikirimlan dari Identity Provider."
+
+msgid "{errors:debuginfo_header}"
+msgstr "Informasi debug"
+
+msgid "{admin:debug_sending_message_msg_text}"
+msgstr ""
+"Karena anda berada pada mode debug, anda dapat melihat isi pesan yang "
+"anda kirim:"
+
+msgid "{errors:descr_RESPONSESTATUSNOSUCCESS}"
+msgstr ""
+"Identity Provider merespon dengan error. (Kode status di Response SAML "
+"adalah tidak berhasil)"
+
+msgid "{admin:metadata_shib13-idp}"
+msgstr "Metadata Shib 1.3 IdP"
+
+msgid "{login:help_text}"
+msgstr ""
+"Sayang sekali! - Tanpa username dan password Anda tidak dapat melakukan "
+"autentifikasi agar dapat mengakses layanan. Mungkin ada seseorang yang "
+"dapat menolong Anda. Hubungi help desk pada universitas Anda."
+
+msgid "{logout:default_link_text}"
+msgstr "Kembali ke halaman instalasi SimpleSAMLphp"
+
+msgid "{errors:error_header}"
+msgstr "Error simpelSAMLphp"
+
+msgid "{login:help_header}"
+msgstr "Tolong! Saya tidak ingat password saya"
+
+msgid "{errors:descr_LDAPERROR}"
+msgstr ""
+"LDAP adalah database user, dan ketika Anda mencoba login, Kami perlu "
+"menghubungi database LDAP. Sebuah error terjadi ketika Kami mencobanya "
+"saat ini. "
+
+msgid "{errors:descr_METADATA}"
+msgstr ""
+"Ada beberapa kesalahan konfigurasi pada instalasi SimpleSAMLphp Anda. "
+"Jika Anda adalah administrator dari layanan ini, Anda harus memastikan "
+"konfigurasi metdata Anda telah disetup dengan benar. "
+
+msgid "{errors:title_BADREQUEST}"
+msgstr "Request buruk diterima"
+
+msgid "{status:sessionsize}"
+msgstr "Ukuran session: %SIZE%"
+
+msgid "{logout:title}"
+msgstr "Log out"
+
+msgid "{admin:metaconv_xmlmetadata}"
+msgstr "metadata XML"
+
+msgid "{admin:metaover_unknown_found}"
+msgstr "Field-field berikut ini tidak dapat dikenali"
+
+msgid "{errors:title_AUTHSOURCEERROR}"
+msgstr "Error sumber autentifikasi"
+
+msgid "{login:select_home_org}"
+msgstr "Pilih Basis Organisasi Anda"
+
+msgid "{logout:hold}"
+msgstr "Ditahan"
+
+msgid "{admin:cfg_check_header}"
+msgstr "Pemeriksaan konfigurasi"
+
+msgid "{admin:debug_sending_message_send}"
+msgstr "Submit pesan"
+
+msgid "{status:logout}"
+msgstr "Logout"
+
+msgid "{errors:descr_DISCOPARAMS}"
+msgstr ""
+"Parameter-parameter yang dikirimkan ke layanan penemuan tidak sesuai "
+"dengan spesifikasi"
+
+msgid "{errors:descr_CREATEREQUEST}"
+msgstr "Sebuah error telah terjadi ketika membuat request SAML."
+
+msgid "{admin:metaover_optional_found}"
+msgstr "Field-field opsional"
+
+msgid "{logout:return}"
+msgstr "Kembali ke layanan"
+
+msgid "{admin:metadata_xmlurl}"
+msgstr ""
+"Anda dapat <a href=\"%METAURL%\">mendapatkan xml metadata pada URL "
+"tersendiri</a>:"
+
+msgid "{logout:logout_all}"
+msgstr "Ya, semua layanan"
+
+msgid "{admin:debug_disable_debug_mode}"
+msgstr ""
+"Anda dapat menonaktifkan mode debuh pada file konfigurasi global "
+"simpleSAMLhphp  <tt>config/config.php</tt>."
+
+msgid "{disco:select}"
+msgstr "Pilih"
+
+msgid "{logout:also_from}"
+msgstr "Anda juga telah log out dari layanan berikut: "
+
+msgid "{login:login_button}"
+msgstr "Login"
+
+msgid "{logout:progress}"
+msgstr "Log out..."
+
+msgid "{login:error_wrongpassword}"
+msgstr "Username atau password salah"
+
+msgid "{admin:metaover_group_metadata.shib13-sp-remote}"
+msgstr "Service Provider Shib 1.3 (Remote)"
+
+msgid "{errors:descr_PROCESSAUTHNREQUEST}"
+msgstr ""
+"Identity Provider ini menerima Request Autentifikasi dari sebuah Service "
+"Provider, tetapi error terjadi ketika memproses request."
+
+msgid "{logout:logout_all_question}"
+msgstr "Apakah anda ingin logout dari semua layanan diatas ?"
+
+msgid "{errors:title_NOACCESS}"
+msgstr "Tiaak ada akses"
+
+msgid "{login:error_nopassword}"
+msgstr ""
+"Anda mengirimkan sesuatu ke halaman login, tetapi karena suatu alasan "
+"tertentu password tidak terkirimkan, Silahkan coba lagi."
+
+msgid "{errors:title_NORELAYSTATE}"
+msgstr "Tidak ada RelayState"
+
+msgid "{errors:descr_NOSTATE}"
+msgstr "Informasi state hilang, dan tidak ada cara untuk me-restat request"
+
+msgid "{login:password}"
+msgstr "Password"
+
+msgid "{errors:debuginfo_text}"
+msgstr "Informasi debug dibawah ini mungkin menarik bagi administrator/help desk:"
+
+msgid "{admin:cfg_check_missing}"
+msgstr "Opsi-opsi uang hilang dari file konfigurasi"
+
+msgid "{errors:descr_UNHANDLEDEXCEPTION}"
+msgstr "Exception yang tidak tertangani telah di-thrown"
+
+msgid "{general:yes}"
+msgstr "Iya nih"
+
+msgid "{errors:title_CONFIG}"
+msgstr "Error konfigurasi"
+
+msgid "{errors:title_LOGOUTREQUEST}"
+msgstr "Error memproses Request Logout"
+
+msgid "{admin:metaover_errorentry}"
+msgstr "Error pada entri metadata ini"
+
+msgid "{errors:title_METADATANOTFOUND}"
+msgstr "Metadata tidak ditemukan"
+
+msgid "{login:contact_info}"
+msgstr "Informasi Kontak"
+
+msgid "{errors:title_UNHANDLEDEXCEPTION}"
+msgstr "Exception yang tidak tertangani"
+
+msgid "{status:header_saml20_sp}"
+msgstr "Contoh Demo SAML 2.0 SP"
+
+msgid "{login:error_header}"
+msgstr "Error"
+
+msgid "{errors:title_USERABORTED}"
+msgstr "Autentifikasi dibatalkan"
+
+msgid "{logout:incapablesps}"
+msgstr ""
+"Satu atau beberapa layanan yang anda telah login  <i>tidak mendukung "
+"logout</i>.Untuk meyakinkan semua session anda ditutup, anda disarankan "
+"untuk <i>menutup web browser anda</i>."
+
+msgid "{admin:metadata_xmlformat}"
+msgstr "Dalam format XML Metadata SAML 2.0"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-remote}"
+msgstr "Identity Provider SAML 2.0 (Remote)"
+
+msgid "{admin:metaover_group_metadata.saml20-idp-hosted}"
+msgstr "Identity Provider SAML 2.0 (Hosted)"
+
+msgid "{admin:metaover_required_found}"
+msgstr "Field-field yang wajib diisi"
+
+msgid "{admin:cfg_check_select_file}"
+msgstr "Pilih file konfigurasi untuk diperiksa"
+
+msgid "{errors:descr_UNKNOWNCERT}"
+msgstr "Autentifikasi gagal: sertifikat yang browser anda kirimkan tidak dikenal"
+
+msgid "{logout:logging_out_from}"
+msgstr "Log out dari layanan-layanan berikut:"
+
+msgid "{logout:loggedoutfrom}"
+msgstr "Sekarang anda telah sukses log out dari %SP%."
+
+msgid "{errors:errorreport_text}"
+msgstr "Laporan error telah dikirimkan ke administrator"
+
+msgid "{errors:descr_LOGOUTREQUEST}"
+msgstr "Sebuah error telah terjadi ketika memproses Request Logout."
+
+msgid "{logout:success}"
+msgstr "Anda telah berhasil log out dari semua layanan yang tercantuh diatas."
+
+msgid "{admin:cfg_check_notices}"
+msgstr "Pemberitahuan"
+
+msgid "{errors:descr_USERABORTED}"
+msgstr "Autentifikasi dibatalkan oleh user"
+
+msgid "{errors:descr_CASERROR}"
+msgstr "Error ketika berkomunikasi dengans server CAS."
+
+msgid "{general:no}"
+msgstr "Tidak"
+
+msgid "{admin:metadata_saml20-sp}"
+msgstr "Metadata SAML 2.0 SP"
+
+msgid "{admin:metaconv_converted}"
+msgstr "Metadata yang telah dikonvesi"
+
+msgid "{logout:completed}"
+msgstr "Selesai"
+
+msgid "{errors:descr_NOTSET}"
+msgstr ""
+"Password di konfigurasi (auth.adminspassword) tidak berubah dari nilai "
+"default. Silahkan edit file konfigurasi."
+
+msgid "{general:service_provider}"
+msgstr "Service Provider"
+
+msgid "{errors:descr_BADREQUEST}"
+msgstr "Terjadi error pada request ke halaman ini. Alasannya adalah: %REASON%"
+
+msgid "{logout:no}"
+msgstr "Tidak"
+
+msgid "{disco:icon_prefered_idp}"
+msgstr "Pilihan yang disukai"
+
+msgid "{general:no_cancel}"
+msgstr "Tidak, batalkan"
+
+msgid "{login:user_pass_header}"
+msgstr "Masukkan username dan password Anda"
+
+msgid "{errors:report_explain}"
+msgstr "Jelaskan apa yang Anda lakukan ketika error ini terjadi..."
+
+msgid "{errors:title_ACSPARAMS}"
+msgstr "Tidak ada response SAML yang disediakan"
+
+msgid "{errors:descr_SLOSERVICEPARAMS}"
+msgstr ""
+"Anda mengakses antarmuka SingleLogout, tetapi tidak menyediakan "
+"LogoutRequest SAML atau LogoutResponse."
+
+msgid "{login:organization}"
+msgstr "Organisasi"
+
+msgid "{errors:title_WRONGUSERPASS}"
+msgstr "Username atau password salah"
+
+msgid "{admin:metaover_required_not_found}"
+msgstr "Field-field yang diperlukan wajib disisi berikut ini tidak ditemukan"
+
+msgid "{errors:descr_NOACCESS}"
+msgstr ""
+"Endpoint ini tidak diaktifkan. Periksalah opsi enable pada konfigurasi "
+"SimpleSAMLphp Anda."
+
+msgid "{errors:title_SLOSERVICEPARAMS}"
+msgstr "Tidak pesan SAML yang disediakan"
+
+msgid "{errors:descr_ACSPARAMS}"
+msgstr ""
+"Anda mengakses antarnyka Assertion Consumer Service, tetapi tidak "
+"menyediakan Response Autentifikasi SAML. "
+
+msgid "{admin:debug_sending_message_text_link}"
+msgstr ""
+"Anda baru saja akan mengirim sebuah pesan. Tekan link submit pesan untuk "
+"melanjutkan."
+
+msgid "{errors:descr_AUTHSOURCEERROR}"
+msgstr "Error autentifikasi di sumber %AUTHSOURCE%. Alasannya adalah: %REASON%"
+
+msgid "{status:some_error_occurred}"
+msgstr "Beberapa error telah terjadi"
+
+msgid "{login:change_home_org_button}"
+msgstr "Pilih basis organisasi"
+
+msgid "{admin:cfg_check_superfluous}"
+msgstr "Pilihan tak beguna di file konfigurasi"
+
+msgid "{errors:report_email}"
+msgstr "Alamat E-mail:"
+
+msgid "{errors:howto_header}"
+msgstr "Bagaimana mendapatkan pertolongan"
+
+msgid "{errors:title_NOTSET}"
+msgstr "Password tidak diset"
+
+msgid "{errors:descr_NORELAYSTATE}"
+msgstr ""
+"Inisiator dari request ini tidak menyediakan parameter RelayState yang "
+"mengindikasikan kemana selanjutnya pergi."
+
+msgid "{status:header_diagnostics}"
+msgstr "Diagnostik SimpleSAMLphp"
+
+msgid "{status:intro}"
+msgstr ""
+"Hai, ini adalah halaman status dari SimpleSAMLphp. Disini anda dapat "
+"melihat jika session anda telah time out, berapa lama ia berlaku sampai "
+"time out dan semua attribut yang menempel pada session anda."
+
+msgid "{errors:title_NOTFOUNDREASON}"
+msgstr "Halaman tidak ditemukan"
+
+msgid "{admin:debug_sending_message_title}"
+msgstr "Mengirimpan pesan"
+
+msgid "{errors:title_RESPONSESTATUSNOSUCCESS}"
+msgstr "Error diterima dari Identity Provider"
+
+msgid "{admin:metadata_shib13-sp}"
+msgstr "Metadata Shib 1.3 SP"
+
+msgid "{admin:metaover_intro}"
+msgstr "Untuk melihat detail entiti SAML, klik pada bagian header entiti SAML"
+
+msgid "{errors:title_NOTVALIDCERT}"
+msgstr "Sertifikat invalid"
+
+msgid "{general:remember}"
+msgstr "Ingat"
+
+msgid "{disco:selectidp}"
+msgstr "Pilih identity provider anda"
+
+msgid "{login:help_desk_email}"
+msgstr "Kirim e-mail ke help dek"
+
+msgid "{login:help_desk_link}"
+msgstr "Homepage Help desk"
+
+msgid "{errors:title_CASERROR}"
+msgstr "Error CAS"
+
+msgid "{login:user_pass_text}"
+msgstr ""
+"Sebuah layanan telah meminta Anda untuk melakukan autentifikasi. Silahkan"
+" masukkan username dan password Anda pada form dibawah"
+
+msgid "{errors:title_DISCOPARAMS}"
+msgstr "Request yang buruk ke layanan penemuan"
+
+msgid "{general:yes_continue}"
+msgstr "Yam lanjutkan"
+
+msgid "{disco:remember}"
+msgstr "Ingat pilihan saya"
+
+msgid "{admin:metaover_group_metadata.saml20-sp-hosted}"
+msgstr "Service Provider SAML 2.0 (Hosted)"
+
+msgid "{admin:metadata_simplesamlformat}"
+msgstr ""
+"Dalam format file biasa SimpleSAMLphp - gunakan ini jika Anda menggunakan"
+" entiti SimpleSAMLphp pada sisi lain:"
+
+msgid "{disco:login_at}"
+msgstr "Login di"
+
+msgid "{errors:title_GENERATEAUTHNRESPONSE}"
+msgstr "Tidak dapat membuat respon autentifikasi"
+
+msgid "{errors:errorreport_header}"
+msgstr "Laporan error dikirimkan"
+
+msgid "{errors:title_CREATEREQUEST}"
+msgstr "Error membuat request."
+
+msgid "{admin:metaover_header}"
+msgstr "Ikhtisar Metadata"
+
+msgid "{errors:report_submit}"
+msgstr "Kirim laporan error"
+
+msgid "{errors:title_INVALIDCERT}"
+msgstr "Sertifikat invalid"
+
+msgid "{errors:title_NOTFOUND}"
+msgstr "Halaman tidak ditemukan"
+
+msgid "{logout:logged_out_text}"
+msgstr "Anda telah log out."
+
+msgid "{admin:metaover_group_metadata.shib13-sp-hosted}"
+msgstr "Service Provider Shib 1.3 (Hosted)"
+
+msgid "{admin:metadata_cert_intro}"
+msgstr "Download sertifikat X509 sebagai file dikodekan-PEM."
+
+msgid "{admin:debug_sending_message_msg_title}"
+msgstr "Pesan"
+
+msgid "{errors:title_UNKNOWNCERT}"
+msgstr "Sertifikat tidak dikenal"
+
+msgid "{errors:title_LDAPERROR}"
+msgstr "Error LDAP"
+
+msgid "{logout:failedsps}"
+msgstr ""
+"Tidak dapat log out dari satu atau beberapa layanan. Untuk memastikan "
+"semua session anda ditutup, anda disaranakan untuk <i>menutup web browser"
+" anda</i>."
+
+msgid "{errors:descr_NOTFOUND}"
+msgstr "Halaman yang diminta tidak dapat ditemukan. URL nya adalah %URL%"
+
+msgid "{errors:howto_text}"
+msgstr ""
+"Error ini mungkin karena perilaku yang tidak diharapakan atau konfigurasi"
+" yang salah di SimpleSAMLphp. Hubungi administrator dari layanan login "
+"ini, dan kirimkan kepada mereka pesan error diatas."
+
+msgid "{admin:metaover_group_metadata.shib13-idp-hosted}"
+msgstr "Identity Provider Shib 1.3 (Hosted)"
+
+msgid "{errors:descr_NOTVALIDCERT}"
+msgstr "Anda tidak menyediakan sertifikat yang valid."
+
+msgid "{admin:debug_sending_message_text_button}"
+msgstr ""
+"Anda baru saja akan mengirim sebuah pesan. Tekan tombol submit pesan "
+"untuk melanjutkan."
+
+msgid "{admin:metaover_optional_not_found}"
+msgstr "Field-field opsional berikut tidak dapat ditemukan"
+
+msgid "{logout:logout_only}"
+msgstr "Tidak, hanya %SP%"
+
+msgid "{login:next}"
+msgstr "Selanjutnya"
+
+msgid "{errors:descr_GENERATEAUTHNRESPONSE}"
+msgstr ""
+"Ketika identity provider ini mencoba untuk membuat response "
+"autentifikasi, error terjadi."
+
+msgid "{disco:selectidp_full}"
+msgstr "Silahkan pilih identity provider tempat anda ingin melakukan autentifikasi"
+
+msgid "{errors:descr_NOTFOUNDREASON}"
+msgstr ""
+"Halaman yang diminta tidak ditemykan, Error-nya adalah: %REASON% URL-nya "
+"adalah: %URL%"
+
+msgid "{errors:title_NOCERT}"
+msgstr "Tidak ada sertifikat"
+
+msgid "{errors:title_LOGOUTINFOLOST}"
+msgstr "Informasi logout hilang"
+
+msgid "{admin:metaover_group_metadata.shib13-idp-remote}"
+msgstr "Identity Provider Shib 1.3 (Remote)"
+
+msgid "{errors:descr_CONFIG}"
+msgstr "SimpleSAMLphp sepertinya telah salah dikonfigurasi"
+
+msgid "{admin:metadata_intro}"
+msgstr ""
+"Berikut ini adalah SimpleSAMLphp metadata yang telah digenerate untuk "
+"Anda. Anda dapat mengirim dokumen metadata ini kepada rekan yang "
+"dipercayai untuk mensetup federasi terpercaya."
+
+msgid "{admin:metadata_cert}"
+msgstr "Sertifikat"
+
+msgid "{errors:descr_INVALIDCERT}"
+msgstr ""
+"Autentifikasi gagal: Sertifikat yang browser Anda kirimkan invalid atau "
+"tidak dapat dibaca"
+
+msgid "{status:header_shib}"
+msgstr "Demo Shibboleth"
+
+msgid "{admin:metaconv_parse}"
+msgstr "Parse"
+
+msgid "Person's principal name at home organization"
+msgstr "Nama kepala pada organisasi asal"
+
+msgid "Superfluous options in config file"
+msgstr "Pilihan tak beguna di file konfigurasi"
+
+msgid "Mobile"
+msgstr "Handphone"
+
+msgid "Shib 1.3 Service Provider (Hosted)"
+msgstr "Service Provider Shib 1.3 (Hosted)"
+
+msgid ""
+"LDAP is the user database, and when you try to login, we need to contact "
+"an LDAP database. An error occurred when we tried it this time."
+msgstr ""
+"LDAP adalah database user, dan ketika Anda mencoba login, Kami perlu "
+"menghubungi database LDAP. Sebuah error terjadi ketika Kami mencobanya "
+"saat ini. "
+
+msgid ""
+"Optionally enter your email address, for the administrators to be able "
+"contact you for further questions about your issue:"
+msgstr ""
+"Opsional, masukkan alamat email Anda, agar administrator dapat "
+"menghubungi Anda untuk pertanyaan lebih lanjut tentang masalah Anda:"
+
+msgid "Display name"
+msgstr "Nama yang ditampilkan"
+
+msgid "Remember my choice"
+msgstr "Ingat pilihan saya"
+
+msgid "SAML 2.0 SP Metadata"
+msgstr "Metadata SAML 2.0 SP"
+
+msgid "Notices"
+msgstr "Pemberitahuan"
+
+msgid "Home telephone"
+msgstr "Telepon rumah"
+
+msgid ""
+"Hi, this is the status page of SimpleSAMLphp. Here you can see if your "
+"session is timed out, how long it lasts until it times out and all the "
+"attributes that are attached to your session."
+msgstr ""
+"Hai, ini adalah halaman status dari SimpleSAMLphp. Disini anda dapat "
+"melihat jika session anda telah time out, berapa lama ia berlaku sampai "
+"time out dan semua attribut yang menempel pada session anda."
+
+msgid "Explain what you did when this error occurred..."
+msgstr "Jelaskan apa yang Anda lakukan ketika error ini terjadi..."
+
+msgid "An unhandled exception was thrown."
+msgstr "Exception yang tidak tertangani telah di-thrown"
+
+msgid "Invalid certificate"
+msgstr "Sertifikat invalid"
+
+msgid "Service Provider"
+msgstr "Service Provider"
+
+msgid "Incorrect username or password."
+msgstr "Username atau password salah"
+
+msgid "There is an error in the request to this page. The reason was: %REASON%"
+msgstr "Terjadi error pada request ke halaman ini. Alasannya adalah: %REASON%"
+
+msgid "E-mail address:"
+msgstr "Alamat E-mail:"
+
+msgid "Submit message"
+msgstr "Submit pesan"
+
+msgid "No RelayState"
+msgstr "Tidak ada RelayState"
+
+msgid "Error creating request"
+msgstr "Error membuat request."
+
+msgid "Locality"
+msgstr "Lokalitas"
+
+msgid "Unhandled exception"
+msgstr "Exception yang tidak tertangani"
+
+msgid "The following required fields was not found"
+msgstr "Field-field yang diperlukan wajib disisi berikut ini tidak ditemukan"
+
+msgid "Download the X509 certificates as PEM-encoded files."
+msgstr "Download sertifikat X509 sebagai file dikodekan-PEM."
+
+#, python-format
+msgid "Unable to locate metadata for %ENTITYID%"
+msgstr "Tidak dapat menemukan metadata untuk %ENTITYID%"
+
+msgid "Organizational number"
+msgstr "Nomor Organisasi"
+
+msgid "Password not set"
+msgstr "Password tidak diset"
+
+msgid "SAML 2.0 IdP Metadata"
+msgstr "Metadata SAML 2.0 IdP"
+
+msgid "Post office box"
+msgstr "PO Box"
+
+msgid ""
+"A service has requested you to authenticate yourself. Please enter your "
+"username and password in the form below."
+msgstr ""
+"Sebuah layanan telah meminta Anda untuk melakukan autentifikasi. Silahkan"
+" masukkan username dan password Anda pada form dibawah"
+
+msgid "CAS Error"
+msgstr "Error CAS"
+
+msgid ""
+"The debug information below may be of interest to the administrator / "
+"help desk:"
+msgstr "Informasi debug dibawah ini mungkin menarik bagi administrator/help desk:"
+
+msgid ""
+"Either no user with the given username could be found, or the password "
+"you gave was wrong. Please check the username and try again."
+msgstr ""
+"Username yang diberikan tidak dapat ditemukan, atau password yang Anda "
+"berikan salah. Silahkan periksa username dan coba lagi."
+
+msgid "Error"
+msgstr "Error"
+
+msgid "Next"
+msgstr "Selanjutnya"
+
+msgid "Distinguished name (DN) of the person's home organizational unit"
+msgstr "Distinguished name (DN) of the person's home organizational unit"
+
+msgid "State information lost"
+msgstr "Informasi state hilang"
+
+msgid ""
+"The password in the configuration (auth.adminpassword) is not changed "
+"from the default value. Please edit the configuration file."
+msgstr ""
+"Password di konfigurasi (auth.adminspassword) tidak berubah dari nilai "
+"default. Silahkan edit file konfigurasi."
+
+msgid "Converted metadata"
+msgstr "Metadata yang telah dikonvesi"
+
+msgid "Mail"
+msgstr "Mail"
+
+msgid "No, cancel"
+msgstr "Tidak"
+
+msgid ""
+"You have chosen <b>%HOMEORG%</b> as your home organization. If this is "
+"wrong you may choose another one."
+msgstr ""
+"Anda telah memilih  <b>%HOMEORG%</b> sebagai basis organisasi anda. Jika "
+"ini salah anda dapat memilih yang lain."
+
+msgid "Error processing request from Service Provider"
+msgstr "Error memproses request dari Service Provider"
+
+msgid "Distinguished name (DN) of person's primary Organizational Unit"
+msgstr "Distinguished name (DN) of person's primary Organizational Unit"
+
+msgid ""
+"To look at the details for an SAML entity, click on the SAML entity "
+"header."
+msgstr "Untuk melihat detail entiti SAML, klik pada bagian header entiti SAML"
+
+msgid "Enter your username and password"
+msgstr "Masukkan username dan password Anda"
+
+msgid "Login at"
+msgstr "Login di"
+
+msgid "No"
+msgstr "Tidak"
+
+msgid "Home postal address"
+msgstr "Alamat pos rumah"
+
+msgid "WS-Fed SP Demo Example"
+msgstr "Contoh Demo WS-Fed SP"
+
+msgid "SAML 2.0 Identity Provider (Remote)"
+msgstr "Identity Provider SAML 2.0 (Remote)"
+
+msgid "Error processing the Logout Request"
+msgstr "Error memproses Request Logout"
+
+msgid "Do you want to logout from all the services above?"
+msgstr "Apakah anda ingin logout dari semua layanan diatas ?"
+
+msgid "Select"
+msgstr "Pilih"
+
+msgid "The authentication was aborted by the user"
+msgstr "Autentifikasi dibatalkan oleh user"
+
+msgid "Your attributes"
+msgstr "Attribut Anda"
+
+msgid "Given name"
+msgstr "Nama"
+
+msgid "Identity assurance profile"
+msgstr "Profil penjamin identitas"
+
+msgid "SAML 2.0 SP Demo Example"
+msgstr "Contoh Demo SAML 2.0 SP"
+
+msgid "Logout information lost"
+msgstr "Informasi logout hilang"
+
+msgid "Organization name"
+msgstr "Nama organisasi"
+
+msgid "Authentication failed: the certificate your browser sent is unknown"
+msgstr "Autentifikasi gagal: sertifikat yang browser anda kirimkan tidak dikenal"
+
+msgid ""
+"You are about to send a message. Hit the submit message button to "
+"continue."
+msgstr ""
+"Anda baru saja akan mengirim sebuah pesan. Tekan tombol submit pesan "
+"untuk melanjutkan."
+
+msgid "Home organization domain name"
+msgstr "Home organization domain name"
+
+msgid "Go back to the file list"
+msgstr "Kembali ke daftar file"
+
+msgid "Error report sent"
+msgstr "Laporan error dikirimkan"
+
+msgid "Common name"
+msgstr "Common Name"
+
+msgid "Please select the identity provider where you want to authenticate:"
+msgstr "Silahkan pilih identity provider tempat anda ingin melakukan autentifikasi"
+
+msgid "Logout failed"
+msgstr "Log out gagal"
+
+msgid "Identity number assigned by public authorities"
+msgstr "Identity number assigned by public authorities"
+
+msgid "WS-Federation Identity Provider (Remote)"
+msgstr "Identity Provider WS-Federation (Remote)"
+
+msgid "Error received from Identity Provider"
+msgstr "Error diterima dari Identity Provider"
+
+msgid "LDAP Error"
+msgstr "Error LDAP"
+
+msgid ""
+"The information about the current logout operation has been lost. You "
+"should return to the service you were trying to log out from and try to "
+"log out again. This error can be caused by the logout information "
+"expiring. The logout information is stored for a limited amout of time - "
+"usually a number of hours. This is longer than any normal logout "
+"operation should take, so this error may indicate some other error with "
+"the configuration. If the problem persists, contact your service "
+"provider."
+msgstr ""
+"Informasi tentang operasi logout saat ini telah hilang. Anda harus "
+"kembali ke layanan tempat Anda mencoba logout dan mencoba melakukan "
+"proses logout kembali. Error ini dapat disebabakan oleh informasi logout "
+"yang telah kadaluarsa. Informasi logout disimpan untuk waktu yang "
+"terbatas - biasanya dalam bilangan jam. Waktu ini lebih lama dari operasi"
+" logout normal umumnya, jadi error ini mungkin mengindikasikan beberapa "
+"erro lain pada konfigurasi. Jika masalah tetap terjadi, hubungi service "
+"provider Anda."
+
+msgid "Some error occurred"
+msgstr "Beberapa error telah terjadi"
+
+msgid "Organization"
+msgstr "Organisasi"
+
+msgid "No certificate"
+msgstr "Tidak ada sertifikat"
+
+msgid "Choose home organization"
+msgstr "Pilih basis organisasi"
+
+msgid "Persistent pseudonymous ID"
+msgstr "Persistent pseudonymous ID"
+
+msgid "No SAML response provided"
+msgstr "Tidak ada response SAML yang disediakan"
+
+msgid "No errors found."
+msgstr "Tidak ada error yang ditemukan"
+
+msgid "SAML 2.0 Service Provider (Hosted)"
+msgstr "Service Provider SAML 2.0 (Hosted)"
+
+msgid "The given page was not found. The URL was: %URL%"
+msgstr "Halaman yang diminta tidak dapat ditemukan. URL nya adalah %URL%"
+
+msgid "Configuration error"
+msgstr "Error konfigurasi"
+
+msgid "Required fields"
+msgstr "Field-field yang wajib diisi"
+
+msgid "An error occurred when trying to create the SAML request."
+msgstr "Sebuah error telah terjadi ketika membuat request SAML."
+
+msgid ""
+"This error probably is due to some unexpected behaviour or to "
+"misconfiguration of SimpleSAMLphp. Contact the administrator of this "
+"login service, and send them the error message above."
+msgstr ""
+"Error ini mungkin karena perilaku yang tidak diharapakan atau konfigurasi"
+" yang salah di SimpleSAMLphp. Hubungi administrator dari layanan login "
+"ini, dan kirimkan kepada mereka pesan error diatas."
+
+#, python-format
+msgid "Your session is valid for %remaining% seconds from now."
+msgstr "Session anda valid untuk %remaining% detik dari sekarang."
+
+msgid "Domain component (DC)"
+msgstr "Domain component(DC)"
+
+msgid "Shib 1.3 Service Provider (Remote)"
+msgstr "Service Provider Shib 1.3 (Remote)"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Nickname"
+msgstr "Nama panggilan"
+
+msgid "Send error report"
+msgstr "Kirim laporan error"
+
+msgid ""
+"Authentication failed: the certificate your browser sent is invalid or "
+"cannot be read"
+msgstr ""
+"Autentifikasi gagal: Sertifikat yang browser Anda kirimkan invalid atau "
+"tidak dapat dibaca"
+
+msgid "The error report has been sent to the administrators."
+msgstr "Laporan error telah dikirimkan ke administrator"
+
+msgid "Date of birth"
+msgstr "Tanggal lahir"
+
+msgid "Private information elements"
+msgstr "Elemen-elemen informasi personal"
+
+msgid "You are also logged in on these services:"
+msgstr "Anda juga telah log out dari layanan berikut: "
+
+msgid "SimpleSAMLphp Diagnostics"
+msgstr "Diagnostik SimpleSAMLphp"
+
+msgid "Debug information"
+msgstr "Informasi debug"
+
+msgid "No, only %SP%"
+msgstr "Tidak, hanya %SP%"
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Go back to SimpleSAMLphp installation page"
+msgstr "Kembali ke halaman instalasi SimpleSAMLphp"
+
+msgid "You have successfully logged out from all services listed above."
+msgstr "Anda telah berhasil log out dari semua layanan yang tercantuh diatas."
+
+msgid "You are now successfully logged out from %SP%."
+msgstr "Sekarang anda telah sukses log out dari %SP%."
+
+msgid "Affiliation"
+msgstr "Afiliasi"
+
+msgid "You have been logged out."
+msgstr "Anda telah log out."
+
+msgid "Return to service"
+msgstr "Kembali ke layanan"
+
+msgid "Logout"
+msgstr "Logout"
+
+msgid "State information lost, and no way to restart the request"
+msgstr "Informasi state hilang, dan tidak ada cara untuk me-restat request"
+
+msgid "Error processing response from Identity Provider"
+msgstr "Error memproses response dari Identity Provider."
+
+msgid "WS-Federation Service Provider (Hosted)"
+msgstr "Servide Provider WS-Federation (Hosted)"
+
+msgid "Preferred language"
+msgstr "Pilihan Bahasa"
+
+msgid "SAML 2.0 Service Provider (Remote)"
+msgstr "Service Provider SAML 2.0 (Remote)"
+
+msgid "Surname"
+msgstr "Nama Keluaga"
+
+msgid "No access"
+msgstr "Tiaak ada akses"
+
+msgid "The following fields was not recognized"
+msgstr "Field-field berikut ini tidak dapat dikenali"
+
+msgid "Authentication error in source %AUTHSOURCE%. The reason was: %REASON%"
+msgstr "Error autentifikasi di sumber %AUTHSOURCE%. Alasannya adalah: %REASON%"
+
+msgid "Bad request received"
+msgstr "Request buruk diterima"
+
+msgid "User ID"
+msgstr "User ID"
+
+msgid "JPEG Photo"
+msgstr "Foto JPEG"
+
+msgid "Postal address"
+msgstr "Alamat pos"
+
+msgid "An error occurred when trying to process the Logout Request."
+msgstr "Sebuah error telah terjadi ketika memproses Request Logout."
+
+msgid "Sending message"
+msgstr "Mengirimpan pesan"
+
+msgid "In SAML 2.0 Metadata XML format:"
+msgstr "Dalam format XML Metadata SAML 2.0"
+
+msgid "Logging out of the following services:"
+msgstr "Log out dari layanan-layanan berikut:"
+
+msgid ""
+"When this identity provider tried to create an authentication response, "
+"an error occurred."
+msgstr ""
+"Ketika identity provider ini mencoba untuk membuat response "
+"autentifikasi, error terjadi."
+
+msgid "Could not create authentication response"
+msgstr "Tidak dapat membuat respon autentifikasi"
+
+msgid "Labeled URI"
+msgstr "Berlabel URL"
+
+msgid "SimpleSAMLphp appears to be misconfigured."
+msgstr "SimpleSAMLphp sepertinya telah salah dikonfigurasi"
+
+msgid "Shib 1.3 Identity Provider (Hosted)"
+msgstr "Identity Provider Shib 1.3 (Hosted)"
+
+msgid "Metadata"
+msgstr "Metadata"
+
+msgid "Login"
+msgstr "Login"
+
+msgid ""
+"This Identity Provider received an Authentication Request from a Service "
+"Provider, but an error occurred when trying to process the request."
+msgstr ""
+"Identity Provider ini menerima Request Autentifikasi dari sebuah Service "
+"Provider, tetapi error terjadi ketika memproses request."
+
+msgid "Yes, all services"
+msgstr "Ya, semua layanan"
+
+msgid "Logged out"
+msgstr "Log out"
+
+msgid "Postal code"
+msgstr "Kode pos"
+
+msgid "Logging out..."
+msgstr "Log out..."
+
+msgid "Metadata not found"
+msgstr "Metadata tidak ditemukan"
+
+msgid "SAML 2.0 Identity Provider (Hosted)"
+msgstr "Identity Provider SAML 2.0 (Hosted)"
+
+msgid "Primary affiliation"
+msgstr "Afiliasi utama"
+
+msgid ""
+"If you report this error, please also report this tracking number which "
+"makes it possible to locate your session in the logs available to the "
+"system administrator:"
+msgstr ""
+"Jika Anda melaporkan error ini, tolong laporkan juga nomor pelacakan "
+"sehingga memungkinkan untuk lokasi session anda pada log tersedia untuk "
+"system administrator:"
+
+msgid "XML metadata"
+msgstr "metadata XML"
+
+msgid ""
+"The parameters sent to the discovery service were not according to "
+"specifications."
+msgstr ""
+"Parameter-parameter yang dikirimkan ke layanan penemuan tidak sesuai "
+"dengan spesifikasi"
+
+msgid "Telephone number"
+msgstr "No Telepon"
+
+msgid ""
+"Unable to log out of one or more services. To ensure that all your "
+"sessions are closed, you are encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Tidak dapat log out dari satu atau beberapa layanan. Untuk memastikan "
+"semua session anda ditutup, anda disaranakan untuk <i>menutup web browser"
+" anda</i>."
+
+msgid "Bad request to discovery service"
+msgstr "Request yang buruk ke layanan penemuan"
+
+msgid "Select your identity provider"
+msgstr "Pilih identity provider anda"
+
+msgid "Entitlement regarding the service"
+msgstr "Hak mengenai layanan ini"
+
+msgid "Shib 1.3 SP Metadata"
+msgstr "Metadata Shib 1.3 SP"
+
+msgid ""
+"As you are in debug mode, you get to see the content of the message you "
+"are sending:"
+msgstr ""
+"Karena anda berada pada mode debug, anda dapat melihat isi pesan yang "
+"anda kirim:"
+
+msgid "Certificates"
+msgstr "Sertifikat"
+
+msgid "Remember"
+msgstr "Ingat"
+
+msgid "Distinguished name (DN) of person's home organization"
+msgstr "Distinguished name (DN) of person's home organization"
+
+msgid "You are about to send a message. Hit the submit message link to continue."
+msgstr ""
+"Anda baru saja akan mengirim sebuah pesan. Tekan link submit pesan untuk "
+"melanjutkan."
+
+msgid "Organizational unit"
+msgstr "Organizational unit"
+
+msgid "Authentication aborted"
+msgstr "Autentifikasi dibatalkan"
+
+msgid "Local identity number"
+msgstr "Nomor identitas lokal"
+
+msgid "Report errors"
+msgstr "Laporakan error"
+
+msgid "Page not found"
+msgstr "Halaman tidak ditemukan"
+
+msgid "Shib 1.3 IdP Metadata"
+msgstr "Metadata Shib 1.3 IdP"
+
+msgid "Change your home organization"
+msgstr "Ubah basis organisasi anda"
+
+msgid "User's password hash"
+msgstr "Hash password user"
+
+msgid ""
+"In SimpleSAMLphp flat file format - use this if you are using a "
+"SimpleSAMLphp entity on the other side:"
+msgstr ""
+"Dalam format file biasa SimpleSAMLphp - gunakan ini jika Anda menggunakan"
+" entiti SimpleSAMLphp pada sisi lain:"
+
+msgid "Yes, continue"
+msgstr "Yam lanjutkan"
+
+msgid "Completed"
+msgstr "Selesai"
+
+msgid ""
+"The Identity Provider responded with an error. (The status code in the "
+"SAML Response was not success)"
+msgstr ""
+"Identity Provider merespon dengan error. (Kode status di Response SAML "
+"adalah tidak berhasil)"
+
+msgid "Error loading metadata"
+msgstr "Error meload metadata"
+
+msgid "Select configuration file to check:"
+msgstr "Pilih file konfigurasi untuk diperiksa"
+
+msgid "On hold"
+msgstr "Ditahan"
+
+msgid "Error when communicating with the CAS server."
+msgstr "Error ketika berkomunikasi dengans server CAS."
+
+msgid "No SAML message provided"
+msgstr "Tidak pesan SAML yang disediakan"
+
+msgid "Help! I don't remember my password."
+msgstr "Tolong! Saya tidak ingat password saya"
+
+msgid ""
+"You can turn off debug mode in the global SimpleSAMLphp configuration "
+"file <tt>config/config.php</tt>."
+msgstr ""
+"Anda dapat menonaktifkan mode debuh pada file konfigurasi global "
+"simpleSAMLhphp  <tt>config/config.php</tt>."
+
+msgid "How to get help"
+msgstr "Bagaimana mendapatkan pertolongan"
+
+msgid ""
+"You accessed the SingleLogoutService interface, but did not provide a "
+"SAML LogoutRequest or LogoutResponse. Please note that this endpoint is "
+"not intended to be accessed directly."
+msgstr ""
+"Anda mengakses antarmuka SingleLogout, tetapi tidak menyediakan "
+"LogoutRequest SAML atau LogoutResponse."
+
+msgid "SimpleSAMLphp error"
+msgstr "Error simpelSAMLphp"
+
+msgid ""
+"One or more of the services you are logged into <i>do not support "
+"logout</i>. To ensure that all your sessions are closed, you are "
+"encouraged to <i>close your webbrowser</i>."
+msgstr ""
+"Satu atau beberapa layanan yang anda telah login  <i>tidak mendukung "
+"logout</i>.Untuk meyakinkan semua session anda ditutup, anda disarankan "
+"untuk <i>menutup web browser anda</i>."
+
+msgid "Organization's legal name"
+msgstr "Nama legal Organisasi"
+
+msgid "Options missing from config file"
+msgstr "Opsi-opsi uang hilang dari file konfigurasi"
+
+msgid "The following optional fields was not found"
+msgstr "Field-field opsional berikut tidak dapat ditemukan"
+
+msgid "Authentication failed: your browser did not send any certificate"
+msgstr "Autentifikasi gagal: Browser anada tidak mengirim sertifikat"
+
+msgid ""
+"This endpoint is not enabled. Check the enable options in your "
+"configuration of SimpleSAMLphp."
+msgstr ""
+"Endpoint ini tidak diaktifkan. Periksalah opsi enable pada konfigurasi "
+"SimpleSAMLphp Anda."
+
+msgid "You can <a href=\"%METAURL%\">get the metadata xml on a dedicated URL</a>:"
+msgstr ""
+"Anda dapat <a href=\"%METAURL%\">mendapatkan xml metadata pada URL "
+"tersendiri</a>:"
+
+msgid "Street"
+msgstr "Jalan"
+
+msgid ""
+"There is some misconfiguration of your SimpleSAMLphp installation. If you"
+" are the administrator of this service, you should make sure your "
+"metadata configuration is correctly setup."
+msgstr ""
+"Ada beberapa kesalahan konfigurasi pada instalasi SimpleSAMLphp Anda. "
+"Jika Anda adalah administrator dari layanan ini, Anda harus memastikan "
+"konfigurasi metdata Anda telah disetup dengan benar. "
+
+msgid "Incorrect username or password"
+msgstr "Username atau password salah"
+
+msgid "Message"
+msgstr "Pesan"
+
+msgid "Contact information:"
+msgstr "Informasi Kontak"
+
+msgid "Unknown certificate"
+msgstr "Sertifikat tidak dikenal"
+
+msgid "Legal name"
+msgstr "Nama legal"
+
+msgid "Optional fields"
+msgstr "Field-field opsional"
+
+msgid ""
+"The initiator of this request did not provide a RelayState parameter "
+"indicating where to go next."
+msgstr ""
+"Inisiator dari request ini tidak menyediakan parameter RelayState yang "
+"mengindikasikan kemana selanjutnya pergi."
+
+msgid "You have previously chosen to authenticate at"
+msgstr "Sebelumnya anda telah memilih untuk melakukan autentifikasi di "
+
+msgid ""
+"You sent something to the login page, but for some reason the password "
+"was not sent. Try again please."
+msgstr ""
+"Anda mengirimkan sesuatu ke halaman login, tetapi karena suatu alasan "
+"tertentu password tidak terkirimkan, Silahkan coba lagi."
+
+msgid "Fax number"
+msgstr "No Fax"
+
+msgid "Shibboleth demo"
+msgstr "Demo Shibboleth"
+
+msgid "Error in this metadata entry"
+msgstr "Error pada entri metadata ini"
+
+msgid "Session size: %SIZE%"
+msgstr "Ukuran session: %SIZE%"
+
+msgid "Parse"
+msgstr "Parse"
+
+msgid ""
+"Without your username and password you cannot authenticate "
+"yourself for access to the service. There may be someone that can help "
+"you. Consult the help desk at your organization!"
+msgstr ""
+"Sayang sekali! - Tanpa username dan password Anda tidak dapat melakukan "
+"autentifikasi agar dapat mengakses layanan. Mungkin ada seseorang yang "
+"dapat menolong Anda. Hubungi help desk pada universitas Anda."
+
+msgid "Metadata parser"
+msgstr "Parser metadata"
+
+msgid "Choose your home organization"
+msgstr "Pilih Basis Organisasi Anda"
+
+msgid "Send e-mail to help desk"
+msgstr "Kirim e-mail ke help dek"
+
+msgid "Metadata overview"
+msgstr "Ikhtisar Metadata"
+
+msgid "Title"
+msgstr "Gelar"
+
+msgid "Manager"
+msgstr "Manager"
+
+msgid "You did not present a valid certificate."
+msgstr "Anda tidak menyediakan sertifikat yang valid."
+
+msgid "Authentication source error"
+msgstr "Error sumber autentifikasi"
+
+msgid "Affiliation at home organization"
+msgstr "Afiliasi di organisasi asal"
+
+msgid "Help desk homepage"
+msgstr "Homepage Help desk"
+
+msgid "Configuration check"
+msgstr "Pemeriksaan konfigurasi"
+
+msgid "We did not accept the response sent from the Identity Provider."
+msgstr "Kami tidak menerima response yang dikirimlan dari Identity Provider."
+
+msgid "The given page was not found. The reason was: %REASON%  The URL was: %URL%"
+msgstr ""
+"Halaman yang diminta tidak ditemykan, Error-nya adalah: %REASON% URL-nya "
+"adalah: %URL%"
+
+msgid "Shib 1.3 Identity Provider (Remote)"
+msgstr "Identity Provider Shib 1.3 (Remote)"
+
+msgid ""
+"Here is the metadata that SimpleSAMLphp has generated for you. You may "
+"send this metadata document to trusted partners to setup a trusted "
+"federation."
+msgstr ""
+"Berikut ini adalah SimpleSAMLphp metadata yang telah digenerate untuk "
+"Anda. Anda dapat mengirim dokumen metadata ini kepada rekan yang "
+"dipercayai untuk mensetup federasi terpercaya."
+
+msgid "[Preferred choice]"
+msgstr "Pilihan yang disukai"
+
+msgid "Organizational homepage"
+msgstr "Homepage organisasi"
+
+msgid ""
+"You accessed the Assertion Consumer Service interface, but did not "
+"provide a SAML Authentication Response. Please note that this endpoint is"
+" not intended to be accessed directly."
+msgstr ""
+"Anda mengakses antarnyka Assertion Consumer Service, tetapi tidak "
+"menyediakan Response Autentifikasi SAML. "
+
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Sekarang anda sedang mengakses sistem pra-produksi. Setup autentifikasi "
+"ini untuk keperluan uji coba dan verifikasi pra-produksi"

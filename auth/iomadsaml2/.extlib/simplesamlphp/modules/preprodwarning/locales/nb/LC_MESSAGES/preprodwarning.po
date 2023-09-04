@@ -1,0 +1,47 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2016-10-12 09:23+0200\n"
+"PO-Revision-Date: 2016-10-14 12:14+0200\n"
+"Last-Translator: \n"
+"Language: nb_NO\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.3.4\n"
+
+msgid "{preprodwarning:warning:warning_header}"
+msgstr "Advarsel om at dette er et test oppsett"
+
+msgid "{preprodwarning:warning:warning}"
+msgstr ""
+"Du har nå kommet til et test-oppsett. Dette oppsettet for autentisering "
+"er kun til bruk for testing og pre-produksjon verifikasjon. Hvis noen "
+"sendte deg en link som pekte hit, og du ikke er <i>en tester</i> så fikk "
+"du nok en feil link, og <b>skulle ikke vært her</b>."
+
+msgid "{preprodwarning:warning:yes}"
+msgstr "Ja, jeg holder på å teste innlogging, og vet dette er et test-system."
+
+msgid ""
+"You are now accessing a pre-production system. This authentication setup "
+"is for testing and pre-production verification only. If someone sent you "
+"a link that pointed you here, and you are not <i>a tester</i> you "
+"probably got the wrong link, and should <b>not be here</b>."
+msgstr ""
+"Du har nå kommet til et test-oppsett. Dette oppsettet for autentisering "
+"er kun til bruk for testing og pre-produksjon verifikasjon. Hvis noen "
+"sendte deg en link som pekte hit, og du ikke er <i>en tester</i> så fikk "
+"du nok en feil link, og <b>skulle ikke vært her</b>."
+
+msgid "Warning about accessing a pre-production system"
+msgstr "Advarsel om at dette er et test oppsett"
+
+msgid "Yes, I know I am accessing a pre-production system"
+msgstr "Ja, jeg holder på å teste innlogging, og vet dette er et test-system."
+

@@ -1,0 +1,79 @@
+<div id="header">
+  <div class="wrap">
+    <div class="left">
+      <div class="v-center logo-header">
+        <div id="logo">
+        {% if header == 'SimpleSAMLphp' %}
+          <span class="simple">Simple</span>{# -#}
+          <span class="saml">SAML</span>{# -#}
+          <span class="simple">php</span>
+        {% else %}
+          {{ header }}
+        {% endif %}
+          <img class="pure-img hidden" src="" alt="{% trans %}Logo{% endtrans %}">
+        </div>
+      </div>
+    </div>
+    {% if not hideLanguageBar %}
+    <div class="right">
+      <a href="" id="menuLink" class="menu-link hide-for-large">
+        <span class="fa fa-globe fa-2x" aria-hidden="true"></span>
+      </a>
+    </div>
+    <div id="languagebar" class="hide-for-large">
+      <div id="menu">
+        <div class="pure-menu">
+          <ul class="pure-menu-list">
+          {% for key, lang in languageBar %}
+            {% if key == currentLanguage %}
+            <li><a class="pure-menu-heading" href="#">{{ lang.name }}</a><li>
+            {% else %}
+            {% if lang.url %}
+            <li class="pure-menu-item"><a href="{{ lang.url }}
+              {%- if queryParams %}&{% endif %}
+                  {%- for name, value in queryParams %}
+                    {%- if not loop.first %}&{% endif %}
+                    {%- if value %}{{ name }}={{ value }}{% else %}{{ name }}{% endif %}
+                  {%- endfor %}" class="pure-menu-link">{{ lang.name }}</a></li>
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="right show-for-large">
+      <div class="v-center language-bar">
+        <form id="language-form" class="pure-form" method="get">
+          {% if not hideLanguageBar %}
+          <div id="languagebar">
+            {% for name, value in queryParams %}
+              {% if value %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}" />
+              {% else %}
+            <input type="hidden" name="{{ name }}" />
+              {% endif %}
+            {% endfor %}
+            <select aria-label="{% trans %}Language{% endtrans %}" class="pure-input-1-4 language-menu" name="language" id="language-selector">
+            {% for key, lang in languageBar %}
+              {% if key == currentLanguage %}
+              <option value="{{ key }}" selected="selected">&#xf0ac;  {{ lang.name }}</option>
+              {% else %}
+              <option value="{{ key }}">{{ lang.name }}</option>
+              {% endif %}
+            {% endfor %}
+            </select>
+            <noscript>
+              <button type="submit" class="pure-button">
+                <i class="fa fa-arrow-right"></i>
+              </button>
+            </noscript>
+          </div>
+          {% endif %}
+        </form>
+      </div>{# language bar #}
+    </div>{# show-for-large #}
+  </div>{# wrap #}
+</div>{# header #}
+
