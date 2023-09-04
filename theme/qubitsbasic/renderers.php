@@ -24,3 +24,5 @@ defined('MOODLE_INTERNAL') || die();
 
 //require_once('renderers/course_renderer.php');
 require_once('renderers/core_renderer.php');
+require_once('renderers/mod_quiz_edit_renderer.php');
+
