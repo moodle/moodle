@@ -948,6 +948,9 @@ button.close:focus,
   @include breakpoint(xs) {
     font-size: 16px;
   }
+  @include breakpoint(md) {
+    font-size: 15px;
+  }
 }
 .breadcrumb-item + .breadcrumb-item::before {
   font-size: 14px;
@@ -1096,4 +1099,12 @@ a:not([class]):focus,
 }
 .pagetitle-left-alignment .breadcrumb-item + .breadcrumb-item {
   padding: 0;
+}
+@media screen and (min-width: 760px) and (max-width: 930px) {
+  #user-menu-toggle > span > span > span:nth-child(2) {
+    display: none;
+  }
+  .editmode-switch-form label {
+    display: none;
+  }
 }
