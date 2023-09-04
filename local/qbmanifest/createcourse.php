@@ -232,8 +232,8 @@ class local_qbcourse extends external_api {
             }
            }
 
-           if(isset($sections[$s]->teacheronly))
-            self::setvisibility($cid,$sections[$s]->teacheronly,trim($sections[$s]->uid));
+         /*  if(isset($sections[$s]->teacheronly))
+            self::setvisibility($cid,$sections[$s]->teacheronly,trim($sections[$s]->uid)); */
            
         }
 
@@ -333,6 +333,8 @@ class local_qbcourse extends external_api {
                             $DB->set_field('qubitspage', 'content', '<p>/</p>', array('uid' => $activities[$a]->uid));
                             else
                             $DB->set_field('qubitspage', 'content', $activities[$a]->content, array('uid' => $activities[$a]->uid));
+
+                            
                         }
                         else{
 
@@ -370,7 +372,7 @@ class local_qbcourse extends external_api {
                  if($acts != ''){     
                     if($sec->sequence != '')               
                     $acts = $sec->sequence.$acts;
-                    else
+                    else 
                     $acts = preg_replace('/,/', '', $acts, 1);
                     $DB->set_field('course_sections', 'sequence', $acts, array('id' => $sec->id));
                 }
