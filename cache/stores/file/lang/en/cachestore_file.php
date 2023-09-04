@@ -40,6 +40,8 @@ $string['pluginname'] = 'File cache';
 $string['privacy:metadata'] = 'The File cache cachestore plugin stores data briefly as part of its caching functionality but this data is regularly cleared.';
 $string['prescan'] = 'Prescan directory';
 $string['prescan_help'] = 'If enabled the directory is scanned when the cache is first used and requests for files are first checked against the scan data. This can help if you have a slow file system and are finding that file operations are causing you a bottle neck.';
+$string['serializer_igbinary'] = 'The igbinary serializer.';
+$string['serializer_php'] = 'The default PHP serializer.';
 $string['singledirectory'] = 'Single directory store';
 $string['singledirectory_help'] = 'If enabled files (cached items) will be stored in a single directory rather than being broken up into multiple directories.
 
@@ -50,6 +52,9 @@ It is advisable to only turn this on if the following is true:
 * If you know the number of items in the cache is going to be small enough that it won\'t cause issues on the file system you are running with.
 * The data being cached is not expensive to generate. If it is then sticking with the default may still be the better option as it reduces the chance of issues.';
 $string['task_asyncpurge'] = 'Asynchronously purge file store old cache revision directories';
+$string['useserializer'] = 'Use serializer';
+$string['useserializer_help'] = 'Specifies the serializer to use for serializing.
+If available the igbinary serializer can reduce the storage requirements for large caches, this is supported only when the igbinary extension is loaded.';
 
 /**
  * This is is like the file store, but designed for siutations where:

@@ -53,5 +53,11 @@ class cachestore_file_addinstance_form extends cachestore_addinstance_form {
         $form->setDefault('lockwait', 60);
         $form->setType('lockwait', PARAM_INT);
         $form->addHelpButton('lockwait', 'lockwait', 'cachestore_file');
+
+        $serializeroptions = cachestore_file::config_get_serializer_options();
+        $form->addElement('select', 'serializer', get_string('useserializer', 'cachestore_file'), $serializeroptions);
+        $form->setDefault('serializer', cachestore_file::SERIALIZER_PHP);
+        $form->setType('serializer', PARAM_ALPHA);
+        $form->addHelpButton('serializer', 'useserializer', 'cachestore_file');
     }
 }
