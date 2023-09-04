@@ -28,6 +28,7 @@ import * as Fragment from 'core/fragment';
 import * as Templates from 'core/templates';
 import * as FormChangeChecker from 'core_form/changechecker';
 import {call as fetchMany} from 'core/ajax';
+import Pending from 'core/pending';
 
 const SELECTORS = {
     EXISTING_CATEGORY_CONTAINER: '[data-region="existing-category-container"]',
@@ -318,6 +319,8 @@ export default class ModalAddRandomQuestion extends Modal {
         newcategory,
         parentcategory
     ) {
+        // We do not need to resolve this Pending because the form submission will result in a page redirect.
+        new Pending('mod-quiz/modal_add_random_questions');
         const call = {
             methodname: 'mod_quiz_add_random_questions',
             args: {
