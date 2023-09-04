@@ -60,12 +60,25 @@
 }
 .qicon-menu:before {
   content: "\e90b";
+  @include breakpoint(xs) {
+    margin-right: 0;
+  }
 }
 .qicon-my-courses:before {
   content: "\e90c";
 }
 .qicon-tick-mark:before {
   content: "\e90d";
+}
+.qicon-icon-back:before {
+  content: "\e910";
+  color: #b3b3b3;
+  @include breakpoint(xs) {
+    display: none;
+  }
+  @include breakpoint(sm) {
+    display: none;
+  }
 }
 .popover-region .popover-region-toggle .qicon-notifications {
   color: #9e9ea2;
@@ -948,6 +961,9 @@ button.close:focus,
   @include breakpoint(xs) {
     font-size: 16px;
   }
+  @include breakpoint(sm) {
+    font-size: 15px;
+  }
   @include breakpoint(md) {
     font-size: 15px;
   }
@@ -1106,5 +1122,14 @@ a:not([class]):focus,
   }
   .editmode-switch-form label {
     display: none;
+  }
+}
+@media screen and (max-width: 767px) {
+  .pagetitle-left-alignment .breadcrumb:not(:empty) {
+    flex-wrap: wrap;
+    padding: 0;
+  }
+  .pagetitle-left-alignment .breadcrumb:not(:empty) .breadcrumb-item {
+    padding: 0;
   }
 }
