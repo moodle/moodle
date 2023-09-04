@@ -846,6 +846,12 @@ EOF;
             }
 
             $enroldata = $entity->get_enrolment_data();
+			
+			if($moodleroleid == 3){
+				$uudata = $DB->get_record('user', ['id' => $moodleuserid]);
+				$uudata->auth = 'classlink';
+				$DB->update_record('user', $uudata);
+			}
 
             if ($existing = $DB->get_record('user_enrolments', ['userid' => $moodleuserid, 'enrolid' => $instance->id])) {
                 $enrolmentkeys = [
