@@ -1111,10 +1111,15 @@ class view {
         [$categoryid, $contextid] = category_condition::validate_category_param($this->pagevars['cat']);
         $catcontext = \context::instance_by_id($contextid);
 
-        $canadd = has_capability('moodle/question:add', $catcontext);
-
-        $category = category_condition::get_category_record($categoryid, $contextid);
-        $this->create_new_question_form($category, $canadd);
+        echo \html_writer::start_tag(
+            'div',
+            [
+                'id' => 'questionscontainer',
+                'data-component' => $this->component,
+                'data-callback' => $this->callback,
+                'data-contextid' => $this->get_most_specific_context()->id,
+            ]
+        );
 
         $this->build_query();
         $questionsrs = $this->load_page_questions();
@@ -1134,7 +1139,7 @@ class view {
         echo \html_writer::input_hidden_params($this->baseurl);
 
         echo \html_writer::start_tag('div',
-            ['class' => 'categoryquestionscontainer', 'id' => 'questionscontainer']);
+            ['class' => 'categoryquestionscontainer']);
         if ($totalquestions > 0) {
             // Bulk load any required statistics.
             $this->load_required_statistics($questions);
@@ -1151,6 +1156,7 @@ class view {
 
         echo \html_writer::end_tag('fieldset');
         echo \html_writer::end_tag('form');
+        echo \html_writer::end_tag('div');
     }
 
     /**

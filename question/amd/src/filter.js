@@ -86,8 +86,6 @@ export const init = (
         filterCondition.sortData = JSON.parse(defaultSort);
     }
 
-    let filterQuery = '';
-
     /**
      * Retrieve table data.
      *
@@ -116,7 +114,6 @@ export const init = (
             cmid: cmid,
             filtercondition: JSON.stringify(filterCondition),
             extraparams: extraparams,
-            filterquery: filterQuery,
             lastchanged: document.querySelector(SELECTORS.LASTCHANGED_FIELD)?.value ?? null
         };
         Fragment.loadFragment(component, callback, contextId, viewData)
@@ -154,13 +151,6 @@ export const init = (
         const filterQuery = JSON.stringify(filters);
         url.searchParams.set('filter', filterQuery);
         history.pushState(filters, '', url);
-        document.querySelectorAll(SELECTORS.BULK_ACTIONS).forEach(bulkAction => {
-            const actionUrl = new URL(bulkAction.formAction);
-            const returnUrl = new URL(actionUrl.searchParams.get('returnurl'));
-            returnUrl.searchParams.set('filter', filterQuery);
-            actionUrl.searchParams.set('returnurl', returnUrl);
-            bulkAction.formAction = actionUrl;
-        });
         const editSwitch = document.querySelector(SELECTORS.EDIT_SWITCH);
         if (editSwitch) {
             const editSwitchUrlInput = document.querySelector(SELECTORS.EDIT_SWITCH_URL);

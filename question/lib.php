@@ -138,8 +138,8 @@ function core_question_output_fragment_question_data(array $args): string {
     } else {
         $thispageurl->param('courseid', $params['courseid']);
     }
-    if (!empty($args['filterquery'])) {
-        $thispageurl->param('filter', $args['filterquery']);
+    if (!empty($args['filtercondition'])) {
+        $thispageurl->param('filter', $args['filtercondition']);
     }
     if (!empty($args['lastchanged'])) {
         $thispageurl->param('lastchanged', $args['lastchanged']);
@@ -150,5 +150,8 @@ function core_question_output_fragment_question_data(array $args): string {
         }
     }
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
-    return $questionbank->display_questions_table();
+    $questionbank->add_standard_search_conditions();
+    ob_start();
+    $questionbank->display_question_list();
+    return ob_get_clean();
 }
