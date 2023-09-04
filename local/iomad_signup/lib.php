@@ -87,8 +87,12 @@ function local_iomad_signup_user_created($user) {
             foreach ($defaults as $index => $value) {
                 $user->$index = $value;
             }
-	    $DB->update_record('user', $user);
+
+            $DB->update_record('user', $user);
             profile_save_data($user);
+
+            // Force the company theme in case it's not already been done.
+            $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
         } else if (!empty($CFG->local_iomad_signup_company)) {
             // Do we have a company to assign?
             // Get company.
@@ -108,12 +112,13 @@ function local_iomad_signup_user_created($user) {
             foreach ($defaults as $index => $value) {
                 $user->$index = $value;
             }
-	    $DB->update_record('user', $user);
-            profile_save_data($user);
-        }
 
-        // Force the company theme in case it's not already been done.
-        $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
+	        $DB->update_record('user', $user);
+            profile_save_data($user);
+
+            // Force the company theme in case it's not already been done.
+            $DB->set_field('user', 'theme', $company->get_theme(), array('id' => $user->id));
+        }
 
         // Do we have a role to assign?
         if (!empty($CFG->local_iomad_signup_role)) {
