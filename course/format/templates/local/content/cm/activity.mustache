@@ -88,7 +88,7 @@
     {{/hasname}}
 
     {{! Dates }}
-    {{#activityinfo}}
+    {{#dates}}
         {{#hasdates}}
             <div data-region="activity-dates" class="activity-dates mr-sm-2">
                 {{#activitydates}}
@@ -98,7 +98,7 @@
                 {{/activitydates}}
             </div>
         {{/hasdates}}
-    {{/activityinfo}}
+    {{/dates}}
 
     {{! Visibility }}
     {{$ core_courseformat/local/content/cm/badges }}
@@ -118,7 +118,7 @@
     {{/groupmodeinfo}}
 
     {{! Completion }}
-    {{#activityinfo}}
+    {{#completion}}
         {{#hascompletion}}
             <div class="activity-completion align-self-start mr-sm-2">
                 {{$ core_courseformat/local/content/cm/activity_info}}
@@ -126,7 +126,7 @@
                 {{/ core_courseformat/local/content/cm/activity_info}}
             </div>
         {{/hascompletion}}
-    {{/activityinfo}}
+    {{/completion}}
 
     {{! Action menu }}
     {{#controlmenu}}
