@@ -29,5 +29,5 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['thisdirection'] = 'ltr';
+$string['thisdirection'] = 'слева направо';
 $string['thislanguage'] = 'Русский';
