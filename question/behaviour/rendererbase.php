@@ -234,14 +234,15 @@ abstract class qbehaviour_renderer extends plugin_renderer_base {
             'type' => 'submit',
             'id' => $qa->get_behaviour_field_name('submit'),
             'name' => $qa->get_behaviour_field_name('submit'),
-            'value' => get_string('check', 'question'),
+            'value' => 1,
             'class' => 'submit btn btn-secondary',
             'data-savescrollposition' => 'true',
         );
         if ($options->readonly) {
             $attributes['disabled'] = 'disabled';
         }
-        $output = html_writer::empty_tag('input', $attributes);
+        $output = html_writer::tag('button',
+            $options->add_question_identifier_to_label(get_string('check', 'question'), true), $attributes);
         if (!$options->readonly) {
             $this->page->requires->js_call_amd('core_question/question_engine', 'initSubmitButton', [$attributes['id']]);
         }
