@@ -436,7 +436,7 @@ All rights reserved.</copyright>
     <location>lti1p3</location>
     <name>LTI 1.3 Tool Library</name>
     <description>A library used for building IMS-certified LTI 1.3 tool providers in PHP.</description>
-    <version>5.2.6</version>
+    <version>5.4.1</version>
     <license>Apache</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/packbackbooks/lti-1-3-php-library</repository>
