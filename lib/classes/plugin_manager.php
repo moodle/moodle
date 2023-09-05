@@ -2044,6 +2044,7 @@ class core_plugin_manager {
                 'link',
                 'html',
                 'noautolink',
+                'premium',
             ],
 
             'theme' => array(
