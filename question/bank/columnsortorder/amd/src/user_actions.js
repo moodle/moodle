@@ -349,7 +349,7 @@ const reorderColumns = event => {
  * column sorting, then enable the move and resize modals to be triggered from menu actions.
  */
 export const init = async() => {
-    const uiRoot = document.querySelector('.questionbankwindow');
+    const uiRoot = document.getElementById('questionscontainer');
     await addHandleContainers(uiRoot);
     setUpMoveHandles(uiRoot.querySelectorAll(SELECTORS.moveAction));
     setUpResizeHandles(uiRoot);
@@ -364,4 +364,5 @@ export const init = async() => {
     });
     setUpMoveActions(uiRoot);
     setUpResizeActions(uiRoot);
+    actions.setupActionButtons(uiRoot);
 };

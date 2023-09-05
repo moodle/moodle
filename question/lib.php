@@ -117,39 +117,33 @@ function core_question_output_fragment_tags_form($args) {
  * @return array|string
  */
 function core_question_output_fragment_question_data(array $args): string {
-    global $PAGE;
     if (empty($args)) {
         return '';
     }
     [$params, $extraparams] = \core_question\local\bank\filter_condition_manager::extract_parameters_from_fragment_args($args);
-    $thiscontext = \context_course::instance($params['courseid']);
-    $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
-    $contexts->require_one_edit_tab_cap($params['tabname']);
-    $course = get_course($params['courseid']);
+    [
+        $thispageurl,
+        $contexts,
+        ,
+        $cm,
+        ,
+        $pagevars
+    ] = question_build_edit_resources('questions', '/question/edit.php', $params);
+
+    if (is_null($cm)) {
+        $course = get_course(clean_param($args['courseid'], PARAM_INT));
+    } else {
+        $course = get_course($cm->course);
+    }
 
     $viewclass = empty($args['view']) ? \core_question\local\bank\view::class : clean_param($args['view'], PARAM_NOTAGS);
-    $cmid = clean_param($args['cmid'], PARAM_INT);
-    [, $cm] = empty($cmid) ? [null, null] : get_module_from_cmid($cmid);
 
-    $nodeparent = $PAGE->settingsnav->find('questionbank', \navigation_node::TYPE_CONTAINER);
-    $thispageurl = new \moodle_url($nodeparent->action);
-    if ($cm) {
-        $thispageurl->param('cmid', $cm->id);
-    } else {
-        $thispageurl->param('courseid', $params['courseid']);
-    }
-    if (!empty($args['filtercondition'])) {
-        $thispageurl->param('filter', $args['filtercondition']);
-    }
     if (!empty($args['lastchanged'])) {
-        $thispageurl->param('lastchanged', $args['lastchanged']);
+        $thispageurl->param('lastchanged', clean_param($args['lastchanged'], PARAM_INT));
     }
-    if (!empty($params['sortdata'])) {
-        foreach ($params['sortdata'] as $sortname => $sortorder) {
-            $thispageurl->param('sortdata[' . $sortname . ']', $sortorder);
-        }
-    }
-    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+    // This is highly suspicious, but it is the same approach taken in /question/edit.php. See MDL-79281.
+    $thispageurl->param('deleteall', 1);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
     $questionbank->add_standard_search_conditions();
     ob_start();
     $questionbank->display_question_list();

@@ -70,7 +70,9 @@ export const init = (
 
     const filterSet = document.querySelector(`#${filterRegionId}`);
 
-    const filterCondition = {
+    const viewData = {
+        view: view,
+        cmid: cmid,
         cat: defaultcategoryid,
         courseid: defaultcourseid,
         filter: {},
@@ -78,12 +80,14 @@ export const init = (
         qpage: 0,
         qperpage: perpage,
         sortdata: {},
-        tabname: 'questions',
+        extraparams: extraparams,
+        lastchanged: document.querySelector(SELECTORS.LASTCHANGED_FIELD)?.value ?? null,
     };
 
+    let sortData = {};
     const defaultSort = document.querySelector(SELECTORS.QUESTION_TABLE)?.dataset?.defaultsort;
     if (defaultSort) {
-        filterCondition.sortData = JSON.parse(defaultSort);
+        sortData = JSON.parse(defaultSort);
     }
 
     /**
@@ -97,25 +101,20 @@ export const init = (
         // use the default category filter condition.
         if (filterdata) {
             // Main join types.
-            filterCondition.jointype = parseInt(filterSet.dataset.filterverb, 10);
+            viewData.jointype = parseInt(filterSet.dataset.filterverb, 10);
             delete filterdata.jointype;
             // Retrieve filter info.
-            filterCondition.filter = filterdata;
+            viewData.filter = filterdata;
             if (Object.keys(filterdata).length !== 0) {
-                if (!isNaN(filterCondition.jointype)) {
-                    filterdata.jointype = filterCondition.jointype;
+                if (!isNaN(viewData.jointype)) {
+                    filterdata.jointype = viewData.jointype;
                 }
                 updateUrlParams(filterdata);
             }
         }
         // Load questions for first page.
-        const viewData = {
-            view: view,
-            cmid: cmid,
-            filtercondition: JSON.stringify(filterCondition),
-            extraparams: extraparams,
-            lastchanged: document.querySelector(SELECTORS.LASTCHANGED_FIELD)?.value ?? null
-        };
+        viewData.filter = JSON.stringify(filterdata);
+        viewData.sortdata = JSON.stringify(sortData);
         Fragment.loadFragment(component, callback, contextId, viewData)
             // Render questions for first page and pagination.
             .then((questionhtml, jsfooter) => {
@@ -126,7 +125,7 @@ export const init = (
                 if (jsfooter === undefined) {
                     jsfooter = '';
                 }
-                Templates.replaceNodeContents(questionscontainer, questionhtml, jsfooter);
+                Templates.replaceNode(questionscontainer, questionhtml, jsfooter);
                 // Resolve filter promise.
                 if (pendingPromise) {
                     pendingPromise.resolve();
@@ -187,15 +186,15 @@ export const init = (
         const clearLink = e.target.closest(Selectors.filterset.actions.resetFilters);
         if (sortableLink) {
             e.preventDefault();
-            const oldSort = filterCondition.sortdata;
-            filterCondition.sortdata = {};
-            filterCondition.sortdata[sortableLink.dataset.sortname] = sortableLink.dataset.sortorder;
+            const oldSort = sortData;
+            sortData = {};
+            sortData[sortableLink.dataset.sortname] = sortableLink.dataset.sortorder;
             for (const sortname in oldSort) {
                 if (sortname !== sortableLink.dataset.sortname) {
-                    filterCondition.sortdata[sortname] = oldSort[sortname];
+                    sortData[sortname] = oldSort[sortname];
                 }
             }
-            filterCondition.qpage = 0;
+            viewData.qpage = 0;
             coreFilter.updateTableFromFilter();
         }
         if (paginationLink) {
@@ -203,7 +202,7 @@ export const init = (
             const paginationURL = new URL(paginationLink.getAttribute("href"));
             const qpage = paginationURL.searchParams.get('qpage');
             if (paginationURL.search !== null) {
-                filterCondition.qpage = qpage;
+                viewData.qpage = qpage;
                 coreFilter.updateTableFromFilter();
             }
         }

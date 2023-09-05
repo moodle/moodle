@@ -59,7 +59,7 @@ class column_action_remove extends column_action_base {
             'column' => $column->get_column_id(),
             'action' => 'remove',
             'sesskey' => sesskey(),
-            'returnurl' => $this->qbank->returnurl,
+            'returnurl' => new \moodle_url($this->qbank->returnurl),
         ]);
         if ($this->global) {
             $actionurl->param('global', $this->global);

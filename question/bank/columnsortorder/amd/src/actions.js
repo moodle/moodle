@@ -109,8 +109,26 @@ export const setupActionButtons = (uiRoot, global = false) => {
                 ]);
             }
             const fragmentData = uiRoot.dataset;
+            const actionUrl = new URL(actionLink.href);
+            const returnUrl = new URL(actionUrl.searchParams.get('returnurl').replaceAll('&amp;', '&'));
+            const viewData = {};
+            const sortData = {};
+            if (returnUrl) {
+                returnUrl.searchParams.forEach((value, key) => {
+                    // Match keys like 'sortdata[fieldname]' and convert them to an array,
+                    // because the fragment API doesn't like non-alphanum argument keys.
+                    const sortItem = key.match(/sortdata\[([^\]]+)\]/);
+                    if (sortItem) {
+                        // The item returned by sortItem.pop() is the contents of the matching group, the field name.
+                        sortData[sortItem.pop()] = value;
+                    } else {
+                        viewData[key] = value;
+                    }
+                });
+            }
+            viewData.sortdata = JSON.stringify(sortData);
             // We have to use then() there, as loadFragment doesn't appear to work with await.
-            Fragment.loadFragment(fragmentData.component, fragmentData.callback, fragmentData.contextid)
+            Fragment.loadFragment(fragmentData.component, fragmentData.callback, fragmentData.contextid, viewData)
                 .then((html, js) => {
                     return Templates.replaceNode(uiRoot, html, js);
                 })
