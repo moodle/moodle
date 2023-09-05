@@ -17,6 +17,7 @@
 namespace qbank_viewquestiontext;
 
 use core_question\local\bank\row_base;
+use qbank_viewquestiontext\output\question_text_format;
 use question_utils;
 
 /**
@@ -29,8 +30,8 @@ use question_utils;
  */
 class question_text_row extends row_base {
 
-    /** @var bool if true, we will show the question text reduced to plain text, else it is fully rendered. */
-    protected $plain;
+    /** @var int if true, we will show the question text reduced to plain text, else it is fully rendered. */
+    protected $preference;
 
     /** @var \stdClass $formatoptions options used when displaying the question text as HTML. */
     protected $formatoptions;
@@ -38,8 +39,7 @@ class question_text_row extends row_base {
     protected function init(): void {
 
         // Cannot use $this->get_preference because of PHP type hints.
-        $preference = question_get_display_preference($this->get_preference_key(), 0, PARAM_INT, new \moodle_url(''));
-        $this->plain = 1 === (int) $preference;
+        $this->preference = (int)question_get_display_preference($this->get_preference_key(), 0, PARAM_INT, new \moodle_url(''));
         $this->formatoptions = new \stdClass();
         $this->formatoptions->noclean = true;
         $this->formatoptions->para = false;
@@ -55,14 +55,12 @@ class question_text_row extends row_base {
 
     protected function display_content($question, $rowclasses): void {
         // Access 'showtext' filter from pagevars.
-        $display = $this->qbank->get_pagevars('filter')['showtext'] ?? null;
-        if ($display) {
-            $showtext = (int)$display['values'][0];
+        if ($this->preference !== question_text_format::OFF) {
             $text = '';
-            if ($showtext === questiontext_condition::PLAIN) {
+            if ($this->preference === question_text_format::PLAIN) {
                 $text = question_utils::to_plain_text($question->questiontext,
                         $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
-            } else if ($showtext === questiontext_condition::FULL) {
+            } else if ($this->preference === question_text_format::FULL) {
                 $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
                         $question->contextid, 'question', 'questiontext', $question->id,
                         $question->contextid, 'core_question');

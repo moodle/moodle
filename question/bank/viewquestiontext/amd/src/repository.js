@@ -1,4 +1,3 @@
-<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,17 +14,28 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Version information for qbank_viewquestiontext.
+ * External function calls for qbank_columnsortorder
  *
- * @package    qbank_viewquestiontext
- * @copyright  2021 Catalyst IT Australia Pty Ltd
- * @author     Safat Shahin <safatshahin@catalyst-au.net>
+ * @module     qbank_viewquestiontext/repository
+ * @copyright  2023 Catalyst IT Europe Ltd.
+ * @author     Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+import {call as fetchMany} from 'core/ajax';
 
-$plugin->component = 'qbank_viewquestiontext';
-$plugin->version   = 2023042401;
-$plugin->requires  = 2023041800;
-$plugin->maturity  = MATURITY_STABLE;
+/**
+ * Set the question text format.
+ *
+ * @param {Number} format The question text format.
+ * @return {Promise}
+ */
+export const setQuestionTextFormat = (format) => {
+    const responses = fetchMany([{
+        methodname: 'qbank_viewquestiontext_set_question_text_format',
+        args: {
+            format
+        },
+    }]);
+    return responses[0];
+};

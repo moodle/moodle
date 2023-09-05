@@ -391,11 +391,6 @@ class view {
             'core_question\local\bank\edit_menu_column' . column_base::ID_SEPARATOR . 'edit_menu_column',
         ];
 
-        if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
-            $corequestionbankcolumns[] = 'qbank_viewquestiontext\question_text_row' . column_base::ID_SEPARATOR .
-                'question_text_row';
-        }
-
         foreach ($corequestionbankcolumns as $columnid) {
             [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
             if (class_exists($columnclass)) {

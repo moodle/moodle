@@ -1,3 +1,4 @@
+<?php
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -14,15 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Filter managing question text display.
+ * qbank_viewquestiontext external functions and service definitions.
  *
- * @module     qbank_viewquestiontext/datafilter/filtertypes/showtext
- * @author     2022 Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
- * @copyright  2022 Catalyst IT Australia Pty Ltd
+ * @package    qbank_viewquestiontext
+ * @category   webservice
+ * @copyright  2023 Catalyst IT Europe Ltd
+ * @author     Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import GenericFilter from 'core/datafilter/filtertype';
+defined('MOODLE_INTERNAL') || die();
 
-export default class extends GenericFilter {
-}
+$functions = [
+    'qbank_viewquestiontext_set_question_text_format' => [
+        'classname' => 'qbank_viewquestiontext\external\set_question_text_format',
+        'description' => 'Sets the preference for displaying and formatting the question text',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];
