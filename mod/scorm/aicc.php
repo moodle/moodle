@@ -405,7 +405,7 @@ if (!empty($command)) {
                             $track->scoid = $sco->id;
                             $track->element = scorm_get_elementid('cmi.core.total_time');
                             $track->value = $scormsession->sessiontime;
-                            $atobject = scorm_get_attempt($userid, $scormsession->scormid, $attempt);
+                            $atobject = scorm_get_attempt($aiccuser->id, $scormsession->scormid, $attempt);
                             $track->attempt = $atobject->id;
                             $track->timemodified = time();
                             $id = $DB->insert_record('scorm_scoes_value', $track);
