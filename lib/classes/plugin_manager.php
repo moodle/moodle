@@ -1871,6 +1871,11 @@ class core_plugin_manager {
                 'paypal', 'self', 'fee',
             ),
 
+            'factor' => [
+                'admin', 'auth', 'capability', 'cohort',  'email', 'grace', 'iprange', 'nosetup', 'role',
+                'token', 'totp', 'webauthn',
+            ],
+
             'filter' => array(
                 'activitynames', 'algebra', 'emailprotect',
                 'emoticon', 'displayh5p', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
