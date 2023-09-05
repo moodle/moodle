@@ -256,7 +256,7 @@ if (!empty($data)) {
                 echo html_writer::tag('p', get_string('deletedtrackentry', 'block_iomad_company_admin', $rowid));
             }
             echo $OUTPUT->single_button(new moodle_url('/local/report_completion/index.php',
-                                     array('userid' => $userid)), get_string('continue'));
+                                     $params + array('userid' => $userid)), get_string('continue'));
             echo $OUTPUT->footer();
             die;
         } else {
