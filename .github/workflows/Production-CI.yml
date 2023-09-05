@@ -17,13 +17,13 @@ jobs:
       - name: Checkout the files
         uses: actions/checkout@v2
 
-      - name: Deploy to Server 1
+      - name: Deploy to Server
         uses: easingthemes/ssh-deploy@main
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.STAGING_EC2_SSH_KEY }}
-          REMOTE_HOST: ${{ secrets.STAGING_HOST_DNS }}
-          REMOTE_USER: ${{ secrets.STAGING_USERNAME }}
-          TARGET: ${{ secrets.STAGING_TARGET_DIR }}
+          SSH_PRIVATE_KEY: ${{ secrets.PRODUCTION_EC2_SSH_KEY }}
+          REMOTE_HOST: ${{ secrets.PRODUCTION_HOST_DNS }}
+          REMOTE_USER: ${{ secrets.PRODUCTION_USERNAME }}
+          TARGET: ${{ secrets.PRODUCTION_TARGET_DIR }}
 
       - name: PR Status
         if: github.event.pull_request.merged == true
