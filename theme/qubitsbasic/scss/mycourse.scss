@@ -122,6 +122,9 @@
   @include breakpoint(xs) {
     margin: 0;
   }
+  @include breakpoint(sm) {
+    margin: 0;
+  }
 }
 .closebar-left-alignment {
   margin-left: 80px;
@@ -129,6 +132,9 @@
   justify-content: center;
   align-items: center;
   @include breakpoint(xs) {
+    margin: 0;
+  }
+  @include breakpoint(sm) {
     margin: 0;
   }
 }
@@ -260,6 +266,9 @@
     @include breakpoint(xs) {
       font-size: $fontsize46;
     }
+    @include breakpoint(sm) {
+      font-size: $fontsize46;
+    }
     @include breakpoint(md) {
       font-size: $fontsize46;
     }
@@ -276,6 +285,11 @@
     margin-top: 83px;
     position: initial;
   }
+  @include breakpoint(sm) {
+    width: 100%;
+    margin-top: 83px;
+    position: initial;
+  }
 }
 .qicon-menu {
   display: none;
@@ -285,6 +299,9 @@
 
 .max-width {
   @include breakpoint(xs) {
+    max-width: 90%;
+  }
+  @include breakpoint(sm) {
     max-width: 90%;
   }
   @include breakpoint(md) {
@@ -959,7 +976,7 @@ button.close:focus,
   font-weight: 600;
 
   @include breakpoint(xs) {
-    font-size: 16px;
+    font-size: 15px;
   }
   @include breakpoint(sm) {
     font-size: 15px;
@@ -1004,6 +1021,9 @@ ol {
   padding: 0;
   // margin-top: 0px;
   @include breakpoint(xs) {
+    padding: 0.75rem;
+  }
+  @include breakpoint(sm) {
     padding: 0.75rem;
   }
 }
@@ -1115,6 +1135,11 @@ a:not([class]):focus,
 }
 .pagetitle-left-alignment .breadcrumb-item + .breadcrumb-item {
   padding: 0;
+}
+#user-menu-toggle > span > span > span:nth-child(2) {
+  @include breakpoint(sm) {
+    display: none;
+  }
 }
 @media screen and (min-width: 760px) and (max-width: 930px) {
   #user-menu-toggle > span > span > span:nth-child(2) {
