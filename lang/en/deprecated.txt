@@ -95,3 +95,4 @@ makeavailablecmtitle,core
 dateintervaldayshoursmins,core_langconfig
 completiondefault,core_completion
 configcompletiondefault,core_completion
+aria:courseimage,core_course
