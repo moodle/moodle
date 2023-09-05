@@ -26,6 +26,7 @@ namespace block_iomad_commerce\forms;
 use \moodleform;
 use \context_system;
 use \block_iomad_commerce\helper;
+use lang_string;
 
 class product_edit_form extends moodleform {
 
@@ -36,7 +37,7 @@ class product_edit_form extends moodleform {
     protected $currency = '';
     protected $priceblocks = null;
 
-    public function __construct($actionurl, $isadding, $shopsettingsid, $courses = [], $priceblocks, $editoroptions) {
+    public function __construct($actionurl, $isadding, $shopsettingsid, $courses = [], $priceblocks = null, $editoroptions = []) {
         global $CFG;
 
         $this->isadding = $isadding;
@@ -46,11 +47,18 @@ class product_edit_form extends moodleform {
         $this->context = context_system::instance();
         $this->editoroptions = $editoroptions;
 
-        if (!empty($CFG->commerce_admin_currency)) {
-            $this->currency = get_string($CFG->commerce_admin_currency, 'core_currencies');
-        } else {
-            $this->currency = get_string('GBP', 'core_currencies');
+        // Get the supported currencies.
+        $codes = \core_payment\helper::get_supported_currencies();
+
+        $currencies = [];
+        foreach ($codes as $c) {
+            $currencies[$c] = new lang_string($c, 'core_currencies');
         }
+
+        uasort($currencies, function($a, $b) {
+            return strcmp($a, $b);
+        });
+        $this->currencies = $currencies;
 
         parent::__construct($actionurl);
     }
@@ -68,8 +76,6 @@ class product_edit_form extends moodleform {
         $mform->setType('id', PARAM_INT);
         $mform->addElement('hidden', 'default');
         $mform->setType('default', PARAM_BOOL);
-        $mform->addElement('hidden', 'currency', $this->currency);
-        $mform->setType('currency', PARAM_TEXT);
         $mform->addElement('hidden', 'deletedBlockPrices', 0);
         $mform->setType('deletedBlockPrices', PARAM_INT);
 
@@ -122,6 +128,7 @@ class product_edit_form extends moodleform {
             $mform->addHelpButton('clearonexpire', 'clearonexpire', 'block_iomad_company_admin');
             $mform->disabledIf('clearonexpire', 'cutoffdate[enabled]');
 
+            $mform->addElement('select', 'currency', get_string('currency'), $this->currencies);
 
             $mform->addElement('header', 'header', get_string('single_purchase', 'block_iomad_commerce'));
 
@@ -129,7 +136,7 @@ class product_edit_form extends moodleform {
             $mform->addHelpButton('allow_single_purchase', 'allow_single_purchase', 'block_iomad_commerce');
 
             $mform->addElement('text', 'single_purchase_price',
-                                        get_string('single_purchase_price', 'block_iomad_commerce') . ' (' . $this->currency . ')');
+                                        get_string('single_purchase_price', 'block_iomad_commerce'));
             $mform->addRule('single_purchase_price',
                              get_string('decimalnumberonly', 'block_iomad_commerce'), 'numeric');
             $mform->disabledIf('single_purchase_price', 'allow_single_purchase', 'eq', 0);

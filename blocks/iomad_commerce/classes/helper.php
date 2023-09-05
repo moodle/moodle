@@ -46,10 +46,14 @@ class helper {
     public static function get_lowest_price_text($course_shopsetting_with_lowest_block_price) {
         global $CFG, $DB;
 
-        if (!empty($CFG->commerce_admin_currency)) {
-            $currency = $CFG->commerce_admin_currency;
+        if (empty($course_shopsetting_with_lowest_block_price->single_purchase_currency)) {    
+            if (!empty($CFG->commerce_admin_currency)) {
+                $currency = $CFG->commerce_admin_currency;
+            } else {
+                $currency = 'GBP';
+            }
         } else {
-            $currency = 'GBP';
+            $currency = $course_shopsetting_with_lowest_block_price->single_purchase_currency;
         }
         $prices = array();
         if ($course_shopsetting_with_lowest_block_price->allow_single_purchase) {
@@ -145,6 +149,16 @@ class helper {
                                            GROUP BY
                                             i.id
                                         ', array('basketid' => $basketid, 'status' => self::INVOICESTATUS_BASKET))) {
+
+            $currency = $DB->get_record_sql("SELECT DISTINCT ii.currency
+                                             FROM {invoice} i
+                                             INNER JOIN {invoiceitem} ii ON ii.invoiceid = i.id
+                                             WHERE
+                                             i.status = :status
+                                             AND
+                                             i.id = :basketid
+                                           ", ['basketid' => $basketid, 'status' => self::INVOICESTATUS_BASKET]);
+            $basket->currency = $currency->currency;
             return $basket;
         }
 
@@ -323,6 +337,20 @@ class helper {
         return new $providername;
     }
 
+    public static function check_multiple_currencies($invoiceid) {
+        global $DB;
+
+        $currencycount = $DB->count_records_sql('SELECT count(DISTINCT currency)
+                                                 FROM {invoiceitem}
+                                                 WHERE invoiceid = :invoiceid', 
+                                                ['invoiceid' => $invoiceid]);
+
+        if ($currencycount > 1) {
+            return true;
+        }
+
+        return false;
+    }
     public static function get_payment_provider_displayname($providername) {
         return get_string('pp_' . $providername . '_name', 'block_iomad_commerce');
     }
@@ -337,6 +365,8 @@ class helper {
         global $DB, $USER, $CFG;
 
         $result = '';
+        $multiplecurrency = false;
+        $currentcurrency = '';
 
         if ($basketitems = $DB->get_records_sql('SELECT ii.*, css.name
                                                 FROM {invoiceitem} ii
@@ -376,6 +406,12 @@ class helper {
                     $unitprice = $item->currency . number_format($item->price, 2);
                 }
 
+                if (!empty($currentcurrency) && $item->currency != $currentcurrency) {
+                    $multiplecurrency = true;
+                } else {
+                    $currentcurrency = $item->currency;
+                }
+
                 $row = array(
                     ($links ? "<a href='" . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/item.php', ['itemid' => $item->invoiceableitemid]) ."'>" .$item->name ."</a>" : $item->name),
                     get_string('type_quantity_' . ($item->license_allocation > 1 ? 'n' : '1') .
@@ -400,12 +436,16 @@ class helper {
                 $total += $rowtotal;
             }
 
-            $totalrow = array(
-                '<b>' . get_string('total', 'block_iomad_commerce') . '</b>',
-                '',
-                '',
-                '<b>' . $currency . ' ' . number_format($total, 2) . '</b>'
-            );
+            if (!$multiplecurrency) {
+                $totalrow = array(
+                    '<b>' . get_string('total', 'block_iomad_commerce') . '</b>',
+                    '',
+                    '',
+                    '<b>' . $currency . ' ' . number_format($total, 2) . '</b>'
+                );
+            } else {
+                $totalrow = ['','','',''];
+            }
             if ($includeremove) {
                 $totalrow[] = '';
             }
@@ -416,6 +456,51 @@ class helper {
 
             if (!empty($table)) {
                 $result .= html_writer::table($table);
+            }
+        }
+        if ($multiplecurrency) {
+            \core\notification::error(get_string('multiplecurrencies', 'block_iomad_commerce'));
+        }
+
+        return $result;
+    }
+
+    public static function get_invoice_summary($invoiceid, $includeremove = 0, $links = 1, $showprocessed = 0) {
+        global $DB, $USER, $CFG;
+
+        $result = '';
+        $multiplecurrency = false;
+        $currentcurrency = '';
+
+        if ($basketitems = $DB->get_records_sql('SELECT ii.*, css.name
+                                                FROM {invoiceitem} ii
+                                                    INNER JOIN {course_shopsettings} css ON ii.invoiceableitemid = css.id
+                                                WHERE ii.invoiceid = :invoiceid
+                                                ORDER BY ii.id
+                                               ', array('invoiceid' => $invoiceid))) {
+
+            foreach ($basketitems as $item) {
+                $rowtotal = $item->price * $item->license_allocation;
+
+                if ($item->invoiceableitemtype == 'singlepurchase') {
+                    $unitprice = '';
+                } else {
+                    $unitprice = $item->currency . number_format($item->price, 2);
+                }
+
+                if (!empty($currentcurrency) && $item->currency != $currentcurrency) {
+                    $multiplecurrency = true;
+                } else {
+                    $currentcurrency = $item->currency;
+                }
+
+                $row = $item->name . ": " .
+                    get_string('type_quantity_' . ($item->license_allocation > 1 ? 'n' : '1') .
+                    '_' . $item->invoiceableitemtype, 'block_iomad_commerce', $item->license_allocation) . " @ " .
+                    $unitprice . ' = ' .
+                    $item->currency .number_format($rowtotal, 2);
+
+                $result .= $row;
             }
         }
 

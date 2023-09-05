@@ -51,7 +51,8 @@ class service_provider implements \core_payment\local\callback\service_provider 
         $companyid = iomad::get_my_companyid(context_system::instance());
         $company = new company($companyid);
         if ($paymentaccount = $company->get_payment_account()) {
-            return new \core_payment\local\entities\payable(\block_iomad_commerce\helper::get_basket_total($instanceid), $CFG->commerce_admin_currency, $paymentaccount);
+            $basket = \block_iomad_commerce\helper::get_basket_by_id($instanceid);
+            return new \core_payment\local\entities\payable($basket->total, $basket->currency, $paymentaccount);
         }
     }
 

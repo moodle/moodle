@@ -113,6 +113,7 @@ $string['managecompanyproducts'] = 'Manage company products';
 $string['managedefaultproducts'] = 'Manage template products';
 $string['missingshortsummary'] = 'Short description is missing.';
 $string['moreinfo'] = 'more info';
+$string['multiplecurrencies'] = 'WARNING: You have added items from the shop which have different currencies. You cannot complete your transaction.';
 $string['name'] = 'Name';
 $string['nocoursesnotontheshop'] = 'There are no courses available to be added to the shop.';
 $string['nocoursesontheshop'] = 'There are no products on the shop matching your criteria.';

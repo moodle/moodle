@@ -71,10 +71,14 @@ if (!empty($SESSION->basketid)) {
 
     if ($baskethtml) {
         echo $baskethtml;
-        echo '<p><a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/checkout.php') . '" class="btn btn-primary">' . get_string('checkout', 'block_iomad_commerce') .
-              '</a> ' . get_string('or', 'block_iomad_commerce') .
-              ' <a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php') . '" class="btn btn-secondary">' . get_string('returntoshop', 'block_iomad_commerce') .
-              '</a></p> ';
+
+        echo "<p>";
+        if (!\block_iomad_commerce\helper::check_multiple_currencies($SESSION->basketid)) {
+            echo '<a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/checkout.php') . '" class="btn btn-primary">' . get_string('checkout', 'block_iomad_commerce') .
+                 '</a> ' . get_string('or', 'block_iomad_commerce');
+        }
+        echo ' <a href="' . new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/shop.php') . '" class="btn btn-secondary">' . get_string('returntoshop', 'block_iomad_commerce') .
+             '</a></p> ';
 
     } else {
         echo '<p>' . get_string('emptybasket', 'block_iomad_commerce') . '</p>';

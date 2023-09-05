@@ -31,7 +31,7 @@ require_once(dirname(__FILE__) . '/../../../config.php');
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 
 class processor {
-    static function trigger_oncheckout($invoiceid) {
+    public static function trigger_oncheckout($invoiceid) {
 
         self::process_all_items($invoiceid, 'oncheckout');
         $_SESSION['Payment_Amount'] = \block_iomad_commerce\helper::get_basket_total();
@@ -39,7 +39,7 @@ class processor {
         \block_iomad_commerce\helper::create_invoice_reference($invoiceid);
     }
 
-    static function trigger_onordercomplete($invoice) {
+    public static function trigger_onordercomplete($invoice) {
         global $DB;
         
         self::process_all_items($invoice->id, 'onordercomplete', $invoice );
@@ -50,6 +50,7 @@ class processor {
 
     private static function process_all_items($invoiceid, $eventname, $invoice = null) {
         global $DB, $CFG;
+
         if ($items = $DB->get_records('invoiceitem', array('invoiceid' => $invoiceid, 'processed' => 0), null, '*')) {
             foreach ($items as $item) {
                 $processorname = $item->invoiceableitemtype;
@@ -59,7 +60,7 @@ class processor {
         }
     }
 
-    static function trigger_invoiceitem_onordercomplete($invoiceitemid, $invoice) {
+    public static function trigger_invoiceitem_onordercomplete($invoiceitemid, $invoice) {
         global $DB;
         if ($item = $DB->get_record('invoiceitem', array('id' => $invoiceitemid, 'processed' => 0), '*')) {
             $processorname = $item->invoiceableitemtype;
@@ -179,7 +180,7 @@ class processor {
         $transaction->allow_commit();
     }
 
-    function licenseblock_oncheckout($invoiceitem) {
+    public static function licenseblock_oncheckout($invoiceitem) {
         global $DB;
 
         if ($ii = $DB->get_record('invoiceitem', array('id' => $invoiceitem->id), '*')) {
@@ -194,7 +195,7 @@ class processor {
         }
     }
 
-    function licenseblock_onordercomplete($invoiceitem, $invoice) {
+    public static function licenseblock_onordercomplete($invoiceitem, $invoice) {
         global $DB, $CFG;
 
         $runtime = time();

@@ -85,6 +85,7 @@ if (!$new) {
     $shopsettings->short_summary_editor = ['text' => $shopsettings->short_description];
     $shopsettings->summary_editor = ['text' => $shopsettings->long_description];
     $shopsettings->default = $default;
+     $shopsettings->currency =  $shopsettings->single_purchase_currency;
 
     iomad::require_capability('block/iomad_commerce:edit_course', $context);
 } else {
@@ -94,6 +95,11 @@ if (!$new) {
     $course = null;
     $priceblocks = null;
     $shopsettings->default = $default;
+    if (!empty($CFG->commerce_admin_currency)) {
+        $shopsettings->currency = $CFG->commerce_admin_currency;
+    } else {
+        $shopsettings->currency = 'GBP';
+    }
 
     iomad::require_capability('block/iomad_commerce:add_course', $context);
 }
@@ -134,10 +140,10 @@ if ($mform->is_cancelled()) {
     $transaction = $DB->start_delegated_transaction();
 
     if ($isadding) {
-        $data->single_purchase_currency = $CFG->commerce_admin_currency;
+        $data->single_purchase_currency = $data->currency;
         $data->id = $DB->insert_record('course_shopsettings', $data);
     } else {
-        $data->single_purchase_currency = $CFG->commerce_admin_currency;
+        $data->single_purchase_currency = $data->currency;
         $DB->update_record('course_shopsettings', $data);
     }
 
@@ -148,7 +154,7 @@ if ($mform->is_cancelled()) {
         if (!empty($itemblock)) {
             $priceblock = (object) [];
             $priceblock->itemid = $data->id;
-            $priceblock->currency = $CFG->commerce_admin_currency;
+            $priceblock->currency = $data->currency;
             $priceblock->price_bracket_start = $itemblock;
             $priceblock->price = $data->item_block_price[$blockid];
             $priceblock->validlength = $data->single_purchase_validlength;

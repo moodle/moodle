@@ -84,14 +84,8 @@ redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/basket.php'));
 
     echo $baskethtml;
 
-    $paymentoptions = ['data-action' => "core_payment/triggerPayment",
-                       'data-component' => "block_iomad_commerce",
-                       'data-paymentarea' => 'invoice',
-                       'data-itemid' => $basketid,
-                       'data-cost' => \block_iomad_commerce\helper::get_basket_total(),
-                       'data-description' => format_string($SITE->fullname),
-                       'data-successurl' => \block_iomad_commerce\payment\service_provider::get_success_url('invoice', $basketid)->out(false),
-                       'class' => 'btn btn-primary'];
+    $paymentoptions = core_payment\helper::gateways_modal_link_params('block_iomad_commerce', 'invoice', $basketid, trim(html_to_text(\block_iomad_commerce\helper::get_invoice_summary($basketid, 0, 0, 0))));
+    $paymentoptions['class'] = 'btn btn-primary';
 
     echo html_writer::start_tag('p');
     echo html_writer::tag('button', get_string('sendpaymentbutton', 'enrol_fee'), $paymentoptions);
