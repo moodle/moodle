@@ -212,7 +212,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <description>jQuery is a fast, small, and feature-rich JavaScript library widely used on moodle.</description>
-    <version>3.6.4</version>
+    <version>3.7.1</version>
     <license>MIT</license>
     <repository>https://github.com/jquery/jquery</repository>
     <copyrights>
