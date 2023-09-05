@@ -394,7 +394,7 @@ if ($companies) {
                                             $linkparams);
                 $suspendbutton = "<a class='btn btn-sm btn-warning' href='$suspendurl'>$strsuspend</a>";
             }
-            $manageurl = new moodle_url('/my', array('company' => $company->id));
+            $manageurl = new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php', array('company' => $company->id));
             $managebutton = "<a class='btn btn-sm btn-primary' href='$manageurl'>$strmanage</a>";
 
             if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {

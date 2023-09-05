@@ -54,7 +54,7 @@ $urlparams = array();
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
-$companylist = new moodle_url('/my', $urlparams);
+$companylist = new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php', $urlparams);
 
 $linktext = get_string('assigncoursegroups', 'block_iomad_company_admin');
 

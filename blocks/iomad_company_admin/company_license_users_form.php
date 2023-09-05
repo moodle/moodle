@@ -163,7 +163,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/my'));
+        redirect(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'));
     }
 } else {
     if ($licenseid > 0) {

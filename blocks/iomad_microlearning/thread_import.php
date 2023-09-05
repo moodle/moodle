@@ -38,7 +38,6 @@ iomad::require_capability('block/iomad_microlearning:import_threads', $context);
 
 $urlparams = array();
 $urlparams['search'] = $search;
-$companylist = new moodle_url('/my', $urlparams);
 
 $linktext = get_string('threads', 'block_iomad_microlearning');
 

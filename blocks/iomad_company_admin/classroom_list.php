@@ -167,4 +167,3 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
     echo '<div class="alert alert-warning">' . get_string('nolocations', 'block_iomad_company_admin') . '</div>';
 }
 
-echo $OUTPUT->footer();

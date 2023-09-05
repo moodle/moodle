@@ -62,7 +62,7 @@ if ($mform->is_cancelled()) {
     if ($returnurl) {
         redirect($returnurl);
     } else {
-        redirect(new moodle_url('/my'));
+        redirect(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'));
     }
 } else {
     $mform->process();

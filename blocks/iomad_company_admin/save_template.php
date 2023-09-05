@@ -52,10 +52,7 @@ $PAGE->set_title($linktext);
 
 // Set the page heading and nav.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
-$PAGE->navbar->add($linktext, $linkurl);
+    $PAGE->navbar->add($linktext, $linkurl);
 
 $mform = new \block_iomad_company_admin\forms\company_role_save_form($linkurl, $companyid, $templateid);
 

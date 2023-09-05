@@ -363,15 +363,15 @@ class block_iomad_company_admin extends block_base {
 
         // Get a list of companies.
         $companylist = company::get_companies_select($showsuspendedcompanies);
-        $select = new \block_iomad_company_admin\forms\iomad_company_select_form(new moodle_url('/my/index.php'), $companylist, $selectedcompany);
+        $select = new \block_iomad_company_admin\forms\iomad_company_select_form(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'), $companylist, $selectedcompany);
         $select->set_data(array('company' => $selectedcompany, 'showsuspendedcompanies' => $showsuspendedcompanies));
         $selector->selectform = $select->render();
         if (!$showsuspendedcompanies) {
-            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php',
                                                array('showsuspendedcompanies' => true)),
                                                get_string("show_suspended_companies", 'block_iomad_company_admin'));
         } else {
-            $selector->suspended = $OUTPUT->single_button(new moodle_url('/my/index.php',
+            $selector->suspended = $OUTPUT->single_button(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php',
                                                array('showsuspendedcompanies' => false)),
                                                get_string("hide_suspended_companies", 'block_iomad_company_admin'));
         }

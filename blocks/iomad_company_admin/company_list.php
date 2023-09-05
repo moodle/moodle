@@ -49,9 +49,6 @@ $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('company_list_title', 'block_iomad_company_admin'));
-if (empty($CFG->defaulthomepage)) {
-    $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'), new moodle_url($CFG->wwwroot . '/my'));
-}
 $PAGE->navbar->add($linktext, $linkurl);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
@@ -242,7 +239,7 @@ if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
 
     echo $OUTPUT->single_button(new moodle_url('company_edit_form.php'),
                                                 get_string('addnewcompany', 'block_iomad_company_admin'), 'get');
-    echo $OUTPUT->single_button(new moodle_url('/my'), get_string('cancel'), 'get');
+    echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'), get_string('cancel'), 'get');
 
     echo '</div>';
 }
