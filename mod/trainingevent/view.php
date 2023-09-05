@@ -842,11 +842,15 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $record = $DB->get_record('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id));
 
             $waitlist = $alreadyattending >= $maxcapacity;
-            if ($alreadyattending < $maxcapacity) {
+            if ($alreadyattending < $maxcapacity || has_capability('mod/trainingevent:addoverride', $context)) {
 
                 // What kind of event is this?
-                if ($event->approvaltype == 0 || $event->approvaltype == 4 || $myapprovallevel == "company" ||
-                    ($event->approvaltype == 1 && $myapprovallevel == "department")) {
+                if ($event->approvaltype == 0 ||
+                    $event->approvaltype == 4 ||
+                    $myapprovallevel == "company" ||
+                    ($event->approvaltype == 1 && $myapprovallevel == "department") ||
+                    ($event->startdatetime < time() && has_capability('mod/trainingevent:addoverride', $context))
+                    ) {
                     // Add to the chosen event.
                     if (!($record && $record->waitlisted == 0)) {
                         if (!empty($record->waitlisted)) {
@@ -1109,8 +1113,10 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                'waiting' => 1)),
                                                          get_string('viewwaitlist', 'trainingevent'))."</td>";
         }
-        if (has_capability('mod/trainingevent:add', $context) && $numattending < $maxcapacity
-                            && time() < $event->startdatetime) {
+        if (has_capability('mod/trainingevent:addoverride', $context) ||
+            (has_capability('mod/trainingevent:add', $context) &&
+             $numattending < $maxcapacity &&
+             time() < $event->startdatetime)) {
             $eventtable .= "<td>".$OUTPUT->single_button(new moodle_url("/mod/trainingevent/searchusers.php",
                                                                         array('eventid' => $event->id)),
                                                                         get_string('selectother',

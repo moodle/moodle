@@ -177,7 +177,9 @@ if (!empty($fieldnames)) {
     foreach ($fieldnames as $id => $fieldname) {
         if (!empty($allfields[$id]->datatype) && $allfields[$id]->datatype == "menu" ) {
             $paramarray = explode("\n", $allfields[$id]->param1);
-            ${$fieldname} = $paramarray[${$fieldname}];
+            if (!empty($paramarray[${$fieldname}])) {
+                ${$fieldname} = $paramarray[${$fieldname}];
+            }
         }
         if (!empty(${$fieldname}) ) {
             $idlist[0] = "We found no one";

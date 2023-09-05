@@ -61,6 +61,16 @@ $capabilities = array(
         )
     ),
 
+    'mod/trainingevent:addoverride' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'companycourseeditor' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+        )
+    ),
+
     'mod/trainingevent:viewattendees' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
