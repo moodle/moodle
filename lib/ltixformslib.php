@@ -103,7 +103,7 @@ function attach_lti_elements($mform, $context, $_instance, $current) {
             }
 
             if ($id) {
-                $config = lti_get_type_config($id);
+                $config = ltix_helper::lti_get_type_config($id);
                 if (!empty($config['contentitem'])) {
                     $attributes['data-contentitem'] = 1;
                     $attributes['data-id'] = $id;
@@ -117,7 +117,7 @@ function attach_lti_elements($mform, $context, $_instance, $current) {
         $mform->addElement('hidden', 'typeid', $typeid);
         $mform->setType('typeid', PARAM_INT);
         if ($typeid) {
-            $config = lti_get_type_config($typeid);
+            $config = ltix_helper::lti_get_type_config($typeid);
             if (!empty($config['contentitem'])) {
                 $mform->addElement('hidden', 'contentitem', 1);
                 $mform->setType('contentitem', PARAM_INT);
@@ -131,7 +131,7 @@ function attach_lti_elements($mform, $context, $_instance, $current) {
         'data-contentitemurl' => $contentitemurl->out(false)
     ];
     if (!$showtypes) {
-        if (!$typeid || empty(lti_get_type_config($typeid)['contentitem'])) {
+        if (!$typeid || empty(ltix_helper::lti_get_type_config($typeid)['contentitem'])) {
             $contentbuttonattributes['disabled'] = 'disabled';
         }
     }
