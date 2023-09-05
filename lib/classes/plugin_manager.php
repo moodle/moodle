@@ -591,19 +591,12 @@ class core_plugin_manager {
      * @return string
      */
     public function plugintype_name($type) {
-
         if (get_string_manager()->string_exists('type_' . $type, 'core_plugin')) {
             // For most plugin types, their names are defined in core_plugin lang file.
             return get_string('type_' . $type, 'core_plugin');
-
         } else if ($parent = $this->get_parent_of_subplugin($type)) {
             // If this is a subplugin, try to ask the parent plugin for the name.
-            if (get_string_manager()->string_exists('subplugintype_' . $type, $parent)) {
-                return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type, $parent);
-            } else {
-                return $this->plugin_name($parent) . ' / ' . $type;
-            }
-
+            return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type, $parent);
         } else {
             return $type;
         }
@@ -620,19 +613,12 @@ class core_plugin_manager {
      * @return string
      */
     public function plugintype_name_plural($type) {
-
         if (get_string_manager()->string_exists('type_' . $type . '_plural', 'core_plugin')) {
             // For most plugin types, their names are defined in core_plugin lang file.
             return get_string('type_' . $type . '_plural', 'core_plugin');
-
         } else if ($parent = $this->get_parent_of_subplugin($type)) {
             // If this is a subplugin, try to ask the parent plugin for the name.
-            if (get_string_manager()->string_exists('subplugintype_' . $type . '_plural', $parent)) {
-                return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type . '_plural', $parent);
-            } else {
-                return $this->plugin_name($parent) . ' / ' . $type;
-            }
-
+            return $this->plugin_name($parent) . ' / ' . get_string('subplugintype_' . $type . '_plural', $parent);
         } else {
             return $type;
         }
