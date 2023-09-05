@@ -33,7 +33,7 @@
 {{/readonly}}
 {{^readonly}}
     <label for="{{name}}" class="accesshide">{{label}}</label>
-    <select id="{{name}}" name="{{name}}" class="custom-select" tabindex="1" {{#disabled}}disabled{{/disabled}}>
+    <select id="{{name}}" name="{{name}}" class="custom-select" {{#disabled}}disabled{{/disabled}}>
         {{#options}}
             <option value="{{value}}" {{#selected}}selected{{/selected}}>{{name}}</option>
         {{/options}}
