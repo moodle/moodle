@@ -60,6 +60,30 @@ Feature: Quiz user override
     And I should not see "Student One"
 
   @javascript
+  Scenario: Add multiple user overrides, one after another
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user      | Student One                |
+      | timeclose[enabled] | 1                          |
+      | Close the quiz     | ## 1 January 2020 08:00 ## |
+    And I press "Save and enter another override"
+    And I set the following fields to these values:
+      | Override user      | Student Two                |
+      | timeclose[enabled] | 1                          |
+      | Close the quiz     | ## 2 January 2020 08:00 ## |
+    When I press "Save"
+    Then the following should exist in the "generaltable" table:
+      | User        | Overrides   | -4-                  |
+      | Student One | Quiz closes | 1 January 2020, 8:00 |
+      | Student Two | Quiz closes | 2 January 2020, 8:00 |
+
+  @javascript
   Scenario: Can add a user override when the quiz is not available to the student
     Given the following "activities" exist:
       | activity   | name      | course | idnumber | visible |
