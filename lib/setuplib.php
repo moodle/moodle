@@ -921,10 +921,10 @@ function initialise_fullme() {
     }
 
     // Using Moodle in "reverse proxy" mode, it's expected that the HTTP Host Moodle receives is different
-    // from the wwwroot configured host. Those URLs beeing identical could be the consequence of various
+    // from the wwwroot configured host. Those URLs being identical could be the consequence of various
     // issues, including:
-    // - Intentionally trying to setup moodle with 2 distinct addresses for intranet and Internet: this
-    //   configuration is unsupported and will leads to bigger problems down the road (the proper solution
+    // - Intentionally trying to set up moodle with 2 distinct addresses for intranet and Internet: this
+    //   configuration is unsupported and will lead to bigger problems down the road (the proper solution
     //   for this is adjusting the network routes, and avoid relying on the application for network concerns).
     // - Misconfiguration of the reverse proxy that would be forwarding the Host header: while it is
     //   standard in many cases that the reverse proxy would do that, in our case, the reverse proxy
