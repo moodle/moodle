@@ -2682,6 +2682,64 @@ EOF;
     }
 
     /**
+     * Test function that calculates password pepper entropy.
+     * @covers ::calculate_entropy
+     */
+    public function test_calculate_entropy() {
+        // Test that the function returns 0 with an empty string.
+        $this->assertEquals(0, calculate_entropy(''));
+
+        // Test that the function returns the correct entropy.
+        $this->assertEquals(132.8814, number_format(calculate_entropy('#GV]NLie|x$H9[$rW%94bXZvJHa%z'), 4));
+    }
+
+    /**
+     * Test function to get password peppers.
+     * @covers ::get_password_peppers
+     */
+    public function test_get_password_peppers() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // First assert that the function returns an empty array,
+        // when no peppers are set.
+        $this->assertEquals([], get_password_peppers());
+
+        // Now set some peppers and check that they are returned.
+        $CFG->passwordpeppers = [
+                1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+                2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+        ];
+        $peppers = get_password_peppers();
+        $this->assertCount(2, $peppers);
+        $this->assertEquals($CFG->passwordpeppers, $peppers);
+
+        // Check that the peppers are returned in the correct order.
+        // Highest numerical key first.
+        $this->assertEquals('#GV]NLie|x$H9[$rW%94bXZvJHa%$', $peppers[2]);
+        $this->assertEquals('#GV]NLie|x$H9[$rW%94bXZvJHa%z', $peppers[1]);
+
+        // Update the latest pepper to be an empty string,
+        // to test phasing out peppers.
+        $CFG->passwordpeppers = [
+                1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+                2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$',
+                3 => ''
+        ];
+        $peppers = get_password_peppers();
+        $this->assertCount(3, $peppers);
+        $this->assertEquals($CFG->passwordpeppers, $peppers);
+
+        // Finally, check that low entropy peppers throw an exception.
+        $CFG->passwordpeppers = [
+                1 => 'foo',
+                2 => 'bar'
+        ];
+        $this->expectException(\coding_exception::class);
+        get_password_peppers();
+    }
+
+    /**
      * Test function validate_internal_user_password.
      * @covers ::validate_internal_user_password
      */
@@ -2716,19 +2774,44 @@ EOF;
     }
 
     /**
-     * Test function hash_internal_user_password.
+     * Test function validate_internal_user_password() with a peppered password,
+     * when the pepper no longer exists.
+     *
+     * @covers ::validate_internal_user_password
+     */
+    public function test_validate_internal_user_password_bad_pepper() {
+        global $CFG;
+        $this->resetAfterTest();
+
+        // Set a pepper.
+        $CFG->passwordpeppers = [
+                1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+                2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+        ];
+        $password = 'test';
+
+        $user = $this->getDataGenerator()->create_user(['auth' => 'manual', 'password' => $password]);
+        $this->assertTrue(validate_internal_user_password($user, $password));
+        $this->assertFalse(validate_internal_user_password($user, 'badpw'));
+
+        // Now remove the peppers.
+        // Things should not work.
+        unset($CFG->passwordpeppers);
+        $this->assertFalse(validate_internal_user_password($user, $password));
+    }
+
+    /**
+     * Helper method to test hashing passwords.
+     *
+     * @param array $passwords
+     * @return void
      * @covers ::hash_internal_user_password
      */
-    public function test_hash_internal_user_password() {
-        $passwords = array('pw', 'abc123', 'C0mP1eX_&}<?@*&%` |\"', 'ĩńťėŕňăţĩōŋāĹ');
-
-        // Check that some passwords that we convert to hashes can
-        // be validated.
+    public function validate_hashed_passwords(array $passwords): void {
         foreach ($passwords as $password) {
             $hash = hash_internal_user_password($password);
             $fasthash = hash_internal_user_password($password, true);
-            $user = new \stdClass();
-            $user->auth = 'manual';
+            $user = $this->getDataGenerator()->create_user(['auth' => 'manual']);
             $user->password = $hash;
             $this->assertTrue(validate_internal_user_password($user, $password));
 
@@ -2744,6 +2827,34 @@ EOF;
     /**
      * Test function update_internal_user_password.
      * @covers ::update_internal_user_password
+     */
+    public function test_hash_internal_user_password() {
+        global $CFG;
+        $this->resetAfterTest();
+        $passwords = ['pw', 'abc123', 'C0mP1eX_&}<?@*&%` |\"', 'ĩńťėŕňăţĩōŋāĹ'];
+
+        // Check that some passwords that we convert to hashes can
+        // be validated.
+        $this->validate_hashed_passwords($passwords);
+
+        // Test again with peppers.
+        $CFG->passwordpeppers = [
+                1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+                2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+        ];
+        $this->validate_hashed_passwords($passwords);
+
+        // Add a new pepper and check that things still pass.
+        $CFG->passwordpeppers = [
+                1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+                2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$',
+                3 => '#GV]NLie|x$H9[$rW%94bXZvJHQ%$'
+        ];
+        $this->validate_hashed_passwords($passwords);
+    }
+
+    /**
+     * Test function update_internal_user_password().
      */
     public function test_update_internal_user_password() {
         global $DB;
