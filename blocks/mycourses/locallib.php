@@ -210,7 +210,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
 
 }
 
-function mycourses_get_my_archive($dateto = 0) {
+function mycourses_get_my_archive($dateto = 0, $sort = 'coursefullname', $dir = 'ASC') {
     global $DB, $USER, $CFG;
 
     // Check if there is a iomadcertificate module.
@@ -222,7 +222,7 @@ function mycourses_get_my_archive($dateto = 0) {
     }
 
     $mycompletions = new stdclass();
-    $myarchive = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, c.fullname as coursefullname, c.summary as coursesummary
+    $myarchive = $DB->get_records_sql("SELECT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, cc.timestarted, c.fullname as coursefullname, c.summary as coursesummary
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
@@ -241,11 +241,6 @@ function mycourses_get_my_archive($dateto = 0) {
                 if ($traccertrec = $DB->get_record('local_iomad_track_certs', array('trackid' => $id))) {
                     // create the file download link.
                     $coursecontext = context_course::instance($archive->courseid);
-/*                    $certstring = "<a class=\"btn btn-info\" href='".
-                                   moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename) .
-                                  "'>" . get_string('downloadcert', 'block_mycourses').
-                                  "</a>";
-*/
                     $certstring = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
                 }
             } else {
@@ -259,7 +254,8 @@ function mycourses_get_my_archive($dateto = 0) {
 
     }
 
-    $mycompletions->myarchive = $myarchive;
+    $myarchive = mycourses_sort($myarchive, $sort, $dir);
+    $mycompletions->mycompleted = $myarchive;
 
     return $mycompletions;
 }
@@ -267,7 +263,7 @@ function mycourses_get_my_archive($dateto = 0) {
 function mycourses_sort($courselist, $sorton = 'timestarted', $direction = "ASC") {
     $namedcourses = [];
     foreach ($courselist as $id => $course) {
-        $namedcourses[$course->$sorton] = $courselist[$id];
+        $namedcourses[$course->$sorton . $id] = $courselist[$id];
     }
     if ($direction == "ASC") {
         ksort($namedcourses, SORT_NATURAL | SORT_FLAG_CASE);
