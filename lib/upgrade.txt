@@ -48,6 +48,11 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* Allowed database identifier lengths have been raised:
+  - From 28 characters to 53 for table names (xmldb_table::NAME_MAX_LENGTH).
+  - From 30 characters to 63 for column names (xmldb_field::NAME_MAX_LENGTH).
+  - Maximum length for table prefixes has been set to 10 characters (xmldb_table::PREFIX_MAX_LENGTH). And it's enforced
+    by environmental checks.
 * New scheduled tasks show_started_courses_task and hide_ended_courses_task that updates the course visibility when the current
   day matches course start date/end date. They are disabled by default. Once they are enabled, only courses with start/end dates
   near the past 24 hours will be checked. The visibility of these courses will only changed when their start/end dates are higher
