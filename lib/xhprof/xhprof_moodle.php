@@ -1013,7 +1013,7 @@ class moodle_xhprofrun implements iXHProfRuns {
                 $parent = 'NULL';
                 $child = $key;
             } else {
-                list ($parent, $child) = explode('==>', $key); // TODO: Consider caching this in a property.
+                [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
             }
 
             if (preg_match($regexp, $key)) {
@@ -1035,7 +1035,7 @@ class moodle_xhprofrun implements iXHProfRuns {
                 $parent = 'NULL';
                 $child = $key;
             } else {
-                list ($parent, $child) = explode('==>', $key); // TODO: Consider caching this in a property.
+                [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
             }
 
             if (isset($removed[$parent]) && !isset($remaining[$parent])) {
@@ -1081,7 +1081,7 @@ class moodle_xhprofrun implements iXHProfRuns {
                     $sorted[$key] = $info[$key];
                     $visited[$key] = true;
                 } else {
-                    list ($parent, $child) = explode('==>', $key); // TODO: Consider caching this in a property.
+                    [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
                     if (isset($visited[$parent])) {
                         // Parent already visited, we can add any children to the sorted array.
                         $sorted[$key] = $info[$key];
