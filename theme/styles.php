@@ -66,6 +66,13 @@ if (!is_null($themesubrev)) {
     $themesubrev = min_clean_param($themesubrev, 'INT');
 }
 
+// Note: We only check validity of the revision number here, we do not check the theme sub-revision because this is
+// not solely based on time.
+if (!min_is_revision_valid_and_current($rev)) {
+    // If the rev is invalid, normalise it to -1 to disable all caching.
+    $rev = -1;
+}
+
 // Check that type fits into the expected values.
 if (!in_array($type, ['all', 'all-rtl', 'editor'])) {
     css_send_css_not_found();
