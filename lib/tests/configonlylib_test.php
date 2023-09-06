@@ -28,7 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 // Global $CFG not used here intentionally to make sure it is not required inside the lib.
 require_once(__DIR__ . '/../configonlylib.php');
 
-
 /**
  * Unit tests for config only library functions.
  *
@@ -150,5 +149,77 @@ class core_configonlylib_testcase extends advanced_testcase {
         $_GET = array();
         // Windows dir separators are removed, multiple ... gets collapsed to one .
         $this->assertSame('/standardcore/./5/u/f1', min_get_slash_argument());
+    }
+
+    /**
+     * Test the min_get_minimum_version function.
+     *
+     * @covers ::min_get_minimum_version
+     */
+    public function test_min_get_minimum_version(): void {
+        // This is fairly hard to write a test for, but we can at least check that it returns a number
+        // greater than the version when the feature was first introduced.
+        $firstintroduced = 1592179200; // Equivalent to 20200615 00:00:00 GMT.
+        $this->assertGreaterThanOrEqual($firstintroduced, min_get_minimum_revision());
+    }
+
+    /**
+     * Test the min_get_maximum_version function.
+     *
+     * @covers ::min_get_maximum_version
+     */
+    public function test_min_get_maximum_version(): void {
+        // The maximum version should be set to a time in the near future.
+        // This is currently defined as "in the next minute".
+        // Note: We use a 65 second window to allow for slow test runners.
+        $this->assertGreaterThan(time(), min_get_maximum_revision());
+        $this->assertLessThanOrEqual(time() + 65, min_get_maximum_revision());
+    }
+
+    /**
+     * Test the min_is_revision_valid_and_current function.
+     *
+     * @covers ::min_is_revision_valid_and_current
+     * @dataProvider min_is_revision_valid_and_current_provider
+     */
+    public function test_min_is_revision_valid_and_current(int $revision, bool $expected): void {
+        $this->assertEquals($expected, min_is_revision_valid_and_current($revision));
+    }
+
+    /**
+     * Data provider for the min_is_revision_valid_and_current tests.
+     *
+     * @return array
+     */
+    public function min_is_revision_valid_and_current_provider(): array {
+        return [
+            'Negative value' => [-1, false],
+            'Empty value' => [0, false],
+            'A time before the minimum accepted value' => [min_get_minimum_revision() - 1, false],
+            'The minimum accepted value' => [min_get_minimum_revision(), true],
+            'The current time' => [time(), true],
+            // Note: We have to be careful using time values because the data provider is run at the start of the phpunit run,
+            // but the test may not be run for some time.
+            // On a slower machine and/or database, this could be several hours.
+            // For a more specific time we must have a specific test function.
+            'A time in the future' => [time() + DAYSECS, false]
+        ];
+    }
+
+
+    /**
+     * Test the min_is_revision_valid_and_current function with close times.
+     *
+     * Note: These tests are incompatible with data providers.
+     *
+     * @covers ::min_is_revision_valid_and_current
+     */
+    public function test_min_is_revision_valid_and_current_close_proximity(): void {
+        // A time in the near future.
+        $this->assertTrue(min_is_revision_valid_and_current(time() + 55));
+
+        // A time in the too-far future.
+        $this->assertFalse(min_is_revision_valid_and_current(time() + 70));
+
     }
 }
