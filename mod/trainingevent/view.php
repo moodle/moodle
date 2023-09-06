@@ -1162,7 +1162,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $attendancecount .get_string('of', 'trainingevent') . $maxcapacity . "</td></tr>";
         }
         $eventtable .= "</table>";
-        $eventtable .= "<div>$event->intro</div>";
 
         if (!$dodownload) {
             echo $OUTPUT->header();
