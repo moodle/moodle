@@ -125,7 +125,7 @@ class api {
                         foreach ($langs as $langid => $langname) {
                             foreach ($addoninfo['lang'] as $stringinfo) {
                                 $lang[$langid][$stringinfo[0]] =
-                                    $stringmanager->get_string($stringinfo[0], $stringinfo[1], null, $langid);
+                                    $stringmanager->get_string($stringinfo[0], $stringinfo[1] ?? null, null, $langid);
                             }
                         }
                     }
