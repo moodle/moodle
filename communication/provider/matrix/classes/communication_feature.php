@@ -92,7 +92,7 @@ class communication_feature implements
         $this->homeserverurl = get_config('communication_matrix', 'matrixhomeserverurl');
         $this->webclienturl = get_config('communication_matrix', 'matrixelementurl');
 
-        if ($this->homeserverurl) {
+        if ($processor::is_provider_available('communication_matrix')) {
             // Generate the API instance.
             $this->matrixapi = matrix_client::instance(
                 serverurl: $this->homeserverurl,
@@ -750,5 +750,26 @@ class communication_feature implements
         }
 
         return $powerlevel;
+    }
+
+    /*
+     * Check if matrix settings are configured
+     *
+     * @return boolean
+     */
+    public static function is_configured(): bool {
+        // Matrix communication settings.
+        $matrixhomeserverurl = get_config('communication_matrix', 'matrixhomeserverurl');
+        $matrixaccesstoken = get_config('communication_matrix', 'matrixaccesstoken');
+        $matrixelementurl = get_config('communication_matrix', 'matrixelementurl');
+
+        if (
+            !empty($matrixhomeserverurl) &&
+            !empty($matrixaccesstoken) &&
+            (PHPUNIT_TEST || BEHAT_SITE_RUNNING || !empty($matrixelementurl))
+        ) {
+            return true;
+        }
+        return false;
     }
 }

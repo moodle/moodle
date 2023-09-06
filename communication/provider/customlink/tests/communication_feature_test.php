@@ -113,4 +113,14 @@ class communication_feature_test extends \advanced_testcase {
 
         return $communicationprocessor;
     }
+
+    /**
+     * Test if the selected provider is configured.
+     *
+     * @return void
+     */
+    public function test_is_configured() {
+        $communicationprocessor = $this->get_test_communication_processor();
+        $this->assertTrue($communicationprocessor->get_form_provider()->is_configured());
+    }
 }

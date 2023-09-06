@@ -25,6 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'communication_matrix';
-$plugin->version = 2023090600;
+$plugin->version = 2023092300;
 $plugin->requires = 2023011300;
 $plugin->maturity = MATURITY_ALPHA;

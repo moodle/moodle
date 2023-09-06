@@ -18,7 +18,10 @@ namespace core_communication;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once(__DIR__ . '/../provider/matrix/tests/matrix_test_helper_trait.php');
 require_once(__DIR__ . '/communication_test_helper_trait.php');
+
+use \communication_matrix\matrix_test_helper_trait;
 
 /**
  * Class processor_test to test the communication internal api and its associated methods.
@@ -30,7 +33,16 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @coversDefaultClass \core_communication\processor
  */
 class processor_test extends \advanced_testcase {
+
+    use matrix_test_helper_trait;
     use communication_test_helper_trait;
+
+    public function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest();
+        $this->setup_communication_configs();
+        $this->initialise_mock_server();
+    }
 
     /**
      * Test create instance.
@@ -417,18 +429,18 @@ class processor_test extends \advanced_testcase {
     }
 
     /**
-     * Test if the provider is enabled or disabled.
+     * Test if the provider is enabled and configured, or disabled.
      *
-     * @covers ::is_provider_enabled
+     * @covers ::is_provider_available
      */
-    public function test_is_provider_enabled(): void {
+    public function test_is_provider_available(): void {
         $this->resetAfterTest();
         $communicationprovider = 'communication_matrix';
-        $this->assertTrue(processor::is_provider_enabled($communicationprovider));
+        $this->assertTrue(processor::is_provider_available($communicationprovider));
 
         // Now test is disabling the plugin returns false.
         set_config('disabled', 1, $communicationprovider);
-        $this->assertFalse(processor::is_provider_enabled($communicationprovider));
+        $this->assertFalse(processor::is_provider_available($communicationprovider));
     }
 
     /**
