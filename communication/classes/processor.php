@@ -462,12 +462,12 @@ class processor {
     }
 
     /**
-     * Get communication provider for form feature.
+     * Set provider specific form definition.
      *
      * @param string $provider The provider name
      * @param \MoodleQuickForm $mform The moodle form
      */
-    public static function set_proider_form_definition(string $provider, \MoodleQuickForm $mform): void {
+    public static function set_provider_specific_form_definition(string $provider, \MoodleQuickForm $mform): void {
         $providerclass = "{$provider}\\communication_feature";
         $providerclass::set_form_definition($mform);
     }

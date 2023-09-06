@@ -245,7 +245,7 @@ class api {
             $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
             $mform->setType('communicationroomname', PARAM_TEXT);
 
-            processor::set_proider_form_definition($provider, $mform);
+            processor::set_provider_specific_form_definition($provider, $mform);
         }
 
     }
