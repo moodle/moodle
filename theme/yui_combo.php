@@ -231,8 +231,9 @@ while (count($parts)) {
             continue;
         }
         $revision = (int)array_shift($bits);
-        if ($revision === -1) {
-            // Revision -1 says please don't cache the JS
+        if (!min_is_revision_valid_and_current($revision)) {
+            // A non-current revision means please don't cache the JS
+            $revision = -1;
             $cache = false;
         }
         $frankenstyle = array_shift($bits);
@@ -278,8 +279,9 @@ while (count($parts)) {
             continue;
         }
         $revision = (int)array_shift($bits);
-        if ($revision === -1) {
-            // Revision -1 says please don't cache the JS
+        if (!min_is_revision_valid_and_current($revision)) {
+            // A non-current revision means please don't cache the JS
+            $revision = -1;
             $cache = false;
         }
         $contentfile = "$CFG->libdir/yuilib/gallery/" . join('/', $bits);
