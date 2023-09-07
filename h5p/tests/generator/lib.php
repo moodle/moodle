@@ -400,6 +400,8 @@ class core_h5p_generator extends \component_generator_base {
      * @param array $typestonotinstall H5P content types that should not be installed
      * @param core $core h5p_test_core instance required to use the exttests URL
      * @return array Data of the content types not installed.
+     *
+     * @throws invalid_response_exception If request to get the latest content types fails (usually due to a transient error)
      */
     public function create_content_types(array $typestonotinstall, core $core): array {
         global $DB;
@@ -407,12 +409,15 @@ class core_h5p_generator extends \component_generator_base {
         autoloader::register();
 
         // Get info of latest content types versions.
-        $contenttypes = $core->get_latest_content_types()->contentTypes;
+        $response = $core->get_latest_content_types();
+        if (!empty($response->error)) {
+            throw new invalid_response_exception($response->error);
+        }
 
         $installedtypes = 0;
 
         // Fake installation of all other H5P content types.
-        foreach ($contenttypes as $contenttype) {
+        foreach ($response->contentTypes as $contenttype) {
             // Don't install pending content types.
             if (in_array($contenttype->id, $typestonotinstall)) {
                 continue;
