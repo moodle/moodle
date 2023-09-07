@@ -68,7 +68,8 @@ class external_api {
             }
             if (!file_exists($function->classpath)) {
                 throw new coding_exception(
-                    "Cannot find file {$function->classpath} with external function implementation"
+                    "Cannot find file {$function->classpath} with external function implementation " .
+                        "for {$function->classname}::{$function->methodname}"
                 );
             }
             require_once($function->classpath);
