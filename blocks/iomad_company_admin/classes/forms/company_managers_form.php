@@ -140,8 +140,12 @@ class company_managers_form extends moodleform {
     public function process($departmentid, $roletype) {
         global $DB, $USER, $CFG;
 
+        $adding = optional_param('add', false, PARAM_BOOL);
+        $moving = optional_param('move', false, PARAM_BOOL);
+        $removing = optional_param('remove', false, PARAM_BOOL);
+
         // Process incoming assignments.
-        if (($adding = optional_param('add', false, PARAM_BOOL) || $moving = optional_param('move', false, PARAM_BOOL)) && confirm_sesskey()) {
+        if (($adding || $moving) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
             if (!empty($userstoassign)) {
                 foreach ($userstoassign as $adduser) {
@@ -177,7 +181,6 @@ class company_managers_form extends moodleform {
                         $educator = false;
                     }
                     // Do the actual work.
-echo "Running upsert for Add</br>";
                     company::upsert_company_user($adduser->id, $this->selectedcompany, $departmentid, $roletype, $educator, false, $moving);
                 }
 
@@ -187,12 +190,12 @@ echo "Running upsert for Add</br>";
         }
 
         // Process incoming unassignments.
-        if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+        if ($removing && confirm_sesskey()) {
             $userstounassign = $this->currentusers->get_selected_users();
             if (!empty($userstounassign)) {
                 foreach ($userstounassign as $removeuser) {
 
-                        // Check the userid is valid.
+                    // Check the userid is valid.
                     if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
                         print_error('invaliduserdepartment', 'block_iomad_company_management');
                     }
