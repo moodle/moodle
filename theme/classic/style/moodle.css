@@ -30135,7 +30135,7 @@ body.drawer-ease {
 
 @media (min-width: 992px) {
   .drawer {
-    z-index: 999;
+    z-index: inherit;
   }
   .drawer#theme_boost-drawers-blocks:focus-within {
     z-index: 1031;
