@@ -29078,6 +29078,9 @@ span.editinstructions .alert-link {
 .activity-add .pluscontainer,
 .block-add .pluscontainer {
   border: 1px solid #3584c9;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
 }
 .activity-add:hover,
 .block-add:hover {
@@ -29097,8 +29100,14 @@ span.editinstructions .alert-link {
   border-radius: 1rem;
 }
 
+/* Add section */
 .changenumsections {
   border-top: 1px solid #3584c9;
+}
+
+.add-sections .icon {
+  margin-right: 0.25rem;
+  font-size: inherit;
 }
 
 /* Section Expand all/Collapse all */
@@ -29133,10 +29142,6 @@ span.editinstructions .alert-link {
 .course-section .section_action_menu .dropdown-toggle::after {
   display: none;
 }
-.course-section .inplaceeditable {
-  display: flex;
-  align-items: center;
-}
 .course-section .summarytext img {
   border-radius: 1rem;
 }
@@ -29144,19 +29149,21 @@ span.editinstructions .alert-link {
   margin-top: 0.5rem;
   padding: 0.25rem 1rem;
   background-color: #e9ecef;
+  font-size: 0.875em;
   border-radius: 1rem;
-}
-.course-section .availabilityinfo .editavailability {
-  padding: 0.25rem 1rem;
-  border-radius: 1rem;
-}
-.course-section .availabilityinfo .editavailability :hover {
-  background-color: #ced4da;
 }
 .course-section .availabilityinfo .editavailability a {
   border-radius: 0.5rem;
   color: #1d2125;
   text-decoration: none;
+  font-weight: bold;
+}
+.course-section .availabilityinfo .editavailability a:hover {
+  background-color: #ced4da;
+}
+.course-section .availabilityinfo .editavailability a .icon {
+  font-size: inherit;
+  margin-right: 0.25rem;
 }
 .course-section.section-summary {
   padding-left: 1rem;
@@ -29255,8 +29262,9 @@ span.editinstructions .alert-link {
   position: relative;
 }
 .activity-item .activity-actions .action-menu .btn.btn-icon {
-  height: 31px;
-  width: 31px;
+  height: 32px;
+  width: 32px;
+  border-radius: 0.25rem;
 }
 .activity-item .activity-icon {
   grid-area: icon;
@@ -29281,6 +29289,7 @@ span.editinstructions .alert-link {
   margin-left: 0.5rem;
 }
 .activity-item .activity-name-area .activityname .inplaceeditable .quickeditlink {
+  position: relative;
   z-index: 2;
   margin-left: 0.5rem;
 }
@@ -29295,9 +29304,47 @@ span.editinstructions .alert-link {
 }
 .activity-item .activity-completion button.btn,
 .activity-item .activity-completion a[role=button].btn {
-  border: 1px solid #ced4da;
+  color: #1d2125;
+  background-color: #fff;
+  border-color: #ced4da;
+  min-height: 32px;
   font-weight: bold;
   border-radius: 0.25rem;
+}
+.activity-item .activity-completion button.btn:hover,
+.activity-item .activity-completion a[role=button].btn:hover {
+  color: #fff;
+  background-color: #6a737b;
+  border-color: #b1bbc4;
+}
+.activity-item .activity-completion button.btn:focus, .activity-item .activity-completion button.btn.focus,
+.activity-item .activity-completion a[role=button].btn:focus,
+.activity-item .activity-completion a[role=button].btn.focus {
+  color: #fff;
+  background-color: #6a737b;
+  border-color: #b1bbc4;
+  box-shadow: 0 0 0 0.2rem rgba(179, 185, 191, 0.5);
+}
+.activity-item .activity-completion button.btn.disabled, .activity-item .activity-completion button.btn:disabled,
+.activity-item .activity-completion a[role=button].btn.disabled,
+.activity-item .activity-completion a[role=button].btn:disabled {
+  color: #1d2125;
+  background-color: #fff;
+  border-color: #ced4da;
+}
+.activity-item .activity-completion button.btn:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn.dropdown-toggle {
+  color: #1d2125;
+  background-color: #e6e6e6;
+  border-color: #aab4bf;
+}
+.activity-item .activity-completion button.btn:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(179, 185, 191, 0.5);
 }
 .activity-item .activity-completion button.btn .icon,
 .activity-item .activity-completion a[role=button].btn .icon {
@@ -29305,115 +29352,371 @@ span.editinstructions .alert-link {
 }
 .activity-item .activity-completion button.btn-primary,
 .activity-item .activity-completion a[role=button].btn-primary {
+  color: #1d2125;
+  background-color: #cfe2f2;
+  border-color: #cfe2f2;
   color: #0f6cbf;
+}
+.activity-item .activity-completion button.btn-primary:hover,
+.activity-item .activity-completion a[role=button].btn-primary:hover {
+  color: #fff;
+  background-color: #0f6cbf;
+  border-color: #a7cae7;
+}
+.activity-item .activity-completion button.btn-primary:focus, .activity-item .activity-completion button.btn-primary.focus,
+.activity-item .activity-completion a[role=button].btn-primary:focus,
+.activity-item .activity-completion a[role=button].btn-primary.focus {
+  color: #fff;
+  background-color: #0f6cbf;
+  border-color: #a7cae7;
+  box-shadow: 0 0 0 0.2rem rgba(180, 197, 211, 0.5);
+}
+.activity-item .activity-completion button.btn-primary.disabled, .activity-item .activity-completion button.btn-primary:disabled,
+.activity-item .activity-completion a[role=button].btn-primary.disabled,
+.activity-item .activity-completion a[role=button].btn-primary:disabled {
+  color: #1d2125;
   background-color: #cfe2f2;
   border-color: #cfe2f2;
 }
-.activity-item .activity-completion button.btn-primary hr,
-.activity-item .activity-completion a[role=button].btn-primary hr {
-  border-top-color: #bbd6ed;
+.activity-item .activity-completion button.btn-primary:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-primary:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-primary.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-primary:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-primary:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-primary.dropdown-toggle {
+  color: #1d2125;
+  background-color: #a7cae7;
+  border-color: #9dc4e4;
 }
-.activity-item .activity-completion button.btn-primary .alert-link,
-.activity-item .activity-completion a[role=button].btn-primary .alert-link {
-  color: #0b5190;
+.activity-item .activity-completion button.btn-primary:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-primary:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-primary.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-primary:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-primary:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-primary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(180, 197, 211, 0.5);
+}
+.activity-item .activity-completion button.btn-primary:hover,
+.activity-item .activity-completion a[role=button].btn-primary:hover {
+  color: #fff;
 }
 .activity-item .activity-completion button.btn-secondary,
 .activity-item .activity-completion a[role=button].btn-secondary {
+  color: #1d2125;
+  background-color: #f5f6f8;
+  border-color: #f5f6f8;
   color: #ced4da;
+}
+.activity-item .activity-completion button.btn-secondary:hover,
+.activity-item .activity-completion a[role=button].btn-secondary:hover {
+  color: #1d2125;
+  background-color: #ced4da;
+  border-color: #d7dbe3;
+}
+.activity-item .activity-completion button.btn-secondary:focus, .activity-item .activity-completion button.btn-secondary.focus,
+.activity-item .activity-completion a[role=button].btn-secondary:focus,
+.activity-item .activity-completion a[role=button].btn-secondary.focus {
+  color: #1d2125;
+  background-color: #ced4da;
+  border-color: #d7dbe3;
+  box-shadow: 0 0 0 0.2rem rgba(213, 214, 216, 0.5);
+}
+.activity-item .activity-completion button.btn-secondary.disabled, .activity-item .activity-completion button.btn-secondary:disabled,
+.activity-item .activity-completion a[role=button].btn-secondary.disabled,
+.activity-item .activity-completion a[role=button].btn-secondary:disabled {
+  color: #1d2125;
   background-color: #f5f6f8;
   border-color: #f5f6f8;
 }
-.activity-item .activity-completion button.btn-secondary hr,
-.activity-item .activity-completion a[role=button].btn-secondary hr {
-  border-top-color: #e6e9ee;
+.activity-item .activity-completion button.btn-secondary:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-secondary:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-secondary.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-secondary:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-secondary:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-secondary.dropdown-toggle {
+  color: #1d2125;
+  background-color: #d7dbe3;
+  border-color: #d0d4de;
 }
-.activity-item .activity-completion button.btn-secondary .alert-link,
-.activity-item .activity-completion a[role=button].btn-secondary .alert-link {
-  color: #b1bbc4;
+.activity-item .activity-completion button.btn-secondary:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-secondary:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-secondary.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-secondary:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-secondary:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-secondary.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(213, 214, 216, 0.5);
+}
+.activity-item .activity-completion button.btn-secondary:hover,
+.activity-item .activity-completion a[role=button].btn-secondary:hover {
+  color: #1d2125;
 }
 .activity-item .activity-completion button.btn-success,
 .activity-item .activity-completion a[role=button].btn-success {
+  color: #1d2125;
+  background-color: #d7e4d6;
+  border-color: #d7e4d6;
   color: #357a32;
+}
+.activity-item .activity-completion button.btn-success:hover,
+.activity-item .activity-completion a[role=button].btn-success:hover {
+  color: #fff;
+  background-color: #357a32;
+  border-color: #b9d0b7;
+}
+.activity-item .activity-completion button.btn-success:focus, .activity-item .activity-completion button.btn-success.focus,
+.activity-item .activity-completion a[role=button].btn-success:focus,
+.activity-item .activity-completion a[role=button].btn-success.focus {
+  color: #fff;
+  background-color: #357a32;
+  border-color: #b9d0b7;
+  box-shadow: 0 0 0 0.2rem rgba(187, 199, 187, 0.5);
+}
+.activity-item .activity-completion button.btn-success.disabled, .activity-item .activity-completion button.btn-success:disabled,
+.activity-item .activity-completion a[role=button].btn-success.disabled,
+.activity-item .activity-completion a[role=button].btn-success:disabled {
+  color: #1d2125;
   background-color: #d7e4d6;
   border-color: #d7e4d6;
 }
-.activity-item .activity-completion button.btn-success hr,
-.activity-item .activity-completion a[role=button].btn-success hr {
-  border-top-color: #c8dac7;
+.activity-item .activity-completion button.btn-success:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-success:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-success.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-success:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-success:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-success.dropdown-toggle {
+  color: #1d2125;
+  background-color: #b9d0b7;
+  border-color: #b2cbb0;
 }
-.activity-item .activity-completion button.btn-success .alert-link,
-.activity-item .activity-completion a[role=button].btn-success .alert-link {
-  color: #255623;
+.activity-item .activity-completion button.btn-success:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-success:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-success.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-success:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-success:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-success.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(187, 199, 187, 0.5);
+}
+.activity-item .activity-completion button.btn-success:hover,
+.activity-item .activity-completion a[role=button].btn-success:hover {
+  color: #fff;
 }
 .activity-item .activity-completion button.btn-info,
 .activity-item .activity-completion a[role=button].btn-info {
+  color: #1d2125;
+  background-color: #cce6ea;
+  border-color: #cce6ea;
   color: #008196;
+}
+.activity-item .activity-completion button.btn-info:hover,
+.activity-item .activity-completion a[role=button].btn-info:hover {
+  color: #fff;
+  background-color: #008196;
+  border-color: #a8d4db;
+}
+.activity-item .activity-completion button.btn-info:focus, .activity-item .activity-completion button.btn-info.focus,
+.activity-item .activity-completion a[role=button].btn-info:focus,
+.activity-item .activity-completion a[role=button].btn-info.focus {
+  color: #fff;
+  background-color: #008196;
+  border-color: #a8d4db;
+  box-shadow: 0 0 0 0.2rem rgba(178, 200, 204, 0.5);
+}
+.activity-item .activity-completion button.btn-info.disabled, .activity-item .activity-completion button.btn-info:disabled,
+.activity-item .activity-completion a[role=button].btn-info.disabled,
+.activity-item .activity-completion a[role=button].btn-info:disabled {
+  color: #1d2125;
   background-color: #cce6ea;
   border-color: #cce6ea;
 }
-.activity-item .activity-completion button.btn-info hr,
-.activity-item .activity-completion a[role=button].btn-info hr {
-  border-top-color: #badde3;
+.activity-item .activity-completion button.btn-info:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-info:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-info.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-info:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-info:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-info.dropdown-toggle {
+  color: #1d2125;
+  background-color: #a8d4db;
+  border-color: #9fd0d7;
 }
-.activity-item .activity-completion button.btn-info .alert-link,
-.activity-item .activity-completion a[role=button].btn-info .alert-link {
-  color: #005563;
+.activity-item .activity-completion button.btn-info:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-info:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-info.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-info:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-info:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-info.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(178, 200, 204, 0.5);
+}
+.activity-item .activity-completion button.btn-info:hover,
+.activity-item .activity-completion a[role=button].btn-info:hover {
+  color: #fff;
 }
 .activity-item .activity-completion button.btn-warning,
 .activity-item .activity-completion a[role=button].btn-warning {
+  color: #1d2125;
+  background-color: #fcefdc;
+  border-color: #fcefdc;
   color: #f0ad4e;
+}
+.activity-item .activity-completion button.btn-warning:hover,
+.activity-item .activity-completion a[role=button].btn-warning:hover {
+  color: #1d2125;
+  background-color: #f0ad4e;
+  border-color: #f8daad;
+}
+.activity-item .activity-completion button.btn-warning:focus, .activity-item .activity-completion button.btn-warning.focus,
+.activity-item .activity-completion a[role=button].btn-warning:focus,
+.activity-item .activity-completion a[role=button].btn-warning.focus {
+  color: #1d2125;
+  background-color: #f0ad4e;
+  border-color: #f8daad;
+  box-shadow: 0 0 0 0.2rem rgba(219, 208, 193, 0.5);
+}
+.activity-item .activity-completion button.btn-warning.disabled, .activity-item .activity-completion button.btn-warning:disabled,
+.activity-item .activity-completion a[role=button].btn-warning.disabled,
+.activity-item .activity-completion a[role=button].btn-warning:disabled {
+  color: #1d2125;
   background-color: #fcefdc;
   border-color: #fcefdc;
 }
-.activity-item .activity-completion button.btn-warning hr,
-.activity-item .activity-completion a[role=button].btn-warning hr {
-  border-top-color: #fae4c5;
+.activity-item .activity-completion button.btn-warning:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-warning:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-warning.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-warning:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-warning:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-warning.dropdown-toggle {
+  color: #1d2125;
+  background-color: #f8daad;
+  border-color: #f7d4a1;
 }
-.activity-item .activity-completion button.btn-warning .alert-link,
-.activity-item .activity-completion a[role=button].btn-warning .alert-link {
-  color: #ec971f;
+.activity-item .activity-completion button.btn-warning:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-warning:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-warning.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-warning:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-warning:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-warning.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(219, 208, 193, 0.5);
+}
+.activity-item .activity-completion button.btn-warning:hover,
+.activity-item .activity-completion a[role=button].btn-warning:hover {
+  color: #1d2125;
 }
 .activity-item .activity-completion button.btn-danger,
 .activity-item .activity-completion a[role=button].btn-danger {
+  color: #1d2125;
+  background-color: #f4d6d2;
+  border-color: #f4d6d2;
   color: #ca3120;
+}
+.activity-item .activity-completion button.btn-danger:hover,
+.activity-item .activity-completion a[role=button].btn-danger:hover {
+  color: #fff;
+  background-color: #ca3120;
+  border-color: #eab1a9;
+}
+.activity-item .activity-completion button.btn-danger:focus, .activity-item .activity-completion button.btn-danger.focus,
+.activity-item .activity-completion a[role=button].btn-danger:focus,
+.activity-item .activity-completion a[role=button].btn-danger.focus {
+  color: #fff;
+  background-color: #ca3120;
+  border-color: #eab1a9;
+  box-shadow: 0 0 0 0.2rem rgba(212, 187, 184, 0.5);
+}
+.activity-item .activity-completion button.btn-danger.disabled, .activity-item .activity-completion button.btn-danger:disabled,
+.activity-item .activity-completion a[role=button].btn-danger.disabled,
+.activity-item .activity-completion a[role=button].btn-danger:disabled {
+  color: #1d2125;
   background-color: #f4d6d2;
   border-color: #f4d6d2;
 }
-.activity-item .activity-completion button.btn-danger hr,
-.activity-item .activity-completion a[role=button].btn-danger hr {
-  border-top-color: #efc3be;
+.activity-item .activity-completion button.btn-danger:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-danger:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-danger.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-danger:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-danger:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-danger.dropdown-toggle {
+  color: #1d2125;
+  background-color: #eab1a9;
+  border-color: #e7a79f;
 }
-.activity-item .activity-completion button.btn-danger .alert-link,
-.activity-item .activity-completion a[role=button].btn-danger .alert-link {
-  color: #9e2619;
+.activity-item .activity-completion button.btn-danger:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-danger:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-danger.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-danger:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-danger:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-danger.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(212, 187, 184, 0.5);
+}
+.activity-item .activity-completion button.btn-danger:hover,
+.activity-item .activity-completion a[role=button].btn-danger:hover {
+  color: #fff;
 }
 .activity-item .activity-completion button.btn-light,
 .activity-item .activity-completion a[role=button].btn-light {
+  color: #1d2125;
+  background-color: #fefefe;
+  border-color: #fefefe;
   color: #f8f9fa;
+}
+.activity-item .activity-completion button.btn-light:hover,
+.activity-item .activity-completion a[role=button].btn-light:hover {
+  color: #1d2125;
+  background-color: #f8f9fa;
+  border-color: #e5e5e5;
+}
+.activity-item .activity-completion button.btn-light:focus, .activity-item .activity-completion button.btn-light.focus,
+.activity-item .activity-completion a[role=button].btn-light:focus,
+.activity-item .activity-completion a[role=button].btn-light.focus {
+  color: #1d2125;
+  background-color: #f8f9fa;
+  border-color: #e5e5e5;
+  box-shadow: 0 0 0 0.2rem rgba(220, 221, 221, 0.5);
+}
+.activity-item .activity-completion button.btn-light.disabled, .activity-item .activity-completion button.btn-light:disabled,
+.activity-item .activity-completion a[role=button].btn-light.disabled,
+.activity-item .activity-completion a[role=button].btn-light:disabled {
+  color: #1d2125;
   background-color: #fefefe;
   border-color: #fefefe;
 }
-.activity-item .activity-completion button.btn-light hr,
-.activity-item .activity-completion a[role=button].btn-light hr {
-  border-top-color: #f1f1f1;
+.activity-item .activity-completion button.btn-light:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-light:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-light.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-light:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-light:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-light.dropdown-toggle {
+  color: #1d2125;
+  background-color: #e5e5e5;
+  border-color: #dedede;
 }
-.activity-item .activity-completion button.btn-light .alert-link,
-.activity-item .activity-completion a[role=button].btn-light .alert-link {
-  color: #dae0e5;
+.activity-item .activity-completion button.btn-light:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-light:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-light.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-light:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-light:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-light.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(220, 221, 221, 0.5);
+}
+.activity-item .activity-completion button.btn-light:hover,
+.activity-item .activity-completion a[role=button].btn-light:hover {
+  color: #1d2125;
 }
 .activity-item .activity-completion button.btn-dark,
 .activity-item .activity-completion a[role=button].btn-dark {
+  color: #1d2125;
+  background-color: #d6d8d9;
+  border-color: #d6d8d9;
   color: #343a40;
+}
+.activity-item .activity-completion button.btn-dark:hover,
+.activity-item .activity-completion a[role=button].btn-dark:hover {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #bcbfc0;
+}
+.activity-item .activity-completion button.btn-dark:focus, .activity-item .activity-completion button.btn-dark.focus,
+.activity-item .activity-completion a[role=button].btn-dark:focus,
+.activity-item .activity-completion a[role=button].btn-dark.focus {
+  color: #fff;
+  background-color: #343a40;
+  border-color: #bcbfc0;
+  box-shadow: 0 0 0 0.2rem rgba(186, 189, 190, 0.5);
+}
+.activity-item .activity-completion button.btn-dark.disabled, .activity-item .activity-completion button.btn-dark:disabled,
+.activity-item .activity-completion a[role=button].btn-dark.disabled,
+.activity-item .activity-completion a[role=button].btn-dark:disabled {
+  color: #1d2125;
   background-color: #d6d8d9;
   border-color: #d6d8d9;
 }
-.activity-item .activity-completion button.btn-dark hr,
-.activity-item .activity-completion a[role=button].btn-dark hr {
-  border-top-color: #c9cbcd;
+.activity-item .activity-completion button.btn-dark:not(:disabled):not(.disabled):active, .activity-item .activity-completion button.btn-dark:not(:disabled):not(.disabled).active, .show > .activity-item .activity-completion button.btn-dark.dropdown-toggle,
+.activity-item .activity-completion a[role=button].btn-dark:not(:disabled):not(.disabled):active,
+.activity-item .activity-completion a[role=button].btn-dark:not(:disabled):not(.disabled).active,
+.show > .activity-item .activity-completion a[role=button].btn-dark.dropdown-toggle {
+  color: #1d2125;
+  background-color: #bcbfc0;
+  border-color: #b5b9ba;
 }
-.activity-item .activity-completion button.btn-dark .alert-link,
-.activity-item .activity-completion a[role=button].btn-dark .alert-link {
-  color: #1d2124;
+.activity-item .activity-completion button.btn-dark:not(:disabled):not(.disabled):active:focus, .activity-item .activity-completion button.btn-dark:not(:disabled):not(.disabled).active:focus, .show > .activity-item .activity-completion button.btn-dark.dropdown-toggle:focus,
+.activity-item .activity-completion a[role=button].btn-dark:not(:disabled):not(.disabled):active:focus,
+.activity-item .activity-completion a[role=button].btn-dark:not(:disabled):not(.disabled).active:focus,
+.show > .activity-item .activity-completion a[role=button].btn-dark.dropdown-toggle:focus {
+  box-shadow: 0 0 0 0.2rem rgba(186, 189, 190, 0.5);
+}
+.activity-item .activity-completion button.btn-dark:hover,
+.activity-item .activity-completion a[role=button].btn-dark:hover {
+  color: #fff;
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-completion {
@@ -29449,9 +29752,11 @@ span.editinstructions .alert-link {
   justify-self: end;
 }
 .activity-item .activity-groupmode-info .groupmode-information {
-  height: 31px;
+  height: 32px;
+  width: 32px;
+  border-radius: 0.25rem;
 }
-.activity-item .activity-groupmode-info .groupmode-information .groupmode-icon-info {
+.activity-item .activity-groupmode-info .groupmode-icon-info {
   display: none;
 }
 @media (max-width: 575.98px) {
@@ -29461,8 +29766,17 @@ span.editinstructions .alert-link {
     padding-top: 0.5rem;
     border-top: 1px solid #dee2e6;
   }
-  .activity-item .activity-groupmode-info .groupmode-information .groupmode-icon-info {
+  .activity-item .activity-groupmode-info .groupmode-information {
+    width: auto;
+    font-size: inherit;
+    padding: 0 0.5rem;
+  }
+  .activity-item .activity-groupmode-info .groupmode-icon-info {
     display: inline;
+  }
+  .activity-item .activity-groupmode-info .v-parent-focus {
+    opacity: 1;
+    visibility: visible;
   }
 }
 .activity-item .activity-badges {
@@ -29497,11 +29811,6 @@ span.editinstructions .alert-link {
   margin-top: 0.5rem;
   padding-top: 0.5rem;
   border-top: 1px solid #dee2e6;
-}
-.activity-item .inplaceeditable {
-  display: flex;
-  flex: 0 1 auto;
-  max-width: 100%;
 }
 .activity-item .no-overflow {
   width: 100%;

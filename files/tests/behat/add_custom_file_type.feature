@@ -36,5 +36,5 @@ Feature: Add a new custom file type
       | Display resource description | 1             |
     And I am on "Course 1" course homepage
     Then I should see "Test file"
-    And I should see "MDLR" in the "div.activitybadge" "css_element"
+    And I should see "MDLR" in the "span.activitybadge" "css_element"
     And I should not see "MDLR" in the "span.resourcelinkdetails" "css_element"
