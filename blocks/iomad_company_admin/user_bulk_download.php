@@ -259,7 +259,11 @@ function user_download_xls($userids, $fields, $includecompanyfield) {
             // Stop the script from timing out on large numbers of users.
             set_time_limit(30);
             if ($includecompanyfield || $field != "profile_field_company") {
-                $worksheet[0]->write($row, $col, $user->$field);
+                if (!empty($user->field)) {
+                    $worksheet[0]->write($row, $col, $user->$field);
+                } else {
+                    $worksheet[0]->write($row, $col, '');
+                }
                 $col++;
             }
         }
@@ -309,7 +313,11 @@ function user_download_csv($userids, $fields, $includecompanyfield) {
             // Stop the script from timing out on large numbers of users.
             set_time_limit(30);
             if ($includecompanyfield || $field != "profile_field_company") {
-                $row[] = str_replace($delimiter, $encdelim, $user->$field);
+                if (!empty($user->field)) {
+                    $row[] = str_replace($delimiter, $encdelim, $user->$field);
+                } else {
+                    $row[] = str_replace($delimiter, $encdelim, '');
+                }
             }
         }
         $row[] = str_replace($delimiter, $encdelim, company_user::get_temporary_password($user));
