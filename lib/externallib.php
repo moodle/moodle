@@ -85,8 +85,8 @@ class external_api {
                 $function->classpath = $CFG->dirroot.'/'.$function->classpath;
             }
             if (!file_exists($function->classpath)) {
-                throw new coding_exception('Cannot find file ' . $function->classpath .
-                        ' with external function implementation');
+                throw new coding_exception("Cannot find file {$function->classpath} with external function implementation " .
+                    "for {$function->classname}::{$function->methodname}");
             }
             require_once($function->classpath);
             if (!class_exists($function->classname)) {
