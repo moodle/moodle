@@ -25,7 +25,7 @@ class File
 
     public const SEND = 2;
 
-    private const CHUNKED_READ_BLOCK_SIZE = 1048576;
+    private const CHUNKED_READ_BLOCK_SIZE = 1024;
 
     /**
      * @var string
