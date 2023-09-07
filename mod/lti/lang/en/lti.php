@@ -93,8 +93,6 @@ $string['basicltisettings'] = 'Basic Learning Tool Interoperability (LTI) settin
 $string['cachedef_keyset'] = 'Caches the keyset information of tools';
 $string['cancel'] = 'Cancel';
 $string['cancelled'] = 'Cancelled';
-$string['cannot_delete'] = 'You may not delete this tool configuration.';
-$string['cannot_edit'] = 'You may not edit this tool configuration.';
 $string['capabilities'] = 'Capabilities';
 $string['capabilitiesrequired'] = 'This tool requires access to the following data in order to activate:';
 $string['capabilities_help'] = 'Select those capabilities which you wish to offer to the tool provider.  More than one capability can be selected.';
@@ -117,7 +115,6 @@ $string['contentitem_deeplinking_help'] = 'If ticked, the option \'Select conten
 $string['contentitem_multiple_description'] = 'The following items will be added to your course:';
 $string['contentitem_multiple_graded'] = 'Graded activity (Maximum grade: {$a})';
 $string['contentselected'] = 'Content selected';
-$string['course_tool_types'] = 'Course tools';
 $string['courseactivitiesorresources'] = 'Course activities or resources';
 $string['courseexternaltooladd'] = 'Add new LTI External tool';
 $string['courseexternaltooladdsuccess'] = '{$a} added.';
@@ -136,7 +133,6 @@ $string['coursetooldeleted'] = '{$a} removed';
 $string['createdon'] = 'Created on';
 $string['curllibrarymissing'] = 'PHP cURL extension required for the External tool.';
 $string['custom'] = 'Custom parameters';
-$string['custom_config'] = 'Using custom tool configuration.';
 $string['custom_help'] = 'Custom parameters are settings used by the tool provider. For example, a custom parameter may be used to display
 a specific resource from the provider.  Each parameter should be entered on a separate line using a format of "name=value"; for example, "chapter=3".
 
@@ -164,12 +160,10 @@ $string['delete_confirmation'] = 'Are you sure you want to delete this preconfig
 $string['deletecoursetool'] = 'Delete {$a}';
 $string['deletecoursetoolconfirm'] = 'This will delete {$a} from the available LTI tools in your course.';
 $string['deletecoursetoolwithusageconfirm'] = '{$a} is currently being used in at least one activity in your course. If you delete this tool, the activities that use it will no longer work.<br><br>Are you sure you want to delete {$a}?';
-$string['deletetype'] = 'Delete preconfigured tool';
 $string['display_description'] = 'Display activity description when students access the tool';
 $string['display_description_help'] = 'Content from this tool is displayed embedded in a page in the course. This setting determines if the activity description is shown in that page.';
 $string['display_name'] = 'Display activity name when students access the tool';
 $string['display_name_help'] = 'Content from this tool is displayed embedded in a page in the course. This setting determines if the activity name is shown in that page.';
-$string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configuration.';
 $string['donot'] = 'Do not send';
 $string['donotaccept'] = 'Do not accept';
 $string['donotallow'] = 'Do not allow';
@@ -189,7 +183,6 @@ $string['editmanualinstancedeprecationwarning'] = 'Manually configured External 
 To make any changes to the tool, or to create new activities with it, the tool needs to be added to your course in Course > More > LTI External tools. Then, you will be able to create new activities, selecting the tool directly in the Activity chooser.
 <br><br>
 You can read more about adding LTI External tools in the documentation <a href="{$a}" target="_blank">External tool</a>.';
-$string['edittype'] = 'Edit preconfigured tool';
 $string['embed'] = 'Embed';
 $string['embed_no_blocks'] = 'Embed, without blocks';
 $string['enableemailnotification'] = 'Send notification emails';
@@ -230,7 +223,6 @@ $string['fixexistingconf'] = 'Use an existing configuration for the misconfigure
 $string['fixnew'] = 'New configuration';
 $string['fixnewconf'] = 'Define a new configuration for the misconfigured instance';
 $string['fixold'] = 'Use existing';
-$string['forced_help'] = 'This setting has been forced in a course or site level tool configuration. You may not change it from this interface.';
 $string['force_ssl'] = 'Force SSL';
 $string['force_ssl_help'] = 'Selecting this option forces all launches to this tool provider to use SSL.
 
@@ -238,7 +230,6 @@ In addition, all web service requests from the tool provider will use SSL.
 
 If using this option, confirm that this Moodle site and the tool provider support SSL.';
 $string['generaltool'] = 'General tool';
-$string['global_tool_types'] = 'Preconfigured tools';
 $string['grading'] = 'Grade routing';
 $string['icon_url'] = 'Icon URL';
 $string['icon_url_help'] = 'The icon URL allows the icon that shows up in the course listing for this activity to be modified. Instead of using the default
@@ -539,7 +530,6 @@ $string['subplugintype_ltiservice_plural'] = 'LTI services';
 $string['subplugintype_ltisource'] = 'LTI source';
 $string['subplugintype_ltisource_plural'] = 'LTI sources';
 $string['toggle_debug_data'] = 'Toggle debug data';
-$string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
 $string['tool_settings'] = 'Tool settings';
 $string['tooldescription'] = 'Tool description';
 $string['tooldescription_help'] = 'The description of the tool that will be displayed to teachers in the activity list.
@@ -574,10 +564,6 @@ $string['toolregistration'] = 'External tool registration';
 $string['toolsetup'] = 'External tool configuration';
 $string['tooltypenotfounderror'] = "The LTI tool used in this activity has been deleted. If you need help, contact your teacher or site administrator.";
 $string['tooltypes'] = 'Tools';
-$string['tooltypeadded'] = 'Preconfigured tool added';
-$string['tooltypedeleted'] = 'Preconfigured tool deleted';
-$string['tooltypenotdeleted'] = 'Could not delete preconfigured tool';
-$string['tooltypeupdated'] = 'Preconfigured tool updated';
 $string['toolurl'] = 'Tool URL';
 $string['toolurlplaceholder'] = 'Tool URL...';
 $string['toolurl_help'] = 'The tool URL is used to match tool URLs to the correct tool configuration. Prefixing the URL with http(s) is optional.
@@ -617,10 +603,24 @@ $string['update'] = 'Update';
 $string['usage'] = 'Usage';
 $string['useraccountinformation'] = 'User account information';
 $string['userpersonalinformation'] = 'User personal information';
-$string['using_tool_cartridge'] = 'Using tool cartridge';
-$string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
 
 // Deprecated since Moodle 4.3.
 $string['lti:addmanualinstance'] = 'Add a manually-configured tool';
+$string['edittype'] = 'Edit preconfigured tool';
+$string['deletetype'] = 'Delete preconfigured tool';
+$string['cannot_delete'] = 'You may not delete this tool configuration.';
+$string['cannot_edit'] = 'You may not edit this tool configuration.';
+$string['global_tool_types'] = 'Preconfigured tools';
+$string['course_tool_types'] = 'Course tools';
+$string['using_tool_cartridge'] = 'Using tool cartridge';
+$string['using_tool_configuration'] = 'Using tool configuration: ';
+$string['domain_mismatch'] = 'Tool URL\'s domain does not match tool configuration.';
+$string['custom_config'] = 'Using custom tool configuration.';
+$string['tool_config_not_found'] = 'Tool configuration not found for this URL.';
+$string['tooltypeadded'] = 'Preconfigured tool added';
+$string['tooltypedeleted'] = 'Preconfigured tool deleted';
+$string['tooltypenotdeleted'] = 'Could not delete preconfigured tool';
+$string['tooltypeupdated'] = 'Preconfigured tool updated';
+$string['forced_help'] = 'This setting has been forced in a course or site level tool configuration. You may not change it from this interface.';
