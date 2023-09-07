@@ -1027,7 +1027,7 @@ function data_get_field_new($type, $data) {
  * @param stdClass|null $cm optional course module data
  * @return data_field_base the field object instance or data_field_base if unkown type
  */
-function data_get_field($field, $data, $cm=null) {
+function data_get_field(stdClass $field, stdClass $data, ?stdClass $cm=null): data_field_base {
     global $CFG;
     if (!isset($field->type)) {
         return new data_field_base($field);
