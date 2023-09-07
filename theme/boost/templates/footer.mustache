@@ -38,7 +38,7 @@
 <footer id="page-footer" class="footer-popover bg-white">
     <div data-region="footer-container-popover">
         {{#output.has_communication_links}}
-            <button onclick="window.open('{{output.communication_url}}', '_blank')" class="btn btn-icon bg-primary text-white icon-no-margin btn-footer-communication" aria-label="{{#str}}communicationroomlink, course{{/str}}">
+            <button onclick="window.open('{{output.communication_url}}', '_blank', 'noreferrer')" class="btn btn-icon bg-primary text-white icon-no-margin btn-footer-communication" aria-label="{{#str}}communicationroomlink, course{{/str}}">
                 {{#pix}}t/messages-o, core{{/pix}}
             </button>
         {{/output.has_communication_links}}

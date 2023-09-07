@@ -167,6 +167,8 @@ class communication_feature_test extends \advanced_testcase {
             ],
         );
 
+        $provider->reload();
+
         // Then call the provider's update method to actually perform the change.
         $provider->update_chat_room();
 
