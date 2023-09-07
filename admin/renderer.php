@@ -898,7 +898,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $url = "https://campaign.moodle.org/current/lms/{$lang}/install/";
         $params = [
             'url' => $url,
-            'iframeid' => 'campaign-content'
+            'iframeid' => 'campaign-content',
+            'title' => get_string('campaign', 'admin'),
         ];
 
         return $this->render_from_template('core/external_content_banner', $params);
@@ -919,7 +920,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $url = "https://campaign.moodle.org/current/lms/{$lang}/servicesandsupport/";
         $params = [
             'url' => $url,
-            'iframeid' => 'services-support-content'
+            'iframeid' => 'services-support-content',
+            'title' => get_string('supportandservices', 'admin'),
         ];
 
         return $this->render_from_template('core/external_content_banner', $params);
