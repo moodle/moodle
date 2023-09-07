@@ -2406,40 +2406,6 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
-// Make links in a menu clickable anywhere in the row.
-.dropdown-item {
-    a {
-        display: block;
-        width: 100%;
-        color: $body-color;
-    }
-    &.active,
-    &:active,
-    &:hover,
-    &:focus,
-    &:focus-within {
-        outline: 0;
-        background-color: $dropdown-link-active-bg;
-        color: $dropdown-link-active-color;
-        a {
-            color: $dropdown-link-active-color;
-        }
-    }
-    &[aria-current="true"],
-    &[aria-selected="true"] {
-        position: relative;
-        display: flex;
-        align-items: center;
-        &:before {
-            @extend .fa-solid;
-            content: fa-content($fa-var-check);
-            position: absolute;
-            left: 0.4rem;
-            font-size: 0.7rem;
-        }
-    }
-}
-
 .competency-tree {
     ul {
         padding-left: 1.5rem;
