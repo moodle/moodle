@@ -7,7 +7,7 @@ $region-footer-height: 30px;
 $content-item-hover-colour-bg: $primary;
 $content-item-hover-colour-text: $white;
 $content-item-selected-colour-bg: #4f94cd;
-$content-item-unread-colour: $gray-100;
+$content-item-unread-colour: #f4f4f4;
 $content-header-footer-height: $region-header-height + $region-footer-height;
 
 @mixin invisible() {
