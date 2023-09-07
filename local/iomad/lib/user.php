@@ -321,6 +321,11 @@ class company_user {
         }
 
         foreach ($courseids as $courseid) {
+            // Check if the courseid is valid.
+            if (empty($courseid)) {
+                continue;
+            }
+
             // Check if course is shared.
             if ($courseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
                 if ($courseinfo->licensed == 1) {
