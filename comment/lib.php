@@ -506,6 +506,9 @@ class comment {
 
                 $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
                 $html .= html_writer::start_tag('div', array('class' => 'db'));
+                $html .= html_writer::tag('label',
+                        get_string('comment', 'comment'),
+                        ['for' => 'dlg-content-'.$this->cid, 'class' => 'sr-only']);
                 $html .= html_writer::tag('textarea', '', $textareaattrs);
                 $html .= html_writer::end_tag('div'); // .db
 

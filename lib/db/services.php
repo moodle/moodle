@@ -1706,6 +1706,34 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'core_search_get_results' => [
+        'classname' => '\core_search\external\get_results',
+        'description' => 'Get search results.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_get_search_areas_list' => [
+        'classname' => '\core_search\external\get_search_areas_list',
+        'description' => 'Get search areas.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_view_results' => [
+        'classname' => '\core_search\external\view_results',
+        'description' => 'Trigger view search results event.',
+        'type' => 'write',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_get_top_results' => [
+        'classname' => '\core_search\external\get_top_results',
+        'description' => 'Get top search results.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tagindex',
@@ -1912,6 +1940,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/site:config',
         'ajax' => true,
+        'loginrequired' => false,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_agree_site_policy' => array(

@@ -40,8 +40,7 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "foo" in the "question 01 name" "table_row"
     And I should see "bar" in the "question 02 name" "table_row"
     And I should see "qidnum" in the "question 02 name" "table_row"
-    And I set the field "Filter by tags..." to "foo"
-    And I press the enter key
+    When I apply question bank filter "Tag" with value "foo"
     And I should see "question 01 name" in the "categoryquestions" "table"
     And I should not see "question 02 name" in the "categoryquestions" "table"
 
@@ -76,9 +75,8 @@ Feature: Adding questions to a quiz from the question bank
     Then I should see "question 21 name" in the "categoryquestions" "table"
     And I should see "question 22 name" in the "categoryquestions" "table"
     And I should not see "question 01 name" in the "categoryquestions" "table"
-    And I click on "Show all 22" "link" in the ".question-showall-text" "css_element"
+    And I click on "1" "link" in the ".pagination" "css_element"
     And I should see "question 01 name" in the "categoryquestions" "table"
-    And I should see "question 22 name" in the "categoryquestions" "table"
 
   Scenario: Questions are added in the right place with multiple sections
     Given the following "questions" exist:

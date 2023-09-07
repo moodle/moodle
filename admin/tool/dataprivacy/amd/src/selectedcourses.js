@@ -28,7 +28,7 @@ import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import Fragment from 'core/fragment';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 prefetchStrings('tool_dataprivacy', [
     'selectcourses',

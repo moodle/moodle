@@ -54,20 +54,26 @@ class question_text_row extends row_base {
     }
 
     protected function display_content($question, $rowclasses): void {
-        if ($this->plain) {
-            $text = question_utils::to_plain_text($question->questiontext,
-                    $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
-        } else {
-            $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
-                    $question->contextid, 'question', 'questiontext', $question->id,
-                    $question->contextid, 'core_question');
-            $text = format_text($text, $question->questiontextformat,
-                    $this->formatoptions);
+        // Access 'showtext' filter from pagevars.
+        $display = $this->qbank->get_pagevars('filter')['showtext'] ?? null;
+        if ($display) {
+            $showtext = (int)$display['values'][0];
+            $text = '';
+            if ($showtext === questiontext_condition::PLAIN) {
+                $text = question_utils::to_plain_text($question->questiontext,
+                        $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+            } else if ($showtext === questiontext_condition::FULL) {
+                $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
+                        $question->contextid, 'question', 'questiontext', $question->id,
+                        $question->contextid, 'core_question');
+                $text = format_text($text, $question->questiontextformat,
+                        $this->formatoptions);
+            }
+            if ($text == '') {
+                $text = '&#160;';
+            }
+            echo $text;
         }
-        if ($text == '') {
-            $text = '&#160;';
-        }
-        echo $text;
     }
 
     public function get_required_fields(): array {
@@ -75,14 +81,10 @@ class question_text_row extends row_base {
     }
 
     public function has_preference(): bool {
-        return true;
+        return false;
     }
 
     public function get_preference_key(): string {
         return 'qbshowtext';
-    }
-
-    public function get_preference(): bool {
-        return question_get_display_preference($this->get_preference_key(), 0, PARAM_BOOL, new \moodle_url(''));
     }
 }

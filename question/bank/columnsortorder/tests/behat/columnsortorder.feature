@@ -27,7 +27,7 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
 
   Scenario: Teacher can see proper view
     Given I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "category" to "Question category 1"
+    When I apply question bank filter "Category" with value "Question category 1"
     And I should see "Test question to be seen"
     Then I should see "Teacher 1"
 
@@ -36,7 +36,7 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
     When I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
     And I drag "Created by (creator_name_column)" "text" and I drop it in "T (question_type_column)" "text"
     And I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "category" to "Question category 1"
+    And I apply question bank filter "Category" with value "Question category 1"
     Then ".creatorname" "css_element" should appear before ".qtype" "css_element"
 
   Scenario: Disabling and enabling column display is proper

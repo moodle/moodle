@@ -35,15 +35,16 @@ $typeid = optional_param('typeid', null, PARAM_INT);
 require_login($courseid, false);
 require_capability('mod/lti:addcoursetool', context_course::instance($courseid));
 if (!empty($typeid)) {
-    $type = lti_get_type($typeid);
+    $type = lti_get_type_type_config($typeid);
     if ($type->course != $courseid || $type->course == get_site()->id) {
         throw new moodle_exception('You do not have permissions to edit this tool type.');
     }
+} else {
+    $type = (object) ['lti_clientid' => null];
 }
 
 // Page setup.
 $url = new moodle_url('/mod/lti/coursetooledit.php', ['courseid' => $courseid]);
-$type = !empty($typeid) ? lti_get_type_type_config($typeid) : (object) ['lti_clientid' => null];
 $pageheading = !empty($typeid) ? get_string('courseexternaltooledit', 'mod_lti', $type->lti_typename) :
     get_string('courseexternaltooladd', 'mod_lti');
 

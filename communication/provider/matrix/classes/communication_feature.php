@@ -50,8 +50,8 @@ class communication_feature implements
     \core_communication\room_user_provider,
     \core_communication\form_provider {
 
-    /** @var matrix_rooms $room The matrix room object to update room information */
-    private ?matrix_rooms $room = null;
+    /** @var matrix_room $room The matrix room object to update room information */
+    private ?matrix_room $room = null;
 
     /** @var string|null The URI of the home server */
     protected ?string $homeserverurl = null;
@@ -124,11 +124,11 @@ class communication_feature implements
 
     /**
      * Get the stored room configuration.
-     * @return null|matrix_rooms
+     * @return null|matrix_room
      */
-    public function get_room_configuration(): ?matrix_rooms {
+    public function get_room_configuration(): ?matrix_room {
         if ($this->room === null) {
-            $this->room = matrix_rooms::load_by_processor_id($this->processor->get_id());
+            $this->room = matrix_room::load_by_processor_id($this->processor->get_id());
         }
 
         return $this->room;
@@ -480,7 +480,7 @@ class communication_feature implements
                 topic: $matrixroomtopic,
             );
         } else {
-            $this->room = matrix_rooms::create_room_record(
+            $this->room = matrix_room::create_room_record(
                 processorid: $this->processor->get_id(),
                 topic: $matrixroomtopic,
             );

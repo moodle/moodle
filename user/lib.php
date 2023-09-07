@@ -1004,7 +1004,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
  * @param string $password plaintext password
  * @return void
  */
-function user_add_password_history($userid, $password) {
+function user_add_password_history(int $userid, #[\SensitiveParameter] string $password): void {
     global $CFG, $DB;
 
     if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
@@ -1012,12 +1012,18 @@ function user_add_password_history($userid, $password) {
     }
 
     // Note: this is using separate code form normal password hashing because
-    //       we need to have this under control in the future. Also the auth
-    //       plugin might not store the passwords locally at all.
+    // we need to have this under control in the future. Also, the auth
+    // plugin might not store the passwords locally at all.
+
+    // First generate a cryptographically suitable salt.
+    $randombytes = random_bytes(16);
+    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
+    // Then create the hash.
+    $generatedhash = crypt($password, '$6$rounds=10000$' . $salt . '$');
 
     $record = new stdClass();
     $record->userid = $userid;
-    $record->hash = password_hash($password, PASSWORD_DEFAULT);
+    $record->hash = $generatedhash;
     $record->timecreated = time();
     $DB->insert_record('user_password_history', $record);
 

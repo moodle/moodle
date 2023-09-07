@@ -211,9 +211,14 @@ function groups_get_grouping_by_idnumber($courseid, $idnumber) {
  * @return bool|stdClass group object or false if not found
  * @throws dml_exception
  */
-function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
+function groups_get_group($groupid, $fields = '*', $strictness = IGNORE_MISSING, $withcustomfields = false) {
     global $DB;
-    return $DB->get_record('groups', array('id'=>$groupid), $fields, $strictness);
+    $group = $DB->get_record('groups', ['id' => $groupid], $fields, $strictness);
+    if ($withcustomfields) {
+        $customfieldsdata = get_group_custom_fields_data([$groupid]);
+        $group->customfields = $customfieldsdata[$groupid] ?? [];
+    }
+    return $group;
 }
 
 /**
@@ -225,9 +230,14 @@ function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
  * @param int $strictness (IGNORE_MISSING - default)
  * @return stdClass group object
  */
-function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING) {
+function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING, $withcustomfields = false) {
     global $DB;
-    return $DB->get_record('groupings', array('id'=>$groupingid), $fields, $strictness);
+    $grouping = $DB->get_record('groupings', ['id' => $groupingid], $fields, $strictness);
+    if ($withcustomfields) {
+        $customfieldsdata = get_grouping_custom_fields_data([$groupingid]);
+        $grouping->customfields = $customfieldsdata[$groupingid] ?? [];
+    }
+    return $grouping;
 }
 
 /**

@@ -26,7 +26,7 @@ Feature: A Teacher can comment in a question
   @javascript
   Scenario: Add a comment in question
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
     And I add "Super test comment 01" comment to question
@@ -38,7 +38,7 @@ Feature: A Teacher can comment in a question
   @javascript
   Scenario: Delete a comment from question
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "0" on the comments column
     When I click "0" on the row on the comments column
     And I add "Super test comment 01 to be deleted" comment to question
@@ -55,7 +55,7 @@ Feature: A Teacher can comment in a question
   @javascript
   Scenario: Preview question with comments
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     And I click on "Comments" "link"
     Then I should see "Save comment"
@@ -79,7 +79,7 @@ Feature: A Teacher can comment in a question
       | moodle/question:commentmine | allow          |
       | moodle/question:commentall  | prevent        |
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"
     And I click on "Close preview" "button"
@@ -96,6 +96,7 @@ Feature: A Teacher can comment in a question
     Then I should see "Save comment"
     And I log out
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher2"
+    And I apply question bank filter "Category" with value "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"
     And I click on "Close preview" "button"
@@ -135,7 +136,6 @@ Feature: A Teacher can comment in a question
     Given I log in as "teacher1"
     And I am on the "Test quiz" "quiz activity" page
     When I navigate to "Question bank" in current page administration
-    And I set the field "Select a category" to "Test questions"
     And I should see "First question"
     And I choose "Edit question" action for "First question" in the question bank
     And I set the field "id_name" to "Renamed question v2"

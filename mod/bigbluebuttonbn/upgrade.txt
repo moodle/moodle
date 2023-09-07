@@ -1,4 +1,7 @@
 This files describes API changes in the bigbluebuttonbn code.
+=== 4.3 ===
+* Make instance class constructor private and use the factory method to create instances.
+
 === 4.2 ===
 * Simplify bigbluebutton_proxy get_join_url so to pass only parameters that cannot be deduced from the instance.
 * Add a new parameter for mod_bigbluebuttonbn\recording::sync_pending_recordings_from_server so sync only 'dismissed' recordings

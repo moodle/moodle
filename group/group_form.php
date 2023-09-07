@@ -47,6 +47,7 @@ class group_form extends moodleform {
 
         $mform =& $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
+        $group = $this->_customdata['group'];
 
         $mform->addElement('header', 'general', get_string('general', 'form'));
 
@@ -98,6 +99,10 @@ class group_form extends moodleform {
 
         $mform->addElement('filepicker', 'imagefile', get_string('newpicture', 'group'));
         $mform->addHelpButton('imagefile', 'newpicture', 'group');
+
+        $handler = \core_group\customfield\group_handler::create();
+        $handler->instance_form_definition($mform, empty($group->id) ? 0 : $group->id);
+        $handler->instance_form_before_set_data($group);
 
         $mform->addElement('hidden','id');
         $mform->setType('id', PARAM_INT);
@@ -153,6 +158,8 @@ class group_form extends moodleform {
             $participation->freeze();
         }
 
+        $handler = core_group\customfield\group_handler::create();
+        $handler->instance_form_definition_after_data($this->_form, empty($groupid) ? 0 : $groupid);
     }
 
     /**
@@ -215,6 +222,9 @@ class group_form extends moodleform {
                 $errors['enrolmentkey'] = get_string('enrolmentkeyalreadyinuse', 'group');
             }
         }
+
+        $handler = \core_group\customfield\group_handler::create();
+        $errors = array_merge($errors, $handler->instance_form_validation($data, $files));
 
         return $errors;
     }

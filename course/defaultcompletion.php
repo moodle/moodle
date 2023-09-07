@@ -30,32 +30,35 @@ require_once($CFG->libdir.'/completionlib.php');
 $id = required_param('id', PARAM_INT);       // Course id.
 $modids = optional_param_array('modids', [], PARAM_INT);
 
-// Perform some basic access control checks.
 if ($id) {
-
-    if ($id == SITEID) {
-        // Don't allow editing of 'site course' using this form.
-        throw new \moodle_exception('cannoteditsiteform');
-    }
-
     if (!$course = $DB->get_record('course', array('id' => $id))) {
         throw new \moodle_exception('invalidcourseid');
     }
-    require_login($course);
-    require_capability('moodle/course:manageactivities', context_course::instance($course->id));
-
-} else {
-    require_login();
-    throw new \moodle_exception('needcourseid');
 }
 
+if ($id == SITEID) {
+    $context = context_system::instance();
+    $title = get_string('defaultcompletion', 'completion');
+    $heading = format_string($SITE->fullname, true, ['context' => $context]);
+} else {
+    $context = context_course::instance($id);
+    $title = $course->shortname;
+    $heading = $course->fullname;
+}
+require_login($course);
+require_capability('moodle/course:manageactivities', $context);
+
 // Set up the page.
-navigation_node::override_active_url(new moodle_url('/course/completion.php', array('id' => $course->id)));
-$PAGE->set_course($course);
-$PAGE->set_url('/course/defaultcompletion.php', array('id' => $course->id));
-$PAGE->set_title($course->shortname);
-$PAGE->set_heading($course->fullname);
+if ($id != SITEID) {
+    navigation_node::override_active_url(new moodle_url('/course/completion.php', array('id' => $course->id)));
+    $PAGE->set_course($course);
+}
+$PAGE->set_url('/course/defaultcompletion.php', ['id' => $id]);
+$PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
+$PAGE->set_title($title);
+$PAGE->set_heading($heading);
+
 
 // Get list of modules that have been sent in the form.
 $manager = new \core_completion\manager($course->id);
@@ -69,7 +72,10 @@ foreach ($allmodules->modules as $module) {
 
 $form = null;
 if (!empty($modules)) {
-    $form = new core_completion_defaultedit_form(null, ['course' => $course, 'modules' => $modules, 'displaycancel' => false]);
+    $form = new core_completion_defaultedit_form(
+        null,
+        ['course' => $course, 'modules' => $modules, 'displaycancel' => false, 'forceuniqueid' => true]
+    );
     if (!$form->is_cancelled() && $data = $form->get_data()) {
         $data->modules = $modules;
         $manager->apply_default_completion($data, $form->has_custom_completion_rules(), $form->get_suffix());
@@ -79,10 +85,14 @@ if (!empty($modules)) {
 $renderer = $PAGE->get_renderer('core_course', 'bulk_activity_completion');
 
 // Print the form.
-echo $OUTPUT->header();
+echo $renderer->header();
 
-$actionbar = new \core_course\output\completion_action_bar($course->id, $PAGE->url);
-echo $renderer->render_course_completion_action_bar($actionbar);
+if ($id == SITEID) {
+    echo $renderer->heading($title);
+} else {
+    $actionbar = new \core_course\output\completion_action_bar($course->id, $PAGE->url);
+    echo $renderer->render_course_completion_action_bar($actionbar);
+}
 
 echo $renderer->defaultcompletion($allmodules, $modules, $form);
 

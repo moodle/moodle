@@ -654,7 +654,7 @@ abstract class moodleform_mod extends moodleform {
         // Add the completion tracking elements to the form.
         if ($completion->is_enabled()) {
             $mform->addElement('header', 'activitycompletionheader', get_string('activitycompletion', 'completion'));
-            $this->add_completion_elements();
+            $this->add_completion_elements(null, false, false, false, $this->_course->id);
         }
 
         // Populate module tags.

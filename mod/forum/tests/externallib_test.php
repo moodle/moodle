@@ -2163,7 +2163,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check default values for capabilities.
         $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
-            'canexportownpost', 'cancantogglefavourite', 'candeleteownpost', 'canallowforcesubscribe');
+            'canexportownpost', 'cancantogglefavourite', 'cancanmailnow', 'candeleteownpost', 'canallowforcesubscribe');
 
         unset($result['warnings']);
         foreach ($result as $capname => $capvalue) {

@@ -1,0 +1,1 @@
+lti:addmanualinstance,mod_lti

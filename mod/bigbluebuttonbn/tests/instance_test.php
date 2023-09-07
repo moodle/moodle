@@ -589,6 +589,26 @@ class instance_test extends advanced_testcase {
     }
 
     /**
+     * Test private method get_instance_info_retriever
+     *
+     * @covers ::get_instance_info_retriever
+     */
+    public function test_get_instance_info_retriever() {
+        $this->resetAfterTest();
+        [
+            'record' => $record,
+            'cm' => $cm,
+        ] = $this->get_test_instance();
+        $instance = instance::get_from_instanceid($record->id);
+        $instancereflection = new \ReflectionClass($instance);
+        $getinstanceinforetriever = $instancereflection->getMethod('get_instance_info_retriever');
+        $getinstanceinforetriever->setAccessible(true);
+        $this->assertInstanceOf('\mod_bigbluebuttonbn\instance',
+            $getinstanceinforetriever->invoke($instance, $record->id, instance::IDTYPE_INSTANCEID));
+        $this->assertEquals($cm->id, $instance->get_cm_id());
+    }
+
+    /**
      * Test guest access password
      *
      * @covers ::get_guest_access_password
@@ -601,5 +621,4 @@ class instance_test extends advanced_testcase {
         $instance = instance::get_from_instanceid($record->id);
         $this->assertNotEmpty($instance->get_guest_access_password());
     }
-
 }

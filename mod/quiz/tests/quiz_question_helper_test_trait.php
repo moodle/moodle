@@ -92,7 +92,7 @@ trait quiz_question_helper_test_trait {
         $cat = $questiongenerator->create_question_category($override);
         $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
         $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz->id, 0, $cat->id, 1);
     }
 
     /**
@@ -179,5 +179,29 @@ trait quiz_question_helper_test_trait {
      */
     protected function duplicate_quiz($course, $quiz): ?\cm_info {
         return duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
+    }
+
+    /**
+     * Add random questions to a quiz, with a filter condition based on a category ID.
+     *
+     * @param int $quizid The quiz to add the questions to.
+     * @param int $page The page number to add the questions to.
+     * @param int $categoryid The category ID to use for the filter condition.
+     * @param int $number The number of questions to add.
+     * @return void
+     */
+    protected function add_random_questions(int $quizid, int $page, int $categoryid, int $number): void {
+        $settings = quiz_settings::create($quizid);
+        $structure = \mod_quiz\structure::create_for_quiz($settings);
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$categoryid],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $structure->add_random_questions($page, $number, $filtercondition);
     }
 }

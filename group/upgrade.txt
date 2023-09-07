@@ -17,6 +17,7 @@ information provided here is intended especially for developers.
            '/',
            'group.svg'
        );
+* Added group/grouping custom fields.
 
 === 4.2 ===
 * `\core_group\visibility` class added to support new `visibility` field in group records. This holds the visibility constants

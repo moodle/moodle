@@ -202,13 +202,13 @@ class communication_feature_test extends \advanced_testcase {
 
         $processor = $communication->get_processor();
         $provider = $communication->get_room_provider();
-        $room = matrix_rooms::load_by_processor_id($processor->get_id());
+        $room = matrix_room::load_by_processor_id($processor->get_id());
 
         // Run the delete method.
         $this->assertTrue($provider->delete_chat_room());
 
         // The record of the room should have been removed.
-        $this->assertNull(matrix_rooms::load_by_processor_id($processor->get_id()));
+        $this->assertNull(matrix_room::load_by_processor_id($processor->get_id()));
 
         // But the room itself shoudl exist.
         $matrixroomdata = $this->get_matrix_room_data($room->get_room_id());

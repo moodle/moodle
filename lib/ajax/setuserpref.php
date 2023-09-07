@@ -24,6 +24,7 @@
  * @category   preference
  * @copyright  2008 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated since Moodle 4.3
  */
 
 require_once(__DIR__ . '/../../config.php');
@@ -38,6 +39,8 @@ $name = required_param('pref', PARAM_RAW);
 if (!isset($USER->ajax_updatable_user_prefs[$name])) {
     throw new \moodle_exception('notallowedtoupdateprefremotely');
 }
+
+debugging('Use of setuserpref.php is deprecated. Please use the "core_user/repository" module instead.', DEBUG_DEVELOPER);
 
 // Get and the value.
 $value = required_param('value', $USER->ajax_updatable_user_prefs[$name]);

@@ -979,6 +979,60 @@ class core_user {
             'permissioncallback' => function($user, $preferencename) {
                 return self::is_current_user($user) && has_capability('moodle/blog:view', context_system::instance());
             });
+        $preferences['filemanager_recentviewmode'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 1,
+            'choices' => [1, 2, 3],
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentrepository'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentlicense'] = [
+            'type' => PARAM_SAFEDIR,
+            'null' => NULL_NOT_ALLOWED,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentviewmode'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 1,
+            'choices' => [1, 2, 3],
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_optionscollapsed'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_autoselectunique'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_preserveselected'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_searchanywhere'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['question_bank_advanced_search'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
 
         $choices = [HOMEPAGE_SITE];
         if (!empty($CFG->enabledashboard)) {

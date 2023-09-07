@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="matrix_rooms" COMMENT="Stores the matrix room information associated with the communication instance.">
+    <TABLE NAME="matrix_room" COMMENT="Stores the matrix room information associated with the communication instance.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="commid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the communication record"/>

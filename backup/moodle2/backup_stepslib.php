@@ -1354,6 +1354,10 @@ class backup_groups_structure_step extends backup_structure_step {
             'name', 'idnumber', 'description', 'descriptionformat', 'enrolmentkey',
             'picture', 'visibility', 'participation', 'timecreated', 'timemodified'));
 
+        $groupcustomfields = new backup_nested_element('groupcustomfields');
+        $groupcustomfield = new backup_nested_element('groupcustomfield', ['id'], [
+            'shortname', 'type', 'value', 'valueformat', 'groupid']);
+
         $members = new backup_nested_element('group_members');
 
         $member = new backup_nested_element('group_member', array('id'), array(
@@ -1365,6 +1369,10 @@ class backup_groups_structure_step extends backup_structure_step {
             'name', 'idnumber', 'description', 'descriptionformat', 'configdata',
             'timecreated', 'timemodified'));
 
+        $groupingcustomfields = new backup_nested_element('groupingcustomfields');
+        $groupingcustomfield = new backup_nested_element('groupingcustomfield', ['id'], [
+            'shortname', 'type', 'value', 'valueformat', 'groupingid']);
+
         $groupinggroups = new backup_nested_element('grouping_groups');
 
         $groupinggroup = new backup_nested_element('grouping_group', array('id'), array(
@@ -1373,12 +1381,16 @@ class backup_groups_structure_step extends backup_structure_step {
         // Build the tree
 
         $groups->add_child($group);
+        $groups->add_child($groupcustomfields);
+        $groupcustomfields->add_child($groupcustomfield);
         $groups->add_child($groupings);
 
         $group->add_child($members);
         $members->add_child($member);
 
         $groupings->add_child($grouping);
+        $groupings->add_child($groupingcustomfields);
+        $groupingcustomfields->add_child($groupingcustomfield);
         $grouping->add_child($groupinggroups);
         $groupinggroups->add_child($groupinggroup);
 
@@ -1405,6 +1417,10 @@ class backup_groups_structure_step extends backup_structure_step {
             if ($userinfo) {
                 $member->set_source_table('groups_members', array('groupid' => backup::VAR_PARENTID));
             }
+
+            $courseid = $this->task->get_courseid();
+            $groupcustomfield->set_source_array($this->get_group_custom_fields_for_backup($courseid));
+            $groupingcustomfield->set_source_array($this->get_grouping_custom_fields_for_backup($courseid));
         }
 
         // Define id annotations (as final)
@@ -1419,6 +1435,40 @@ class backup_groups_structure_step extends backup_structure_step {
 
         // Return the root element (groups)
         return $groups;
+    }
+
+    /**
+     * Get custom fields array for group
+     * @param int $courseid
+     * @return array
+     */
+    protected function get_group_custom_fields_for_backup(int $courseid): array {
+        global $DB;
+        $handler = \core_group\customfield\group_handler::create();
+        $fieldsforbackup = [];
+        if ($groups = $DB->get_records('groups', ['courseid' => $courseid], '', 'id')) {
+            foreach ($groups as $group) {
+                $fieldsforbackup = array_merge($fieldsforbackup, $handler->get_instance_data_for_backup($group->id));
+            }
+        }
+        return $fieldsforbackup;
+    }
+
+    /**
+     * Get custom fields array for grouping
+     * @param int $courseid
+     * @return array
+     */
+    protected function get_grouping_custom_fields_for_backup(int $courseid): array {
+        global $DB;
+        $handler = \core_group\customfield\grouping_handler::create();
+        $fieldsforbackup = [];
+        if ($groupings = $DB->get_records('groupings', ['courseid' => $courseid], '', 'id')) {
+            foreach ($groupings as $grouping) {
+                $fieldsforbackup = array_merge($fieldsforbackup, $handler->get_instance_data_for_backup($grouping->id));
+            }
+        }
+        return $fieldsforbackup;
     }
 }
 

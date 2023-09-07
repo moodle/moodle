@@ -489,7 +489,14 @@ class enrol_guest_plugin extends enrol_plugin {
         return $errors;
     }
 
-
+    /**
+     * Check if enrolment plugin is supported in csv course upload.
+     *
+     * @return bool
+     */
+    public function is_csv_upload_supported(): bool {
+        return true;
+    }
 }
 
 /**

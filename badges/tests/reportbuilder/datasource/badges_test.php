@@ -124,6 +124,7 @@ class badges_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name', 'sortenabled' => 1]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname', 'sortenabled' => 1]);
 
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:namewithlink']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:criteria']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:image']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:language']);
@@ -141,11 +142,15 @@ class badges_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(3, $content);
 
+        $expectedbadgeonelink = \html_writer::link(new \moodle_url('/badges/overview.php',
+            ['id' => $badgeone->id]), ($badgeone->name));
+
         // First badge, issued to user one.
-        [$badgename, $fullname, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires, $visible, $coursename]
-            = array_values($content[0]);
+        [$badgename, $fullname, $namewithlink, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires,
+            $visible, $coursename] = array_values($content[0]);
         $this->assertEquals($badgeone->name, $badgename);
         $this->assertEquals(fullname($user1), $fullname);
+        $this->assertEquals($expectedbadgeonelink, $namewithlink);
         $this->assertStringContainsString('Awarded by: Manager', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('German', $language);
@@ -158,10 +163,11 @@ class badges_test extends core_reportbuilder_testcase {
         $this->assertEquals('PHPUnit test site', $coursename);
 
         // First badge, issued to user two.
-        [$badgename, $fullname, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires, $visible, $coursename]
-            = array_values($content[1]);
+        [$badgename, $fullname, $namewithlink, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires,
+            $visible, $coursename] = array_values($content[1]);
         $this->assertEquals($badgeone->name, $badgename);
         $this->assertEquals(fullname($user2), $fullname);
+        $this->assertEquals($expectedbadgeonelink, $namewithlink);
         $this->assertStringContainsString('Awarded by: Manager', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('German', $language);
@@ -173,11 +179,15 @@ class badges_test extends core_reportbuilder_testcase {
         $this->assertEquals('Yes', $visible);
         $this->assertEquals('PHPUnit test site', $coursename);
 
+        $expectedbadgetwolink = \html_writer::link(new \moodle_url('/badges/overview.php',
+            ['id' => $badgetwo->id]), ($badgetwo->name));
+
         // Course badge, not issues to any users.
-        [$badgename, $fullname, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires, $visible, $coursename]
-            = array_values($content[2]);
+        [$badgename, $fullname, $namewithlink, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires,
+            $visible, $coursename] = array_values($content[2]);
         $this->assertEquals($badgetwo->name, $badgename);
         $this->assertEmpty($fullname);
+        $this->assertEquals($expectedbadgetwolink, $namewithlink);
         $this->assertEquals('Criteria for this badge have not been set up yet.', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('English', $language);

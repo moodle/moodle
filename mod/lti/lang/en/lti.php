@@ -191,6 +191,11 @@ $string['dynreg_update_btn_update'] = 'Update';
 $string['dynreg_update_btn_new'] = 'Register as a new external tool';
 $string['duplicateregurl'] = 'This registration URL is already in use';
 $string['editdescription'] = 'Click here to give this tool a description';
+$string['editmanualinstancedeprecationwarning'] = 'Manually configured External tool activities are no longer supported. Don\'t worry, this activity will still work as it is, but you can\'t make changes to the tool configuration here anymore.
+<br><br>
+To make any changes to the tool, or to create new activities with it, the tool needs to be added to your course in Course > More > LTI External tools. Then, you will be able to create new activities, selecting the tool directly in the Activity chooser.
+<br><br>
+You can read more about adding LTI External tools in the documentation <a href="{$a}" target="_blank">External tool</a>.';
 $string['edittype'] = 'Edit preconfigured tool';
 $string['embed'] = 'Embed';
 $string['embed_no_blocks'] = 'Embed, without blocks';
@@ -288,7 +293,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
 $string['launchoptions'] = 'Launch options';
 $string['lti'] = 'LTI';
 $string['lti:addcoursetool'] = 'Add course-specific tool configurations';
-$string['lti:addmanualinstance'] = 'Add a manually-configured tool';
+$string['lti:addmanualinstanceprohibitederror'] = 'The manual creation of tools without a course tool definition is no longer supported. Please create a course tool first and then use that to create activity instances.';
 $string['lti:addinstance'] = 'Add a new external tool';
 $string['lti:addpreconfiguredinstance'] = 'Add a preconfigured tool';
 $string['lti:grade'] = 'View grades returned by the external tool';
@@ -620,3 +625,6 @@ $string['using_tool_cartridge'] = 'Using tool cartridge';
 $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
+
+// Deprecated since Moodle 4.3.
+$string['lti:addmanualinstance'] = 'Add a manually-configured tool';

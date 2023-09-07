@@ -16,6 +16,8 @@
 
 namespace mod_quiz\question\bank\filter;
 
+use qbank_managecategories\helper;
+
 /**
  * A custom filter condition for quiz to select question categories.
  *
@@ -27,19 +29,23 @@ namespace mod_quiz\question\bank\filter;
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class custom_category_condition extends \core_question\bank\search\category_condition {
+class custom_category_condition extends \qbank_managecategories\category_condition {
 
-    public function display_options() {
-        global $PAGE;
-        $displaydata = [];
-        $catmenu = custom_category_condition_helper::question_category_options($this->contexts, true, 0,
-            true, -1, false);
-        $displaydata['categoryselect'] = \html_writer::select($catmenu, 'category', $this->cat, [],
-            ['class' => 'searchoptions custom-select', 'id' => 'id_selectacategory']);
-        $displaydata['categorydesc'] = '';
-        if ($this->category) {
-            $displaydata['categorydesc'] = $this->print_category_info($this->category);
+    public function get_initial_values() {
+        $catmenu = custom_category_condition_helper::question_category_options($this->contexts, true, 0, true, -1, false);
+        $values = [];
+        foreach ($catmenu as $menu) {
+            foreach ($menu as $catlist) {
+                foreach ($catlist as $key => $value) {
+                    $values[] = (object) [
+                        // Remove contextid from value.
+                        'value' => strpos($key, ',') === false ? $key : substr($key, 0, strpos($key, ',')),
+                        'title' => $value,
+                        'selected' => ($key === $this->cat),
+                    ];
+                }
+            }
         }
-        return $PAGE->get_renderer('core_question', 'bank')->render_category_condition($displaydata);
+        return $values;
     }
 }

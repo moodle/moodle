@@ -111,28 +111,37 @@ class services_content_item_service_test extends \advanced_testcase {
         $this->resetAfterTest();
         global $DB;
 
-        // Create a user in a course.
+        // Create a user in a course and set up a site-level LTI tool, configured to display in the activity chooser.
         $course = $this->getDataGenerator()->create_course();
         $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
-
+        /** @var \mod_lti_generator $ltigenerator */
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool',
+            'baseurl' => 'http://example.com',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
         $cis = new content_item_service(new content_item_readonly_repository());
-        $allcontentitems = $cis->get_all_content_items($user);
-        $coursecontentitems = $cis->get_content_items_for_user_in_course($user, $course);
+        $this->setUser($user); // This is needed since the underlying lti code needs the global user despite the api accepting user.
 
         // The call to get_all_content_items() should return the same items as for the course,
-        // given the user in an editing teacher and can add manual lti instances.
-        $this->assertContains('lti', array_column($coursecontentitems, 'name'));
-        $this->assertContains('lti', array_column($allcontentitems, 'name'));
-
-        // Now removing the cap 'mod/lti:addinstance'. This will restrict those items returned by the course-specific method.
-        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
-        assign_capability('mod/lti:addinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
-
-        // Verify that all items, including lti, are still returned by the get_all_content_items() call.
+        // given the user is an editing teacher and can add preconfigured lti instances.
         $allcontentitems = $cis->get_all_content_items($user);
         $coursecontentitems = $cis->get_content_items_for_user_in_course($user, $course);
-        $this->assertNotContains('lti', array_column($coursecontentitems, 'name'));
-        $this->assertContains('lti', array_column($allcontentitems, 'name'));
+        $this->assertContains('site tool', array_column($coursecontentitems, 'title'));
+        $this->assertContains('site tool', array_column($allcontentitems, 'title'));
+
+        // Now removing the cap 'mod/lti:addpreconfiguredinstance', restricting those items returned by the course-specific method.
+        $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
+        assign_capability('mod/lti:addpreconfiguredinstance', CAP_PROHIBIT, $teacherrole->id,
+            \core\context\course::instance($course->id));
+
+        // Verify that all items, including the tool, are still returned by the get_all_content_items() call.
+        $allcontentitems = $cis->get_all_content_items($user);
+        $coursecontentitems = $cis->get_content_items_for_user_in_course($user, $course);
+        $this->assertNotContains('site tool', array_column($coursecontentitems, 'title'));
+        $this->assertContains('site tool', array_column($allcontentitems, 'title'));
     }
 
     /**

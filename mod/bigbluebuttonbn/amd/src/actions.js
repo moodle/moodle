@@ -26,7 +26,7 @@ import {
     saveCancel,
 } from 'core/notification';
 import {notifySessionEnded} from './events';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const confirmedPromise = (title, question, saveLabel) => new Promise(resolve => {
     saveCancel(title, question, saveLabel, resolve);

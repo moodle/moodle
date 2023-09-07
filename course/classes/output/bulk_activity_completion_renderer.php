@@ -83,18 +83,23 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                 // Only create the form if it's different from the one that has been sent.
                 $modform = $form;
                 if (empty($form) || !in_array($module->id, array_keys($modules))) {
-                    $modform = new \core_completion_defaultedit_form(null, [
-                        'course' => $course,
-                        'modules' => [
-                            $module->id => $module,
+                    $modform = new \core_completion_defaultedit_form(
+                        null,
+                        [
+                            'course' => $course,
+                            'modules' => [
+                                $module->id => $module,
+                            ],
+                            'displaycancel' => false,
+                            'forceuniqueid' => true,
                         ],
-                        'displaycancel' => false,
-                    ]);
+                    );
                     $module->modulecollapsed = true;
                 }
                 $module->formhtml = $modform->render();
             }
         }
+        $data->issite = $course->id == SITEID;
 
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }

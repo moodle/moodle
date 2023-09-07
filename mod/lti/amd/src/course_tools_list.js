@@ -27,7 +27,7 @@ import Notification from 'core/notification';
 import Pending from 'core/pending';
 import Ajax from 'core/ajax';
 import {add as addToast} from 'core/toast';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {refreshTableContent} from 'core_table/dynamic';
 import * as Selectors from 'core_table/local/dynamic/selectors';
 

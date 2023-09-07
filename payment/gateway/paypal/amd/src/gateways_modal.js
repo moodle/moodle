@@ -26,7 +26,7 @@ import Templates from 'core/templates';
 import Truncate from 'core/truncate';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 /**
  * Creates and shows a modal that contains a placeholder.

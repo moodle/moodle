@@ -23,7 +23,7 @@
 
 import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {getAvailableGateways} from './repository';
 import Selectors from './selectors';
 import ModalEvents from 'core/modal_events';

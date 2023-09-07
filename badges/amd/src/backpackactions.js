@@ -23,7 +23,7 @@
 
 import $ from 'jquery';
 import selectors from 'core_badges/selectors';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';

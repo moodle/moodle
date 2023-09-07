@@ -3,6 +3,11 @@ This files describes API changes in the lti code.
 === 4.3 ===
 
 * The `lti_libxml_disable_entity_loader` method is deprecated, as it is no longer required from PHP 8.0
+* The `mod_lti_mod_form` constructor will now throw an exception if called without passing a typeid as manual configuration of
+  instances is now unsupported.
+* The `lti_get_lti_types_by_course` method is deprecated. Please use mod_lti\local\types_helper::get_lti_types_by_course instead.
+* The capability `mod/lti:addmanualinstance` is now deprecated. Since manual instance creation is no longer supported, there is no
+  substitute for this capability.
 
 === 4.2 ===
 

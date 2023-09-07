@@ -41,6 +41,9 @@ use templatable;
 /**
  * The activity information renderable class.
  *
+ * @deprecated since Moodle 4.3 MDL-78744
+ * @todo MDL-78926 This class will be deleted in Moodle 4.7
+ *
  * @package    core_course
  * @copyright  2021 Jun Pataleta <jun@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -59,11 +62,14 @@ class activity_information implements renderable, templatable {
     /**
      * Constructor.
      *
+     * @deprecated since Moodle 4.3
+     *
      * @param cm_info $cminfo The course module information.
      * @param cm_completion_details $cmcompletion The course module information.
      * @param array $activitydates The activity dates.
      */
     public function __construct(cm_info $cminfo, cm_completion_details $cmcompletion, array $activitydates) {
+        debugging('activity_information class is deprecated. Use activity_completion and activity_dates instead.', DEBUG_DEVELOPER);
         $this->cminfo = $cminfo;
         $this->cmcompletion = $cmcompletion;
         $this->activitydates = $activitydates;
@@ -72,10 +78,14 @@ class activity_information implements renderable, templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
+     * @deprecated since Moodle 4.3
+     *
      * @param renderer_base $output Renderer base.
      * @return stdClass
      */
     public function export_for_template(renderer_base $output): stdClass {
+        debugging('activity_information class is deprecated. Use activity_completion and activity_dates instead.', DEBUG_DEVELOPER);
+
         $data = $this->build_completion_data();
 
         $data->cmid = $this->cminfo->id;

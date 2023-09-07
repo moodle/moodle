@@ -3501,5 +3501,98 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023082200.04);
     }
 
+    if ($oldversion < 2023082600.02) {
+        // Get all the ids of users who still have md5 hashed passwords.
+        if ($DB->sql_regex_supported()) {
+            // If the database supports regex, we can add an exact check for md5.
+            $condition = 'password ' . $DB->sql_regex() . ' :pattern';
+            $params = ['pattern' => "^[a-fA-F0-9]{32}$"];
+        } else {
+            // Otherwise, we need to use a NOT LIKE condition and rule out bcrypt.
+            $condition = $DB->sql_like('password', ':pattern', true, false, true);
+            $params = ['pattern' => '$2y$%'];
+        }
+
+        // Regardless of database regex support we check the hash length which should be enough.
+        // But extra regex or like matching makes sure.
+        $sql = "SELECT id FROM {user} WHERE LENGTH(password) = 32 AND $condition";
+        $userids = $DB->get_fieldset_sql($sql, $params);
+
+        // Update the password for each user with a new SHA-512 hash.
+        // Users won't know this password, but they can reset it. This is a security measure,
+        // in case the database is compromised or the hash has been leaked elsewhere.
+        foreach ($userids as $userid) {
+            $password = base64_encode(random_bytes(24)); // Generate a new password for the user.
+
+            $user = new \stdClass();
+            $user->id = $userid;
+            $user->password = hash_internal_user_password($password);
+            $DB->update_record('user', $user, true);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.02);
+    }
+
+    if ($oldversion < 2023082600.03) {
+        // The previous default configuration had a typo, check for its presence and correct if necessary.
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        if (strpos($sensiblesettings, 'smtppass@none') !== false) {
+            $newsensiblesettings = str_replace('smtppass@none', 'smtppass@@none', $sensiblesettings);
+            set_config('sensiblesettings', $newsensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.03);
+    }
+
+    if ($oldversion < 2023082600.05) {
+        unset_config('completiondefault');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.05);
+    }
+
+    if ($oldversion < 2023090100.00) {
+        // Upgrade MIME type for existing PSD files.
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'image/vnd.adobe.photoshop',
+            $DB->sql_like('filename', '?', false),
+            ['%.psd']
+        );
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090100.00);
+    }
+
+    if ($oldversion < 2023090200.01) {
+
+        // Define table moodlenet_share_progress to be created.
+        $table = new xmldb_table('moodlenet_share_progress');
+
+        // Adding fields to table moodlenet_share_progress.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('resourceurl', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+
+        // Adding keys to table moodlenet_share_progress.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for moodlenet_share_progress.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090200.01);
+    }
+
     return true;
 }

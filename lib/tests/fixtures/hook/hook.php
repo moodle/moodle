@@ -41,4 +41,13 @@ final class hook implements
     public static function get_deprecated_plugin_callbacks(): array {
         return ['oldcallback'];
     }
+
+    /**
+     * List of tags that describe this hook.
+     *
+     * @return string[]
+     */
+    public static function get_hook_tags(): array {
+        return ['test'];
+    }
 }

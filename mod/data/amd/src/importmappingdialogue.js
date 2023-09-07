@@ -27,7 +27,7 @@ import Url from 'core/url';
 import Templates from 'core/templates';
 import ModalFactory from 'core/modal_factory';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 // Load global strings.
 prefetchStrings('mod_data', ['mapping:dialogtitle:usepreset']);

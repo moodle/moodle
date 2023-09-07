@@ -264,6 +264,14 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         $defaulprovider, $communicationproviders));
 
     $ADMIN->add('coursedefaultsettings', $temp);
+    if (!empty($CFG->enablecompletion)) {
+        $ADMIN->add('coursedefaultsettings', new admin_externalpage(
+                'sitedefaultcompletion',
+                new lang_string('defaultcompletion', 'completion'),
+                new moodle_url('/course/defaultcompletion.php', ['id' => $SITE->id]),
+                ['moodle/course:manageactivities'])
+        );
+    }
     $ADMIN->add('coursedefaultsettings', new admin_externalpage(
         'course_customfield',
         new lang_string('course_customfield', 'admin'),
@@ -287,6 +295,27 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
                 1 => new lang_string('activitychoosertabmodetwo', 'course'),
                 2 => new lang_string('activitychoosertabmodethree', 'course'),
             ]
+        )
+    );
+
+    // Add a category for the Groups.
+    $ADMIN->add('courses', new admin_category('groups', new lang_string('groups')));
+    $ADMIN->add(
+        'groups',
+        new admin_externalpage(
+            'group_customfield',
+            new lang_string('group_customfield', 'admin'),
+            $CFG->wwwroot . '/group/customfield.php',
+            ['moodle/group:configurecustomfields']
+        )
+    );
+    $ADMIN->add(
+        'groups',
+        new admin_externalpage(
+            'grouping_customfield',
+            new lang_string('grouping_customfield', 'admin'),
+            $CFG->wwwroot . '/group/grouping_customfield.php',
+            ['moodle/group:configurecustomfields']
         )
     );
 

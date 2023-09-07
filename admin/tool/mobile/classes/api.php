@@ -373,6 +373,16 @@ class api {
             $settings->forcetimezone = $CFG->forcetimezone;
         }
 
+        if (empty($section) || $section === 'manageglobalsearch') {
+            $settings->searchengine = $CFG->searchengine;
+            $settings->searchenablecategories = $CFG->searchenablecategories;
+            $settings->searchdefaultcategory = $CFG->searchdefaultcategory;
+            $settings->searchhideallcategory = $CFG->searchhideallcategory;
+            $settings->searchmaxtopresults = $CFG->searchmaxtopresults;
+            $settings->searchbannerenable = $CFG->searchbannerenable;
+            $settings->searchbanner = $CFG->searchbanner;
+        }
+
         return $settings;
     }
 
@@ -535,6 +545,7 @@ class api {
                 'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
                 'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
                 'NoDelegate_CoreUserSupport' => new lang_string('contactsitesupport', 'admin'),
+                'NoDelegate_GlobalSearch' => new lang_string('globalsearch', 'search'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),

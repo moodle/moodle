@@ -259,6 +259,14 @@ class externallib_test extends externallib_advanced_testcase {
         $expected[] = ['name' => 'timezone', 'value' => $CFG->timezone];
         $expected[] = ['name' => 'forcetimezone', 'value' => $CFG->forcetimezone];
 
+        $expected[] = ['name' => 'searchengine', 'value' => $CFG->searchengine];
+        $expected[] = ['name' => 'searchenablecategories', 'value' => $CFG->searchenablecategories];
+        $expected[] = ['name' => 'searchdefaultcategory', 'value' => $CFG->searchdefaultcategory];
+        $expected[] = ['name' => 'searchhideallcategory', 'value' => $CFG->searchhideallcategory];
+        $expected[] = ['name' => 'searchmaxtopresults', 'value' => $CFG->searchmaxtopresults];
+        $expected[] = ['name' => 'searchbannerenable', 'value' => $CFG->searchbannerenable];
+        $expected[] = ['name' => 'searchbanner', 'value' => $CFG->searchbanner];
+
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 
@@ -406,18 +414,18 @@ class externallib_test extends externallib_advanced_testcase {
         $result = external::get_autologin_key($token->privatetoken);
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
-        // Change min time between requests to 30 seconds.
-        set_config('autologinmintimebetweenreq', 30, 'tool_mobile');
+        // Change min time between requests to 3 minutes.
+        set_config('autologinmintimebetweenreq', 3 * MINSECS, 'tool_mobile');
 
-        // Mock a previous request, 60 seconds ago.
-        $mocktime = time() - MINSECS;
+        // Mock a previous request, 4 minutes ago.
+        $mocktime = time() - (4 * MINSECS);
         set_user_preference('tool_mobile_autologin_request_last', $mocktime, $USER);
-        $result = external::get_autologin_key($token->privatetoken);    // All good, we were expecint 30 seconds or more.
+        $result = external::get_autologin_key($token->privatetoken);
         $result = external_api::clean_returnvalue(external::get_autologin_key_returns(), $result);
 
         // We just requested one token, we must wait.
         $this->expectException('moodle_exception');
-        $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile'));
+        $this->expectExceptionMessage(get_string('autologinkeygenerationlockout', 'tool_mobile', 3));
         $result = external::get_autologin_key($token->privatetoken);
     }
 

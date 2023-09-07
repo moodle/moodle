@@ -34,7 +34,7 @@ import * as Aria from 'core/aria';
 import Popper from 'core/popper';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {eventTypes} from './events';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {notifyFilterContentUpdated} from 'core/event';
 

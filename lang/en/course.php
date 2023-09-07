@@ -41,7 +41,6 @@ $string['activitydate:closes'] = 'Closes:';
 $string['activitydate:opened'] = 'Opened:';
 $string['activitydate:opens'] = 'Opens:';
 $string['aria:coursecategory'] = 'Course category';
-$string['aria:courseimage'] = 'Course image';
 $string['aria:courseshortname'] = 'Course short name';
 $string['aria:coursename'] = 'Course name';
 $string['aria:defaulttab'] = 'Default activities';
@@ -163,3 +162,6 @@ $string['targetlabelstudentgradetopassno'] = 'Student who is likely to meet the 
 $string['targetlabelstudentgradetopassyes'] = 'Student at risk of not meeting the minimum grade to pass the course.';
 $string['targetlabelteachingyes'] = 'Users with teaching capabilities who have access to the course';
 $string['targetlabelteachingno'] = 'Courses at risk of not starting';
+
+// Deprecated since Moodle 4.3.
+$string['aria:courseimage'] = 'Course image';

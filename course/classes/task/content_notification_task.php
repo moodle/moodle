@@ -120,11 +120,9 @@ class content_notification_task extends adhoc_task {
             }
             $eventdata->customdata = $eventcustomdata;
 
-            $completion = \core_completion\cm_completion_details::get_instance($cm, $user->id);
             $activitydates = \core\activity_dates::get_dates_for_module($cm, $user->id);
             if (!empty($activitydates)) {
-                $activityinfo = new \core_course\output\activity_information($cm, $completion, $activitydates);
-                $data = $activityinfo->export_for_template($OUTPUT);
+                $data = (new \core_course\output\activity_dates($activitydates))->export_for_template($OUTPUT);
                 foreach ($data->activitydates as $date) {
                     $eventdata->fullmessagehtml .= \html_writer::div($date['label'] . ' ' . $date['datestring']);
                 }

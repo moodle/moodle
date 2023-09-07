@@ -24,7 +24,7 @@
 import * as repository from './repository';
 import {exception as displayException} from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
 import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';

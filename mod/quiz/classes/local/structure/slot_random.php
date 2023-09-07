@@ -112,8 +112,13 @@ class slot_random {
      * Set some tags for this quiz slot.
      *
      * @param \core_tag_tag[] $tags
+     *
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function set_tags($tags) {
+        debugging('Method set_tags() is deprecated, ' .
+            'please do not use this function.', DEBUG_DEVELOPER);
         $this->tags = [];
         foreach ($tags as $tag) {
             // We use $tag->id as the key for the array so not only it handles duplicates of the same tag being given,
@@ -126,22 +131,24 @@ class slot_random {
      * Set some tags for this quiz slot. This function uses tag ids to find tags.
      *
      * @param int[] $tagids
+     * @deprecated since Moodle 4.3
+     * @todo Final deprecation on Moodle 4.7 MDL-78091
      */
     public function set_tags_by_id($tagids) {
+        debugging(
+            'Method set_tags_by_id() is deprecated, please do not use this function.',
+            DEBUG_DEVELOPER
+        );
         $this->tags = \core_tag_tag::get_bulk($tagids, 'id, name');
     }
 
     /**
      * Set filter condition.
      *
-     * @param \stdClass $filters
+     * @param \string $filters
      */
-    public function set_filter_condition($filters) {
-        if (!empty($this->tags)) {
-            $filters->tags = $this->tags;
-        }
-
-        $this->filtercondition = json_encode($filters);
+    public function set_filter_condition(string $filters): void {
+        $this->filtercondition = $filters;
     }
 
     /**

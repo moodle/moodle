@@ -388,7 +388,7 @@ All rights reserved.</copyright>
     <location>amd/src/chartjs-lazy.js</location>
     <name>Chart.js</name>
     <description>Simple yet flexible JavaScript charting for designers &amp; developers.</description>
-    <version>4.2.1</version>
+    <version>4.4.0</version>
     <license>MIT</license>
     <repository>https://github.com/chartjs/Chart.js</repository>
     <copyrights>
@@ -697,5 +697,12 @@ All rights reserved.</copyright>
     <version>4.0.2</version>
     <license>MIT</license>
     <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
+  </library>
+  <library>
+      <location>webauthn/src</location>
+      <name>WebAuthn</name>
+      <version>2.0.1</version>
+      <license>MIT</license>
+      <repository>https://github.com/lbuchs/WebAuthn</repository>
   </library>
 </libraries>

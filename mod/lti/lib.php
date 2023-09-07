@@ -240,23 +240,12 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
 
     $types = [];
 
-    // The 'External tool' entry (the main module content item), should always take the id of 1.
-    if (has_capability('mod/lti:addmanualinstance', context_course::instance($course->id), $user)) {
-        $types = [new \core_course\local\entity\content_item(
-            1,
-            $defaultmodulecontentitem->get_name(),
-            $defaultmodulecontentitem->get_title(),
-            $defaultmodulecontentitem->get_link(),
-            $defaultmodulecontentitem->get_icon(),
-            $defaultmodulecontentitem->get_help(),
-            $defaultmodulecontentitem->get_archetype(),
-            $defaultmodulecontentitem->get_component_name(),
-            $defaultmodulecontentitem->get_purpose()
-        )];
+    // Use of a tool type, whether site or course level, is controlled by the following cap.
+    if (!has_capability('mod/lti:addpreconfiguredinstance', \core\context\course::instance($course->id), $user)) {
+        return $types;
     }
-
-    // Other, preconfigured tools take their own id + 1, so we'll never clash with the module's entry.
     $preconfiguredtools = lti_get_configured_types($course->id, $defaultmodulecontentitem->get_link()->param('sr'));
+
     foreach ($preconfiguredtools as $preconfiguredtool) {
 
         // Append the help link to the help text.
@@ -270,6 +259,9 @@ function lti_get_course_content_items(\core_course\local\entity\content_item $de
             $preconfiguredtool->help = '';
         }
 
+        // Preconfigured tools take their own id + 1. This logic exists because, previously, the entry permitting manual instance
+        // creation (the $defaultmodulecontentitem, or 'External tool' item) was included and had the id 1. This logic prevented id
+        // collisions.
         $types[] = new \core_course\local\entity\content_item(
             $preconfiguredtool->id + 1,
             $preconfiguredtool->name,
@@ -295,18 +287,7 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
     global $OUTPUT, $CFG;
     require_once($CFG->dirroot . '/mod/lti/locallib.php'); // For access to constants.
 
-    // The 'External tool' entry (the main module content item), should always take the id of 1.
-    $types = [new \core_course\local\entity\content_item(
-        1,
-        $defaultmodulecontentitem->get_name(),
-        $defaultmodulecontentitem->get_title(),
-        $defaultmodulecontentitem->get_link(),
-        $defaultmodulecontentitem->get_icon(),
-        $defaultmodulecontentitem->get_help(),
-        $defaultmodulecontentitem->get_archetype(),
-        $defaultmodulecontentitem->get_component_name(),
-        $defaultmodulecontentitem->get_purpose()
-    )];
+    $types = [];
 
     foreach (lti_get_lti_types() as $ltitype) {
         if ($ltitype->coursevisible != LTI_COURSEVISIBLE_ACTIVITYCHOOSER) {
@@ -332,6 +313,9 @@ function mod_lti_get_all_content_items(\core_course\local\entity\content_item $d
         }
         $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'typeid' => $ltitype->id));
 
+        // Preconfigured tools take their own id + 1. This logic exists because, previously, the entry permitting manual instance
+        // creation (the $defaultmodulecontentitem, or 'External tool' item) was included and had the id 1. This logic prevented id
+        // collisions.
         $types[] = new \core_course\local\entity\content_item(
             $type->id + 1,
             $type->name,

@@ -151,7 +151,9 @@ class mod_forum_post_form extends moodleform {
                 $mform->addHelpButton('pinned', 'discussionpinned', 'forum');
             }
 
-            if (empty($post->id) && $manageactivities) {
+            if (empty($post->id) && ($manageactivities ||
+                    ($forum->type == 'qanda' && has_capability('mod/forum:canmailnow', $modcontext)))
+            ) {
                 $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
             }
 
