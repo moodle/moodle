@@ -158,7 +158,7 @@ class grade_edit_tree {
             $level++;
             $this->categories[$object->id] = $strippedname;
             $category = grade_category::fetch(array('id' => $object->id));
-            $item = $category->get_grade_item();
+            $category->load_grade_item();
 
             // Add aggregation coef input if not a course item and if parent category has correct aggregation type
             // Before we print the category's row, we must find out how many rows will appear below it (for the filler cell's rowspan)
@@ -271,7 +271,7 @@ class grade_edit_tree {
             $categoryrow->id = 'grade-item-' . $eid;
             $categoryrow->attributes['class'] = $courseclass . ' category ';
             $categoryrow->attributes['data-category'] = $eid;
-            $categoryrow->attributes['data-itemid'] = $category->get_grade_item()->id;
+            $categoryrow->attributes['data-itemid'] = $category->grade_item->id;
             $categoryrow->attributes['data-hidden'] = 'false';
             foreach ($rowclasses as $class) {
                 $categoryrow->attributes['class'] .= ' ' . $class;
@@ -1058,6 +1058,8 @@ class grade_edit_tree_column_status extends grade_edit_tree_column {
      */
     public function get_category_cell($category, $levelclass, $params) {
         global $OUTPUT, $gtree;
+
+        $category->load_grade_item();
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
         $element = [];
         $element['object'] = $category;

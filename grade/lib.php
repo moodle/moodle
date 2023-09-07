@@ -2379,7 +2379,26 @@ class grade_structure {
                 ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
             $url = $gpr->add_url_params($url);
 
-            if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
+            if ($element['type'] == 'category') {
+                // Grade categories themselves cannot be locked. We lock/unlock their grade items.
+                $children = $element['object']->get_children(true);
+                $alllocked = true;
+                foreach ($children as $child) {
+                    if (!$child['object']->is_locked()) {
+                        $alllocked = false;
+                        break;
+                    }
+                }
+                if ($alllocked && has_capability('moodle/grade:unlock', $this->context)) {
+                    $title = get_string('unlock', 'grades');
+                    $url->param('action', 'unlock');
+                } else if (!$alllocked && has_capability('moodle/grade:lock', $this->context)) {
+                    $title = get_string('lock', 'grades');
+                    $url->param('action', 'lock');
+                } else {
+                    return null;
+                }
+            } else if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
                 // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
@@ -2501,7 +2520,6 @@ class grade_structure {
 
         $context = [
             'hidden' => $element['object']->is_hidden(),
-            'locked' => $element['object']->is_locked(),
         ];
 
         if ($element['object'] instanceof grade_grade) {
@@ -2511,18 +2529,32 @@ class grade_structure {
             $context['feedback'] = !empty($grade->feedback) && $grade->load_grade_item()->gradetype != GRADE_TYPE_TEXT;
         }
 
-        // Early return if there aren't any statuses that we need to show.
-        if (!in_array(true, $context)) {
-            return null;
-        }
-
         $context['classes'] = 'grade_icons data-collapse_gradeicons';
 
-        if (isset($element['type']) && ($element['type'] == 'category')) {
+        if ($element['object'] instanceof grade_category) {
             $context['classes'] = 'category_grade_icons';
+
+            $children = $element['object']->get_children(true);
+            $alllocked = true;
+            foreach ($children as $child) {
+                if (!$child['object']->is_locked()) {
+                    $alllocked = false;
+                    break;
+                }
+            }
+            if ($alllocked) {
+                $context['locked'] = true;
+            }
+        } else {
+            $context['locked'] = $element['object']->is_locked();
         }
 
-        return $OUTPUT->render_from_template('core_grades/status_icons', $context);
+        // Don't even attempt rendering if there is no status to show.
+        if (in_array(true, $context)) {
+            return $OUTPUT->render_from_template('core_grades/status_icons', $context);
+        } else {
+            return null;
+        }
     }
 
     /**
