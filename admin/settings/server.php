@@ -452,7 +452,8 @@ if ($hassiteconfig) {
 
     // IOMAD - Do we have the per company settings?
     $havecompany = false;
-    if ($companyid = iomad::get_my_companyid(context_system::instance(), false)) {
+    if (!during_initial_install() &&
+        $companyid = iomad::get_my_companyid(context_system::instance(), false)) {
         $havecompany = true;
     }
 
