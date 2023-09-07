@@ -349,7 +349,7 @@ class current_company_users_user_selector extends company_user_selector_base {
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
 
-        $fields      = 'SELECT ' . $this->required_fields_sql('u');
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
