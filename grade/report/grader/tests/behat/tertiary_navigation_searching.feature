@@ -1,4 +1,4 @@
-@core @javascript @gradereport @gradereport_grader
+@core @core_grades @javascript @gradereport @gradereport_grader
 Feature: Within the grader report, test that we can search for users
   In order to find specific users in the course gradebook
   As a teacher
@@ -30,9 +30,8 @@ Feature: Within the grader report, test that we can search for users
       | assign   | C1     | a1       | Test assignment one |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I change window size to "large"
-    And I navigate to "View > Grader report" in the course gradebook
 
   Scenario: A teacher can view and trigger the user search
     # Check the placeholder text
@@ -243,9 +242,8 @@ Feature: Within the grader report, test that we can search for users
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     # Move onto general keyboard navigation testing.
-    And I press the tab key
-    And the focused element is "Search users" "field"
     When I set the field "Search users" to "ABC"
+    And the focused element is "Search users" "field"
     And I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
     And the focused element is "Student 1" "option_role"

@@ -149,7 +149,6 @@ class enrolment extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_field($this->get_status_field_sql(), 'status')
-            ->add_field("{$userenrolments}.userid")
             ->set_is_sortable(true)
             ->add_callback([enrolment_formatter::class, 'enrolment_status']);
 
@@ -200,7 +199,7 @@ class enrolment extends base {
                            THEN " . status_field::STATUS_NOT_CURRENT . "
                            ELSE " . status_field::STATUS_ACTIVE . "
                       END
-                 ELSE " . status_field::STATUS_SUSPENDED . "
+                 ELSE {$userenrolments}.status
             END";
     }
 

@@ -1906,6 +1906,121 @@ EOF;
         sleep(ceil(1 / $leak));
         $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
     }
+
+    /**
+     * Test text cleaning when preparing text editor data.
+     *
+     * @covers ::file_prepare_standard_editor
+     */
+    public function test_file_prepare_standard_editor_clean_text() {
+        $text = "lala <object>xx</object>";
+
+        $syscontext = \context_system::instance();
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_PLAIN;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_MARKDOWN;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_MOODLE;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_HTML;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+    }
+
+    /**
+     * Tests for file_get_typegroup to check that both arrays, and string values are accepted.
+     *
+     * @dataProvider file_get_typegroup_provider
+     * @param string|array $group
+     * @param string $expected
+     */
+    public function test_file_get_typegroup(
+        string|array $group,
+        string $expected,
+    ): void {
+        $result = file_get_typegroup('type', $group);
+        $this->assertContains($expected, $result);
+    }
+
+    public static function file_get_typegroup_provider(): array {
+        return [
+            'Array of values' => [
+                ['.html', '.htm'],
+                'text/html',
+            ],
+            'String of comma-separated values' => [
+                '.html, .htm',
+                'text/html',
+            ],
+            'String of colon-separated values' => [
+                '.html : .htm',
+                'text/html',
+            ],
+            'String of semi-colon-separated values' => [
+                '.html ; .htm',
+                'text/html',
+            ],
+        ];
+    }
 }
 
 /**

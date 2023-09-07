@@ -27,16 +27,15 @@ Feature: The activity results block displays student high scores
     And the following "activities" exist:
       | activity   | name            | intro          | course | section | idnumber | assignsubmission_file_enabled |
       | assign     | Test assignment | Offline text   | C1     | 1       | assign1  | 0                             |
+    And the following "grade grades" exist:
+      | gradeitem       | user     | grade |
+      | Test assignment | student1 | 90.00 |
+      | Test assignment | student2 | 80.00 |
+      | Test assignment | student3 | 70.00 |
+      | Test assignment | student4 | 60.00 |
+      | Test assignment | student5 | 50.00 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "View > Grader report" in the course gradebook
-    And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "60.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "50.00" to the user "Student 5" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on the course page to show 0 high scores
     Given I add the "Activity results" block to the default region with:

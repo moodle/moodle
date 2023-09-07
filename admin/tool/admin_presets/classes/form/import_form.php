@@ -42,8 +42,8 @@ class import_form extends moodleform {
         $mform->setType('name', PARAM_TEXT);
 
         // File upload.
-        $mform->addElement('filepicker', 'xmlfile',
-            get_string('selectfile', 'tool_admin_presets'));
+        $mform->addElement('filepicker', 'xmlfile', get_string('selectfile', 'tool_admin_presets'), null,
+            ['accepted_types' => ['.xml']]);
         $mform->addRule('xmlfile', null, 'required');
 
         $this->add_action_buttons(true, get_string('import', 'tool_admin_presets'));
