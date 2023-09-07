@@ -541,6 +541,8 @@ class qformat_xml extends qformat_default {
             $qo->questiontext .= ' <img src="@@PLUGINFILE@@/' . $filename . '" />';
         }
 
+        $qo->idnumber = $this->getpath($question, ['#', 'idnumber', 0, '#'], null);
+
         // Restore files in generalfeedback.
         $generalfeedback = $this->import_text_with_files($question,
                 array('#', 'generalfeedback', 0), '', $this->get_format($qo->questiontextformat));
