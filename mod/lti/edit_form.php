@@ -269,16 +269,15 @@ class mod_lti_edit_types_form extends moodleform {
             $options = array();
             $options[0] = get_string('never', 'lti');
             $options[1] = get_string('always', 'lti');
-            $options[2] = get_string('delegate', 'lti');
 
             $mform->addElement('select', 'lti_sendname', get_string('share_name_admin', 'lti'), $options);
             $mform->setType('lti_sendname', PARAM_INT);
-            $mform->setDefault('lti_sendname', '2');
+            $mform->setDefault('lti_sendname', '0');
             $mform->addHelpButton('lti_sendname', 'share_name_admin', 'lti');
 
             $mform->addElement('select', 'lti_sendemailaddr', get_string('share_email_admin', 'lti'), $options);
             $mform->setType('lti_sendemailaddr', PARAM_INT);
-            $mform->setDefault('lti_sendemailaddr', '2');
+            $mform->setDefault('lti_sendemailaddr', '0');
             $mform->addHelpButton('lti_sendemailaddr', 'share_email_admin', 'lti');
 
             // LTI Extensions.
@@ -294,7 +293,7 @@ class mod_lti_edit_types_form extends moodleform {
             $mform->setDefault('lti_acceptgrades', '2');
             $mform->addHelpButton('lti_acceptgrades', 'accept_grades_admin', 'lti');
 
-            $mform->addElement('checkbox', 'lti_forcessl', get_string('force_ssl', 'lti'), '', $options);
+            $mform->addElement('checkbox', 'lti_forcessl', get_string('force_ssl', 'lti'));
             $mform->setType('lti_forcessl', PARAM_BOOL);
             if (!empty($CFG->mod_lti_forcessl)) {
                 $mform->setDefault('lti_forcessl', '1');
@@ -430,5 +429,27 @@ class mod_lti_edit_types_form extends moodleform {
             }
         }
         return $branch;
+    }
+
+    public function definition_after_data() {
+        // Add the deprecated "Delegate to teacher" option to the "Share launcher's name" and "Share launcher's email" fields for
+        // existing types which are already using this setting value. This ensures that editing the tool type won't result in a
+        // change to the existing value. Add the option as a disabled to make this clear. Once changed, it cannot be set again.
+        // This isn't supported from 4.3 onward in the creation of new tool types.
+        foreach (['lti_sendname', 'lti_sendemailaddr'] as $elementname) {
+            if ($this->_form->_defaultValues[$elementname] == LTI_SETTING_DELEGATE) {
+                $elementarr = array_filter($this->_form->_elements, function ($element) use($elementname) {
+                    return !empty($element->_attributes['name']) && $element->_attributes['name'] == $elementname;
+                });
+                /** @var MoodleQuickForm_select $element */
+                $element = array_shift($elementarr);
+
+                $element->addOption(
+                    get_string('delegate', 'mod_lti'),
+                    LTI_SETTING_DELEGATE,
+                    ['disabled' => 'disabled', 'selected' => 'selected']
+                );
+            }
+        }
     }
 }
