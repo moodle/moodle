@@ -1826,6 +1826,7 @@ class core_plugin_manager {
             ),
 
             'communication' => [
+                'customlink',
                 'matrix',
             ],
 
