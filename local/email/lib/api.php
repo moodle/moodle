@@ -810,7 +810,7 @@ class EmailTemplate {
      *
      *
      **/
-    private static function email_direct($emailaddress, $supportuser, $subject, $messagetext, $messagehtml = '', $attachment = null, $companyid) {
+    private static function email_direct($emailaddress, $supportuser, $subject, $messagetext, $messagehtml = '', $attachment = null, $companyid = 0) {
         global $USER, $CFG;
 
         $mail = get_mailer();
