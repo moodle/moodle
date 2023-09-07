@@ -33,7 +33,7 @@ Feature: Locking Grade Items and Categories in Gradebook
     Given I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I change window size to "large"
-    When I click on "Cell actions" "button" in the "//td[count(//th[.//descendant::a[normalize-space(text())='Manual grade 1']]/preceding-sibling::*)][../th[1]/a[normalize-space(text())='Student 1']]" "xpath_element"
+    When I click on "Manual grade 1" "core_grades > grade_actions" in the "Student 1" "table_row"
     And I choose "Lock" in the open action menu
     And I click on grade item menu "Manual grade 1" of type "gradeitem" on "grader" page
     And I choose "Lock" in the open action menu
@@ -47,7 +47,7 @@ Feature: Locking Grade Items and Categories in Gradebook
     Given I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I change window size to "large"
-    When I click on "Cell actions" "button" in the "//td[count(//th[.//descendant::a[normalize-space(text())='Manual grade 1']]/preceding-sibling::*)][../th[1]/a[normalize-space(text())='Student 1']]" "xpath_element"
+    When I click on "Manual grade 1" "core_grades > grade_actions" in the "Student 1" "table_row"
     And I choose "Edit grade" in the open action menu
     And I set the field "Locked" to "1"
     And I press "Save changes"
