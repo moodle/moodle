@@ -291,7 +291,7 @@ $rb-right-sidebar-width: 350px;
         &::after {
             content: '';
             flex: 1;
-            border-bottom: 1px solid rgba(0, 0, 0, .125);
+            border-bottom: 1px solid $report-audience-border-color;
         }
         &:not(:empty)::before {
             margin-right: 1rem;

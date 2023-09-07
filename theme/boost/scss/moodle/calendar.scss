@@ -9,12 +9,20 @@ $calendarEventUserColor: #dce7ec !default; // Pale blue.
 $calendarEventOtherColor: #ced4da !default; // Pale gray.
 
 // Border colours for the event colour indicators.
-$calendarEventCategoryBorder: 2px solid #9e619f !default; // Purple.
-$calendarEventCourseBorder: 2px solid #d34600 !default; // Red-orange.
-$calendarEventGlobalBorder: 2px solid #2b8713 !default; // Green.
-$calendarEventGroupBorder: 2px solid #9a6e02 !default; // Dark orange.
-$calendarEventUserBorder: 2px solid #4e7c91 !default; // Blue.
-$calendarEventOtherBorder: 2px solid #687889 !default; // Gray.
+$calendarEventCategoryBorderColor:#9e619f !default; // Purple.
+$calendarEventCourseBorderColor:#d34600 !default; // Red-orange.
+$calendarEventGlobalBorderColor:#2b8713 !default; // Green.
+$calendarEventGroupBorderColor:#9a6e02 !default; // Dark orange.
+$calendarEventUserBorderColor:#4e7c91 !default; // Blue.
+$calendarEventOtherBorderColor:#687889 !default; // Gray.
+
+// Border for the event colour indicators.
+$calendarEventCategoryBorder: 2px solid $calendarEventCategoryBorderColor !default; // Purple.
+$calendarEventCourseBorder: 2px solid $calendarEventCourseBorderColor !default; // Red-orange.
+$calendarEventGlobalBorder: 2px solid $calendarEventGlobalBorderColor !default; // Green.
+$calendarEventGroupBorder: 2px solid $calendarEventGroupBorderColor !default; // Dark orange.
+$calendarEventUserBorder: 2px solid $calendarEventUserBorderColor !default; // Blue.
+$calendarEventOtherBorder: 2px solid $calendarEventOtherBorderColor !default; // Gray.
 
 // This will be the colour of mini-calendar links, hide/show filter icons, edit/delete icon buttons.
 $calendarEventColor: #0d5ca1 !default;
@@ -276,7 +284,7 @@ $calendarCurrentDateBackground: $primary;
         }
 
         .clickable:hover {
-            background-color: #ededed;
+            background-color: $calendar-month-clickable-bg;
         }
     }
 
@@ -657,7 +665,7 @@ table.calendartable caption {
                                 &.clickable:not(.today):hover {
                                     .day-number-circle {
                                         border-radius: 50%;
-                                        background-color: #ededed;
+                                        background-color: $calendar-month-clickable-bg;
                                     }
                                 }
                             }

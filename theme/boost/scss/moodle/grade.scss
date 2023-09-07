@@ -100,7 +100,7 @@
             overflow: hidden;
             margin: 0.5em;
             padding: 1em;
-            border: 1px solid #aaa;
+            border: 1px solid $grade-manage-action-border-color;
 
             .action-text {
                 position: relative;
@@ -126,7 +126,7 @@
     &.evaluate .criterion .levels .level {
         &:hover,
         &.checked {
-            background: #dff0d8;
+            background: $grade-criterion-level-hover-bg;
         }
         &.checked {
             border: none;
@@ -169,12 +169,12 @@
             padding: $rubricPadding;
 
             &.currentchecked {
-                background: #fff0f0;
+                background: $grade-criterion-level-currentchecked-bg;
             }
 
             &.checked {
-                background: #d0ffd0;
-                border: 1px solid #555;
+                background: $grade-criterion-level-checked-bg;
+                border: 1px solid $grade-criterion-level-checked-border-color;
             }
 
             .delete {
@@ -195,7 +195,7 @@
                     margin: 0;
 
                     &:hover {
-                        background-color: #ddd;
+                        background-color: $grade-criterion-level-delete-bg;
                     }
                 }
             }
@@ -405,7 +405,7 @@
 
                     &.category {
                         td {
-                            background-color: white;
+                            background-color: $grade-table-td-bg;
                             border-top: 1px solid $gray-300;
                             border-bottom: 1px solid $gray-300;
 
@@ -443,7 +443,7 @@
                                                 font-size: 12px;
                                                 width: 12px;
                                                 height: 12px;
-                                                color: #1d2125;
+                                                color: $grade-table-toggle-icon-color;
                                                 margin: 0;
                                             }
                                         }
@@ -455,7 +455,7 @@
 
                     &.item {
                         td {
-                            background-color: white;
+                            background-color: $grade-table-td-bg;
                             border-top: 3px solid $gray-100;
                         }
 
@@ -482,8 +482,8 @@
         }
 
         .badge-light {
-            color: #1d2125;
-            background-color: #ced4da;
+            color: $grade-badge-color;
+            background-color: $grade-badge-bg;
             margin-right: 0.5em;
             margin-bottom: 0.5em;
         }
@@ -655,7 +655,7 @@
         .dropdown-item:hover,
         .dropdown-item:active {
             span {
-                color: #fff;
+                color: $grade-search-hover-color;
             }
         }
 
@@ -671,7 +671,7 @@
         }
 
         .unsearchablecontentcontainer {
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid $grade-search-container-border-color;
             padding-top: 10px;
             font-size: 90%;
         }
