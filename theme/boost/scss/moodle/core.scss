@@ -39,6 +39,14 @@ $font-size-xs: ($font-size-base * .75) !default;
     }
 }
 
+@mixin optional-animation($animation) {
+    animation: $animation;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
 .context-header-settings-menu .dropdown-toggle > .icon,
 #region-main-settings-menu .dropdown-toggle > .icon {
     height: 24px;
@@ -357,33 +365,6 @@ a.autolink {
 img.resize {
     height: 1em;
     width: 1em;
-}
-
-.action-menu .dropdown-toggle {
-    text-decoration: none;
-    display: inline-block;
-}
-
-.action-menu {
-    white-space: nowrap;
-    display: inline;
-
-    .dropdown.downleft .dropdown-subpanel-content {
-        right: 0;
-        left: auto;
-    }
-
-    .dropdown-subpanel.content-displayed {
-        background-color: $gray-200;
-    }
-
-    .dropdown-subpanel-content {
-        max-width: $modal-sm;
-
-        a:focus {
-            outline: solid $primary;
-        }
-    }
 }
 
 .block img.resize {
