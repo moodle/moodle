@@ -207,11 +207,11 @@ class api {
         $mform->addElement(
             'select',
             'selectedcommunication',
-            get_string('seleccommunicationprovider', 'communication'),
+            get_string('selectcommunicationprovider', 'communication'),
             $communicationproviders,
             ['data-communicationchooser-field' => 'selector'],
         );
-        $mform->addHelpButton('selectedcommunication', 'seleccommunicationprovider', 'communication');
+        $mform->addHelpButton('selectedcommunication', 'selectcommunicationprovider', 'communication');
         $mform->setDefault('selectedcommunication', $defaulprovider);
 
         $mform->registerNoSubmitButton('updatecommunicationprovider');
@@ -245,8 +245,17 @@ class api {
                 ),
                 'addcommunicationoptionshere'
             );
-            $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
             $mform->setType('communicationroomname', PARAM_TEXT);
+
+            $mform->insertElementBefore(
+                $mform->createElement(
+                    'static',
+                    'communicationroomnameinfo',
+                    '',
+                    get_string('communicationroomnameinfo', 'communication'),
+                ),
+                'addcommunicationoptionshere',
+            );
 
             processor::set_provider_specific_form_definition($provider, $mform);
         }

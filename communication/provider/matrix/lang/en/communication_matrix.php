@@ -24,17 +24,15 @@
 
 $string['cachedef_serverversions'] = 'Matrix server version information for running servers';
 $string['matrixuserid'] = 'Matrix user ID';
-$string['matrixuserid_desc'] = 'The user ID to be used for Matrix';
-$string['matrixhomeserverurl'] = 'Home server URL';
-$string['matrixhomeserverurl_desc'] = 'The URL of the Synapse home server to connect to, for user and room creation.';
+$string['matrixhomeserverurl'] = 'Homeserver URL';
+$string['matrixhomeserverurl_desc'] = 'The URL of the Synapse homeserver to connect to, for user and room creation.';
 $string['matrixaccesstoken'] = 'Access token';
-$string['matrixaccesstoken_desc'] = 'Admin access token to authenticate against the Synapse Home server.';
+$string['matrixaccesstoken_desc'] = 'Access token for the account which will perform actions on the homeserver.';
 $string['matrixrefreshtoken'] = 'Refresh token';
 $string['matrixrefreshtoken_desc'] = 'Admin refresh token to associated with the access token.';
 $string['matrixelementurl'] = 'Element web URL';
-$string['matrixelementurl_desc'] = 'The URL to Element Web instance.';
 $string['matrixroomtopic'] = 'Room topic';
 $string['matrixroomtopic_help'] = 'A short description of what this room is for.';
 $string['matrix:moderator'] = 'Matrix moderator';
 $string['pluginname'] = 'Matrix';
-$string['privacy:metadata'] = 'Matrix communication plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Matrix communication plugin does not store any personal data.';
