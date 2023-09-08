@@ -946,6 +946,9 @@ if (!empty($cancelled)) {
                 }
                 $user->id = company_user::create($user);
 
+                // Save the profile information.
+                profile_save_data($user);
+
                 // Are we being passed company departments?
                 if ($passeddepartment) {
                     // Stash the default in case we need to remove them from it later.
