@@ -256,7 +256,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         new lang_string('communication', 'core_communication'), ''));
 
     list($communicationproviders, $defaulprovider) = \core_communication\api::
-        get_enabled_providers_and_default('communication_matrix');
+        get_enabled_providers_and_default();
 
     $temp->add(new admin_setting_configselect('moodlecourse/coursecommunicationprovider',
         new lang_string('seleccommunicationprovider', 'communication'),
