@@ -59,6 +59,7 @@ $string['generatefeedback'] = 'Generate feedback PDF';
 $string['gotopage'] = 'Go to page';
 $string['green'] = 'Green';
 $string['gsimage'] = 'Ghostscript test image';
+$string['pathtogserror'] = 'The configured path to ghostscript is not correctly set: {$a}';
 $string['pathtogspathdesc'] = 'Please note that annotate PDF requires the path to ghostscript to be set in {$a}.';
 $string['highlight'] = 'Highlight';
 $string['jsrequired'] = 'JavaScript is required to annotate a PDF. Please enable JavaScript in your browser to use this feature.';
