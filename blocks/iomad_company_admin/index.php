@@ -246,13 +246,6 @@ foreach ($menus as $key => $menu) {
     $panes[$tab]['items'][] = $menu;
 }
 
-// If there are no menu items to show this user...
-if (!$somethingtodisplay) {
-    $this->content = new stdClass;
-    $this->content->text = '';
-    return $this->content;
-}
-
 // Logo.
 $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
 
