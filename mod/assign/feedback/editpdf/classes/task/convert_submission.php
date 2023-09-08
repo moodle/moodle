@@ -20,7 +20,9 @@ use core\task\adhoc_task;
 use core\task\manager;
 use assignfeedback_editpdf\document_services;
 use assignfeedback_editpdf\combined_document;
+use assignfeedback_editpdf\pdf;
 use context_module;
+use moodle_exception;
 use assign;
 
 /**
@@ -45,6 +47,13 @@ class convert_submission extends adhoc_task {
         if (!$submission) {
             mtrace('Submission no longer exists');
             return;
+        }
+
+        // Early exit if ghostscript isn't correctly configured.
+        $result = pdf::test_gs_path(false);
+        if ($result->status !== pdf::GSPATH_OK) {
+            $statusstring = get_string('test_' . $result->status, 'assignfeedback_editpdf');
+            throw new moodle_exception('pathtogserror', 'assignfeedback_editpdf', '', $statusstring, $result->status);
         }
 
         $cm = get_coursemodule_from_instance('assign', $submission->assignment, 0, false, MUST_EXIST);
