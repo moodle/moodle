@@ -212,8 +212,8 @@
 
   .card-body-overlay {
     background: linear-gradient(
-      lighten($colorbgcard, 15),
-      darken($colorbgcard, 10)
+      lighten($colorbgcard, 30),
+      darken($colorbgcard, 20)
     );
     color: darken($colorbgcard, 45);
     padding: 20px 20px 30px 10px;
@@ -388,7 +388,7 @@
     padding: 0 0 150px 0;
     overflow: auto;
     margin: 0;
-    margin-top: 10px;
+    margin-top: 20px;
     .nav-item .arrow {
       font-size: 13px;
     }
@@ -986,6 +986,9 @@ button.close:focus,
 .breadcrumb {
   align-items: center;
 }
+.breadcrumb-item {
+  padding-right: 10px;
+}
 .pagetitle-left-alignment nav .breadcrumb-item.active {
   color: #333333;
   font-size: 20px;
@@ -1173,8 +1176,5 @@ a:not([class]):focus,
   }
   .pagetitle-left-alignment .breadcrumb:not(:empty) .breadcrumb-item {
     padding: 0;
-  }
-  .popover-region-container {
-    width: 350px;
   }
 }
