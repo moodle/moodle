@@ -38,6 +38,12 @@ let feedbackInitialised = false;
 const initPopovers = () => {
     if (!feedbackInitialised) {
         $(SELECTORS.FEEDBACK_TRIGGER).popover();
+
+        document.addEventListener('click', (e) => {
+            if (e.target.closest(SELECTORS.FEEDBACK_TRIGGER)) {
+                e.preventDefault();
+            }
+        });
         feedbackInitialised = true;
     }
 };
