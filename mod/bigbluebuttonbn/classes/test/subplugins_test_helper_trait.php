@@ -26,6 +26,7 @@
 namespace mod_bigbluebuttonbn\test;
 
 use core_component;
+use core_h5p\core;
 use core_plugin_manager;
 use mod_bigbluebuttonbn\extension;
 use ReflectionClass;
@@ -67,14 +68,62 @@ trait subplugins_test_helper_trait {
         $fillfilemap->setAccessible(true);
         $fillfilemap->invoke(null);
 
+        $mockedsubplugins = $mockedcomponent->getProperty('subplugins');
+        $mockedsubplugins->setAccessible(true);
+        $subplugins = $mockedsubplugins->getValue();
+        $subplugins['mod_bigbluebuttonbn'][extension::BBB_EXTENSION_PLUGIN_NAME][] = $pluginname;
+        $mockedsubplugins->setValue($subplugins);
+
+        // Now write the content of the cache in a file so we can use it later.
+        $content = core_component::get_cache_content();
+        self::write_fake_component_cache($content);
+
         // Make sure the plugin is installed.
         ob_start();
         upgrade_noncore(false);
         upgrade_finished();
         ob_end_clean();
-        \core_plugin_manager::reset_caches();
-        $this->resetDebugging(); // We might have debugging messages here that we need to get rid of.
-        // End of the component loader mock.
+
+        // Cache has been cleared so let's write it again.
+        self::write_fake_component_cache($content);
+
+    }
+
+    /**
+     * Write the content of the cache in a file for later use.
+     *
+     * This is used exclusively in behat test as the cache is filled with new values at each session/page load.
+     *
+     * @param string $content content of the cache
+     * @return void
+     */
+    protected function write_fake_component_cache($content) {
+        global $CFG;
+        $cachefile = "$CFG->cachedir/core_component.php";
+        if (file_exists($cachefile)) {
+            // Stale cache detected!
+            unlink($cachefile);
+        }
+
+        // Permissions might not be setup properly in installers.
+        $dirpermissions = !isset($CFG->directorypermissions) ? 02777 : $CFG->directorypermissions;
+        $filepermissions = !isset($CFG->filepermissions) ? ($dirpermissions & 0666) : $CFG->filepermissions;
+
+        clearstatcache();
+        $cachedir = dirname($cachefile);
+        if (!is_dir($cachedir)) {
+            mkdir($cachedir, $dirpermissions, true);
+        }
+
+        if ($fp = @fopen($cachefile . '.tmp', 'xb')) {
+            fwrite($fp, $content);
+            fclose($fp);
+            @rename($cachefile . '.tmp', $cachefile);
+            @chmod($cachefile, $filepermissions);
+        }
+        @unlink($cachefile . '.tmp'); // Just in case anything fails (race condition).
+        core_component::invalidate_opcode_php_cache($cachefile);
+
     }
     /**
      * Uninstall a fake extension plugin
@@ -86,12 +135,22 @@ trait subplugins_test_helper_trait {
      * @return void
      */
     protected function uninstall_fake_plugin(string $pluginname): void {
+        global $CFG;
+        require_once("$CFG->libdir/adminlib.php");
         // We just need access to fill_all_caches so everything goes back to normal.
         // If we don't do this, there are some side effects that will make other test fails
         // (such as mod_bigbluebuttonbn\task\upgrade_recordings_task_test::test_upgrade_recordings_imported_basic).
+        $cachefile = "$CFG->cachedir/core_component.php";
+        if (file_exists($cachefile)) {
+            // Stale cache detected!
+            unlink($cachefile);
+        }
         $mockedcomponent = new ReflectionClass(core_component::class);
         // Here we reset the plugin caches.
-        $fillclassmap = $mockedcomponent->getMethod('fill_all_caches');
+        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
+        $mockedplugintypes->setAccessible(true);
+        $mockedplugintypes->setValue(null);
+        $fillclassmap = $mockedcomponent->getMethod('init');
         $fillclassmap->setAccessible(true);
         $fillclassmap->invoke(null);
 

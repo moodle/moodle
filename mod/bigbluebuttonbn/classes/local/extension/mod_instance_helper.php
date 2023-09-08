@@ -49,4 +49,12 @@ class mod_instance_helper {
      */
     public function delete_instance(int $cmid): void {
     }
+
+    /**
+     * Get any join table name that is used to store additional data for the instance.
+     * @return string[]
+     */
+    public function get_join_tables(): array {
+        return [];
+    }
 }

@@ -156,9 +156,16 @@ class instance {
             'bbbtable' => $bbbtable,
             'bbbselect' => $bbbselect,
             'bbbfrom' => $bbbfrom,
+            'subplugintables' => $subplugintables,
+            'subpluginselects' => $subpluginselects,
+            'subpluginfroms' => $subpluginfroms
         ] = self::get_tables_info();
 
-        $select = implode(', ', [$courseselect, $bbbselect, $cmselect]);
+        $select = implode(', ', array_merge([$courseselect, $bbbselect, $cmselect], $subpluginselects));
+        $subpluginsleftjoins = '';
+        foreach ($subpluginfroms as $tablealias => $subpluginfrom) {
+            $subpluginsleftjoins .= "LEFT JOIN {$subpluginfrom} ON bbb.id = {$tablealias}.bigbluebuttonbnid\n";
+        }
         $params = [
             'modname' => 'bigbluebuttonbn',
             'bbbid' => $id,
@@ -181,7 +188,7 @@ EOF;
 EOF;
         }
 
-        $sql = "SELECT {$select} FROM {$from} WHERE {$where}";
+        $sql = "SELECT {$select} FROM {$from} {$subpluginsleftjoins} WHERE {$where}";
 
         $result = $DB->get_record_sql($sql, $params);
 
@@ -191,6 +198,7 @@ EOF;
 
         $course = $coursetable->extract_from_result($result);
         $instancedata = $bbbtable->extract_from_result($result);
+        self::extract_plugin_table_info($instancedata, $result, $subplugintables);
         if ($idtype == self::IDTYPE_INSTANCEID) {
             $cmid = $result->cmid;
         } else {
@@ -255,16 +263,24 @@ EOF;
             'cmfrom' => $cmfrom,
             'bbbtable' => $bbbtable,
             'bbbselect' => $bbbselect,
-            'bbbfrom' => $bbbfrom
+            'bbbfrom' => $bbbfrom,
+            'subplugintables' => $subplugintables,
+            'subpluginselects' => $subpluginselects,
+            'subpluginfroms' => $subpluginfroms
         ] = self::get_tables_info();
 
-        $selects = implode(', ', [$courseselect, $bbbselect]);
+        $selects = implode(', ', array_merge([$courseselect, $bbbselect], $subpluginselects));
+        $subpluginsleftjoins = '';
+        foreach ($subpluginfroms as $tablealias => $subpluginfrom) {
+            $subpluginsleftjoins .= "LEFT JOIN {$subpluginfrom} ON bbb.id = {$tablealias}.bigbluebuttonbnid\n";
+        }
         $sql = <<<EOF
     SELECT cm.id as cmid, {$selects}
       FROM {$cmfrom}
 INNER JOIN {$coursefrom} ON c.id = cm.course
 INNER JOIN {modules} m ON m.id = cm.module AND m.name = :modname
 INNER JOIN {$bbbfrom} ON cm.instance = bbb.id
+{$subpluginsleftjoins}
      WHERE cm.course = :courseid
 EOF;
 
@@ -277,13 +293,29 @@ EOF;
         foreach ($results as $result) {
             $course = $coursetable->extract_from_result($result);
             $instancedata = $bbbtable->extract_from_result($result);
+            self::extract_plugin_table_info($instancedata, $result, $subplugintables);
             $instances[$result->cmid] = new self($result->cmid, $course, $instancedata);
         }
 
         return $instances;
     }
-    // Add an helper method that can be used in both self::get_all_instances_in_course and self::get_all_instances_in_course.
-    // This method will be used to get the additional tables returned from the subplugin.
+
+    /**
+     * Helper method to extract result from subplugin tables.
+     * @param object $instancedata instance data
+     * @param object $result result from sql query
+     * @param array $subplugintables array of subplugin tables
+     */
+    private static function extract_plugin_table_info(object &$instancedata, object $result, array $subplugintables) {
+        foreach ($subplugintables as $subplugintable) {
+            $subplugindata = (array) $subplugintable->extract_from_result($result);
+            if (isset($subplugindata['id'])) {
+                unset($subplugindata['id']); // Make sure that from the subplugin we don't conflict with the bigbluebutton id.
+            }
+            $instancedata = (object) array_merge($subplugindata, (array) $instancedata);
+        }
+    }
+
     /**
      * Get the additional tables returned from the subplugin.
      *
@@ -302,12 +334,26 @@ EOF;
         $bbbselect = $bbbtable->get_field_select();
         $bbbfrom = $bbbtable->get_from_sql();
 
+        // Look now for additional tables returned from the subplugin.
+        $subpluginselects = [];
+        $subpluginfroms = [];
+        $subplugintables = [];
+        $subplugintablesnames = extension::get_join_tables();
+        foreach ($subplugintablesnames as $index => $subplugintablename) {
+            $tablealias = 'ext'.$index;
+            $subplugintable = new table($subplugintablename, $tablealias, 'ext'.$index);
+            $subpluginselects[$tablealias] = $subplugintable->get_field_select();
+            $subpluginfroms[$tablealias] = $subplugintable->get_from_sql();
+            $subplugintables[$tablealias] = $subplugintable;
+        }
         return compact(
             'coursetable', 'courseselect', 'coursefrom',
             'cmtable', 'cmselect', 'cmfrom',
-            'bbbtable', 'bbbselect', 'bbbfrom'
+            'bbbtable', 'bbbselect', 'bbbfrom',
+            'subplugintables', 'subpluginselects', 'subpluginfroms',
         );
     }
+
     /**
      * Set the current group id of the activity.
      *

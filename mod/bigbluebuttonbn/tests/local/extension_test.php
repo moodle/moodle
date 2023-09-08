@@ -45,6 +45,7 @@ class extension_test extends \advanced_testcase {
     public function setUp(): void {
         $this->resetAfterTest(true);
         $this->setup_fake_plugin('simple');
+        $this->resetDebugging(); // We might have debugging messages issued from setup_fake_plugin here that we need to get rid of.
     }
 
 
@@ -87,7 +88,7 @@ class extension_test extends \advanced_testcase {
      * Test the add module callback
      *
      * @return void
-     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helpe
+     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helper
      */
     public function test_mod_instance_helper_add() {
         global $DB;
@@ -106,7 +107,7 @@ class extension_test extends \advanced_testcase {
      * Test the update module callback
      *
      * @return void
-     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helpe
+     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helper
      */
     public function test_mod_instance_helper_update() {
         global $DB;
@@ -127,7 +128,7 @@ class extension_test extends \advanced_testcase {
      * Test delete module callback
      *
      * @return void
-     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helpe
+     * @covers \mod_bigbluebuttonbn\local\extension\mod_instance_helper
      */
     public function test_mod_instance_helper_delete() {
         global $DB;

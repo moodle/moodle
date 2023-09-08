@@ -24,4 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 $string['config_extension'] = 'Sample config extension setting';
+$string['newfield'] = 'New field';
+$string['newfielderror'] = 'New field cannot be empty';
 $string['pluginname'] = 'Simple BigBlueButtonPlugin';
