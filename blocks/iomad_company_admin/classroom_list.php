@@ -32,14 +32,12 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_classrooms, PARAM_INT);        // How many per page.
 
-global $DB, $email;
-
 $block = 'block_iomad_company_admin';
 
 // Get the SYSTEM context.
 $context = context_system::instance();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+require_login(); // Adds to $PAGE, creates $OUTPUT.
 
 // Correct the navbar.
 // Set the name for the page.
@@ -59,6 +57,9 @@ $company = new company($companyid);
 
 // Set the page heading.
 $PAGE->set_heading(get_string('classrooms_for', $block, $company->get_name()));
+$PAGE->navbar->add($linktext, $linkurl);
+
+require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort,
                                                     'dir' => $dir,

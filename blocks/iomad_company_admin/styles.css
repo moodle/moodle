@@ -377,3 +377,7 @@ border-radius: 10px;
     display: inline-block;
     width: 100%;
 }
+
+#page-blocks-iomad_company_admin-classroom_list > #page-wrapper > nav > div.primary-navigation > nav {
+    opacity: 1;
+}
