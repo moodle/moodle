@@ -1083,7 +1083,35 @@ class company {
                                             'userid' => $userid,
                                             'departmentid' => $departmentid]);
             }
-            if ($managertype == 1 &&
+            if ($managertype == 0 &&
+                $DB->get_records_sql('SELECT id FROM {company_users}
+                                      WHERE
+                                      userid = :userid
+                                      AND managertype != 0
+                                      AND companyid = :companyid',
+                                      ['userid' => $userid,
+                                      'companyid' => $companyid])) {
+                // We are demoting a manager type.
+                role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
+                role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
+                role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
+
+                // Deal with course permissions.
+                if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
+                    foreach ($companycourses as $companycourse) {
+                        if ($DB->record_exists('course', array('id' => $companycourse->courseid))) {
+                            company_user::unenrol($userid,
+                                                  [$companycourse->courseid],
+                                                  $companycourse->companyid);
+
+                        }
+                    }
+                }
+
+                // Make sure all department records in the company match this.
+                $DB->set_field('company_users', 'managertype', 0, ['companyid' => $companyid, 'userid' => $userid]);
+
+            } else if ($managertype == 1 &&
                        $DB->get_records_sql('SELECT id FROM {company_users}
                                             WHERE
                                             userid = :userid
