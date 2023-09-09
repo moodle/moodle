@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
   If it's necessary to override this, pass `false` to its new optional parameter `$appendsitename`.
 * New page title separator constant `moodle_page:TITLE_SEPARATOR` has been created to help standardise the separators used in page
   titles.
+* New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
+  when writing feature files to check that the page title contains the expected string.
+  e.g. `And the page title should contain "Some title"`
 
 === 4.1.5 ===
 * Added a new render of caption for the table in render_caption. It can be used by
