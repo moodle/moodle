@@ -137,16 +137,17 @@ class editusers_table extends table_sql {
             $usertypeselect = $this->usertypeselect;
             if (count($userdepartments) > 1 ||
                 $userdepartments[0] != $this->parentlevel->id) {
-                unset($usertypeselect[1]);
+                unset($usertypeselect[10]);
                 unset($usertypeselect[11]);
             }
 
             // Set up the current value for the inplace form and display it.
             if (empty($CFG->iomad_autoenrol_managers)) {
-                $currentvalue = ($row->managertype + 10) * $row->educator;
+                $currentvalue = ($row->managertype * 10) + $row->educator;
             } else {
-                $currentvalue = $row->managertype;
+                $currentvalue = $row->managertype * 10;
             }
+
             // Added due to value mismatch when editing under certain circumstances.
             if (empty($currentvalue)) {
                 $currentvalue = 0;
@@ -431,25 +432,29 @@ class editusers_table extends table_sql {
         // Deal with role selector.
         $this->usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
         if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
-            $this->usertypeselect[1] = get_string('companymanager', 'block_iomad_company_admin');
+            $this->usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
-            $this->usertypeselect[2] = get_string('departmentmanager', 'block_iomad_company_admin');
+            $this->usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
-            $this->usertypeselect[4] = get_string('companyreporter', 'block_iomad_company_admin');
+            $this->usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin');
         }
         if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $context)) {
-            $this->usertypeselect[10] = get_string('educator', 'block_iomad_company_admin');
+            $this->usertypeselect[1] = get_string('educator', 'block_iomad_company_admin');
             if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
-                $this->usertypeselect[11] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('companymanager', 'block_iomad_company_admin');
+                $this->usertypeselect[10] = get_string('companymanager', 'block_iomad_company_admin');
+                $this->usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin');
             }
             if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
-                $this->usertypeselect[12] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('departmentmanager', 'block_iomad_company_admin');
+                $this->usertypeselect[20] = get_string('departmentmanager', 'block_iomad_company_admin');
+                $this->usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin'); 
             }
             if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
-                $this->usertypeselect[14] = get_string('educator', 'block_iomad_company_admin') . ' + ' . get_string('companyreporter', 'block_iomad_company_admin');
+                $this->usertypeselect[40] = get_string('companyreporter', 'block_iomad_company_admin');
+                $this->usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin');
             }
         }
+        ksort($this->usertypeselect);
     }
 }
