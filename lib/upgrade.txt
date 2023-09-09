@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 3.9.24 ===
+* New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
+  when writing feature files to check that the page title contains the expected string.
+  e.g. `And the page title should contain "Some title"`
+
 ===3.9.22===
 * Added a new parameter in address_in_subnet to give us the ability to check for 0.0.0.0 or not.
 
