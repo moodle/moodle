@@ -102,8 +102,6 @@ class courses_autoenrol_editable extends \core\output\inplace_editable {
     public static function update($itemid, $newvalue) {
         global $DB, $CFG, $USER;
 
-error_log("got value $newvalue");
-
         require_once($CFG->libdir . '/external/externallib.php');
         // Check caps.
         // Do the thing.

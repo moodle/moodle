@@ -59,7 +59,6 @@ if (isset($options['file'])) {
     unset($options['file']);
 }
 $options['profilefieldid'] = $profilefieldid;
-error_log("options =");error_log(print_r($options, true));
 $userselector = new $classname($name, $options);
 
 // Do the search and output the results.
