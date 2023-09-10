@@ -132,12 +132,9 @@ export const contentUpdated = (event) => {
     if (typeof window.MathJax === "undefined") {
         return;
     }
-    const processDelay = window.MathJax.Hub.processSectionDelay;
-    // Set the process section delay to 0 when updating the formula.
-    window.MathJax.Hub.processSectionDelay = 0;
-    // When content is updated never position to hash, it may cause unexpected document scrolling.
-    window.MathJax.Hub.Config({positionToHash: false});
-    setLocale();
+
+    let listOfElementContainMathJax = [];
+    let hasMathJax = false;
     // The list of HTMLElements in an Array.
     event.detail.nodes.forEach((node) => {
         if (!(node instanceof HTMLElement)) {
@@ -145,6 +142,21 @@ export const contentUpdated = (event) => {
             return;
         }
         const mathjaxElements = node.querySelectorAll('.filter_mathjaxloader_equation');
+        if (mathjaxElements.length > 0) {
+            hasMathJax = true;
+        }
+        listOfElementContainMathJax.push(mathjaxElements);
+    });
+    if (!hasMathJax) {
+        return;
+    }
+    const processDelay = window.MathJax.Hub.processSectionDelay;
+    // Set the process section delay to 0 when updating the formula.
+    window.MathJax.Hub.processSectionDelay = 0;
+    // When content is updated never position to hash, it may cause unexpected document scrolling.
+    window.MathJax.Hub.Config({positionToHash: false});
+    setLocale();
+    listOfElementContainMathJax.forEach((mathjaxElements) => {
         mathjaxElements.forEach((node) => typesetNode(node));
     });
     window.MathJax.Hub.processSectionDelay = processDelay;
