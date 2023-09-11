@@ -2416,7 +2416,7 @@ function link_arrow_right($text, $url='', $accesshide=false, $addclass='', $addp
     if (!$url) {
         $arrowclass .= $addclass;
     }
-    $arrow = '<span class="'.$arrowclass.'">'.$OUTPUT->rarrow().'</span>';
+    $arrow = '<span class="'.$arrowclass.'" aria-hidden="true">'.$OUTPUT->rarrow().'</span>';
     $htmltext = '';
     if ($text) {
         $htmltext = '<span class="arrow_text">'.$text.'</span>&nbsp;';
@@ -2458,7 +2458,7 @@ function link_arrow_left($text, $url='', $accesshide=false, $addclass='', $addpa
     if (! $url) {
         $arrowclass .= $addclass;
     }
-    $arrow = '<span class="'.$arrowclass.'">'.$OUTPUT->larrow().'</span>';
+    $arrow = '<span class="'.$arrowclass.'" aria-hidden="true">'.$OUTPUT->larrow().'</span>';
     $htmltext = '';
     if ($text) {
         $htmltext = '&nbsp;<span class="arrow_text">'.$text.'</span>';
