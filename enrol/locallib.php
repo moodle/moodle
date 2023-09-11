@@ -546,16 +546,27 @@ class course_enrolment_manager {
      */
     public function search_users(string $search = '', bool $searchanywhere = false, int $page = 0, int $perpage = 25,
             bool $returnexactcount = false) {
+        global $USER;
+
         list($ufields, $params, $wherecondition) = $this->get_basic_search_conditions($search, $searchanywhere);
+
+        $groupmode = groups_get_course_groupmode($this->course);
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $this->context)) {
+            $groups = groups_get_all_groups($this->course->id, $USER->id, 0, 'g.id');
+            $groupids = array_column($groups, 'id');
+        } else {
+            $groupids = [];
+        }
+
+        [$enrolledsql, $enrolledparams] = get_enrolled_sql($this->context, '', $groupids);
 
         $fields      = 'SELECT ' . $ufields;
         $countfields = 'SELECT COUNT(u.id)';
         $sql = " FROM {user} u
-                 JOIN {user_enrolments} ue ON ue.userid = u.id
-                 JOIN {enrol} e ON ue.enrolid = e.id
-                WHERE $wherecondition
-                  AND e.courseid = :courseid";
-        $params['courseid'] = $this->course->id;
+                 JOIN ($enrolledsql) je ON je.id = u.id
+                WHERE $wherecondition";
+
+        $params = array_merge($params, $enrolledparams);
 
         return $this->execute_search_queries($search, $fields, $countfields, $sql, $params, $page, $perpage, 0, $returnexactcount);
     }
