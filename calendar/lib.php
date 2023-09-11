@@ -1672,11 +1672,14 @@ function calendar_get_events_by_id($eventids) {
 /**
  * Get control options for calendar.
  *
+ * @deprecated since Moodle 4.3
  * @param string $type of calendar
  * @param array $data calendar information
- * @return string $content return available control for the calender in html
+ * @return string $content return available control for the calendar in html
  */
 function calendar_top_controls($type, $data) {
+    debugging(__FUNCTION__ . ' has been deprecated and should not be used anymore.', DEBUG_DEVELOPER);
+
     global $PAGE, $OUTPUT;
 
     // Get the calendar type we are using.
