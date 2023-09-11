@@ -701,7 +701,12 @@ class observer {
                                                                 'courseid' => $courseid,
                                                                 'timecompleted' => null))) {
             // We already have an entry.  Remove it.
-            $DB->set_field('local_iomad_track', 'finalscore', $graderec->finalgrade/$graderec->rawgrademax * 100, array('id' => $entry->id));
+            // check for max grade = 0
+            $mygrade = 0;
+            if ($graderec->rawgrademax > 0) {
+                $mygrade = $graderec->finalgrade/$graderec->rawgrademax * 100;
+            }
+            $DB->set_field('local_iomad_track', 'finalscore', $mygrade, array('id' => $entry->id));
             $DB->set_field('local_iomad_track', 'modifiedtime', $event->timecreated, array('id' => $entry->id));
         }
 
