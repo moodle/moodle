@@ -547,8 +547,8 @@ class summary_table extends table_sql {
         $userfieldssql = \user_picture::fields('u', $userfields);
 
         // Define base SQL query format.
-        $this->sql->basefields = ' ue.userid AS userid,
-                                   e.courseid AS courseid,
+        $this->sql->basefields = ' u.id AS userid,
+                                   d.course AS courseid,
                                    SUM(CASE WHEN p.parent = 0 THEN 1 ELSE 0 END) AS postcount,
                                    SUM(CASE WHEN p.parent != 0 THEN 1 ELSE 0 END) AS replycount,
                                    ' . $userfieldssql . ',
@@ -567,13 +567,30 @@ class summary_table extends table_sql {
             $privaterepliesparams['privatereplyfrom'] = $USER->id;
         }
 
-        $this->sql->basefromjoins = '    {enrol} e
-                                    JOIN {user_enrolments} ue ON ue.enrolid = e.id
-                                    JOIN {user} u ON u.id = ue.userid
-                                    JOIN {forum} f ON f.course = e.courseid
+        if ($this->iscoursereport) {
+            $course = get_course($this->courseid);
+            $groupmode = groups_get_course_groupmode($course);
+        } else {
+            $cm = \cm_info::create($this->cms[0]);
+            $groupmode = $cm->effectivegroupmode;
+        }
+
+        if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $this->get_context())) {
+            $groups = groups_get_all_groups($this->courseid, $USER->id, 0, 'g.id');
+            $groupids = array_column($groups, 'id');
+        } else {
+            $groupids = [];
+        }
+
+        [$enrolleduserssql, $enrolledusersparams] = get_enrolled_sql($this->get_context(), '', $groupids);
+        $this->sql->params += $enrolledusersparams;
+
+        $this->sql->basefromjoins = '    {user} u
+                                    JOIN (' . $enrolleduserssql . ') enrolledusers ON enrolledusers.id = u.id
+                                    JOIN {forum} f ON f.course = :forumcourseid
                                     JOIN {forum_discussions} d ON d.forum = f.id
                                LEFT JOIN {forum_posts} p ON p.discussion =  d.id
-                                     AND p.userid = ue.userid
+                                     AND p.userid = u.id
                                      ' . $privaterepliessql
                                        . $this->sql->filterbase['dates'] . '
                                LEFT JOIN (
@@ -583,11 +600,11 @@ class summary_table extends table_sql {
                                                AND fi.filesize > 0
                                           GROUP BY fi.itemid, fi.userid
                                          ) att ON att.postid = p.id
-                                         AND att.userid = ue.userid';
+                                         AND att.userid = u.id';
 
-        $this->sql->basewhere = 'e.courseid = :courseid';
+        $this->sql->basewhere = '1=1';
 
-        $this->sql->basegroupby = 'ue.userid, e.courseid, u.id, ' . $userfieldssql;
+        $this->sql->basegroupby = $userfieldssql . ', d.course';
 
         if ($this->logreader) {
             $this->fill_log_summary_temp_table();
@@ -605,12 +622,12 @@ class summary_table extends table_sql {
 
         $this->sql->params += [
             'component' => 'mod_forum',
-            'courseid' => $this->courseid,
+            'forumcourseid' => $this->courseid,
         ] + $privaterepliesparams;
 
         // Handle if a user is limited to viewing their own summary.
         if (!empty($this->userid)) {
-            $this->sql->basewhere .= ' AND ue.userid = :userid';
+            $this->sql->basewhere .= ' AND u.id = :userid';
             $this->sql->params['userid'] = $this->userid;
         }
     }
@@ -723,7 +740,7 @@ class summary_table extends table_sql {
                 $orderby = " ORDER BY {$sort}";
             }
         } else {
-            $selectfields = 'COUNT(DISTINCT(ue.userid))';
+            $selectfields = 'COUNT(u.id)';
         }
 
         $sql = "SELECT {$selectfields}
