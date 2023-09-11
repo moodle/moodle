@@ -27,9 +27,9 @@ define([
     'core/str',
     'core/templates',
     'core/url',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events'],
-function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) {
+function($, Ajax, Notification, Str, Templates, Url, ModalSaveCancel, ModalEvents) {
 
     /**
      * List of action selectors.
@@ -93,27 +93,21 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 }
                 deleteButtonText = langStrings[3];
 
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: modalTitle,
                     body: modalContent,
-                    type: ModalFactory.types.SAVE_CANCEL,
-                    large: true
+                    large: true,
+                    removeOnClose: true,
+                    show: true,
+                    buttons: {
+                        save: deleteButtonText,
+                    },
                 });
-            }).done(function(modal) {
-                modal.setSaveButtonText(deleteButtonText);
+            }).then(function(modal) {
                 modal.getRoot().on(ModalEvents.save, function() {
                     // The action is now confirmed, sending an action for it.
                     return deleteContent(contentid, contextid);
                 });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                // Show the modal.
-                modal.show();
 
                 return;
             }).catch(Notification.exception);
@@ -141,13 +135,16 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 var modalTitle = langStrings[0];
                 saveButtonText = langStrings[1];
 
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: modalTitle,
                     body: Templates.render('core_contentbank/renamecontent', {'contentid': contentid, 'name': contentname}),
-                    type: ModalFactory.types.SAVE_CANCEL
+                    removeOnClose: true,
+                    show: true,
+                    buttons: {
+                        save: saveButtonText,
+                    },
                 });
             }).then(function(modal) {
-                modal.setSaveButtonText(saveButtonText);
                 modal.getRoot().on(ModalEvents.save, function(e) {
                     // The action is now confirmed, sending an action for it.
                     var newname = $("#newname").val().trim();
@@ -169,15 +166,6 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                         e.preventDefault();
                     }
                 });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                // Show the modal.
-                modal.show();
 
                 return;
             }).catch(Notification.exception);
@@ -209,10 +197,11 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 errorTitle = langStrings[1];
                 errorMessage = langStrings[2];
 
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: modalTitle,
                     body: Templates.render('core_contentbank/copycontent', {'contentid': contentid, 'name': contentname}),
-                    type: ModalFactory.types.SAVE_CANCEL
+                    removeOnClose: true,
+                    show: true,
                 });
             }).then(function(modal) {
                 modal.getRoot().on(ModalEvents.save, function() {
@@ -225,15 +214,7 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                         return false;
                     }
                 });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                // Show the modal.
-                modal.show();
+                return;
             }).catch(Notification.exception);
         });
 

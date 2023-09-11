@@ -25,13 +25,15 @@ define([
     'core/ajax',
     'core/notification',
     'core/str',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events',
     'core/templates',
     'tool_dataprivacy/data_request_modal',
     'tool_dataprivacy/events',
-    'tool_dataprivacy/selectedcourses'],
-function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, ModalDataRequest, DataPrivacyEvents, SelectedCourses) {
+    'tool_dataprivacy/selectedcourses'
+], function(
+    $, Ajax, Notification, Str, ModalSaveCancel, ModalEvents, Templates, ModalDataRequest, DataPrivacyEvents, SelectedCourses
+) {
 
     /**
      * List of action selectors.
@@ -121,10 +123,9 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
                     canmarkcomplete: data.canmarkcomplete,
                     allowfiltering: data.allowfiltering
                 };
-                return ModalFactory.create({
+                return ModalDataRequest.create({
                     title: data.typename,
                     body: body,
-                    type: ModalDataRequest.TYPE,
                     large: true,
                     templateContext: templateContext
                 });
@@ -398,10 +399,9 @@ function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, Modal
         Str.get_strings(keys).then(function(langStrings) {
             modalTitle = langStrings[0];
             var confirmMessage = langStrings[1];
-            return ModalFactory.create({
+            return ModalSaveCancel.create({
                 title: modalTitle,
                 body: confirmMessage,
-                type: ModalFactory.types.SAVE_CANCEL
             });
         }).then(function(modal) {
             modal.setSaveButtonText(modalTitle);

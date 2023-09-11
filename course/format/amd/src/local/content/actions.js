@@ -26,7 +26,9 @@
  */
 
 import {BaseComponent} from 'core/reactive';
-import ModalFactory from 'core/modal_factory';
+import Modal from 'core/modal';
+import ModalSaveCancel from 'core/modal_save_cancel';
+import ModalDeleteCancel from 'core/modal_delete_cancel';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
@@ -247,14 +249,12 @@ export default class extends BaseComponent {
         }
 
 
+        // Create the modal.
         // Build the modal parameters from the event data.
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(Modal, {
             title: titleText,
             body: Templates.render('core_courseformat/local/content/movesection', data),
-        };
-
-        // Create the modal.
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         const modalBody = getFirst(modal.getBody());
 
@@ -328,14 +328,12 @@ export default class extends BaseComponent {
             titleText = this.reactive.getFormatString('cmsmove_title');
         }
 
+        // Create the modal.
         // Build the modal parameters from the event data.
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(Modal, {
             title: titleText,
             body: Templates.render('core_courseformat/local/content/movecm', data),
-        };
-
-        // Create the modal.
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         const modalBody = getFirst(modal.getBody());
 
@@ -446,13 +444,10 @@ export default class extends BaseComponent {
             bodyText = this.reactive.getFormatString('sectionsdelete_info', {count: sectionIds.length});
         }
 
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(ModalDeleteCancel, {
             title: titleText,
             body: bodyText,
-            type: ModalFactory.types.DELETE_CANCEL,
-        };
-
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         modal.getRoot().on(
             ModalEvents.delete,
@@ -552,13 +547,10 @@ export default class extends BaseComponent {
             );
         }
 
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(ModalDeleteCancel, {
             title: titleText,
             body: bodyText,
-            type: ModalFactory.types.DELETE_CANCEL,
-        };
-
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         modal.getRoot().on(
             ModalEvents.delete,
@@ -586,13 +578,11 @@ export default class extends BaseComponent {
         const data = {
             allowstealth: exporter.canUseStealth(this.reactive.state, cmIds),
         };
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(ModalSaveCancel, {
             title: getString('availability', 'core'),
             body: Templates.render('core_courseformat/local/content/cm/availabilitymodal', data),
             saveButtonText: getString('apply', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
-        };
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         this._setupMutationRadioButtonModal(modal, cmIds);
     }
@@ -609,13 +599,11 @@ export default class extends BaseComponent {
         }
         const title = (sectionIds.length == 1) ? 'sectionavailability_title' : 'sectionsavailability_title';
         // Show the availability modal to decide which action to trigger.
-        const modalParams = {
+        const modal = await this._modalBodyRenderedPromise(ModalSaveCancel, {
             title: this.reactive.getFormatString(title),
             body: Templates.render('core_courseformat/local/content/section/availabilitymodal', []),
             saveButtonText: getString('apply', 'core'),
-            type: ModalFactory.types.SAVE_CANCEL,
-        };
-        const modal = await this._modalBodyRenderedPromise(modalParams);
+        });
 
         this._setupMutationRadioButtonModal(modal, sectionIds);
     }
@@ -698,12 +686,13 @@ export default class extends BaseComponent {
     /**
      * Render a modal and return a body ready promise.
      *
+     * @param {Modal} ModalClass the modal class
      * @param {object} modalParams the modal params
      * @return {Promise} the modal body ready promise
      */
-    _modalBodyRenderedPromise(modalParams) {
+    _modalBodyRenderedPromise(ModalClass, modalParams) {
         return new Promise((resolve, reject) => {
-            ModalFactory.create(modalParams).then((modal) => {
+            ModalClass.create(modalParams).then((modal) => {
                 modal.setRemoveOnClose(true);
                 // Handle body loading event.
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {
