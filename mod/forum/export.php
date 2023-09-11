@@ -187,6 +187,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($pagetitle);
 
 // It is possible that the following fields have been provided in the URL.
+$userids = array_filter($userids, static function(int $userid) use ($course, $cm): bool {
+    $user = core_user::get_user($userid, '*', MUST_EXIST);
+    return $cm->effectivegroupmode != SEPARATEGROUPS || user_can_view_profile($user, $course);
+});
 $form->set_data(['useridsselected' => $userids, 'discussionids' => $discussionids, 'from' => $from, 'to' => $to]);
 
 $form->display();
