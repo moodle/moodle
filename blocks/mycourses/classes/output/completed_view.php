@@ -106,12 +106,14 @@ class completed_view implements renderable, templatable {
             } else {
                 $exportedcourse->finalscore = get_string('passed', 'block_iomad_company_admin');
             }
-            foreach ($completed->certificates as $certificate) {
-                $certout = new \stdclass();
-                $certout->certificateurl = $certificate->certificateurl;
-                $certout->certificatename = $certificate->certificatename;
-                $certout->certificateimage = $certificateimage;
-                $exportedcourse->certificates[] = $certout;
+            if (!empty($completed->certificates)) {
+                foreach ($completed->certificates as $certificate) {
+                    $certout = new \stdclass();
+                    $certout->certificateurl = $certificate->certificateurl;
+                    $certout->certificatename = $certificate->certificatename;
+                    $certout->certificateimage = $certificateimage;
+                    $exportedcourse->certificates[] = $certout;
+                }
             }
             $completedview['courses'][] = $exportedcourse;
         }
