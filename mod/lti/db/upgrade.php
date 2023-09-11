@@ -150,6 +150,11 @@ function xmldb_lti_upgrade($oldversion) {
         // Add key.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
+        // Define index courseid (not unique) to be added to lti_coursevisible.
+        $table->add_index('courseid', XMLDB_INDEX_NOTUNIQUE, ['courseid']);
+        // Define index typeid (not unique) to be added to lti_coursevisible.
+        $table->add_index('typeid', XMLDB_INDEX_NOTUNIQUE, ['typeid']);
+
         // Conditionally launch create table for overriding coursevisible.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
