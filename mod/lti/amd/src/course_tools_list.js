@@ -30,6 +30,7 @@ import {add as addToast} from 'core/toast';
 import {getString, getStrings} from 'core/str';
 import {refreshTableContent} from 'core_table/dynamic';
 import * as Selectors from 'core_table/local/dynamic/selectors';
+import {toggleShowInActivityChooser} from "./repository";
 
 /**
  * Initialise module.
@@ -77,6 +78,16 @@ export const init = () => {
             }).catch(() => {
                 return;
             });
+        }
+
+        const courseShowInActivityChooser = event.target.closest('[data-action="showinactivitychooser-toggle"]');
+        if (courseShowInActivityChooser) {
+            const showInActivityChooserStateToggle = courseShowInActivityChooser.dataset.state === "0" ? 1 : 0;
+            return toggleShowInActivityChooser(
+                courseShowInActivityChooser.dataset.id,
+                courseShowInActivityChooser.dataset.courseid,
+                showInActivityChooserStateToggle,
+            );
         }
     });
 };

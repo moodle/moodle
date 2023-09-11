@@ -181,7 +181,7 @@ class mod_lti_edit_types_form extends moodleform {
 
         if (!empty($this->_customdata->isadmin)) {
             // Only site-level preconfigured tools allow the control of course visibility in the site admin tool type form.
-            if (!$this->_customdata->iscoursetool) {
+            if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
                 $options = array(
                     LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
                     LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
@@ -246,14 +246,16 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
 
         // Restrict to course categories.
-        $mform->addElement('header', 'coursecategory', get_string('restricttocategory', 'lti'));
-        $mform->addHelpButton('coursecategory', 'restricttocategory', 'lti');
-        $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
-        // Convert array of objects to two dimentional array.
-        $tree = $this->lti_build_category_tree(array_map(fn($record) => (array)$record, $records));
-        $mform->addElement('html', $OUTPUT->render_from_template('mod_lti/categorynode', ['nodes' => $tree]));
-        $mform->addElement('hidden', 'lti_coursecategories');
-        $mform->setType('lti_coursecategories', PARAM_TEXT);
+        if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
+            $mform->addElement('header', 'coursecategory', get_string('restricttocategory', 'lti'));
+            $mform->addHelpButton('coursecategory', 'restricttocategory', 'lti');
+            $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
+            // Convert array of objects to two dimentional array.
+            $tree = $this->lti_build_category_tree(array_map(fn($record) => (array)$record, $records));
+            $mform->addElement('html', $OUTPUT->render_from_template('mod_lti/categorynode', ['nodes' => $tree]));
+            $mform->addElement('hidden', 'lti_coursecategories');
+            $mform->setType('lti_coursecategories', PARAM_TEXT);
+        }
 
         if (!$istool) {
             // Display the lti advantage services.

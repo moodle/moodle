@@ -154,6 +154,14 @@ $functions = array(
         'ajax'          => true
     ),
 
+    'mod_lti_toggle_showinactivitychooser' => array(
+        'classname'     => 'mod_lti\external\toggle_showinactivitychooser',
+        'description'   => 'Toggle showinactivitychooser for a tool type in a course',
+        'type'          => 'write',
+        'capabilities'  => 'mod/lti:addcoursetool',
+        'ajax'          => true
+    ),
+
     'mod_lti_is_cartridge' => array(
         'classname'     => 'mod_lti_external',
         'methodname'    => 'is_cartridge',
