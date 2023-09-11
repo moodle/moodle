@@ -29,6 +29,7 @@ $string['availability_hide_help'] = 'Not available to students.';
 $string['availability_stealth'] = 'Make available but don\'t show on course page';
 $string['availability_stealth_help'] = 'Available to students if you provide a link. Activities will still appear in the gradebook and other reports.';
 $string['bulkedit'] = 'Bulk edit';
+$string['bulkeditingcourse'] = 'Bulk edit course: {$a}';
 $string['bulkcancel'] = 'Close bulk edit';
 $string['bulkselection'] = '{$a} selected';
 $string['bulkselection_plural'] = '{$a} selected';
