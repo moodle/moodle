@@ -100,7 +100,7 @@ class user extends entity implements user_representation {
         return (object) [
             'idnumber' => $this->get('sourcedId'),
             'status' => $this->get('status'),
-            'username' => strtolower($this->get('identifier')),
+            'username' => strtolower($this->get('username')),
             //'username' => $this->get('identifier'),
             'email' => $this->get('email'),
             'password' => $this->get('password') ?? '',
