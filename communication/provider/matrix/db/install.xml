@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="communication/provider/matrix/db" VERSION="2023011900" COMMENT="Stores the matrix room information associated with the communication instance."
+<XMLDB PATH="communication/provider/matrix/db" VERSION="20230719" COMMENT="Stores the matrix room information associated with the communication instance."
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
