@@ -163,9 +163,8 @@ class badges extends system_report {
         $this->add_action((new action(
             new moodle_url('/badges/action.php', [
                 'id' => ':id',
-                'sesskey' => sesskey(),
                 'activate' => true,
-                'return' => (new moodle_url(qualified_me()))->out_as_local_url(false),
+                'return' => ':return',
             ]),
             new pix_icon('t/show', '', 'core'),
             [],
@@ -173,8 +172,12 @@ class badges extends system_report {
             new lang_string('activate', 'badges')
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
-            $context = self::get_badge_context((int)$row->type, (int)$row->courseid);
-            return has_capability('moodle/badges:configuredetails', $context) &&
+
+            // Populate the return URL.
+            $row->return = (new moodle_url('/badges/index.php',
+                ['type' => $badge->type, 'id' => (int) $badge->courseid]))->out_as_local_url(false);
+
+            return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
                 $badge->has_criteria() &&
                 ($row->status == BADGE_STATUS_INACTIVE || $row->status == BADGE_STATUS_INACTIVE_LOCKED);
 
@@ -194,8 +197,7 @@ class badges extends system_report {
             new lang_string('deactivate', 'badges')
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
-            $context = self::get_badge_context((int)$row->type, (int)$row->courseid);
-            return has_capability('moodle/badges:configuredetails', $context) &&
+            return has_capability('moodle/badges:configuredetails', $badge->get_context()) &&
                 $badge->has_criteria() &&
                 $row->status != BADGE_STATUS_INACTIVE && $row->status != BADGE_STATUS_INACTIVE_LOCKED;
         }));
@@ -211,9 +213,8 @@ class badges extends system_report {
             new lang_string('award', 'badges')
         ))->add_callback(static function(stdclass $row): bool {
             $badge = new \core_badges\badge($row->id);
-            $context = self::get_badge_context((int)$row->type, (int)$row->courseid);
-            return $badge->has_manual_award_criteria() &&
-                has_capability('moodle/badges:awardbadge', $context) &&
+            return has_capability('moodle/badges:awardbadge', $badge->get_context()) &&
+                $badge->has_manual_award_criteria() &&
                 $badge->is_active();
         }));
 
