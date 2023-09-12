@@ -44,7 +44,7 @@ Feature: Test duplicating a quiz containing a Ordering question
       | For any partially correct response | Parts, but only parts, of your response are correct.                          |
       | For any incorrect response         | That is not right at all.                                                     |
       | id_shownumcorrect                  | 1                                                                             |
-      | id_hintshownumcorrect_0            | 1                                                                             |
-      | id_hintoptions_0                   | 1                                                                             |
-      | id_hintshownumcorrect_1            | 1                                                                             |
-      | id_hintoptions_1                   | 1                                                                             |
+      | id_hintshownumcorrect_0            | 0                                                                             |
+      | id_hintoptions_0                   | 0                                                                             |
+      | id_hintshownumcorrect_1            | 0                                                                             |
+      | id_hintoptions_1                   | 0                                                                             |

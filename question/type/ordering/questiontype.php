@@ -242,86 +242,39 @@ class qtype_ordering extends question_type {
      * @return int Count of hints on the form.
      */
     protected function count_hints_on_form($formdata, $withparts) {
-        if (!empty($formdata->hint)) {
-            $numhints = max(array_keys($formdata->hint)) + 1;
-        } else {
-            $numhints = 0;
+        $numhints = parent::count_hints_on_form($formdata, $withparts);
+
+        if (!empty($formdata->hintoptions)) {
+            $numhints = max($numhints, max(array_keys($formdata->hintoptions)) + 1);
         }
 
-        if ($withparts) {
-            if (!empty($formdata->hintclearwrong)) {
-                $numclears = max(array_keys($formdata->hintclearwrong)) + 1;
-            } else {
-                $numclears = 0;
-            }
-            if (!empty($formdata->hintshownumcorrect)) {
-                $numshows = max(array_keys($formdata->hintshownumcorrect)) + 1;
-            } else {
-                $numshows = 0;
-            }
-            if (!empty($formdata->hintoptions)) {
-                $numhighlights = max(array_keys($formdata->hintoptions)) + 1;
-            } else {
-                $numhighlights = 0;
-            }
-
-            $numhints = max($numhints, $numclears, $numshows, $numhighlights);
-        }
         return $numhints;
     }
 
     /**
-     * Save hints from the form. Overwrite save_hints function to custom hint controls.
+     * Determine if the hint with specified number is not empty and should be saved.
+     * Overload if you use custom hint controls.
      *
-     * @param object $formdata The data from the form.
-     * @param bool $withparts Whether to take into account clearwrong, shownumcorrect, and highlightresponse options.
+     * @param object $formdata the data from the form.
+     * @param int $number number of hint under question.
+     * @param bool $withparts whether to take into account clearwrong and shownumcorrect options.
+     * @return bool is this particular hint data empty.
      */
-    public function save_hints($formdata, $withparts = false) {
-        global $DB;
-        $context = $formdata->context;
+    protected function is_hint_empty_in_form_data($formdata, $number, $withparts) {
+        return parent::is_hint_empty_in_form_data($formdata, $number, $withparts) &&
+            empty($formdata->hintoptions[$number]);
+    }
 
-        $oldhints = $DB->get_records('question_hints',
-            array('questionid' => $formdata->id), 'id ASC');
-
-        $numhints = $this->count_hints_on_form($formdata, $withparts);
-
-        for ($i = 0; $i < $numhints; $i += 1) {
-            if (html_is_blank($formdata->hint[$i]['text'])) {
-                $formdata->hint[$i]['text'] = '';
-            }
-
-            if ($withparts) {
-                $clearwrong = !empty($formdata->hintclearwrong[$i]);
-                $shownumcorrect = !empty($formdata->hintshownumcorrect[$i]);
-                $highlightresponse = !empty($formdata->hintoptions[$i]);
-            }
-
-            // Update an existing hint if possible.
-            $hint = array_shift($oldhints);
-            if (!$hint) {
-                $hint = new stdClass();
-                $hint->questionid = $formdata->id;
-                $hint->hint = '';
-                $hint->id = $DB->insert_record('question_hints', $hint);
-            }
-
-            $hint->hint = $this->import_or_save_files($formdata->hint[$i],
-                $context, 'question', 'hint', $hint->id);
-            $hint->hintformat = $formdata->hint[$i]['format'];
-            if ($withparts) {
-                $hint->clearwrong = $clearwrong;
-                $hint->shownumcorrect = $shownumcorrect;
-                $hint->options = $highlightresponse;
-            }
-            $DB->update_record('question_hints', $hint);
-        }
-
-        // Delete any remaining old hints.
-        $fs = get_file_storage();
-        foreach ($oldhints as $oldhint) {
-            $fs->delete_area_files($context->id, 'question', 'hint', $oldhint->id);
-            $DB->delete_records('question_hints', array('id' => $oldhint->id));
-        }
+    /**
+     * Save additional question type data into the hint optional field.
+     * Overload if you use custom hint information.
+     * @param object $formdata the data from the form.
+     * @param int $number number of hint to get options from.
+     * @param bool $withparts whether question have parts.
+     * @return string value to save into the options field of question_hints table.
+     */
+    protected function save_hint_options($formdata, $number, $withparts) {
+        return !empty($formdata->hintoptions[$number]);
     }
 
     /**
@@ -424,31 +377,6 @@ class qtype_ordering extends question_type {
                 array('question' => $question->id), 'fraction, id')) {
             echo $OUTPUT->notification('Error: Missing question answers for ordering question ' . $question->id . '!');
             return false;
-        }
-
-        // Initialize the shownumcorrect and highlight options with the old question when restoring.
-        $hints = $DB->get_records('question_hints', ['questionid' => $question->id], 'id ASC');
-        $counthints = count($hints);
-        for ($i = 0; $i < max(self::DEFAULT_NUM_HINTS, $counthints); $i++) {
-            $hint = array_shift($hints);
-            if (!$hint) {
-                $hint = new stdClass();
-                $hint->questionid = $question->id;
-                $hint->hint = '';
-                $hint->hintformat = 1;
-                $hint->clearwrong = 0;
-                $hint->options = 1;
-                $hint->shownumcorrect = 1;
-                $hint->id = $DB->insert_record('question_hints', $hint);
-            }
-
-            if (isset($hint->shownumcorrect) || isset($hint->options)) {
-                continue;
-            }
-
-            $hint->options = 1;
-            $hint->shownumcorrect = 1;
-            $DB->update_record('question_hints', $hint);
         }
 
         parent::get_question_options($question);

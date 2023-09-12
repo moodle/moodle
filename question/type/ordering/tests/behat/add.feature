@@ -37,3 +37,18 @@ Feature: Test creating an Ordering question
       | hintshownumcorrect[1]              | 1                                |
       | shownumcorrect                     | 1                                |
     Then I should see "Ordering-001"
+
+  Scenario: Ordering questions are created with only the number of hints that are defined
+    Given the following config values are set as admin:
+      | behaviour | interactive | question_preview |
+    When I add a "Ordering" question filling the form with:
+      | Question name                      | Ordering with one hint           |
+      | Question text                      | Put the words in correct order.  |
+      | id_answer_0                        | one                              |
+      | id_answer_1                        | two                              |
+      | id_answer_2                        | three                            |
+      | Hint 1                             | This is the first and only hint. |
+      | hintoptions[0]                     | 1                                |
+    And I should see "Ordering with one hint"
+    When I am on the "Ordering with one hint" "core_question > preview" page
+    Then I should see "Tries remaining: 2"
