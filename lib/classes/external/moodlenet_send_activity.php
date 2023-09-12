@@ -141,7 +141,10 @@ class moodlenet_send_activity extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'Status: true if success'),
-            'resourceurl' => new external_value(PARAM_URL, 'Resource URL from MoodleNet'),
+            // We used PARAM_TEXT instead of PARAM_URL because the URL return from MoodleNet may contain some characters.
+            // It does not match with PARAM_URL, but the URL still works.
+            // Since we just show the response resource URL to the user for them to navigate to MoodleNet, it would be safe.
+            'resourceurl' => new external_value(PARAM_TEXT, 'Resource URL from MoodleNet'),
             'warnings' => new external_warnings(),
         ]);
     }
