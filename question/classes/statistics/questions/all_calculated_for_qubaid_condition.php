@@ -211,17 +211,21 @@ class all_calculated_for_qubaid_condition {
         foreach ($questionstatrecs as $fromdb) {
             if (is_null($fromdb->variant)) {
                 if ($fromdb->slot) {
+                    if (!isset($this->questionstats[$fromdb->slot])) {
+                        debugging('Statistics found for slot ' . $fromdb->slot .
+                            ' in stats ' . json_encode($qubaids->from_where_params()) .
+                            ' which is not an analysable question.', DEBUG_DEVELOPER);
+                    }
                     $this->questionstats[$fromdb->slot]->populate_from_record($fromdb);
-                    // Array created in constructor and populated from question.
                 } else {
                     $this->subquestionstats[$fromdb->questionid] = new calculated_for_subquestion();
                     $this->subquestionstats[$fromdb->questionid]->populate_from_record($fromdb);
                     if (isset($this->subquestions[$fromdb->questionid])) {
                         $this->subquestionstats[$fromdb->questionid]->question =
-                                $this->subquestions[$fromdb->questionid];
+                            $this->subquestions[$fromdb->questionid];
                     } else {
-                        $this->subquestionstats[$fromdb->questionid]->question =
-                                question_bank::get_qtype('missingtype', false)->make_deleted_instance($fromdb->questionid, 1);
+                        $this->subquestionstats[$fromdb->questionid]->question = question_bank::get_qtype(
+                            'missingtype', false)->make_deleted_instance($fromdb->questionid, 1);
                     }
                 }
             }
@@ -230,13 +234,24 @@ class all_calculated_for_qubaid_condition {
         foreach ($questionstatrecs as $fromdb) {
             if (!is_null($fromdb->variant)) {
                 if ($fromdb->slot) {
+                    if (!isset($this->questionstats[$fromdb->slot])) {
+                        debugging('Statistics found for slot ' . $fromdb->slot .
+                            ' in stats ' . json_encode($qubaids->from_where_params()) .
+                            ' which is not an analysable question.', DEBUG_DEVELOPER);
+                        continue;
+                    }
                     $newcalcinstance = new calculated();
                     $this->questionstats[$fromdb->slot]->variantstats[$fromdb->variant] = $newcalcinstance;
                     $newcalcinstance->question = $this->questionstats[$fromdb->slot]->question;
                 } else {
                     $newcalcinstance = new calculated_for_subquestion();
                     $this->subquestionstats[$fromdb->questionid]->variantstats[$fromdb->variant] = $newcalcinstance;
-                    $newcalcinstance->question = $this->subquestions[$fromdb->questionid];
+                    if (isset($this->subquestions[$fromdb->questionid])) {
+                        $newcalcinstance->question = $this->subquestions[$fromdb->questionid];
+                    } else {
+                        $newcalcinstance->question = question_bank::get_qtype(
+                            'missingtype', false)->make_deleted_instance($fromdb->questionid, 1);
+                    }
                 }
                 $newcalcinstance->populate_from_record($fromdb);
             }
