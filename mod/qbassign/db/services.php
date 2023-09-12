@@ -295,4 +295,14 @@ $functions = array(
                 'capabilities'  => 'mod/qbassign:view',
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_save_studentfilesubmission' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'studentfilesubmission',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Save students submission',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
 );

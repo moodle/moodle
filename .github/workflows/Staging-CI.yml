@@ -28,4 +28,4 @@ jobs:
       - name: PR Status
         if: github.event.pull_request.merged == true
         run: |
-          echo "Pull request merged! PR Name: ${{ github.event.pull_request.title }}"
+          echo "Pull request merged!! PR Name: ${{ github.event.pull_request.title }}"
