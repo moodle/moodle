@@ -42,17 +42,23 @@ class extension {
      * @param string $action
      * @param array $data
      * @param array $metadata
+     * @param int|null $instanceid
      * @return array associative array with the additional data and metadata (indexed by 'data' and
      * 'metadata' keys).
      */
-    public static function action_url_addons(string $action = '', array $data = [], array $metadata = []): array {
+    public static function action_url_addons(
+        string $action = '',
+        array $data = [],
+        array $metadata = [],
+        ?int $instanceid = null
+    ): array {
         $allmutationclass = self::get_instances_implementing(action_url_addons::class);
         $additionaldata = [];
         $additionalmetadata = [];
         foreach ($allmutationclass as $mutationclass) {
             // Here we intentionally just pass data and metadata and not the result as we
             // do not want subplugin to assume that another subplugin is doing a modification.
-            ['data' => $newdata, 'metadata' => $newmetadata] = $mutationclass->execute($action, $data, $metadata);
+            ['data' => $newdata, 'metadata' => $newmetadata] = $mutationclass->execute($action, $data, $metadata, $instanceid);
             $additionaldata = array_merge($additionaldata, $newdata ?? []);
             $additionalmetadata = array_merge($additionalmetadata, $newmetadata ?? []);
         }
@@ -60,6 +66,52 @@ class extension {
             'data' => $additionaldata,
             'metadata' => $additionalmetadata
         ];
+    }
+
+    /**
+     * Get new instance of classes that are named on the base of this classname and implementing this class
+     *
+     * @param string $classname
+     * @param array|null $newparameters additional parameters for the constructor.
+     * @return array
+     */
+    protected static function get_instances_implementing(string $classname, ?array $newparameters = []): array {
+        $classes = self::get_classes_implementing($classname);
+        sort($classes); // Make sure all extension classes are returned in the same order. This is arbitrarily in
+        // alphabetical order and depends on the classname but this one way to ensure consistency across calls.
+        return array_map(function($targetclassname) use ($newparameters) {
+            // If $newparameters is null, the constructor will be called without parameters.
+            return new $targetclassname(...$newparameters);
+        }, $classes);
+    }
+
+    /**
+     * Get classes are named on the base of this classname and implementing this class
+     *
+     * @param string $classname
+     * @return array
+     */
+    protected static function get_classes_implementing(string $classname): array {
+        // Get the class basename without Reflection API.
+        $classnamecomponents = explode("\\", $classname);
+        $classbasename = end($classnamecomponents);
+        $allsubs = core_plugin_manager::instance()->get_plugins_of_type(self::BBB_EXTENSION_PLUGIN_NAME);
+        $extensionclasses = [];
+        foreach ($allsubs as $sub) {
+            if (!$sub->is_enabled()) {
+                continue;
+            }
+            $targetclassname = "\\bbbext_{$sub->name}\\bigbluebuttonbn\\$classbasename";
+            if (!class_exists($targetclassname)) {
+                continue;
+            }
+            if (!is_subclass_of($targetclassname, $classname)) {
+                debugging("The class $targetclassname should extend $classname in the subplugin {$sub->name}. Ignoring.");
+                continue;
+            }
+            $extensionclasses[] = $targetclassname;
+        }
+        return $extensionclasses;
     }
 
     /**
@@ -141,51 +193,5 @@ class extension {
         foreach ($formmanagersclasses as $fmclass) {
             $fmclass->delete_instance($id);
         }
-    }
-
-    /**
-     * Get new instance of classes that are named on the base of this classname and implementing this class
-     *
-     * @param string $classname
-     * @param array|null $newparameters additional parameters for the constructor.
-     * @return array
-     */
-    protected static function get_instances_implementing(string $classname, ?array $newparameters = []): array {
-        $classes = self::get_classes_implementing($classname);
-        sort($classes); // Make sure all extension classes are returned in the same order. This is arbitrarily in
-        // alphabetical order and depends on the classname but this one way to ensure consistency across calls.
-        return array_map(function($targetclassname)  use ($newparameters) {
-            // If $newparameters is null, the constructor will be called without parameters.
-            return new $targetclassname(...$newparameters);
-        }, $classes);
-    }
-
-    /**
-     * Get classes are named on the base of this classname and implementing this class
-     *
-     * @param string $classname
-     * @return array
-     */
-    protected static function get_classes_implementing(string $classname): array {
-        // Get the class basename without Reflection API.
-        $classnamecomponents = explode("\\", $classname);
-        $classbasename = end($classnamecomponents);
-        $allsubs = core_plugin_manager::instance()->get_plugins_of_type(self::BBB_EXTENSION_PLUGIN_NAME);
-        $extensionclasses = [];
-        foreach ($allsubs as $sub) {
-            if (!$sub->is_enabled()) {
-                continue;
-            }
-            $targetclassname = "\\bbbext_{$sub->name}\\bigbluebuttonbn\\$classbasename";
-            if (!class_exists($targetclassname)) {
-                continue;
-            }
-            if (!is_subclass_of($targetclassname, $classname)) {
-                debugging("The class $targetclassname should extend $classname in the subplugin {$sub->name}. Ignoring.");
-                continue;
-            }
-            $extensionclasses[] = $targetclassname;
-        }
-        return $extensionclasses;
     }
 }

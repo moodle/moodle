@@ -18,7 +18,9 @@ namespace mod_bigbluebuttonbn\local;
 use backup;
 use backup_controller;
 use mod_bigbluebuttonbn\extension;
+use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
+use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\test\subplugins_test_helper_trait;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use restore_controller;
@@ -152,15 +154,38 @@ class extension_test extends \advanced_testcase {
     public function test_action_url_addons() {
         // Enable plugin.
         $this->enable_plugins(true);
-        // Set a random var here.
-        $var1 = [];
-        $var2 = ['Test'];
-        ['data' => $additionalvar1, 'metadata' => $additionalvar2] = extension::action_url_addons('create', [], ['Test']);
+        $course = $this->get_course();
+        [$cm, $cminfo, $bbactivity] = $this->create_instance($course);
+        $bbactivity->newfield = 4;
+        extension::update_instance($bbactivity);
+        ['data' => $additionalvar1, 'metadata' => $additionalvar2] =
+            extension::action_url_addons('create', [], ['bbb-meta' => 'Test'], $bbactivity->id);
         $this->assertEmpty($additionalvar1);
         $this->assertCount(2, $additionalvar2);
+        $this->assertEquals($additionalvar2['newfield'], 4);
         ['data' => $additionalvar1, 'metadata' => $additionalvar2] = extension::action_url_addons('delete');
-        $this->assertNotEmpty($additionalvar1);
+        $this->assertEmpty($additionalvar1);
         $this->assertEmpty($additionalvar2);
+    }
+
+    /**
+     * Test the action_url_addons with plugin enabled
+     *
+     * @return void
+     * @covers \mod_bigbluebuttonbn\extension::action_url_addons
+     */
+    public function test_join_url_with_additional_field() {
+        $this->initialise_mock_server();
+        // Enable plugin.
+        $this->enable_plugins(true);
+        $course = $this->get_course();
+        [$cm, $cminfo, $bbactivity] = $this->create_instance($course);
+        $bbactivity->newfield = 4;
+        extension::update_instance($bbactivity);
+        $instance = instance::get_from_instanceid($bbactivity->id);
+        $meeting = new meeting($instance);
+        $meetingjoinurl = $meeting->get_join_url();
+        $this->assertStringContainsString('newfield=4', $meetingjoinurl);
     }
 
     /**
