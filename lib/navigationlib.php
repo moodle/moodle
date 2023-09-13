@@ -4637,7 +4637,7 @@ class settings_navigation extends navigation_node {
             $coursenode->force_open();
         }
 
-        // Share course to moodlenet.
+        // MoodleNet links.
         $usercanshare = utilities::can_user_share($coursecontext, $USER->id, 'course');
         $issuerid = get_config('moodlenet', 'oauthservice');
         try {
@@ -4650,8 +4650,13 @@ class settings_navigation extends navigation_node {
                     'data-type' => 'course',
                     'data-sharetype' => 'resource',
                 ]);
+                // Share course to MoodleNet link.
                 $coursenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
                     $action, self::TYPE_SETTING, null, 'exportcoursetomoodlenet')->set_force_into_more_menu(true);
+                // MoodleNet share progress link.
+                $url = new moodle_url('/moodlenet/shareprogress.php');
+                $coursenode->add(get_string('moodlenet:shareprogress'),
+                    $url, self::TYPE_SETTING, null, 'moodlenetshareprogress')->set_force_into_more_menu(true);
             }
         } catch (dml_missing_record_exception $e) {
             debugging("Invalid MoodleNet OAuth 2 service set in site administration: 'moodlenet | oauthservice'. " .
