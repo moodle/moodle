@@ -83,7 +83,7 @@ if (!user_can_view_profile($user, null, $context)) {
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');
     $PAGE->set_context(context_system::instance());
-    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
+    $PAGE->set_title($struser);  // Do not leak the name.
     $PAGE->set_heading($struser);
     $PAGE->set_pagelayout('mypublic');
     $PAGE->add_body_class('limitedwidth');
