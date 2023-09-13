@@ -238,6 +238,8 @@ export default class Component extends BaseComponent {
             {watch: `transaction:start`, handler: this._startProcessing},
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
+            // Section visibility.
+            {watch: `section.visible:updated`, handler: this._reloadSection},
             // Reindex sections and cms.
             {watch: `state:updated`, handler: this._indexContents},
         ];
