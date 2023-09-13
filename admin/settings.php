@@ -129,9 +129,7 @@ if (empty($SITE->fullname)) {
         $PAGE->set_button($buttons);
     }
 
-    $visiblepathtosection = array_reverse($settingspage->visiblepath);
-
-    $PAGE->set_title("$SITE->shortname: " . implode(": ",$visiblepathtosection));
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $settingspage->visiblepath));
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
 

@@ -244,7 +244,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 $passwordchangeurl = $CFG->wwwroot.'/login/change_password.php';
             }
             $days2expire = $userauth->password_expire($USER->username);
-            $PAGE->set_title("$site->fullname: $loginsite");
+            $PAGE->set_title($loginsite);
             $PAGE->set_heading("$site->fullname");
             if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                 echo $OUTPUT->header();
@@ -361,7 +361,7 @@ if (!empty($SESSION->loginerrormsg)) {
     redirect(new moodle_url('/login/index.php'));
 }
 
-$PAGE->set_title("$site->fullname: $loginsite");
+$PAGE->set_title($loginsite);
 $PAGE->set_heading("$site->fullname");
 
 echo $OUTPUT->header();

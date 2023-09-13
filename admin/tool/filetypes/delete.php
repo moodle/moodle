@@ -46,7 +46,7 @@ $PAGE->set_url(new \moodle_url('/admin/tool/filetypes/delete.php', array('extens
 $PAGE->navbar->add($title);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title($SITE->fullname. ': ' . $title);
+$PAGE->set_title($title);
 $PAGE->set_primary_active_tab('siteadminnode');
 $PAGE->set_secondary_active_tab('server');
 
