@@ -21,12 +21,13 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     When I add a "Assignment" to section "0"
     And I expand all fieldsets
     # Completion tracking 0 = Do not indicate activity completion.
-    Then the field "Completion tracking" matches value "0"
+    Then the field "None" matches value "1"
     # Default values don't affect existing activities.
     But I am on the "Test assignment one" "assign activity editing" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "Completion tracking" matches value "1"
+    And the field "Students must manually mark the activity as done" matches value "1"
+    And the field "None" matches value "0"
 
   @javascript
   Scenario: Default activity completion rules with site default completion but with no course default completion
@@ -41,7 +42,7 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     And I am on "Course 1" course homepage with editing mode on
     When I add a "Assignment" to section "0"
     And I expand all fieldsets
-    Then the field "Completion tracking" matches value "2"
+    Then the field "Add requirements" matches value "1"
     And the field "completionview" matches value "0"
     And the field "completionusegrade" matches value "1"
     And the field "completionsubmit" matches value "1"
@@ -49,7 +50,8 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     But I am on the "Test assignment one" "assign activity editing" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "Completion tracking" matches value "0"
+    And the field "Add requirements" matches value "0"
+    And the field "None" matches value "1"
 
   @javascript
   Scenario: Default activity completion rules with site default completion and course default completion
@@ -65,7 +67,7 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     And I am on "Course 1" course homepage with editing mode on
     When I add a "Assignment" to section "0"
     And I expand all fieldsets
-    Then the field "Completion tracking" matches value "2"
+    Then the field "Add requirements" matches value "1"
     And the field "completionview" matches value "1"
     And the field "completionusegrade" matches value "0"
     And the field "completionsubmit" matches value "1"
@@ -73,7 +75,8 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     But I am on the "Test assignment one" "assign activity editing" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "Completion tracking" matches value "0"
+    And the field "Add requirements" matches value "0"
+    And the field "None" matches value "1"
 
   Scenario: Navigate to site default activity completion
     Given I navigate to "Courses > Default settings > Default activity completion" in site administration
