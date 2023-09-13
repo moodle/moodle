@@ -15,15 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Quiz statistics report version information.
+ * Settings for the Statisics report
  *
  * @package   quiz_statistics
- * @copyright 2008 Jamie Pratt
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+defined('MOODLE_INTERNAL') || die;
 
-$plugin->version   = 2022112801;
-$plugin->requires  = 2022111800;
-$plugin->component = 'quiz_statistics';
+if ($ADMIN->fulltree) {
+    $settings->add(new admin_setting_configtext(
+        'quiz_statistics/getstatslocktimeout',
+        get_string('getstatslocktimeout', 'quiz_statistics'),
+        get_string('getstatslocktimeoutdesc', 'quiz_statistics'),
+        MINSECS * 15
+    ));
+}
