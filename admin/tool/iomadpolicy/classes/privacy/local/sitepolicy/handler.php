@@ -107,7 +107,7 @@ class handler extends \core_privacy\local\sitepolicy\handler {
         }
 
         // Mark policies as agreed.
-        $DB->set_field('user', 'iomadpolicyagreed', 1, array('id' => $USER->id));
+        $DB->set_field('user', 'policyagreed', 1, array('id' => $USER->id));
         $USER->policyagreed = 1;
 
         return true;
@@ -122,8 +122,8 @@ class handler extends \core_privacy\local\sitepolicy\handler {
         if (static::is_defined()) {
             // This plugin displays policies to the user who is signing up before the signup form is shown.
             // By the time user has access to signup form they have already agreed to all compulsory policies.
-            $mform->addElement('hidden', 'iomadpolicyagreed', 1);
-            $mform->setType('iomadpolicyagreed', PARAM_INT);
+            $mform->addElement('hidden', 'policyagreed', 1);
+            $mform->setType('policyagreed', PARAM_INT);
         }
     }
 }
