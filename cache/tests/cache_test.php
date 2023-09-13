@@ -2275,6 +2275,93 @@ class cache_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that locking fails correctly when either layer of a 2-layer cache has a lock already.
+     *
+     * @covers \cache_loader
+     */
+    public function test_application_locking_multiple_layers_failures(): void {
+
+        $instance = cache_config_testing::instance(true);
+        $instance->phpunit_add_definition('phpunit/test_application_locking', array(
+            'mode' => cache_store::MODE_APPLICATION,
+            'component' => 'phpunit',
+            'area' => 'test_application_locking',
+            'staticacceleration' => true,
+            'staticaccelerationsize' => 1,
+            'requirelockingbeforewrite' => true
+        ), false);
+        $instance->phpunit_add_file_store('phpunittest1');
+        $instance->phpunit_add_file_store('phpunittest2');
+        $instance->phpunit_add_definition_mapping('phpunit/test_application_locking', 'phpunittest1', 1);
+        $instance->phpunit_add_definition_mapping('phpunit/test_application_locking', 'phpunittest2', 2);
+
+        $cache = cache::make('phpunit', 'test_application_locking');
+
+        // We need to get the individual stores so as to set up the right behaviour here.
+        $ref = new \ReflectionClass('\cache');
+        $definitionprop = $ref->getProperty('definition');
+        $definitionprop->setAccessible(true);
+        $storeprop = $ref->getProperty('store');
+        $storeprop->setAccessible(true);
+        $loaderprop = $ref->getProperty('loader');
+        $loaderprop->setAccessible(true);
+
+        $definition = $definitionprop->getValue($cache);
+        $localstore = $storeprop->getValue($cache);
+        $sharedcache = $loaderprop->getValue($cache);
+        $sharedstore = $storeprop->getValue($sharedcache);
+
+        // Set the lock waiting time to 1 second so it doesn't take forever to run the test.
+        $ref = new \ReflectionClass('\cachestore_file');
+        $lockwaitprop = $ref->getProperty('lockwait');
+        $lockwaitprop->setAccessible(true);
+
+        $lockwaitprop->setValue($localstore, 1);
+        $lockwaitprop->setValue($sharedstore, 1);
+
+        // Get key details and the cache identifier.
+        $hashedkey = cache_helper::hash_key('apple', $definition);
+        $localidentifier = $cache->get_identifier();
+        $sharedidentifier = $sharedcache->get_identifier();
+
+        // 1. Local cache is not locked but parent cache is locked.
+        $sharedstore->acquire_lock($hashedkey, 'somebodyelse');
+        try {
+            $this->assertFalse($cache->acquire_lock('apple'));
+
+            // Neither store is locked by us, shared store still locked.
+            $this->assertFalse((bool)$localstore->check_lock_state($hashedkey, $localidentifier));
+            $this->assertFalse((bool)$sharedstore->check_lock_state($hashedkey, $sharedidentifier));
+            $this->assertTrue((bool)$sharedstore->check_lock_state($hashedkey, 'somebodyelse'));
+
+        } finally {
+            $sharedstore->release_lock($hashedkey, 'somebodyelse');
+        }
+
+        // 2. Local cache is locked, parent cache is not locked.
+        $localstore->acquire_lock($hashedkey, 'somebodyelse');
+        try {
+            $this->assertFalse($cache->acquire_lock('apple'));
+
+            // Neither store is locked by us, local store still locked.
+            $this->assertFalse((bool)$localstore->check_lock_state($hashedkey, $localidentifier));
+            $this->assertFalse((bool)$sharedstore->check_lock_state($hashedkey, $sharedidentifier));
+            $this->assertTrue((bool)$localstore->check_lock_state($hashedkey, 'somebodyelse'));
+        } finally {
+            $localstore->release_lock($hashedkey, 'somebodyelse');
+        }
+
+        // 3. Just for completion, test what happens if we do lock it.
+        $this->assertTrue($cache->acquire_lock('apple'));
+        try {
+            $this->assertTrue((bool)$localstore->check_lock_state($hashedkey, $localidentifier));
+            $this->assertTrue((bool)$sharedstore->check_lock_state($hashedkey, $sharedidentifier));
+        } finally {
+            $cache->release_lock('apple');
+        }
+    }
+
+    /**
      * Test the static cache_helper method purge_stores_used_by_definition.
      */
     public function test_purge_stores_used_by_definition() {

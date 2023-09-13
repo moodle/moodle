@@ -1689,24 +1689,34 @@ class cache_application extends cache implements cache_loader_with_locking {
      * @return bool Returns true if the lock could be acquired, false otherwise.
      */
     public function acquire_lock($key) {
-        global $CFG;
+        $releaseparent = false;
         if ($this->get_loader() !== false) {
-            $this->get_loader()->acquire_lock($key);
+            if (!$this->get_loader()->acquire_lock($key)) {
+                return false;
+            }
+            // We need to release this lock later if the lock is not successful.
+            $releaseparent = true;
         }
-        $key = cache_helper::hash_key($key, $this->get_definition());
+        $hashedkey = cache_helper::hash_key($key, $this->get_definition());
         $before = microtime(true);
         if ($this->nativelocking) {
-            $lock = $this->get_store()->acquire_lock($key, $this->get_identifier());
+            $lock = $this->get_store()->acquire_lock($hashedkey, $this->get_identifier());
         } else {
             $this->ensure_cachelock_available();
-            $lock = $this->cachelockinstance->lock($key, $this->get_identifier());
+            $lock = $this->cachelockinstance->lock($hashedkey, $this->get_identifier());
         }
         $after = microtime(true);
         if ($lock) {
-            $this->locks[$key] = $lock;
+            $this->locks[$hashedkey] = $lock;
             if ((defined('MDL_PERF') && MDL_PERF) || $this->perfdebug) {
                 \core\lock\timing_wrapper_lock_factory::record_lock_data($after, $before,
-                        $this->get_definition()->get_id(), $key, $lock, $this->get_identifier() . $key);
+                        $this->get_definition()->get_id(), $hashedkey, $lock, $this->get_identifier() . $hashedkey);
+            }
+        } else {
+            // If we successfully got the parent lock, but are now failing to get this lock, then we should release
+            // the parent one.
+            if ($releaseparent) {
+                $this->get_loader()->release_lock($key);
             }
         }
         return $lock;
