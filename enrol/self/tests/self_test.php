@@ -16,6 +16,9 @@
 
 namespace enrol_self;
 
+use context_course;
+use enrol_self_plugin;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -29,6 +32,7 @@ require_once($CFG->dirroot.'/enrol/self/locallib.php');
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \enrol_self_plugin
  */
 class self_test extends \advanced_testcase {
 
@@ -759,6 +763,44 @@ class self_test extends \advanced_testcase {
         $this->assertStringContainsString($error, $selfplugin->is_self_enrol_available($instance));
         $this->setUser($user2);
         $this->assertEquals($canntenrolerror, $selfplugin->is_self_enrol_available($instance));
+    }
+
+    /**
+     * Test custom validation of instance data for group enrolment key
+     *
+     * @covers ::edit_instance_validation
+     */
+    public function test_edit_instance_validation_group_enrolment_key(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $context = context_course::instance($course->id);
+
+        /** @var enrol_self_plugin $plugin */
+        $plugin = enrol_get_plugin('self');
+
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => $plugin->get_name()], '*', MUST_EXIST);
+
+        // Enable group enrolment keys.
+        $errors = $plugin->edit_instance_validation([
+            'customint1' => 1,
+            'password' => 'cat',
+        ] + (array) $instance, [], $instance, $context);
+
+        $this->assertEmpty($errors);
+
+        // Now create a group with the same enrolment key we want to use.
+        $this->getDataGenerator()->create_group(['courseid' => $course->id, 'enrolmentkey' => 'cat']);
+
+        $errors = $plugin->edit_instance_validation([
+            'customint1' => 1,
+            'password' => 'cat',
+        ] + (array) $instance, [], $instance, $context);
+
+        $this->assertArrayHasKey('password', $errors);
+        $this->assertEquals('Enrolment key matches an existing group enrolment key', $errors['password']);
     }
 
     /**
