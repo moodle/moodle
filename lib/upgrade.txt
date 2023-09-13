@@ -1,6 +1,16 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.2.3 ===
+* \moodle_page::set_title() has been updated to append the site name depending on the value of $CFG->sitenameintitle and whether
+  the site's fullname/shortname has been set. So there's no need to manually add the site name whenever calling $PAGE->set_title().
+  If it's necessary to override this, pass `false` to its new optional parameter `$appendsitename`.
+* New page title separator constant `moodle_page:TITLE_SEPARATOR` has been created to help standardise the separators used in page
+  titles.
+* New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
+  when writing feature files to check that the page title contains the expected string.
+  e.g. `And the page title should contain "Some title"`
+
 === 4.2.2 ===
 * Added a new render of caption for the table in render_caption. It can be used by
   set_caption($caption, $captionattributes).
