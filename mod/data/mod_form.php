@@ -145,11 +145,11 @@ class mod_data_mod_form extends moodleform_mod {
         $mform->addGroup(
             $group,
             $completionentriesgroupel,
-            get_string('completionentries', 'data'),
+            '',
             [' '],
             false
         );
-        $mform->disabledIf($completionentriesel, $completionentriesenabledel, 'notchecked');
+        $mform->hideIf($completionentriesel, $completionentriesenabledel, 'notchecked');
         $mform->setDefault($completionentriesel, 1);
         $mform->setType($completionentriesel, PARAM_INT);
         /* This ensures the elements are disabled unless completion rules are enabled */

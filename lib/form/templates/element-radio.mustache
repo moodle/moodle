@@ -10,7 +10,7 @@
     }
 
 }}
-<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}}">
+<div class="form-group row {{#error}}has-danger{{/error}} fitem {{#advanced}}advanced{{/advanced}} {{{element.parentclasses}}}">
     <div class="col-md-3 col-form-label pb-0 pt-0">
         {{#text}}
             <label class="d-inline word-break" for="{{element.id}}">
@@ -19,7 +19,7 @@
         {{/text}}
     </div>
     <div class="col-md-9 checkbox">
-        <div class="form-check d-flex">
+        <div class="form-check d-flex {{{element.extraclasses}}}">
                 <label class="form-check-label">
                     {{^element.hardfrozen}}{{#element.frozen}}{{#element.checked}}
                         <input type="hidden" name="{{element.name}}" value="{{element.value}}">
@@ -28,9 +28,9 @@
                         id="{{element.id}}" value="{{element.value}}"
                         {{#element.checked}}checked{{/element.checked}}
                         {{#element.frozen}}disabled{{/element.frozen}}
-                        {{#error}}
+                        {{#error}}{{#element.checked}}
                             autofocus aria-describedby="{{element.iderror}}"
-                        {{/error}} {{{element.attributes}}} >
+                        {{/element.checked}}{{/error}} {{{element.attributes}}} >
                     {{#text}}
                         {{{.}}}
                     {{/text}}
@@ -47,9 +47,11 @@
                     {{{helpbutton}}}
                 </div>
         </div>
-        <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}} style="display: block;"{{/error}}>
-            {{{error}}}
-        </div>
+        {{#error}}{{#element.checked}}
+            <div class="form-control-feedback invalid-feedback" id="{{element.iderror}}" {{#error}}{{#element.checked}} style="display: block;"{{/element.checked}}{{/error}}>
+                {{{error}}}
+            </div>
+        {{/element.checked}}{{/error}}
     </div>
 </div>
 {{^element.frozen}}

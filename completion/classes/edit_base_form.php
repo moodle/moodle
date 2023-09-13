@@ -99,18 +99,23 @@ abstract class core_completion_edit_base_form extends moodleform {
      *
      * @return array
      */
-    protected function add_completion_rules() {
+    protected function add_custom_completion(string $function): array {
         $modnames = array_keys($this->get_module_names());
+
         if (count($modnames) != 1 || !plugin_supports('mod', $modnames[0], FEATURE_COMPLETION_HAS_RULES, false)) {
-            return [];
+            return [false, []];
         }
+
+        $component = "mod_{$modnames[0]}";
+        $itemnames = \core_grades\component_gradeitems::get_itemname_mapping_for_component($component);
+        $hascustomrules = count($itemnames) > 1;
 
         try {
             // Add completion rules from the module form to this form.
             $moduleform = $this->get_module_form();
             $moduleform->_form = $this->_form;
-            if ($customcompletionelements = $moduleform->add_completion_rules()) {
-                $this->hascustomrules = true;
+            if ($customcompletionelements = $moduleform->{$function}()) {
+                $hascustomrules = true;
                 foreach ($customcompletionelements as $customcompletionelement) {
                     // Instead of checking for the suffix at the end of the element name, we need to check for its presence
                     // because some modules, like SCORM, are adding things at the end.
@@ -123,14 +128,33 @@ abstract class core_completion_edit_base_form extends moodleform {
                         $moduleform->_form->removeElement($customcompletionelement);
                     }
                 }
-
             }
-            return $customcompletionelements;
+            return [$hascustomrules, $customcompletionelements];
         } catch (Exception $e) {
             debugging('Could not add custom completion rule of module ' . $modnames[0] .
                 ' to this form, this has to be fixed by the developer', DEBUG_DEVELOPER);
-            return [];
+            return [$hascustomrules, $customcompletionelements];
         }
+    }
+
+    /**
+     * If all selected modules are of the same module type, adds custom completion rules from this module type
+     *
+     * @return array
+     */
+    protected function add_completion_rules() {
+        list($hascustomrules, $customcompletionelements) = $this->add_custom_completion('add_completion_rules');
+        if (!$this->hascustomrules && $hascustomrules) {
+            $this->hascustomrules = true;
+        }
+
+        $component = "mod_{$this->get_module_name()}";
+        $itemnames = \core_grades\component_gradeitems::get_itemname_mapping_for_component($component);
+        if (count($itemnames) > 1) {
+            $customcompletionelements[] = 'completiongradeitemnumber';
+        }
+
+        return $customcompletionelements;
     }
 
     /**
@@ -145,6 +169,20 @@ abstract class core_completion_edit_base_form extends moodleform {
             return $this->get_module_form()->completion_rule_enabled($data);
         }
         return false;
+    }
+
+    /**
+     * If all selected modules are of the same module type, adds custom completion rules from this module type
+     *
+     * @return array
+     */
+    public function add_completiongrade_rules(): array {
+        list($hascustomrules, $customcompletionelements) = $this->add_custom_completion('add_completiongrade_rules');
+        if (!$this->hascustomrules && $hascustomrules) {
+            $this->hascustomrules = true;
+        }
+
+        return $customcompletionelements;
     }
 
     /**

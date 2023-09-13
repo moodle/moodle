@@ -42,8 +42,8 @@ Feature: Enable Block Completion in a course
     And I follow "Test page name"
     And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view | 1 |
+      | Add requirements         | 1                  |
+      | View the activity | 1 |
     And I press "Save and return to course"
     When I add the "Course completion status" block
     And I navigate to "Course completion" in current page administration

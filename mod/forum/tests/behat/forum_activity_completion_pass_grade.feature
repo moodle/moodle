@@ -31,18 +31,19 @@ Feature: Completion pass grade  view activity completion in the forum activity
     And I am on the "Music history" "forum activity editing" page
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Whole forum grading > Type            | Point                                             |
-      | Whole forum grading > Grade to pass   | 50                                                |
-      | Completion tracking                   | Show activity as complete when conditions are met |
-      | Require view                          | 1                                                 |
-      | Require grade                         | Whole forum                                       |
-      | completionpostsenabled                | 1                                                 |
-      | completionpassgrade                   | 1                                                 |
-      | completionposts                       | 2                                                 |
-      | completiondiscussionsenabled          | 1                                                 |
-      | completiondiscussions                 | 1                                                 |
-      | completionrepliesenabled              | 1                                                 |
-      | completionreplies                     | 1                                                 |
+      | Whole forum grading > Type            | Point       |
+      | Whole forum grading > Grade to pass   | 50          |
+      | Add requirements                      | 1           |
+      | View the activity                     | 1           |
+      | Receive a grade                       | 1           |
+      | Passing grade                         | 1           |
+      | completiongradeitemnumber             | Whole forum |
+      | completionpostsenabled                | 1           |
+      | completionposts                       | 2           |
+      | completiondiscussionsenabled          | 1           |
+      | completiondiscussions                 | 1           |
+      | completionrepliesenabled              | 1           |
+      | completionreplies                     | 1           |
     And I press "Save and display"
 
   Scenario: View automatic completion items as a teacher

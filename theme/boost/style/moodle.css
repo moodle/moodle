@@ -33394,6 +33394,10 @@ textarea[data-auto-rows] {
   right: 0;
 }
 
+.form-check.left-indented {
+  padding-left: 0px;
+}
+
 .pagelayout-login #region-main {
   border: 0;
   background-color: inherit;

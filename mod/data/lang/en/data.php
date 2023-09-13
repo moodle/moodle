@@ -71,8 +71,7 @@ $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '{$a} comment(s)';
 $string['commentsoff'] = 'Comments feature is not enabled';
 $string['completiondetail:entries'] = 'Make entries: {$a}';
-$string['completionentries'] = 'Require entries';
-$string['completionentriescount'] = 'Count of entries';
+$string['completionentriescount'] = 'Add entries';
 $string['completionentriesdesc'] = 'Minimum number of entries required: {$a}';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all databases. You will still need to turn feeds on manually in the settings for each database.';
 $string['confirmdeletefield'] = 'You are about to delete this field, are you sure?';
@@ -486,3 +485,6 @@ $string['todatabase'] = 'to this database.';
 
 // Deprecated since Moodle 4.2.
 $string['fieldids'] = 'Field ids';
+
+// Deprecated since Moodle 4.3.
+$string['completionentries'] = 'Require entries';

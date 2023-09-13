@@ -22,8 +22,8 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     And I click on "Settings" "link"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity   | 1                                                 |
     And I press "Save and display"
     And I log out
     Given I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
@@ -37,7 +37,7 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     And I click on "Settings" "link"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
+      | Add requirements         | 1                  |
       | Chats               | 1                                                 |
     And I press "Save and display"
     # We start the meeting here so to make sure that meta_analytics-callback-url is set.
