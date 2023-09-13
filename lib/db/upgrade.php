@@ -3594,5 +3594,12 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023090200.01);
     }
 
+    if ($oldversion < 2023090800.00) {
+        // Delete all the searchanywhere prefs in user_preferences table.
+        $DB->delete_records('user_preferences', ['name' => 'userselector_searchanywhere']);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090800.00);
+    }
+
     return true;
 }

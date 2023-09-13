@@ -68,7 +68,7 @@ class search_identity extends external_api {
         $fields = \core_user\fields::for_name()->with_identity($context, false);
         $extrafields = $fields->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
-        list($searchsql, $searchparams) = users_search_sql($query, '', true, $extrafields);
+        list($searchsql, $searchparams) = users_search_sql($query, '', USER_SEARCH_CONTAINS, $extrafields);
         list($sortsql, $sortparams) = users_order_by_sql('', $query, $context);
         $params = array_merge($searchparams, $sortparams);
 
