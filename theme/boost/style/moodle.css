@@ -29157,8 +29157,6 @@ span.editinstructions .alert-link {
 }
 .course-section .availabilityinfo .editavailability a {
   border-radius: 0.5rem;
-  color: #1d2125;
-  text-decoration: none;
   font-weight: bold;
 }
 .course-section .availabilityinfo .editavailability a:hover {
