@@ -3002,151 +3002,177 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
          );
      }
  
-     public static function get_assignment_service($uniquefield)
-     { 
-         global $DB,$CFG,$USER,$CONTEXT;
-        
-         //Get activity unique field details       
-         $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
- 
-         if($get_assignmentdetails->id!='')
-         { 
-            $get_assign_type = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'plugin'=>'file','subtype'=>'qbassignsubmission','name'=>'enabled','value'=>'1'));
-             $assignid = $get_assignmentdetails->id;
-             $courseid = $get_assignmentdetails->course;
- 
-             //Get activity Module details
-             $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid,'course' => $courseid));
-             $moduleid = $get_coursefield->id;
- 
-             //Get assignment submission details
-             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
- 
-             if(!empty($get_assign_type))
-             $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
-             else
-             $getonline_content = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
- 
-             //Get submission type details (file,onlinetex,codeblock)
-             $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
-             $sql .= " AND name = :name AND value = :value ";
-             $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
-             $getpluginconfig = $DB->get_records_sql($sql,
-             [
-                 'qbdetid' => $get_assignmentdetails->id,
-                 'subtype' => 'qbassignsubmission',
-                 'name' => 'enabled',
-                 'value' => '1',
-                 'type1' => 'file',
-                 'type2' => 'onlinetex',
-                 'type3' => 'codeblock'
-             ]
-         );
-             $countsql = count($getpluginconfig);
-             if($countsql>0)
-             { 
-                 foreach($getpluginconfig as $config)
-                 {
-                     if($config->plugin=='onlinetex')
-                     { 
-                        $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
- 
-                        $submissintype = array(
-                         'type'=> $config->plugin,
-                         'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
-                         ); 
-                     }
-                     if($config->plugin=='file')
-                    {
-                        $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
-
-                        $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
-
-                           $submissintype = array(
-                            'type'=> $config->plugin,
-                            'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
-                            'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
-                            ); 
-
-                           $filesql = "SELECT * FROM {files} WHERE component = :component AND itemid = :itemid ";
-            $filesql .= " AND filename!='.'";
-            $get_filedetails = $DB->get_record_sql($filesql,
+    public static function get_assignment_service($uniquefield)
+    {
+        global $DB, $CFG, $USER, $CONTEXT;
+        //Get activity unique field details       
+        $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
+        if ($get_assignmentdetails->id != '') 
+        {
+            $get_assign_types = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype AND plugin = :plugin ";
+            $get_assign_types .= " AND name = :name AND value = :value ";
+            $assign_type_text = $DB->get_records_sql(
+            $get_assign_types,
             [
-                'component' => 'qbassignsubmission_file',
-                'itemid' => $get_assignmentsubmission_details->id
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'onlinetex',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_file = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'file',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_code = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'codeblock',
+            'name' => 'enabled',
+            'value' => '1'
             ]
             );
 
-            $fileurl =  $CFG->wwwroot."/pluginfile.php/".$get_filedetails->contextid."/qbassignsubmission_file/submission_files/".$get_assignmentsubmission_details->id."/".$get_filedetails->filename."?forcedownload=1";
-                    }
-                     if($config->plugin=='codeblock')
-                     {
-                         $get_typedetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'type','plugin'=>'codeblock'));
- 
-                         $get_langdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'lang','plugin'=>'codeblock'));
- 
-                            $submissintype = array(
-                             'type'=> $config->plugin,
-                             'operation' => ($config->plugin=='codeblock')?$get_typedetails->value:'1',
-                             'language' => ($config->plugin=='codeblock')?$get_langdetails->value:'python'                    
-                             ); 
-                     }
-                 }
-             }
-             $context = context_course::instance($get_assignmentdetails->course);
-             $roles = get_user_roles($context, $USER->id, true);
-             $role = key($roles);
-             $rolename = $roles[$role]->shortname;
- 
-             
-             $userdetails = array(
-                 'userid' => $USER->id,
-                 'email' => $USER->email,
-                 'username' => $USER->username,
-                 'sesskey' => $USER->sesskey,
-                 'role' => $rolename
-             );
-             $returnarray = array(
+            if (!empty($assign_type_text))
+            $get_assign_type = "text";
+            elseif (!empty($assign_type_file))
+            $get_assign_type = "file";
+            elseif (!empty($assign_type_code))
+            $get_assign_type = "codeblock";
+            $assignid = $get_assignmentdetails->id;
+            $courseid = $get_assignmentdetails->course;
 
-                'course_id' => $get_assignmentdetails->course,            
-                'assignmentid' => $get_assignmentdetails->id,
-                'assignment_title' => $get_assignmentdetails->name,
-                'assignment_activitydesc' => $get_assignmentdetails->intro,
-                'duedate' => $get_assignmentdetails->duedate,
-                'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
-                'assign_uniquefield' => $uniquefield,
-                'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
-                'submission_id' => $get_assignmentsubmission_details->id,
-                'submission_status' => ($get_assignmentsubmission_details->status=='new')?0:1,
-                'studentsubmitted_content' => !empty($get_assign_type) ? $getonline_content->onlinetex : $getonline_content->codeblock,
-                'studentsubmitted_fileurl' => ($get_assignmentsubmission_details->status=='new')?'':$fileurl,
-                'studentsubmitted_filename' => ($get_assignmentsubmission_details->status=='new')?'':$get_filedetails->filename,
-                'submissiontypes' => $submissintype
-             );
- 
-             $contextsystem = context_module::instance($moduleid);
-             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
-             if($checkenrol)
-             { 
-                 $assign_updated = [                        
-                         'message'=>'Assignment details',
-                         'userdetails' => $userdetails,
-                         'assignmentdetails' => $returnarray
-                         ]; 
-                 return $assign_updated;                      
-             }            
-             else
-             { 
-                 throw new moodle_exception('This user not enrolled', 'error');
-             }
-             
-         }
-         else
-         { 
-             throw new moodle_exception('Invalid assignment uniqueid', 'error');
-         }
-         
-     }
+            //Get activity Module details
+            $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid, 'course' => $courseid));
+            $moduleid = $get_coursefield->id;
+
+            //Get assignment submission details
+            $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id, 'qbassignment' => $get_assignmentdetails->id));
+
+            if ($get_assign_type == "text") {
+            $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            } elseif ($get_assign_type == "codeblock") {
+            $getonline_content = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            }
+
+            //Get submission type details (file,onlinetex,codeblock)
+
+            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+            $sql .= " AND name = :name AND value = :value ";
+            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
+            $getpluginconfig = $DB->get_records_sql(
+            $sql,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'name' => 'enabled',
+            'value' => '1',
+            'type1' => 'file',
+            'type2' => 'onlinetex',
+            'type3' => 'codeblock'
+            ]
+            );
+            $countsql = count($getpluginconfig);
+            if ($countsql > 0) {
+            foreach ($getpluginconfig as $config) {
+                if ($config->plugin == 'onlinetex') {
+                    $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'wordlimit', 'plugin' => 'onlinetex'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'wordlimit' => ($config->plugin == 'onlinetex') ? $get_qbdetails->value : ''
+                    );
+                }
+                if ($config->plugin == 'file') {
+                    $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxfilesubmissions', 'plugin' => 'file'));
+
+                    $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxsubmissionsizebytes', 'plugin' => 'file'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'maxfileallowed' => ($config->plugin == 'file') ? $get_fbdetails->value : '',
+                    'maxfilesize' => ($config->plugin == 'file') ? $get_fmbdetails->value : ''
+                    );
+
+                    $filesql = "SELECT * FROM {files} WHERE component = :component AND itemid = :itemid ";
+                    $filesql .= " AND filename!='.'";
+                    $get_filedetails = $DB->get_record_sql(
+                    $filesql,
+                    [
+                    'component' => 'qbassignsubmission_file',
+                    'itemid' => $get_assignmentsubmission_details->id
+                    ]
+                    );
+
+                    $fileurl =  $CFG->wwwroot . "/pluginfile.php/" . $get_filedetails->contextid . "/qbassignsubmission_file/submission_files/" . $get_assignmentsubmission_details->id . "/" . $get_filedetails->filename . "?forcedownload=1";
+                }
+                if ($config->plugin == 'codeblock') {
+                    $get_typedetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'type', 'plugin' => 'codeblock'));
+
+                    $get_langdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'lang', 'plugin' => 'codeblock'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'operation' => ($config->plugin == 'codeblock') ? $get_typedetails->value : '1',
+                    'language' => ($config->plugin == 'codeblock') ? $get_langdetails->value : 'python'
+                    );
+                }
+            }
+            }
+            $context = context_course::instance($get_assignmentdetails->course);
+            $roles = get_user_roles($context, $USER->id, true);
+            $role = key($roles);
+            $rolename = $roles[$role]->shortname;
+
+            $userdetails = array(
+            'userid' => $USER->id,
+            'email' => $USER->email,
+            'username' => $USER->username,
+            'sesskey' => $USER->sesskey,
+            'role' => $rolename
+            );
+            $returnarray = array(
+            'course_id' => $get_assignmentdetails->course,
+            'assignmentid' => $get_assignmentdetails->id,
+            'assignment_title' => $get_assignmentdetails->name,
+            'assignment_activitydesc' => $get_assignmentdetails->intro,
+            'duedate' => $get_assignmentdetails->duedate,
+            'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
+            'assign_uniquefield' => $uniquefield,
+            'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
+            'submission_id' => $get_assignmentsubmission_details->id,
+            'submission_status' => ($get_assignmentsubmission_details->status == 'new') ? 0 : 1,
+            'studentsubmitted_content' => $get_assign_type == "text"  ? $getonline_content->onlinetex : $getonline_content->codeblock,
+            'studentsubmitted_fileurl' => ($get_assignmentsubmission_details->status == 'new') ? '' : $fileurl,
+            'studentsubmitted_filename' => ($get_assignmentsubmission_details->status == 'new') ? '' : $get_filedetails->filename,
+            'submissiontypes' => $submissintype
+            );
+
+            $contextsystem = context_module::instance($moduleid);
+            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
+            if ($checkenrol) {
+                $assign_updated = [
+                'message' => 'Assignment details',
+                'userdetails' => $userdetails,
+                'assignmentdetails' => $returnarray
+                ];
+                return $assign_updated;
+            } else {
+                throw new moodle_exception('This user not enrolled', 'error');
+            }
+        } else {
+            throw new moodle_exception('Invalid assignment uniqueid', 'error');
+        }
+    }
  
      public static function get_assignment_service_returns()
      {
@@ -3181,6 +3207,8 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                      'submissiontypes' => new external_single_structure(
                                          array(
                                           'type' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                          'maxfileallowed' => new external_value(PARAM_TEXT, 'File Allowed',VALUE_OPTIONAL),
+                                          'maxfilesize' => new external_value(PARAM_TEXT, 'File Size Limit',VALUE_OPTIONAL),
                                           'wordlimit' =>new external_value(PARAM_INT, 'Text Limit',VALUE_OPTIONAL),
                                           'operation' =>new external_value(PARAM_TEXT, 'codeblock type',VALUE_OPTIONAL),
                                           'language' =>new external_value(PARAM_TEXT, 'Language',VALUE_OPTIONAL)
@@ -3191,10 +3219,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                  ),
                                  'Assignment Details', VALUE_OPTIONAL
                          )
-                 );
- 
-  
-        
+                 );        
      }
  
      /**
@@ -3886,14 +3911,14 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  $questonscount = count($exp_questions);
                  foreach($exp_questions as $eaches)
                  { 
-                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                    $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0,'createdby'=>2));
                      if(isset($getquestion->id))
                      { 
                      
                          $questionID = $getquestion->id;
                          $question_mark = $getquestion->defaultmark;
  
-                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID));
                          $questionbank_entry = $getquestion_versions->questionbankentryid;
                         
                          //INSERTION INTO SLOTS
@@ -4034,14 +4059,14 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  $exp_questions = explode(",",$questions);
                  $questonscount = count($exp_questions);
                  foreach($exp_questions as $eaches)
-                 { 
-                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                 {
+                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0,'createdby'=>2));
                      if(isset($getquestion->id))
                      { 
                          $questionID = $getquestion->id;
                          $question_mark = $getquestion->defaultmark;
  
-                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID));
                          $questionbank_entry = $getquestion_versions->questionbankentryid;
                         
                          //INSERTION INTO SLOTS
