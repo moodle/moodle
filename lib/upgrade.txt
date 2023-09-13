@@ -177,6 +177,8 @@ being forced open in all behat tests.
 * New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
   when writing feature files to check that the page title contains the expected string.
   e.g. `And the page title should contain "Some title"`
+* Ensure that all system icons now come with an accompanying SVG file. Any missing SVG files have been addressed, and to maintain
+  this consistency, a PHPUnit test has been implemented to validate the inclusion of SVG files for any new icons.
 
 === 4.2 ===
 
