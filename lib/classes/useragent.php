@@ -958,26 +958,13 @@ class core_useragent {
      * @return bool
      */
     public static function supports_svg() {
-        // IE 5 - 8 don't support SVG at all.
         $instance = self::instance();
         if ($instance->supportssvg === null) {
-            if ($instance->useragent === false) {
-                // Can't be sure, just say no.
-                $instance->supportssvg = false;
-            } else if (self::check_ie_version('0') and !self::check_ie_version('9')) {
-                // IE < 9 doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (self::is_ie() and !self::check_ie_version('10') and self::check_ie_compatibility_view()) {
-                // IE 9 Compatibility View doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
-                // Android < 3 doesn't support SVG. Say no.
-                $instance->supportssvg = false;
-            } else if (self::is_opera()) {
-                // Opera 12 still does not support SVG well enough. Say no.
+            if (preg_match('#Android +[0-2]\.#', $instance->useragent)) {
+                // Android < 3 doesn't support SVG.
                 $instance->supportssvg = false;
             } else {
-                // Presumed fine.
+                // With widespread SVG support in modern browsers, default to returning true (even when useragent is false).
                 $instance->supportssvg = true;
             }
         }

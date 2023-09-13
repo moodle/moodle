@@ -179,6 +179,7 @@ being forced open in all behat tests.
   e.g. `And the page title should contain "Some title"`
 * Ensure that all system icons now come with an accompanying SVG file. Any missing SVG files have been addressed, and to maintain
   this consistency, a PHPUnit test has been implemented to validate the inclusion of SVG files for any new icons.
+* The $CFG->svgicons setting has been removed because all modern browsers now handle SVG files correctly.
 
 === 4.2 ===
 
