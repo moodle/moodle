@@ -177,38 +177,6 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
-     * Ensure that assign_get_completion_state reflects the correct status at each point.
-     */
-    public function test_assign_get_completion_state() {
-        global $DB;
-
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
-        $student = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $assign = $this->create_instance($course, [
-                'submissiondrafts' => 0,
-                'completionsubmit' => 1
-            ]);
-
-        $this->setUser($student);
-        $result = assign_get_completion_state($course, $assign->get_course_module(), $student->id, false);
-        $this->assertFalse($result);
-
-        $this->add_submission($student, $assign);
-        $result = assign_get_completion_state($course, $assign->get_course_module(), $student->id, false);
-        $this->assertFalse($result);
-
-        $this->submit_for_grading($student, $assign);
-        $result = assign_get_completion_state($course, $assign->get_course_module(), $student->id, false);
-        $this->assertTrue($result);
-
-        $this->mark_submission($teacher, $assign, $student, 50.0);
-        $result = assign_get_completion_state($course, $assign->get_course_module(), $student->id, false);
-        $this->assertTrue($result);
-    }
-
-    /**
      * Tests for mod_assign_refresh_events.
      */
     public function test_assign_refresh_events() {

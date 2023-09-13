@@ -1,6 +1,18 @@
+# Moodle HQ security submission form
 Contact: https://moodle.org/security/report/
+
+# Moodle LMS security publications and acknowledgements page
 Acknowledgments: https://moodle.org/security/
+
+# Submission preferred languages
 Preferred-Languages: en
+
+# Moodle HQ canonical security.txt file
 Canonical: https://moodle.org/.well-known/security.txt
+
+# Moodle LMS Security Procedures document, including Responsible Disclosure Policy
 Policy: https://moodledev.io/general/development/process/security
-Expires: 2023-10-30T01:00:00.000Z
+
+# Expiry date of this document
+# This information is considered current and up to date until 3 weeks after the next major Moodle LMS release
+Expires: 2024-05-13T01:00:00.000Z

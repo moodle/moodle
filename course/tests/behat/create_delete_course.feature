@@ -32,6 +32,7 @@ Feature: Test we can both create and delete a course.
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Test course: create a course" in the "#course-listing" "css_element"
 
+  @javascript
   Scenario: Delete a course via its management listing
     Given the following "categories" exist:
       | name | category 0| idnumber |
@@ -64,6 +65,7 @@ Feature: Test we can both create and delete a course.
     And I should see "Cat 1" in the "#category-listing" "css_element"
     And I should see "Test course 2: create another course" in the "#course-listing" "css_element"
 
+  @javascript
   Scenario: Delete a course via its management details page
     Given the following "categories" exist:
       | name | category 0| idnumber |

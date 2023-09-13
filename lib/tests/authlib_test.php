@@ -390,6 +390,50 @@ class authlib_test extends \advanced_testcase {
         $this->assertEquals(count($events), 0);
         // Check no notifications.
         $this->assertEquals(count($notifications), 0);
+
+        // Capture failed login reCaptcha.
+        $CFG->recaptchapublickey = 'randompublickey';
+        $CFG->recaptchaprivatekey = 'randomprivatekey';
+        $CFG->enableloginrecaptcha = true;
+
+        // Login with blank captcha.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, false, '');
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_FAILED_RECAPTCHA, $reason);
+
+        // Test event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username1');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED_RECAPTCHA);
+        $this->assertEventContextNotUsed($event);
+
+        // Login with invalid captcha.
+        $sink = $this->redirectEvents();
+        $result = authenticate_user_login('username1', 'password1', false, $reason, false, 'invalidcaptcha');
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+
+        $this->assertFalse($result);
+        $this->assertEquals(AUTH_LOGIN_FAILED_RECAPTCHA, $reason);
+
+        // Test event.
+        $this->assertInstanceOf('\core\event\user_login_failed', $event);
+        $eventdata = $event->get_data();
+        $this->assertSame($eventdata['other']['username'], 'username1');
+        $this->assertSame($eventdata['other']['reason'], AUTH_LOGIN_FAILED_RECAPTCHA);
+        $this->assertEventContextNotUsed($event);
+
+        // Unset settings.
+        unset($CFG->recaptchapublickey);
+        unset($CFG->recaptchaprivatekey);
+        unset($CFG->enableloginrecaptcha);
     }
 
     public function test_user_loggedin_event_exceptions() {

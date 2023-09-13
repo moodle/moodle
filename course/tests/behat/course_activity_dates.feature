@@ -53,7 +53,7 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
 
   Scenario: Default activity dates setting default value can changed to No
     Given I log in as "admin"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
     When I set the following fields to these values:
       | Show activity dates | No |
     And I click on "Save changes" "button"
@@ -62,7 +62,7 @@ Feature: Allow teachers to edit the visibility of activity dates in a course
 
   Scenario: Default activity dates setting default value can changed to Yes
     Given I log in as "admin"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
     When I set the following fields to these values:
       | Show activity dates | Yes |
     And I click on "Save changes" "button"

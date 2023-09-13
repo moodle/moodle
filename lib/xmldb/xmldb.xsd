@@ -10,13 +10,13 @@
 
   <xs:simpleType name="tableName" >
     <xs:restriction base="xs:string" >
-     <xs:pattern value='[0-9a-z_]{1,28}'/>
+     <xs:pattern value='[0-9a-z_]{1,53}'/>
     </xs:restriction >
   </xs:simpleType >
 
   <xs:simpleType name="fieldName" >
     <xs:restriction base="xs:string" >
-     <xs:pattern value='[0-9a-z_]{1,30}'/>
+     <xs:pattern value='[0-9a-z_]{1,63}'/>
     </xs:restriction >
   </xs:simpleType >
 

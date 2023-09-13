@@ -114,7 +114,7 @@ class activity_sender_test extends \advanced_testcase {
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
-            activity_sender::SHARE_FORMAT_BACKUP
+            resource_sender::SHARE_FORMAT_BACKUP
         ));
         $this->assertEmpty($package);
 
@@ -124,7 +124,7 @@ class activity_sender_test extends \advanced_testcase {
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
-            activity_sender::SHARE_FORMAT_BACKUP
+            resource_sender::SHARE_FORMAT_BACKUP
         ));
         $this->assertNotEmpty($package);
 
@@ -165,7 +165,7 @@ class activity_sender_test extends \advanced_testcase {
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
-            activity_sender::SHARE_FORMAT_BACKUP
+            resource_sender::SHARE_FORMAT_BACKUP
         ), $this->coursecontext);
 
         $this->assertEquals('This is an example Moodle activity description.
@@ -178,17 +178,17 @@ The last word of this sentence is in bold', $processeddescription);
     }
 
     /**
-     * Test share_activity() method.
+     * Test share_resource() method.
      *
-     * @dataProvider share_activity_provider
-     * @covers ::share_activity
+     * @dataProvider share_resource_provider
+     * @covers ::share_resource
      * @covers ::log_event
      * @covers \core\moodlenet\moodlenet_client::create_resource_from_stored_file
      * @covers \core\moodlenet\moodlenet_client::prepare_file_share_request_data
      * @param ResponseInterface $httpresponse
      * @param array $expected
      */
-    public function test_share_activity(ResponseInterface $httpresponse, array $expected): void {
+    public function test_share_resource(ResponseInterface $httpresponse, array $expected): void {
         global $CFG, $USER;
         $this->setAdminUser();
 
@@ -222,7 +222,7 @@ The last word of this sentence is in bold', $processeddescription);
             $USER->id,
             $moodlenetclient,
             $this->mockoauthclient,
-            activity_sender::SHARE_FORMAT_BACKUP
+            resource_sender::SHARE_FORMAT_BACKUP
         );
 
         if (isset($expected['exception'])) {
@@ -230,7 +230,7 @@ The last word of this sentence is in bold', $processeddescription);
             $this->expectExceptionMessage($expected['exception']);
         }
         // Call the API.
-        $result = $activitysender->share_activity();
+        $result = $activitysender->share_resource();
 
         // Verify the result.
         $this->assertEquals($expected['response_code'], $result['responsecode']);
@@ -253,11 +253,11 @@ The last word of this sentence is in bold', $processeddescription);
     }
 
     /**
-     * Provider for test share_activity().
+     * Provider for test share_resource().
      *
      * @return array Test data.
      */
-    public function share_activity_provider(): array {
+    public function share_resource_provider(): array {
         return [
             'Success' => [
                 'http_response' => new Response(

@@ -16,7 +16,10 @@
 
 namespace core_group;
 
+use core_customfield\field_controller;
 use core_external\external_api;
+use core_group\customfield\group_handler;
+use core_group\customfield\grouping_handler;
 use core_group_external;
 use externallib_advanced_testcase;
 
@@ -36,8 +39,44 @@ require_once($CFG->dirroot . '/group/lib.php');
  * @copyright  2012 Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.4
+ * @covers \core_group_external
  */
 class externallib_test extends externallib_advanced_testcase {
+
+    /**
+     * Create group custom field for testing.
+     *
+     * @return field_controller
+     */
+    protected function create_group_custom_field(): field_controller {
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'group',
+        ]);
+
+        return self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupcustomfield1',
+            'type' => 'text',
+            'categoryid' => $fieldcategory->get('id'),
+        ]);
+    }
+    /**
+     * Create grouping custom field for testing.
+     *
+     * @return field_controller
+     */
+    protected function create_grouping_custom_field(): field_controller {
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_group',
+            'area' => 'grouping',
+        ]);
+
+        return self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testgroupingcustomfield1',
+            'type' => 'text',
+            'categoryid' => $fieldcategory->get('id'),
+        ]);
+    }
 
     /**
      * Test create_groups
@@ -127,6 +166,41 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->expectException(\required_capability_exception::class);
         $froups = core_group_external::create_groups(array($group4));
+    }
+
+    /**
+     * Test create_groups with custom fields.
+     */
+    public function test_create_groups_with_customfields() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = [
+            'courseid' => $course->id,
+            'name' => 'Create groups test (with custom fields)',
+            'description' => 'Description for create groups test with custom fields',
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupcustomfield1',
+                    'value' => 'Test group value 1',
+                ],
+            ],
+        ];
+        $createdgroups = core_group_external::create_groups([$group]);
+        $createdgroups = external_api::clean_returnvalue(core_group_external::create_groups_returns(), $createdgroups);
+
+        $this->assertCount(1, $createdgroups);
+        $createdgroup = reset($createdgroups);
+        $dbgroup = $DB->get_record('groups', ['id' => $createdgroup['id']], '*', MUST_EXIST);
+        $this->assertEquals($group['name'], $dbgroup->name);
+        $this->assertEquals($group['description'], $dbgroup->description);
+
+        $data = group_handler::create()->export_instance_data_object($createdgroup['id'], true);
+        $this->assertEquals('Test group value 1', $data->testgroupcustomfield1);
     }
 
     /**
@@ -238,6 +312,35 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->expectException(\required_capability_exception::class);
         $groups = core_group_external::update_groups(array($group1data));
+    }
+
+    /**
+     * Test update_groups with custom fields.
+     */
+    public function test_update_groups_with_customfields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $data = group_handler::create()->export_instance_data_object($group->id, true);
+        $this->assertNull($data->testgroupcustomfield1);
+
+        $updategroup = [
+            'id' => $group->id,
+            'name' => $group->name,
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupcustomfield1',
+                    'value' => 'Test value 1',
+                ],
+            ],
+        ];
+        core_group_external::update_groups([$updategroup]);
+        $data = group_handler::create()->export_instance_data_object($group->id, true);
+        $this->assertEquals('Test value 1', $data->testgroupcustomfield1);
     }
 
     /**
@@ -412,6 +515,33 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_groups with customfields.
+     */
+    public function test_get_groups_with_customfields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'customfield_testgroupcustomfield1' => 'Test group value 1',
+        ]);
+
+        // Call the external function.
+        $groups = core_group_external::get_groups([$group->id]);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groups = external_api::clean_returnvalue(core_group_external::get_groups_returns(), $groups);
+
+        $this->assertEquals(1, count($groups));
+        $groupresult = reset($groups);
+        $this->assertEquals(1, count($groupresult['customfields']));
+        $customfield = reset($groupresult['customfields']);
+        $this->assertEquals('testgroupcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test group value 1', $customfield['value']);
+    }
+
+    /**
      * Test delete_groups
      */
     public function test_delete_groups() {
@@ -520,6 +650,73 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test create_groupings with custom fields.
+     */
+    public function test_create_groupings_with_customfields() {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = [
+            'courseid' => $course->id,
+            'name' => 'Create groupings test (with custom fields)',
+            'description' => 'Description for create groupings test with custom fields',
+            'idnumber' => 'groupingidnumber1',
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupingcustomfield1',
+                    'value' => 'Test grouping value 1',
+                ],
+            ],
+        ];
+        $createdgroupings = core_group_external::create_groupings([$grouping]);
+        $createdgroupings = external_api::clean_returnvalue(core_group_external::create_groupings_returns(), $createdgroupings);
+
+        $this->assertCount(1, $createdgroupings);
+        $createdgrouping = reset($createdgroupings);
+        $dbgroup = $DB->get_record('groupings', ['id' => $createdgrouping['id']], '*', MUST_EXIST);
+        $this->assertEquals($grouping['name'], $dbgroup->name);
+        $this->assertEquals($grouping['description'], $dbgroup->description);
+        $this->assertEquals($grouping['idnumber'], $dbgroup->idnumber);
+
+        $data = grouping_handler::create()->export_instance_data_object($createdgrouping['id'], true);
+        $this->assertEquals('Test grouping value 1', $data->testgroupingcustomfield1);
+    }
+
+    /**
+     * Test update_groups with custom fields.
+     */
+    public function test_update_groupings_with_customfields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = self::getDataGenerator()->create_grouping(['courseid' => $course->id]);
+
+        $data = grouping_handler::create()->export_instance_data_object($grouping->id, true);
+        $this->assertNull($data->testgroupingcustomfield1);
+
+        $updategroup = [
+            'id' => $grouping->id,
+            'name' => $grouping->name,
+            'description' => $grouping->description,
+            'customfields' => [
+                [
+                    'shortname' => 'testgroupingcustomfield1',
+                    'value' => 'Test grouping value 1',
+                ],
+            ],
+        ];
+        core_group_external::update_groupings([$updategroup]);
+        $data = grouping_handler::create()->export_instance_data_object($grouping->id, true);
+        $this->assertEquals('Test grouping value 1', $data->testgroupingcustomfield1);
+    }
+
+    /**
      * Test get_groupings
      */
     public function test_get_groupings() {
@@ -594,6 +791,56 @@ class externallib_test extends externallib_advanced_testcase {
             $this->assertEquals($dbgroup->description, $groupdescription);
             $this->assertEquals($dbgroup->courseid, $groupcourseid);
         }
+    }
+
+    /**
+     * Test get_groupings with customfields.
+     */
+    public function test_get_groupings_with_customfields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $course = self::getDataGenerator()->create_course();
+        $this->create_grouping_custom_field();
+        $grouping = self::getDataGenerator()->create_grouping([
+            'courseid' => $course->id,
+            'customfield_testgroupingcustomfield1' => 'Test grouping value 1',
+        ]);
+        $this->create_group_custom_field();
+        $group = self::getDataGenerator()->create_group([
+            'courseid' => $course->id,
+            'customfield_testgroupcustomfield1' => 'Test group value 1',
+        ]);
+        groups_assign_grouping($grouping->id, $group->id);
+
+        // Call the external function.
+        $groupings = core_group_external::get_groupings([$grouping->id]);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+
+        $this->assertEquals(1, count($groupings));
+        $groupingresult = reset($groupings);
+        $this->assertEquals(1, count($groupingresult['customfields']));
+        $customfield = reset($groupingresult['customfields']);
+        $this->assertEquals('testgroupingcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test grouping value 1', $customfield['value']);
+        $this->assertArrayNotHasKey('groups', $groupingresult);
+
+        // Call the external function with return group parameter.
+        $groupings = core_group_external::get_groupings([$grouping->id], true);
+        // We need to execute the return values cleaning process to simulate the web service server.
+        $groupings = external_api::clean_returnvalue(core_group_external::get_groupings_returns(), $groupings);
+
+        $this->assertEquals(1, count($groupings));
+        $groupingresult = reset($groupings);
+        $this->assertEquals(1, count($groupingresult['customfields']));
+        $this->assertArrayHasKey('groups', $groupingresult);
+        $this->assertEquals(1, count($groupingresult['groups']));
+        $groupresult = reset($groupingresult['groups']);
+        $this->assertEquals(1, count($groupresult['customfields']));
+        $customfield = reset($groupresult['customfields']);
+        $this->assertEquals('testgroupcustomfield1', $customfield['shortname']);
+        $this->assertEquals('Test group value 1', $customfield['value']);
     }
 
     /**

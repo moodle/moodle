@@ -24,6 +24,10 @@ use core_external\external_warnings;
 use core_external\util;
 use core_group\visibility;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/group/lib.php');
+
 /**
  * Group external functions
  *
@@ -80,6 +84,7 @@ class core_group_external extends external_api {
                             'participation' => new external_value(PARAM_BOOL,
                                     'activity participation enabled? Only for "all" and "members" visibility. Default true.',
                                     VALUE_DEFAULT, true),
+                            'customfields' => self::build_custom_fields_parameters_structure(),
                         )
                     ), 'List of group object. A group has a courseid, a name, a description and an enrolment key.'
                 )
@@ -132,6 +137,14 @@ class core_group_external extends external_api {
             // Validate visibility.
             self::validate_visibility($group->visibility);
 
+            // Custom fields.
+            if (!empty($group->customfields)) {
+                foreach ($group->customfields as $field) {
+                    $fieldname = self::build_custom_field_name($field['shortname']);
+                    $group->{$fieldname} = $field['value'];
+                }
+            }
+
             // finally create the group
             $group->id = groups_create_group($group, false);
             if (!isset($group->enrolmentkey)) {
@@ -170,6 +183,7 @@ class core_group_external extends external_api {
                             'group visibility mode. 0 = Visible to all. 1 = Visible to members. 2 = See own membership. '
                             . '3 = Membership is hidden.'),
                     'participation' => new external_value(PARAM_BOOL, 'participation mode'),
+                    'customfields' => self::build_custom_fields_parameters_structure(),
                 )
             ), 'List of group object. A group has an id, a courseid, a name, a description and an enrolment key.'
         );
@@ -201,6 +215,7 @@ class core_group_external extends external_api {
         $params = self::validate_parameters(self::get_groups_parameters(), array('groupids'=>$groupids));
 
         $groups = array();
+        $customfieldsdata = get_group_custom_fields_data($groupids);
         foreach ($params['groupids'] as $groupid) {
             // validate params
             $group = groups_get_group($groupid, 'id, courseid, name, idnumber, description, descriptionformat, enrolmentkey, '
@@ -223,6 +238,7 @@ class core_group_external extends external_api {
                 \core_external\util::format_text($group->description, $group->descriptionformat,
                         $context, 'group', 'description', $group->id);
 
+            $group->customfields = $customfieldsdata[$group->id] ?? [];
             $groups[] = (array)$group;
         }
 
@@ -250,6 +266,7 @@ class core_group_external extends external_api {
                             'group visibility mode. 0 = Visible to all. 1 = Visible to members. 2 = See own membership. '
                             . '3 = Membership is hidden.'),
                     'participation' => new external_value(PARAM_BOOL, 'participation mode'),
+                    'customfields' => self::build_custom_fields_returns_structure(),
                 )
             )
         );
@@ -633,7 +650,8 @@ class core_group_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'grouping description text'),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
-                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
+                            'customfields' => self::build_custom_fields_parameters_structure(),
                         )
                     ), 'List of grouping object. A grouping has a courseid, a name and a description.'
                 )
@@ -682,6 +700,14 @@ class core_group_external extends external_api {
 
             $grouping->descriptionformat = util::validate_format($grouping->descriptionformat);
 
+            // Custom fields.
+            if (!empty($grouping->customfields)) {
+                foreach ($grouping->customfields as $field) {
+                    $fieldname = self::build_custom_field_name($field['shortname']);
+                    $grouping->{$fieldname} = $field['value'];
+                }
+            }
+
             // Finally create the grouping.
             $grouping->id = groups_create_grouping($grouping);
             $groupings[] = (array)$grouping;
@@ -707,7 +733,8 @@ class core_group_external extends external_api {
                     'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
                     'descriptionformat' => new external_format_value('description'),
-                    'idnumber' => new external_value(PARAM_RAW, 'id number')
+                    'idnumber' => new external_value(PARAM_RAW, 'id number'),
+                    'customfields' => self::build_custom_fields_parameters_structure(),
                 )
             ), 'List of grouping object. A grouping has an id, a courseid, a name and a description.'
         );
@@ -729,7 +756,8 @@ class core_group_external extends external_api {
                             'name' => new external_value(PARAM_TEXT, 'multilang compatible name, course unique'),
                             'description' => new external_value(PARAM_RAW, 'grouping description text'),
                             'descriptionformat' => new external_format_value('description', VALUE_DEFAULT),
-                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL)
+                            'idnumber' => new external_value(PARAM_RAW, 'id number', VALUE_OPTIONAL),
+                            'customfields' => self::build_custom_fields_parameters_structure(),
                         )
                     ), 'List of grouping object. A grouping has a courseid, a name and a description.'
                 )
@@ -786,6 +814,14 @@ class core_group_external extends external_api {
             // We must force allways FORMAT_HTML.
             $grouping->descriptionformat = util::validate_format($grouping->descriptionformat);
 
+            // Custom fields.
+            if (!empty($grouping->customfields)) {
+                foreach ($grouping->customfields as $field) {
+                    $fieldname = self::build_custom_field_name($field['shortname']);
+                    $grouping->{$fieldname} = $field['value'];
+                }
+            }
+
             // Finally update the grouping.
             groups_update_grouping($grouping);
         }
@@ -839,6 +875,7 @@ class core_group_external extends external_api {
                                                   'returngroups' => $returngroups));
 
         $groupings = array();
+        $groupingcustomfieldsdata = get_grouping_custom_fields_data($groupingids);
         foreach ($params['groupingids'] as $groupingid) {
             // Validate params.
             $grouping = groups_get_grouping($groupingid, '*', MUST_EXIST);
@@ -859,6 +896,7 @@ class core_group_external extends external_api {
                 \core_external\util::format_text($grouping->description, $grouping->descriptionformat,
                         $context, 'grouping', 'description', $grouping->id);
 
+            $grouping->customfields = $groupingcustomfieldsdata[$grouping->id] ?? [];
             $groupingarray = (array)$grouping;
 
             if ($params['returngroups']) {
@@ -867,6 +905,7 @@ class core_group_external extends external_api {
                                                "ORDER BY groupid", array($groupingid));
                 if ($grouprecords) {
                     $groups = array();
+                    $groupids = [];
                     foreach ($grouprecords as $grouprecord) {
                         list($grouprecord->description, $grouprecord->descriptionformat) =
                         \core_external\util::format_text($grouprecord->description, $grouprecord->descriptionformat,
@@ -879,6 +918,11 @@ class core_group_external extends external_api {
                                           'enrolmentkey' => $grouprecord->enrolmentkey,
                                           'courseid' => $grouprecord->courseid
                                           );
+                        $groupids[] = $grouprecord->groupid;
+                    }
+                    $groupcustomfieldsdata = get_group_custom_fields_data($groupids);
+                    foreach ($groups as $i => $group) {
+                        $groups[$i]['customfields'] = $groupcustomfieldsdata[$group['id']] ?? [];
                     }
                     $groupingarray['groups'] = $groups;
                 }
@@ -905,6 +949,7 @@ class core_group_external extends external_api {
                     'description' => new external_value(PARAM_RAW, 'grouping description text'),
                     'descriptionformat' => new external_format_value('description'),
                     'idnumber' => new external_value(PARAM_RAW, 'id number'),
+                    'customfields' => self::build_custom_fields_returns_structure(),
                     'groups' => new external_multiple_structure(
                         new external_single_structure(
                             array(
@@ -914,7 +959,8 @@ class core_group_external extends external_api {
                                 'description' => new external_value(PARAM_RAW, 'group description text'),
                                 'descriptionformat' => new external_format_value('description'),
                                 'enrolmentkey' => new external_value(PARAM_RAW, 'group enrol secret phrase'),
-                                'idnumber' => new external_value(PARAM_RAW, 'id number')
+                                'idnumber' => new external_value(PARAM_RAW, 'id number'),
+                                'customfields' => self::build_custom_fields_returns_structure(),
                             )
                         ),
                     'optional groups', VALUE_OPTIONAL)
@@ -1554,6 +1600,7 @@ class core_group_external extends external_api {
                                     . '2 = See own membership. 3 = Membership is hidden.', VALUE_OPTIONAL),
                             'participation' => new external_value(PARAM_BOOL,
                                     'activity participation enabled? Only for "all" and "members" visibility', VALUE_OPTIONAL),
+                            'customfields' => self::build_custom_fields_parameters_structure(),
                         )
                     ), 'List of group objects. A group is found by the id, then all other details provided will be updated.'
                 )
@@ -1629,6 +1676,14 @@ class core_group_external extends external_api {
                 $group->descriptionformat = util::validate_format($group->descriptionformat);
             }
 
+            // Custom fields.
+            if (!empty($group->customfields)) {
+                foreach ($group->customfields as $field) {
+                    $fieldname = self::build_custom_field_name($field['shortname']);
+                    $group->{$fieldname} = $field['value'];
+                }
+            }
+
             groups_update_group($group);
         }
 
@@ -1645,5 +1700,48 @@ class core_group_external extends external_api {
      */
     public static function update_groups_returns() {
         return null;
+    }
+
+    /**
+     * Builds a structure for custom fields parameters.
+     *
+     * @return \core_external\external_multiple_structure
+     */
+    protected static function build_custom_fields_parameters_structure(): external_multiple_structure {
+        return new external_multiple_structure(
+            new external_single_structure([
+                'shortname' => new external_value(PARAM_ALPHANUMEXT, 'The shortname of the custom field'),
+                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+            ]), 'Custom fields', VALUE_OPTIONAL
+        );
+    }
+
+    /**
+     * Builds a structure for custom fields returns.
+     *
+     * @return \core_external\external_multiple_structure
+     */
+    protected static function build_custom_fields_returns_structure(): external_multiple_structure {
+        return new external_multiple_structure(
+            new external_single_structure([
+                'name' => new external_value(PARAM_RAW, 'The name of the custom field'),
+                'shortname' => new external_value(PARAM_RAW,
+                    'The shortname of the custom field - to be able to build the field class in the code'),
+                'type' => new external_value(PARAM_ALPHANUMEXT,
+                    'The type of the custom field - text field, checkbox...'),
+                'valueraw' => new external_value(PARAM_RAW, 'The raw value of the custom field'),
+                'value' => new external_value(PARAM_RAW, 'The value of the custom field'),
+            ]), 'Custom fields', VALUE_OPTIONAL
+        );
+    }
+
+    /**
+     * Builds a suitable name of a custom field for a custom field handler based on provided shortname.
+     *
+     * @param string $shortname shortname to use.
+     * @return string
+     */
+    protected static function build_custom_field_name(string $shortname): string {
+        return 'customfield_' . $shortname;
     }
 }

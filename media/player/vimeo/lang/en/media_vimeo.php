@@ -25,3 +25,5 @@
 $string['pluginname'] = 'Vimeo';
 $string['pluginname_help'] = 'The video-sharing website vimeo.com.';
 $string['privacy:metadata'] = 'The Vimeo media plugin does not store any personal data.';
+$string['donottrack'] = 'Enable do not track Vimeo links';
+$string['donottrack_desc'] = 'If enabled, the player will not track any session data, including all cookies and analytics.';

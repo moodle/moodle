@@ -16,7 +16,6 @@ Feature: Use the qbank plugin manager page for question history
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
 
-  @javascript
   Scenario: Enable/disable question history column from the base view
     Given I log in as "admin"
     When I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
@@ -32,8 +31,6 @@ Feature: Use the qbank plugin manager page for question history
   Scenario: History page shows only the specified features and questions
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
     And I choose "History" action for "First question" in the question bank
-    Then I should not see "Select a category"
-    And I should see "No tag filters applied"
     And I should see "Question"
     And I should see "Actions"
     And I should see "Status"

@@ -17,12 +17,12 @@ Feature: A user can view their posts and discussions
     And the following "activities" exist:
       | activity   | name                   | course | idnumber     | groupmode |
       | forum      | Test forum name        | C1     | forum        | 0         |
-    And the following forum discussions exist in course "Course 1":
-      | user     | forum           | name               | message                               |
-      | student1 | Test forum name | Forum discussion 1 | How awesome is this forum discussion? |
-    And the following forum replies exist in course "Course 1":
-      | user     | forum           | discussion         | message                     |
-      | student1 | Test forum name | Forum discussion 1 | Actually, I've seen better. |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum | name               | message                               |
+      | student1 | forum | Forum discussion 1 | How awesome is this forum discussion? |
+    And the following "mod_forum > posts" exist:
+      | user     | parentsubject             | subject                     | message                     |
+      | student1 | Forum discussion 1        | Actually, I've seen better. | Actually, I've seen better. |
     And I log in as "student1"
     When I follow "Profile" in the user menu
     And I follow "Forum posts"

@@ -35,27 +35,13 @@ Feature: Edit activities in main menu block
       | activity | course               | section | name          |
       | forum    | Acceptance test site | 0       | Visible forum |
       | forum    | Acceptance test site | 0       | My forum name |
+    And I change window size to "large"
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And "My forum name" activity in site main menu block should have "Hide" editing icon
-    And "My forum name" activity in site main menu block should not have "Show" editing icon
-    And "My forum name" activity in site main menu block should not have "Make available" editing icon
-    And "My forum name" activity in site main menu block should not have "Make unavailable" editing icon
-    And I open "My forum name" actions menu in site main menu block
-    And I click on "Hide" "link" in the "My forum name" activity in site main menu block
-    And "My forum name" activity in site main menu block should be hidden
-    And "My forum name" activity in site main menu block should not have "Hide" editing icon
-    And "My forum name" activity in site main menu block should have "Show" editing icon
-    And "My forum name" activity in site main menu block should have "Make available" editing icon
-    And "My forum name" activity in site main menu block should not have "Make unavailable" editing icon
-    And I open "My forum name" actions menu in site main menu block
-    And I click on "Make available" "link" in the "My forum name" activity in site main menu block
-    And "My forum name" activity in site main menu block should be available but hidden from course page
-    And "My forum name" activity in site main menu block should not have "Hide" editing icon
-    And "My forum name" activity in site main menu block should have "Show" editing icon
-    And "My forum name" activity in site main menu block should not have "Make available" editing icon
-    And "My forum name" activity in site main menu block should have "Make unavailable" editing icon
+    When I open "My forum name" actions menu in site main menu block
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    Then I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
     # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu in site main menu block
     And I click on "Edit settings" "link" in the "My forum name" activity in site main menu block

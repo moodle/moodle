@@ -299,4 +299,53 @@ class behat_core_question extends behat_question_base {
         $DB->delete_records('question', ['id' => $id]);
         question_bank::notify_question_edited($id);
     }
+
+    /**
+     * Add a question bank filter
+     *
+     * This will add the filter if it does not exist, but leave the value empty.
+     *
+     * @When I add question bank filter :filtertype
+     * @param string $filtertype The filter we are adding
+     */
+    public function i_add_question_bank_filter(string $filtertype) {
+        $filter = $this->getSession()->getPage()->find('css',
+                '[data-filterregion=filter] [data-field-title="' . $filtertype . '"]');
+        if ($filter === null) {
+            $this->execute('behat_forms::press_button', [get_string('addcondition')]);
+            $this->execute('behat_forms::i_set_the_field_in_container_to', [
+                    "type",
+                    "[data-filterregion=filter]:last-child fieldset",
+                    "css_element",
+                    $filtertype
+            ]);
+        }
+    }
+
+    /**
+     * Apply question bank filter.
+     *
+     * This will change the existing value of the specified filter, or add the filter and set its value if it doesn't already
+     * exist.
+     *
+     * @When I apply question bank filter :filtertype with value :value
+     * @param string $filtertype The filter to apply. This should match the get_title() return value from the
+     *        filter's condition class.
+     * @param string $value The value to set for the condition.
+     */
+    public function i_apply_question_bank_filter(string $filtertype, string $value) {
+        // Add the filter if needed.
+        $this->execute('behat_core_question::i_add_question_bank_filter', [
+            $filtertype,
+        ]);
+
+        // Set the filter value.
+        $this->execute('behat_forms::i_set_the_field_to', [
+            $filtertype,
+            $value
+        ]);
+
+        // Apply filters.
+        $this->execute("behat_forms::press_button", [get_string('applyfilters')]);
+    }
 }

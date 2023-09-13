@@ -30,6 +30,35 @@ use question_bank;
 class comment_count_column extends column_base {
 
     /**
+     * @var bool Comments enabled or not from config.
+     */
+    protected $commentsenabled = true;
+
+    /**
+     * Load javascript module if enabled.
+     *
+     * @return void
+     */
+    public function init(): void {
+        parent::init();
+        $this->check_comments_status();
+        if ($this->commentsenabled) {
+            global $PAGE;
+            $PAGE->requires->js_call_amd('qbank_comment/comment', 'init');
+        }
+    }
+
+    /**
+     * Check if comments is turned on in the system or not.
+     */
+    protected function check_comments_status(): void {
+        global $CFG;
+        if (!$CFG->usecomments) {
+            $this->commentsenabled = false;
+        }
+    }
+
+    /**
      * Get the name of the column, used internally.
      *
      * @return string
@@ -54,7 +83,7 @@ class comment_count_column extends column_base {
      * @param string $rowclasses Classes that can be added.
      */
     protected function display_content($question, $rowclasses): void {
-        global $DB, $PAGE;
+        global $DB;
         $syscontext = \context_system::instance();
         $args = [
             'component' => 'qbank_comment',
@@ -66,8 +95,6 @@ class comment_count_column extends column_base {
         $attributes = [];
         if (question_has_capability_on($question, 'comment')) {
             $target = 'questioncommentpreview_' . $question->id;
-            $datatarget = '[data-target="' . $target . '"]';
-            $PAGE->requires->js_call_amd('qbank_comment/comment', 'init', [$datatarget]);
             $attributes = [
                 'href' => '#',
                 'data-target' => $target,

@@ -275,6 +275,9 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     $data->id = $DB->insert_record('groups', $data);
 
+    $handler = \core_group\customfield\group_handler::create();
+    $handler->instance_form_save($data, true);
+
     if ($editform and $editoroptions) {
         // Update description from editor with fixed files
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
@@ -351,6 +354,9 @@ function groups_create_grouping($data, $editoroptions=null) {
 
     $id = $DB->insert_record('groupings', $data);
     $data->id = $id;
+
+    $handler = \core_group\customfield\grouping_handler::create();
+    $handler->instance_form_save($data, true);
 
     if ($editoroptions !== null) {
         $description = new stdClass;
@@ -445,6 +451,9 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     $DB->update_record('groups', $data);
 
+    $handler = \core_group\customfield\group_handler::create();
+    $handler->instance_form_save($data);
+
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
     // Rebuild the coursehiddengroups cache for the course.
@@ -528,6 +537,9 @@ function groups_update_grouping($data, $editoroptions=null) {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $editoroptions['context'], 'grouping', 'description', $data->id);
     }
     $DB->update_record('groupings', $data);
+
+    $handler = \core_group\customfield\grouping_handler::create();
+    $handler->instance_form_save($data);
 
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
@@ -1221,4 +1233,62 @@ function set_groups_messaging(array $groupids, bool $enabled): void {
         $data->enablemessaging = $enabled;
         groups_update_group($data);
     }
+}
+
+/**
+ * Returns custom fields data for provided groups.
+ *
+ * @param array $groupids a list of group IDs to provide data for.
+ * @return \core_customfield\data_controller[]
+ */
+function get_group_custom_fields_data(array $groupids): array {
+    $result = [];
+
+    if (!empty($groupids)) {
+        $handler = \core_group\customfield\group_handler::create();
+        $customfieldsdata = $handler->get_instances_data($groupids, true);
+
+        foreach ($customfieldsdata as $groupid => $fieldcontrollers) {
+            foreach ($fieldcontrollers as $fieldcontroller) {
+                $result[$groupid][] = [
+                    'type' => $fieldcontroller->get_field()->get('type'),
+                    'value' => $fieldcontroller->export_value(),
+                    'valueraw' => $fieldcontroller->get_value(),
+                    'name' => $fieldcontroller->get_field()->get('name'),
+                    'shortname' => $fieldcontroller->get_field()->get('shortname'),
+                ];
+            }
+        }
+    }
+
+    return $result;
+}
+
+/**
+ * Returns custom fields data for provided groupings.
+ *
+ * @param array $groupingids a list of group IDs to provide data for.
+ * @return \core_customfield\data_controller[]
+ */
+function get_grouping_custom_fields_data(array $groupingids): array {
+    $result = [];
+
+    if (!empty($groupingids)) {
+        $handler = \core_group\customfield\grouping_handler::create();
+        $customfieldsdata = $handler->get_instances_data($groupingids, true);
+
+        foreach ($customfieldsdata as $groupingid => $fieldcontrollers) {
+            foreach ($fieldcontrollers as $fieldcontroller) {
+                $result[$groupingid][] = [
+                    'type' => $fieldcontroller->get_field()->get('type'),
+                    'value' => $fieldcontroller->export_value(),
+                    'valueraw' => $fieldcontroller->get_value(),
+                    'name' => $fieldcontroller->get_field()->get('name'),
+                    'shortname' => $fieldcontroller->get_field()->get('shortname'),
+                ];
+            }
+        }
+    }
+
+    return $result;
 }

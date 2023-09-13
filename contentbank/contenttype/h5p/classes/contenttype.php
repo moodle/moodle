@@ -110,7 +110,7 @@ class contenttype extends \core_contentbank\contenttype {
      * @return array
      */
     protected function get_implemented_features(): array {
-        return [self::CAN_UPLOAD, self::CAN_EDIT, self::CAN_DOWNLOAD];
+        return [self::CAN_UPLOAD, self::CAN_EDIT, self::CAN_DOWNLOAD, self::CAN_COPY];
     }
 
     /**

@@ -846,10 +846,11 @@ function get_moduleinfo_data($cm, $course) {
  * @param  stdClass $course  course object
  * @param  string $modulename  module name
  * @param  int $section section number
+ * @param  string $suffix the suffix to add to the name of the completion rules.
  * @return array module information about other required data
  * @since  Moodle 3.2
  */
-function prepare_new_moduleinfo_data($course, $modulename, $section) {
+function prepare_new_moduleinfo_data($course, $modulename, $section, string $suffix = '') {
     global $CFG;
 
     list($module, $context, $cw) = can_add_moduleinfo($course, $modulename, $section);
@@ -870,7 +871,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     $data->downloadcontent  = DOWNLOAD_COURSE_CONTENT_ENABLED;
 
     // Apply completion defaults.
-    $defaults = \core_completion\manager::get_default_completion($course, $module);
+    $defaults = \core_completion\manager::get_default_completion($course, $module, true, $suffix);
     foreach ($defaults as $key => $value) {
         $data->$key = $value;
     }

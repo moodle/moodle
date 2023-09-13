@@ -65,6 +65,12 @@ class api {
     const DEFAULT_ANDROID_APP_ID = 'com.moodle.moodlemobile';
     /** @var string Default iOS app id */
     const DEFAULT_IOS_APP_ID = '633359593';
+    /** @var int AUTOLOGOUT disabled value */
+    const AUTOLOGOUT_DISABLED = 0;
+    /** @var int AUTOLOGOUT type inmediate value */
+    const AUTOLOGOUT_INMEDIATE = 1;
+    /** @var int AUTOLOGOUT type custom value */
+    const AUTOLOGOUT_CUSTOM = 2;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -118,8 +124,12 @@ class api {
                         $langs = $stringmanager->get_list_of_translations(true);
                         foreach ($langs as $langid => $langname) {
                             foreach ($addoninfo['lang'] as $stringinfo) {
-                                $lang[$langid][$stringinfo[0]] =
-                                    $stringmanager->get_string($stringinfo[0], $stringinfo[1], null, $langid);
+                                $lang[$langid][$stringinfo[0]] = $stringmanager->get_string(
+                                    $stringinfo[0],
+                                    $stringinfo[1] ?? '',
+                                    null,
+                                    $langid,
+                                );
                             }
                         }
                     }
@@ -315,6 +325,8 @@ class api {
             $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
             $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
             $settings->tool_mobile_autologinmintimebetweenreq = $mintimereq;
+            $settings->tool_mobile_autologout = get_config('tool_mobile', 'autologout');
+            $settings->tool_mobile_autologouttime = get_config('tool_mobile', 'autologouttime');
         }
 
         if (empty($section) or $section == 'calendar') {
@@ -363,6 +375,16 @@ class api {
         if (empty($section) || $section === 'locationsettings') {
             $settings->timezone = $CFG->timezone;
             $settings->forcetimezone = $CFG->forcetimezone;
+        }
+
+        if (empty($section) || $section === 'manageglobalsearch') {
+            $settings->searchengine = $CFG->searchengine;
+            $settings->searchenablecategories = $CFG->searchenablecategories;
+            $settings->searchdefaultcategory = $CFG->searchdefaultcategory;
+            $settings->searchhideallcategory = $CFG->searchhideallcategory;
+            $settings->searchmaxtopresults = $CFG->searchmaxtopresults;
+            $settings->searchbannerenable = $CFG->searchbannerenable;
+            $settings->searchbanner = $CFG->searchbanner;
         }
 
         return $settings;
@@ -527,6 +549,7 @@ class api {
                 'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
                 'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
                 'NoDelegate_CoreUserSupport' => new lang_string('contactsitesupport', 'admin'),
+                'NoDelegate_GlobalSearch' => new lang_string('globalsearch', 'search'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),

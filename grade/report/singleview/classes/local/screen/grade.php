@@ -215,24 +215,21 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $grade = $this->fetch_grade_or_default($this->item, $item->id);
 
-        $lockicon = '';
+        $gradestatus = '';
+        $context = [
+            'hidden' => $grade->is_hidden(),
+            'locked' => $grade->is_locked(),
+        ];
 
-        $lockedgrade = $lockedgradeitem = 0;
-        if (!empty($grade->locked)) {
-            $lockedgrade = 1;
-        }
-        if (!empty($grade->grade_item->locked)) {
-            $lockedgradeitem = 1;
-        }
-        // Check both grade and grade item.
-        if ( $lockedgrade || $lockedgradeitem ) {
-            $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
+        if (in_array(true, $context)) {
+            $context['classes'] = 'gradestatus';
+            $gradestatus = $OUTPUT->render_from_template('core_grades/status_icons', $context);
         }
 
         if (has_capability('moodle/site:viewfullnames', \context_course::instance($this->courseid))) {
-            $fullname = $lockicon . fullname($item, true);
+            $fullname = fullname($item, true);
         } else {
-            $fullname = $lockicon . fullname($item);
+            $fullname = fullname($item);
         }
 
         $item->imagealt = $fullname;
@@ -245,7 +242,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $line = [
             html_writer::link($url, $userpic . $fullname),
             $this->get_user_action_menu($item),
-            $formatteddefinition['finalgrade'],
+            $formatteddefinition['finalgrade'] . $gradestatus,
             $this->item_range(),
             $formatteddefinition['feedback'],
             $formatteddefinition['override'],

@@ -24,9 +24,11 @@
  */
 
 use mod_quiz\quiz_settings;
+use mod_quiz\question\bank\random_question_view;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/lib.php');
 
 $slotid = required_param('slotid', PARAM_INT);
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
@@ -53,16 +55,14 @@ $PAGE->add_body_class('limitedwidth');
 
 $setreference = $DB->get_record('question_set_references',
     ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
-$filterconditions = json_decode($setreference->filtercondition);
+$filterconditions = json_decode($setreference->filtercondition, true);
 
-// Validate the question category.
-if (!$category = $DB->get_record('question_categories', ['id' => $filterconditions->questioncategoryid])) {
-    new moodle_exception('categorydoesnotexist', 'question', $returnurl);
-}
+$params = $filterconditions;
+$params['cmid'] = $cm->id;
+$extraparams['view'] = random_question_view::class;
 
-// Check permissions.
-$catcontext = context::instance_by_id($category->contextid);
-require_capability('moodle/question:useall', $catcontext);
+// Build required parameters.
+[$contexts, $thispageurl, $cm, $pagevars, $extraparams] = build_required_parameters_for_custom_view($params, $extraparams);
 
 $thiscontext = $quizobj->get_context();
 $contexts = new core_question\local\bank\question_edit_contexts($thiscontext);
@@ -72,11 +72,15 @@ $mform = new mod_quiz\form\randomquestion_form(new moodle_url('/mod/quiz/editran
 
 // Set the form data.
 $toform = new stdClass();
-$toform->category = "{$category->id},{$category->contextid}";
-$toform->includesubcategories = $filterconditions->includingsubcategories;
+$toform->category = $filterconditions['filter']['category']['values'][0];
+$includesubcategories = false;
+if (!empty($filterconditions['filter']['category']['filteroptions']['includesubcategories'])) {
+    $includesubcategories = true;
+}
+$toform->includesubcategories = $includesubcategories;
 $toform->fromtags = [];
-if (isset($filterconditions->tags)) {
-    $currentslottags = $filterconditions->tags;
+if (isset($filterconditions['tags'])) {
+    $currentslottags = $filterconditions['tags'];
     foreach ($currentslottags as $slottag) {
         $toform->fromtags[] = $slottag;
     }
@@ -130,11 +134,22 @@ $PAGE->set_title('Random question');
 $PAGE->set_heading($COURSE->fullname);
 $PAGE->navbar->add('Random question');
 
+// Custom View.
+$questionbank = new random_question_view($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+
+// Output.
+$renderer = $PAGE->get_renderer('mod_quiz', 'edit');
+$data = new \stdClass();
+$data->questionbank = $renderer->question_bank_contents($questionbank, $params);
+$data->cmid = $cm->id;
+$data->slotid = $slot->id;
+$data->returnurl = $returnurl;
+$updateform = $OUTPUT->render_from_template('mod_quiz/update_filter_condition_form', $data);
+$PAGE->requires->js_call_amd('mod_quiz/update_random_question_filter_condition', 'init');
+
 // Display a heading, question editing form.
 echo $OUTPUT->header();
 $heading = get_string('randomediting', 'mod_quiz');
 echo $OUTPUT->heading_with_help($heading, 'randomquestion', 'mod_quiz');
-
-$mform->display();
-
+echo $updateform;
 echo $OUTPUT->footer();

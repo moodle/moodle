@@ -292,6 +292,7 @@ function scorm_delete_instance($id) {
 
     $result = true;
 
+    require_once($CFG->dirroot . '/mod/scorm/locallib.php');
     // Delete any dependent records.
     scorm_delete_tracks($scorm->id);
     if ($scoes = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id))) {

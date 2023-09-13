@@ -2550,6 +2550,27 @@ function check_igbinary322_version(environment_results $result) {
 }
 
 /**
+ * This function checks that the database prefix ($CFG->prefix) is <= xmldb_table::PREFIX_MAX_LENGTH
+ *
+ * @param environment_results $result
+ * @return environment_results|null updated results object, or null if the prefix check is passing ok.
+ */
+function check_db_prefix_length(environment_results $result) {
+    global $CFG;
+
+    require_once($CFG->libdir.'/ddllib.php');
+    $prefixlen = strlen($CFG->prefix) ?? 0;
+    if ($prefixlen > xmldb_table::PREFIX_MAX_LENGTH) {
+        $parameters = (object)['current' => $prefixlen, 'maximum' => xmldb_table::PREFIX_MAX_LENGTH];
+        $result->setFeedbackStr(['dbprefixtoolong', 'admin', $parameters]);
+        $result->setInfo('db prefix too long');
+        $result->setStatus(false);
+        return $result;
+    }
+    return null; // All, good. By returning null we hide the check.
+}
+
+/**
  * Assert the upgrade key is provided, if it is defined.
  *
  * The upgrade key can be defined in the main config.php as $CFG->upgradekey. If

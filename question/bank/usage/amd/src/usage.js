@@ -23,7 +23,7 @@
  */
 
 import Fragment from 'core/fragment';
-import ModalFactory from 'core/modal_factory';
+import ModalCancel from 'core/modal_cancel';
 import Notification from 'core/notification';
 import * as Str from 'core/str';
 
@@ -44,18 +44,17 @@ const usageEvent = async(questionId, contextId, specificVersion) => {
     };
     if (modal === null) {
         try {
-            modal = await ModalFactory.create({
-                type: ModalFactory.types.CANCEL,
+            modal = await ModalCancel.create({
                 title: Str.get_string('usageheader', 'qbank_usage'),
                 body: Fragment.loadFragment('qbank_usage', 'question_usage', contextId, args),
                 large: true,
+                show: true,
             });
         } catch (e) {
             Notification.exception(e);
             return;
         }
 
-        modal.show();
         modal.getRoot().on('click', 'a[href].page-link', function(e) {
             e.preventDefault();
             let attr = e.target.getAttribute("href");
@@ -80,15 +79,16 @@ const usageEvent = async(questionId, contextId, specificVersion) => {
  * Entrypoint of the js.
  *
  * @method init
- * @param {string} questionSelector the question usage identifier.
- * @param {int} contextId the question context id.
  * @param {boolean} specificVersion Is the view listing specific question versions?
  */
-export const init = (questionSelector, contextId, specificVersion = false) => {
-    let target = document.querySelector(questionSelector);
-    let questionId = target.getAttribute('data-questionid');
-    target.addEventListener('click', () => {
-        // Call for the event listener to listed for clicks in any usage count row.
-        usageEvent(questionId, contextId, specificVersion);
-    });
+export const init = (specificVersion = false) => {
+    const target = document.querySelector('#categoryquestions');
+    if (target !== null) {
+        target.addEventListener('click', (e) => {
+            if (e.target.dataset.target && e.target.dataset.target.includes('questionusagepreview')) {
+                // Call for the event listener to listed for clicks in any usage count row.
+                usageEvent(e.target.dataset.questionid, e.target.dataset.contextid, specificVersion);
+            }
+        });
+    }
 };

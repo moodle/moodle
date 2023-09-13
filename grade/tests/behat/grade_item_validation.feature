@@ -16,6 +16,9 @@ Feature: Grade item validation
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And the following "grade categories" exist:
+      | fullname   | course |
+      | Category 1 | C1     |
     And I log in as "admin"
     And I navigate to "Grades > Scales" in site administration
     And I press "Add a new scale"
@@ -28,9 +31,8 @@ Feature: Grade item validation
       | Name  | Letter scale                              |
       | Scale | Disappointing, Good, Very good, Excellent |
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add grade item"
+    And I am on the "Course 1" "grades > gradebook setup" page
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 1 |
     And I click on "Save" "button" in the "New grade item" "dialogue"
@@ -59,7 +61,7 @@ Feature: Grade item validation
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
-    And I choose "Edit grade item" in the open action menu
+    When I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And "//div[contains(concat(' ', normalize-space(@class), ' '), 'felement') and contains(text(), 'Value')]" "xpath_element" should exist
 
@@ -86,7 +88,32 @@ Feature: Grade item validation
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
-    And I choose "Edit grade item" in the open action menu
+    When I choose "Edit grade item" in the open action menu
     Then I should see "Some grades have already been awarded, so the grade type cannot be changed. If you wish to change the maximum grade, you must first choose whether or not to rescale existing grades."
     And I should see "Choose" in the "Rescale existing grades" "field"
     And the "Maximum grade" "field" should be disabled
+
+  Scenario: As a teacher confirm that I can delete items within the gradebook
+    Given I navigate to "Setup > Gradebook setup" in the course gradebook
+    And the following should exist in the "setup-grades" table:
+      | Name         |
+      | Course       |
+      | MI 1         |
+      | Category 1   |
+      | Course total |
+    And I click on grade item menu "MI 1" of type "gradeitem" on "setup" page
+    And I choose "Delete" in the open action menu
+    And "Confirm" "dialogue" should exist
+    When I click on "Delete" "button" in the "Confirm" "dialogue"
+    And I wait to be redirected
+    And the following should not exist in the "setup-grades" table:
+      | Name |
+      | MI 1 |
+    When I click on grade item menu "Category 1" of type "category" on "setup" page
+    And I choose "Delete" in the open action menu
+    And "Confirm" "dialogue" should exist
+    And I click on "Delete" "button" in the "Confirm" "dialogue"
+    And I wait to be redirected
+    And the following should not exist in the "setup-grades" table:
+      | Name       |
+      | Category 1 |

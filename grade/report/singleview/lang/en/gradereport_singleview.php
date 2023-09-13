@@ -79,7 +79,6 @@ $string['ariareporttype'] = 'Select a report type to view';
 $string['viewby'] = 'View by';
 $string['viewsingleuser'] = 'Select a user above to view all their grades';
 $string['viewsinglegradeitem'] = 'Select a grade item above';
-$string['searchgrades'] = 'Search grade items';
 $string['selectagrade'] = 'Select a grade item';
 $string['selectgradeitemlink'] = 'Select a grade item';
 $string['singleviewdescription'] = 'In single view you can override or exclude selected grades and bulk insert grades.';

@@ -17,9 +17,7 @@
 namespace gradereport_singleview\report;
 
 use context_course;
-use grade_helper;
 use grade_report;
-use html_writer;
 use moodle_url;
 use renderer_base;
 use stdClass;

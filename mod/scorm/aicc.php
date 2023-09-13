@@ -217,8 +217,29 @@ if (!empty($command)) {
                         $datamodel['[comments]'] = 'cmi.comments';
                         $datarows = explode("\r\n", $aiccdata);
                         reset($datarows);
-                        foreach ($datarows as $datarow) {
-                            if (($equal = strpos($datarow, '=')) !== false) {
+                        $multirowvalue = '';
+                        $multirowelement = '';
+                        foreach ($datarows as $did => $datarow) {
+                            $equal = strpos($datarow, '=');
+                            if ($equal === false || !empty($multirowelement)) {
+                                if (empty($multirowelement)) {
+                                    if (isset($datamodel[strtolower(trim($datarow))])) {
+                                        $multirowelement = $datamodel[strtolower(trim($datarow))];
+                                    } else {
+                                        // An element was passed by the external AICC package is not one we care about.
+                                        continue;
+                                    }
+                                }
+                                $multirowvalue .= $datarow."\r\n";
+                                if (isset($datarows[$did + 1]) && substr($datarows[$did + 1], 0, 1) != '[') {
+                                    // This is a multiline row, we haven't found the end yet.
+                                    continue;
+                                }
+                                $value = rawurlencode($multirowvalue);
+                                $id = scorm_insert_track($aiccuser->id, $scorm->id, $sco->id, $attemptobject,
+                                                         $multirowelement, $value);
+                                $multirowvalue = $multirowelement = '';
+                            } else {
                                 $element = strtolower(trim(substr($datarow, 0, $equal)));
                                 $value = trim(substr($datarow, $equal + 1));
                                 if (isset($datamodel[$element])) {
@@ -301,17 +322,6 @@ if (!empty($command)) {
                                              $scormsession->sessiontime = $value;
                                         break;
                                     }
-                                }
-                            } else {
-                                if (isset($datamodel[strtolower(trim($datarow))])) {
-                                    $element = $datamodel[strtolower(trim($datarow))];
-                                    $value = '';
-                                    while ((($datarow = current($datarows)) !== false) && (substr($datarow, 0, 1) != '[')) {
-                                        $value .= $datarow."\r\n";
-                                        next($datarows);
-                                    }
-                                    $value = rawurlencode($value);
-                                    $id = scorm_insert_track($aiccuser->id, $scorm->id, $sco->id, $attemptobject, $element, $value);
                                 }
                             }
                         }
@@ -405,7 +415,7 @@ if (!empty($command)) {
                             $track->scoid = $sco->id;
                             $track->element = scorm_get_elementid('cmi.core.total_time');
                             $track->value = $scormsession->sessiontime;
-                            $atobject = scorm_get_attempt($userid, $scormsession->scormid, $attempt);
+                            $atobject = scorm_get_attempt($aiccuser->id, $scormsession->scormid, $attempt);
                             $track->attempt = $atobject->id;
                             $track->timemodified = time();
                             $id = $DB->insert_record('scorm_scoes_value', $track);

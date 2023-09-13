@@ -54,14 +54,8 @@ class add_item extends dynamic_form {
         $id = $this->optional_param('itemid', null, PARAM_INT);
 
         if ($gradeitem = grade_item::fetch(['id' => $id, 'courseid' => $courseid])) {
-            // Redirect if outcomeid present.
-            if (!empty($gradeitem->outcomeid) && !empty($CFG->enableoutcomes)) {
-                $url = new moodle_url('/grade/edit/tree/outcomeitem.php', ['id' => $id, 'courseid' => $courseid]);
-                redirect($this->gpr->add_url_params($url));
-            }
             $item = $gradeitem->get_record_data();
             $parentcategory = $gradeitem->get_parent_category();
-
         } else {
             $gradeitem = new grade_item(['courseid' => $courseid, 'itemtype' => 'manual'], false);
             $item = $gradeitem->get_record_data();
@@ -245,57 +239,46 @@ class add_item extends dynamic_form {
             $gradeitem->parent_category = $parentcategory;
         }
 
-        if ($gradeitem->is_outcome_item()) {
-            // We have to prevent incompatible modifications of outcomes if outcomes disabled.
-            $mform->removeElement('grademax');
+        if ($gradeitem->is_external_item()) {
+            // Following items are set up from modules and should not be overrided by user.
             if ($mform->elementExists('grademin')) {
-                $mform->removeElement('grademin');
+                // The site setting grade_report_showmin may have prevented grademin being added to the form.
+                $mform->hardFreeze('grademin');
             }
-            $mform->removeElement('gradetype');
-            $mform->hardFreeze('scaleid');
+            $mform->hardFreeze('itemname,gradetype,grademax,scaleid');
 
-        } else {
-            if ($gradeitem->is_external_item()) {
-                // Following items are set up from modules and should not be overrided by user.
+            // For external items we can not change the grade type, even if no grades exist, so if it is set to
+            // scale, then remove the grademax and grademin fields from the form - no point displaying them.
+            if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                $mform->removeElement('grademax');
                 if ($mform->elementExists('grademin')) {
-                    // The site setting grade_report_showmin may have prevented grademin being added to the form.
-                    $mform->hardFreeze('grademin');
+                    $mform->removeElement('grademin');
                 }
-                $mform->hardFreeze('itemname,gradetype,grademax,scaleid');
-
-                // For external items we can not change the grade type, even if no grades exist, so if it is set to
-                // scale, then remove the grademax and grademin fields from the form - no point displaying them.
-                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
-                    $mform->removeElement('grademax');
-                    if ($mform->elementExists('grademin')) {
-                        $mform->removeElement('grademin');
-                    }
-                } else { // Not using scale, so remove it.
-                    $mform->removeElement('scaleid');
-                }
-
-                // Always remove the rescale grades element if it's an external item.
-                $mform->removeElement('rescalegrades');
-            } else if ($gradeitem->has_grades()) {
-                // Can't change the grade type or the scale if there are grades.
-                $mform->hardFreeze('gradetype, scaleid');
-
-                // If we are using scales then remove the unnecessary rescale and grade fields.
-                if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
-                    $mform->removeElement('rescalegrades');
-                    $mform->removeElement('grademax');
-                    if ($mform->elementExists('grademin')) {
-                        $mform->removeElement('grademin');
-                    }
-                } else { // Remove the scale field.
-                    $mform->removeElement('scaleid');
-                    // Set the maximum grade to disabled unless a grade is chosen.
-                    $mform->hideIf('grademax', 'rescalegrades', 'eq', '');
-                }
-            } else {
-                // Remove rescale element if there are no grades.
-                $mform->removeElement('rescalegrades');
+            } else { // Not using scale, so remove it.
+                $mform->removeElement('scaleid');
             }
+
+            // Always remove the rescale grades element if it's an external item.
+            $mform->removeElement('rescalegrades');
+        } else if ($gradeitem->has_grades()) {
+            // Can't change the grade type or the scale if there are grades.
+            $mform->hardFreeze('gradetype, scaleid');
+
+            // If we are using scales then remove the unnecessary rescale and grade fields.
+            if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                $mform->removeElement('rescalegrades');
+                $mform->removeElement('grademax');
+                if ($mform->elementExists('grademin')) {
+                    $mform->removeElement('grademin');
+                }
+            } else { // Remove the scale field.
+                $mform->removeElement('scaleid');
+                // Set the maximum grade to disabled unless a grade is chosen.
+                $mform->hideIf('grademax', 'rescalegrades', 'eq', '');
+            }
+        } else {
+            // Remove rescale element if there are no grades.
+            $mform->removeElement('rescalegrades');
         }
 
         // If we wanted to change parent of existing item - we would have to verify there are no circular references in parents!!!
@@ -320,6 +303,7 @@ class add_item extends dynamic_form {
                     $element =& $mform->createElement('checkbox', 'aggregationcoef', get_string($coefstring, 'grades'));
                 } else {
                     $element =& $mform->createElement('text', 'aggregationcoef', get_string($coefstring, 'grades'));
+                    $mform->setType('aggregationcoef', PARAM_FLOAT);
                 }
                 if ($mform->elementExists('parentcategory')) {
                     $mform->insertElementBefore($element, 'parentcategory');
@@ -364,7 +348,7 @@ class add_item extends dynamic_form {
 
         $url = new moodle_url('/grade/edit/tree/item.php', ['id' => $id, 'courseid' => $courseid]);
         $url = $this->gpr->add_url_params($url);
-        $url = '<a href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
+        $url = '<a class="showadvancedform" href="' . $url . '">' . get_string('showmore', 'form') .'</a>';
         $mform->addElement('static', 'advancedform', $url);
 
         // Add return tracking info.

@@ -70,6 +70,7 @@ $string['add_ltiadv'] = 'Add LTI Advantage';
 $string['add_ltilegacy'] = 'Add Legacy LTI';
 $string['addnewapp'] = 'Enable external application';
 $string['addserver'] = 'Add new trusted server';
+$string['addtool'] = 'Add tool';
 $string['addtype'] = 'Add preconfigured tool';
 $string['allow'] = 'Allow';
 $string['allowsetting'] = 'Allow tool to store 8K of settings in Moodle';
@@ -116,10 +117,20 @@ $string['contentitem_multiple_description'] = 'The following items will be added
 $string['contentitem_multiple_graded'] = 'Graded activity (Maximum grade: {$a})';
 $string['course_tool_types'] = 'Course tools';
 $string['courseactivitiesorresources'] = 'Course activities or resources';
+$string['courseexternaltooladd'] = 'Add new LTI External tool';
+$string['courseexternaltooladdsuccess'] = '{$a} added.';
+$string['courseexternaltooledit'] = 'Edit {$a}';
+$string['courseexternaltooleditsuccess'] = 'Changes saved.';
+$string['courseexternaltooliconalt'] = 'Icon for {$a}';
+$string['courseexternaltools'] = 'LTI External tools';
+$string['courseexternaltoolsinfo'] = 'LTI External tools are add-on apps you can integrate into your course, such as interactive content or assessments. Your students can access and use them without leaving your course.';
+$string['courseexternaltoolsnoeditpermissions'] = 'You don\'t have permission to edit this tool';
+$string['courseexternaltoolsnoviewpermissions'] = 'View course external tools';
 $string['courseid'] = 'Course ID number';
 $string['courseinformation'] = 'Course information';
 $string['courselink'] = 'Go to course';
 $string['coursemisconf'] = 'Course is misconfigured';
+$string['coursetooldeleted'] = '{$a} removed';
 $string['createdon'] = 'Created on';
 $string['curllibrarymissing'] = 'PHP cURL extension required for the External tool.';
 $string['custom'] = 'Custom parameters';
@@ -148,6 +159,9 @@ $string['delegate'] = 'Delegate to teacher';
 $string['delegate_tool'] = 'As specified in Deep Linking definition or Delegate to teacher';
 $string['delete'] = 'Delete';
 $string['delete_confirmation'] = 'Are you sure you want to delete this preconfigured tool?';
+$string['deletecoursetool'] = 'Delete {$a}';
+$string['deletecoursetoolconfirm'] = 'This will delete {$a} from the available LTI tools in your course.';
+$string['deletecoursetoolwithusageconfirm'] = '{$a} is currently being used in at least one activity in your course. If you delete this tool, the activities that use it will no longer work.<br><br>Are you sure you want to delete {$a}?';
 $string['deletetype'] = 'Delete preconfigured tool';
 $string['display_description'] = 'Display activity description when launched';
 $string['display_description_help'] = 'If selected, the activity description (specified above) will display above the tool provider\'s content.
@@ -177,6 +191,11 @@ $string['dynreg_update_btn_update'] = 'Update';
 $string['dynreg_update_btn_new'] = 'Register as a new external tool';
 $string['duplicateregurl'] = 'This registration URL is already in use';
 $string['editdescription'] = 'Click here to give this tool a description';
+$string['editmanualinstancedeprecationwarning'] = 'Manually configured External tool activities are no longer supported. Don\'t worry, this activity will still work as it is, but you can\'t make changes to the tool configuration here anymore.
+<br><br>
+To make any changes to the tool, or to create new activities with it, the tool needs to be added to your course in Course > More > LTI External tools. Then, you will be able to create new activities, selecting the tool directly in the Activity chooser.
+<br><br>
+You can read more about adding LTI External tools in the documentation <a href="{$a}" target="_blank">External tool</a>.';
 $string['edittype'] = 'Edit preconfigured tool';
 $string['embed'] = 'Embed';
 $string['embed_no_blocks'] = 'Embed, without blocks';
@@ -184,6 +203,7 @@ $string['enableemailnotification'] = 'Send notification emails';
 $string['enableemailnotification_help'] = 'If enabled, students will receive email notification when their tool submissions are graded.';
 $string['enterkeyandsecret'] = 'Enter your consumer key and shared secret';
 $string['enterkeyandsecret_help'] = 'If you were given a consumer key and/or shared secret, input them here';
+$string['entitycourseexternaltools'] = 'LTI External tools';
 $string['errorbadurl'] = 'URL is not a valid tool URL or cartridge.';
 $string['errorincorrectconsumerkey'] = 'Consumer key is incorrect.';
 $string['errorinvaliddata'] = 'Invalid data: {$a}';
@@ -273,7 +293,7 @@ real estate to the tool, and others provide a more integrated feel with the Mood
 $string['launchoptions'] = 'Launch options';
 $string['lti'] = 'LTI';
 $string['lti:addcoursetool'] = 'Add course-specific tool configurations';
-$string['lti:addmanualinstance'] = 'Add a manually-configured tool';
+$string['lti:addmanualinstanceprohibitederror'] = 'The manual creation of tools without a course tool definition is no longer supported. Please create a course tool first and then use that to create activity instances.';
 $string['lti:addinstance'] = 'Add a new external tool';
 $string['lti:addpreconfiguredinstance'] = 'Add a preconfigured tool';
 $string['lti:grade'] = 'View grades returned by the external tool';
@@ -339,6 +359,7 @@ $string['no_tp_configured'] = 'There are no unregistered external tool registrat
 $string['no_tp_pending'] = 'There are no pending external tool registrations.';
 $string['no_tp_rejected'] = 'There are no rejected external tool registrations.';
 $string['noattempts'] = 'No attempts have been made on this tool instance';
+$string['nocourseexternaltoolsnotice'] = 'There are no LTI external tools yet';
 $string['noltis'] = 'There are no external tool instances';
 $string['noprofileservice'] = 'Profile service not found';
 $string['noservers'] = 'No servers found';
@@ -460,6 +481,8 @@ tool providers. It may be an automated process, or it may require a dialogue wit
 Tools which do not require secure communication from Moodle and do not provide additional services (such as grade reporting)
 may not require a resource key.';
 $string['resourceurl'] = 'Resource URL';
+$string['restricttocategory'] = 'Restrict to category';
+$string['restricttocategory_help'] = 'To restrict use of this external tool on all courses within a category, select course category / categories from the list.';
 $string['return_to_course'] = 'Click <a href="{$a->link}" target="_top">here</a> to return to the course.';
 $string['saveallfeedback'] = 'Save all my feedback';
 $string['search:activity'] = 'External tool - activity information';
@@ -500,6 +523,8 @@ $string['share_roster_help'] = 'Specify whether the tool can access the list of 
 
 Note that this setting may be overridden in the tool configuration.';
 $string['show_in_course_activity_chooser'] = 'Show in activity chooser and as a preconfigured tool';
+$string['showinactivitychooser'] = 'Show in activity chooser';
+$string['dontshowinactivitychooser'] = 'Don\'t show in activity chooser';
 $string['show_in_course_lti1'] = 'Tool configuration usage';
 $string['show_in_course_lti1_help'] = 'This tool may be shown in the activity chooser for a teacher to select to add to a course. Alternatively, it may be shown in the preconfigured tool drop-down menu when adding an external tool to a course. A further option is for the tool configuration to only be used if the exact tool URL is entered when adding an external tool to a course.';
 $string['show_in_course_lti2'] = 'Tool configuration usage';
@@ -553,6 +578,7 @@ back to the \'Configured\' category so the registration process can be restarted
 $string['toolproxyregistration'] = 'External tool registration';
 $string['toolregistration'] = 'External tool registration';
 $string['toolsetup'] = 'External tool configuration';
+$string['tooltypenotfounderror'] = "The LTI tool used in this activity has been deleted. If you need help, contact your teacher or site administrator.";
 $string['tooltypes'] = 'Tools';
 $string['tooltypeadded'] = 'Preconfigured tool added';
 $string['tooltypedeleted'] = 'Preconfigured tool deleted';
@@ -594,9 +620,13 @@ $string['unabletocreatetooltype'] = 'Unable to create tool';
 $string['unabletofindtooltype'] = 'Unable to find tool for {$a->id}';
 $string['unknownstate'] = 'Unknown state';
 $string['update'] = 'Update';
+$string['usage'] = 'Usage';
 $string['useraccountinformation'] = 'User account information';
 $string['userpersonalinformation'] = 'User personal information';
 $string['using_tool_cartridge'] = 'Using tool cartridge';
 $string['using_tool_configuration'] = 'Using tool configuration: ';
 $string['validurl'] = 'A valid URL must start with http(s)://';
 $string['viewsubmissions'] = 'View submissions and grading screen';
+
+// Deprecated since Moodle 4.3.
+$string['lti:addmanualinstance'] = 'Add a manually-configured tool';

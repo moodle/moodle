@@ -321,7 +321,7 @@ class manager {
         $cookiesecure = is_moodle_cookie_secure();
 
         if (!isset($CFG->cookiehttponly)) {
-            $CFG->cookiehttponly = 0;
+            $CFG->cookiehttponly = 1;
         }
 
         // Set sessioncookie variable if it isn't already.
@@ -689,12 +689,6 @@ class manager {
         global $PERF, $ME, $CFG;
 
         if (self::$sessionactive) {
-            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
-            if (debugging()) {
-                self::$sessionatclose = (array) $_SESSION['SESSION'];
-                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
-            }
-
             // Grab the time when session lock is released.
             $PERF->sessionlock['released'] = microtime(true);
             if (!empty($PERF->sessionlock['gained'])) {
@@ -703,6 +697,12 @@ class manager {
             $PERF->sessionlock['url'] = me();
             self::update_recent_session_locks($PERF->sessionlock);
             self::sessionlock_debugging();
+
+            // If debugging, take a snapshot of session at close and compare on shutdown to detect any accidental mutations.
+            if (debugging()) {
+                self::$sessionatclose = (array) $_SESSION['SESSION'];
+                \core_shutdown_manager::register_function('\core\session\manager::check_mutated_closed_session');
+            }
 
             $requireslock = self::$handler->requires_write_lock();
             if (!$requireslock || !self::$requireslockdebug) {

@@ -16,6 +16,8 @@
 
 namespace communication_matrix;
 
+use GuzzleHttp\Psr7\Response;
+
 /**
  * Trait matrix_helper_trait to generate initial setup for matrix mock and associated helpers.
  *
@@ -112,9 +114,12 @@ trait matrix_test_helper_trait {
      * @return \stdClass
      */
     public function get_matrix_room_data(string $roomid): \stdClass {
-        $matrixeventmanager = new matrix_events_manager($roomid);
-        $response = $matrixeventmanager->request()->get($matrixeventmanager->get_room_info_endpoint());
-        return json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
+        $rooms = $this->backoffice_get_all_rooms();
+        foreach ($rooms as $room) {
+            if ($room->room_id === $roomid) {
+                return $room;
+            }
+        }
     }
 
     /**
@@ -125,9 +130,41 @@ trait matrix_test_helper_trait {
      * @return \stdClass
      */
     public function get_matrix_user_data(string $roomid, string $matrixuserid): \stdClass {
-        $matrixeventmanager = new matrix_events_manager($roomid);
-        $response = $matrixeventmanager->request()->get($matrixeventmanager->get_user_info_endpoint($matrixuserid));
-        return json_decode($response->getBody(), false, 512, JSON_THROW_ON_ERROR);
+        $users = $this->backoffice_get_all_users();
+
+        foreach ($users as $user) {
+            if ($user->userid === $matrixuserid) {
+                return $user;
+            }
+        }
+    }
+
+    /**
+     * A backoffice call to get all registered users from our mock server.
+     *
+     * @return array
+     */
+    public function backoffice_get_all_users(): array {
+        $client = new \core\http_client();
+
+        return json_decode($client->get($this->get_backoffice_uri('users'))->getBody())->users;
+    }
+
+    /**
+     * A backoffice method to create users and rooms on our mock server.
+     *
+     * @param array $users
+     * @param array $rooms
+     */
+    public function backoffice_create_users_and_rooms(
+        array $users = [],
+        array $rooms = [],
+    ): Response {
+        $client = new \core\http_client();
+        return $client->put($this->get_backoffice_uri('create'), ['json' => [
+            'users' => $users,
+            'rooms' => $rooms,
+        ]]);
     }
 
     /**
@@ -138,11 +175,46 @@ trait matrix_test_helper_trait {
      * @return \core\http_client
      */
     public function request(array $jsonarray = [], array $headers = []): \core\http_client {
-        $response = new  \core\http_client([
+        $response = new \core\http_client([
             'headers' => $headers,
             'json' => $jsonarray,
         ]);
         return $response;
+    }
+
+    /**
+     * Get the URI of a backoffice endpoint on the mock server.
+     *
+     * @param string $endpoint
+     * @return string
+     */
+    protected function get_backoffice_uri(string $endpoint): string {
+        return $this->get_matrix_server_url() . '/backoffice/' . $endpoint;
+    }
+
+    /**
+     * Fetch all rooms from the back office.
+     *
+     * @return array
+     */
+    public function backoffice_get_all_rooms(): array {
+        $client = new \core\http_client();
+
+        return json_decode($client->get($this->get_backoffice_uri('rooms'))->getBody())->rooms;
+    }
+
+    /**
+     * Return the first room from the server.
+     *
+     * In most cases there is only one room.
+     * @return \stdClass
+     */
+    public function backoffice_get_room(): \stdClass {
+        // Fetch the room information from the server.
+        $rooms = $this->backoffice_get_all_rooms();
+        $this->assertCount(1, $rooms);
+        $room = reset($rooms);
+        return $room;
     }
 
     /**
@@ -163,4 +235,52 @@ trait matrix_test_helper_trait {
         }
     }
 
+    /**
+     * Helper to create a room.
+     *
+     * @param null|string $component
+     * @param null|string $itemtype
+     * @param null|int $itemid
+     * @param null|string $roomname
+     * @param null|string $roomtopic
+     * @param null|stored_file $roomavatar
+     * @param array $members
+     * @return api
+     */
+    protected function create_matrix_room(
+        ?string $component = 'communication_matrix',
+        ?string $itemtype = 'example',
+        ?int $itemid = 1,
+        ?string $roomname = null,
+        ?string $roomtopic = null,
+        ?\stored_file $roomavatar = null,
+        array $members = [],
+    ): \core_communication\api {
+        // Create a new room.
+        $communication = \core_communication\api::load_by_instance(
+            component: $component,
+            instancetype: $itemtype,
+            instanceid: $itemid,
+        );
+
+        $communication->create_and_configure_room(
+            selectedcommunication: 'communication_matrix',
+            communicationroomname: $roomname ?? 'Room name',
+            avatar: $roomavatar,
+            instance: (object) [
+                'matrixroomtopic' => $roomtopic ?? 'A fun topic',
+            ],
+        );
+
+        $communication->add_members_to_room($members);
+
+        // Run the adhoc task.
+        $this->run_all_adhoc_tasks();
+
+        return \core_communication\api::load_by_instance(
+            component: $component,
+            instancetype: $itemtype,
+            instanceid: $itemid,
+        );
+    }
 }

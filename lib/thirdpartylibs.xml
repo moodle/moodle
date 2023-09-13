@@ -17,7 +17,7 @@
     <location>behat/axe</location>
     <name>axe-core</name>
     <description>Accessibility testing engine for websites and other HTML-based user interfaces.</description>
-    <version>4.6.3</version>
+    <version>4.7.2</version>
     <license>MPL</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/dequelabs/axe-core</repository>
@@ -54,7 +54,7 @@
     <location>phpspreadsheet</location>
     <name>PhpSpreadsheet</name>
     <description>Library to read, write and create spreadsheet documents in PHP.</description>
-    <version>1.28.0</version>
+    <version>1.29.0</version>
     <license>MIT</license>
     <repository>https://github.com/PHPOffice/PhpSpreadsheet</repository>
     <customised/>
@@ -212,7 +212,7 @@
     <location>jquery</location>
     <name>jQuery</name>
     <description>jQuery is a fast, small, and feature-rich JavaScript library widely used on moodle.</description>
-    <version>3.6.4</version>
+    <version>3.7.1</version>
     <license>MIT</license>
     <repository>https://github.com/jquery/jquery</repository>
     <copyrights>
@@ -388,7 +388,7 @@ All rights reserved.</copyright>
     <location>amd/src/chartjs-lazy.js</location>
     <name>Chart.js</name>
     <description>Simple yet flexible JavaScript charting for designers &amp; developers.</description>
-    <version>4.2.1</version>
+    <version>4.4.0</version>
     <license>MIT</license>
     <repository>https://github.com/chartjs/Chart.js</repository>
     <copyrights>
@@ -436,7 +436,7 @@ All rights reserved.</copyright>
     <location>lti1p3</location>
     <name>LTI 1.3 Tool Library</name>
     <description>A library used for building IMS-certified LTI 1.3 tool providers in PHP.</description>
-    <version>5.2.6</version>
+    <version>5.4.1</version>
     <license>Apache</license>
     <licenseversion>2.0</licenseversion>
     <repository>https://github.com/packbackbooks/lti-1-3-php-library</repository>
@@ -516,7 +516,7 @@ All rights reserved.</copyright>
     <location>php-jwt</location>
     <name>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</name>
     <description>A simple library to encode and decode JSON Web Tokens (JWT) in PHP, conforming to RFC 7519</description>
-    <version>6.4.0</version>
+    <version>6.8.1</version>
     <license>BSD</license>
     <licenseversion>3-Clause</licenseversion>
     <repository>https://github.com/firebase/php-jwt</repository>
@@ -697,5 +697,12 @@ All rights reserved.</copyright>
     <version>4.0.2</version>
     <license>MIT</license>
     <repository>https://github.com/Kevinrob/guzzle-cache-middleware</repository>
+  </library>
+  <library>
+      <location>webauthn/src</location>
+      <name>WebAuthn</name>
+      <version>2.0.1</version>
+      <license>MIT</license>
+      <repository>https://github.com/lbuchs/WebAuthn</repository>
   </library>
 </libraries>

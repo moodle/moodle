@@ -24,7 +24,6 @@ define([
     'jquery',
     'core/str',
     'core/notification',
-    'core/modal_factory',
     'core/modal_events',
     'core_calendar/modal_event_form',
     'core_calendar/repository',
@@ -32,19 +31,20 @@ define([
     'core_calendar/modal_delete',
     'core_calendar/selectors',
     'core/pending',
+    'core/modal_save_cancel',
 ],
 function(
     $,
     Str,
     Notification,
-    ModalFactory,
     ModalEvents,
     ModalEventForm,
     CalendarRepository,
     CalendarEvents,
-    ModalDelete,
+    CalendarModalDelete,
     CalendarSelectors,
-    Pending
+    Pending,
+    ModalSaveCancel,
 ) {
 
     /**
@@ -77,11 +77,7 @@ function(
                 },
             });
 
-            deletePromise = ModalFactory.create(
-                {
-                    type: ModalDelete.TYPE
-                }
-            );
+            deletePromise = CalendarModalDelete.create();
         } else {
             deleteStrings.push({
                 key: 'confirmeventdelete',
@@ -90,9 +86,7 @@ function(
             });
 
 
-            deletePromise = ModalFactory.create({
-                type: ModalFactory.types.SAVE_CANCEL,
-            });
+            deletePromise = ModalSaveCancel.create();
         }
 
         var stringsPromise = Str.get_strings(deleteStrings);
@@ -151,10 +145,7 @@ function(
      * @return {object} The create modal promise
      */
     var registerEventFormModal = function(root) {
-        var eventFormPromise = ModalFactory.create({
-            type: ModalEventForm.TYPE,
-            large: true
-        });
+        var eventFormPromise = ModalEventForm.create();
 
         // Bind click event on the new event button.
         root.on('click', CalendarSelectors.actions.create, function(e) {

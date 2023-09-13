@@ -135,7 +135,7 @@ class moodlenet implements issuer_interface {
                 $request = [
                     'client_name' => $SITE->fullname,
                     'client_uri' => $hosturl,
-                    'logo_uri' => $hosturl . '/pix/f/moodle-256.png',
+                    'logo_uri' => $hosturl . '/pix/moodlelogo.png',
                     'tos_uri' => $hosturl,
                     'policy_uri' => $hosturl,
                     'software_id' => 'moodle',

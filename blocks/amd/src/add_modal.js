@@ -21,11 +21,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Ajax from 'core/ajax';
 import ModalForm from "core_form/modalform";
+import CancelModal from 'core/modal_cancel';
 
 const SELECTORS = {
     ADD_BLOCK: '[data-key="addblock"]',
@@ -98,12 +98,9 @@ const registerListenerEvents = (addBlockUrl, pagehash) => {
  * @method buildAddBlockModal
  * @returns {Promise} The modal promise (modal's body will be rendered later).
  */
-const buildAddBlockModal = () => {
-    return ModalFactory.create({
-        type: ModalFactory.types.CANCEL,
-        title: getString('addblock')
-    });
-};
+const buildAddBlockModal = () => CancelModal.create({
+    title: getString('addblock'),
+});
 
 /**
  * Method that renders the list of available blocks.

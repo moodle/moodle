@@ -54,7 +54,7 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
 
   Scenario Outline: Default showcompletionconditions value in course form on course creation
     Given I log in as "admin"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
     And I set the field "Show activity completion conditions" to "<siteshowcompletion>"
     And I press "Save changes"
     When I navigate to "Courses > Add a new course" in site administration
@@ -67,7 +67,7 @@ Feature: Allow teachers to edit the visibility of completion conditions in a cou
 
   Scenario Outline: Default showcompletionconditions displayed when editing a course with disabled completion tracking
     Given I log in as "admin"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
     And I set the field "Show activity completion conditions" to "<siteshowcompletion>"
     And I press "Save changes"
     And I am on "Course 1" course homepage with editing mode on

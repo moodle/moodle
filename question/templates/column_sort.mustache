@@ -22,13 +22,15 @@
         "sortdata": [
           {
                 "sorturl": "url",
+                "sortname": "Sort name",
+                "sortorder": "Sort order when activate this sort",
                 "sorttip": "Sort according to first name",
                 "sortcontent": "Sort title sort icon"
           }
         ]
     }
 }}
-<a href="{{{sorturl}}}" title="{{sorttip}}">
+<a href="{{{sorturl}}}" data-sortname="{{sortname}}" data-sortorder="{{sortorder}}" title="{{sorttip}}">
     {{{sortcontent}}}
 </a>
 

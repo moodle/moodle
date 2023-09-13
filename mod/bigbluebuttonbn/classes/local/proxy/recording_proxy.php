@@ -49,7 +49,7 @@ class recording_proxy extends proxy_base {
      * @param string $recordid a recording id
      * @return bool
      */
-    public static function delete_recording(string $recordid): bool {
+    public static function delete_recording(string $recordid, ?int $instanceid = null): bool {
         $result = self::fetch_endpoint_xml('deleteRecordings', ['recordID' => $recordid]);
         if (!$result || $result->returncode != 'SUCCESS') {
             return false;

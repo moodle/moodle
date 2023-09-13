@@ -131,7 +131,7 @@ class google_docs {
                 'url' => "{$gdoc->link[0]->attributes()->href}",
                 'source' => $source,
                 'date'   => strtotime($gdoc->updated),
-                'thumbnail' => (string) $OUTPUT->image_url(file_extension_icon($title, 32))
+                'thumbnail' => (string) $OUTPUT->image_url(file_extension_icon($title))
             );
         }
         core_date::set_default_server_timezone();

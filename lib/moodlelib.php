@@ -397,6 +397,11 @@ define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
+/**
+ * Required password pepper entropy.
+ */
+define ('PEPPER_ENTROPY', 112);
+
 // Feature constants.
 // Used for plugin_supports() to report features that are, or are not, supported by a module.
 
@@ -577,6 +582,11 @@ define('CONTACT_SUPPORT_AUTHENTICATED', 1);
  * Contact site support form/link available to anyone visiting the site.
  */
 define('CONTACT_SUPPORT_ANYONE', 2);
+
+/**
+ * Maximum number of characters for password.
+ */
+define('MAX_PASSWORD_CHARACTERS', 128);
 
 // PARAMETER HANDLING.
 
@@ -2441,15 +2451,50 @@ function usertime($date, $timezone=99) {
  * @param int $time1 unix timestamp
  * @param int $time2 unix timestamp
  * @param string $format string (can be lang string) containing format chars: https://www.php.net/manual/en/dateinterval.format.php.
+ * @param bool $dropzeroes If format is not provided and this is set to true, do not include zero time units.
+ *                         e.g. a duration of 3 days and 2 hours will be displayed as '3d 2h' instead of '3d 2h 0s'
+ * @param bool $fullformat If format is not provided and this is set to true, display time units in full format.
+ *                         e.g. instead of showing "3d", "3 days" will be returned.
  * @return string the formatted string describing the time difference, e.g. '10d 11h 45m'.
  */
-function get_time_interval_string(int $time1, int $time2, string $format = ''): string {
+function get_time_interval_string(int $time1, int $time2, string $format = '',
+        bool $dropzeroes = false, bool $fullformat = false): string {
     $dtdate = new DateTime();
     $dtdate->setTimeStamp($time1);
     $dtdate2 = new DateTime();
     $dtdate2->setTimeStamp($time2);
     $interval = $dtdate2->diff($dtdate);
-    $format = empty($format) ? get_string('dateintervaldayshoursmins', 'langconfig') : $format;
+
+    if (empty(trim($format))) {
+        // Default to this key.
+        $formatkey = 'dateintervaldayhrmin';
+
+        if ($dropzeroes) {
+            $units = [
+                'y' => 'yr',
+                'm' => 'mo',
+                'd' => 'day',
+                'h' => 'hr',
+                'i' => 'min',
+                's' => 'sec',
+            ];
+            $formatunits = [];
+            foreach ($units as $key => $unit) {
+                if (empty($interval->$key)) {
+                    continue;
+                }
+                $formatunits[] = $unit;
+            }
+            if (!empty($formatunits)) {
+                $formatkey = 'dateinterval' . implode("", $formatunits);
+            }
+        }
+
+        if ($fullformat) {
+            $formatkey .= 'full';
+        }
+        $format = get_string($formatkey, 'langconfig');
+    }
     return $interval->format($format);
 }
 
@@ -4242,11 +4287,19 @@ function guest_user() {
  * @param string $password  User's password
  * @param bool $ignorelockout useful when guessing is prevented by other mechanism such as captcha or SSO
  * @param int $failurereason login failure reason, can be used in renderers (it may disclose if account exists)
- * @param mixed logintoken If this is set to a string it is validated against the login token for the session.
+ * @param string|bool $logintoken If this is set to a string it is validated against the login token for the session.
+ * @param string|bool $loginrecaptcha If this is set to a string it is validated against Google reCaptcha.
  * @return stdClass|false A {@link $USER} object or false if error
  */
-function authenticate_user_login($username, $password, $ignorelockout=false, &$failurereason=null, $logintoken=false) {
-    global $CFG, $DB, $PAGE;
+function authenticate_user_login(
+    $username,
+    $password,
+    $ignorelockout = false,
+    &$failurereason = null,
+    $logintoken = false,
+    string|bool $loginrecaptcha = false,
+) {
+    global $CFG, $DB, $PAGE, $SESSION;
     require_once("$CFG->libdir/authlib.php");
 
     if ($user = get_complete_user_data('username', $username, $CFG->mnet_localhost_id)) {
@@ -4281,6 +4334,20 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
         ])->trigger();
 
         error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Invalid Login Token:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+        return false;
+    }
+
+    // Login reCaptcha.
+    if (login_captcha_enabled() && !validate_login_captcha($loginrecaptcha)) {
+        $failurereason = AUTH_LOGIN_FAILED_RECAPTCHA;
+        // Trigger login failed event (specifying the ID of the found user, if available).
+        \core\event\user_login_failed::create([
+            'userid' => ($user->id ?? 0),
+            'other' => [
+                'username' => $username,
+                'reason' => $failurereason,
+            ],
+        ])->trigger();
         return false;
     }
 
@@ -4351,6 +4418,8 @@ function authenticate_user_login($username, $password, $ignorelockout=false, &$f
             $event->trigger();
 
             error_log('[client '.getremoteaddr()."]  $CFG->wwwroot  Login lockout:  $username  ".$_SERVER['HTTP_USER_AGENT']);
+            $SESSION->loginerrormsg = get_string('accountlocked', 'admin');
+
             return false;
         }
     } else {
@@ -4594,13 +4663,75 @@ function complete_user_login($user, array $extrauserinfo = []) {
 }
 
 /**
- * Check a password hash to see if it was hashed using the legacy hash algorithm (md5).
+ * Check a password hash to see if it was hashed using the legacy hash algorithm (bcrypt).
  *
  * @param string $password String to check.
- * @return boolean True if the $password matches the format of an md5 sum.
+ * @return bool True if the $password matches the format of a bcrypt hash.
  */
-function password_is_legacy_hash($password) {
-    return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
+function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool {
+    return (bool) preg_match('/^\$2y\$[\d]{2}\$[A-Za-z0-9\.\/]{53}$/', $password);
+}
+
+/**
+ * Calculate the Shannon entropy of a string.
+ *
+ * @param string $pepper The pepper to calculate the entropy of.
+ * @return float The Shannon entropy of the string.
+ */
+function calculate_entropy(#[\SensitiveParameter] string $pepper): float {
+    // Initialize entropy.
+    $h = 0;
+
+    // Calculate the length of the string.
+    $size = strlen($pepper);
+
+    // For each unique character in the string.
+    foreach (count_chars($pepper, 1) as $v) {
+        // Calculate the probability of the character.
+        $p = $v / $size;
+
+        // Add the character's contribution to the total entropy.
+        // This uses the formula for the entropy of a discrete random variable.
+        $h -= $p * log($p) / log(2);
+    }
+
+    // Instead of returning the average entropy per symbol (Shannon entropy),
+    // we multiply by the length of the string to get total entropy.
+    return $h * $size;
+}
+
+/**
+ * Get the available password peppers.
+ * The latest pepper is checked for minimum entropy as part of this function.
+ * We only calculate the entropy of the most recent pepper,
+ * because passwords are always updated to the latest pepper,
+ * and in the past we may have enforced a lower minimum entropy.
+ * Also, we allow the latest pepper to be empty, to allow admins to migrate off peppers.
+ *
+ * @return array The password peppers.
+ * @throws coding_exception If the entropy of the password pepper is less than the recommended minimum.
+ */
+function get_password_peppers(): array {
+    global $CFG;
+
+    // Get all available peppers.
+    if (isset($CFG->passwordpeppers) && is_array($CFG->passwordpeppers)) {
+        // Sort the array in descending order of keys (numerical).
+        $peppers = $CFG->passwordpeppers;
+        krsort($peppers, SORT_NUMERIC);
+    } else {
+        $peppers = [];  // Set an empty array if no peppers are found.
+    }
+
+    // Check if the entropy of the most recent pepper is less than the minimum.
+    // Also, we allow the most recent pepper to be empty, to allow admins to migrate off peppers.
+    $lastpepper = reset($peppers);
+    if (!empty($peppers) && $lastpepper !== '' && calculate_entropy($lastpepper) < PEPPER_ENTROPY) {
+        throw new coding_exception(
+                'password pepper below minimum',
+                'The entropy of the password pepper is less than the recommended minimum.');
+    }
+    return $peppers;
 }
 
 /**
@@ -4612,73 +4743,83 @@ function password_is_legacy_hash($password) {
  * @param string $password Plain text password.
  * @return bool True if password is valid.
  */
-function validate_internal_user_password($user, $password) {
-    global $CFG;
+function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] string $password): bool {
+
+    if (exceeds_password_length($password)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS characters.
+        return false;
+    }
 
     if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
         // Internal password is not used at all, it can not validate.
         return false;
     }
 
-    // If hash isn't a legacy (md5) hash, validate using the library function.
-    if (!password_is_legacy_hash($user->password)) {
-        return password_verify($password, $user->password);
+    $peppers = get_password_peppers(); // Get the array of available peppers.
+    $islegacy = password_is_legacy_hash($user->password); // Check if the password is a legacy bcrypt hash.
+
+    // If the password is a legacy hash, no peppers were used, so verify and update directly.
+    if ($islegacy && password_verify($password, $user->password)) {
+        update_internal_user_password($user, $password);
+        return true;
     }
 
-    // Otherwise we need to check for a legacy (md5) hash instead. If the hash
-    // is valid we can then update it to the new algorithm.
+    // If the password is not a legacy hash, iterate through the peppers.
+    $latestpepper = reset($peppers);
+    // Add an empty pepper to the beginning of the array. To make it easier to check if the password matches without any pepper.
+    $peppers = [-1 => ''] + $peppers;
+    foreach ($peppers as $pepper) {
+        $pepperedpassword = $password . $pepper;
 
-    $sitesalt = isset($CFG->passwordsaltmain) ? $CFG->passwordsaltmain : '';
-    $validated = false;
-
-    if ($user->password === md5($password.$sitesalt)
-            or $user->password === md5($password)
-            or $user->password === md5(addslashes($password).$sitesalt)
-            or $user->password === md5(addslashes($password))) {
-        // Note: we are intentionally using the addslashes() here because we
-        //       need to accept old password hashes of passwords with magic quotes.
-        $validated = true;
-
-    } else {
-        for ($i=1; $i<=20; $i++) { // 20 alternative salts should be enough, right?
-            $alt = 'passwordsaltalt'.$i;
-            if (!empty($CFG->$alt)) {
-                if ($user->password === md5($password.$CFG->$alt) or $user->password === md5(addslashes($password).$CFG->$alt)) {
-                    $validated = true;
-                    break;
-                }
+        // If the peppered password is correct, update (if necessary) and return true.
+        if (password_verify($pepperedpassword, $user->password)) {
+            // If the pepper used is not the latest one, update the password.
+            if ($pepper !== $latestpepper) {
+                update_internal_user_password($user, $password);
             }
+            return true;
         }
     }
 
-    if ($validated) {
-        // If the password matches the existing md5 hash, update to the
-        // current hash algorithm while we have access to the user's password.
-        update_internal_user_password($user, $password);
-    }
-
-    return $validated;
+    // If no peppered password was correct, the password is wrong.
+    return false;
 }
 
 /**
  * Calculate hash for a plain text password.
  *
  * @param string $password Plain text password to be hashed.
- * @param bool $fasthash If true, use a low cost factor when generating the hash
- *                       This is much faster to generate but makes the hash
- *                       less secure. It is used when lots of hashes need to
- *                       be generated quickly.
+ * @param bool $fasthash If true, use a low number of rounds when generating the hash
+ *                       This is faster to generate but makes the hash less secure.
+ *                       It is used when lots of hashes need to be generated quickly.
+ * @param int $pepperlength Lenght of the peppers
  * @return string The hashed password.
  *
  * @throws moodle_exception If a problem occurs while generating the hash.
  */
-function hash_internal_user_password($password, $fasthash = false) {
-    global $CFG;
+function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false, $pepperlength = 0): string {
+    if (exceeds_password_length($password, $pepperlength)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS.
+        throw new \moodle_exception(get_string("passwordexceeded", 'error', MAX_PASSWORD_CHARACTERS));
+    }
 
-    // Set the cost factor to 4 for fast hashing, otherwise use default cost.
-    $options = ($fasthash) ? array('cost' => 4) : array();
+    // Set the cost factor to 5000 for fast hashing, otherwise use default cost.
+    $rounds = $fasthash ? 5000 : 10000;
 
-    $generatedhash = password_hash($password, PASSWORD_DEFAULT, $options);
+    // First generate a cryptographically suitable salt.
+    $randombytes = random_bytes(16);
+    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
+
+    // Now construct the password string with the salt and number of rounds.
+    // The password string is in the format $algorithm$rounds$salt$hash. ($6 is the SHA512 algorithm).
+    $generatedhash = crypt($password, implode('$', [
+        '',
+        // The SHA512 Algorithm
+        '6',
+        "rounds={$rounds}",
+        $salt,
+        '',
+    ]));
 
     if ($generatedhash === false || $generatedhash === null) {
         throw new moodle_exception('Failed to generate password hash.');
@@ -4696,6 +4837,8 @@ function hash_internal_user_password($password, $fasthash = false) {
  * 2. The existing hash is using an out-of-date algorithm (or the legacy
  *    md5 algorithm).
  *
+ * The password is peppered with the latest pepper before hashing,
+ * if peppers are available.
  * Updating the password will modify the $user object and the database
  * record to use the current hashing algorithm.
  * It will remove Web Services user tokens too.
@@ -4708,8 +4851,18 @@ function hash_internal_user_password($password, $fasthash = false) {
  *                       be generated quickly.
  * @return bool Always returns true.
  */
-function update_internal_user_password($user, $password, $fasthash = false) {
+function update_internal_user_password(
+        stdClass $user,
+        #[\SensitiveParameter] string $password,
+        bool $fasthash = false
+): bool {
     global $CFG, $DB;
+
+    // Add the latest password pepper to the password before further processing.
+    $peppers = get_password_peppers();
+    if (!empty($peppers)) {
+        $password = $password . reset($peppers);
+    }
 
     // Figure out what the hashed password should be.
     if (!isset($user->auth)) {
@@ -4733,7 +4886,7 @@ function update_internal_user_password($user, $password, $fasthash = false) {
     } else if (isset($user->password)) {
         // If verification fails then it means the password has changed.
         $passwordchanged = !password_verify($password, $user->password);
-        $algorithmchanged = password_needs_rehash($user->password, PASSWORD_DEFAULT);
+        $algorithmchanged = password_is_legacy_hash($user->password);
     } else {
         // While creating new user, password in unset in $user object, to avoid
         // saving it with user_create()
@@ -8461,7 +8614,7 @@ function count_letters($string, $format = null) {
  * @return string
  */
 function random_string($length=15) {
-    $randombytes = random_bytes_emulate($length);
+    $randombytes = random_bytes($length);
     $pool  = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $pool .= 'abcdefghijklmnopqrstuvwxyz';
     $pool .= '0123456789';
@@ -8490,55 +8643,13 @@ function complex_random_string($length=null) {
     if ($length===null) {
         $length = floor(rand(24, 32));
     }
-    $randombytes = random_bytes_emulate($length);
+    $randombytes = random_bytes($length);
     $string = '';
     for ($i = 0; $i < $length; $i++) {
         $rand = ord($randombytes[$i]);
         $string .= $pool[($rand%$poollen)];
     }
     return $string;
-}
-
-/**
- * Try to generates cryptographically secure pseudo-random bytes.
- *
- * Note this is achieved by fallbacking between:
- *  - PHP 7 random_bytes().
- *  - OpenSSL openssl_random_pseudo_bytes().
- *  - In house random generator getting its entropy from various, hard to guess, pseudo-random sources.
- *
- * @param int $length requested length in bytes
- * @return string binary data
- */
-function random_bytes_emulate($length) {
-    global $CFG;
-    if ($length <= 0) {
-        debugging('Invalid random bytes length', DEBUG_DEVELOPER);
-        return '';
-    }
-    if (function_exists('random_bytes')) {
-        // Use PHP 7 goodness.
-        $hash = @random_bytes($length);
-        if ($hash !== false) {
-            return $hash;
-        }
-    }
-    if (function_exists('openssl_random_pseudo_bytes')) {
-        // If you have the openssl extension enabled.
-        $hash = openssl_random_pseudo_bytes($length);
-        if ($hash !== false) {
-            return $hash;
-        }
-    }
-
-    // Bad luck, there is no reliable random generator, let's just slowly hash some unique stuff that is hard to guess.
-    $staticdata = serialize($CFG) . serialize($_SERVER);
-    $hash = '';
-    do {
-        $hash .= sha1($staticdata . microtime(true) . uniqid('', true), true);
-    } while (strlen($hash) < $length);
-
-    return substr($hash, 0, $length);
 }
 
 /**
@@ -10248,23 +10359,12 @@ function is_proxybypass( $url ) {
     // Get the possible bypass hosts into an array.
     $matches = explode( ',', $CFG->proxybypass );
 
-    // Check for a match.
-    // (IPs need to match the left hand side and hosts the right of the url,
-    // but we can recklessly check both as there can't be a false +ve).
-    foreach ($matches as $match) {
-        $match = trim($match);
+    // Check for a exact match on the IP or in the domains.
+    $isdomaininallowedlist = \core\ip_utils::is_domain_in_allowed_list($host, $matches);
+    $isipinsubnetlist = \core\ip_utils::is_ip_in_subnet_list($host, $CFG->proxybypass, ',');
 
-        // Try for IP match (Left side).
-        $lhs = substr($host, 0, strlen($match));
-        if (strcasecmp($match, $lhs)==0) {
-            return true;
-        }
-
-        // Try for host match (Right side).
-        $rhs = substr($host, -strlen($match));
-        if (strcasecmp($match, $rhs)==0) {
-            return true;
-        }
+    if ($isdomaininallowedlist || $isipinsubnetlist) {
+        return true;
     }
 
     // Nothing matched.
@@ -10588,52 +10688,33 @@ function get_course_display_name_for_list($course) {
  * Safe analogue of unserialize() that can only parse arrays
  *
  * Arrays may contain only integers or strings as both keys and values. Nested arrays are allowed.
- * Note: If any string (key or value) has semicolon (;) as part of the string parsing will fail.
- * This is a simple method to substitute unnecessary unserialize() in code and not intended to cover all possible cases.
  *
  * @param string $expression
  * @return array|bool either parsed array or false if parsing was impossible.
  */
 function unserialize_array($expression) {
-    $subs = [];
-    // Find nested arrays, parse them and store in $subs , substitute with special string.
-    while (preg_match('/([\^;\}])(a:\d+:\{[^\{\}]*\})/', $expression, $matches) && strlen($matches[2]) < strlen($expression)) {
-        $key = '--SUB' . count($subs) . '--';
-        $subs[$key] = unserialize_array($matches[2]);
-        if ($subs[$key] === false) {
-            return false;
-        }
-        $expression = str_replace($matches[2], $key . ';', $expression);
-    }
 
     // Check the expression is an array.
-    if (!preg_match('/^a:(\d+):\{([^\}]*)\}$/', $expression, $matches1)) {
+    if (!preg_match('/^a:(\d+):/', $expression)) {
         return false;
     }
-    // Get the size and elements of an array (key;value;key;value;....).
-    $parts = explode(';', $matches1[2]);
-    $size = intval($matches1[1]);
-    if (count($parts) < $size * 2 + 1) {
-        return false;
-    }
-    // Analyze each part and make sure it is an integer or string or a substitute.
-    $value = [];
-    for ($i = 0; $i < $size * 2; $i++) {
-        if (preg_match('/^i:(\d+)$/', $parts[$i], $matches2)) {
-            $parts[$i] = (int)$matches2[1];
-        } else if (preg_match('/^s:(\d+):"(.*)"$/', $parts[$i], $matches3) && strlen($matches3[2]) == (int)$matches3[1]) {
-            $parts[$i] = $matches3[2];
-        } else if (preg_match('/^--SUB\d+--$/', $parts[$i])) {
-            $parts[$i] = $subs[$parts[$i]];
-        } else {
-            return false;
+
+    $values = (array) unserialize_object($expression);
+
+    // Callback that returns true if the given value is an unserialized object, executes recursively.
+    $invalidvaluecallback = static function($value) use (&$invalidvaluecallback): bool {
+        if (is_array($value)) {
+            return (bool) array_filter($value, $invalidvaluecallback);
         }
+        return ($value instanceof stdClass) || ($value instanceof __PHP_Incomplete_Class);
+    };
+
+    // Iterate over the result to ensure there are no stray objects.
+    if (array_filter($values, $invalidvaluecallback)) {
+        return false;
     }
-    // Combine keys and values.
-    for ($i = 0; $i < $size * 2; $i += 2) {
-        $value[$parts[$i]] = $parts[$i+1];
-    }
-    return $value;
+
+    return $values;
 }
 
 /**
@@ -10951,4 +11032,15 @@ function site_is_public() {
     }
 
     return $ispublic;
+}
+
+/**
+ * Validates user's password length.
+ *
+ * @param string $password
+ * @param int $pepperlength The length of the used peppers
+ * @return bool
+ */
+function exceeds_password_length(string $password, int $pepperlength = 0): bool {
+    return (strlen($password) > (MAX_PASSWORD_CHARACTERS + $pepperlength));
 }

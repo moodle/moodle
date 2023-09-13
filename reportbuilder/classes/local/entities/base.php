@@ -38,8 +38,11 @@ abstract class base {
     /** @var lang_string $entitytitle Used as a title for the entity in reports */
     private $entitytitle = null;
 
-    /** @var array $tablealiases Database tables that this entity uses and their default aliases */
+    /** @var array $tablealiases Database tables that this entity uses and their aliases */
     private $tablealiases = [];
+
+    /** @var array $tablejoinaliases Database tables that have already been joined to the report and their aliases */
+    private $tablejoinaliases = [];
 
     /** @var string[] $joins List of SQL joins for the entity */
     private $joins = [];
@@ -180,6 +183,31 @@ abstract class base {
         }
 
         return $this->tablealiases[$tablename] ?? $defaulttablealiases[$tablename];
+    }
+
+    /**
+     * Set the alias for given database table that has already been added to the report. Enables entities to avoid additional
+     * joins on the same table by allowing re-use of existing table aliases in their own queries, {@see has_table_join_alias}
+     *
+     * @param string $tablename
+     * @param string $alias
+     * @return self
+     */
+    final public function set_table_join_alias(string $tablename, string $alias): self {
+        $this->tablejoinaliases[$tablename] = $alias;
+
+        // Internally set the same table alias for the entity.
+        return $this->set_table_alias($tablename, $alias);
+    }
+
+    /**
+     * Determine whether defined table join alias was specified. Call {@see get_table_alias} to retrieve said value
+     *
+     * @param string $tablename
+     * @return bool
+     */
+    final public function has_table_join_alias(string $tablename): bool {
+        return array_key_exists($tablename, $this->tablejoinaliases);
     }
 
     /**

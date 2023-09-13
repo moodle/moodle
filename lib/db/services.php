@@ -978,17 +978,19 @@ $functions = array(
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ),
     'core_grades_get_groups_for_search_widget' => [
-        'classname' => 'core_grades\external\get_groups_for_selector',
+        'classname' => 'core_group\external\get_groups_for_selector',
         'description' => '** DEPRECATED ** Please do not call this function any more. ' .
-            'Use core_grades_get_groups_for_selector instead. ' .
+            'Use core_group_get_groups_for_selector instead. ' .
             'Get the group/(s) for a course',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'core_grades_get_groups_for_selector' => [
-        'classname' => 'core_grades\external\get_groups_for_selector',
-        'description' => 'Get the group/(s) for a course',
+        'classname' => 'core_group\external\get_groups_for_selector',
+        'description' => '** DEPRECATED ** Please do not call this function any more. ' .
+            'Use core_group_get_groups_for_selector instead. ' .
+            'Get the group/(s) for a course',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
@@ -1143,6 +1145,13 @@ $functions = array(
         'type' => 'read',
         'capabilities' => 'moodle/course:managegroups'
     ),
+    'core_group_get_groups_for_selector' => [
+        'classname' => 'core_group\external\get_groups_for_selector',
+        'description' => 'Get the group/(s) for a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_group_unassign_grouping' => array(
         'classname' => 'core_group_external',
         'methodname' => 'unassign_grouping',
@@ -1697,6 +1706,34 @@ $functions = array(
         'type' => 'read',
         'ajax' => true
     ),
+    'core_search_get_results' => [
+        'classname' => '\core_search\external\get_results',
+        'description' => 'Get search results.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_get_search_areas_list' => [
+        'classname' => '\core_search\external\get_search_areas_list',
+        'description' => 'Get search areas.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_view_results' => [
+        'classname' => '\core_search\external\view_results',
+        'description' => 'Trigger view search results event.',
+        'type' => 'write',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_search_get_top_results' => [
+        'classname' => '\core_search\external\get_top_results',
+        'description' => 'Get top search results.',
+        'type' => 'read',
+        'capabilities' => 'moodle/search:query',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_tag_get_tagindex' => array(
         'classname' => 'core_tag_external',
         'methodname' => 'get_tagindex',
@@ -1903,6 +1940,7 @@ $functions = array(
         'type' => 'write',
         'capabilities' => 'moodle/site:config',
         'ajax' => true,
+        'loginrequired' => false,
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
     'core_user_agree_site_policy' => array(
@@ -2857,6 +2895,14 @@ $functions = array(
         'ajax'          => true,
         'capabilities'  => 'moodle/contentbank:manageowncontent',
     ],
+    'core_contentbank_copy_content' => [
+        'classname'     => 'core_contentbank\external\copy_content',
+        'classpath'     => '',
+        'description'   => 'Copy a content in the content bank.',
+        'type'          => 'write',
+        'ajax'          => 'true',
+        'capabilities'  => 'moodle/contentbank:copycontent, moodle/contentbank:copyanycontent',
+    ],
     'core_contentbank_set_content_visibility' => [
         'classname'     => 'core_contentbank\external\set_content_visibility',
         'classpath'     => '',
@@ -2931,6 +2977,12 @@ $functions = array(
     'core_reportbuilder_retrieve_system_report' => [
         'classname'   => 'core_reportbuilder\external\systemreports\retrieve',
         'description' => 'Retrieve system report content',
+        'type'        => 'read',
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_reportbuilder_can_view_system_report' => [
+        'classname'   => 'core_reportbuilder\external\systemreports\can_view',
+        'description' => 'Determine access to a system report',
         'type'        => 'read',
         'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
@@ -3076,6 +3128,18 @@ $functions = array(
         'classname'   => 'core\external\moodlenet_auth_check',
         'description' => 'Check a user has authorized for a given MoodleNet site',
         'type'        => 'write',
+        'ajax'        => true,
+    ],
+    'core_moodlenet_get_shared_course_info' => [
+        'classname'   => 'core\external\moodlenet_get_shared_course_info',
+        'description' => 'Get information about an course being shared',
+        'type'        => 'read',
+        'ajax'        => true,
+    ],
+    'core_moodlenet_send_course' => [
+        'classname'   => 'core\external\moodlenet_send_course',
+        'description' => 'Send course to MoodleNet',
+        'type'        => 'read',
         'ajax'        => true,
     ],
 );

@@ -68,7 +68,7 @@ class mod_lti_edit_types_form extends moodleform {
      * Define this form.
      */
     public function definition() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB, $OUTPUT;
 
         $mform    =& $this->_form;
 
@@ -180,23 +180,26 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setForceLtr('lti_customparameters');
 
         if (!empty($this->_customdata->isadmin)) {
-            $options = array(
-                LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
-                LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
-                LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
-            );
-            if ($istool) {
-                // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
-                unset($options[LTI_COURSEVISIBLE_NO]);
-                $stringname = 'show_in_course_lti2';
-            } else {
-                $stringname = 'show_in_course_lti1';
+            // Only site-level preconfigured tools allow the control of course visibility in the site admin tool type form.
+            if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
+                $options = array(
+                    LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
+                    LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
+                    LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
+                );
+                if ($istool) {
+                    // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
+                    unset($options[LTI_COURSEVISIBLE_NO]);
+                    $stringname = 'show_in_course_lti2';
+                } else {
+                    $stringname = 'show_in_course_lti1';
+                }
+                $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
+                $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
+                $mform->setDefault('lti_coursevisible', '1');
             }
-            $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
-            $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
-            $mform->setDefault('lti_coursevisible', '1');
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_PRECONFIGURED);
+            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_ACTIVITYCHOOSER);
         }
         $mform->setType('lti_coursevisible', PARAM_INT);
 
@@ -241,6 +244,18 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setType('lti_secureicon', PARAM_URL);
         $mform->setAdvanced('lti_secureicon');
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
+
+        // Restrict to course categories.
+        if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
+            $mform->addElement('header', 'coursecategory', get_string('restricttocategory', 'lti'));
+            $mform->addHelpButton('coursecategory', 'restricttocategory', 'lti');
+            $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
+            // Convert array of objects to two dimentional array.
+            $tree = $this->lti_build_category_tree(array_map(fn($record) => (array)$record, $records));
+            $mform->addElement('html', $OUTPUT->render_from_template('mod_lti/categorynode', ['nodes' => $tree]));
+            $mform->addElement('hidden', 'lti_coursecategories');
+            $mform->setType('lti_coursecategories', PARAM_TEXT);
+        }
 
         if (!$istool) {
             // Display the lti advantage services.
@@ -389,5 +404,31 @@ class mod_lti_edit_types_form extends moodleform {
             }
         }
         return $errors;
+    }
+
+    /**
+     * Build category tree.
+     *
+     * @param array $elements
+     * @param int $parentid
+     * @return array category tree
+     */
+    public function lti_build_category_tree(array $elements, int $parentid = 0) : array {
+        $branch = [];
+
+        foreach ($elements as $element) {
+            if ($element['parent'] == $parentid) {
+                $children = $this->lti_build_category_tree($elements, $element['id']);
+                if ($children) {
+                    $element['nodes'] = $children;
+                    $element['haschildren'] = true;
+                } else {
+                    $element['nodes'] = null;
+                    $element['haschildren'] = false;
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
     }
 }

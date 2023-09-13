@@ -40,9 +40,8 @@ Feature: Within the grader report, test that we can collapse columns
       | assign   | C1     | a4       | Test assignment four  |
     And the following config values are set as admin:
       | showuseridentity | idnumber,email,city,country,phone1,phone2,department,institution,profile_field_enduro |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
     And I change window size to "large"
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: An admin collapses a user info column and then reloads the page to find the column still collapsed
     Given I should see "Email" in the "First name / Last name" "table_row"
@@ -55,7 +54,6 @@ Feature: Within the grader report, test that we can collapse columns
     When I reload the page
     Then I should not see "Email" in the "First name / Last name" "table_row"
     # Check that the collapsed column is only for the user that set it.
-    And I log out
     And I am on the "Course 1" "Course" page logged in as "admin"
     And I change window size to "large"
     And I navigate to "View > Grader report" in the course gradebook
@@ -81,7 +79,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "idnumber"
     And I choose "Collapse" in the open action menu
     # Opens the tertiary trigger button.
-    And I click on "Collapsed columns" "button"
+    And I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     And I wait until "Search collapsed columns" "field" exists
     # Default state contains the collapsed column names.
@@ -109,7 +107,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I choose "Collapse" in the open action menu
     And I click on user profile field menu "Phone1"
     And I choose "Collapse" in the open action menu
-    And I click on "Collapsed columns" "button"
+    And I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     When I wait until "Search collapsed columns" "field" exists
     And I click on "Test assignment one" "option_role" in the "form" "gradereport_grader > collapse search"
@@ -143,7 +141,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I should not see "Test assignment two</a>" in the "First name / Last name" "table_row"
     And I should not see "Email" in the "First name / Last name" "table_row"
     # Opens the tertiary trigger button.
-    When I click on "Collapsed columns" "button"
+    When I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     And I wait until "Search collapsed columns" "field" exists
     # Add ordering test as well.
@@ -183,12 +181,12 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Basic tests for the page.
-    When the page should meet accessibility standards
+    When I click on "Collapsed columns" "combobox"
+    And the page should meet accessibility standards
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     # Move onto general keyboard navigation testing.
-    Then I click on "Collapsed columns" "button"
-    And the focused element is "Search collapsed columns" "field"
+    Then the focused element is "Search collapsed columns" "field"
     And I press the down key
     And the focused element is "Email address" "option_role"
     And I press the end key
@@ -199,9 +197,12 @@ Feature: Within the grader report, test that we can collapse columns
     And the focused element is "Country" "option_role"
     And I press the down key
     And the focused element is "Email address" "option_role"
+    And I press the end key
+    And I press the tab key
+    And the focused element is "Select all" "checkbox"
     And I press the escape key
-    And the focused element is "Collapsed columns" "button"
-    And I click on "Collapsed columns" "button"
+    And the focused element is "Collapsed columns" "combobox"
+    And I click on "Collapsed columns" "combobox"
     Then I set the field "Search collapsed columns" to "Goodmeme"
     And I wait until "No results for \"Goodmeme\"" "text" exists
     And I press the down key
@@ -211,6 +212,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I wait until "Mobile phone" "option_role" exists
     And I press the tab key
     And the focused element is "Clear search input" "button" in the ".dropdown-menu.show" "css_element"
+    And I press the tab key
     And I press the tab key
     And I press the tab key
     And I press the tab key
@@ -247,7 +249,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Country"
     And I choose "Collapse" in the open action menu
     # Ensure we are ready to move onto the next step.
-    When I wait until "Collapsed columns 4" "button" exists
+    When I should see "Collapsed columns 4"
     # Confirm our columns are hidden.
     And I should not see "Email" in the "First name / Last name" "table_row"
     And I should not see "Phone" in the "First name / Last name" "table_row"
@@ -273,3 +275,38 @@ Feature: Within the grader report, test that we can collapse columns
     Then "Dummy User" "table_row" should appear before "Student 1" "table_row"
     And "Student 1" "table_row" should appear before "Turtle Manatee" "table_row"
     And "Turtle Manatee" "table_row" should appear before "User Example" "table_row"
+
+  Scenario: If multiple columns are collapsed, then all the user to expand all of them at once
+    # Hide a bunch of columns.
+    Given I click on user profile field menu "Email"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Phone1"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Phone2"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Country"
+    And I choose "Collapse" in the open action menu
+    # Ensure we are ready to move onto the next step.
+    And I wait until "Collapsed columns" "combobox" exists
+    When I click on "Collapsed columns" "combobox"
+    And I click on "Select all" "checkbox"
+    And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
+    # All of the previously collapsed columns should now be visible.
+    Then I should see "Email" in the "First name / Last name" "table_row"
+    And I should see "Phone" in the "First name / Last name" "table_row"
+    And I should see "Mobile phone" in the "First name / Last name" "table_row"
+    And I should see "Country" in the "First name / Last name" "table_row"
+
+  Scenario: If multiple columns are collapsed, when selecting all and then unselecting an option, the select all is then unchecked
+    # Hide some columns.
+    Given I click on user profile field menu "Email"
+    And I choose "Collapse" in the open action menu
+    And I click on user profile field menu "Country"
+    And I choose "Collapse" in the open action menu
+    # Ensure we are ready to move onto the next step.
+    And I wait until "Collapsed columns" "combobox" exists
+    When I click on "Collapsed columns" "combobox"
+    And I click on "Select all" "checkbox"
+    And I click on "Email" "option_role" in the "form" "gradereport_grader > collapse search"
+    # The select all option should now be unchecked, Checking the form or option role is iffy with behat so we use the id.
+    Then "input#check-all-input:not([checked=checked])" "css_element" should exist

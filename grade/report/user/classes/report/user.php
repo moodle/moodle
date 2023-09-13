@@ -375,51 +375,51 @@ class user extends grade_report {
         // Setting up table headers.
 
         $this->tablecolumns = ['itemname'];
-        $this->tableheaders = [\grade_helper::get_lang_string('gradeitem', 'grades')];
+        $this->tableheaders = [get_string('gradeitem', 'grades')];
 
         if ($this->showweight) {
             $this->tablecolumns[] = 'weight';
-            $this->tableheaders[] = \grade_helper::get_lang_string('weightuc', 'grades');
+            $this->tableheaders[] = get_string('weightuc', 'grades');
         }
 
         if ($this->showgrade) {
             $this->tablecolumns[] = 'grade';
-            $this->tableheaders[] = \grade_helper::get_lang_string('grade', 'grades');
+            $this->tableheaders[] = get_string('grade', 'grades');
         }
 
         if ($this->showrange) {
             $this->tablecolumns[] = 'range';
-            $this->tableheaders[] = \grade_helper::get_lang_string('range', 'grades');
+            $this->tableheaders[] = get_string('range', 'grades');
         }
 
         if ($this->showpercentage) {
             $this->tablecolumns[] = 'percentage';
-            $this->tableheaders[] = \grade_helper::get_lang_string('percentage', 'grades');
+            $this->tableheaders[] = get_string('percentage', 'grades');
         }
 
         if ($this->showlettergrade) {
             $this->tablecolumns[] = 'lettergrade';
-            $this->tableheaders[] = \grade_helper::get_lang_string('lettergrade', 'grades');
+            $this->tableheaders[] = get_string('lettergrade', 'grades');
         }
 
         if ($this->showrank) {
             $this->tablecolumns[] = 'rank';
-            $this->tableheaders[] = \grade_helper::get_lang_string('rank', 'grades');
+            $this->tableheaders[] = get_string('rank', 'grades');
         }
 
         if ($this->showaverage) {
             $this->tablecolumns[] = 'average';
-            $this->tableheaders[] = \grade_helper::get_lang_string('average', 'grades');
+            $this->tableheaders[] = get_string('average', 'grades');
         }
 
         if ($this->showfeedback) {
             $this->tablecolumns[] = 'feedback';
-            $this->tableheaders[] = \grade_helper::get_lang_string('feedback', 'grades');
+            $this->tableheaders[] = get_string('feedback', 'grades');
         }
 
         if ($this->showcontributiontocoursetotal) {
             $this->tablecolumns[] = 'contributiontocoursetotal';
-            $this->tableheaders[] = \grade_helper::get_lang_string('contributiontocoursetotal', 'grades');
+            $this->tableheaders[] = get_string('contributiontocoursetotal', 'grades');
         }
     }
 
@@ -446,7 +446,7 @@ class user extends grade_report {
         $gradeobject = $element['object'];
         $eid = $gradeobject->id;
         $element['userid'] = $this->user->id;
-        $fullname = $this->gtree->get_element_header($element, true, false, true, true, true);
+        $fullname = $this->gtree->get_element_header($element, true, false, true, false, true);
         $data = [];
         $gradeitemdata = [];
         $hidden = '';
@@ -603,6 +603,22 @@ class user extends grade_report {
                 }
 
                 if ($this->showgrade) {
+                    $gradestatus = '';
+                    // We only show status icons for a teacher if he views report as himself.
+                    if (isset($this->viewasuser) && !$this->viewasuser) {
+                        $context = [
+                            'hidden' => $gradegrade->is_hidden(),
+                            'locked' => $gradegrade->is_locked(),
+                            'overridden' => $gradegrade->is_overridden(),
+                            'excluded' => $gradegrade->is_excluded()
+                        ];
+
+                        if (in_array(true, $context)) {
+                            $context['classes'] = 'gradestatus';
+                            $gradestatus = $OUTPUT->render_from_template('core_grades/status_icons', $context);
+                        }
+                    }
+
                     $gradeitemdata['graderaw'] = null;
                     $gradeitemdata['gradehiddenbydate'] = false;
                     $gradeitemdata['gradeneedsupdate'] = $gradegrade->grade_item->needsupdate;
@@ -633,7 +649,7 @@ class user extends grade_report {
                             userdate(
                                 $gradegrade->get_datesubmitted(),
                                 get_string('strftimedatetimeshort')
-                            )
+                            ) . $gradestatus
                         );
                         $gradeitemdata['gradehiddenbydate'] = true;
                     } else if ($gradegrade->is_hidden()) {
@@ -644,7 +660,7 @@ class user extends grade_report {
                             $gradeitemdata['graderaw'] = $gradeval;
                             $data['grade']['content'] = grade_format_gradevalue($gradeval,
                                 $gradegrade->grade_item,
-                                true);
+                                true) . $gradestatus;
                         }
                     } else {
                         $gradestatusclass = '';
@@ -671,7 +687,7 @@ class user extends grade_report {
 
                         $data['grade']['class'] = "{$class} {$gradestatusclass}";
                         $data['grade']['content'] = $gradepassicon . grade_format_gradevalue($gradeval,
-                                $gradegrade->grade_item, true);
+                                $gradegrade->grade_item, true) . $gradestatus;
                         $gradeitemdata['graderaw'] = $gradeval;
                     }
                     $data['grade']['headers'] = "$headercat $headerrow grade";
@@ -814,17 +830,10 @@ class user extends grade_report {
                         );
                     }
 
-                    if ($gradegrade->overridden > 0 && ($type == 'categoryitem' || $type == 'courseitem')) {
-                        $data['feedback']['class'] = $classfeedback.' feedbacktext';
-                        $data['feedback']['content'] = get_string('overridden', 'grades').': ' .
-                            format_text($gradegrade->feedback, $gradegrade->feedbackformat,
-                                ['context' => $gradegrade->get_context()]);
-                        $gradeitemdata['feedback'] = $gradegrade->feedback;
-                    } else if (empty($gradegrade->feedback) || (!$this->canviewhidden && $gradegrade->is_hidden())) {
-                        $data['feedback']['class'] = $classfeedback.' feedbacktext';
+                    $data['feedback']['class'] = $classfeedback.' feedbacktext';
+                    if (empty($gradegrade->feedback) || (!$this->canviewhidden && $gradegrade->is_hidden())) {
                         $data['feedback']['content'] = '&nbsp;';
                     } else {
-                        $data['feedback']['class'] = $classfeedback.' feedbacktext';
                         $data['feedback']['content'] = format_text($gradegrade->feedback, $gradegrade->feedbackformat,
                             ['context' => $gradegrade->get_context()]);
                         $gradeitemdata['feedback'] = $gradegrade->feedback;
@@ -1012,7 +1021,7 @@ class user extends grade_report {
 
         $table = new \html_table();
         $table->attributes = [
-            'summary' => s(\grade_helper::get_lang_string('tablesummary', 'gradereport_user')),
+            'summary' => s(get_string('tablesummary', 'gradereport_user')),
             'class' => 'generaltable boxaligncenter user-grade',
         ];
 

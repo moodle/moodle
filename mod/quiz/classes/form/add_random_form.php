@@ -16,6 +16,7 @@
 
 namespace mod_quiz\form;
 
+use core\check\performance\debugging;
 use core_tag_tag;
 use moodleform;
 
@@ -30,10 +31,23 @@ require_once($CFG->libdir.'/formslib.php');
  * @package   mod_quiz
  * @copyright 1999 onwards Martin Dougiamas and others {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Moodle 4.3 MDL-72321. This form is new generated in a modal with mod_quiz/add_random_question_form.mustache
+ * @todo Final deprecation in Moodle 4.7 MDL-78091
  */
 class add_random_form extends moodleform {
 
+    /**
+     * Deprecated.
+     *
+     * @return void
+     * @deprecated Moodle 4.3 MDL-72321
+     * @todo Final deprecation in Moodle 4.7 MDL-78091
+     */
     protected function definition() {
+        debugging(
+            'add_random_form is deprecated. Please use mod_quiz/add_random_question_form.mustache instead.',
+            DEBUG_DEVELOPER
+        );
         global $OUTPUT, $PAGE, $CFG;
 
         $mform = $this->_form;
@@ -119,7 +133,20 @@ class add_random_form extends moodleform {
         ]);
     }
 
+    /**
+     * Deprecated.
+     *
+     * @param array $fromform
+     * @param array $files
+     * @return array
+     * @deprecated Moodle 4.3 MDL-72321
+     * @todo Final deprecation in Moodle 4.7 MDL-78091
+     */
     public function validation($fromform, $files) {
+        debugging(
+            'add_random_form is deprecated. Please use mod_quiz/add_random_question_form.mustache instead.',
+            DEBUG_DEVELOPER
+        );
         $errors = parent::validation($fromform, $files);
 
         if (!empty($fromform['newcategory']) && trim($fromform['name']) == '') {

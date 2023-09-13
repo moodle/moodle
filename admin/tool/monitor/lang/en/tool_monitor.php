@@ -68,9 +68,12 @@ $string['messagetemplate_help'] = 'A notification message is sent to subscribers
 
 * Link to the location of the event {link}
 * Link to the area monitored {modulelink}
+* Name of the course module {modulename}
 * Rule name {rulename}
 * Description {description}
-* Event {eventname}';
+* Event {eventname}
+* Full name of the course {coursefullname}
+* Short name of the course {courseshortname}';
 $string['messagetemplate_link'] = 'admin/tool/monitor/managerules';
 $string['moduleinstance'] = 'Instance';
 $string['monitorenabled'] = 'Event monitoring is currently enabled. ';

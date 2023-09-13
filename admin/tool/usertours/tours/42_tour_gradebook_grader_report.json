@@ -1,0 +1,43 @@
+{
+  "name": "tour_gradebook_tour_name,tool_usertours",
+  "description": "tour_gradebook_tour_description,tool_usertours",
+  "pathmatch": "\/grade\/report\/grader\/index.php%",
+  "enabled": "1",
+  "sortorder": "4",
+  "endtourlabel": "",
+  "configdata": "{\"placement\":\"bottom\",\"orphan\":\"0\",\"backdrop\":\"1\",\"reflex\":\"0\",\"filtervalues\":{\"accessdate\":{\"filter_accessdate\":\"tool_usertours_accountcreation\",\"filter_accessdate_range\":0,\"filter_accessdate_enabled\":\"0\"},\"category\":[],\"course\":[],\"courseformat\":[],\"role\":[],\"theme\":[],\"cssselector\":[]},\"majorupdatetime\":1683276000}",
+  "displaystepnumbers": true,
+  "version": "2023042401",
+  "steps": [
+    {
+      "title": "tour_gradebook_search_title,tool_usertours",
+      "content": "tour_gradebook_search_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": ".tertiary-navigation .user-search",
+      "sortorder": "0",
+      "configdata": "{}",
+      "files": []
+    },
+    {
+      "title": "tour_gradebook_filter_title,tool_usertours",
+      "content": "tour_gradebook_filter_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": ".tertiary-navigation .initials-selector",
+      "sortorder": "1",
+      "configdata": "{}",
+      "files": []
+    },
+    {
+      "title": "tour_gradebook_action_title,tool_usertours",
+      "content": "tour_gradebook_action_content,tool_usertours",
+      "contentformat": "1",
+      "targettype": "0",
+      "targetvalue": "tr.heading th.highlightable .action-menu.grader",
+      "sortorder": "2",
+      "configdata": "{}",
+      "files": []
+    }
+  ]
+}

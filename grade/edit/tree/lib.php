@@ -158,7 +158,7 @@ class grade_edit_tree {
             $level++;
             $this->categories[$object->id] = $strippedname;
             $category = grade_category::fetch(array('id' => $object->id));
-            $item = $category->get_grade_item();
+            $category->load_grade_item();
 
             // Add aggregation coef input if not a course item and if parent category has correct aggregation type
             // Before we print the category's row, we must find out how many rows will appear below it (for the filler cell's rowspan)
@@ -271,7 +271,7 @@ class grade_edit_tree {
             $categoryrow->id = 'grade-item-' . $eid;
             $categoryrow->attributes['class'] = $courseclass . ' category ';
             $categoryrow->attributes['data-category'] = $eid;
-            $categoryrow->attributes['data-itemid'] = $category->get_grade_item()->id;
+            $categoryrow->attributes['data-itemid'] = $category->grade_item->id;
             $categoryrow->attributes['data-hidden'] = 'false';
             foreach ($rowclasses as $class) {
                 $categoryrow->attributes['class'] .= ' ' . $class;
@@ -296,11 +296,13 @@ class grade_edit_tree {
             $parentcategories = array_merge($rowclasses, [$eid]);
             $emptyrow->attributes['class'] = 'spacer ' . implode(' ', $parentcategories);
             $emptyrow->attributes['data-hidden'] = 'false';
+            $emptyrow->attributes['aria-hidden'] = 'true';
 
             $headercell = new html_table_cell();
             $headercell->header = true;
             $headercell->scope = 'row';
             $headercell->attributes['class'] = 'cell column-rowspan rowspan';
+            $headercell->attributes['aria-hidden'] = 'true';
             $headercell->rowspan = $row_count;
             $emptyrow->cells[] = $headercell;
 
@@ -310,6 +312,7 @@ class grade_edit_tree {
             $endcell = new html_table_cell();
             $endcell->colspan = (19 - $level);
             $endcell->attributes['class'] = 'emptyrow colspan ' . $levelclass;
+            $endcell->attributes['aria-hidden'] = 'true';
 
             $returnrows[] = new html_table_row(array($endcell));
 
@@ -740,13 +743,11 @@ abstract class grade_edit_tree_column {
     public function get_category_cell($category, $levelclass, $params) {
         $cell = clone($this->categorycell);
         $cell->attributes['class'] .= ' ' . $levelclass;
-        $cell->attributes['text'] = '';
         return $cell;
     }
 
     public function get_item_cell($item, $params) {
         $cell = clone($this->itemcell);
-        $cell->attributes['text'] = '';
         if (isset($params['level'])) {
             $level = $params['level'] + (($item->itemtype == 'category' || $item->itemtype == 'course') ? 0 : 1);
             $cell->attributes['class'] .= ' level' . $level;
@@ -827,7 +828,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
             $masterlabel = $params['level'] === 1 ? get_string('all') : $params['name'];
             // Build the master checkbox.
             $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-                'id' => $togglegroup,
+                'id' => 'select_category_' . $category->id,
                 'name' => $togglegroup,
                 'value' => 1,
                 'classes' => 'itemselect ignoredirty mr-2',
@@ -1057,6 +1058,8 @@ class grade_edit_tree_column_status extends grade_edit_tree_column {
      */
     public function get_category_cell($category, $levelclass, $params) {
         global $OUTPUT, $gtree;
+
+        $category->load_grade_item();
         $categorycell = parent::get_category_cell($category, $levelclass, $params);
         $element = [];
         $element['object'] = $category;
@@ -1064,7 +1067,7 @@ class grade_edit_tree_column_status extends grade_edit_tree_column {
 
         $context = new stdClass();
         if ($category->grade_item->is_calculated()) {
-            $context->calculatedgrade = grade_helper::get_lang_string('calculatedgrade', 'grades');
+            $context->calculatedgrade = get_string('calculatedgrade', 'grades');
         } else {
             // Aggregation type.
             $aggrstrings = grade_helper::get_aggregation_strings();
@@ -1203,7 +1206,7 @@ class grade_edit_tree_column_select extends grade_edit_tree_column {
         }
         // Build the master checkbox.
         $mastercheckbox = new \core\output\checkbox_toggleall($togglegroup, true, [
-            'id' => $togglegroup,
+            'id' => 'select_category_' . $category->id,
             'name' => $togglegroup,
             'value' => 1,
             'classes' => 'itemselect ignoredirty',

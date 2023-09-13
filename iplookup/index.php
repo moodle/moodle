@@ -106,7 +106,7 @@ echo $OUTPUT->header();
 
 // The map dimension is here as big as the popup/page is, so max with and at least 360px height.
 if ($ispopup) {
-    echo '<h1 class="iplookup h2">' . htmlspecialchars($title) . '</h1>';
+    echo '<h1 class="iplookup h2">' . htmlspecialchars($title, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE) . '</h1>';
     $mapdim = 'width: '
         . (($width > 0) ? $width . 'px' : '100%')
         . '; height: '

@@ -79,6 +79,9 @@ define('AUTH_LOGIN_LOCKOUT', 4);
 /** Can not login becauser user is not authorised. */
 define('AUTH_LOGIN_UNAUTHORISED', 5);
 
+/** Can not login, failed reCaptcha challenge. */
+define('AUTH_LOGIN_FAILED_RECAPTCHA', 6);
+
 /**
  * Abstract authentication plugin.
  *
@@ -1018,12 +1021,18 @@ function login_lock_account($user) {
  * Unlock user account and reset timers.
  *
  * @param stdClass $user
+ * @param bool $notify Notify the user their account has been unlocked.
  */
-function login_unlock_account($user) {
+function login_unlock_account($user, bool $notify = false) {
+    global $SESSION;
+
     unset_user_preference('login_lockout', $user);
     unset_user_preference('login_failed_count', $user);
     unset_user_preference('login_failed_last', $user);
 
+    if ($notify) {
+        $SESSION->logininfomsg = get_string('accountunlocked', 'admin');
+    }
     // Note: do not clear the lockout secret because user might click on the link repeatedly.
 }
 
@@ -1035,6 +1044,40 @@ function signup_captcha_enabled() {
     global $CFG;
     $authplugin = get_auth_plugin($CFG->registerauth);
     return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $authplugin->is_captcha_enabled();
+}
+
+/**
+ * Returns whether the captcha element is enabled for the login form, and the admin settings fulfil its requirements.
+ * @return bool
+ */
+function login_captcha_enabled(): bool {
+    global $CFG;
+    return !empty($CFG->recaptchapublickey) && !empty($CFG->recaptchaprivatekey) && $CFG->enableloginrecaptcha == true;
+}
+
+/**
+ * Check the submitted captcha is valid or not.
+ *
+ * @param string|bool $captcha The value submitted in the login form that we are validating.
+ *                             If false is passed for the captcha, this function will always return true.
+ * @return boolean If the submitted captcha is valid.
+ */
+function validate_login_captcha(string|bool $captcha): bool {
+    global $CFG;
+    if (!empty($CFG->alternateloginurl)) {
+        // An external login page cannot use the reCaptcha.
+        return true;
+    }
+    if ($captcha === false) {
+        // The authenticate_user_login() is a core function was extended to validate captcha.
+        // For existing uses other than the login form it does not need to validate the captcha.
+        // Example: login/change_password_form.php or login/token.php.
+        return true;
+    }
+
+    require_once($CFG->libdir . '/recaptchalib_v2.php');
+    $response = recaptcha_check_response(RECAPTCHA_VERIFY_URL, $CFG->recaptchaprivatekey, getremoteaddr(), $captcha);
+    return $response['isvalid'];
 }
 
 /**

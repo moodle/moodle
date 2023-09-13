@@ -37,6 +37,7 @@ import jQuery from 'jquery';
  *
  * @constant
  * @property {String} filterContentUpdated See {@link event:filterContentUpdated}
+ * @property {String} filterContentRenderingComplete See {@link event:filterContentRenderingComplete}
  */
 export const eventTypes = {
     /**
@@ -51,6 +52,15 @@ export const eventTypes = {
      * @property {NodeElement[]} detail.nodes The list of parent nodes which were updated
      */
     filterContentUpdated: 'core_filters/contentUpdated',
+
+    /**
+     * An event triggered when filter system have done rendering the content using the filter system.
+     *
+     * @event filterContentRenderingComplete
+     * @type {CustomEvent}
+     * @property {object} detail
+     */
+    filterContentRenderingComplete: 'core_filters/contentRenderingComplete',
 };
 
 /**
@@ -67,6 +77,18 @@ export const notifyFilterContentUpdated = nodes => {
     nodes = normalistNodeList(nodes);
 
     return dispatchEvent(eventTypes.filterContentUpdated, {nodes});
+};
+
+/**
+ * Trigger an event to indicate that the filter has been processed.
+ *
+ * @method notifyFilterContentRenderingComplete
+ * @param {NodeList|Node[]} nodes List of nodes that has been modified by filter
+ * @returns {CustomEvent}
+ * @fires filterContentRenderingComplete
+ */
+export const notifyFilterContentRenderingComplete = nodes => {
+    return dispatchEvent(eventTypes.filterContentRenderingComplete, {nodes});
 };
 
 let legacyEventsRegistered = false;

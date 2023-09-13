@@ -16,10 +16,15 @@
 
 namespace qbank_statistics;
 
+defined('MOODLE_INTERNAL') || die();
+
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 use question_engine;
+
+global $CFG;
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Tests for question statistics.
@@ -30,6 +35,8 @@ use question_engine;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class helper_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * Test quizzes that contain a specified question.
@@ -100,7 +107,7 @@ class helper_test extends \advanced_testcase {
         $this->assertEquals((object) ['component' => 'mod_quiz', 'contextid' => $quiz2context->id], $q2places[0]);
 
         // Add a random question to quiz3.
-        quiz_add_random_questions($quiz3, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz3->id, 0, $cat->id, 1);
         $this->submit_quiz($quiz3, [1 => ['answer' => 'willbewrong']]);
 
         // Quiz 3 will now be in one of these arrays.

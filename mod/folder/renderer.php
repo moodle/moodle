@@ -121,7 +121,7 @@ class mod_folder_renderer extends plugin_renderer_base {
         }
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(24), $subdir['dirname'], 'moodle');
+            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
             $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
                     html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
             $filename = html_writer::tag('div', $filename, array('class' => 'fp-filename-icon'));
@@ -136,7 +136,7 @@ class mod_folder_renderer extends plugin_renderer_base {
                 $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
                 $image = html_writer::empty_tag('img', array('src' => $image));
             } else {
-                $image = $this->output->pix_icon(file_file_icon($file, 24), $filenamedisplay, 'moodle');
+                $image = $this->output->pix_icon(file_file_icon($file), $filenamedisplay, 'moodle');
             }
             $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
                     html_writer::tag('span', $filenamedisplay, array('class' => 'fp-filename'));

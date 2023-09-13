@@ -21,7 +21,7 @@ Feature: Fields locked control who is able to edit it
 
   Scenario: Editing locked and not locked custom fields
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
     And I set the following fields to these values:

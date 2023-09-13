@@ -39,17 +39,17 @@
         ]
     }
 }}
-<div
+<span
     {{#badgeelementid}}id="{{.}}"{{/badgeelementid}}
-    class="mx-2 d-flex align-items-center"
+    class="ml-1"
     {{#badgeextraattributes}} {{name}}="{{value}}" {{/badgeextraattributes}}
 >
-    <div class="activitybadge badge badge-pill {{badgestyle}}">
+    <span class="activitybadge badge badge-pill {{badgestyle}}">
         {{#badgeurl}}
             <a href="{{.}}">{{badgecontent}}</a>
         {{/badgeurl}}
         {{^badgeurl}}
             {{badgecontent}}
         {{/badgeurl}}
-    </div>
-</div>
+    </span>
+</span>

@@ -1,6 +1,12 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.3 ===
+
+* New is_csv_upload_supported() function has been created. It checks whether enrolment plugin is supported
+ in CSV course upload. Defaults to false. Override this function in your enrolment plugin if you want it to
+ be supported in CSV course upload.
+
 === 4.2 ===
 
 * New is_self_enrol_available() function has been created. Similar to can_self_enrol but without checking user capabilities.

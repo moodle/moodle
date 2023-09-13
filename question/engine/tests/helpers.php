@@ -1229,7 +1229,7 @@ abstract class qbehaviour_walkthrough_test_base extends question_testcase {
         } else if ($enabled === false) {
             $expectedattributes['disabled'] = 'disabled';
         }
-        return new question_contains_tag_with_attributes('input', $expectedattributes, $forbiddenattributes);
+        return new question_contains_tag_with_attributes('button', $expectedattributes, $forbiddenattributes);
     }
 
     /**
@@ -1389,5 +1389,37 @@ class question_test_recordset extends moodle_recordset {
 
     public function close() {
         $this->records = null;
+    }
+}
+
+/**
+ * Provide utility function for random question test
+ *
+ * @package   core_question
+ * @author     Nathan Nguyen <nathannguyen@catalyst-au.net>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class question_filter_test_helper {
+    /**
+     * Create filters base on provided values
+     *
+     * @param array $categoryids question category filter
+     * @param bool $recursive subcategories filter
+     * @param array $qtagids tags filter
+     * @return array
+     */
+    public static function create_filters(array $categoryids, bool $recursive = false, array $qtagids = []): array {
+        $filters = [
+            'category' => [
+                'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                'values' => $categoryids,
+                'filteroptions' => ['includesubcategories' => $recursive],
+            ],
+            'qtagids' => [
+                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
+                'values' => $qtagids,
+            ],
+        ];
+        return $filters;
     }
 }

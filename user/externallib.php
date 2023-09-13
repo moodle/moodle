@@ -1822,14 +1822,14 @@ class core_user_external extends \core_external\external_api {
      * @throws moodle_exception
      */
     public static function set_user_preferences($preferences) {
-        global $USER;
+        global $PAGE, $USER;
 
         $params = self::validate_parameters(self::set_user_preferences_parameters(), array('preferences' => $preferences));
         $warnings = array();
         $saved = array();
 
         $context = context_system::instance();
-        self::validate_context($context);
+        $PAGE->set_context($context);
 
         $userscache = array();
         foreach ($params['preferences'] as $pref) {
@@ -1855,7 +1855,18 @@ class core_user_external extends \core_external\external_api {
             }
 
             try {
-                if (core_user::can_edit_preference($pref['name'], $user)) {
+
+                // Support legacy preferences from the old M.util.set_user_preference API (always using the current user).
+                if (isset($USER->ajax_updatable_user_prefs[$pref['name']])) {
+                    debugging('Updating preferences via ajax_updatable_user_prefs is deprecated. ' .
+                        'Please use the "core_user/repository" module instead.', DEBUG_DEVELOPER);
+
+                    set_user_preference($pref['name'], $pref['value']);
+                    $saved[] = array(
+                        'name' => $pref['name'],
+                        'userid' => $USER->id,
+                    );
+                } else if (core_user::can_edit_preference($pref['name'], $user)) {
                     $value = core_user::clean_preference($pref['value'], $pref['name']);
                     set_user_preference($pref['name'], $value, $user->id);
                     $saved[] = array(

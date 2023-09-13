@@ -77,6 +77,13 @@ class dynamic_form extends external_api {
 
         // Render actual form.
 
+        if ($form->no_submit_button_pressed()) {
+            // If form has not been submitted, we have to recreate the form for being able to properly handle non-submit action
+            // like "repeat elements" to include additional JS.
+            /** @var \core_form\dynamic_form $form */
+            $form = new $formclass(null, null, 'post', '', [], true, $formdata, true);
+            $form->set_data_for_dynamic_submission();
+        }
         // Hack alert: Forcing bootstrap_renderer to initiate moodle page.
         $OUTPUT->header();
 

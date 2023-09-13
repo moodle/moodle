@@ -577,7 +577,6 @@ $string['nooutcome'] = 'No outcome';
 $string['nooutcomes'] = 'Outcome items must be linked to a course outcome, but there are no outcomes for this course. Would you like to add one?';
 $string['nopermissiontoresetweights'] = 'No permission to reset the weights';
 $string['nopublish'] = 'Do not publish';
-$string['noresultsfor'] = 'No results for "{$a}"';
 $string['noreports'] = 'You are not enrolled in, nor teaching any courses on this site.';
 $string['norolesdefined'] = 'No roles defined in Administration > Grades > General settings > Graded roles';
 $string['noscales'] = 'Outcomes must be linked to a course scale or global scale, but there are none. Would you like to add one?';
@@ -734,8 +733,6 @@ $string['savepreferences'] = 'Save preferences';
 $string['scaleconfirmdelete'] = 'Are you sure you wish to delete the scale "{$a}"?';
 $string['scaledpct'] = 'Scaled %';
 $string['searchcollapsedcolumns'] = 'Search collapsed columns';
-$string['searchgroups'] = 'Search groups';
-$string['searchusers'] = 'Search users';
 $string['seeallcoursegrades'] = 'See all course grades';
 $string['select'] = 'Select {$a}';
 $string['selectalloroneuser'] = 'Select all or one user';
@@ -857,7 +854,6 @@ $string['userfields_show_help'] = 'Show additional user fields like email addres
 $string['usergrade'] = 'User {$a->fullname} ({$a->useridnumber}) on item {$a->gradeidnumber}';
 $string['userid'] = 'User ID';
 $string['useridnumberwarning'] = 'Users without an ID number are excluded from the export as they cannot be imported';
-$string['usermatchedon'] = 'This user matches the search via the following field';
 $string['usermappingerror'] = 'User mapping error: Could not find user with {$a->field} of "{$a->value}".';
 $string['usermappingerrormultipleusersfound'] = 'User mapping error: Multiple users found with {$a->field} of "{$a->value}". Please use a more unique mapping field.';
 $string['usermappingerrorusernotfound'] = 'User mapping error. Could not find user.';
@@ -893,6 +889,7 @@ $string['yes'] = 'Yes';
 $string['yourgrade'] = 'Your grade';
 
 $string['aria-toggledropdown'] = 'Toggle the following dropdown';
+$string['aria:dropdowngrades'] = 'Grade items found';
 
 // Deprecated since Moodle 4.0.
 $string['navmethod'] = 'Navigation method';

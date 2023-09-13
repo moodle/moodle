@@ -22,6 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cachedef_serverversions'] = 'Matrix server version information for running servers';
 $string['matrixuserid'] = 'Matrix user ID';
 $string['matrixuserid_desc'] = 'The user ID to be used for Matrix';
 $string['matrixhomeserverurl'] = 'Home server URL';

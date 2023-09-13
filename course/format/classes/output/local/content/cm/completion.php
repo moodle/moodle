@@ -17,14 +17,13 @@
 namespace core_courseformat\output\local\content\cm;
 
 use cm_info;
+use core_course\output\activity_completion;
 use section_info;
 use renderable;
 use stdClass;
-use core\activity_dates;
 use core\output\named_templatable;
 use core\output\local\dropdown\dialog as dropdown_dialog;
 use core_completion\cm_completion_details;
-use core_course\output\activity_information;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
 
@@ -67,31 +66,20 @@ class completion implements named_templatable, renderable {
         $showcompletionconditions = $course->showcompletionconditions == COMPLETION_SHOW_CONDITIONS;
         $completiondetails = cm_completion_details::get_instance($this->mod, $USER->id, $showcompletionconditions);
 
-        $activitydates = [];
-        if ($course->showactivitydates) {
-            $activitydates = activity_dates::get_dates_for_module($this->mod, $USER->id);
-        }
-
-        // There are activity dates to be shown; or
-        // Completion info needs to be displayed
-        // * The activity tracks completion; AND
-        // * The showcompletionconditions setting is enabled OR an activity that tracks manual
-        // completion needs the manual completion button to be displayed on the course homepage.
-        $showcompletioninfo = $completiondetails->has_completion() && ($showcompletionconditions ||
-            (!$completiondetails->is_automatic() && $completiondetails->show_manual_completion()));
-        if (!$showcompletioninfo && empty($activitydates)) {
+        $showcompletioninfo = $completiondetails->has_completion() &&
+            ($showcompletionconditions || $completiondetails->show_manual_completion());
+        if (!$showcompletioninfo) {
             return null;
         }
 
-        $activityinfodata = (object) [ 'hasdates' => false, 'hascompletion' => false ];
-        $activityinfo = new activity_information($this->mod, $completiondetails, $activitydates);
-        $activityinfodata = $activityinfo->export_for_template($output);
+        $completion = new activity_completion($this->mod, $completiondetails);
+        $completiondata = $completion->export_for_template($output);
 
-        if ($activityinfodata->isautomatic || ($activityinfodata->ismanual && !$activityinfodata->istrackeduser)) {
-            $activityinfodata->completiondialog = $this->get_completion_dialog($output, $activityinfodata);
+        if ($completiondata->isautomatic || ($completiondata->ismanual && !$completiondata->istrackeduser)) {
+            $completiondata->completiondialog = $this->get_completion_dialog($output, $completiondata);
         }
 
-        return $activityinfodata;
+        return $completiondata;
     }
 
     /**
@@ -102,16 +90,30 @@ class completion implements named_templatable, renderable {
      * @return array the completion dialog exported for template
      */
     private function get_completion_dialog(\renderer_base $output, stdClass $completioninfo): array {
+        global $PAGE;
+
+        $editurl = new \moodle_url(
+            '/course/modedit.php',
+            ['update' => $this->mod->id, 'showonly' => 'activitycompletionheader']
+        );
+        $completioninfo->editurl = $editurl->out(false);
+        $completioninfo->editing = $PAGE->user_is_editing();
+        $completioninfo->hasconditions = $completioninfo->ismanual || count($completioninfo->completiondetails) > 0;
+        $dialogcontent = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
+
+        $buttoncontent = get_string('completionmenuitem', 'completion');
+        $buttonclass = '';
         if ($completioninfo->istrackeduser) {
             $buttoncontent = get_string('todo', 'completion');
-        } else {
-            $buttoncontent = get_string('completionmenuitem', 'completion');
+            if ($completioninfo->overallcomplete) {
+                $buttoncontent = $output->pix_icon('i/checked', '') . " " . get_string('completion_manual:done', 'core_course');
+                $buttonclass = 'btn-success';
+            }
         }
-        $content = $output->render_from_template('core_courseformat/local/content/cm/completion_dialog', $completioninfo);
 
-        $completiondialog = new dropdown_dialog($buttoncontent, $content, [
+        $completiondialog = new dropdown_dialog($buttoncontent, $dialogcontent, [
             'classes' => 'completion-dropdown',
-            'buttonclasses' => 'btn btn-sm btn-outline-secondary dropdown-toggle',
+            'buttonclasses' => 'btn btn-sm dropdown-toggle icon-no-margin ' . $buttonclass,
             'dropdownposition' => dropdown_dialog::POSITION['end'],
         ]);
 

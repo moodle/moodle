@@ -21,6 +21,7 @@ use core\http_client;
 use core\moodlenet\activity_sender;
 use core\moodlenet\moodlenet_client;
 use core\moodlenet\utilities;
+use core\moodlenet\share_recorder;
 use core\oauth2\api;
 use core_external\external_api;
 use core_external\external_function_parameters;
@@ -114,16 +115,27 @@ class moodlenet_send_activity extends external_api {
 
         // Share activity.
         try {
+            // Record activity share progress.
+            $shareid = share_recorder::insert_share_progress(share_recorder::TYPE_ACTIVITY, $USER->id, $course->id, $cmid);
+
             $moodlenetclient = new moodlenet_client($client, $oauthclient);
             $activitysender = new activity_sender($cmid, $USER->id, $moodlenetclient, $oauthclient, $shareformat);
-            $result = $activitysender->share_activity();
+            $result = $activitysender->share_resource();
             if (empty($result['drafturl'])) {
+
+                share_recorder::update_share_progress($shareid, share_recorder::STATUS_ERROR);
+
                 return self::return_errors($result['responsecode'], 'errorsendingactivity',
                     get_string('moodlenet:cannotconnecttoserver', 'moodle'));
             }
         } catch (\moodle_exception $e) {
+
+            share_recorder::update_share_progress($shareid, share_recorder::STATUS_ERROR);
+
             return self::return_errors(0, 'errorsendingactivity', $e->getMessage());
         }
+
+        share_recorder::update_share_progress($shareid, share_recorder::STATUS_SENT, $result['drafturl']);
 
         return [
             'status' => true,

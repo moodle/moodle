@@ -31,13 +31,28 @@ class action_url_addons extends \mod_bigbluebuttonbn\local\extension\action_url_
      * @param string $action
      * @param array $data
      * @param array $metadata
+     * @param int|null $instanceid
      * @return array associative array with the additional data and metadata (indexed by 'data' and
      * 'metadata' keys)
      */
-    public function execute(string $action = '', array $data = [], array $metadata = []): array {
+    public function execute(
+        string $action = '',
+        array $data = [],
+        array $metadata = [],
+        ?int $instanceid = null
+    ): array {
+        if ($action == 'create' || $action == 'join') {
+            global $DB;
+            $record = $DB->get_record('bbbext_simple', [
+                'bigbluebuttonbnid' => $instanceid,
+            ]);
+            if ($record) {
+                $metadata['newfield'] = $record->newfield ?? '';
+            }
+        }
         return [
-            'data' => $action == 'create' ? [] : ['a', 'b'],
-            'metadata' => in_array('Test', $metadata) ? ['c', 'd'] : []
+            'data' => $data,
+            'metadata' => $metadata,
         ];
     }
 }

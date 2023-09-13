@@ -570,12 +570,14 @@ class quiz_settings {
                 continue;
             }
             if ($questiondata->qtype === 'random' && $includepotential) {
-                if (!isset($qcategories[$questiondata->category])) {
-                    $qcategories[$questiondata->category] = false;
-                }
-                if (!empty($questiondata->filtercondition)) {
-                    $filtercondition = json_decode($questiondata->filtercondition);
-                    $qcategories[$questiondata->category] = !empty($filtercondition->includingsubcategories);
+                $filtercondition = $questiondata->filtercondition;
+                if (!empty($filtercondition)) {
+                    $filter = $filtercondition['filter'];
+                    if (isset($filter['category'])) {
+                        foreach ($filter['category']['values'] as $catid) {
+                            $qcategories[$catid] = $filter['category']['filteroptions']['includesubcategories'];
+                        }
+                    }
                 }
             } else {
                 if (!in_array($questiondata->qtype, $questiontypes)) {

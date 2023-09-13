@@ -152,17 +152,6 @@ class cm_completion_details {
 
                 $details = $this->sort_completion_details($details);
             }
-        } else {
-            if (function_exists($this->cminfo->modname . '_get_completion_state')) {
-                // If the plugin does not have the custom completion implementation but implements the get_completion_state() callback,
-                // fallback to displaying the overall completion state of the activity.
-                $details = [
-                    'plugincompletionstate' => (object)[
-                        'status' => $this->get_overall_completion(),
-                        'description' => get_string('completeactivity', 'completion')
-                    ]
-                ];
-            }
         }
 
         return $details;

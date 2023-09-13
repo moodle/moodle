@@ -537,105 +537,59 @@ function upgrade_delete_orphaned_file_records() {
 function upgrade_core_licenses() {
     global $CFG, $DB;
 
-    $corelicenses = [];
+    $expectedlicenses = json_decode(file_get_contents($CFG->dirroot . '/lib/licenses.json'))->licenses;
+    if (!is_array($expectedlicenses)) {
+        $expectedlicenses = [];
+    }
+    $corelicenses = $DB->get_records('license', ['custom' => 0]);
 
-    $license = new stdClass();
-    $license->shortname = 'unknown';
-    $license->fullname = 'Licence not specified';
-    $license->source = '';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
+    // Disable core licenses which are no longer current.
+    $todisable = array_diff(
+        array_map(fn ($license) => $license->shortname, $corelicenses),
+        array_map(fn ($license) => $license->shortname, $expectedlicenses),
+    );
 
-    $license = new stdClass();
-    $license->shortname = 'allrightsreserved';
-    $license->fullname = 'All rights reserved';
-    $license->source = 'https://en.wikipedia.org/wiki/All_rights_reserved';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
+    // Disable any old *core* license that does not exist in the licenses.json file.
+    if (count($todisable)) {
+        [$where, $params] = $DB->get_in_or_equal($todisable, SQL_PARAMS_NAMED);
+        $DB->set_field_select(
+            'license',
+            'enabled',
+            0,
+            "shortname {$where}",
+            $params
+        );
+    }
 
-    $license = new stdClass();
-    $license->shortname = 'public';
-    $license->fullname = 'Public domain';
-    $license->source = 'https://en.wikipedia.org/wiki/Public_domain';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc';
-    $license->fullname = 'Creative Commons';
-    $license->source = 'https://creativecommons.org/licenses/by/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc-nd';
-    $license->fullname = 'Creative Commons - NoDerivs';
-    $license->source = 'https://creativecommons.org/licenses/by-nd/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc-nc-nd';
-    $license->fullname = 'Creative Commons - No Commercial NoDerivs';
-    $license->source = 'https://creativecommons.org/licenses/by-nc-nd/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc-nc';
-    $license->fullname = 'Creative Commons - No Commercial';
-    $license->source = 'https://creativecommons.org/licenses/by-nc/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc-nc-sa';
-    $license->fullname = 'Creative Commons - No Commercial ShareAlike';
-    $license->source = 'https://creativecommons.org/licenses/by-nc-sa/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    $license = new stdClass();
-    $license->shortname = 'cc-sa';
-    $license->fullname = 'Creative Commons - ShareAlike';
-    $license->source = 'https://creativecommons.org/licenses/by-sa/3.0/';
-    $license->enabled = 1;
-    $license->version = '2010033100';
-    $license->custom = 0;
-    $corelicenses[] = $license;
-
-    foreach ($corelicenses as $corelicense) {
-        // Check for current license to maintain idempotence.
-        $currentlicense = $DB->get_record('license', ['shortname' => $corelicense->shortname]);
-        if (!empty($currentlicense)) {
-            $corelicense->id = $currentlicense->id;
-            // Remember if the license was enabled before upgrade.
-            $corelicense->enabled = $currentlicense->enabled;
-            $DB->update_record('license', $corelicense);
-        } else if (!isset($CFG->upgraderunning) || during_initial_install()) {
-            // Only install missing core licenses if not upgrading or during initial install.
-            $DB->insert_record('license', $corelicense);
+    // Add any new licenses.
+    foreach ($expectedlicenses as $expectedlicense) {
+        if (!$expectedlicense->enabled) {
+            // Skip any license which is no longer enabled.
+            continue;
+        }
+        if (!$DB->record_exists('license', ['shortname' => $expectedlicense->shortname])) {
+            // If the license replaces an older one, check whether this old license was enabled or not.
+            $isreplacement = false;
+            foreach (array_reverse($expectedlicense->replaces ?? []) as $item) {
+                foreach ($corelicenses as $corelicense) {
+                    if ($corelicense->shortname === $item) {
+                        $expectedlicense->enabled = $corelicense->enabled;
+                        // Also, keep the old sort order.
+                        $expectedlicense->sortorder = $corelicense->sortorder * 100;
+                        $isreplacement = true;
+                        break 2;
+                    }
+                }
+            }
+            if (!isset($CFG->upgraderunning) || during_initial_install() || $isreplacement) {
+                // Only install missing core licenses if not upgrading or during initial installation.
+                $DB->insert_record('license', $expectedlicense);
+            }
         }
     }
 
-    // Add sortorder to all licenses.
-    $licenses = $DB->get_records('license');
+    // Add/renumber sortorder to all licenses.
+    $licenses = $DB->get_records('license', null, 'sortorder');
     $sortorder = 1;
     foreach ($licenses as $license) {
         $license->sortorder = $sortorder++;

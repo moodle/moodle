@@ -36,6 +36,15 @@ trait communication_test_helper_trait {
     }
 
     /**
+     * Disable configs for communication subsystem.
+     *
+     * @return void
+     */
+    protected function disable_communication_configs(): void {
+        set_config('enablecommunicationsubsystem', 0);
+    }
+
+    /**
      * Get or create course if it does not exist
      *
      * @param string $roomname The room name for the communication api
@@ -78,5 +87,32 @@ trait communication_test_helper_trait {
         ];
 
         return $this->getDataGenerator()->create_user($records);
+    }
+
+
+    /**
+     * Create a stored_file in a draft file area from a fixture file.
+     *
+     * @param string $filename The file name within the communication/tests/fixtures folder.
+     * @param string $storedname The name to use in the database.
+     * @return \stored_file
+     */
+    protected function create_communication_file(
+        string $filename,
+        string $storedname,
+    ): \stored_file {
+        global $CFG;
+
+        $fs = get_file_storage();
+
+        $itemid = file_get_unused_draft_itemid();
+        return $fs->create_file_from_pathname((object) [
+            'contextid' => \context_system::instance()->id,
+            'component' => 'user',
+            'filearea' => 'draftfile',
+            'itemid' => $itemid,
+            'filepath' => '/',
+            'filename' => $storedname,
+        ], "{$CFG->dirroot}/communication/tests/fixtures/{$filename}");
     }
 }

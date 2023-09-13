@@ -3,16 +3,39 @@ Information provided here is intended especially for developers.
 
 === 4.3 ===
 
-* New external method `core_reportbuilder_retrieve_system_report` for retrieving system report data
+* New external methods for retrieving system report data:
+  - `core_reportbuilder_can_view_system_report`
+  - `core_reportbuilder_retrieve_system_report`
 * New `get_tag_joins_for_entity` helper in base entity class, for returning SQL joins necessary for retrieving tags
+* New methods `[set|has]_table_join_alias` in the base entity class, to allow entities to reduce joins on the same table
 * New `set_is_deprecated` method in base `local\report\[column|filter]` classes to deprecate report entity columns and filters
 * The following report entity columns have been deprecated, with replacements as follows:
+  - `comment:context` => `context:name`
+  - `comment:contexturl` => `context:link`
   - `enrolment:method` => `enrol:name` (plus enrolment formatter `enrolment_name` method)
   - 'enrolment:role` => `role:name`
+  - `file:context` => `context:name`
+  - `file:contexturl` => `context:link`
+  - `instance:context` (tag) => `context:name`
+  - `instance:contexturl` (tag) => `context:link`
 * The following report entity filters/conditions have been deprecated, with replacements as follows:
   - `enrolment:method` => `enrol:plugin`
+* The `local/audience/form` template outer region has renamed some of it's `data-` attributes (relevant for any themes that
+  have overridden this template):
+  - `data-instanceid` => `data-audience-id`
+  - `data-title` => `data-audience-title`
+* The `add_base_condition_sql` method of the base report class will now ignore empty where clauses
+* If a non-default column is specified in a datasource `get_default_column_sorting` method, a coding exception will be thrown
 * Trying to add/annotate duplicate entity names to a report will now throw a coding exception
 * The `get_default_entity_name` method of the base entity class is now private, and shouldn't be overridden in extending classes
+* The report helper methods `add_report_[condition|filter]` now throw an exception when trying to add duplicate conditions or
+  filters to a report
+* Two new methods:
+  - `get_default_no_results_notice` and
+  - `set_default_no_results_notice`
+  have been added to core_reportbuilder\local\report\base, allowing report implementations to control what lang string is used in
+  the notice when the report has no results. Reports can either set a preferred lang string, or pass null if the notice isn't
+  required in that particular report.
 
 === 4.2 ===
 

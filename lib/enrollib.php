@@ -2674,6 +2674,30 @@ abstract class enrol_plugin {
     }
 
     /**
+     * Add new instance of enrol plugin with custom settings,
+     * called when adding new instance manually or when adding new course.
+     * Used for example on course upload.
+     *
+     * Not all plugins support this.
+     *
+     * @param stdClass $course Course object
+     * @param array|null $fields instance fields
+     * @return int|null id of new instance or null if not supported
+     */
+    public function add_custom_instance(stdClass $course, ?array $fields = null): ?int {
+        return null;
+    }
+
+    /**
+     * Check if enrolment plugin is supported in csv course upload.
+     *
+     * @return bool
+     */
+    public function is_csv_upload_supported(): bool {
+        return false;
+    }
+
+    /**
      * Update instance status
      *
      * Override when plugin needs to do some action when enabled or disabled.
@@ -3460,7 +3484,14 @@ abstract class enrol_plugin {
      * @return array Errors
      */
     public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null) : array {
-        return [];
+        $errors = [];
+        if (!$this->is_csv_upload_supported()) {
+            $errors['errorunsupportedmethod'] =
+                new lang_string('errorunsupportedmethod', 'tool_uploadcourse',
+                    get_class($this));
+
+        }
+        return $errors;
     }
 
     /**

@@ -18,9 +18,7 @@
 
     Context variables required for this template:
     * generalnavselector - The data object containing the required properties to render the general navigation selector.
-    * addgradeitembutton - The data object containing the required properties to render the 'add grade item' button.
-    * addoutcomeitembutton - The data object containing the required properties to render the 'add outcome item' button.
-    * addcategorybutton - The data object containing the required properties to render the 'add category' button.
+    * addmenu - The data object containing the required properties to render the 'Add' action menu.
 
     Example context (json):
     {
@@ -62,39 +60,17 @@
                 }
             ]
         },
-        "addgradeitembutton": {
-            "id": "single_button12345",
-            "method" : "get",
-            "classes": "singlebutton",
-            "formid": null,
-            "url" : "#",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Add grade item",
-            "attributes": []
-        },
-        "addoutcomeitembutton": {
-            "id": "single_button13245",
-            "method" : "get",
-            "classes": "singlebutton",
-            "formid": null,
-            "url" : "#",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Add outcome item",
-            "attributes": []
-        },
-        "addcategorybutton": {
-            "id": "single_button14325",
-            "method" : "get",
-            "classes": "singlebutton",
-            "formid": null,
-            "url" : "#",
-            "primary" : false,
-            "tooltip" : null,
-            "label" : "Add category",
-            "attributes": []
-        }
+        "addmenu": [
+            {
+                "classes": "",
+                "primary": {
+                    "items": [{"rawhtml": "<p>Item in primary menu</p>"}]
+                },
+                "secondary": {
+                    "items": [{"rawhtml": "<p>Item in secondary menu</p>"}]
+                }
+            }
+        ]
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
@@ -105,20 +81,12 @@
             </div>
             <div class="navitem-divider"></div>
         {{/generalnavselector}}
-        {{#addgradeitembutton}}
-            <div class="navitem">
-                {{>core/single_button}}
-            </div>
-        {{/addgradeitembutton}}
-        {{#addoutcomeitembutton}}
-            <div class="navitem">
-                {{>core/single_button}}
-            </div>
-        {{/addoutcomeitembutton}}
-        {{#addcategorybutton}}
-            <div class="navitem">
-                {{>core/single_button}}
-            </div>
-        {{/addcategorybutton}}
+        <div class="navitem-divider ml-auto"></div>
+        <div class="navitem">
+            {{#addmenu}}
+                {{>core/action_menu}}
+            {{/addmenu}}
+        </div>
+        <div class="navitem-divider"></div>
     </div>
 </div>

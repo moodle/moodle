@@ -48,8 +48,7 @@ Feature: View gradebook when single item scales are used
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I set the field "Grade" to "A"
     And I press "Save changes"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Course grade settings" in the course gradebook
+    When I am on the "Course 1" "grades > course grade settings" page
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
@@ -103,10 +102,10 @@ Feature: View gradebook when single item scales are used
     And I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And the following should exist in the "user-grade" table:
-      | Grade item                                       | Grade          | Range       | Contribution to course total |
-      | Test assignment one                              | Ace!           | Ace!–Ace!   | <contrib1>                   |
-      | Sub category (<aggregation>) total<aggregation>. | <cattotal1>    | 0–100       | -                            |
-      | Course total<aggregation>.                       | <coursetotal1> | 0–100       | -                            |
+      | Grade item                         | Grade          | Range       | Contribution to course total |
+      | Test assignment one                | Ace!           | Ace!–Ace!   | <contrib1>                   |
+      | Sub category (<aggregation>) total | <cattotal1>    | 0–100       | -                            |
+      | Course total                       | <coursetotal1> | 0–100       | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
     And the following should exist in the "grade_edit_tree_table" table:
       | Name                                             | Max grade |

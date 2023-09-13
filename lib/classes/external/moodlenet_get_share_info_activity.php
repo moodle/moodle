@@ -80,19 +80,11 @@ class moodlenet_get_share_info_activity extends external_api {
         }
 
         $warnings = [];
-        $supporturl = '';
+        $supporturl = utilities::get_support_url();
         $issuerid = get_config('moodlenet', 'oauthservice');
 
         if (empty($issuerid)) {
             return self::return_errors(0, 'errorissuernotset', get_string('moodlenet:issuerisnotset', 'moodle'));
-        }
-
-        if ($CFG->supportavailability && $CFG->supportavailability != CONTACT_SUPPORT_DISABLED) {
-            if (!empty($CFG->supportpage)) {
-                $supporturl = $CFG->supportpage;
-            } else {
-                $supporturl = $CFG->wwwroot . '/user/contactsitesupport.php';
-            }
         }
 
         // Get the issuer.

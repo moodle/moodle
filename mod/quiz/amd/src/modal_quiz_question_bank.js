@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import Modal from 'core/modal';
+import Modal from './add_question_modal';
 import * as Fragment from 'core/fragment';
 import * as FormChangeChecker from 'core_form/changechecker';
 import * as ModalEvents from 'core/modal_events';
@@ -31,66 +31,37 @@ const SELECTORS = {
     ADD_TO_QUIZ_CONTAINER: 'td.addtoquizaction',
     ANCHOR: 'a[href]',
     PREVIEW_CONTAINER: 'td.previewaction',
-    SEARCH_OPTIONS: '#advancedsearch',
-    DISPLAY_OPTIONS: '#displayoptions',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
+    SORTERS: '.sorters',
 };
 
 export default class ModalQuizQuestionBank extends Modal {
     static TYPE = 'mod_quiz-quiz-question-bank';
 
     /**
-     * Constructor for the Modal.
+     * Create the question bank modal.
      *
-     * @param {object} root The root jQuery element for the modal
+     * @param {Number} contextId Current context id.
      */
-    constructor(root) {
-        super(root);
+    static init(contextId) {
+        const selector = '.menu [data-action="questionbank"]';
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest(selector);
+            if (!trigger) {
+                return;
+            }
+            e.preventDefault();
 
-        this.contextId = null;
-        this.addOnPageId = null;
-    }
-
-    /**
-     * Save the Moodle context id that the question bank is being
-     * rendered in.
-     *
-     * @method setContextId
-     * @param {int} id
-     */
-    setContextId(id) {
-        this.contextId = id;
-    }
-
-    /**
-     * Retrieve the saved Moodle context id.
-     *
-     * @method getContextId
-     * @return {int}
-     */
-    getContextId() {
-        return this.contextId;
-    }
-
-    /**
-     * Set the id of the page that the question should be added to
-     * when the user clicks the add to quiz link.
-     *
-     * @method setAddOnPageId
-     * @param {int} id
-     */
-    setAddOnPageId(id) {
-        this.addOnPageId = id;
-    }
-
-    /**
-     * Returns the saved page id for the question to be added it.
-     *
-     * @method getAddOnPageId
-     * @return {int}
-     */
-    getAddOnPageId() {
-        return this.addOnPageId;
+            ModalQuizQuestionBank.create({
+                contextId,
+                title: trigger.dataset.header,
+                addOnPage: trigger.dataset.addonpage,
+                templateContext: {
+                    hidden: true,
+                },
+                large: true,
+            });
+        });
     }
 
     /**
@@ -179,59 +150,6 @@ export default class ModalQuizQuestionBank extends Modal {
     }
 
     /**
-     * Reload the modal body with the new display options the user has selected.
-     *
-     * A query string is built using the form elements to be used to generate the
-     * new body content.
-     *
-     * @method handleDisplayOptionFormEvent
-     * @param {event} e A JavaScript event
-     */
-    handleDisplayOptionFormEvent(e) {
-        // Stop propagation to prevent other wild event handlers
-        // from submitting the form on change.
-        e.stopPropagation();
-        e.preventDefault();
-
-        const form = $(e.target).closest(SELECTORS.DISPLAY_OPTIONS);
-        const queryString = '?' + form.serialize();
-        this.reloadBodyContent(queryString);
-    }
-
-    /**
-     * Listen for changes to the display options form.
-     *
-     * This handles the user changing:
-     *      - The quiz category select box
-     *      - The tags to filter by
-     *      - Show/hide questions from sub categories
-     *      - Show/hide old questions
-     *
-     * @method registerDisplayOptionListeners
-     */
-    registerDisplayOptionListeners() {
-        // Listen for changes to the display options form.
-        this.getModal().on('change', SELECTORS.DISPLAY_OPTIONS, (e) => {
-            // Get the element that was changed.
-            const modifiedElement = $(e.target);
-            if (modifiedElement.attr('aria-autocomplete')) {
-                // If the element that was change is the autocomplete
-                // input then we should ignore it because that is for
-                // display purposes only.
-                return;
-            }
-
-            this.handleDisplayOptionFormEvent(e);
-        });
-
-        // Listen for the display options form submission because the tags
-        // filter will submit the form when it is changed.
-        this.getModal().on('submit', SELECTORS.DISPLAY_OPTIONS, (e) => {
-            this.handleDisplayOptionFormEvent(e);
-        });
-    }
-
-    /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
@@ -239,9 +157,6 @@ export default class ModalQuizQuestionBank extends Modal {
     registerEventListeners() {
         // Apply parent event listeners.
         super.registerEventListeners(this);
-
-        // Set up the event handlers for all of the display options.
-        this.registerDisplayOptionListeners();
 
         this.getModal().on('submit', SELECTORS.ADD_QUESTIONS_FORM, (e) => {
             // If the user clicks on the "Add selected questions to the quiz" button to add some questions to the page
@@ -270,9 +185,8 @@ export default class ModalQuizQuestionBank extends Modal {
                 return;
             }
 
-            // Click on expand/collaspse search-options. Has its own handler.
-            // We should not interfere.
-            if (anchorElement.closest(SELECTORS.SEARCH_OPTIONS).length) {
+            // Sorting links have their own handler.
+            if (anchorElement.closest(SELECTORS.SORTERS).length) {
                 return;
             }
 

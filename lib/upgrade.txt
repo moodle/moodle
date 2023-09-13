@@ -16,6 +16,12 @@ information provided here is intended especially for developers.
   example, of `\moodle_url` instances)
 * The badges_get_oauth2_service_options() method has been deprecated, because it's not required anymore. It should no longer
   be used.
+* The following class constants are deprecated, as Sodium is now required and we no longer support the OpenSSL fallback except
+  when decrypting existing content for backwards compatibility:
+  - `\core\encryption::METHOD_OPENSSL`
+  - `\core\encryption::OPENSSL_CIPHER`
+* The `\core\encryption::is_sodium_installed` method is deprecated, as Sodium is now a requirement
+* The `drop_plugin_tables` method now returns immediately after deleting tables defined by plugin XMLDB file
 * Support for the following phpunit coverage info properties, deprecated since 3.11, has been removed:
   - `whitelistfolders`
   - `whitelistfiles`
@@ -42,6 +48,11 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* Allowed database identifier lengths have been raised:
+  - From 28 characters to 53 for table names (xmldb_table::NAME_MAX_LENGTH).
+  - From 30 characters to 63 for column names (xmldb_field::NAME_MAX_LENGTH).
+  - Maximum length for table prefixes has been set to 10 characters (xmldb_table::PREFIX_MAX_LENGTH). And it's enforced
+    by environmental checks.
 * New scheduled tasks show_started_courses_task and hide_ended_courses_task that updates the course visibility when the current
   day matches course start date/end date. They are disabled by default. Once they are enabled, only courses with start/end dates
   near the past 24 hours will be checked. The visibility of these courses will only changed when their start/end dates are higher
@@ -53,7 +64,111 @@ information provided here is intended especially for developers.
   the page displays a heading for the activity (usually a h2 heading containing the activity name).
 * New method moodleform::filter_shown_headers() is created to show some expanded headers only and hide the rest.
 * count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
-* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writter.
+* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writer.
+* New events \core\event\qbank_plugin_enabled and \core\event\qbank_plugin_disabled are triggered when a qbank plugin is enabled or
+  disabled respectively, with the plugin's frankenstyle name. Any plugins that need to perform an action in response to a qbank
+  plugin being enabled or disabled should observe these events.
+* Code calling to qbank plugins was moved from question_delete_question in questionlib.php into the plugins themselves. Any plugins
+  that need to perform processing when a question is deleted should observe the \core\event\question_deleted event instead.
+* The external function core_grades_get_groups_for_selector is now relocated.
+  Please use it at core_group_get_groups_for_selector instead.
+* The M.util.show_confirm_dialog function has been rewritten as an ESM to use the core/notification module instead.
+  See MDL-77174 for further information.
+* The moodle-core-notification-confirm module, found under the M.core.confirm namespace, has been deprecated.
+  Any code using it should be rewritten as an ESM and use the core/notification module instead.
+  See MDL-77174 for further information.
+* New set of output generic components. Check the component library for more information:
+  - core\output\local\action_menu\subpanel to add subpanels to action menus.
+  - core\output\local\dropdown\dialog to display HTML inside a dropdown element.
+  - core\output\local\dropdown\status to render a user choice into a dropdown.
+  - core\output\choicelist class to render a list of user choices. It combines with dropdown status and action menu subpanels.
+* The behat step I choose "WHATEVER" in the open action menu is now compatible with action menus subpanels
+  using the ">" symbol to suparate the item link text and subitem one. For example:
+  - I choose "Group mode > Visible groups" in the open action menu
+* addHelpButton() function has a new optional $a parameter to allow variables with translation strings.
+* help_icon constructor has a new optional $a parameter to allow variables with translation strings.
+* The random_bytes_emulate() function has been deprecated, because it's not required anymore. PHP native function random_bytes()
+  should be used instead.
+* New behat behat_navigation::i_close_block_drawer_if_open() and behat_navigation::i_keep_block_drawer_closed()
+to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
+being forced open in all behat tests.
+* The core_useragent::get_device_type_list() function has been deprecated. Use core_useragent::devicetypes instead as a replacement.
+* The parameter $size of the following functions has been deprecated and is not used any more:
+  - file_extension_icon
+  - file_file_icon
+  - file_folder_icon
+  - file_mimetype_icon
+  - mimeinfo_from_type
+  - url_guess_icon
+* The xxxxxxx-yyy.png MIME icons placed in pix/f have been removed and replaced with new SVG files.
+  In order to reduce the number of icons for the MIME types, a few MIME icons have been removed and
+  replaced with their generic from the existing ones:
+    - avi -> video
+    - base -> database
+    - bmp -> image
+    - html -> markup
+    - jpeg -> image
+    - mov -> video
+    - mp3 -> audio
+    - mpeg -> video
+    - png -> image
+    - quicktime -> video
+    - tiff -> image
+    - wav -> audio
+    - wmv -> video
+  Apart from that, the following MIME icons have been completely removed:
+    - clip-353 --> It was added in MDL-75362 by mistake.
+    - edit
+    - env
+    - explore
+    - folder-open
+    - help
+    - move
+    - parent
+* The signature of the static method `can_user_share` in the `core\moodlenet\local\can_share_manager` class has been updated to include an additional parameter `$type`.
+  This parameter specifies the type of resource being checked for sharing capabilities, which can either be 'activity' or 'course'.
+* The method 'share_activity' in 'core\moodlenet\activity_sender' class has been deprecated and renamed to 'share_resource'. The method signature is the same as before and
+  the new method is coming from the base class 'core\moodlenet\resource_sender'.
+* Final deprecation and removal of legacy cron. This includes the functions:
+  - cron_execute_plugin_type()
+  - cron_bc_hack_plugin_functions()
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
+* Final deprecation and removal of the following classes:
+  - \core\task\legacy_plugin_cron_task
+  - \mod_quiz\task\legacy_quiz_reports_cron
+  - \mod_quiz\task\legacy_quiz_accessrules_cron
+  - \mod_workshop\task\legacy_workshop_allocation_cron
+  Please, use the Task API instead: https://moodledev.io/docs/apis/subsystems/task
+* New method login_captcha_enabled() is created to check whether the login captcha is enabled or not.
+* New method validate_login_captcha() is created to validate the login captcha.
+* A new parameter $loginrecaptcha has been added to the authenticate_user_login() to check whether the login captcha is needed to verify or not. The default value is false.
+* A new parameter $compactmode has been added to the recaptcha_get_challenge_html() to define whether the reCaptcha element should be displayed in the compact mode or not.
+  Default value is false.
+* A new native event in the `core_filters/events` AMD module eventTypes.filterContentRenderingComplete has been created to determine when the filter is complete the rendering.
+* New parameters for \get_time_interval_string():
+  - `$dropzeroes` - Passing `true` will exclude zero date/time units from the output.
+  - `$fullformat` - Passing `true` will return date/time units in full format (e.g. `1 day` instead of `1d`).
+* The print_object function (for temporary debugging use only) can now be used on objects that have recursive references,
+  and has an improved display and other changes. (New parameters are available; see function documentation.)
+* New `filteroptions` field added to getFilterValue() in core/datafilter/filtertype. This is generated by `get filterOptions()`
+  and returns an arbitrary list of options specific to the filter type, in [{name:, value}] format. This allows filters to extend
+  the values returned with additional fields.
+* New `required` field added to core\output\datafilter. This will be output via the data-required property in filter_type.mustache,
+  any additional filter types will need to output this property as well. Filters with data-required="1" will not be removable from
+  the list of filters.
+* addFilterRow() in core/datafilter now accepts a filterdata object to add a row with a pre-defined filter.
+* New "binary" datafilter type added for creating filters with a single yes/no option.
+* New "joinlist" parameter added to core\output\datafilter::get_filter_object(). This takes an array of datafilter::JOINTYPE_*
+  constants to define which types of join the filter supports. By default this will include all three of "Any", "All" and "None",
+  but a subset can be specified instead.
+* core/form-autocomplete now supports disabled options in the source select list. These will be displayed in the autocomplete
+  options with the aria-disabled attribute, and will not be selectable.
+* The method grade_item::set_locked() now returns true if the grade item needs to be updated. The method schedules the locking of
+  the grade item once the recalculations are completed. (This was fixed in 4.3, 4.2.2)
+* Added a new constant called MAX_PASSWORD_CHARACTERS in moodlelib.php to hold a length of accepted password.
+* Added a new method called exceeds_password_length in moodlelib.php to validate the password length.
+* The core/modal_factory has been deprecated. From Moodle 4.3 onwards please instantiate new modals using the ModalType.create method instead.
+  Please note that this method does not support the `trigger` option.
 
 === 4.2 ===
 

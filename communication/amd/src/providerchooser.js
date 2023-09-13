@@ -19,7 +19,6 @@
  * @module     core_communication/communicationchooser
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @since      4.2
  */
 
 const Selectors = {
@@ -36,10 +35,7 @@ export const init = () => {
     document.querySelector(Selectors.fields.selector).addEventListener('change', e => {
         const form = e.target.closest('form');
         const updateButton = form.querySelector(Selectors.fields.updateButton);
-        const fieldset = updateButton.closest('fieldset');
-
         const url = new URL(form.action);
-        url.hash = fieldset.id;
 
         form.action = url.toString();
         updateButton.click();

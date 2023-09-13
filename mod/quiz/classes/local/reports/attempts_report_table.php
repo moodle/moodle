@@ -707,11 +707,12 @@ abstract class attempts_report_table extends \table_sql {
                 'data-action' => 'toggle',
                 'data-togglegroup' => $this->togglegroup,
                 'data-toggle' => 'action',
-                'disabled' => true
+                'disabled' => true,
+                'data-modal' => 'confirmation',
+                'data-modal-type' => 'delete',
+                'data-modal-content-str' => json_encode(['deleteattemptcheck', 'quiz']),
             ];
             echo html_writer::empty_tag('input', $deletebuttonparams);
-            $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
-                    ['message' => get_string('deleteattemptcheck', 'quiz')]);
         }
     }
 

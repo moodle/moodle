@@ -502,6 +502,17 @@ export default class {
     }
 
     /**
+     * Update the course index collapsed attribute of all sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {boolean} collapsed the new collapsed value
+     */
+    async allSectionsIndexCollapsed(stateManager, collapsed) {
+        const sectionIds = stateManager.getIds('section');
+        this.sectionIndexCollapsed(stateManager, sectionIds, collapsed);
+    }
+
+    /**
      * Update the course content collapsed attribute of some sections.
      *
      * @param {StateManager} stateManager the current state manager

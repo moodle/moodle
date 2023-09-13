@@ -24,6 +24,7 @@ import {debounce} from 'core/utils';
 import * as Templates from 'core/templates';
 import * as Selectors from 'core_grades/searchwidget/selectors';
 import Notification from 'core/notification';
+import Log from 'core/log';
 
 /**
  * Build the base searching widget.
@@ -44,6 +45,7 @@ export const init = async(
     unsearchableContent = null,
     afterSelect = null,
 ) => {
+    Log.debug('This pattern is no longer used, refer to core/search_combobox() instead.');
     bodyPromise.then(async(bodyContent) => {
         // Render the body content.
         widgetContentContainer.innerHTML = bodyContent;

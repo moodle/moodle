@@ -103,11 +103,11 @@ class repository_merlot extends repository {
         $xml = simplexml_load_string($content);
         foreach ($xml->results->material as $entry) {
             $list[] = array(
-                'title'=>(string)$entry->title,
-                'thumbnail'=>$OUTPUT->image_url(file_extension_icon($entry->title, 90))->out(false),
-                'date'=>userdate((int)$entry->creationDate),
-                'size'=>'',
-                'source'=>(string)$entry->URL
+                'title' => (string)$entry->title,
+                'thumbnail' => $OUTPUT->image_url(file_extension_icon($entry->title))->out(false),
+                'date' => userdate((int)$entry->creationDate),
+                'size' => '',
+                'source' => (string)$entry->URL,
             );
         }
         return $list;
@@ -184,4 +184,3 @@ class repository_merlot extends repository {
         return false;
     }
 }
-

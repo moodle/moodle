@@ -582,11 +582,20 @@ class navigation_node implements renderable {
 
     /**
      * Sets the title for this node and forces Moodle to utilise it.
-     * @param string $title
+     *
+     * Note that this method is named identically to the public "title" property of the class, which unfortunately confuses
+     * our Mustache renderer, because it will see the method and try and call it without any arguments (hence must be nullable)
+     * before trying to access the public property
+     *
+     * @param string|null $title
+     * @return string
      */
-    public function title($title) {
-        $this->title = $title;
-        $this->forcetitle = true;
+    public function title(?string $title = null): string {
+        if ($title !== null) {
+            $this->title = $title;
+            $this->forcetitle = true;
+        }
+        return (string) $this->title;
     }
 
     /**
@@ -2976,6 +2985,14 @@ class global_navigation extends navigation_node {
             }
         }
 
+        // Add link for configuring communication.
+        if ($navoptions->communication) {
+            $url = new moodle_url('/communication/configure.php', ['instanceid' => $course->id,
+                'instancetype' => 'coursecommunication', 'component' => 'core_course']);
+            $coursenode->add(get_string('communication', 'communication'), $url,
+                navigation_node::TYPE_SETTING, null, 'communication');
+        }
+
         return true;
     }
     /**
@@ -3644,6 +3661,7 @@ class navbar extends navigation_node {
         } else if ($this->hasitems !== false) {
             return true;
         }
+        $outcome = false;
         if (count($this->children) > 0 || count($this->prependchildren) > 0) {
             // There have been manually added items - there are definitely items.
             $outcome = true;
@@ -4619,6 +4637,26 @@ class settings_navigation extends navigation_node {
             $coursenode->force_open();
         }
 
+        // Share course to moodlenet.
+        $usercanshare = utilities::can_user_share($coursecontext, $USER->id, 'course');
+        $issuerid = get_config('moodlenet', 'oauthservice');
+        try {
+            $issuer = \core\oauth2\api::get_issuer($issuerid);
+            $isvalidinstance = utilities::is_valid_instance($issuer);
+            if ($usercanshare && $isvalidinstance) {
+                $this->page->requires->js_call_amd('core/moodlenet/send_resource', 'init');
+                $action = new action_link(new moodle_url(''), '', null, [
+                    'data-action' => 'sendtomoodlenet',
+                    'data-type' => 'course',
+                    'data-sharetype' => 'resource',
+                ]);
+                $coursenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
+                    $action, self::TYPE_SETTING, null, 'exportcoursetomoodlenet')->set_force_into_more_menu(true);
+            }
+        } catch (dml_missing_record_exception $e) {
+            debugging("Invalid MoodleNet OAuth 2 service set in site administration: 'moodlenet | oauthservice'. " .
+                "This must be a valid issuer.");
+        }
 
         if ($adminoptions->update) {
             // Add the course settings link
@@ -4886,7 +4924,7 @@ class settings_navigation extends navigation_node {
             $function($this, $modulenode);
         }
 
-        // Send to MoodleNet.
+        // Send activity to MoodleNet.
         $usercanshare = utilities::can_user_share($this->context->get_course_context(), $USER->id);
         $issuerid = get_config('moodlenet', 'oauthservice');
         try {

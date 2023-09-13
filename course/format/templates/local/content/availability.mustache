@@ -28,7 +28,9 @@
     }
 }}
 {{^excerpt}}
-    {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+    <div{{#editing}} class="mt-2"{{/editing}}>
+        {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+    </div>
 {{/excerpt}}
 {{#excerpt}}
     {{< core/showmore }}
@@ -39,14 +41,17 @@
             {{#pix}}t/unlock, core{{/pix}} {{{text}}}
         {{/expandedcontent}}
         {{$buttonextraclasses}}font-weight-bold{{/buttonextraclasses}}
-        {{$collapsedextraclasses}}text-truncate pr-2{{/collapsedextraclasses}}
-        {{$expandedextraclasses}}py-2{{/expandedextraclasses}}
+        {{$collapsedextraclasses}}text-truncate pr-2 {{#editing}}mt-2{{/editing}}{{/collapsedextraclasses}}
+        {{$expandedextraclasses}}
+            {{^editing}}py-2{{/editing}}
+            {{#editing}}mt-2 pb-2{{/editing}}
+        {{/expandedextraclasses}}
     {{/core/showmore }}
 {{/excerpt}}
 {{#editing}}
     {{#editurl}}
         <div class="editavailability border-top mt-2 py-2">
-            <a href="{{editurl}}" class="p-1">{{#pix}} i/edit, core {{/pix}}{{#str}}editsettings, availability{{/str}}</a>
+            <a href="{{editurl}}" class="px-2 py-1">{{#pix}} i/edit, core {{/pix}}{{#str}}editsettings, availability{{/str}}</a>
         </div>
     {{/editurl}}
 {{/editing}}

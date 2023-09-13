@@ -27,9 +27,9 @@ define([
     'core/str',
     'core/templates',
     'core/url',
-    'core/modal_factory',
+    'core/modal_save_cancel',
     'core/modal_events'],
-function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) {
+function($, Ajax, Notification, Str, Templates, Url, ModalSaveCancel, ModalEvents) {
 
     /**
      * List of action selectors.
@@ -40,6 +40,7 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
         DELETE_CONTENT: '[data-action="deletecontent"]',
         RENAME_CONTENT: '[data-action="renamecontent"]',
         SET_CONTENT_VISIBILITY: '[data-action="setcontentvisibility"]',
+        COPY_CONTENT: '[data-action="copycontent"]',
     };
 
     /**
@@ -92,27 +93,21 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 }
                 deleteButtonText = langStrings[3];
 
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: modalTitle,
                     body: modalContent,
-                    type: ModalFactory.types.SAVE_CANCEL,
-                    large: true
+                    large: true,
+                    removeOnClose: true,
+                    show: true,
+                    buttons: {
+                        save: deleteButtonText,
+                    },
                 });
-            }).done(function(modal) {
-                modal.setSaveButtonText(deleteButtonText);
+            }).then(function(modal) {
                 modal.getRoot().on(ModalEvents.save, function() {
                     // The action is now confirmed, sending an action for it.
                     return deleteContent(contentid, contextid);
                 });
-
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
-                });
-
-                // Show the modal.
-                modal.show();
 
                 return;
             }).catch(Notification.exception);
@@ -140,13 +135,16 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 var modalTitle = langStrings[0];
                 saveButtonText = langStrings[1];
 
-                return ModalFactory.create({
+                return ModalSaveCancel.create({
                     title: modalTitle,
                     body: Templates.render('core_contentbank/renamecontent', {'contentid': contentid, 'name': contentname}),
-                    type: ModalFactory.types.SAVE_CANCEL
+                    removeOnClose: true,
+                    show: true,
+                    buttons: {
+                        save: saveButtonText,
+                    },
                 });
             }).then(function(modal) {
-                modal.setSaveButtonText(saveButtonText);
                 modal.getRoot().on(ModalEvents.save, function(e) {
                     // The action is now confirmed, sending an action for it.
                     var newname = $("#newname").val().trim();
@@ -169,15 +167,53 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                     }
                 });
 
-                // Handle hidden event.
-                modal.getRoot().on(ModalEvents.hidden, function() {
-                    // Destroy when hidden.
-                    modal.destroy();
+                return;
+            }).catch(Notification.exception);
+        });
+
+        $(ACTIONS.COPY_CONTENT).click(function(e) {
+            e.preventDefault();
+
+            var contentname = $(this).data('contentname');
+            var contentid = $(this).data('contentid');
+
+            var strings = [
+                {
+                    key: 'copycontent',
+                    component: 'core_contentbank'
+                },
+                {
+                    key: 'error',
+                },
+                {
+                    key: 'emptynamenotallowed',
+                    component: 'core_contentbank',
+                },
+            ];
+
+            let errorTitle, errorMessage;
+            Str.get_strings(strings).then(function(langStrings) {
+                var modalTitle = langStrings[0];
+                errorTitle = langStrings[1];
+                errorMessage = langStrings[2];
+
+                return ModalSaveCancel.create({
+                    title: modalTitle,
+                    body: Templates.render('core_contentbank/copycontent', {'contentid': contentid, 'name': contentname}),
+                    removeOnClose: true,
+                    show: true,
                 });
-
-                // Show the modal.
-                modal.show();
-
+            }).then(function(modal) {
+                modal.getRoot().on(ModalEvents.save, function() {
+                    // The action is now confirmed, sending an action for it.
+                    var newname = $("#newname").val().trim();
+                    if (newname) {
+                        copyContent(contentid, newname);
+                    } else {
+                        Notification.alert(errorTitle, errorMessage);
+                        return false;
+                    }
+                });
                 return;
             }).catch(Notification.exception);
         });
@@ -268,6 +304,41 @@ function($, Ajax, Notification, Str, Templates, Url, ModalFactory, ModalEvents) 
                 Notification.fetchNotifications();
             }
             return;
+        }).catch(Notification.exception);
+    }
+
+    /**
+     * Copy content in the content bank.
+     *
+     * @param {int} contentid The content to copy.
+     * @param {string} name The name for the new content.
+     */
+    function copyContent(contentid, name) {
+        var request = {
+            methodname: 'core_contentbank_copy_content',
+            args: {
+                contentid: contentid,
+                name: name
+            }
+        };
+        Ajax.call([request])[0].then(function(data) {
+            if (data.id == 0) {
+                // Fetch error notifications.
+                Notification.addNotification({
+                    message: data.warnings[0].message,
+                    type: 'error'
+                });
+                Notification.fetchNotifications();
+                return data.warnings[0].message;
+            } else {
+                let params = {
+                    id: data.id,
+                    statusmsg: 'contentcopied'
+                };
+                // Redirect to the content view page and display the message as a notification.
+                window.location.href = Url.relativeUrl('contentbank/view.php', params, false);
+            }
+            return '';
         }).catch(Notification.exception);
     }
 

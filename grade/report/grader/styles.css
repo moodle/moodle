@@ -158,9 +158,8 @@
 }
 
 .path-grade-report-grader .gradeparent .sorticon {
-    margin-left: 5px;
     vertical-align: middle;
-    margin-right: 1px;
+    margin: 0;
 }
 
 .path-grade-report-grader .gradeparent td.grade_type_value,
@@ -212,13 +211,13 @@
     text-align: center;
 }
 
-.path-grade-report-grader .action-menu {
+.path-grade-report-grader .gradeparent table .action-menu {
     display: inline-block;
     margin-right: -0.5rem;
     padding-left: 0.5rem;
 }
 
-.path-grade-report-grader .heading .action-menu {
+.path-grade-report-grader .gradeparent table .heading .action-menu {
     padding-left: 0;
 }
 
@@ -267,6 +266,6 @@
 }
 
 .collapsecolumndropdown.show {
-    width: 275px;
+    width: 300px;
     max-height: 300px;
 }

@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_grades\form\add_category;
+
 require_once('../../../config.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 require_once($CFG->dirroot.'/grade/edit/tree/lib.php');
@@ -129,6 +131,11 @@ if ($id) {
 }
 
 $mform = new edit_category_form(null, array('current'=>$category, 'gpr'=>$gpr));
+
+$simpleform = new add_category(null, ['category' => $grade_category->id, 'courseid' => $courseid, 'gpr' => $gpr]);
+if ($simpledata = $simpleform->get_data()) {
+    $mform->set_data($simpledata);
+}
 
 if ($mform->is_cancelled()) {
     redirect($returnurl);

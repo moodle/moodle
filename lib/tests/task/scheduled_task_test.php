@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core\task\scheduled_task
  */
 class scheduled_task_test extends \advanced_testcase {
 
@@ -806,5 +807,56 @@ class scheduled_task_test extends \advanced_testcase {
     public function test_is_component_enabled_core(): void {
         $task = new scheduled_test_task();
         $this->assertTrue($task->is_component_enabled());
+    }
+
+    /**
+     * Test disabling and enabling individual tasks.
+     *
+     * @covers ::disable
+     * @covers ::enable
+     * @covers ::has_default_configuration
+     */
+    public function test_disable_and_enable_task(): void {
+        $this->resetAfterTest();
+
+        // We use a real task because the manager doesn't know about the test tasks.
+        $taskname = '\core\task\send_new_user_passwords_task';
+
+        $task = manager::get_scheduled_task($taskname);
+        $defaulttask = manager::get_default_scheduled_task($taskname);
+        $this->assertTaskEquals($task, $defaulttask);
+
+        // Disable task and verify drift.
+        $task->disable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_disabled());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Enable task and verify not drifted.
+        $task->enable();
+        $this->assertTaskEquals($task, $defaulttask);
+        $this->assertEquals(0, $task->get_disabled());
+        $this->assertEquals(true, $task->has_default_configuration());
+
+        // Modify task and verify drift.
+        $task->set_hour(1);
+        \core\task\manager::configure_scheduled_task($task);
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Disable task and verify drift.
+        $task->disable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(1, $task->get_disabled());
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
+
+        // Enable task and verify drift.
+        $task->enable();
+        $this->assertTaskNotEquals($task, $defaulttask);
+        $this->assertEquals(0, $task->get_disabled());
+        $this->assertEquals(1, $task->get_hour());
+        $this->assertEquals(false, $task->has_default_configuration());
     }
 }

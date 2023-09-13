@@ -166,4 +166,4 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Question preview can be closed
     And I press "Close preview"
     Then I should not see "(latest)"
-    And I should see "Course 1"
+    And I should see "Test quiz"

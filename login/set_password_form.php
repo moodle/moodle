@@ -70,12 +70,16 @@ class login_set_password_form extends moodleform {
         if ($policies) {
             $mform->addElement('static', 'passwordpolicyinfo', '', implode('<br />', $policies));
         }
-        $mform->addElement('password', 'password', get_string('newpassword'));
+        $mform->addElement('password', 'password', get_string('newpassword'),
+            ['maxlength' => MAX_PASSWORD_CHARACTERS]);
         $mform->addRule('password', get_string('required'), 'required', null, 'client');
+        $mform->addRule('password', get_string('maximumchars', '', MAX_PASSWORD_CHARACTERS),
+            'maxlength', MAX_PASSWORD_CHARACTERS, 'client');
         $mform->setType('password', PARAM_RAW);
 
         $strpasswordagain = get_string('newpassword') . ' (' . get_string('again') . ')';
-        $mform->addElement('password', 'password2', $strpasswordagain);
+        $mform->addElement('password', 'password2', $strpasswordagain,
+            ['maxlength' => MAX_PASSWORD_CHARACTERS]);
         $mform->addRule('password2', get_string('required'), 'required', null, 'client');
         $mform->setType('password2', PARAM_RAW);
 

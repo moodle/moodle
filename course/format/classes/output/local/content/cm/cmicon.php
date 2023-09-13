@@ -79,16 +79,15 @@ class cmicon implements named_templatable, renderable {
         $iconurl = $mod->get_icon_url();
         $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
         $data = [
+            'uservisible' => $mod->uservisible,
             'url' => $mod->url,
             'icon' => $iconurl,
             'iconclass' => $iconclass,
             'modname' => $mod->modname,
+            'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
+            'showtooltip' => $this->format->show_editor(),
             'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
         ];
-
-        if ($this->format->show_editor()) {
-            $data['pluginname'] = get_string('pluginname', 'mod_' . $mod->modname);
-        }
 
         return $data;
     }

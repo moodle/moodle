@@ -370,7 +370,8 @@ function drop_plugin_tables($name, $file, $feedback=true) {
     global $CFG, $DB;
 
     // first try normal delete
-    if (file_exists($file) and $DB->get_manager()->delete_tables_from_xmldb_file($file)) {
+    if (file_exists($file)) {
+        $DB->get_manager()->delete_tables_from_xmldb_file($file);
         return true;
     }
 
@@ -10689,6 +10690,8 @@ class admin_setting_configstoredfile extends admin_setting {
 /**
  * Administration interface for user specified regular expressions for device detection.
  *
+ * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+ * @todo Final deprecation on Moodle 4.7 MDL-79052
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_setting_devicedetectregex extends admin_setting {
@@ -10696,12 +10699,19 @@ class admin_setting_devicedetectregex extends admin_setting {
     /**
      * Calls parent::__construct with specific args
      *
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @param string $name
      * @param string $visiblename
      * @param string $description
      * @param mixed $defaultsetting
      */
     public function __construct($name, $visiblename, $description, $defaultsetting = '') {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.',
+            DEBUG_DEVELOPER
+        );
         global $CFG;
         parent::__construct($name, $visiblename, $description, $defaultsetting);
     }
@@ -10709,9 +10719,16 @@ class admin_setting_devicedetectregex extends admin_setting {
     /**
      * Return the current setting(s)
      *
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @return array Current settings array
      */
     public function get_setting() {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.',
+            DEBUG_DEVELOPER
+        );
         global $CFG;
 
         $config = $this->config_read($this->name);
@@ -10725,10 +10742,17 @@ class admin_setting_devicedetectregex extends admin_setting {
     /**
      * Save selected settings
      *
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @param array $data Array of settings to save
      * @return bool
      */
     public function write_setting($data) {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.',
+            DEBUG_DEVELOPER
+        );
         if (empty($data)) {
             $data = array();
         }
@@ -10743,10 +10767,17 @@ class admin_setting_devicedetectregex extends admin_setting {
     /**
      * Return XHTML field(s) for regexes
      *
+     * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
+     * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @param array $data Array of options to set in HTML
      * @return string XHTML string for the fields and wrapping div(s)
      */
     public function output_html($data, $query='') {
+        debugging(
+            __FUNCTION__ . '() is deprecated.' .
+                'All functions associated with devicedetectregex theme setting are being removed.',
+            DEBUG_DEVELOPER
+        );
         global $OUTPUT;
 
         $context = (object) [

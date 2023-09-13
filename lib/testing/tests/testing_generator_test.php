@@ -47,8 +47,8 @@ class testing_generator_test extends \advanced_testcase {
      */
     public function test_get_plugin_generator_no_component_dir() {
         $this->expectException(\coding_exception::class);
-        $this->expectExceptionMessage('Component core_completion does not support generators yet. Missing tests/generator/lib.php.');
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_completion');
+        $this->expectExceptionMessage('Component core_cohort does not support generators yet. Missing tests/generator/lib.php.');
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_cohort');
     }
 
     public function test_create_user() {

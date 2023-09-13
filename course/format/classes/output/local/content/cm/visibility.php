@@ -153,7 +153,7 @@ class visibility implements named_templatable, renderable {
      * Get the availability choice list.
      * @return choicelist
      */
-    protected function get_choice_list(): choicelist {
+    public function get_choice_list(): choicelist {
         $choice = $this->create_choice_list();
         if (!$this->mod->visible) {
             $selected = 'hide';
@@ -174,11 +174,14 @@ class visibility implements named_templatable, renderable {
         global $CFG;
 
         $choice = new choicelist();
-        $choice->add_option(
-            'show',
-            get_string('availability_show', 'core_courseformat'),
-            $this->get_option_data('show', 'cmShow')
-        );
+        if ($this->section->visible || $this->mod->has_view()) {
+            $label = $this->section->visible ? 'show' : 'stealth';
+            $choice->add_option(
+                'show',
+                get_string("availability_{$label}", 'core_courseformat'),
+                $this->get_option_data($label, 'cmShow')
+            );
+        }
         $choice->add_option(
             'hide',
             get_string('availability_hide', 'core_courseformat'),

@@ -4,7 +4,7 @@
     <location>yui/src/codemirror</location>
     <name>codemirror</name>
     <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
-    <version>5.65.12</version>
+    <version>5.65.15</version>
     <license>MIT</license>
     <repository>https://github.com/codemirror/codemirror5</repository>
   </library>

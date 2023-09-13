@@ -22,7 +22,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | course                              | CC1                         |
       | name                                | Test assignment name        |
       | idnumber                            | assign1                     |
-      | description                         | Test assignment description |
     And the following "blocks" exist:
       | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
       | completionstatus | Course       | CC1       | course-view-*   | side-pre      |
@@ -31,7 +30,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I set the field "Enable completion tracking" to "Yes"
     And I click on "Save and display" "button"
     And I am on the "Test assignment name" "assign activity editing" page
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
     And I press "Save and return to course"
@@ -43,7 +42,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
   @javascript
   Scenario: Update course completion when student marks activity as complete
     Given I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
     And I press "Save and return to course"
     When I am on the "Completion course" course page logged in as student1
@@ -73,7 +72,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
       | name                                | Test assignment name2       |
       | idnumber                            | assign2                     |
     And I am on the "Test assignment name2" "assign activity editing" page logged in as admin
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Completion tracking" to "Show activity as complete when conditions are met"
     And I set the field "completionusegrade" to "1"
     And I press "Save and return to course"
@@ -88,7 +87,6 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
-    And I am on "Completion course" course homepage
     And I am on the "Completion course" course page logged in as student1
     And I should see "Status: In progress"
     And I am on the "Test assignment name2" "assign activity" page logged in as teacher1
@@ -96,14 +94,12 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And I click on "Grade" "link" in the "student1@example.com" "table_row"
     And I set the field "Grade out of 100" to "40"
     And I click on "Save changes" "button"
-    And I am on "Completion course" course homepage
     When I am on the "Completion course" course page logged in as student1
     Then I should see "Status: Complete"
 
   @javascript
   Scenario: Course completion should not be updated when teacher grades assignment on course grader report page
-    Given I am on the "Completion course" course page logged in as teacher1
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Completion course" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "57" to the user "Student First" for the grade item "Test assignment name"
     And I press "Save changes"
@@ -117,8 +113,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   @javascript
   Scenario: Course completion should not be updated when teacher grades assignment on activity grader report page
-    Given I am on the "Completion course" course page logged in as teacher1
-    And I navigate to "View > Single view" in the course gradebook
+    Given I am on the "Completion course" "grades > Single View > View" page logged in as "teacher1"
     And I click on "Users" "link" in the ".page-toggler" "css_element"
     And I turn editing mode on
     And I click on "Student First" in the "user" search widget

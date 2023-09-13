@@ -173,6 +173,9 @@ class enrol_manual_plugin extends enrol_plugin {
                 }
             }
         }
+
+        $data->notifyall = $data->expirynotify == 2 ? 1 : 0;
+
         return parent::update_instance($instance, $data);
     }
 
@@ -641,6 +644,15 @@ class enrol_manual_plugin extends enrol_plugin {
         $errors = array_merge($errors, $typeerrors);
 
         return $errors;
+    }
+
+    /**
+     * Check if enrolment plugin is supported in csv course upload.
+     *
+     * @return bool
+     */
+    public function is_csv_upload_supported(): bool {
+        return true;
     }
 
 }

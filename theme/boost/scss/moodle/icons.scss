@@ -144,6 +144,7 @@ $iconsizes: map-merge((
     .activityicon,
     .icon {
         margin: 0;
+        font-size: $icon-medium-width;
         height: $icon-medium-width;
         width: $icon-medium-height;
     }
@@ -155,8 +156,8 @@ $iconsizes: map-merge((
         width: $activity-iconcontainer-width - 20px;
         height: $activity-iconcontainer-width - 20px;
         .activityicon {
-            width: $icon-width;
-            height: $icon-height;
+            width: $icon-medium-width;
+            height: $icon-medium-height;
         }
     }
 }

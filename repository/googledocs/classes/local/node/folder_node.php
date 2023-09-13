@@ -67,7 +67,7 @@ class folder_node implements node {
             'title' => $this->title,
             'path' => helper::build_node_path($this->id, $this->title, $this->path),
             'date' => $this->modified,
-            'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+            'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
             'thumbnail_height' => 64,
             'thumbnail_width' => 64,
             'children' => [],

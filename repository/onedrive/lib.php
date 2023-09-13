@@ -356,7 +356,7 @@ class repository_onedrive extends repository {
                     'title' => $remotefile->name,
                     'path' => $this->build_node_path($remotefile->id, $remotefile->name, $path),
                     'date' => strtotime($remotefile->lastModifiedDateTime),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     'children' => []

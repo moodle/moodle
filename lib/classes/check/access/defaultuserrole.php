@@ -14,19 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Verifies sanity of default user role.
- *
- * @package    core
- * @category   check
- * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
- * @copyright  2008 petr Skoda
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\check\access;
-
-defined('MOODLE_INTERNAL') || die();
 
 use core\check\check;
 use core\check\result;
@@ -34,6 +22,8 @@ use core\check\result;
 /**
  * Verifies sanity of default user role.
  *
+ * @package    core
+ * @category   check
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @copyright  2008 petr Skoda
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -55,10 +45,14 @@ class defaultuserrole extends check {
      * @return \action_link|null
      */
     public function get_action_link(): ?\action_link {
-        global $CFG;
+        global $CFG, $DB;
+
+        $defaultrole = $DB->get_record('role', ['id' => $CFG->defaultuserroleid]);
+
         return new \action_link(
-            new \moodle_url('/admin/roles/define.php?action=view&roleid=' . $CFG->defaultuserroleid),
-            get_string('userpolicies', 'admin'));
+            new \moodle_url('/admin/roles/define.php', ['action' => 'view', 'roleid' => $defaultrole->id]),
+            get_string('definitionofrolex', 'core_role', role_get_name($defaultrole))
+        );
     }
 
     /**
@@ -76,7 +70,7 @@ class defaultuserrole extends check {
         }
 
         // Risky caps - usually very dangerous.
-        $sql = "SELECT rc.contextid, rc.capability
+        $sql = "SELECT rc.id, rc.contextid, rc.capability
                   FROM {role_capabilities} rc
                   JOIN {capabilities} cap ON cap.name = rc.capability
                  WHERE " . $DB->sql_bitand('cap.riskbitmask', (RISK_XSS | RISK_CONFIG | RISK_DATALOSS)) . " <> 0

@@ -51,6 +51,12 @@ abstract class contenttype {
      */
     const CAN_DOWNLOAD = 'download';
 
+    /**
+     * @var string Constant representing whether the plugin implements copy feature
+     * @since  Moodle 4.3
+     */
+    const CAN_COPY = 'copy';
+
     /** @var \context This contenttype's context. **/
     protected $context = null;
 
@@ -465,6 +471,35 @@ abstract class contenttype {
     }
 
     /**
+     * Returns whether or not the user has permission to copy the content.
+     *
+     * @since  Moodle 4.3
+     * @param  content $content The content to be copied.
+     * @return bool    True if the user can copy the content. False otherwise.
+     */
+    final public function can_copy(content $content): bool {
+        global $USER;
+
+        if (!$this->is_feature_supported(self::CAN_COPY)) {
+            return false;
+        }
+
+        if (!$this->can_access()) {
+            return false;
+        }
+
+        if (!$this->is_copy_allowed($content)) {
+            return false;
+        }
+
+        $hascapability = has_capability('moodle/contentbank:copyanycontent', $this->context);
+        if (!$hascapability && ($content->get_content()->usercreated == $USER->id)) {
+            $hascapability = has_capability('moodle/contentbank:copycontent', $this->context);
+        }
+        return $hascapability;
+    }
+
+    /**
      * Returns plugin allows downloading.
      *
      * @since  Moodle 3.10
@@ -472,6 +507,18 @@ abstract class contenttype {
      * @return bool    True if plugin allows downloading. False otherwise.
      */
     protected function is_download_allowed(content $content): bool {
+        // Plugins can overwrite this function to add any check they need.
+        return true;
+    }
+
+    /**
+     * Returns plugin allows copying.
+     *
+     * @since  Moodle 4.3
+     * @param  content $content The content to be copied.
+     * @return bool    True if plugin allows copying. False otherwise.
+     */
+    protected function is_copy_allowed(content $content): bool {
         // Plugins can overwrite this function to add any check they need.
         return true;
     }

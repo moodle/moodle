@@ -268,7 +268,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/lock' => 'fa-lock',
             'core:i/log' => 'fa-list-alt',
             'core:i/mahara_host' => 'fa-id-badge',
-            'core:i/manual_item' => 'fa-square-o',
+            'core:i/manual_item' => 'fa-pencil-square-o',
             'core:i/marked' => 'fa-circle',
             'core:i/marker' => 'fa-circle-o',
             'core:i/mean' => 'fa-calculator',
@@ -501,8 +501,9 @@ class icon_system_fontawesome extends icon_system_font {
             $data['aria-hidden'] = $icon->attributes['aria-hidden'];
         }
 
-        // Flipping help icon direction in right-to-left languages.
-        if (right_to_left() && $data['key'] == "fa-question-circle text-info") {
+        // Flip question mark icon orientation when the `questioniconfollowlangdirection` lang config string is set to `yes`.
+        $isquestionicon = strpos($data['key'], 'fa-question') !== false;
+        if ($isquestionicon && right_to_left() && get_string('questioniconfollowlangdirection', 'langconfig') === 'yes') {
             $data['extraclasses'] = "fa-flip-horizontal";
         }
 

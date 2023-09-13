@@ -28,12 +28,10 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
     And the following "grade items" exist:
       | itemname     | grademax | course | gradecategory |
       | Manual grade | 40       | C1     | Category 1    |
-    And I log in as "teacher1"
-    And I am on "Course" course homepage
+    And I am on the "Course" "grades > gradebook setup" page logged in as "teacher1"
 
   Scenario: A teacher can collapse and expand grade categories in the Gradebook setup page
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
-    And the following should exist in the "setup-grades" table:
+    Given the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |
       | Test assignment one |
@@ -105,8 +103,7 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1 total    |
 
   Scenario: A teacher can see the aggregated max grade for a grade category even when the category is collapsed
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
-    And the following should exist in the "setup-grades" table:
+    Given the following should exist in the "setup-grades" table:
       | Name             | Max grade |
       | Course           |           |
       | Category 1       |           |
@@ -134,8 +131,7 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
     And I should not see "Category 1 total" in the "setup-grades" "table"
 
   Scenario: A teacher can collapse and expand grade categories in the Gradebook setup when moving grade items
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I click on "Move" "link" in the "Test assignment one" "table_row"
+    Given I click on "Move" "link" in the "Test assignment one" "table_row"
     And the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |
@@ -205,12 +201,10 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1 total    |
 
   Scenario: Previously collapsed categories are still shown as collapsed when a teacher navigates back to Gradebook setup
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     # Collapse the grade category 'Category 1' and navigate to the course homepage.
-    And I click on "Collapse" "link" in the "Category 1" "table_row"
-    And I am on "Course" course homepage
+    Given I click on "Collapse" "link" in the "Category 1" "table_row"
     # Navigate back to Gradebook setup and confirm that the category 'Category 1' is still collapsed.
-    When I navigate to "Setup > Gradebook setup" in the course gradebook
+    When I am on the "Course" "grades > gradebook setup" page
     Then the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |
@@ -226,9 +220,8 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1 total    |
 
   Scenario: Previously collapsed categories are still shown as collapsed when a teacher is moving grade items in Gradebook setup
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     # Collapse the grade category 'Category 1'.
-    And I click on "Collapse" "link" in the "Category 1" "table_row"
+    Given I click on "Collapse" "link" in the "Category 1" "table_row"
     # Attempt to move a grade item and confirm that the category 'Category 1' is still collapsed.
     When I click on "Move" "link" in the "Test assignment one" "table_row"
     Then the following should exist in the "setup-grades" table:
@@ -246,13 +239,10 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1 total    |
 
   Scenario: Grade categories are shown as collapsed only to the teacher that collapsed them
-    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     # Collapse the grade category 'Category 1'.
-    And I click on "Collapse" "link" in the "Category 1" "table_row"
+    Given I click on "Collapse" "link" in the "Category 1" "table_row"
     # Log in as teacher2 and confirm that the category 'Category 1' is not collapsed.
-    And I log in as "teacher2"
-    And I am on "Course" course homepage
-    When I navigate to "Setup > Gradebook setup" in the course gradebook
+    When I am on the "Course" "grades > gradebook setup" page logged in as "teacher2"
     Then the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |
@@ -265,9 +255,7 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Collapse" "link" should exist in the "Category 1" "table_row"
     # Log in as teacher1 and confirm that the category 'Category 1' is still collapsed.
-    And I log in as "teacher1"
-    And I am on "Course" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course" "grades > gradebook setup" page logged in as "teacher1"
     And the following should exist in the "setup-grades" table:
       | Name                |
       | Course              |

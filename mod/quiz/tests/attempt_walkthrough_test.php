@@ -24,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Quiz attempt walk through.
@@ -36,6 +37,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @covers \mod_quiz\quiz_attempt
  */
 class attempt_walkthrough_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * Create a quiz with questions and walk through a quiz attempt.
@@ -288,7 +291,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
 
         // Add random question to the quiz.
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz->id, 0, $cat->id, 1);
 
         // Make another category.
         $cat2 = $questiongenerator->create_question_category();

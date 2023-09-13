@@ -154,7 +154,7 @@ class edit_override_form extends moodleform {
                         $this->context, $userfieldsql->mappings);
 
                 $users = $DB->get_records_sql("
-                        SELECT $userfieldsql->selects
+                        SELECT DISTINCT $userfieldsql->selects
                           FROM {user} u
                           $enrolledjoin->joins
                           $userfieldsql->joins

@@ -284,98 +284,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render the deprecated nonajax activity chooser.
-     *
-     * @deprecated since Moodle 3.11
-     *
-     * @todo MDL-71331 deprecate this function
-     * @param stdClass $course the course object
-     * @param int $section relative section number (field course_sections.section)
-     * @param int $sectionreturn The section to link back to
-     * @param array $displayoptions additional display options, for example blocks add
-     *     option 'inblock' => true, suggesting to display controls vertically
-     * @return string
-     */
-    private function course_section_add_cm_control_nonajax($course, $section, $sectionreturn = null,
-            $displayoptions = array()): string {
-        global $USER;
-
-        $vertical = !empty($displayoptions['inblock']);
-
-        // Check to see if user can add menus.
-        if (
-            !has_capability('moodle/course:manageactivities', context_course::instance($course->id))
-            || !$this->page->user_is_editing()
-        ) {
-            return '';
-        }
-
-        debugging('non-js dropdowns are deprecated.', DEBUG_DEVELOPER);
-        // Retrieve all modules with associated metadata.
-        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
-        $urlparams = ['section' => $section];
-        if (!is_null($sectionreturn)) {
-            $urlparams['sr'] = $sectionreturn;
-        }
-        $modules = $contentitemservice->get_content_items_for_user_in_course($USER, $course, $urlparams);
-
-        // Return if there are no content items to add.
-        if (empty($modules)) {
-            return '';
-        }
-
-        // We'll sort resources and activities into two lists.
-        $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
-
-        foreach ($modules as $module) {
-            $activityclass = MOD_CLASS_ACTIVITY;
-            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $activityclass = MOD_CLASS_RESOURCE;
-            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
-                // System modules cannot be added by user, do not add to dropdown.
-                continue;
-            }
-            $link = $module->link;
-            $activities[$activityclass][$link] = $module->title;
-        }
-
-        $straddactivity = get_string('addactivity');
-        $straddresource = get_string('addresource');
-        $sectionname = get_section_name($course, $section);
-        $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
-        $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
-
-        $nonajaxcontrol = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-'
-            . $section));
-
-        if (!$vertical) {
-            $nonajaxcontrol .= html_writer::start_tag('div', array('class' => 'horizontal'));
-        }
-
-        if (!empty($activities[MOD_CLASS_RESOURCE])) {
-            $select = new url_select($activities[MOD_CLASS_RESOURCE], '', array('' => $straddresource), "ressection$section");
-            $select->set_help_icon('resources');
-            $select->set_label($strresourcelabel, array('class' => 'accesshide'));
-            $nonajaxcontrol .= $this->output->render($select);
-        }
-
-        if (!empty($activities[MOD_CLASS_ACTIVITY])) {
-            $select = new url_select($activities[MOD_CLASS_ACTIVITY], '', array('' => $straddactivity), "section$section");
-            $select->set_help_icon('activities');
-            $select->set_label($stractivitylabel, array('class' => 'accesshide'));
-            $nonajaxcontrol .= $this->output->render($select);
-        }
-
-        if (!$vertical) {
-            $nonajaxcontrol .= html_writer::end_tag('div');
-        }
-
-        $nonajaxcontrol .= html_writer::end_tag('div');
-
-        return $nonajaxcontrol;
-    }
-
-    /**
      * Renders html to display a course search form
      *
      * @param string $value default value to populate the search field
@@ -398,7 +306,7 @@ class core_course_renderer extends plugin_renderer_base {
      * @deprecated since Moodle 3.11
      */
     public function course_section_cm_completion() {
-        throw new coding_exception(__FUNCTION__ . ' is deprecated. Use the activity_information output component instead.');
+        throw new coding_exception(__FUNCTION__ . ' is deprecated. Use the activity_completion output component instead.');
     }
 
     /**
@@ -1068,10 +976,10 @@ class core_course_renderer extends plugin_renderer_base {
                 $file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
             if ($isimage) {
                 $contentimages .= html_writer::tag('div',
-                    html_writer::empty_tag('img', ['src' => $url]),
+                    html_writer::empty_tag('img', ['src' => $url, 'alt' => '']),
                     ['class' => 'courseimage']);
             } else {
-                $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                $image = $this->output->pix_icon(file_file_icon($file), $file->get_filename(), 'moodle');
                 $filename = html_writer::tag('span', $image, ['class' => 'fp-icon']).
                     html_writer::tag('span', $file->get_filename(), ['class' => 'fp-filename']);
                 $contentfiles .= html_writer::tag('span',
@@ -1968,10 +1876,13 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * Defer to template.
      *
+     * @deprecated since Moodle 4.3 MDL-78744
+     * @todo MDL-78926 This method will be deleted in Moodle 4.7
      * @param \core_course\output\activity_information $page
      * @return string html for the page
      */
     public function render_activity_information(\core_course\output\activity_information $page) {
+        debugging('render_activity_information method is deprecated.', DEBUG_DEVELOPER);
         $data = $page->export_for_template($this->output);
         return $this->output->render_from_template('core_course/activity_info', $data);
     }

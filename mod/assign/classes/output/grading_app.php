@@ -72,9 +72,6 @@ class grading_app implements templatable, renderable {
         $this->userid = $userid;
         $this->groupid = $groupid;
         $this->assignment = $assignment;
-        user_preference_allow_ajax_update('assign_filter', PARAM_ALPHA);
-        user_preference_allow_ajax_update('assign_workflowfilter', PARAM_ALPHA);
-        user_preference_allow_ajax_update('assign_markerfilter', PARAM_ALPHANUMEXT);
         $this->participants = $assignment->list_participants_with_filter_status_and_group($groupid);
         if (!$this->userid && count($this->participants)) {
             $this->userid = reset($this->participants)->id;

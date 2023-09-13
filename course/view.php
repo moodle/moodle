@@ -259,19 +259,25 @@ if ($PAGE->user_allowed_editing()) {
     $PAGE->set_button($buttons);
 }
 
+$editingtitle = '';
+if ($PAGE->user_is_editing()) {
+    // Append this to the page title's lang string to get its equivalent when editing mode is turned on.
+    $editingtitle = 'editing';
+}
+
 // If viewing a section, make the title more specific.
 if ($section && $section > 0 && course_format_uses_sections($course->format)) {
     $sectionname = get_string('sectionname', "format_$course->format");
     $sectiontitle = get_section_name($course, $section);
     $PAGE->set_title(
         get_string(
-            'coursesectiontitle',
+            'coursesectiontitle' . $editingtitle,
             'moodle',
             ['course' => $course->fullname, 'sectiontitle' => $sectiontitle, 'sectionname' => $sectionname]
         )
     );
 } else {
-    $PAGE->set_title(get_string('coursetitle', 'moodle', ['course' => $course->fullname]));
+    $PAGE->set_title(get_string('coursetitle' . $editingtitle, 'moodle', ['course' => $course->fullname]));
 }
 
 // Add bulk editing control.

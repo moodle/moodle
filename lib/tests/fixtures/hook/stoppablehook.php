@@ -53,4 +53,13 @@ final class stoppablehook implements
     public function isPropagationStopped(): bool {
         return $this->stopped;
     }
+
+    /**
+     * List of tags that describe this hook.
+     *
+     * @return string[]
+     */
+    public static function get_hook_tags(): array {
+        return ['test'];
+    }
 }

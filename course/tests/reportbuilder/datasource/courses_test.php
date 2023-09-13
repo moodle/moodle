@@ -22,6 +22,7 @@ use context_course;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\boolean_select;
+use core_reportbuilder\local\filters\category;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\tags;
@@ -50,7 +51,13 @@ class courses_test extends core_reportbuilder_testcase {
 
         // Test subject.
         $category = $this->getDataGenerator()->create_category(['name' => 'My cats']);
-        $course = $this->getDataGenerator()->create_course([
+        $courseone = $this->getDataGenerator()->create_course([
+            'category' => $category->id,
+            'fullname' => 'Feline fine',
+            'shortname' => 'C102',
+            'idnumber' => 'CAT102'
+        ]);
+        $coursetwo = $this->getDataGenerator()->create_course([
             'category' => $category->id,
             'fullname' => 'All about cats',
             'shortname' => 'C101',
@@ -62,16 +69,12 @@ class courses_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
 
-        $contentrow = array_values($content[0]);
-
+        // Default columns are category, shortname, fullname, idnumber. Sorted by category, shortname, fullname.
         $this->assertEquals([
-            $category->get_formatted_name(),
-            $course->shortname,
-            $course->fullname,
-            $course->idnumber,
-        ], $contentrow);
+            [$category->name, $coursetwo->shortname, $coursetwo->fullname, $coursetwo->idnumber],
+            [$category->name, $courseone->shortname, $courseone->fullname, $courseone->idnumber],
+        ], array_map('array_values', $content));
     }
 
     /**
@@ -219,6 +222,11 @@ class courses_test extends core_reportbuilder_testcase {
         return [
             // Category.
             'Filter category' => ['course_category:name', [
+                'course_category:name_operator' => category::NOT_EQUAL_TO,
+                'course_category:name_value' => -1,
+            ], true],
+            'Filter category (no match)' => ['course_category:name', [
+                'course_category:name_operator' => category::EQUAL_TO,
                 'course_category:name_value' => -1,
             ], false],
             'Filter category name' => ['course_category:text', [

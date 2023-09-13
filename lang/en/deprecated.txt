@@ -50,6 +50,7 @@ filtertype,core_user
 match,core_user
 matchofthefollowing,core_user
 placeholdertypeorselect,core_user
+prefixtoolong,core_error
 selectfiltertype,core_user
 confirmaddadmin,core_role
 confirmdeladmin,core_role
@@ -83,3 +84,16 @@ showmore,core_availability
 backpackemail,core_badges
 backpackemail_help,core_badges
 editcoursecompletionsettings,core_completion
+clicktochangeinbrackets,core
+configenabledevicedetection,core_admin
+enabledevicedetection,core_admin
+devicedetectregex,core_admin
+devicedetectregex_desc,core_admin
+devicedetectregexexpression,core_admin
+devicedetectregexvalue,core_admin
+modshowcmtitle,core
+makeavailablecmtitle,core
+dateintervaldayshoursmins,core_langconfig
+completiondefault,core_completion
+configcompletiondefault,core_completion
+aria:courseimage,core_course

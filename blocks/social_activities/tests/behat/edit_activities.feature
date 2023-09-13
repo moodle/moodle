@@ -44,25 +44,9 @@ Feature: Edit activities in social activities block
     And I click on "Add a new Forum" "link" in the "Add an activity or resource" "dialogue"
     And I set the field "Forum name" to "My forum name"
     And I press "Save and return to course"
-    And "My forum name" activity in social activities block should have "Hide" editing icon
-    And "My forum name" activity in social activities block should not have "Show" editing icon
-    And "My forum name" activity in social activities block should not have "Make available" editing icon
-    And "My forum name" activity in social activities block should not have "Make unavailable" editing icon
-    And I wait until the page is ready
-    And I open "My forum name" actions menu in social activities block
-    And I click on "Hide" "link" in the "My forum name" activity in social activities block
-    And "My forum name" activity in social activities block should be hidden
-    And "My forum name" activity in social activities block should not have "Hide" editing icon
-    And "My forum name" activity in social activities block should have "Show" editing icon
-    And "My forum name" activity in social activities block should have "Make available" editing icon
-    And "My forum name" activity in social activities block should not have "Make unavailable" editing icon
-    And I open "My forum name" actions menu in social activities block
-    And I click on "Make available" "link" in the "My forum name" activity in social activities block
-    And "My forum name" activity in social activities block should be available but hidden from course page
-    And "My forum name" activity in social activities block should not have "Hide" editing icon
-    And "My forum name" activity in social activities block should have "Show" editing icon
-    And "My forum name" activity in social activities block should not have "Make available" editing icon
-    And "My forum name" activity in social activities block should have "Make unavailable" editing icon
+    When I open "My forum name" actions menu in social activities block
+    And I choose "Availability > Make available but don't show on course page" in the open action menu
+    Then I should see "Available but not shown on course page" in the "My forum name" "core_courseformat > Activity visibility"
     # Make sure that "Availability" dropdown in the edit menu has three options.
     And I open "My forum name" actions menu in social activities block
     And I click on "Edit settings" "link" in the "My forum name" activity in social activities block

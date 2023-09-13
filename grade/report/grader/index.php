@@ -33,7 +33,7 @@ $page          = optional_param('page', 0, PARAM_INT);   // active page
 $edit          = optional_param('edit', -1, PARAM_BOOL); // sticky editting mode
 
 $sortitemid    = optional_param('sortitemid', 0, PARAM_ALPHANUMEXT);
-$sort          = optional_param('sort', '', PARAM_TEXT);
+$sort          = optional_param('sort', '', PARAM_ALPHA);
 $action        = optional_param('action', 0, PARAM_ALPHAEXT);
 $move          = optional_param('move', 0, PARAM_INT);
 $type          = optional_param('type', 0, PARAM_ALPHA);
@@ -49,7 +49,7 @@ $studentsperpage = optional_param('perpage', null, PARAM_INT);
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
 $PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
-$PAGE->requires->js_call_amd('gradereport_grader/search', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/user', 'init');
 $PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
 $PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
@@ -57,6 +57,12 @@ $PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
     throw new \moodle_exception('invalidcourseid');
 }
+
+// Conditionally add the group JS if we have groups enabled.
+if ($course->groupmode) {
+    $PAGE->requires->js_call_amd('gradereport_grader/group', 'init');
+}
+
 require_login($course);
 $context = context_course::instance($course->id);
 
@@ -124,9 +130,12 @@ grade_regrade_final_grades_if_required($course);
 
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
-if ($sort) {
-    $sort = strtoupper($sort);
+if ($sort && strcasecmp($sort, 'desc') !== 0) {
+    $sort = 'asc';
 }
+// We have lots of hardcoded 'ASC' and 'DESC' strings in grade/report/grader.lib :(. So we need to uppercase the sort.
+$sort = strtoupper($sort);
+
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
 
 // We call this a little later since we need some info from the grader report.

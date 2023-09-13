@@ -61,7 +61,8 @@
             ]
         },
         "groupselector": "<div class='group-selector'></div>",
-        "collapsedcolumns": "<div class='collapse-columns'></div>"
+        "collapsedcolumns": "<div class='collapse-columns'></div>",
+        "pagereset": "http://moodle.local/grade/report/grader/index.php?id=2&userid=2&reset=1"
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
@@ -74,26 +75,32 @@
         {{/generalnavselector}}
         {{#searchdropdown}}
             <div class="navitem">
-                {{>core_grades/tertiary_navigation_dropdown}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider"></div>
         {{/searchdropdown}}
         {{#groupselector}}
             <div class="navitem">
-                {{{groupselector}}}
+                {{{.}}}
             </div>
             <div class="navitem-divider"></div>
         {{/groupselector}}
         {{#initialselector}}
             <div class="navitem d-flex flex-column align-self-center">
-                {{>core_grades/tertiary_navigation_dropdown}}
+                {{>core/comboboxsearch}}
             </div>
             <div class="navitem-divider"></div>
         {{/initialselector}}
+        {{#pagereset}}
+            <div class="navitem align-self-center">
+                <a href="{{{.}}}" class="btn btn-link">{{#str}}clearall, gradereport_grader{{/str}}</a>
+            </div>
+            <div class="navitem-divider"></div>
+        {{/pagereset}}
         {{#collapsedcolumns}}
             <div class="navitem flex-column align-self-center ml-auto {{#classes}}{{.}}{{/classes}}" aria-live="polite">
                 {{#content}}
-                    {{>core_grades/tertiary_navigation_dropdown}}
+                    {{>core/comboboxsearch}}
                 {{/content}}
             </div>
         {{/collapsedcolumns}}

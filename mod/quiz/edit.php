@@ -49,7 +49,7 @@ require_once($CFG->dirroot . '/question/editlib.php');
 $mdlscrollto = optional_param('mdlscrollto', '', PARAM_INT);
 
 list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-        question_edit_setup('editq', '/mod/quiz/edit.php', true);
+    question_edit_setup('editq', '/mod/quiz/edit.php', true);
 
 $PAGE->set_url($thispageurl);
 $PAGE->set_secondary_active_tab("mod_quiz_edit");
@@ -166,10 +166,6 @@ $event = \mod_quiz\event\edit_page_viewed::create([
 ]);
 $event->trigger();
 
-// Get the question bank view.
-$questionbank = new mod_quiz\question\bank\custom_view($contexts, $thispageurl, $course, $cm, $quiz);
-$questionbank->set_quiz_has_attempts($quizhasattempts);
-
 // End of process commands =====================================================.
 
 $PAGE->set_pagelayout('incourse');
@@ -184,8 +180,13 @@ $node = $PAGE->settingsnav->find('mod_quiz_edit', navigation_node::TYPE_SETTING)
 if ($node) {
     $node->make_active();
 }
-echo $OUTPUT->header();
 
+// Add random question - result message.
+if ($message = optional_param('message', '', PARAM_TEXT)) {
+    core\notification::add($message, core\notification::SUCCESS);
+}
+
+echo $OUTPUT->header();
 // Initialise the JavaScript.
 $quizeditconfig = new stdClass();
 $quizeditconfig->url = $thispageurl->out(true, ['qbanktool' => '0']);

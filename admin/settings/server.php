@@ -453,6 +453,12 @@ if ($hassiteconfig) {
     // Outgoing mail configuration.
     $temp = new admin_settingpage('outgoingmailconfig', new lang_string('outgoingmailconfig', 'admin'));
 
+    if (!empty($CFG->noemailever)) {
+        $noemaileverwarning = new \core\output\notification(get_string('noemaileverwarning', 'admin'),
+        \core\output\notification::NOTIFY_ERROR);
+        $temp->add(new admin_setting_heading('outgoingmaildisabled', '', $OUTPUT->render($noemaileverwarning)));
+    }
+
     $temp->add(new admin_setting_heading('smtpheading', new lang_string('smtp', 'admin'),
         new lang_string('smtpdetail', 'admin')));
 

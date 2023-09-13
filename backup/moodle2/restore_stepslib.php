@@ -1159,7 +1159,10 @@ class restore_groups_structure_step extends restore_structure_step {
         $groupinfo = $this->get_setting_value('groups');
         if ($groupinfo) {
             $paths[] = new restore_path_element('group', '/groups/group');
+            $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
             $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
+            $paths[] = new restore_path_element('groupingcustomfield',
+                '/groups/groupings/groupingcustomfields/groupingcustomfield');
             $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
         }
         return $paths;
@@ -1225,6 +1228,18 @@ class restore_groups_structure_step extends restore_structure_step {
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
     }
 
+    /**
+     * Restore group custom field values.
+     * @param array $data data for group custom field
+     * @return void
+     */
+    public function process_groupcustomfield($data) {
+        $newgroup = $this->get_mapping('group', $data['groupid']);
+        $data['groupid'] = $newgroup->newitemid;
+        $handler = \core_group\customfield\group_handler::create();
+        $handler->restore_instance_data_from_backup($this->task, $data);
+    }
+
     public function process_grouping($data) {
         global $DB;
 
@@ -1268,6 +1283,18 @@ class restore_groups_structure_step extends restore_structure_step {
         $this->set_mapping('grouping', $oldid, $newitemid, $restorefiles);
         // Invalidate the course group data cache just in case.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
+    }
+
+    /**
+     * Restore grouping custom field values.
+     * @param array $data data for grouping custom field
+     * @return void
+     */
+    public function process_groupingcustomfield($data) {
+        $newgroup = $this->get_mapping('grouping', $data['groupingid']);
+        $data['groupingid'] = $newgroup->newitemid;
+        $handler = \core_group\customfield\grouping_handler::create();
+        $handler->restore_instance_data_from_backup($this->task, $data);
     }
 
     public function process_grouping_group($data) {
@@ -6191,14 +6218,29 @@ trait restore_question_set_reference_data_trait {
         $data = (object) $data;
         $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
         $data->itemid = $this->get_new_parentid('quiz_question_instance');
-        $filtercondition = json_decode($data->filtercondition);
-        if ($category = $this->get_mappingid('question_category', $filtercondition->questioncategoryid)) {
-            $filtercondition->questioncategoryid = $category;
+        $filtercondition = json_decode($data->filtercondition, true);
+
+        if (!isset($filtercondition['filter'])) {
+            // Pre-4.3, convert the old filtercondition format to the new format.
+            $filtercondition = \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition(
+                    $filtercondition);
         }
-        $data->filtercondition = json_encode($filtercondition);
+
+        // Map category id used for category filter condition and corresponding context id.
+        $oldcategoryid = $filtercondition['filter']['category']['values'][0];
+        $newcategoryid = $this->get_mappingid('question_category', $oldcategoryid);
+        $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
         }
+
+        $filtercondition['cat'] = implode(',', [
+            $filtercondition['filter']['category']['values'][0],
+            $data->questionscontextid,
+        ]);
+
+        $data->filtercondition = json_encode($filtercondition);
 
         $DB->insert_record('question_set_references', $data);
     }

@@ -146,6 +146,9 @@ abstract class moodleform {
     /** @var bool|null stores the validation result of this form or null if not yet validated */
     protected $_validated = null;
 
+    /** @var int Unique identifier to be used for action buttons. */
+    static protected $uniqueid = 0;
+
     /**
      * The constructor function calls the abstract function definition() and it will then
      * process and clean and attempt to validate incoming data.
@@ -1359,21 +1362,35 @@ abstract class moodleform {
      * @param string $submitlabel label for submit button, defaults to get_string('savechanges')
      */
     public function add_action_buttons($cancel = true, $submitlabel = null) {
-        if (is_null($submitlabel)){
+        if (is_null($submitlabel)) {
             $submitlabel = get_string('savechanges');
         }
-        $mform =& $this->_form;
-        if ($cancel){
-            //when two elements we need a group
-            $buttonarray=array();
-            $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitlabel);
-            $buttonarray[] = &$mform->createElement('cancel');
-            $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
+        $mform = $this->_form;
+        // Only use uniqueid if the form defines it needs to be used.
+        $forceuniqueid = false;
+        if (is_array($this->_customdata)) {
+            $forceuniqueid = $this->_customdata['forceuniqueid'] ?? false;
+        }
+        // Keep the first action button as submitbutton (without uniqueid) because single forms pages expect this to happen.
+        $submitbuttonname = $forceuniqueid && $this::$uniqueid > 0 ? 'submitbutton_' . $this::$uniqueid : 'submitbutton';
+        if ($cancel) {
+            // When two elements we need a group.
+            $buttonarray = [
+                $mform->createElement('submit', $submitbuttonname, $submitlabel),
+                $mform->createElement('cancel'),
+            ];
+            $buttonarname = $forceuniqueid && $this::$uniqueid > 0 ? 'buttonar_' . $this::$uniqueid : 'buttonar';
+            $mform->addGroup($buttonarray, $buttonarname, '', [' '], false);
             $mform->closeHeaderBefore('buttonar');
         } else {
-            //no group needed
-            $mform->addElement('submit', 'submitbutton', $submitlabel);
+            // No group needed.
+            $mform->addElement('submit', $submitbuttonname, $submitlabel);
             $mform->closeHeaderBefore('submitbutton');
+        }
+
+        // Increase the uniqueid so that we can have multiple forms with different ids for the action buttons on the same page.
+        if ($forceuniqueid) {
+            $this::$uniqueid++;
         }
     }
 
@@ -2354,12 +2371,21 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      * @param string $component component name to look the help string in
      * @param string $linktext optional text to display next to the icon
      * @param bool $suppresscheck set to true if the element may not exist
+     * @param string|object|array|int $a An object, string or number that can be used
+     *      within translation strings
      */
-    function addHelpButton($elementname, $identifier, $component = 'moodle', $linktext = '', $suppresscheck = false) {
+    public function addHelpButton(
+        $elementname,
+        $identifier,
+        $component = 'moodle',
+        $linktext = '',
+        $suppresscheck = false,
+        $a = null
+    ) {
         global $OUTPUT;
         if (array_key_exists($elementname, $this->_elementIndex)) {
             $element = $this->_elements[$this->_elementIndex[$elementname]];
-            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext);
+            $element->_helpbutton = $OUTPUT->help_icon($identifier, $component, $linktext, $a);
         } else if (!$suppresscheck) {
             debugging(get_string('nonexistentformelements', 'form', $elementname));
         }

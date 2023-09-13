@@ -352,11 +352,12 @@ function question_delete_question($questionid): void {
                    qv.version,
                    qbe.id as entryid,
                    qc.id as categoryid,
-                   qc.contextid as contextid
+                   ctx.id as contextid
               FROM {question} q
               LEFT JOIN {question_versions} qv ON qv.questionid = q.id
               LEFT JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+              LEFT JOIN {context} ctx ON ctx.id = qc.contextid
              WHERE q.id = ?';
     $questiondata = $DB->get_record_sql($sql, [$question->id]);
 
@@ -389,13 +390,6 @@ function question_delete_question($questionid): void {
     // Delete questiontype-specific data.
     question_bank::get_qtype($question->qtype, false)->delete_question($question->id, $questiondata->contextid);
 
-    // Delete all tag instances.
-    core_tag_tag::remove_all_item_tags('core_question', 'question', $question->id);
-
-    // Delete the custom filed data for the question.
-    $customfieldhandler = qbank_customfields\customfield\question_handler::create();
-    $customfieldhandler->delete_instance($question->id);
-
     // Now recursively delete all child questions
     if ($children = $DB->get_records('question',
             array('parent' => $questionid), '', 'id, qtype')) {
@@ -406,9 +400,6 @@ function question_delete_question($questionid): void {
         }
     }
 
-    // Delete question comments.
-    $DB->delete_records('comments', ['itemid' => $questionid, 'component' => 'qbank_comment',
-                                            'commentarea' => 'question']);
     // Finally delete the question record itself.
     $DB->delete_records('question', ['id' => $question->id]);
     $DB->delete_records('question_versions', ['id' => $questiondata->versionid]);
@@ -421,6 +412,7 @@ function question_delete_question($questionid): void {
     question_bank::notify_question_edited($question->id);
 
     // Log the deletion of this question.
+    // Any qbank plugins storing additional question data should observe this event and perform the necessary deletion.
     $question->category = $questiondata->categoryid;
     $question->contextid = $questiondata->contextid;
     $event = \core\event\question_deleted::create_from_question_instance($question);

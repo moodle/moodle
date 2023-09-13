@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="communication/provider/matrix/db" VERSION="2023011900" COMMENT="Stores the matrix room information associated with the communication instance."
+<XMLDB PATH="communication/provider/matrix/db" VERSION="20230719" COMMENT="Stores the matrix room information associated with the communication instance."
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="matrix_rooms" COMMENT="Stores the matrix room information associated with the communication instance.">
+    <TABLE NAME="matrix_room" COMMENT="Stores the matrix room information associated with the communication instance.">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
         <FIELD NAME="commid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the communication record"/>

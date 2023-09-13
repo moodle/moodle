@@ -24,11 +24,11 @@
 
 import Ajax from 'core/ajax';
 import Notification from 'core/notification';
-import ModalFactory from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalEvents from 'core/modal_events';
 import Fragment from 'core/fragment';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 prefetchStrings('tool_dataprivacy', [
     'selectcourses',
@@ -63,8 +63,7 @@ export default class SelectedCourses {
         this.contextId = contextId;
         this.requestId = requestId;
         // Now create the modal.
-        ModalFactory.create({
-            type: ModalFactory.types.SAVE_CANCEL,
+        ModalSaveCancel.create({
             title: getString('selectcourses', 'tool_dataprivacy'),
             body: this.getBody({requestid: requestId}),
             large: true,

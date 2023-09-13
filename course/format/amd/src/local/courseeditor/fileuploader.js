@@ -31,12 +31,12 @@
  */
 
 import Config from 'core/config';
-import ModalFactory from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {getFirst} from 'core/normalise';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {getCourseEditor} from 'core_courseformat/courseeditor';
 import {processMonitor} from 'core/process_monitor';
 import {debounce} from 'core/utils';
@@ -314,7 +314,6 @@ class HandlerManager {
                     this.lastHandlers[extension] ?? null
                 )
             ),
-            type: ModalFactory.types.SAVE_CANCEL,
             saveButtonText: getString('upload', 'moodle'),
         };
         // Create the modal.
@@ -405,7 +404,7 @@ class HandlerManager {
      */
     modalBodyRenderedPromise(modalParams) {
         return new Promise((resolve, reject) => {
-            ModalFactory.create(modalParams).then((modal) => {
+            ModalSaveCancel.create(modalParams).then((modal) => {
                 modal.setRemoveOnClose(true);
                 // Handle body loading event.
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {

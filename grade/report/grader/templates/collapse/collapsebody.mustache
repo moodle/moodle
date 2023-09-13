@@ -39,15 +39,31 @@
         {{$placeholder}}{{#str}}
             searchcollapsedcolumns, core_grades
         {{/str}}{{/placeholder}}
+        {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="collapse-listbox"
+            aria-autocomplete="list"
+            data-input-element="collapse-input-{{uniqid}}"
+        {{/additionalattributes}}
     {{/ core/search_input_auto }}
+    <input type="hidden" name="search" id="collapse-input-{{uniqid}}"/>
 
     <form class="columnsdropdownform flex-column h-100">
-        <ul class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1">
+        <ul id="collapse-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true">
             {{>gradereport_grader/collapse/collapseresults}}
         </ul>
-        <div class="d-flex flex-row justify-content-end mt-2">
-            <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
-            <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+        <div class="d-flex mt-2">
+            <div class="d-flex align-items-center form-check">
+                <label id="check-all" for="check-all-input" class="selected-option-info text-truncate form-check-label d-block" tabindex="-1">
+                    <input disabled id="check-all-input" class="form-check-input" type="checkbox" data-action="selectall" aria-label="{{#str}}selectall, core{{/str}}">
+                    {{#str}}selectall, core{{/str}}
+                </label>
+            </div>
+            <div class="flex-row ml-auto">
+                <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+                <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+            </div>
         </div>
     </form>
 </div>

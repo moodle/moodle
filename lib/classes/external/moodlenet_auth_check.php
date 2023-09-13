@@ -69,8 +69,9 @@ class moodlenet_auth_check extends external_api {
 
         // Check capability.
         $coursecontext = context_course::instance($courseid);
-        $usercanshare = utilities::can_user_share($coursecontext, $USER->id);
-        if (!$usercanshare) {
+        $usercanshareactivity = utilities::can_user_share($coursecontext, $USER->id, 'activity');
+        $usercansharecourse = utilities::can_user_share($coursecontext, $USER->id, 'course');
+        if (!$usercanshareactivity && !$usercansharecourse) {
             return self::return_errors($courseid, 'errorpermission',
                 get_string('nopermissions', 'error', get_string('moodlenet:sharetomoodlenet', 'moodle')));
         }

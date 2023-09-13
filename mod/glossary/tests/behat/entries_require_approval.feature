@@ -40,7 +40,7 @@ Feature: A teacher can choose whether glossary entries require approval
     And I log out
     # Approve the entry.
     And I am on the "Test glossary name" "glossary activity" page logged in as teacher1
-    And I follow "Pending approval"
+    And I follow "Pending approval (1)"
     Then I should see "(this entry is currently hidden)"
     And I follow "Approve"
     And I am on the "Test glossary name" "glossary activity" page
