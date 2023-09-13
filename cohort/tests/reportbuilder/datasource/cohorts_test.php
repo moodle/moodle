@@ -23,7 +23,7 @@ use context_system;
 use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{date, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, select, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -61,6 +61,13 @@ class cohorts_test extends core_reportbuilder_testcase {
             'contextid' => $contextcategory->id,
             'name' => 'Category cohort',
             'description' => 'This is my category cohort',
+        ]);
+
+        // Non-visible cohort (excluded by default).
+        $cohortnonvisible = $this->getDataGenerator()->create_cohort([
+            'contextid' => $contextsystem->id,
+            'name' => 'Non-visible',
+            'visible' => false,
         ]);
 
         /** @var core_reportbuilder_generator $generator */
@@ -176,6 +183,12 @@ class cohorts_test extends core_reportbuilder_testcase {
             ], true],
             'Filter description (no match)' => ['cohort:description', [
                 'cohort:description_operator' => text::IS_EMPTY,
+            ], false],
+            'Filter visible' => ['cohort:visible', [
+                'cohort:visible_operator' => boolean_select::CHECKED,
+            ], true],
+            'Filter visible (no match)' => ['cohort:visible', [
+                'cohort:visible_operator' => boolean_select::NOT_CHECKED,
             ], false],
 
             // Cohort member.
