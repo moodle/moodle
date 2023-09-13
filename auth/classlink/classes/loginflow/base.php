@@ -428,22 +428,42 @@ class base {
      * @return \stdClass The created token database record.
      */
     protected function createtoken($classlinkuniqid, $username, $authparams, $tokenparams, \auth_classlink\jwt $idtoken, $userid = 0) {
-
-       
         global $DB,$CFG;
+
+        // TEMP class used to debug the code flow
+        $datastore = new \stdClass;
+        $data = array(
+            'classlinkuniqid' => $classlinkuniqid,
+            'username' => $username,
+            'authparams' => $authparams,
+            'tokenparams' => $tokenparams,
+            'idtoken' => $idtoken->claim('email'),
+            'upn' => $idtoken->claim('upn'),
+            'loginhint' => $idtoken->claim('login_hint')
+        );
+        $datastore->storedata = serialize($data);
+        $datastore->date = date("Y-m-d h:i:s");
+        $DB->insert_record('temp_class', $datastore);
+
         // Determine remote username. Use 'upn' if available (Azure-specific), or fall back to standard 'sub'.
         $classlinkusername = $idtoken->claim('upn');
         if (empty($classlinkusername)) { 
           //  $classlinkusername = $idtoken->claim('sub');
             $classlinkusername = $idtoken->claim('login_hint');
         }
-
+        $classlinkusername = $idtoken->claim('login_hint');
         $classlinkusername = trim(\core_text::strtolower($classlinkusername));
+
+        // We should not fail here (idtoken was verified earlier to at least contain 'sub', but just in case...).
+        if (empty($classlinkusername)) { 
+            throw new \moodle_exception('errorauthinvalididtoken', 'auth_classlink');
+        }
       
         // Look for local moodle user by matched email:
         $email = $idtoken->claim('email');
         if (!empty($email)) {
-            $existingUser = $DB->get_record("user", array("email"=>$email), "id");
+            //$existingUser = $DB->get_record("user", array("email"=>$email), "id");
+            $existingUser = $DB->get_record("user", array("username"=>$classlinkusername), "id");
             if ($existingUser) {
                 $userid = $existingUser->id;
                 $username = $classlinkusername;
@@ -453,13 +473,7 @@ class base {
                 $mnethostid = $CFG->mnet_localhost_id;
                 $user = $DB->update_record("user", array("id"=>$userid, "username"=>$username, "auth"=>'classlink',"firstaccess"=>$timecreated,"lastaccess"=>$timecreated,"currentlogin"=>$timecreated,"lastip"=>$lastip,"mnethostid"=>$mnethostid));
             }
-    }
-
-        // We should not fail here (idtoken was verified earlier to at least contain 'sub', but just in case...).
-        if (empty($classlinkusername)) { 
-            throw new \moodle_exception('errorauthinvalididtoken', 'auth_classlink');
         }
-
         $tokenrec = new \stdClass;
         $tokenrec->classlinkuniqid = $classlinkuniqid;
         $tokenrec->username = $username;
