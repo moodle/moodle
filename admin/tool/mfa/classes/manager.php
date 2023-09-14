@@ -17,6 +17,7 @@
 namespace tool_mfa;
 
 use dml_exception;
+use tool_mfa\plugininfo\factor;
 
 /**
  * MFA management class.
@@ -69,8 +70,8 @@ class manager {
             'text-right',
             'text-center',
         ];
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
-        $userfactors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_enabled_factors();
+        $userfactors = factor::get_active_user_factor_types();
         $runningtotal = 0;
         $weighttoggle = false;
 
@@ -79,13 +80,13 @@ class manager {
             $name = get_string('pluginname', $namespace);
 
             // If factor is unknown, pending from here.
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_UNKNOWN) {
+            if ($factor->get_state() == factor::STATE_UNKNOWN) {
                 $weighttoggle = true;
             }
 
             // Stop adding weight if 100 achieved.
             if (!$weighttoggle) {
-                $achieved = $factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS ? $factor->get_weight() : 0;
+                $achieved = $factor->get_state() == factor::STATE_PASS ? $factor->get_weight() : 0;
                 $achieved = '+'.$achieved;
                 $runningtotal += $achieved;
             } else {
@@ -148,10 +149,10 @@ class manager {
      */
     public static function get_total_weight(): int {
         $totalweight = 0;
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_active_user_factor_types();
 
         foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if ($factor->get_state() == factor::STATE_PASS) {
                 $totalweight += $factor->get_weight();
             }
         }
@@ -227,12 +228,12 @@ class manager {
         global $SESSION;
 
         // Check for any instant fail states.
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
             $factor->load_locked_state();
 
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
-                return \tool_mfa\plugininfo\factor::STATE_FAIL;
+            if ($factor->get_state() == factor::STATE_FAIL) {
+                return factor::STATE_FAIL;
             }
         }
 
@@ -240,25 +241,24 @@ class manager {
             self::passed_enough_factors());
 
         // Check next factor for instant fail (fallback).
-        if (\tool_mfa\plugininfo\factor::get_next_user_factor()->get_state() ==
-            \tool_mfa\plugininfo\factor::STATE_FAIL) {
+        if (factor::get_next_user_login_factor()->get_state() == factor::STATE_FAIL) {
             // We need to handle a special case here, where someone reached the fallback,
             // If they were able to modify their state on the error page, such as passing iprange,
             // We must return pass.
             if ($passcondition) {
-                return \tool_mfa\plugininfo\factor::STATE_PASS;
+                return factor::STATE_PASS;
             }
 
-            return \tool_mfa\plugininfo\factor::STATE_FAIL;
+            return factor::STATE_FAIL;
         }
 
         // Now check for general passing state. If found, ensure that session var is set.
         if ($passcondition) {
-            return \tool_mfa\plugininfo\factor::STATE_PASS;
+            return factor::STATE_PASS;
         }
 
         // Else return neutral state.
-        return \tool_mfa\plugininfo\factor::STATE_NEUTRAL;
+        return factor::STATE_NEUTRAL;
     }
 
     /**
@@ -272,7 +272,7 @@ class manager {
         global $SESSION;
 
         $state = self::get_status();
-        if ($state == \tool_mfa\plugininfo\factor::STATE_PASS) {
+        if ($state == factor::STATE_PASS) {
             self::set_pass_state();
             // Check if user even had to reach auth page.
             if (isset($SESSION->tool_mfa_has_been_redirected)) {
@@ -287,7 +287,7 @@ class manager {
                 // Don't touch anything, let user be on their way.
                 return;
             }
-        } else if ($state == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+        } else if ($state == factor::STATE_FAIL) {
             self::cannot_login();
         } else if ($shouldreload) {
             // Set a session variable to track whether user is where they want to be.
@@ -305,9 +305,9 @@ class manager {
     public static function passed_enough_factors(): bool {
 
         // Check for any instant fail states.
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_active_user_factor_types();
         foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
+            if ($factor->get_state() == factor::STATE_FAIL) {
                 self::mfa_logout();
             }
         }
@@ -353,17 +353,17 @@ class manager {
             // @codingStandardsIgnoreEnd
 
             // Fire post pass state factor actions.
-            $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+            $factors = factor::get_active_user_factor_types();
             foreach ($factors as $factor) {
                 $factor->post_pass_state();
                 // Also set the states for this session to neutral if they were locked.
-                if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_LOCKED) {
-                    $factor->set_state(\tool_mfa\plugininfo\factor::STATE_NEUTRAL);
+                if ($factor->get_state() == factor::STATE_LOCKED) {
+                    $factor->set_state(factor::STATE_NEUTRAL);
                 }
             }
 
             // Output notifications if any factors were reset for this user.
-            $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+            $enabledfactors = factor::get_enabled_factors();
             foreach ($enabledfactors as $factor) {
                 $pref = 'tool_mfa_reset_' . $factor->name;
                 $factorpref = get_user_preferences($pref, false);
@@ -377,7 +377,7 @@ class manager {
             }
 
             // Also check for a global reset.
-            // TODO: Delete this in a ferw months, the reset all preference is no longer set.
+            // TODO: Delete this in a few months, the reset all preference is no longer set.
             $allfactor = get_user_preferences('tool_mfa_reset_all', false);
             if ($allfactor) {
                 $url = new \moodle_url('/admin/tool/mfa/user_preferences.php');
@@ -563,7 +563,7 @@ class manager {
      * @return array
      */
     public static function get_no_redirect_urls(): array {
-        $factors = \tool_mfa\plugininfo\factor::get_factors();
+        $factors = factor::get_factors();
         $urls = [
             new \moodle_url('/login/logout.php'),
             new \moodle_url('/admin/tool/mfa/guide.php'),
@@ -723,7 +723,7 @@ class manager {
             return false;
         }
 
-        $enabledfactors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $enabledfactors = factor::get_enabled_factors();
         if (count($enabledfactors) == 0) {
             return false;
         }
@@ -791,13 +791,13 @@ class manager {
         global $USER;
 
         // Get all active factors.
-        $factors = \tool_mfa\plugininfo\factor::get_enabled_factors();
+        $factors = factor::get_enabled_factors();
 
         // Check if there are enough factors that a user can ONLY pass, if so, don't display the menu.
         $weight = 0;
         foreach ($factors as $factor) {
             $states = $factor->possible_states($USER);
-            if (count($states) == 1 && reset($states) == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if (count($states) == 1 && reset($states) == factor::STATE_PASS) {
                 $weight += $factor->get_weight();
                 if ($weight >= 100) {
                     return false;
@@ -808,7 +808,7 @@ class manager {
         // Now if there is a factor that can be setup, that may return a pass state for the user, display menu.
         foreach ($factors as $factor) {
             if ($factor->has_setup()) {
-                if (in_array(\tool_mfa\plugininfo\factor::STATE_PASS, $factor->possible_states($USER))) {
+                if (in_array(factor::STATE_PASS, $factor->possible_states($USER))) {
                     return true;
                 }
             }
@@ -820,19 +820,21 @@ class manager {
     /**
      * Gets current user weight, up until first unknown factor.
      *
-     * @return int
+     * @return int $totalweight Total weight of all factors.
      */
     public static function get_cumulative_weight(): int {
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_active_user_factor_types();
+        // Factor order is important here, so sort the factors by state.
+        $sortedfactors = factor::sort_factors_by_state($factors, factor::STATE_PASS);
         $totalweight = 0;
-        foreach ($factors as $factor) {
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+        foreach ($sortedfactors as $factor) {
+            if ($factor->get_state() == factor::STATE_PASS) {
                 $totalweight += $factor->get_weight();
-                // If over 100, break. Dont care about >100.
+                // If over 100, break. Don't care about >100.
                 if ($totalweight >= 100) {
                     break;
                 }
-            } else if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_UNKNOWN) {
+            } else if ($factor->get_state() == factor::STATE_UNKNOWN) {
                 break;
             }
         }
@@ -846,7 +848,7 @@ class manager {
      * @return bool true if factor is pending.
      */
     public static function check_factor_pending(string $factorname): bool {
-        $factors = \tool_mfa\plugininfo\factor::get_active_user_factor_types();
+        $factors = factor::get_active_user_factor_types();
         // Setup vars.
         $pending = [];
         $totalweight = 0;
@@ -859,7 +861,7 @@ class manager {
                 continue;
             }
 
-            if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_PASS) {
+            if ($factor->get_state() == factor::STATE_PASS) {
                 $totalweight += $factor->get_weight();
                 if ($totalweight >= 100) {
                     $weighttoggle = true;

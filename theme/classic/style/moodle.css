@@ -33471,7 +33471,7 @@ textarea[data-auto-rows] {
 
 @media (min-width: 768px) {
   .login-container {
-    max-width: 600px;
+    width: 500px !important; /* stylelint-disable-line declaration-no-important */
     border-radius: 0.25rem;
   }
 }

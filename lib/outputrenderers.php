@@ -4259,9 +4259,10 @@ EOD;
      * Returns the HTML for the site support email link
      *
      * @param array $customattribs Array of custom attributes for the support email anchor tag.
+     * @param bool $embed Set to true if you want to embed the link in other inline content.
      * @return string The html code for the support email link.
      */
-    public function supportemail(array $customattribs = []): string {
+    public function supportemail(array $customattribs = [], bool $embed = false): string {
         global $CFG;
 
         // Do not provide a link to contact site support if it is unavailable to this user. This would be where the site has
@@ -4274,7 +4275,12 @@ EOD;
 
         $label = get_string('contactsitesupport', 'admin');
         $icon = $this->pix_icon('t/email', '');
-        $content = $icon . $label;
+
+        if (!$embed) {
+            $content = $icon . $label;
+        } else {
+            $content = $label;
+        }
 
         if (!empty($CFG->supportpage)) {
             $attributes = ['href' => $CFG->supportpage, 'target' => 'blank'];

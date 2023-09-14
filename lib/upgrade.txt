@@ -180,6 +180,8 @@ being forced open in all behat tests.
 * Ensure that all system icons now come with an accompanying SVG file. Any missing SVG files have been addressed, and to maintain
   this consistency, a PHPUnit test has been implemented to validate the inclusion of SVG files for any new icons.
 * The $CFG->svgicons setting has been removed because all modern browsers now handle SVG files correctly.
+* The method `\core_renderer->supportemail()` has an updated signature. It now allows a second optional parameter.
+  Set it to true if you want to embed the generated link in other inline content.
 
 === 4.2 ===
 

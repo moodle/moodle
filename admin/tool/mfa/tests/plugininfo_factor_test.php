@@ -29,14 +29,14 @@ class plugininfo_factor_test extends \advanced_testcase {
     /**
      * Tests getting next user factor
      *
-     * @covers ::get_next_user_factor
+     * @covers ::get_next_user_login_factor
      * @covers ::setup_user_factor
      * @covers ::get_enabled_factors
      * @covers ::is_enabled
      * @covers ::has_setup
      * @covers ::get_active_user_factor_types
      */
-    public function test_get_next_user_factor() {
+    public function test_get_next_user_login_factor() {
 
         $this->resetAfterTest(true);
 
@@ -45,7 +45,7 @@ class plugininfo_factor_test extends \advanced_testcase {
         $this->setUser($user);
 
         // Test that with no enabled factors, fallback is returned.
-        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_factor()->name);
+        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
 
         // Setup enabled totp factor for user.
         set_config('enabled', 1, 'factor_totp');
@@ -57,11 +57,11 @@ class plugininfo_factor_test extends \advanced_testcase {
         $this->assertNotEmpty($totpfactor->setup_user_factor((object) $totpdata));
 
         // Test that factor now appears (from STATE_UNKNOWN).
-        $this->assertEquals('totp', \tool_mfa\plugininfo\factor::get_next_user_factor()->name);
+        $this->assertEquals('totp', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
 
         // Now pass this factor, check for fallback.
         $totpfactor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
-        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_factor()->name);
+        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
 
         // Add in a no-input factor.
         set_config('enabled', 1, 'factor_auth');
@@ -73,6 +73,6 @@ class plugininfo_factor_test extends \advanced_testcase {
 
         // Check that the next factor is still the fallback factor.
         $this->assertEquals(2, count(\tool_mfa\plugininfo\factor::get_active_user_factor_types()));
-        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_factor()->name);
+        $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
     }
 }
