@@ -15,25 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Legacy Cron Quiz Reports Task
+ * Add event observers for quiz_statistics
  *
- * @package    quiz_statistics
- * @copyright  2017 Michael Hughes, University of Strathclyde
- * @author Michael Hughes <michaelhughes@strath.ac.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- *
+ * @package   quiz_statistics
+ * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$tasks = [
+$observers = [
     [
-        'classname' => 'quiz_statistics\task\recalculate',
-        'blocking' => 0,
-        'minute' => 'R',
-        'hour' => '*/4',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ]
+        'eventname' => '\mod_quiz\event\attempt_submitted',
+        'callback' => '\quiz_statistics\event\observer\attempt_submitted::process',
+    ],
 ];
