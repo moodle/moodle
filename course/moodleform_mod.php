@@ -318,7 +318,11 @@ abstract class moodleform_mod extends moodleform {
         }
 
         // Completion: If necessary, freeze fields.
-        $this->definition_after_data_completion();
+        $cm = null;
+        if ($this->_cm) {
+            $cm = get_fast_modinfo($COURSE)->get_cm($this->_cm->id);
+        }
+        $this->definition_after_data_completion($cm);
 
         // Freeze admin defaults if required (and not different from default)
         $this->apply_admin_locked_flags();

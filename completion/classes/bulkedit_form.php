@@ -56,11 +56,11 @@ class core_completion_bulkedit_form extends core_completion_edit_base_form {
     /**
      * It will return the course module when $cms has only one course module; otherwise, null will be returned.
      *
-     * @return \stdClass|null
+     * @return cm_info|null
      */
-    protected function get_cm(): ?\stdClass {
+    protected function get_cm(): ?cm_info {
         if (count($this->cms) === 1) {
-            return reset($this->cms)->get_course_module_record();
+            return reset($this->cms);
         }
 
         // If there are multiple modules, so none will be selected.

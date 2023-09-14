@@ -219,10 +219,19 @@ abstract class core_completion_edit_base_form extends moodleform {
     }
 
     /**
+     * Return the course module of the form, if any.
+     *
+     * @return cm_info|null
+     */
+    protected function get_cm(): ?cm_info {
+        return null;
+    }
+
+    /**
      * Each module which defines definition_after_data() must call this method.
      */
     public function definition_after_data() {
-        $this->definition_after_data_completion();
+        $this->definition_after_data_completion($this->get_cm());
     }
 
     /**
