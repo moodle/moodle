@@ -262,9 +262,13 @@ class behat_gradingform_rubric extends behat_base {
                 'xpath',
             ]);
 
-            $inputfield = $this->find('xpath', $inputxpath . '|' . $textareaxpath);
-            $inputfield->setValue($value);
-
+            $this->execute(
+                'behat_forms::i_set_the_field_with_xpath_to',
+                [
+                    $inputxpath . '|' . $textareaxpath,
+                    $value,
+                ]
+            );
         } else {
             $fieldnode = $this->find('xpath', $inputxpath . '|' . $textareaxpath);
             $this->set_rubric_field_value($fieldnode->getAttribute('name'), $value);
@@ -447,8 +451,13 @@ class behat_gradingform_rubric extends behat_base {
         }
 
         // Set the value now.
-        $description = $this->find_field($name);
-        $description->setValue($value);
+        $this->execute(
+            'behat_forms::i_set_the_field_to',
+            [
+                $name,
+                $value,
+            ]
+        );
     }
 
     /**

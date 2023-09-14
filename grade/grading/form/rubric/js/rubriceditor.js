@@ -210,6 +210,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
+            M.util.js_pending('gradingform_rubriceditor:deleteConfirmation');
             require(['core/notification', 'core/str'], function(Notification, Str) {
                 Notification.saveCancelPromise(
                     Str.get_string('confirmation', 'admin'),
@@ -221,6 +222,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
                 }.bind(this)).catch(function() {
                     // User cancelled.
                 });
+                M.util.js_complete('gradingform_rubriceditor:deleteConfirmation');
             }.bind(this));
         }
     } else if (chunks.length == 4 && action == 'duplicate') {
@@ -264,6 +266,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]+'-'+chunks[3]+'-'+chunks[4]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
+            M.util.js_pending('gradingform_rubriceditor:deleteLevelConfirmation');
             require(['core/notification', 'core/str'], function(Notification, Str) {
                 Notification.saveCancelPromise(
                     Str.get_string('confirmation', 'admin'),
@@ -275,6 +278,7 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
                 }.bind(this)).catch(function() {
                     // User cancelled.
                 });
+                M.util.js_complete('gradingform_rubriceditor:deleteLevelConfirmation');
             }.bind(this));
         }
     } else {
