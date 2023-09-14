@@ -16,21 +16,28 @@
 
 namespace core\oauth2\service;
 
+use core\oauth2\discovery\openidconnect;
 use core\oauth2\issuer;
-use core\oauth2\endpoint;
-use core\oauth2\user_field_mapping;
 
 /**
  * Class linkedin.
  *
- * Custom oauth2 issuer for linkedin as it doesn't support OIDC and has a different way to get
- * key information for users - firstname, lastname, email.
+ * OAuth 2 issuer for linkedin which is mostly OIDC compliant, with a few notable exceptions which require working around:
+ *
+ * 1. LinkedIn don't provide their OIDC discovery doc at {ISSUER}/.well-known/openid-configuration as the spec requires.
+ * i.e. https://www.linkedin.com/.well-known/openid-configuration isn't present.
+ * Instead, they make the configuration available at https://www.linkedin.com/oauth/.well-known/openid-configuration.
+ * See: https://openid.net/specs/openid-connect-discovery-1_0.html#ProviderConfig
+ *
+ * 2. LinkedIn don't return 'locale' as a string in the userinfo but instead return an object with 'language' and 'country' props.
+ * See: https://openid.net/specs/openid-connect-core-1_0.html#StandardClaims
+ * This is resolved in {@see \core\oauth2\client\linkedin::get_userinfo()}
  *
  * @copyright  2021 Peter Dias
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package    core
  */
-class linkedin implements issuer_interface {
+class linkedin extends openidconnect {
     /**
      * Build an OAuth2 issuer, with all the default values for this service.
      *
@@ -40,67 +47,14 @@ class linkedin implements issuer_interface {
         $record = (object) [
             'name' => 'LinkedIn',
             'image' => 'https://static.licdn.com/scds/common/u/images/logos/favicons/v1/favicon.ico',
-            'baseurl' => 'https://api.linkedin.com/v2',
-            'loginscopes' => 'r_liteprofile r_emailaddress',
-            'loginscopesoffline' => 'r_liteprofile r_emailaddress',
+            'baseurl' => 'https://www.linkedin.com/oauth', // The /oauth is where .well-known/openid-configuration lives.
+            'loginscopes' => 'openid profile email',
+            'loginscopesoffline' => 'openid profile email',
             'showonloginpage' => issuer::EVERYWHERE,
             'servicetype' => 'linkedin',
         ];
 
         $issuer = new issuer(0, $record);
         return $issuer;
-    }
-
-    /**
-     * Create endpoints for this issuer.
-     *
-     * @param issuer $issuer Issuer the endpoints should be created for.
-     * @return issuer
-     */
-    public static function create_endpoints(issuer $issuer): issuer {
-        $endpoints = [
-            'authorization_endpoint' => 'https://www.linkedin.com/oauth/v2/authorization',
-            'token_endpoint' => 'https://www.linkedin.com/oauth/v2/accessToken',
-            'email_endpoint' => 'https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))',
-            'userinfo_endpoint' => "https://api.linkedin.com/v2/me?projection=(localizedFirstName,localizedLastName,"
-                                        . "profilePicture(displayImage~digitalmediaAsset:playableStreams))",
-        ];
-        foreach ($endpoints as $name => $url) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'name' => $name,
-                'url' => $url
-            ];
-            $endpoint = new endpoint(0, $record);
-            $endpoint->create();
-        }
-
-        // Create the field mappings.
-        $mapping = [
-            'localizedFirstName' => 'firstname',
-            'localizedLastName' => 'lastname',
-            'elements[0]-handle~-emailAddress' => 'email',
-            'profilePicture-displayImage~-elements[0]-identifiers[0]-identifier' => 'picture'
-        ];
-        foreach ($mapping as $external => $internal) {
-            $record = (object) [
-                'issuerid' => $issuer->get('id'),
-                'externalfield' => $external,
-                'internalfield' => $internal
-            ];
-            $userfieldmapping = new user_field_mapping(0, $record);
-            $userfieldmapping->create();
-        }
-
-        return $issuer;
-    }
-
-    /**
-     * Linkedin does not have a discovery url that could be found. Return empty.
-     * @param issuer $issuer
-     * @return int
-     */
-    public static function discover_endpoints($issuer): int {
-        return 0;
     }
 }
