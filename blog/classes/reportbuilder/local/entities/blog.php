@@ -38,15 +38,15 @@ use core_reportbuilder\local\report\{column, filter};
 class blog extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'post' => 'bp',
-            'tag_instance' => 'bti',
-            'tag' => 'bt',
+            'post',
+            'tag_instance',
+            'tag',
         ];
     }
 

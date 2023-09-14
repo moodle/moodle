@@ -42,17 +42,17 @@ use stdClass;
 class completion extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'course_completion' => 'ccomp',
-            'course' => 'c',
-            'grade_grades' => 'gg',
-            'grade_items' => 'gi',
-            'user' => 'u',
+            'course_completion',
+            'course',
+            'grade_grades' ,
+            'grade_items',
+            'user',
         ];
     }
 
