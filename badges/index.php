@@ -48,7 +48,6 @@ if (empty($CFG->badges_allowcoursebadges) && ($type == BADGE_TYPE_COURSE)) {
     throw new \moodle_exception('coursebadgesdisabled', 'badges');
 }
 
-$err = '';
 $urlparams = ['type' => $type];
 
 if ($course = $DB->get_record('course', ['id' => $courseid])) {
@@ -150,25 +149,17 @@ if ($type == BADGE_TYPE_SITE) {
 
 echo $OUTPUT->box('', 'notifyproblem hide', 'check_connection');
 
-$totalcount = count(badges_get_badges($type, $courseid, '', '' , 0, 0));
-
-if ($totalcount) {
-    if ($course && $course->startdate > time()) {
-        echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
-    }
-
-    if ($err !== '') {
-        echo $OUTPUT->notification($err, 'notifyproblem');
-    }
-
-    if ($msg !== '') {
-        echo $OUTPUT->notification(get_string($msg, 'badges'), 'notifysuccess');
-    }
-
-    $report = system_report_factory::create(badges::class, $PAGE->context);
-    echo $report->output();
-} else {
-    echo $output->notification(get_string('nobadges', 'badges'), 'info');
+if ($course && $course->startdate > time()) {
+    echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
 }
+
+if ($msg !== '') {
+    echo $OUTPUT->notification(get_string($msg, 'badges'), 'notifysuccess');
+}
+
+$report = system_report_factory::create(badges::class, $PAGE->context);
+$report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
+
+echo $report->output();
 
 echo $OUTPUT->footer();
