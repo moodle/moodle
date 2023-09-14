@@ -1,7 +1,14 @@
 #trainingeventattendancetable {
    overflow-x: scroll;
+   padding-top: 10px;
+   padding-bottom: 10px;
 }
 
 input[name=usergrade] {
     width: 3em;
+}
+
+table.trainingeventdetails {
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

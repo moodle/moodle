@@ -33,7 +33,7 @@ $attending = optional_param('attending', null, PARAM_ALPHA);
 $view = optional_param('view', 0, PARAM_INTEGER);
 $waitingoption = optional_param('waiting', 0, PARAM_INTEGER);
 $publish = optional_param('publish', 0, PARAM_INTEGER);
-$dodownload = optional_param('dodownload', 0, PARAM_INTEGER);
+$download = optional_param('download', 0, PARAM_CLEAN);
 $exportcalendar = optional_param('exportcalendar', null, PARAM_CLEAN);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
 $usergrade = optional_param('usergrade', 0, PARAM_INTEGER);
@@ -57,7 +57,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
     print_error('noinstance');
 } else {
     if (!$location = $DB->get_record('classroom', array('id' => $event->classroomid))) {
-        if (!empty($dodownload)) {
+        if (!empty($download)) {
             die;
         }
         print_error('location not defined');
@@ -71,6 +71,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $PAGE->set_pagelayout('standard');
         $PAGE->set_title($event->name);
         $PAGE->set_heading($SITE->fullname);
+        $PAGE->set_context(context_module::instance($id));
 
         // Get the associated department id.
         $company = new company($location->companyid);
@@ -1122,8 +1123,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                         get_string('selectother',
                                                                         'trainingevent')). "</td>";
         }
+            if (!$waitingoption && has_capability('mod/trainingevent:resetattendees', $context)) {
+                    $eventtable .= "<td>". $OUTPUT->single_button(new moodle_url($CFG->wwwroot . "/mod/trainingevent/view.php",
+                                                                                 ['id' => $id,
+                                                                                  'action' => 'reset']),
+                                                                   get_string('resetattending', 'trainingevent'))."</td>";
+            }
         $eventtable .= "</tr></table>";
-        $eventtable .= "<table>";
+        $eventtable .= "<table class='trainingeventdetails'>";
         $eventtable .= "<tr><th>" . get_string('location', 'trainingevent') . "</th><td>" . format_text($location->name) . "</td></tr>";
 
         if (!empty($location->description)) {
@@ -1163,7 +1170,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         $eventtable .= "</table>";
 
-        if (!$dodownload) {
+        if (!$download) {
             echo $OUTPUT->header();
 
             // Check the userid is valid.
@@ -1257,144 +1264,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     echo html_writer::tag('h2', get_string('eventhaspassed', 'trainingevent'));
                 }
             }
-
-            // Output the attendees.
-            if (!empty($view) && has_capability('mod/trainingevent:viewattendees', $context)) {
-                // Get the associated department id.
-                $company = new company($location->companyid);
-                $parentlevel = company::get_company_parentnode($company->id);
-                $companydepartment = $parentlevel->id;
-
-                if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
-                    $userhierarchylevel = $parentlevel->id;
-                } else {
-                    $userlevel = $company->get_userlevel($USER);
-                    $userhierarchylevel = key($userlevel);
-                }
-                $departmentid = $userhierarchylevel;
-
-                $allowedusers = company::get_recursive_department_users($departmentid);
-                $allowedlist = '0';
-                foreach ($allowedusers as $alloweduser) {
-                    if ($allowedlist == '0') {
-                        $allowedlist = $alloweduser->userid;
-                    } else {
-                        $allowedlist .= ', '.$alloweduser->userid;
-                    }
-                }
-                // Get the list of other events in this course.
-                $eventselect = array();
-                $courseevents = $DB->get_records('trainingevent', array('course' => $event->course));
-                foreach ($courseevents as $courseevent) {
-                    // Can't add someone to your own.
-                    if ($courseevent->id == $event->id && empty($waitingoption) ) {
-                        continue;
-                    }
-                    // is there space??
-                    $currentcount = $DB->count_records('trainingevent_users',
-                                                       ['trainingeventid' => $courseevent->id,
-                                                       'waitlisted' => 0]);
-                    if ($currentcount < $courseevent->coursecapacity) {
-                        $courselocation = $DB->get_record('classroom', array('id' => $courseevent->classroomid));
-                        $eventselect[$courseevent->id] = $courseevent->name . ' - ' . $courselocation->name.
-                                                         ' '.date($dateformat, $courseevent->startdatetime);
-                    }
-                }
-
-                $attendancetable = new html_table();
-                $attendancetable->width = '95%';
-                $attendancetable->head = array(get_string('fullname'), get_string('email'));
-                $attendancetable->align = array("left", "left");
-                if (has_capability('mod/trainingevent:add', $context)) {
-                    $attendancetable->head[] = get_string('event', 'trainingevent');
-                    $attendancetable->head[] = get_string('action', 'trainingevent');
-                    $attendancetable->align[] = "center";
-                    $attendancetable->align[] = "center";
-                }
-                if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
-                    $attendancetable->head[] = get_string('grade', 'grades');
-                    $attendancetable->align[] = "center";
-                }
-
-                if ($users = $DB->get_records_sql('SELECT userid AS id FROM {trainingevent_users}
-                                                   WHERE trainingeventid='.$event->id.'
-                                                   AND userid IN ('.$allowedlist.')
-                                                   AND waitlisted=:waitlisted', 
-                                                   array('waitlisted' => $waitingoption)
-                                                   )) {
-                    foreach ($users as $user) {
-                        $fulluserdata = $DB->get_record('user', array('id' => $user->id));
-                        $userrow = array($fulluserdata->firstname.' '.$fulluserdata->lastname, $fulluserdata->email);
-                        if (has_capability('mod/trainingevent:add', $context)) {
-                            $select = new single_select(new moodle_url('/mod/trainingevent/view.php',
-                                                                       ['userid' => $user->id,
-                                                                        'id' => $id,
-                                                                        'view' => 1,
-                                                                        'waiting' => $waitingoption]),
-                                                                       'chosenevent',
-                                                                       $eventselect,
-                                                                       $event->id);
-                            $select->formid = 'chooseevent'.$user->id;
-                            $eventselecthtml = html_writer::tag('div',
-                                                                $OUTPUT->render($select),
-                                                                array('id' => 'iomad_event_selector'));
-                            $actionhtml = "";
-                            if ($waitingoption && $numattending < $maxcapacity) {
-                                $actionhtml = $OUTPUT->single_button(new moodle_url('view.php',
-                                                                                     array('userid' => $user->id,
-                                                                                           'id' => $id,
-                                                                                           'action' => 'add',
-                                                                                        'view' => 1 )),
-                                                                                     get_string("add"));
-                                $actionhtml .= "&nbsp";
-                            }
-                            $actionhtml .= $OUTPUT->single_button(new moodle_url('view.php',
-                                                                                  ['userid' => $user->id,
-                                                                                   'id' => $id,
-                                                                                   'action' => 'delete',
-                                                                                   'view' => 1,
-                                                                                   'waiting' => $waitingoption]),
-                                                                                  get_string("remove", 'trainingevent'));
-                            $userrow[] = $eventselecthtml;
-                            $userrow[] = $actionhtml;
-                        }
-
-                        if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
-                            $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);
-                            $gradehtml = '<form action="view.php" method="get">
-                                         <input type="hidden" name="id" value="' . $id . '" />
-                                         <input type="hidden" name="userid" value="'.$user->id.'" />
-                                         <input type="hidden" name="action" value="grade" />
-                                         <input type="hidden" name="view" value="1" />
-                                         <input type="text" name="usergrade" id="id_usergrade"
-                                                value="'.$usergradeentry->items[0]->grades[$user->id]->str_grade.'" />
-                                         <input type="submit" value="' . get_string('grade', 'grades') . '" />
-                                         </form>';
-
-                            $userrow[] = $gradehtml;
-                        }
-                        $attendancetable->data[] = $userrow;
-                    }
-                }
-                echo "<h3>".get_string('attendance', 'local_report_attendance')."</h3>";
-                if (!$waitingoption) {
-                    echo $OUTPUT->single_button($CFG->wwwroot."/mod/trainingevent/view.php?id=".$id."&dodownload=1",
-                                                get_string("downloadcsv",
-                                                'local_report_attendance'));
-                    if (has_capability('mod/trainingevent:resetattendees', $context)) {
-                        echo $OUTPUT->single_button("$CFG->wwwroot/mod/trainingevent/view.php?id=$id&action=reset",
-                                                                        get_string('resetattending', 'trainingevent'))."</td>";
-                    }
-                }
-                echo html_writer::start_tag('div', array('id' => 'trainingeventattendancetable'));
-                echo html_writer::table($attendancetable);
-                echo html_writer::end_tag('div');
-            }
-            if (has_capability('mod/trainingevent:grade', $context)) {
-                echo '<input type="submit" value="' . get_string('grade', 'grades') . '" />';
-            }
-            echo $OUTPUT->footer();
-        } else {
+        }
+        // Output the attendees.
+        if (!empty($view) && has_capability('mod/trainingevent:viewattendees', $context)) {
             // Get the associated department id.
             $company = new company($location->companyid);
             $parentlevel = company::get_company_parentnode($company->id);
@@ -1409,39 +1281,88 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $departmentid = $userhierarchylevel;
 
             $allowedusers = company::get_recursive_department_users($departmentid);
-            $allowedlist = "";
+            $allowedlist = '0';
             foreach ($allowedusers as $alloweduser) {
-                if (empty($allowedlist)) {
+                if ($allowedlist == '0') {
                     $allowedlist = $alloweduser->userid;
                 } else {
                     $allowedlist .= ', '.$alloweduser->userid;
                 }
             }
-
-            // Output everything to a file.
-            header("Content-Type: application/download\n");
-            header("Content-Disposition: attachment; filename=\"".$event->name.".csv\"");
-            header("Expires: 0");
-            header("Cache-Control: must-revalidate,post-check=0,pre-check=0");
-            header("Pragma: public");
-            echo "\"$event->name, $location->name, $location->address, $location->city, $location->country, $location->postcode\"\n";
-            echo "\"".get_string('fullname')."\",\"". get_string('email')."\",\"".get_string('grade', 'grades')."\"\n";
-            if ($users = $DB->get_records_sql('SELECT userid AS id
-                                               FROM {trainingevent_users}
-                                               WHERE trainingeventid='.$event->id.'
-                                               AND userid IN ('.$allowedlist.') AND waitlisted=0')) {
-                foreach ($users as $user) {
-                    $fulluserdata = $DB->get_record('user', array('id' => $user->id));
-                    $usergradeentry = grade_get_grades($event->course, 'mod', 'trainingevent', $event->id, $user->id);
-                    if (!empty($usergradeentry->items[0]->grades[$user->id]->str_grade)) {
-                        $user->grade = $usergradeentry->items[0]->grades[$user->id]->str_grade;
-                    } else {
-                        $user->grade = "";
-                    }
-                    echo "\"$fulluserdata->firstname $fulluserdata->lastname\", \"$fulluserdata->email\", \"".$user->grade."\"\n";
+            // Get the list of other events in this course.
+            $eventselect = array();
+            $courseevents = $DB->get_records('trainingevent', array('course' => $event->course));
+            foreach ($courseevents as $courseevent) {
+                // Can't add someone to your own.
+                if ($courseevent->id == $event->id && empty($waitingoption) ) {
+                    continue;
+                }
+                // is there space??
+                $currentcount = $DB->count_records('trainingevent_users',
+                                                   ['trainingeventid' => $courseevent->id,
+                                                   'waitlisted' => 0]);
+                if ($currentcount < $courseevent->coursecapacity) {
+                    $courselocation = $DB->get_record('classroom', array('id' => $courseevent->classroomid));
+                    $eventselect[$courseevent->id] = $courseevent->name . ' - ' . $courselocation->name.
+                                                     ' '.date($dateformat, $courseevent->startdatetime);
                 }
             }
-            exit;
+
+            $table = new \mod_trainingevent\tables\attendees_table('trainingeventattendees');
+            $table->is_downloading($download, format_string($event->name) . ' ' . get_string('attendance', 'local_report_attendance'), 'trainingevent_attendees123');
+            $headers = [get_string('fullname'),
+                        get_string('email')];
+            $columns = ['fullname',
+                        'email'];
+
+            if (has_capability('mod/trainingevent:add', $context)) {
+                $headers[] = get_string('event', 'trainingevent');
+                $columns[] = 'event';
+                if (!$download) {
+                    $headers[] = get_string('action', 'trainingevent');
+                    $columns[] = 'action';
+                }
+            }
+            if (has_capability('mod/trainingevent:grade', $context) && $waitingoption == 0) {
+                $headers[] = get_string('grade', 'grades');
+                $columns[] = 'grade';
+            }
+
+            $selectsql = "DISTINCT u.*";
+            $fromsql = " {user} u
+                         JOIN {trainingevent_users} teu ON (u.id = teu.userid)";
+            $wheresql = "teu.trainingeventid = :event
+                         AND u.id IN (".$allowedlist.")
+                         AND teu.waitlisted = :waitlisted"; 
+            $sqlparams = ['waitlisted' => $waitingoption,
+                          'event' => $event->id];
+
+            $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
+            $table->define_baseurl(new moodle_url('/mod/trainingevent/view.php',
+                                                  ['id' => $id,
+                                                   'view' => 1,
+                                                   'waiting' => $waitingoption]));
+            $table->define_columns($columns);
+            $table->define_headers($headers);
+            $table->no_sorting('event');
+            $table->no_sorting('grade');
+            $table->no_sorting('action');
+
+            if (!$download) {
+                echo "<h3>".get_string('attendance', 'local_report_attendance')."</h3>";
+                echo html_writer::start_tag('div', array('id' => 'trainingeventattendancetable'));
+            }
+            $table->out($CFG->iomad_max_list_users, true);
+            if (!$download) {
+                echo html_writer::end_tag('div');
+            }
+            if (!$download) {
+
+                if (has_capability('mod/trainingevent:grade', $context)) {
+                    echo '<br><input type="submit" value="' . get_string('grade', 'grades') . '" />';
+                }
+                echo $OUTPUT->footer();
+            }
         }
     }
 }
