@@ -324,6 +324,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/section' => 'fa-folder-o',
             'core:i/sendmessage' => 'fa-paper-plane',
             'core:i/settings' => 'fa-cog',
+            'core:i/share' => 'fa-share-square-o',
             'core:i/show' => 'fa-eye-slash',
             'core:i/siteevent' => 'fa-globe',
             'core:i/star' => 'fa-star',

@@ -57,9 +57,9 @@ Feature: MoodleNet outbound share course
   Scenario: User can share course to MoodleNet
     Given I am on the "C1" "course" page logged in as teacher1
     When I navigate to "Share to MoodleNet" in current page administration
-    Then I should see "COURSE" in the "Share to MoodleNet" "dialogue"
-    And I should see "C1" in the "Share to MoodleNet" "dialogue"
-    And I should see "You are sharing this to MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
+    Then I should see "Course" in the "Share to MoodleNet" "dialogue"
+    And I should see "Test course 1" in the "Share to MoodleNet" "dialogue"
+    And I should see "This course is being shared with MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
     And I click on "Share" "button" in the "Share to MoodleNet" "dialogue"
     And I switch to "moodlenet_auth" window
     And I press "Allow" and switch to main window

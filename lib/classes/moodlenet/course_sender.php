@@ -33,7 +33,7 @@ class course_sender extends resource_sender {
     /**
      * @var \core\context\course|false The course context.
      */
-    private \core\context\course|false $coursecontext;
+    protected \core\context\course|false $coursecontext;
 
     /**
      * Constructor for course sender.
@@ -54,6 +54,7 @@ class course_sender extends resource_sender {
         parent::__construct($courseid, $userid, $moodlenetclient, $oauthclient, $shareformat);
         $this->course = get_course($courseid);
         $this->coursecontext = \core\context\course::instance($courseid);
+        $this->packager = new course_packager($this->course, $this->userid);
     }
 
     /**
@@ -118,19 +119,6 @@ class course_sender extends resource_sender {
             'responsecode' => $responsecode,
             'drafturl' => $resourceurl,
         ];
-    }
-
-    /**
-     * Prepare the data for sharing, in the format specified.
-     *
-     * @return stored_file
-     */
-    protected function prepare_share_contents(): stored_file {
-        $packager = new course_packager($this->course, $this->userid);
-        return match ($this->shareformat) {
-            self::SHARE_FORMAT_BACKUP => $packager->get_package(),
-            default => throw new \coding_exception("Unknown share format: {$this->shareformat}'"),
-        };
     }
 
     /**

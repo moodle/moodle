@@ -27,7 +27,7 @@ Feature: Bulk course section actions one section per page.
       | allowstealth | 1 |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     And I should see "0 selected" in the "sticky-footer" "region"
 
   Scenario: Bulk section edit is only available when multiple sections are displayed
@@ -35,7 +35,7 @@ Feature: Bulk course section actions one section per page.
     And I should see "1 selected" in the "sticky-footer" "region"
     # Move to single topic page.
     When I click on "Topic 1" "link" in the "region-main" "region"
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     Then "Select topic Topic 1" "checkbox" should not exist
 
   Scenario: Bulk availability sections in one section per page

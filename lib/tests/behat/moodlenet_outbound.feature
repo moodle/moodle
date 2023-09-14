@@ -62,7 +62,7 @@ Feature: MoodleNet outbound send activity
     When I navigate to "Share to MoodleNet" in current page administration
     Then I should see "Assignment" in the "Share to MoodleNet" "dialogue"
     And I should see "Test Assignment 1" in the "Share to MoodleNet" "dialogue"
-    And I should see "You are sharing this to MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
+    And I should see "This activity is being shared with MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
     And I click on "Share" "button" in the "Share to MoodleNet" "dialogue"
     And I switch to "moodlenet_auth" window
     And I press "Allow" and switch to main window

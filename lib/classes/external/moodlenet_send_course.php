@@ -18,6 +18,7 @@ namespace core\external;
 
 use context_course;
 use core\http_client;
+use core\moodlenet\course_partial_sender;
 use core\moodlenet\course_sender;
 use core\moodlenet\moodlenet_client;
 use core\moodlenet\share_recorder;
@@ -25,6 +26,7 @@ use core\moodlenet\utilities;
 use core\oauth2\api;
 use core_external\external_api;
 use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use core_external\external_warnings;
@@ -49,6 +51,10 @@ class moodlenet_send_course extends external_api {
             'issuerid' => new external_value(PARAM_INT, 'OAuth 2 issuer ID', VALUE_REQUIRED),
             'courseid' => new external_value(PARAM_INT, 'Course ID', VALUE_REQUIRED),
             'shareformat' => new external_value(PARAM_INT, 'Share format', VALUE_REQUIRED),
+            'cmids' => new external_multiple_structure(
+                new external_value(PARAM_INT, 'Course module id', VALUE_DEFAULT, null, NULL_ALLOWED),
+                'List for course module ids', VALUE_DEFAULT, []
+            ),
         ]);
     }
 
@@ -58,12 +64,14 @@ class moodlenet_send_course extends external_api {
      * @param int $issuerid The MoodleNet OAuth 2 issuer ID
      * @param int $courseid The course ID
      * @param int $shareformat The share format being used, as defined by \core\moodlenet\course_sender
+     * @param array $cmids The course module ids
      * @return array
      */
     public static function execute(
         int $issuerid,
         int $courseid,
-        int $shareformat
+        int $shareformat,
+        array $cmids = [],
     ): array {
         global $CFG, $USER;
 
@@ -71,11 +79,16 @@ class moodlenet_send_course extends external_api {
             'issuerid' => $issuerid,
             'courseid' => $courseid,
             'shareformat' => $shareformat,
+            'cmids' => $cmids,
         ] = self::validate_parameters(self::execute_parameters(), [
             'issuerid' => $issuerid,
             'courseid' => $courseid,
             'shareformat' => $shareformat,
+            'cmids' => $cmids,
         ]);
+
+        // Partial sharing check.
+        $ispartialsharing = count($cmids) > 0;
 
         // Check capability.
         $coursecontext = context_course::instance($courseid);
@@ -95,6 +108,21 @@ class moodlenet_send_course extends external_api {
                 'errorinvalidformat',
                 get_string('invalidparameter', 'debug')
             );
+        }
+
+        if ($ispartialsharing) {
+            // Check course modules in the course.
+            $modinfo = get_fast_modinfo($courseid);
+            $cms = $modinfo->get_cms();
+            foreach ($cmids as $cmid) {
+                if (!array_key_exists($cmid, $cms)) {
+                    return self::return_errors(
+                        $cmid,
+                        'errorinvalidcmids',
+                        get_string('invalidparameter', 'debug')
+                    );
+                }
+            }
         }
 
         // Get the issuer.
@@ -139,7 +167,12 @@ class moodlenet_send_course extends external_api {
             $shareid = share_recorder::insert_share_progress(share_recorder::TYPE_COURSE, $USER->id, $courseid);
 
             $moodlenetclient = new moodlenet_client($client, $oauthclient);
-            $coursesender = new course_sender($courseid, $USER->id, $moodlenetclient, $oauthclient, $shareformat);
+            if ($ispartialsharing) {
+                $coursesender = new course_partial_sender($courseid, $USER->id, $moodlenetclient,
+                    $oauthclient, $cmids, $shareformat);
+            } else {
+                $coursesender = new course_sender($courseid, $USER->id, $moodlenetclient, $oauthclient, $shareformat);
+            }
             $result = $coursesender->share_resource();
             if (empty($result['drafturl'])) {
 
