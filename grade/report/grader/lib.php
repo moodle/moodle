@@ -793,10 +793,13 @@ class grade_report_grader extends grade_report {
             $tabindices[$item->id]['grade'] = $gradetabindex;
             $gradetabindex += $numusers * 2;
         }
-        $scalesarray = [];
 
-        if (!empty($scaleslist)) {
+        $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'gradereport_grader', 'scales');
+        $scalesarray = $cache->get(get_class($this));
+        if (!$scalesarray) {
             $scalesarray = $DB->get_records_list('scale', 'id', $scaleslist);
+            // Save to cache.
+            $cache->set(get_class($this), $scalesarray);
         }
 
         foreach ($this->gtree->get_levels() as $row) {
@@ -891,44 +894,7 @@ class grade_report_grader extends grade_report {
                         $itemcell->attributes['class'] .= ' statusicons';
                     }
 
-                    if (!empty($USER->editing)) {
-                        switch ($element['object']->gradetype) {
-                            case GRADE_TYPE_SCALE:
-                                $itemcell->attributes['class'] .= ' grade_type_scale';
-                                break;
-                            case GRADE_TYPE_VALUE:
-                                $itemcell->attributes['class'] .= ' grade_type_value';
-                                break;
-                            case GRADE_TYPE_TEXT:
-                                $itemcell->attributes['class'] .= ' grade_type_text';
-                                break;
-                        }
-                    } else {
-                        $gradedisplaytype = $element['object']->get_displaytype();
-
-                        // Letter grades, scales and text grades are left aligned.
-                        $textgrade = false;
-                        $textgrades = [GRADE_DISPLAY_TYPE_LETTER,
-                            GRADE_DISPLAY_TYPE_REAL_LETTER,
-                            GRADE_DISPLAY_TYPE_LETTER_REAL,
-                            GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE,
-                            GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER];
-                        if (in_array($gradedisplaytype, $textgrades)) {
-                            $textgrade = true;
-                        }
-
-                        if ($textgrade || ($element['object']->gradetype == GRADE_TYPE_TEXT)) {
-                            $itemcell->attributes['class'] .= ' grade_type_text';
-                        } else if ($element['object']->scaleid && !empty($scalesarray[$element['object']->scaleid])) {
-                            if ($gradedisplaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
-                                $itemcell->attributes['class'] .= ' grade_type_value';
-                            } else {
-                                $itemcell->attributes['class'] .= ' grade_type_scale';
-                            }
-                        } else {
-                            $itemcell->attributes['class'] .= ' grade_type_value';
-                        }
-                    }
+                    $itemcell->attributes['class'] .= $this->get_cell_display_class($element['object']);
 
                     $itemcell->colspan = $colspan;
                     $itemcell->header = true;
@@ -1393,7 +1359,6 @@ class grade_report_grader extends grade_report {
      * @return array Array of rows for the right part of the report
      */
     public function get_right_range_row($rows=array()) {
-        global $OUTPUT;
 
         if ($this->get_pref('showranges')) {
             $rangesdisplaytype   = $this->get_pref('rangesdisplaytype');
@@ -1405,14 +1370,7 @@ class grade_report_grader extends grade_report {
                 $item =& $this->gtree->items[$itemid];
                 $itemcell = new html_table_cell();
                 $itemcell->attributes['class'] .= ' range i'. $itemid;
-
-                if ($item->gradetype == GRADE_TYPE_SCALE) {
-                    $itemcell->attributes['class'] .= ' grade_type_scale';
-                } else if ($item->gradetype == GRADE_TYPE_VALUE) {
-                    $itemcell->attributes['class'] .= ' grade_type_value';
-                } else if ($item->gradetype == GRADE_TYPE_TEXT) {
-                    $itemcell->attributes['class'] .= ' grade_type_text';
-                }
+                $itemcell->attributes['class'] .= $this->get_cell_display_class($item);
 
                 $hidden = '';
                 if ($item->is_hidden()) {
@@ -1574,14 +1532,7 @@ class grade_report_grader extends grade_report {
                     $decimalpoints = $averagesdecimalpoints;
                 }
 
-                $gradetypeclass = '';
-                if ($item->gradetype == GRADE_TYPE_SCALE) {
-                    $gradetypeclass = ' grade_type_scale';
-                } else if ($item->gradetype == GRADE_TYPE_VALUE) {
-                    $gradetypeclass = ' grade_type_value';
-                } else if ($item->gradetype == GRADE_TYPE_TEXT) {
-                    $gradetypeclass = ' grade_type_text';
-                }
+                $gradetypeclass = $this->get_cell_display_class($item);
 
                 if (!isset($sumarray[$item->id]) || $meancount == 0) {
                     $avgcell = new html_table_cell();
@@ -2032,6 +1983,60 @@ class grade_report_grader extends grade_report {
         ]);
         $this->gpr->add_url_params($sortlink);
         return $sortlink->out(false);
+    }
+
+    /**
+     * Return class used for text alignment.
+     *
+     * @param grade_item $item Can be grade item or grade
+     * @return string class name used for text alignment
+     */
+    public function get_cell_display_class(grade_item $item): string {
+        global $USER;
+
+        $gradetypeclass = '';
+        if (!empty($USER->editing)) {
+            switch ($item->gradetype) {
+                case GRADE_TYPE_SCALE:
+                    $gradetypeclass = ' grade_type_scale';
+                    break;
+                case GRADE_TYPE_VALUE:
+                    $gradetypeclass = ' grade_type_value';
+                    break;
+                case GRADE_TYPE_TEXT:
+                    $gradetypeclass = ' grade_type_text';
+                    break;
+            }
+        } else {
+            $gradedisplaytype = $item->get_displaytype();
+
+            // Letter grades, scales and text grades are left aligned.
+            $textgrade = false;
+            $textgrades = [GRADE_DISPLAY_TYPE_LETTER,
+                GRADE_DISPLAY_TYPE_REAL_LETTER,
+                GRADE_DISPLAY_TYPE_LETTER_REAL,
+                GRADE_DISPLAY_TYPE_LETTER_PERCENTAGE,
+                GRADE_DISPLAY_TYPE_PERCENTAGE_LETTER];
+            if (in_array($gradedisplaytype, $textgrades)) {
+                $textgrade = true;
+            }
+
+            $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'gradereport_grader', 'scales');
+            $scalesarray = $cache->get(get_class($this));
+
+            if ($textgrade || ($item->gradetype == GRADE_TYPE_TEXT)) {
+                $gradetypeclass = ' grade_type_text';
+            } else if ($item->scaleid && !empty($scalesarray[$item->scaleid])) {
+                if ($gradedisplaytype == GRADE_DISPLAY_TYPE_PERCENTAGE) {
+                    $gradetypeclass = ' grade_type_value';
+                } else {
+                    $gradetypeclass = ' grade_type_scale';
+                }
+            } else {
+                $gradetypeclass = ' grade_type_value';
+            }
+        }
+        return $gradetypeclass;
     }
 }
 
