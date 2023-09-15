@@ -4,17 +4,6 @@
 <link rel="icon" href="{{qmurl}}/qubits-logo.png" sizes="any" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.jsdelivr.net/gh/qubits-platform/sqlite-wasm@master/sqlite3.js" defer=""></script>
-
-<link
-      rel="preload"
-      href="{{qmurl}}/_next/static/css/b7fe1c3ced7eec1e.css"
-      as="style"
-    />
-    <link
-      rel="stylesheet"
-      href="{{qmurl}}/_next/static/css/b7fe1c3ced7eec1e.css"
-      data-n-g=""
-    />
 <link rel="stylesheet" href="{{qmurl}}/css/pytutor.css" />
 <link rel="stylesheet" href="{{qmurl}}/css/jquery-ui.min.css" />
 <style>
@@ -35,27 +24,35 @@ require(["jquery", "jqueryui"], function($, jqui){
             $.getScript(`${murl}/js/d3.v2.min.js`),
             $.getScript(`${murl}/js/jquery.jsPlumb-1.3.10-all-min.js`),
             $.getScript(`${murl}/js/pytutor.js`),
-            $.getScript(`${murl}/_next/static/chunks/138-07ae0e62fb9ebb02.js`),
-            $.getScript(`${murl}/_next/static/chunks/2b7b2d2a-81f6f30138d3ccc2.js`),
-            $.getScript(`${murl}/_next/static/chunks/330.15fd4ae41f8497d9.js`),
-            $.getScript(`${murl}/_next/static/chunks/437.7034086ff5ece537.js`),
-            $.getScript(`${murl}/_next/static/chunks/666.488d54202b21d697.js`),
-            $.getScript(`${murl}/_next/static/chunks/751-80cffe59879d0435.js`),
-            $.getScript(`${murl}/_next/static/chunks/8a28b14e.d29918a3616a3ec4.js`),
-            $.getScript(`${murl}/_next/static/chunks/framework-2c79e2a64abdb08b.js`),
-            $.getScript(`${murl}/_next/static/chunks/main-164f91e3b1a225f8.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Chapter1-389954bb27641c0b.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Chapter2-0e94c8818fca8f51.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Chapter3-3dbf0cd5c4b8e1ec.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/Editor/[language]-f271a32e3f14878b.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/index-d53433006dcaa3a2.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/pdf-d04447f7d36b4a69.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/_app-aea6920bd27938ca.js`),
-            $.getScript(`${murl}/_next/static/chunks/pages/_error-3986dd5834f581dc.js`),
             $.getScript(`${murl}/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js`),
-            $.getScript(`${murl}/_next/static/chunks/webpack-5a0558ca168ebc76.js`),
-            $.getScript(`${murl}/_next/static/1ZAuSTIIzMcs6Ol2DXPM_/_buildManifest.js`),
-            $.getScript(`${murl}/_next/static/1ZAuSTIIzMcs6Ol2DXPM_/_ssgManifest.js`),
+            $.getScript(`${murl}/_next/static/chunks/webpack-c11c777fc8c8dd23.js`),
+            $.getScript(`${murl}/_next/static/chunks/framework-73b8966a3c579ab0.js`),
+            $.getScript(`${murl}/_next/static/chunks/main-0195563e86877484.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/_app-c69b2c1c2c2a4ea3.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/_error-a2805152a5cb71b2.js`),
+            $.getScript(`${murl}/_next/static/chunks/110-686e3878273eef90.js`),
+            $.getScript(`${murl}/_next/static/chunks/283.f0159db72648956d.js`),
+            $.getScript(`${murl}/_next/static/chunks/294-1d8c4ce2ef3b6233.js`),
+            $.getScript(`${murl}/_next/static/chunks/2b7b2d2a-4112f4194de6a343.js`),
+            $.getScript(`${murl}/_next/static/chunks/36-68e2902f78b3e2f0.js`),
+            $.getScript(`${murl}/_next/static/chunks/369-518ab4e47622d611.js`),
+            $.getScript(`${murl}/_next/static/chunks/441.6e8f56c733171ebd.js`),
+            $.getScript(`${murl}/_next/static/chunks/489.b9b6257f01afd9cc.js`),
+            $.getScript(`${murl}/_next/static/chunks/568.25e344edffa76485.js`),
+            $.getScript(`${murl}/_next/static/chunks/70.1fae6ae48a390866.js`),
+            $.getScript(`${murl}/_next/static/chunks/824-2d20f2b5ffab35a5.js`),
+            $.getScript(`${murl}/_next/static/chunks/868-d97d1c8bf82105eb.js`),
+            $.getScript(`${murl}/_next/static/chunks/890-d7c7d20f94930d62.js`),
+            $.getScript(`${murl}/_next/static/chunks/8a28b14e.c45c4298898c80e6.js`),
+            $.getScript(`${murl}/_next/static/chunks/952.9ebd4fe01c4c7ae6.js`),
+            $.getScript(`${murl}/_next/static/chunks/955.d2e99f4d05818d9a.js`),
+            $.getScript(`${murl}/_next/static/chunks/d0447323.dda696ef3ee3ad16.js`),
+            $.getScript(`${murl}/_next/static/chunks/d2094a0f-f5122f8c9c670d5a.js`),
+            $.getScript(`${murl}/_next/static/chunks/d3048c20-664a72a1e6dcb451.js`),
+            $.getScript(`${murl}/_next/static/chunks/d7eeaac4.d3cbb0b6d1e496af.js`),
+            $.getScript(`${murl}/_next/static/chunks/pages/pdf-52ebd2ed7afceedf.js`),
+            $.getScript(`${murl}/_next/static/iLLJ41TGYwZnM0_woJzO_/_buildManifest.js`),
+            $.getScript(`${murl}/_next/static/iLLJ41TGYwZnM0_woJzO_/_ssgManifest.js`),
 
             $.Deferred(
                 function( deferred ){
