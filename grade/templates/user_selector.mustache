@@ -40,17 +40,17 @@
 }}
 <div class="search-widget dropdown d-flex" data-searchtype="user">
     <button aria-expanded="false" data-toggle="dropdown" class="btn dropdown-toggle d-flex text-left align-items-center p-0" data-courseid="{{courseid}}" data-groupid="{{groupid}}" aria-label="{{#str}} selectauser, core_grades {{/str}}">
-        <div class="align-items-center d-flex">
+        <span class="align-items-center d-flex">
             {{#selectedoption}}
-                <div class="selected-option-img d-block pr-2">
+                <span class="selected-option-img d-block pr-2">
                     {{#image}}
                         {{{image}}}
                     {{/image}}
                     {{^image}}
                         <span class="userinitials"></span>
                     {{/image}}
-                </div>
-                <div class="selected-option-info d-block pr-3 text-truncate">
+                </span>
+                <span class="selected-option-info d-block pr-3 text-truncate">
                     <span class="selected-option-text p-0 font-weight-bold">
                         {{text}}
                     </span>
@@ -59,17 +59,17 @@
                             {{additionaltext}}
                         </span>
                     {{/additionaltext}}
-                </div>
+                </span>
             {{/selectedoption}}
             {{^selectedoption}}
-                <div class="d-block pr-2">
+                <span class="d-block pr-2">
                     <span class="userinitials"></span>
-                </div>
-                <div class="user-info d-block pr-3">
+                </span>
+                <span class="user-info d-block pr-3">
                     {{#str}} selectauser, core_grades {{/str}}
-                </div>
+                </span>
             {{/selectedoption}}
-        </div>
+        </span>
     </button>
     <div class="dropdown-menu wide">
     </div>
