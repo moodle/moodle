@@ -1,0 +1,47 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/form_user_selector_searchtype
+
+    Template for the form_user_selector search type.
+
+    Context variables required for this template:
+    * defaultvalue int - The user's full name.
+    * fields list - the input element attributes and label
+
+    Example context (json):
+       {
+           "fields": [
+               {
+                   "id": "id",
+                   "name": "userselector_searchexactmatchesonly",
+                   "class": "class",
+                   "label": "Search anywhere",
+                   "checked": true
+               }
+           ]
+       }
+}}
+<div class="form-check justify-content-start ml-1">
+   <span class="mr-1">{{#str}}userselectorsearchmatching, core{{/str}}</span>
+    {{#fields}}
+        <label for="{{id}}">
+            <input id="{{id}}" type="radio" value="{{value}}" name="{{name}}" class="{{class}}" {{#checked}}checked{{/checked}}>
+            {{label}}
+        </label>
+    {{/fields}}
+</div>

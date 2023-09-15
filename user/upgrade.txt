@@ -22,6 +22,9 @@ This files describes API changes for code that uses the user API.
   - `user_get_participants`
   - `user_get_participants_sql`
   - `user_get_total_participants`
+* The users_search_sql function parameter $searchanywhere has been change to $searchtype for different type of search. $searchtype is a int parameter and has three constant value:
+  USER_SEARCH_STARTS_WITH: 0, USER_SEARCH_CONTAINS: 1, USER_SEARCH_EXACT_MATCH: 2
+  users_search_sql('User Test 2', '', false) =>  users_search_sql('Test Street', '', USER_SEARCH_CONTAINS)
 
 === 4.2 ===
 

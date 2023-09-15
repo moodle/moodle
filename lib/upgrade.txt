@@ -182,6 +182,9 @@ being forced open in all behat tests.
 * The $CFG->svgicons setting has been removed because all modern browsers now handle SVG files correctly.
 * The method `\core_renderer->supportemail()` has an updated signature. It now allows a second optional parameter.
   Set it to true if you want to embed the generated link in other inline content.
+* The users_search_sql function parameter $searchanywhere has been change to $searchtype for different type of search. $searchtype is a int parameter and has three constant value:
+  USER_SEARCH_STARTS_WITH: 0, USER_SEARCH_CONTAINS: 1, USER_SEARCH_EXACT_MATCH: 2
+  See MDL-78312 for further information.
 
 === 4.2 ===
 

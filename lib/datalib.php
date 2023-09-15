@@ -52,6 +52,12 @@ define('MAX_COURSE_CATEGORIES', 10000);
 if (!defined('LASTACCESS_UPDATE_SECS')) {
     define('LASTACCESS_UPDATE_SECS', 60);
 }
+/**
+ * The constant value when we use the search option.
+ */
+define('USER_SEARCH_STARTS_WITH', 0);
+define('USER_SEARCH_CONTAINS', 1);
+define('USER_SEARCH_EXACT_MATCH', 2);
 
 /**
  * Returns $user object of the main admin user
@@ -216,8 +222,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  * @param string $search the text to search for (empty string = find all)
  * @param string $u the table alias for the user table in the query being
  *     built. May be ''.
- * @param bool $searchanywhere If true (default), searches in the middle of
- *     names, otherwise only searches at start
+ * @param int $searchtype If 0(default): searches at start, 1: searches in the middle of names
+ *      2: search exact match.
  * @param array $extrafields Array of extra user fields to include in search, must be prefixed with table alias if they are not in
  *     the user table.
  * @param array $exclude Array of user ids to exclude (empty = don't exclude)
@@ -227,7 +233,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     where clause the query, and an associative array containing any required
  *     parameters (using named placeholders).
  */
-function users_search_sql(string $search, string $u = 'u', bool $searchanywhere = true, array $extrafields = [],
+function users_search_sql(string $search, string $u = 'u', int $searchtype = USER_SEARCH_STARTS_WITH, array $extrafields = [],
         array $exclude = null, array $includeonly = null): array {
     global $DB, $CFG;
     $params = array();
@@ -237,7 +243,6 @@ function users_search_sql(string $search, string $u = 'u', bool $searchanywhere 
         $u .= '.';
     }
 
-    // If we have a $search string, put a field LIKE '$search%' condition on each field.
     if ($search) {
         $conditions = array(
             $DB->sql_fullname($u . 'firstname', $u . 'lastname'),
@@ -247,14 +252,26 @@ function users_search_sql(string $search, string $u = 'u', bool $searchanywhere 
             // Add the table alias for the user table if the field doesn't already have an alias.
             $conditions[] = strpos($field, '.') !== false ? $field : $u . $field;
         }
-        if ($searchanywhere) {
-            $searchparam = '%' . $search . '%';
-        } else {
-            $searchparam = $search . '%';
+        switch ($searchtype) {
+            case USER_SEARCH_STARTS_WITH:
+                // Put a field LIKE 'search%' condition on each field.
+                $searchparam = $search . '%';
+                break;
+            case USER_SEARCH_CONTAINS:
+                // Put a field LIKE '$search%' condition on each field.
+                $searchparam = '%' . $search . '%';
+                break;
+            case USER_SEARCH_EXACT_MATCH:
+                // Match exact the $search string.
+                $searchparam = $search;
+                break;
         }
         $i = 0;
         foreach ($conditions as $key => $condition) {
             $conditions[$key] = $DB->sql_like($condition, ":con{$i}00", false, false);
+            if ($searchtype === USER_SEARCH_EXACT_MATCH) {
+                $conditions[$key] = "$condition = :con{$i}00";
+            }
             $params["con{$i}00"] = $searchparam;
             $i++;
         }

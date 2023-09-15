@@ -58,9 +58,9 @@ abstract class user_selector_base {
     protected $preserveselected = false;
     /** @var boolean If only one user matches the search, should we select them automatically. */
     protected $autoselectunique = false;
-    /** @var boolean When searching, do we only match the starts of fields (better performance)
-     * or do we match occurrences anywhere? */
-    protected $searchanywhere = false;
+    /** @var int When searching, do we only match the starts of fields (better performance)
+     * or do we match occurrences anywhere or do we match exact the fields. */
+    protected $searchtype = USER_SEARCH_STARTS_WITH;
     /** @var mixed This is used by get selected users */
     protected $validatinguserids = null;
 
@@ -156,8 +156,7 @@ abstract class user_selector_base {
         // Read the user prefs / optional_params that we use.
         $this->preserveselected = $this->initialise_option('userselector_preserveselected', $this->preserveselected);
         $this->autoselectunique = $this->initialise_option('userselector_autoselectunique', $this->autoselectunique);
-        $this->searchanywhere = $this->initialise_option('userselector_searchanywhere', $this->searchanywhere);
-
+        $this->searchtype = (int) $this->initialise_option('userselector_searchtype', $this->searchtype, PARAM_INT);
         if (!empty($CFG->maxusersperpage)) {
             $this->maxusersperpage = $CFG->maxusersperpage;
         }
@@ -278,7 +277,6 @@ abstract class user_selector_base {
                 $this->name . '_clearbutton" value="' . get_string('clear') . '" class="btn btn-secondary"/>';
 
         // And the search options.
-        $optionsoutput = false;
         if (!user_selector_base::$searchoptionsoutput) {
             $output .= print_collapsible_region_start('', 'userselector_options',
                 get_string('searchoptions'), 'userselector_optionscollapsed', true, true);
@@ -286,8 +284,7 @@ abstract class user_selector_base {
                 get_string('userselectorpreserveselected'));
             $output .= $this->option_checkbox('autoselectunique', $this->autoselectunique,
                 get_string('userselectorautoselectunique'));
-            $output .= $this->option_checkbox('searchanywhere', $this->searchanywhere,
-                get_string('userselectorsearchanywhere'));
+            $output .= $this->output_searchtype_radios();
             $output .= print_collapsible_region_end(true);
 
             $PAGE->requires->js_init_call('M.core_user.init_user_selector_options_tracker', array(), false, self::$jsmodule);
@@ -499,8 +496,7 @@ abstract class user_selector_base {
         $extrafields = $this->includecustomfields
             ? array_values($this->userfieldsmappings)
             : $this->extrafields;
-
-        return users_search_sql($search, $u, $this->searchanywhere, $extrafields,
+        return users_search_sql($search, $u, $this->searchtype, $extrafields,
                 $this->exclude, $this->validatinguserids);
     }
 
@@ -644,10 +640,11 @@ abstract class user_selector_base {
      *
      * @param string $name
      * @param mixed $default
+     * @param string $paramtype allow the option to custom param type. default is bool
      * @return mixed|null|string
      */
-    private function initialise_option($name, $default) {
-        $param = optional_param($name, null, PARAM_BOOL);
+    private function initialise_option($name, $default, $paramtype = PARAM_BOOL) {
+        $param = optional_param($name, null, $paramtype);
         if (is_null($param)) {
             return get_user_preferences($name, $default);
         } else {
@@ -673,7 +670,7 @@ abstract class user_selector_base {
         $name = 'userselector_' . $name;
         // For the benefit of brain-dead IE, the id must be different from the name of the hidden form field above.
         // It seems that document.getElementById('frog') in IE will return and element with name="frog".
-        $output = '<div class="form-check"><input type="hidden" name="' . $name . '" value="0" />' .
+        $output = '<div class="form-check justify-content-start ml-1"><input type="hidden" name="' . $name . '" value="0" />' .
                     '<label class="form-check-label" for="' . $name . 'id">' .
                         '<input class="form-check-input" type="checkbox" id="' . $name . 'id" name="' . $name .
                             '" value="1"' . $checked . ' /> ' . $label .
@@ -683,13 +680,55 @@ abstract class user_selector_base {
     }
 
     /**
+     * Get all the data for each input in the user selector search type.
+     *
+     * @param string $name
+     * @param bool $checked
+     * @param string $label
+     * @param int $value
+     * @param string $class
+     * @return array a list of attributes for input.
+     */
+    private function get_radio_searchtype_data(string $name, bool $checked, string $label, int $value, string $class): array {
+        $name = 'userselector_' . $name;
+        $id = $name . 'id';
+        $attrs = [
+            'value' => $value,
+            'id' => $id,
+            'name' => $name,
+            'class' => $class,
+            'label' => $label,
+        ];
+        if ($checked) {
+            $attrs['checked'] = true;
+        }
+        return $attrs;
+    }
+
+    /**
+     * Output the search type radio buttons.
+     *
+     * @return string
+     */
+    private function output_searchtype_radios(): string {
+        global $OUTPUT;
+        $fields[] = $this->get_radio_searchtype_data('searchexactmatchesonly', $this->searchtype === USER_SEARCH_EXACT_MATCH,
+            get_string('userselectorsearchexactmatchonly'), USER_SEARCH_EXACT_MATCH, 'mr-1');
+        $fields[] = $this->get_radio_searchtype_data('searchfromstart', $this->searchtype === USER_SEARCH_STARTS_WITH,
+            get_string('userselectorsearchfromstart'), USER_SEARCH_STARTS_WITH, 'mr-1');
+        $fields[] = $this->get_radio_searchtype_data('searchanywhere', $this->searchtype === USER_SEARCH_CONTAINS,
+            get_string('userselectorsearchanywhere'), USER_SEARCH_CONTAINS, 'mr-1');
+        return $OUTPUT->render_from_template('core_user/form_user_selector_searchtype', (object) ['fields' => $fields]);
+    }
+
+    /**
      * Initialises JS for this control.
      *
      * @param string $search
      * @return string any HTML needed here.
      */
     protected function initialise_javascript($search) {
-        global $USER, $PAGE, $OUTPUT;
+        global $USER, $PAGE;
         $output = '';
 
         // Put the options into the session, to allow search.php to respond to the ajax requests.
@@ -700,7 +739,7 @@ abstract class user_selector_base {
         // Initialise the selector.
         $PAGE->requires->js_init_call(
             'M.core_user.init_user_selector',
-            array($this->name, $hash, $this->extrafields, $search),
+            array($this->name, $hash, $this->extrafields, $search, $this->searchtype),
             false,
             self::$jsmodule
         );
