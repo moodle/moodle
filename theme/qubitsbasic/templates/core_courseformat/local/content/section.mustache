@@ -95,7 +95,7 @@
     data-for="section"
     data-id="{{id}}"
     data-number="{{num}}"
-    {{#restrictionlock}} style="display:none !important;" {{/restrictionlock}}
+    {{^issiteadmin}} {{#restrictionlock}} style="display:none !important;" {{/restrictionlock}} {{/issiteadmin}}
 >
     <div class="course-section-header d-flex" 
         data-for="section_title"
