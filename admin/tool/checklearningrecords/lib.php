@@ -93,11 +93,11 @@ function do_fixbrokenlicenses($brokenlicenses) {
         }
     }
     if (!CLI_SCRIPT) {
-        echo "Fixed " . count($fixed) . " records. </br>";
-        echo "Remaining = " . count($stillbroken) . " broken records. IDs:</br>" . join(',', array_keys($stillbroken)) . "</br>";
+        echo "Fixed " . count($fixed) . " records. <br>";
+        echo "Remaining = " . count($stillbroken) . " broken records. IDs:<br>" . join(',', array_keys($stillbroken)) . "<br>";
     } else {
-        mtrace("Fixed " . count($fixed) . " records. </br>");
-        mtrace("Remaining = " . count($stillbroken) . " broken records. IDs:</br>" . join(',', array_keys($stillbroken)) . "</br>");
+        mtrace("Fixed " . count($fixed) . " records. <br>");
+        mtrace("Remaining = " . count($stillbroken) . " broken records. IDs:<br>" . join(',', array_keys($stillbroken)) . "<br>");
     }
 }
 
@@ -170,11 +170,11 @@ function do_fixbrokencompletions($brokencompletions) {
         }
     }
     if (!CLI_SCRIPT) {
-        echo "Fixed " . count($fixed) . " records. </br>";
-        echo "Remaining = " . count($broken) . " broken records. IDs:</br>" . join(',', array_keys($broken)) . "</br>";
+        echo "Fixed " . count($fixed) . " records. <br>";
+        echo "Remaining = " . count($broken) . " broken records. IDs:<br>" . join(',', array_keys($broken)) . "<br>";
     } else {
-        mtrace("Fixed " . count($fixed) . " records. </br>");
-        mtrace("Remaining = " . count($broken) . " broken records. IDs:</br>" . join(',', array_keys($broken)) . "</br>");
+        mtrace("Fixed " . count($fixed) . " records. <br>");
+        mtrace("Remaining = " . count($broken) . " broken records. IDs:<br>" . join(',', array_keys($broken)) . "<br>");
     }
 }
 
@@ -202,8 +202,8 @@ function do_fixmissingcompletions($missingcompletions) {
 
     }
     if (!CLI_SCRIPT) {
-        echo "Fired course completed even for " . count($missingcompletions) . " entries</br>";
+        echo "Fired course completed even for " . count($missingcompletions) . " entries<br>";
     } else {
-        mtrace("Fired course completed even for " . count($missingcompletions) . " entries</br>");
+        mtrace("Fired course completed even for " . count($missingcompletions) . " entries<br>");
     }
 }

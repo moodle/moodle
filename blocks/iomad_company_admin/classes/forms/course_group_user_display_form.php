@@ -66,7 +66,7 @@ class course_group_user_display_form extends company_moodleform {
                            $company->get_name());
 
         if (empty($coursegroups)) {
-            $mform->addElement('html', "<h3>" . get_string('nogroups', 'block_iomad_company_admin') . "</h3></br>");
+            $mform->addElement('html', "<h3>" . get_string('nogroups', 'block_iomad_company_admin') . "</h3><br>");
         } else {
             $autooptions = array('setmultiple' => false,
                                  'noselectionstring' => '',

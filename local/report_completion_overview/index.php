@@ -457,7 +457,7 @@ foreach ($userlist as $user) {
         $departmentinfo .= format_string($userdepartment->name);
         if ($current < $count) {
             if (!$download) {
-                $departmentinfo .= ",</br>";
+                $departmentinfo .= ",<br>";
             } else {
                 $departmentinfo .= ",\n";
             }

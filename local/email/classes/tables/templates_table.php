@@ -47,7 +47,7 @@ class templates_table extends table_sql {
     public function col_templatename($row) {
         global $output;
 
-        return format_string($row->templatename) . $output->help_icon($row->name.'_name', 'local_email') ."</br>(" . $row->name . ")";
+        return format_string($row->templatename) . $output->help_icon($row->name.'_name', 'local_email') ."<br>(" . $row->name . ")";
     }
 
     /**

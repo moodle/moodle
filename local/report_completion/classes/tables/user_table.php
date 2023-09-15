@@ -84,7 +84,7 @@ class user_table extends table_sql {
             $returnstr .= format_string($department->name);
 
             if ($current < $count) {
-                $returnstr .= ",</br>";
+                $returnstr .= ",<br>";
             }
             $current++;
         }
@@ -117,7 +117,7 @@ class user_table extends table_sql {
         foreach($companies as $company) {
             $returnstr .= format_string($company->name);
             if ($current < $count) {
-                $returnstr .= ",</br>";
+                $returnstr .= ",<br>";
             }
             $current++;
         }

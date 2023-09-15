@@ -57,13 +57,13 @@ class course_table extends table_sql {
             }
             if (iomad::has_capability('local/report_completion_monthly:view', $systemcontext)) {
                 if (!empty($cell)) {
-                    $cell .= "</br>";
+                    $cell .= "<br>";
                 }
                 $cell .= $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
             }
             if (iomad::has_capability('local/report_user_license_allocations:view', $systemcontext) && $haslicenses) {
                 if (!empty($cell)) {
-                    $cell .= "</br>";
+                    $cell .= "<br>";
                 }
                 $cell .= $output->single_button($courselicenselink, get_string('pluginname', 'local_report_user_license_allocations'));
             }

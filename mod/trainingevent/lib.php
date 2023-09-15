@@ -188,14 +188,14 @@ function trainingevent_get_coursemodule_info($coursemodule) {
 
         if ($trainingevent->classroomid) {
             if ($classroom = $DB->get_record('classroom', array('id' => $trainingevent->classroomid), '*')) {
-                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . "</br>";
+                $extra .= get_string('location', 'trainingevent') . ": " . $classroom->name . "<br>";
             }
         }
         $dateformat = "$CFG->iomad_date_format, g:ia";
 
         $extra .= get_string('startdatetime', 'trainingevent') . ": " . date($dateformat, $trainingevent->startdatetime);
-        $extra .= "</br><a href='$CFG->wwwroot/mod/trainingevent/view.php?id=$coursemodule->id'>".
-                   get_string('details', 'trainingevent')."</a></br>";
+        $extra .= "<br><a href='$CFG->wwwroot/mod/trainingevent/view.php?id=$coursemodule->id'>".
+                   get_string('details', 'trainingevent')."</a><br>";
 
         // Sneakily prepend the extra info to the intro value (only for the remainder of this function).
         $trainingevent->intro = "<div>" . $extra . "</div>";

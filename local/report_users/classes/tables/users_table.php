@@ -162,7 +162,7 @@ class users_table extends table_sql {
         foreach($departments as $department) {
             $returnstr .= format_string($department->name);
             if ($current < $count) {
-                $returnstr .= ",</br>";
+                $returnstr .= ",<br>";
             }
             $current++;
         }

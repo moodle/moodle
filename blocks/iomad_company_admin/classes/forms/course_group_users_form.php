@@ -173,7 +173,7 @@ class course_group_users_form extends moodleform {
             $mform->addElement('html', '
                       <input name="remove" id="remove" type="submit" value="' .
                        get_string('remove') . '&nbsp;' . $output->rarrow() .
-                       '" title="'.get_string('remove') .'" /></br>');
+                       '" title="'.get_string('remove') .'" /><br>');
         }
 
         $mform->addElement('html', '

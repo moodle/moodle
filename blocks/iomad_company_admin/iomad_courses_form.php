@@ -202,7 +202,7 @@ $companyselect = new single_select($linkurl, 'companyid', $companyids, $companyi
 $companyselect->label = get_string('filtercompany', 'block_iomad_company_admin');
 echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));
 if ($canedit) {
-    echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'</br>';
+    echo html_writer::tag('div', $OUTPUT->render($companyselect), array('id' => 'iomad_company_selector')).'<br>';
 }
 echo html_writer::start_tag('div', array('class' => 'searchcourseform'));
 $mform->display();

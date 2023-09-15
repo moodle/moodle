@@ -121,11 +121,11 @@ class local_email_renderer extends plugin_renderer_base {
         $table->id = 'ReportTable';
         $head = array();
         $head[] = get_string('emailtemplatename', 'local_email');
-        $head[] = get_string('enable') . '</br><label class="switch"><input class="checkbox enableallall" type="checkbox" ' . $echecked. ' value="' . "{$prefix}.e.{$page}" . '" />' .
+        $head[] = get_string('enable') . '<br><label class="switch"><input class="checkbox enableallall" type="checkbox" ' . $echecked. ' value="' . "{$prefix}.e.{$page}" . '" />' .
                                     "<span class='slider round'></span></label>";
-        $head[] = get_string('enable_manager', 'local_email') . '</br><label class="switch"><input class="checkbox enableallmanager" type="checkbox" ' . $emchecked. ' value="' . "{$prefix}.em.{$page}" . '" />' .
+        $head[] = get_string('enable_manager', 'local_email') . '<br><label class="switch"><input class="checkbox enableallmanager" type="checkbox" ' . $emchecked. ' value="' . "{$prefix}.em.{$page}" . '" />' .
                                     "<span class='slider round'></span></label>";
-        $head[] = get_string('enable_supervisor', 'local_email') . '</br><label class="switch"><input class="checkbox enableallsupervisor" type="checkbox" ' . $eschecked. ' value="' . "{$prefix}.es.{$page}" . '" />' .
+        $head[] = get_string('enable_supervisor', 'local_email') . '<br><label class="switch"><input class="checkbox enableallsupervisor" type="checkbox" ' . $eschecked. ' value="' . "{$prefix}.es.{$page}" . '" />' .
                                     "<span class='slider round'></span></label>";
         $head[] = get_string('controls', 'local_email');
         $table->head = $head;

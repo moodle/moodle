@@ -63,7 +63,7 @@ class group_display_form extends moodleform {
             foreach ($subdepartmentslist as $key => $value) {
 
                 $subdepartmenthtml .= '<input type = "checkbox" name = "departmentids[]" value="'.
-                                       $key.'" /> '.$value.'</br>';
+                                       $key.'" /> '.$value.'<br>';
             }
         }
 
@@ -73,7 +73,7 @@ class group_display_form extends moodleform {
                            $this->company->get_name());
 
         if (count($departmentslist) == 1) {
-            $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
+            $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3><br>");
         }
 
         $mform->addElement('html', '<p>' . get_string('parentdepartment', 'block_iomad_company_admin') . '</p>');

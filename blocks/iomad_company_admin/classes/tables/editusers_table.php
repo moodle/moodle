@@ -91,7 +91,7 @@ class editusers_table extends table_sql {
                 $returnstr .= format_string($this->departmentsmenu[$department]);
 
                 if ($current < $count) {
-                    $returnstr .= ",</br>";
+                    $returnstr .= ",<br>";
                 }
                 $current++;
             }
@@ -127,7 +127,7 @@ class editusers_table extends table_sql {
         if (empty($USER->editing)) {
             $returnstr .= $this->usertypes[$row->managertype];
             if (!empty($row->educator) && empty($CFG->iomad_autoenrol_managers)) {
-                $returnstr .= ",</br>" . $this->usertypes[3];
+                $returnstr .= ",<br>" . $this->usertypes[3];
             }
     
             return $returnstr;

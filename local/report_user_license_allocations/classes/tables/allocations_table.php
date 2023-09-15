@@ -102,7 +102,7 @@ class allocations_table extends table_sql {
 
         // Process them.
         foreach ($allocations as $allocation) {
-            $returnstr .= date($CFG->iomad_date_format, $allocation->issuedate) . "</br>";
+            $returnstr .= date($CFG->iomad_date_format, $allocation->issuedate) . "<br>";
         }
 
         if ($count > 5) {
@@ -134,7 +134,7 @@ class allocations_table extends table_sql {
 
         // Process them.
         foreach ($unallocations as $unallocation) {
-            $returnstr .= date($CFG->iomad_date_format, $unallocation->issuedate) . "</br>";
+            $returnstr .= date($CFG->iomad_date_format, $unallocation->issuedate) . "<br>";
         }
 
         if ($count > 5) {
@@ -304,7 +304,7 @@ class allocations_table extends table_sql {
         foreach($departments as $department) {
             $returnstr .= format_string($department->name);
             if ($current < $count) {
-                $returnstr .= ",</br>";
+                $returnstr .= ",<br>";
             }
             $current++;
         }

@@ -112,10 +112,10 @@ class company_license_table extends table_sql {
                 }
             } else {
                 if ($issiteadmin) {
-                    $coursestring .= ",</br><a href='".new moodle_url('/course/view.php',
+                    $coursestring .= ",<br><a href='".new moodle_url('/course/view.php',
                                    array('id' => $licensecourse->courseid))."'>".format_string($coursename->fullname, true, 1)."</a>";
                 } else {
-                    $coursestring .= ",</br>". format_string($coursename->fullname, true, 1);
+                    $coursestring .= ",<br>". format_string($coursename->fullname, true, 1);
                 }
             }
         }

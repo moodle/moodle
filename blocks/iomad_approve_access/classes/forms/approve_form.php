@@ -102,7 +102,7 @@ class approve_form extends moodleform {
                                      $user->firstname. ' '. $user->lastname.' : '.$course->fullname.'
                                      <a href="'.
                                      new moodle_url('/mod/trainingevent/manageclass.php', array('id' => $result->activityid)).'">'.
-                                     $activity->name.' '.date($dateformat, $activity->startdatetime).'</a></br><b>'.
+                                     $activity->name.' '.date($dateformat, $activity->startdatetime).'</a><br><b>'.
                                      get_string('fullybooked', 'block_iomad_approve_access')."</b>",
                                      array(' '), false);
                 }

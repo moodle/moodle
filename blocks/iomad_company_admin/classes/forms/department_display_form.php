@@ -95,12 +95,12 @@ class department_display_form extends company_moodleform {
             foreach ($subdepartmentslist as $key => $value) {
 
                 $subdepartmenthtml .= '<input type = "checkbox" name = "departmentids[]" value="'.
-                                       $key.'" /> '.$value.'</br>';
+                                       $key.'" /> '.$value.'<br>';
             }
         }
 
         if (count($departmentslist) == 1) {
-            $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3></br>");
+            $mform->addElement('html', "<h3>" . get_string('nodepartments', 'block_iomad_company_admin') . "</h3><br>");
         }
 
         if (!empty($this->action)) {

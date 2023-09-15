@@ -232,52 +232,52 @@ $string['approved_body'] = '<p>You have been granted access to course {Course_Fu
 $string['course_classroom_approval_subject'] = 'New face to face training event approval';
 $string['course_classroom_approval_body'] = '<p>You have been asked to approve access to the face to face training course {Event_Name} for {Approveuser_FirstName} {Approveuser_LastName} at the following event -</p>
 <br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
-          {Classroom_City} {Classroom_Postcode}</br>
-</br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
+<br>
 <p>please log onto {Site_FullName} ('.$CFG->wwwroot.') to approve or deny this request.</p>';
 
 $string['course_classroom_approved_subject'] = 'Face to face training event approved';
 $string['course_classroom_approved_body'] = '<p>You have been approved access to the face to face training course {Event_Name} at the following event -</p>
-</br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 
 $string['course_classroom_approved_teacher_subject'] = 'User approved to Face to face training event';
 $string['course_classroom_approved_teacher_body'] = '<p>{Approveuser_FirstName} {Approveuser_LastName} has been granted access to the face to face training course {Event_Name} at the following event -</p>
-</br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 
 $string['course_classroom_denied_subject'] = 'Face to face training event approval denied';
 $string['course_classroom_denied_body'] = '<p>Your approval request has been rejected for {Event_Name} at the following event -</p>
-</br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 
 $string['course_classroom_manager_denied_subject'] = 'Face to face training event approval denied by company manager';
 $string['course_classroom_manager_denied_body'] = '<p>The approval request for {Approveuser_FirstName} {Approveuser_LastName} has been rejected by {User_FirstName} {User_LastName} ({User_Email}) for {Event_Name} at the following event -</p>
-</br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 
 $string['course_classroom_approval_request_subject'] = 'New face to face training event approval request sent';
 $string['course_classroom_approval_request_body'] = '<p>You have asked for access to the face to face training course {Event_Name} at the following event -</p>
-</br>
-Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
-          {Classroom_City} {Classroom_Postcode}</br>
+<br>
+Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
 <p>You will be notified once your manager has approved or denied access.</p>';
 
 $string['courseclassroom_approved_subject'] = 'You have been approved access to {Event_Name}';
@@ -299,7 +299,7 @@ $string['invoice_ordercomplete_body'] = '<p>Dear {User_FirstName} {User_LastName
 
 $string['invoice_ordercomplete_admin_subject'] = 'E-commerce order (invoice {Invoice_Reference})';
 $string['invoice_ordercomplete_admin_body'] = '<p>Dear e-commerce admin</p>
-<p>The following order has just been submitted by {Invoice_FirstName} {Invoice_LastName} of {Invoice_Company}.</br>
+<p>The following order has just been submitted by {Invoice_FirstName} {Invoice_LastName} of {Invoice_Company}.<br>
 An invoice has been sent to them via email.</p>
 
 <p>{Invoice_Itemized}</p>';
@@ -309,9 +309,9 @@ $string['advertise_classroom_based_course_body'] = '<o>This to let you know abou
 <p>{Course_FullName}</p>
 
 <p>It will be in {Classroom_Name}, which is at</p>
-<p>{Classroom_Address}</br>
-{Classroom_City} {Classroom_Postcode}</br>
-{Classroom_Country}</br>
+<p>{Classroom_Address}<br>
+{Classroom_City} {Classroom_Postcode}<br>
+{Classroom_Country}<br>
 
 <p>and has a capacity of {Classroom_Capacity}.</p>
 
@@ -321,10 +321,10 @@ $string['user_signed_up_for_event_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>you have signed up for the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
-          {Classroom_City} {Classroom_Postcode}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
 
 <p>Please ensure you have completed an pre-course tasks required before attendance</p>';
 $string['user_signed_up_for_event_reminder_subject'] = 'Attendance Reminder {Course_FullName}';
@@ -332,10 +332,10 @@ $string['user_signed_up_for_event_reminder_body'] = '<p>Dear {User_FirstName},</
 
 <p>This is to remind you that you have signed up for the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
-          {Classroom_City} {Classroom_Postcode}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
 
 <p>Please ensure you have completed an pre-course tasks required before attendance</p>';
 $string['user_removed_from_event_subject'] = 'Cancellation Notice {Course_FullName}';
@@ -343,19 +343,19 @@ $string['user_removed_from_event_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>you have been marked as no longer attending the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 $string['user_signed_up_for_event_teacher_subject'] = 'User attending notice {Course_FullName}';
 $string['user_signed_up_for_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>{Approveuser_FirstName} {Approveuser_LastName} has signed up for the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
-          {Classroom_City} {Classroom_Postcode}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
 
 <p>Please ensure you have completed an pre-course tasks required before attendance</p>';
 $string['user_removed_from_event_teacher_subject'] = 'User cancellation notice {Course_FullName}';
@@ -363,28 +363,28 @@ $string['user_removed_from_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>{Approveuser_FirstName} {Approveuser_LastName} is no longer attending the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 $string['user_removed_from_event_waitlist_subject'] = 'Waitinglist Removal Notice {Course_FullName}';
 $string['user_removed_from_event_waitlist_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>you have been removed from the waitinglist for the face to face training on {Course_FullName} at the following event -</p>
 
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<p>Time : {Classroom_Time}<br>
+Location : {Classroom_Name}<br>
+Address : {Classroom_Address}<br>
           {Classroom_City} {Classroom_Postcode}';
 $string['license_allocated_subject'] = 'Access to course {Course_FullName} granted';
 $string['license_allocated_body'] = '<p>Dear {User_FirstName},</p>
 
-<p>You have been granted access to the online training for {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to partake in this training.</br>
+<p>You have been granted access to the online training for {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to partake in this training.<br>
 Once you have entered the course you will have access to it for {License_Length} days.  Unused access will expire after {License_Valid}</p>';
 $string['license_reminder_subject'] = 'Reminder: you have been allocated the course {Course_FullName}';
 $string['license_reminder_body'] = '<p>Dear {User_FirstName},</p>
 
-<p>You have been granted access to the online training for {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to partake in this training.</br>
+<p>You have been granted access to the online training for {Course_FullName}.  Please visit <a href="{CourseURL}">{CourseURL}</a> to partake in this training.<br>
 Once you have entered the course you will have access to it for {License_Length} days.  Unused access will expire after {License_Valid}</p>';
 $string['license_removed_subject'] = 'Access to course {Course_FullName} removed';
 $string['license_removed_body'] = '<p>Your access to course {Course_FullName} has been revoked.  If you feel this is in error, please contact your training manager</p>';
@@ -433,8 +433,8 @@ $string['user_reset_body'] = '<p>Dear {User_FirstName},</p>
 
 <p>Your user account details are as follows.</p>
 
-<p>username: {User_Username}</br>
-password: {User_Newpassword}</br>
+<p>username: {User_Username}<br>
+password: {User_Newpassword}<br>
 (you will have to change your password when you log in)</p>
 
 <p>Best Regards,</p>
@@ -447,8 +447,8 @@ $string['user_create_body'] = '<p>Dear {User_FirstName},</p>
 and you have been issued with a new temporary password.</p>
 
 <p>Your current login information is now:<p>
-<p>username: {User_Username}</br>
-password: {User_Newpassword}</br>
+<p>username: {User_Username}<br>
+password: {User_Newpassword}<br>
 (you will have to change your password
 when you login for the first time)</p>
 

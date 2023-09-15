@@ -66,7 +66,7 @@ class course_group_display_form extends company_moodleform {
             foreach ($coursegroups as $key => $value) {
 
                 $coursegrouphtml .= '<input type = "radio" name = "groupids[]" value="'.
-                                       $key.'" /> '.$value.'</br>';
+                                       $key.'" /> '.$value.'<br>';
             }
         }
         // Then show the fields about where this block appears.
@@ -75,7 +75,7 @@ class course_group_display_form extends company_moodleform {
                            $company->get_name());
 
         if (empty($coursegroups)) {
-            $mform->addElement('html', "<h3>" . get_string('nogroups', 'block_iomad_company_admin') . "</h3></br>");
+            $mform->addElement('html', "<h3>" . get_string('nogroups', 'block_iomad_company_admin') . "</h3><br>");
         }
         $mform->addElement('html', $coursegrouphtml);
         $mform->addElement('hidden', 'selectedcourse', $this->courseid);

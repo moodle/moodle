@@ -149,7 +149,7 @@ class template_edit_form extends moodleform {
         $optioncount = 0;
         foreach ($vars as $option) {
             if ($optioncount > 10) {
-                $break = "</br>";
+                $break = "<br>";
                 $optioncount = 0;
             } else {
                 $break = "&nbsp";
@@ -168,7 +168,7 @@ class template_edit_form extends moodleform {
         $optioncount = 0;
         foreach ($vars as $option) {
             if ($optioncount > 10) {
-                $break = "</br>";
+                $break = "<br>";
                 $optioncount = 0;
             } else {
                 $break = "&nbsp";
