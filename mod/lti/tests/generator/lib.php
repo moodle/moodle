@@ -128,10 +128,11 @@ class mod_lti_generator extends testing_module_generator {
         $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
         $data['lti_sendname'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
 
-        return lti_add_type(type: (object) $type, config: (object) $config);
+        return lti_add_type(type: $type, config: $config);
     }
 
     /**
@@ -160,6 +161,7 @@ class mod_lti_generator extends testing_module_generator {
         $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
         $type['lti_coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         // Required for cartridge processing support.
         $type['lti_toolurl'] = $type['baseurl'];
