@@ -11,6 +11,10 @@ Information provided here is intended especially for developers.
   These features are not used in core, were recommended against in the documentation, had significant
   bugs, and had no useful purpose. 'requirelockingbeforewrite' is still available to check that manual
   locking has been applied.
+* The acquire_lock function within cache loaders now throws an exception if it fails to obtain the
+  lock after a timeout, instead of returning false.
+* The functions set_many, delete, and delete_many now all throw exceptions if you are using
+  'requirelockingbeforewrite' and do not have a lock, same as the set function.
 
 === 4.2 ===
 * The memcached cachestore has been removed.
