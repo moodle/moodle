@@ -3111,5 +3111,21 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022112805.14);
     }
 
+    if ($oldversion < 2022112811.09) {
+
+        // Fix missing default admin presets "sensible settings" (those that should be treated as sensitive).
+        $newsensiblesetting = 'bigbluebuttonbn_shared_secret@@none';
+
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        if (strpos($sensiblesettings, $newsensiblesetting) === false) {
+            $sensiblesettings .= ", {$newsensiblesetting}";
+        }
+
+        set_config('sensiblesettings', $sensiblesettings, 'adminpresets');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112811.09);
+    }
+
     return true;
 }
