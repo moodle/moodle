@@ -152,7 +152,9 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $sensiblesettingsdefault .= 'server_password@@search_solr, ssl_keypassword@@search_solr, ';
     $sensiblesettingsdefault .= 'alternateserver_password@@search_solr, alternatessl_keypassword@@search_solr, ';
     $sensiblesettingsdefault .= 'test_password@@cachestore_redis, password@@mlbackend_python, ';
-    $sensiblesettingsdefault .= 'badges_badgesalt@@none, calendar_exportsalt@@none';
+    $sensiblesettingsdefault .= 'badges_badgesalt@@none, calendar_exportsalt@@none, ';
+    $sensiblesettingsdefault .= 'bigbluebuttonbn_shared_secret@@none, apikey@@tiny_premium, ';
+    $sensiblesettingsdefault .= 'matrixaccesstoken@@communication_matrix, api_secret@@factor_sms';
     $temp->add(new admin_setting_configtextarea('adminpresets/sensiblesettings',
             get_string('sensiblesettings', 'core_adminpresets'),
             get_string('sensiblesettingstext', 'core_adminpresets'),
