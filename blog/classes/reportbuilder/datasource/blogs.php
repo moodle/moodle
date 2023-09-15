@@ -88,23 +88,21 @@ class blogs extends datasource {
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.id = {$postalias}.courseid"));
 
-        // Join the comment entity (ensure differing alias from that used by course entity).
-        $commententity = (new comment())
-            ->set_table_alias('comments', 'bcmt');
+        // Join the comment entity.
+        $commententity = new comment();
+        $commentalias = $commententity->get_table_alias('comments');
         $this->add_entity($commententity
-            ->add_join("LEFT JOIN {comments} bcmt ON bcmt.component = 'blog' AND bcmt.itemid = {$postalias}.id"));
+            ->add_join("LEFT JOIN {comments} {$commentalias} ON {$commentalias}.component = 'blog'
+                AND {$commentalias}.itemid = {$postalias}.id"));
 
-        // Join the user entity to represent the comment author. Override table aliases to avoid clash with first instance.
+        // Join the user entity to represent the comment author.
         $commenterentity = (new user())
             ->set_entity_name('commenter')
-            ->set_entity_title(new lang_string('commenter', 'core_comment'))
-            ->set_table_aliases([
-                'user' => 'cu',
-                'context' => 'cuctx',
-            ]);
+            ->set_entity_title(new lang_string('commenter', 'core_comment'));
+        $commenteralias = $commenterentity->get_table_alias('user');
         $this->add_entity($commenterentity
             ->add_joins($commententity->get_joins())
-            ->add_join("LEFT JOIN {user} cu ON cu.id = bcmt.userid"));
+            ->add_join("LEFT JOIN {user} {$commenteralias} ON {$commenteralias}.id = {$commentalias}.userid"));
 
         // Add report elements from each of the entities we added to the report.
         $this->add_all_from_entity($blogentity->get_entity_name());
