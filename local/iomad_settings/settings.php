@@ -71,6 +71,11 @@ if ($hassiteconfig) {
                                                 get_string('iomad_showcharts', 'local_iomad_settings'),
                                                 1));
 
+    $settings->add(new admin_setting_configcheckbox('iomad_useicons',
+                                                get_string('iomad_useicons', 'local_iomad_settings'),
+                                                get_string('iomad_useicons', 'local_iomad_settings'),
+                                                0));
+
     $settings->add(new admin_setting_configtext('iomad_emaildelay',
                                                 get_string('emaildelay', 'local_iomad_settings'),
                                                 get_string('emaildelay_help', 'local_iomad_settings'),

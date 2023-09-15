@@ -151,7 +151,7 @@ class block_iomad_company_admin extends block_base {
         // Build tabs.
         $tabs = [];
         $panes = [];
-        $url = '/my';
+        $url = $CFG->wwwroot . '/blocks/iomad_company_admin/index.php';
         $selected = true;
         if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $context)) {
             $tabs[] = [
@@ -260,7 +260,7 @@ class block_iomad_company_admin extends block_base {
             }
 
             // Get topic image icon
-            if (((empty($USER->theme) && (strpos($CFG->theme, 'iomad') !== false)) || (strpos($USER->theme, 'iomad') !== false))  && !empty($menu['icon'])) {
+            if (!$CFG->iomad_useicons && !empty($menu['icon'])) {
                 $icon = $menu['icon'];
             } else if (!empty($menu['icondefault'])) {
                 $imgsrc = $OUTPUT->image_url($menu['icondefault'], 'block_iomad_company_admin');
