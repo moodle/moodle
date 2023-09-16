@@ -21,7 +21,7 @@
 
 /* Editing form. */
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answeroptions_],
-body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answeroptions_] {
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=answer_] {
     background: #eee;
     margin-top: 0;
     margin-bottom: 0;
@@ -32,14 +32,13 @@ body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answeroptions_] 
 }
 
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label,
-body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answeroptions_] .fgrouplabel label {
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=answer_] .fgrouplabel label {
     font-weight: bold;
 }
 
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'],
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answertolerance_] label[for^='id_tolerance_'],
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answerdisplay_] label[for^='id_correctanswerlength_'],
-body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answeroptions_] label[for^='id_answer_'],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answerdisplay_] label[for^='id_correctanswerlength_'] {
     position: absolute;
     left: -10000px;
@@ -49,6 +48,7 @@ body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answerdisplay_] 
 
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answertolerance_],
 body#page-question-type-calculated div[id^=fgroup_id_][id*=answerdisplay_],
+body#page-question-type-calculatedmulti div[id^=fitem_id_][id*=fraction_],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answertolerance_],
 body#page-question-type-calculatedmulti div[id^=fgroup_id_][id*=answerdisplay_] {
     background: #eee;
