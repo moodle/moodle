@@ -92,6 +92,12 @@ $vgbar = ' class="vgbar"';
 // Start moodle modification: use own XHProfRuns implementation.
 // $xhprof_runs_impl = new XHProfRuns_Default();
 $xhprof_runs_impl = new moodle_xhprofrun();
+$reducedata = xhprof_get_bool_param('reducedata', 0); // Don't reduce data by default.
+$xhprof_runs_impl->set_reducedata($reducedata);
+if ($reducedata) {
+    // We need to inject it, so we continue in "reduced data mode" all the time.
+    $params['reducedata'] = $reducedata;
+}
 // End moodle modification.
 
 displayXHProfReport($xhprof_runs_impl, $params, $source, $run, $wts,
