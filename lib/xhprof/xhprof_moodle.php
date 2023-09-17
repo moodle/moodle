@@ -859,6 +859,9 @@ class moodle_xhprofrun implements iXHProfRuns {
     protected $totalmemory = 0;
     protected $timecreated = 0;
 
+    /** @var bool Decide if we want to reduce profiling data or no */
+    protected bool $reducedata = false;
+
     public function __construct() {
         $this->timecreated = time();
     }
@@ -889,6 +892,10 @@ class moodle_xhprofrun implements iXHProfRuns {
             return unserialize(base64_decode($rec->data));
         } else {
             $info = unserialize(gzuncompress(base64_decode($rec->data)));
+            if (!$this->reducedata) {
+                // We want to return the full data.
+                return $info;
+            }
 
             // We want to apply some transformations here, in order to reduce
             // the information for some complex (too many levels) cases.
@@ -965,6 +972,15 @@ class moodle_xhprofrun implements iXHProfRuns {
 
     public function prepare_run($url) {
         $this->url = $url;
+    }
+
+    /**
+     * Enable or disable reducing profiling data.
+     *
+     * @param bool $reducedata Decide if we want to reduce profiling data (true) or no (false).
+     */
+    public function set_reducedata(bool $reducedata): void {
+        $this->reducedata = $reducedata;
     }
 
     // Private API starts here.
