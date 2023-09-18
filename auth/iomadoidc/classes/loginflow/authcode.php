@@ -34,6 +34,7 @@ use moodle_exception;
 use moodle_url;
 use pix_icon;
 use iomad;
+use context_system;
 
 defined('MOODLE_INTERNAL') || die();
 

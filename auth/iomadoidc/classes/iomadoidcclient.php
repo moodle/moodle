@@ -27,6 +27,7 @@ namespace auth_iomadoidc;
 
 use moodle_exception;
 use moodle_url;
+use context_system;
 use iomad;
 
 defined('MOODLE_INTERNAL') || die();

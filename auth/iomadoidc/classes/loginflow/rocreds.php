@@ -25,6 +25,7 @@
 
 namespace auth_iomadoidc\loginflow;
 use iomad;
+use context_system;
 
 defined('MOODLE_INTERNAL') || die();
 

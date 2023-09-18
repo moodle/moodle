@@ -31,6 +31,7 @@ use auth_iomadoidc\iomadoidcclient;
 use core_user;
 use moodle_exception;
 use stdClass;
+use context_system;
 use iomad;
 
 defined('MOODLE_INTERNAL') || die();
