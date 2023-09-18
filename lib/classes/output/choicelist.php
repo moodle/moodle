@@ -169,7 +169,7 @@ class choicelist implements renderable, named_templatable {
         $options = [];
         foreach ($this->options as $option) {
             if (!empty($option['icon'])) {
-                $option['icon'] = $option['icon']->export_for_template($output);
+                $option['icon'] = $option['icon']->export_for_pix($output);
             }
             $option['hasicon'] = !empty($option['icon']);
 
