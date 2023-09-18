@@ -10322,8 +10322,14 @@ function setup_lang_from_browser() {
         // Clean it properly for include.
         $lang = strtolower(clean_param($lang, PARAM_SAFEDIR));
         if (get_string_manager()->translation_exists($lang, false)) {
-            // Lang exists, set it in session.
-            $SESSION->lang = $lang;
+            // If the translation for this language exists then try to set it
+            // for the rest of the session, if this is a read only session then
+            // we can only set it temporarily in $CFG.
+            if (defined('READ_ONLY_SESSION') && !empty($CFG->enable_read_only_sessions)) {
+                $CFG->lang = $lang;
+            } else {
+                $SESSION->lang = $lang;
+            }
             // We have finished. Go out.
             break;
         }
