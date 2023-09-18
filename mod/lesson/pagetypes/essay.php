@@ -56,9 +56,9 @@ class lesson_page_type_essay extends lesson_page {
      * @return object
      */
     static public function extract_useranswer($useranswer) {
-        $essayinfo = unserialize($useranswer);
+        $essayinfo = unserialize_object($useranswer);
         if (!isset($essayinfo->responseformat)) {
-            $essayinfo->response = text_to_html($essayinfo->response, false, false);
+            $essayinfo->response = text_to_html($essayinfo->response ?? '', false, false);
             $essayinfo->responseformat = FORMAT_HTML;
         }
         return $essayinfo;
@@ -150,7 +150,7 @@ class lesson_page_type_essay extends lesson_page {
                 $editoroptions['context'], 'mod_lesson', 'essay_answers', $attempt->id);
 
             // Update the student response to have the modified link.
-            $useranswer = unserialize($attempt->useranswer);
+            $useranswer = unserialize_object($attempt->useranswer);
             $useranswer->answer = $formdata->answer;
             $useranswer->answerformat = $formdata->answerformat;
             $attempt->useranswer = serialize($useranswer);
