@@ -219,7 +219,7 @@ if (!empty($data)) {
                 if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $redocertificate))) {
                     echo html_writer::start_tag('p');
                     local_iomad_track_delete_entry($redocertificate);
-                    xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id);
+                    xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, true, false);
                     echo html_writer::end_tag('p');
                 }
             }
@@ -318,7 +318,7 @@ if (!empty($data)) {
                     // Re-generate the certificate.
                     if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $key))) {
                         local_iomad_track_delete_entry($key);
-                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false);
+                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false, true);
                     }
                 }
             }
@@ -362,7 +362,7 @@ if (!empty($data)) {
 
                         // Re-generate the certificate.
                         local_iomad_track_delete_entry($key);
-                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false);
+                        xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false, true);
                     }
                 }
             }
@@ -376,7 +376,7 @@ if (!empty($action)) {
         if ($action == 'redocert' && !empty($redocertificate)) {
             if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $redocertificate))) {
                 local_iomad_track_delete_entry($redocertificate);
-                if (xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false)) {
+                if (xmldb_local_iomad_track_record_certificates($trackrec->courseid, $trackrec->userid, $trackrec->id, false, true)) {
                     redirect(new moodle_url('/local/report_completion/index.php', $params),
                              get_string($action . "_successful", 'local_report_users'),
                              null,

@@ -113,7 +113,7 @@ mtrace("removing filename $filepath");
     }
     $DB->delete_records('files', array('itemid' => $track->id, 'component' => 'local_iomad_track'));
 mtrace ("adding Certificate");
-    xmldb_local_iomad_track_record_certificates($track->courseid, $track->userid, $track->id);
+    xmldb_local_iomad_track_record_certificates($track->courseid, $track->userid, $track->id, true, false);
 
 $count++;
 }

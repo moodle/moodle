@@ -124,7 +124,7 @@ function xmldb_local_iomad_track_save_certificate($trackid, $filename) {
 /**
  * Process (any) certificates in the course
  */
-function xmldb_local_iomad_track_record_certificates($courseid, $userid, $trackid, $showresult = true) {
+function xmldb_local_iomad_track_record_certificates($courseid, $userid, $trackid, $showresult = true, $onlyvisible = true) {
     global $DB;
 
     // Get course.
@@ -156,7 +156,7 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
             $cm = $modinfo->get_cm($cm->id);
 
             // Can the user see this certificate?
-            if (!$cm->uservisible) {
+            if ($onlyvisible && !$cm->uservisible) {
                 continue;
             }
 
