@@ -358,10 +358,10 @@ class mod_lesson_mod_form extends moodleform_mod {
      **/
     public function data_preprocessing(&$defaultvalues) {
         if (isset($defaultvalues['conditions'])) {
-            $conditions = unserialize($defaultvalues['conditions']);
-            $defaultvalues['timespent'] = $conditions->timespent;
-            $defaultvalues['completed'] = $conditions->completed;
-            $defaultvalues['gradebetterthan'] = $conditions->gradebetterthan;
+            $conditions = unserialize_object($defaultvalues['conditions']);
+            $defaultvalues['timespent'] = $conditions->timespent ?? 0;
+            $defaultvalues['completed'] = !empty($conditions->completed);
+            $defaultvalues['gradebetterthan'] = $conditions->gradebetterthan ?? 0;
         }
 
         // Set up the completion checkbox which is not part of standard data.
