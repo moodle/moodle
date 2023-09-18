@@ -95,7 +95,9 @@ class moodlenet_client {
      * Prepare the request data required for sharing a file to MoodleNet.
      * This creates an array in the format used by \core\httpclient options to send a multipart request.
      *
-     * @param array $filedata An array of data relating to the file being shared (as prepared by ::prepare_share_contents).
+     * @param string $filename Name of the file being shared.
+     * @param string $mimetype Mime type of the file being shared.
+     * @param StreamInterface $stream Stream of the file being shared.
      * @param string $resourcename The name of the resource being shared.
      * @param string $resourcedescription A description of the resource being shared.
      * @return array Data in the format required to send a file to MoodleNet using \core\httpclient.
@@ -105,7 +107,7 @@ class moodlenet_client {
         string $mimetype,
         StreamInterface $stream,
         string $resourcename,
-        $resourcedescription,
+        string $resourcedescription,
     ): array {
         return [
             'headers' => [
