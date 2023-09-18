@@ -139,16 +139,6 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
     }
 
     /**
-     * There is no course module for this form, because it is used to update default completion settings. So it will
-     * always return null.
-     *
-     * @return \stdClass|null
-     */
-    protected function get_cm(): ?\stdClass {
-        return null;
-    }
-
-    /**
      * This method has been overridden because the form identifier must be unique for each module type.
      * Otherwise, the form will display the same data for each module type once it's submitted.
      */
