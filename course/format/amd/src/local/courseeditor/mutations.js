@@ -74,6 +74,7 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }
@@ -96,6 +97,7 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmIds, false);
     }
@@ -197,6 +199,7 @@ export default class {
         this.sectionLock(stateManager, Array.from(sectionIds), true);
 
         const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
 
         this.sectionLock(stateManager, Array.from(sectionIds), false);
@@ -224,6 +227,7 @@ export default class {
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmids, true);
         const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmids, false);
     }
@@ -242,6 +246,26 @@ export default class {
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_move', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
+    }
+
+    /**
+     * Move course modules after a specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids to move
+     * @param {number} targetSectionId the target section id
+     */
+    async sectionMoveAfter(stateManager, sectionIds, targetSectionId) {
+        if (!targetSectionId) {
+            throw new Error(`Mutation sectionMoveAfter requires targetSectionId`);
+        }
+        const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
+        const updates = await this._callEditWebservice('section_move_after', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }
@@ -270,6 +294,7 @@ export default class {
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
     }
 
@@ -282,6 +307,7 @@ export default class {
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmIds, true);
         const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.bulkReset(stateManager);
         this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
     }
@@ -320,6 +346,51 @@ export default class {
     cmCompletion(stateManager, cmIds, complete) {
         const newValue = (complete) ? 1 : 0;
         this._setElementsValue(stateManager, 'cm', cmIds, 'completionstate', newValue);
+    }
+
+    /**
+     * Move cms to the right: indent = 1.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmMoveRight(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_moveright', cmIds);
+    }
+
+    /**
+     * Move cms to the left: indent = 0.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmMoveLeft(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_moveleft', cmIds);
+    }
+
+    /**
+     * Set cms group mode to NOGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmNoGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_nogroups', cmIds);
+    }
+
+    /**
+     * Set cms group mode to VISIBLEGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmVisibleGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_visiblegroups', cmIds);
+    }
+
+    /**
+     * Set cms group mode to SEPARATEGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmSeparateGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_separategroups', cmIds);
     }
 
     /**
@@ -423,8 +494,22 @@ export default class {
      */
     async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
+    }
+
+    /**
+     * Update the course index collapsed attribute of all sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {boolean} collapsed the new collapsed value
+     */
+    async allSectionsIndexCollapsed(stateManager, collapsed) {
+        const sectionIds = stateManager.getIds('section');
+        this.sectionIndexCollapsed(stateManager, sectionIds, collapsed);
     }
 
     /**
@@ -436,6 +521,9 @@ export default class {
      */
     async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
         const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        if (!collapsedIds) {
+            return;
+        }
         const course = stateManager.get('course');
         await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
     }
@@ -447,7 +535,7 @@ export default class {
      * @param {string} preferenceName the preference name
      * @param {array} sectionIds the affected section ids
      * @param {boolean} preferenceValue the new preferenceValue value
-     * @return {array} the list of all sections with that preference set to true
+     * @return {Number[]|null} sections ids with the preference value true or null if no update is required
      */
     _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
@@ -456,7 +544,7 @@ export default class {
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
-                return;
+                return null;
             }
             const newValue = preferenceValue ?? section[preferenceName];
             if (section[preferenceName] != newValue) {
@@ -466,7 +554,7 @@ export default class {
         });
         stateManager.setReadOnly(true);
         if (affectedSections.size == 0) {
-            return [];
+            return null;
         }
         // Get all collapsed section ids.
         const collapsedSectionIds = [];

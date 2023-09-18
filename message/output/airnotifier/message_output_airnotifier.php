@@ -85,22 +85,23 @@ class message_output_airnotifier extends message_output {
         $extra->site            = $siteid;
         $extra->date            = (!empty($eventdata->timecreated)) ? $eventdata->timecreated : time();
         $extra->notification    = (!empty($eventdata->notification)) ? 1 : 0;
+        $encryptnotifications = get_config('message_airnotifier', 'encryptnotifications') == 1;
+        $encryptprocessing = get_config('message_airnotifier', 'encryptprocessing');
 
         // Site name.
         $site = get_site();
         $extra->sitefullname = clean_param(format_string($site->fullname), PARAM_NOTAGS);
         $extra->siteshortname = clean_param(format_string($site->shortname), PARAM_NOTAGS);
 
-        // Clean HTML, push notifications must arrive clean.
-        if (!empty($extra->smallmessage)) {
-            $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        // Clean HTML and ony allow data not to be ignored by Airnotifier to reduce the payload size.
+        if (empty($extra->smallmessage)) {
+            $extra->smallmessage = $extra->fullmessage;
         }
-        if (!empty($extra->fullmessage)) {
-            $extra->fullmessage = clean_param($extra->fullmessage, PARAM_NOTAGS);
-        }
-        if (!empty($extra->fullmessagehtml)) {
-            $extra->fullmessagehtml = clean_param($extra->fullmessagehtml, PARAM_NOTAGS);
-        }
+        $extra->smallmessage = clean_param($extra->smallmessage, PARAM_NOTAGS);
+        unset($extra->fullmessage);
+        unset($extra->fullmessagehtml);
+        unset($extra->fullmessageformat);
+        unset($extra->fullmessagetrust);
 
         // Send wwwroot to airnotifier.
         $extra->wwwroot = $CFG->wwwroot;
@@ -110,9 +111,15 @@ class message_output_airnotifier extends message_output {
         $devicetokens = $airnotifiermanager->get_user_devices($CFG->airnotifiermobileappname, $eventdata->userto->id);
 
         foreach ($devicetokens as $devicetoken) {
-
             if (!$devicetoken->enable) {
                 continue;
+            }
+
+            // Check if we should skip sending the notification.
+            if ($encryptnotifications && empty($devicetoken->publickey) &&
+                    $encryptprocessing == message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND) {
+
+                continue;   // Avoid sending notifications to devices not supporting encryption.
             }
 
             // Sending the message to the device.
@@ -124,17 +131,88 @@ class message_output_airnotifier extends message_output {
             $curl->setopt(array('CURLOPT_TIMEOUT' => 2, 'CURLOPT_CONNECTTIMEOUT' => 2));
             $curl->setHeader($header);
 
+            // Clone the data to avoid modifying the original.
+            $deviceextra = clone $extra;
+
+            $deviceextra->encrypted = $encryptnotifications;
+            $deviceextra = $this->encrypt_payload($deviceextra, $devicetoken);
+
+            // We use Firebase to deliver all Push Notifications, and for all device types.
+            // Firebase has a 4KB payload limit.
+            // https://firebase.google.com/docs/cloud-messaging/concept-options#notifications_and_data_messages
+            // If the message is over that limit we remove unneeded fields and replace the title with a simple message.
+            if (\core_text::strlen(json_encode($deviceextra), '8bit') > 4000) {
+                $deviceextra->smallmessage = get_string('view_notification', 'message_airnotifier');
+            }
+
             $params = array(
                 'device'    => $devicetoken->platform,
                 'token'     => $devicetoken->pushid,
-                'extra'     => $extra
+                'extra'     => $deviceextra
             );
+            if ($deviceextra->encrypted) {
+                // Setting alert to null makes air notifier send the notification as a data payload,
+                // this forces Android phones to call the app onMessageReceived function to decrypt the notification.
+                // Otherwise notifications are created by the Android system and will not be decrypted.
+                $params['alert'] = null;
+            }
 
             // JSON POST raw body request.
             $resp = $curl->post($serverurl, json_encode($params));
         }
 
         return true;
+    }
+
+    /**
+     * Encrypt the notification payload.
+     *
+     * @param stdClass $payload The notification payload.
+     * @param stdClass $devicetoken The device token record
+     * @return stdClass
+     */
+    protected function encrypt_payload(stdClass $payload, stdClass $devicetoken): stdClass {
+        if (empty($payload->encrypted)) {
+            return $payload;
+        }
+
+        if (empty($devicetoken->publickey)) {
+            $payload->encrypted = false;
+            return $payload;
+        }
+
+        $publickey = sodium_base642bin($devicetoken->publickey, SODIUM_BASE64_VARIANT_ORIGINAL);
+        $fields = [
+            'userfromfullname',
+            'userfromid',
+            'sitefullname',
+            'smallmessage',
+            'subject',
+            'contexturl',
+        ];
+        foreach ($fields as $field) {
+            if (!isset($payload->$field)) {
+                continue;
+            }
+            $payload->$field = sodium_bin2base64(sodium_crypto_box_seal(
+                $payload->$field,
+                $publickey
+            ), SODIUM_BASE64_VARIANT_ORIGINAL);
+        }
+
+        // Remove extra fields which may contain personal data.
+        // They cannot be encrypted otherwise we would go over the 4KB payload size limit.
+        unset($payload->usertoid);
+        unset($payload->replyto);
+        unset($payload->replytoname);
+        unset($payload->siteshortname);
+        unset($payload->customdata);
+        unset($payload->contexturlname);
+        unset($payload->replytoname);
+        unset($payload->attachment);
+        unset($payload->attachname);
+
+        return $payload;
     }
 
     /**
@@ -221,4 +299,3 @@ class message_output_airnotifier extends message_output {
         return $airnotifiermanager->is_system_configured();
     }
 }
-

@@ -26,7 +26,7 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-$bbbsettings = new mod_bigbluebuttonbn\settings($ADMIN, $module, $section);
+$bbbsettings = new mod_bigbluebuttonbn\settings($ADMIN, $module, $section, $hassiteconfig);
 $bbbsettings->add_all_settings();
 
 $settings = null;

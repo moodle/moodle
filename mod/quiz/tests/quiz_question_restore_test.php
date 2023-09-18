@@ -379,4 +379,194 @@ class quiz_question_restore_test extends \advanced_testcase {
         }
 
     }
+
+    /**
+     * Test pre 4.0 quiz restore for random question used on multiple quizzes.
+     *
+     * @covers ::process_quiz_question_legacy_instance
+     */
+    public function test_pre_4_quiz_restore_shared_random_question() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                __DIR__ . "/fixtures/pre-40-shared-random-question.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        // Each quiz should contain an instance of the random question.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quizzes = $modinfo->get_instances_of('quiz');
+        $this->assertCount(2, $quizzes);
+        foreach ($quizzes as $quiz) {
+            $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
+            $structure = structure::create_for_quiz($quizobj);
+
+            // Are the correct slots returned?
+            $slots = $structure->get_slots();
+            $this->assertCount(1, $slots);
+
+            $quizobj->preload_questions();
+            $quizobj->load_questions();
+            $questions = $quizobj->get_questions();
+            $this->assertCount(1, $questions);
+        }
+
+        // Count the questions for course question bank.
+        // We should have a single question, the random question should have been deleted after the restore.
+        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id));
+        $this->assertEquals(1, $this->question_count(\context_course::instance($newcourseid)->id,
+                "AND q.qtype <> 'random'"));
+
+        // Count the questions in quiz qbank.
+        $this->assertEquals(0, $this->question_count($quizobj->get_context()->id));
+    }
+
+    /**
+     * Ensure that question slots are correctly backed up and restored with all properties.
+     *
+     * @covers \backup_quiz_activity_structure_step::define_structure()
+     * @return void
+     */
+    public function test_backup_restore_question_slots(): void {
+        $this->resetAfterTest(true);
+
+        $course1 = $this->getDataGenerator()->create_course();
+        $course2 = $this->getDataGenerator()->create_course();
+
+        $user1 = $this->getDataGenerator()->create_and_enrol($course1, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($user1->id, $course2->id, 'editingteacher');
+
+        // Make a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz = $quizgenerator->create_instance(['course' => $course1->id, 'questionsperpage' => 0, 'grade' => 100.0,
+                'sumgrades' => 3]);
+
+        // Create some fixed and random questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
+        $randomcat = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('shortanswer', null, ['category' => $randomcat->id]);
+        $questiongenerator->create_question('numerical', null, ['category' => $randomcat->id]);
+        $questiongenerator->create_question('match', null, ['category' => $randomcat->id]);
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz, 1, 3);
+        quiz_add_quiz_question($numq->id, $quiz, 2, 2);
+        quiz_add_quiz_question($matchq->id, $quiz, 3, 1);
+        $this->add_random_questions($quiz->id, 3, $randomcat->id, 2);
+
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
+        $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Set one slot to a non-default display number.
+        $originalslots = $originalstructure->get_slots();
+        $firstslot = reset($originalslots);
+        $originalstructure->update_slot_display_number($firstslot->id, rand(5, 10));
+
+        // Set one slot to requireprevious.
+        $lastslot = end($originalslots);
+        $originalstructure->update_question_dependency($lastslot->id, true);
+
+        // Backup and restore the quiz.
+        $backupid = $this->backup_quiz($quiz, $user1);
+        $this->restore_quiz($backupid, $course2, $user1);
+
+        // Ensure the restored slots match the original slots.
+        $modinfo = get_fast_modinfo($course2);
+        $quizzes = $modinfo->get_instances_of('quiz');
+        $restoredquiz = reset($quizzes);
+        $restoredquizobj = quiz_settings::create($restoredquiz->instance, $user1->id);
+        $restoredstructure = \mod_quiz\structure::create_for_quiz($restoredquizobj);
+        $restoredslots = array_values($restoredstructure->get_slots());
+        $originalstructure = \mod_quiz\structure::create_for_quiz($quizobj);
+        $originalslots = array_values($originalstructure->get_slots());
+        foreach ($restoredslots as $key => $restoredslot) {
+            $originalslot = $originalslots[$key];
+            $this->assertEquals($originalslot->quizid, $quiz->id);
+            $this->assertEquals($restoredslot->quizid, $restoredquiz->instance);
+            $this->assertEquals($originalslot->slot, $restoredslot->slot);
+            $this->assertEquals($originalslot->page, $restoredslot->page);
+            $this->assertEquals($originalslot->displaynumber, $restoredslot->displaynumber);
+            $this->assertEquals($originalslot->requireprevious, $restoredslot->requireprevious);
+            $this->assertEquals($originalslot->maxmark, $restoredslot->maxmark);
+        }
+    }
+
+    /**
+     * Test pre 4.3 quiz restore for random question filter conditions.
+     *
+     * @covers \restore_question_set_reference_data_trait::process_question_set_reference
+     */
+    public function test_pre_43_quiz_restore_for_random_question_filtercondition() {
+        global $USER, $DB;
+        $this->resetAfterTest();
+        $backupid = 'abc';
+        $backuppath = make_backup_temp_directory($backupid);
+        get_file_packer('application/vnd.moodle.backup')->extract_to_pathname(
+                __DIR__ . "/fixtures/moodle_42_random_question.mbz", $backuppath);
+
+        // Do the restore to new course with default settings.
+        $categoryid = $DB->get_field_sql("SELECT MIN(id) FROM {course_categories}");
+        $newcourseid = \restore_dbops::create_new_course('Test fullname', 'Test shortname', $categoryid);
+        $rc = new \restore_controller($backupid, $newcourseid, \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+                \backup::TARGET_NEW_COURSE);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        // Get the information about the resulting course and check that it is set up correctly.
+        $modinfo = get_fast_modinfo($newcourseid);
+        $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
+        $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
+        $structure = \mod_quiz\structure::create_for_quiz($quizobj);
+
+        // Count the questions in quiz qbank.
+        $context = \context_module::instance(get_coursemodule_from_instance("quiz", $quizobj->get_quizid(), $newcourseid)->id);
+        $this->assertEquals(2, $this->question_count($context->id));
+
+        // Are the correct slots returned?
+        $slots = $structure->get_slots();
+        $this->assertCount(1, $slots);
+
+        // Check that the filtercondition now matches the 4.3 structure.
+        foreach ($slots as $slot) {
+            $setreference = $DB->get_record('question_set_references',
+                    ['itemid' => $slot->id, 'component' => 'mod_quiz', 'questionarea' => 'slot']);
+            $filterconditions = json_decode($setreference->filtercondition, true);
+            $this->assertArrayHasKey('cat', $filterconditions);
+            $this->assertArrayHasKey('jointype', $filterconditions);
+            $this->assertArrayHasKey('qpage', $filterconditions);
+            $this->assertArrayHasKey('qperpage', $filterconditions);
+            $this->assertArrayHasKey('filter', $filterconditions);
+            $this->assertArrayHasKey('category', $filterconditions['filter']);
+            $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
+            $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
+            $this->assertArrayNotHasKey('tags', $filterconditions);
+            $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
+            $expectedtagids = array_values(array_map(fn($expectedtag) => $expectedtag->id, $expectedtags));
+            $this->assertEquals($expectedtagids, $filterconditions['filter']['qtagids']['values']);
+            $expectedcategory = $DB->get_record('question_categories', ['idnumber' => 'RAND']);
+            $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
+            $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);
+            $this->assertEquals($expectedcat, $filterconditions['cat']);
+        }
+    }
 }

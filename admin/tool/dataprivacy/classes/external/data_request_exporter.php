@@ -104,6 +104,11 @@ class data_request_exporter extends persistent_exporter {
                 'optional' => true,
                 'default' => false
             ],
+            'allowfiltering' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+                'default' => false,
+            ],
             'canmarkcomplete' => [
                 'type' => PARAM_BOOL,
                 'optional' => true,
@@ -153,10 +158,12 @@ class data_request_exporter extends persistent_exporter {
 
         $values['canreview'] = false;
         $values['approvedeny'] = false;
+        $values['allowfiltering'] = get_config('tool_dataprivacy', 'allowfiltering');
         $values['statuslabel'] = helper::get_request_status_string($this->persistent->get('status'));
 
         switch ($this->persistent->get('status')) {
             case api::DATAREQUEST_STATUS_PENDING:
+            case api::DATAREQUEST_STATUS_PREPROCESSING:
                 $values['statuslabelclass'] = 'badge-info';
                 // Request can be manually completed for general enquiry requests.
                 $values['canmarkcomplete'] = $requesttype == api::DATAREQUEST_TYPE_OTHERS;

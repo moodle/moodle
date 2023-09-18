@@ -40,6 +40,19 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  */
 class column_manager_test extends advanced_testcase {
 
+
+    /** @var \stdClass course record. */
+    protected $course;
+
+    /** @var \core_question\local\bank\view  */
+    protected $questionbank;
+
+    /** @var array  */
+    protected $columns;
+
+    /** @var \qbank_columnsortorder\column_manager  */
+    protected $columnmanager;
+
     /**
      * Setup testcase.
      */
@@ -111,6 +124,34 @@ class column_manager_test extends advanced_testcase {
         $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
         $this->assertNotEquals($olddisabledconfig, $newdisabledconfig);
         $this->columnmanager->enable_columns($randomplugintodisable);
+        $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
+        $this->assertEmpty($newdisabledconfig);
+        $enabledconfig = get_config('qbank_columnsortorder', 'enabledcol');
+        $contains = strpos($enabledconfig, $randomplugintodisable);
+        $this->assertNotFalse($contains);
+        $this->assertIsInt($contains);
+    }
+
+    /**
+     * Test enabling and disabling columns through event observers
+     *
+     * @covers \qbank_columnsortorder\event\plugin_observer
+     */
+    public function test_plugin_enabled_disabled_observers(): void {
+        $neworder = $this->columnmanager->get_sorted_columns($this->columns);
+        shuffle($neworder);
+        set_columnbank_order::execute($neworder);
+        // Get the list of enabled columns, excluding core columns (we can't disable those).
+        $currentconfig = get_config('qbank_columnsortorder', 'enabledcol');
+        $currentconfig = array_filter(explode(',', $currentconfig), fn($class) => !str_starts_with($class, 'core'));
+        // Pick a column at random and get its plugin name.
+        $class = $currentconfig[array_rand($currentconfig, 1)];
+        $randomplugintodisable = explode('\\', $class)[0];
+        $olddisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
+        \core\event\qbank_plugin_disabled::create_for_plugin($randomplugintodisable)->trigger();
+        $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
+        $this->assertNotEquals($olddisabledconfig, $newdisabledconfig);
+        \core\event\qbank_plugin_enabled::create_for_plugin($randomplugintodisable)->trigger();
         $newdisabledconfig = get_config('qbank_columnsortorder', 'disabledcol');
         $this->assertEmpty($newdisabledconfig);
         $enabledconfig = get_config('qbank_columnsortorder', 'enabledcol');

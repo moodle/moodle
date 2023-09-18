@@ -1,4 +1,4 @@
-@mod @mod_lti @core_completion @javascript
+@mod @mod_lti @core_completion
 Feature: View activity completion information in the LTI activity
   In order to have visibility of LTI completion requirements
   As a student
@@ -25,30 +25,27 @@ Feature: View activity completion information in the LTI activity
     Then "Music history" should have the "Receive a grade" completion condition
     And "Music history" should have the "View" completion condition
 
+  @javascript
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "lti activity" page logged in as student1
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
-    And I log out
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "90.00" to the user "Vinnie Student1" for the grade item "Music history"
     And I press "Save changes"
-    And I log out
     When I am on the "Music history" "lti activity" page logged in as student1
     Then the "Receive a grade" completion condition of "Music history" is displayed as "done"
     And the "View" completion condition of "Music history" is displayed as "done"
 
+  @javascript
   Scenario: Use manual completion
     Given I am on the "Music history" "lti activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
-    And I press "Save and return to course"
+    And I set the field "Students must manually mark the activity as done" to "1"
+    And I press "Save and display"
     # Teacher view.
-    Given I am on the "Music history" "lti activity" page
     And the manual completion button for "Music history" should be disabled
-    And I log out
     # Student view.
     When I am on the "Music history" "lti activity" page logged in as student1
     Then the manual completion button of "Music history" is displayed as "Mark as done"

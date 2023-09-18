@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense extends Google_Service
 {
   /** View and manage your AdSense data. */
@@ -1070,6 +1071,7 @@ class Google_Service_AdSense extends Google_Service
  *   $accounts = $adsenseService->accounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -1117,6 +1119,7 @@ class Google_Service_AdSense_Accounts_Resource extends Google_Service_Resource
  *   $adclients = $adsenseService->adclients;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsAdclients_Resource extends Google_Service_Resource
 {
 
@@ -1149,6 +1152,7 @@ class Google_Service_AdSense_AccountsAdclients_Resource extends Google_Service_R
  *   $adunits = $adsenseService->adunits;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsAdunits_Resource extends Google_Service_Resource
 {
 
@@ -1218,6 +1222,7 @@ class Google_Service_AdSense_AccountsAdunits_Resource extends Google_Service_Res
  *   $customchannels = $adsenseService->customchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsAdunitsCustomchannels_Resource extends Google_Service_Resource
 {
 
@@ -1252,6 +1257,7 @@ class Google_Service_AdSense_AccountsAdunitsCustomchannels_Resource extends Goog
  *   $alerts = $adsenseService->alerts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsAlerts_Resource extends Google_Service_Resource
 {
 
@@ -1297,6 +1303,7 @@ class Google_Service_AdSense_AccountsAlerts_Resource extends Google_Service_Reso
  *   $customchannels = $adsenseService->customchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsCustomchannels_Resource extends Google_Service_Resource
 {
 
@@ -1348,6 +1355,7 @@ class Google_Service_AdSense_AccountsCustomchannels_Resource extends Google_Serv
  *   $adunits = $adsenseService->adunits;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsCustomchannelsAdunits_Resource extends Google_Service_Resource
 {
 
@@ -1384,6 +1392,7 @@ class Google_Service_AdSense_AccountsCustomchannelsAdunits_Resource extends Goog
  *   $payments = $adsenseService->payments;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsPayments_Resource extends Google_Service_Resource
 {
 
@@ -1410,6 +1419,7 @@ class Google_Service_AdSense_AccountsPayments_Resource extends Google_Service_Re
  *   $reports = $adsenseService->reports;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsReports_Resource extends Google_Service_Resource
 {
 
@@ -1459,6 +1469,7 @@ class Google_Service_AdSense_AccountsReports_Resource extends Google_Service_Res
  *   $saved = $adsenseService->saved;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsReportsSaved_Resource extends Google_Service_Resource
 {
 
@@ -1513,6 +1524,7 @@ class Google_Service_AdSense_AccountsReportsSaved_Resource extends Google_Servic
  *   $savedadstyles = $adsenseService->savedadstyles;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsSavedadstyles_Resource extends Google_Service_Resource
 {
 
@@ -1560,6 +1572,7 @@ class Google_Service_AdSense_AccountsSavedadstyles_Resource extends Google_Servi
  *   $urlchannels = $adsenseService->urlchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AccountsUrlchannels_Resource extends Google_Service_Resource
 {
 
@@ -1594,6 +1607,7 @@ class Google_Service_AdSense_AccountsUrlchannels_Resource extends Google_Service
  *   $adclients = $adsenseService->adclients;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Adclients_Resource extends Google_Service_Resource
 {
 
@@ -1625,6 +1639,7 @@ class Google_Service_AdSense_Adclients_Resource extends Google_Service_Resource
  *   $adunits = $adsenseService->adunits;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Adunits_Resource extends Google_Service_Resource
 {
 
@@ -1690,6 +1705,7 @@ class Google_Service_AdSense_Adunits_Resource extends Google_Service_Resource
  *   $customchannels = $adsenseService->customchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdunitsCustomchannels_Resource extends Google_Service_Resource
 {
 
@@ -1724,6 +1740,7 @@ class Google_Service_AdSense_AdunitsCustomchannels_Resource extends Google_Servi
  *   $alerts = $adsenseService->alerts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Alerts_Resource extends Google_Service_Resource
 {
 
@@ -1767,6 +1784,7 @@ class Google_Service_AdSense_Alerts_Resource extends Google_Service_Resource
  *   $customchannels = $adsenseService->customchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Customchannels_Resource extends Google_Service_Resource
 {
 
@@ -1816,6 +1834,7 @@ class Google_Service_AdSense_Customchannels_Resource extends Google_Service_Reso
  *   $adunits = $adsenseService->adunits;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_CustomchannelsAdunits_Resource extends Google_Service_Resource
 {
 
@@ -1852,6 +1871,7 @@ class Google_Service_AdSense_CustomchannelsAdunits_Resource extends Google_Servi
  *   $metadata = $adsenseService->metadata;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Metadata_Resource extends Google_Service_Resource
 {
 }
@@ -1864,6 +1884,7 @@ class Google_Service_AdSense_Metadata_Resource extends Google_Service_Resource
  *   $dimensions = $adsenseService->dimensions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_MetadataDimensions_Resource extends Google_Service_Resource
 {
 
@@ -1889,6 +1910,7 @@ class Google_Service_AdSense_MetadataDimensions_Resource extends Google_Service_
  *   $metrics = $adsenseService->metrics;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_MetadataMetrics_Resource extends Google_Service_Resource
 {
 
@@ -1915,6 +1937,7 @@ class Google_Service_AdSense_MetadataMetrics_Resource extends Google_Service_Res
  *   $payments = $adsenseService->payments;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Payments_Resource extends Google_Service_Resource
 {
 
@@ -1940,6 +1963,7 @@ class Google_Service_AdSense_Payments_Resource extends Google_Service_Resource
  *   $reports = $adsenseService->reports;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Reports_Resource extends Google_Service_Resource
 {
 
@@ -1989,6 +2013,7 @@ class Google_Service_AdSense_Reports_Resource extends Google_Service_Resource
  *   $saved = $adsenseService->saved;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_ReportsSaved_Resource extends Google_Service_Resource
 {
 
@@ -2041,6 +2066,7 @@ class Google_Service_AdSense_ReportsSaved_Resource extends Google_Service_Resour
  *   $savedadstyles = $adsenseService->savedadstyles;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Savedadstyles_Resource extends Google_Service_Resource
 {
 
@@ -2087,6 +2113,7 @@ class Google_Service_AdSense_Savedadstyles_Resource extends Google_Service_Resou
  *   $urlchannels = $adsenseService->urlchannels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Urlchannels_Resource extends Google_Service_Resource
 {
 
@@ -2115,6 +2142,7 @@ class Google_Service_AdSense_Urlchannels_Resource extends Google_Service_Resourc
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Account extends Google_Collection
 {
   protected $collection_key = 'subAccounts';
@@ -2189,6 +2217,7 @@ class Google_Service_AdSense_Account extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Accounts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2235,6 +2264,7 @@ class Google_Service_AdSense_Accounts extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdClient extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2297,6 +2327,7 @@ class Google_Service_AdSense_AdClient extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdClients extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2343,6 +2374,7 @@ class Google_Service_AdSense_AdClients extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdCode extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2369,6 +2401,7 @@ class Google_Service_AdSense_AdCode extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2415,6 +2448,7 @@ class Google_Service_AdSense_AdStyle extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdStyleColors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2468,6 +2502,7 @@ class Google_Service_AdSense_AdStyleColors extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdStyleFont extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2494,6 +2529,7 @@ class Google_Service_AdSense_AdStyleFont extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2596,6 +2632,7 @@ class Google_Service_AdSense_AdUnit extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnitContentAdsSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2632,6 +2669,7 @@ class Google_Service_AdSense_AdUnitContentAdsSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnitContentAdsSettingsBackupOption extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2667,6 +2705,7 @@ class Google_Service_AdSense_AdUnitContentAdsSettingsBackupOption extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnitFeedAdsSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2711,6 +2750,7 @@ class Google_Service_AdSense_AdUnitFeedAdsSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnitMobileContentAdsSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2755,6 +2795,7 @@ class Google_Service_AdSense_AdUnitMobileContentAdsSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdUnits extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2801,6 +2842,7 @@ class Google_Service_AdSense_AdUnits extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdsenseReportsGenerateResponse extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -2892,6 +2934,7 @@ class Google_Service_AdSense_AdsenseReportsGenerateResponse extends Google_Colle
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_AdsenseReportsGenerateResponseHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2927,6 +2970,7 @@ class Google_Service_AdSense_AdsenseReportsGenerateResponseHeaders extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Alert extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2989,6 +3033,7 @@ class Google_Service_AdSense_Alert extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Alerts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3017,6 +3062,7 @@ class Google_Service_AdSense_Alerts extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_CustomChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3071,6 +3117,7 @@ class Google_Service_AdSense_CustomChannel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_CustomChannelTargetingInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3115,6 +3162,7 @@ class Google_Service_AdSense_CustomChannelTargetingInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_CustomChannels extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3161,6 +3209,7 @@ class Google_Service_AdSense_CustomChannels extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Metadata extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3189,6 +3238,7 @@ class Google_Service_AdSense_Metadata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Payment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3242,6 +3292,7 @@ class Google_Service_AdSense_Payment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_Payments extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3270,6 +3321,7 @@ class Google_Service_AdSense_Payments extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_ReportingMetadataEntry extends Google_Collection
 {
   protected $collection_key = 'supportedProducts';
@@ -3342,6 +3394,7 @@ class Google_Service_AdSense_ReportingMetadataEntry extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_SavedAdStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3387,6 +3440,7 @@ class Google_Service_AdSense_SavedAdStyle extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_SavedAdStyles extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3433,6 +3487,7 @@ class Google_Service_AdSense_SavedAdStyles extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_SavedReport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3468,6 +3523,7 @@ class Google_Service_AdSense_SavedReport extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_SavedReports extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3514,6 +3570,7 @@ class Google_Service_AdSense_SavedReports extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_UrlChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3549,6 +3606,7 @@ class Google_Service_AdSense_UrlChannel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_AdSense_UrlChannels extends Google_Collection
 {
   protected $collection_key = 'items';

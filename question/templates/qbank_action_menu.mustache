@@ -55,7 +55,10 @@
                 }
             ]
         },
-        "addcategory": "http://localhost/moodle/question/bank/managecategories/addcategory.php?cmid=71"
+        "actionbutton": {
+            "url": "http://localhost/moodle/question/bank/managecategories/addcategory.php?cmid=71",
+            "label": "Add category"
+        }
     }
 }}
 <div class="container-fluid tertiary-navigation">
@@ -65,10 +68,10 @@
                 {{>core/url_select}}
             </div>
         {{/questionbankselect}}
-        {{#addcategory}}
+        {{#actionbutton}}
             <div class="navitem">
-                <a class="btn btn-primary ml-2" href="{{ addcategory }}">{{#str}}addcategory, question {{/str}}</a>
+                <a class="btn btn-primary ml-2" href="{{url}}">{{label}}</a>
             </div>
-        {{/addcategory}}
+        {{/actionbutton}}
     </div>
 </div>

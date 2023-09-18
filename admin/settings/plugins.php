@@ -116,6 +116,17 @@ if ($hassiteconfig) {
     $temp->add($setting);
     $temp->add(new admin_setting_configcheckbox('verifychangedemail', new lang_string('verifychangedemail', 'admin'), new lang_string('configverifychangedemail', 'admin'), 1));
 
+    // ReCaptcha.
+    $temp->add(new admin_setting_configselect('enableloginrecaptcha',
+        new lang_string('auth_loginrecaptcha', 'auth'),
+        new lang_string('auth_loginrecaptcha_desc', 'auth'),
+        0,
+        [
+            new lang_string('no'),
+            new lang_string('yes'),
+        ],
+    ));
+
     $setting = new admin_setting_configtext('recaptchapublickey', new lang_string('recaptchapublickey', 'admin'), new lang_string('configrecaptchapublickey', 'admin'), '', PARAM_NOTAGS);
     $setting->set_force_ltr(true);
     $temp->add($setting);
@@ -154,7 +165,12 @@ if ($hassiteconfig) {
 /// Editor plugins
     $ADMIN->add('modules', new admin_category('editorsettings', new lang_string('editors', 'editor')));
     $temp = new admin_settingpage('manageeditors', new lang_string('editorsettings', 'editor'));
-    $temp->add(new admin_setting_manageeditors());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'editor',
+        \core_admin\table\editor_management_table::class,
+        'editorsui',
+        get_string('editorsettings', 'editor'),
+    ));
     $ADMIN->add('editorsettings', $temp);
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('editor');
     core_collator::asort_objects_by_property($plugins, 'displayname');
@@ -273,7 +289,12 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('managemediaplayers', new lang_string('managemediaplayers', 'media'));
     $temp->add(new admin_setting_heading('mediaformats', get_string('mediaformats', 'core_media'),
         format_text(get_string('mediaformats_desc', 'core_media'), FORMAT_MARKDOWN)));
-    $temp->add(new admin_setting_managemediaplayers());
+    $temp->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'media',
+        \core_admin\table\media_management_table::class,
+        'managemediaplayers',
+        new lang_string('managemediaplayers', 'core_media'),
+    ));
     $temp->add(new admin_setting_heading('managemediaplayerscommonheading', new lang_string('commonsettings', 'admin'), ''));
     $temp->add(new admin_setting_configtext('media_default_width',
         new lang_string('defaultwidth', 'core_media'), new lang_string('defaultwidthdesc', 'core_media'),
@@ -723,8 +744,14 @@ if ($hassiteconfig) {
 /// Add all admin tools
 if ($hassiteconfig) {
     $ADMIN->add('modules', new admin_category('tools', new lang_string('tools', 'admin')));
-    $ADMIN->add('tools', new admin_externalpage('managetools', new lang_string('toolsmanage', 'admin'),
-                                                     $CFG->wwwroot . '/' . $CFG->admin . '/tools.php'));
+    $settingspage = new admin_settingpage('toolsmanagement', new lang_string('toolsmanage', 'admin'));
+    $ADMIN->add('tools', $settingspage);
+    $settingspage->add(new \core_admin\admin\admin_setting_plugin_manager(
+        'tool',
+        \core_admin\table\tool_plugin_management_table::class,
+        'managetools',
+        new lang_string('toolsmanage', 'admin')
+    ));
 }
 
 // Now add various admin tools.
@@ -762,6 +789,20 @@ if ($hassiteconfig) {
     foreach ($plugins as $plugin) {
         /** @var \core\plugininfo\calendartype $plugin */
         $plugin->load_settings($ADMIN, 'calendartype', $hassiteconfig);
+    }
+}
+
+// Communication plugins.
+if ($hassiteconfig && core_communication\api::is_available()) {
+    $ADMIN->add('modules', new admin_category('communicationsettings', new lang_string('communication', 'core_communication')));
+    $temp = new admin_settingpage('managecommunicationproviders',
+        new lang_string('managecommunicationproviders', 'core_communication'));
+    $temp->add(new \core_communication\admin\manage_communication_providers_page());
+    $ADMIN->add('communicationsettings', $temp);
+    $plugins = core_plugin_manager::instance()->get_plugins_of_type('communication');
+    foreach ($plugins as $plugin) {
+        /** @var \core\plugininfo\communication $plugin */
+        $plugin->load_settings($ADMIN, 'communicationsettings', $hassiteconfig);
     }
 }
 

@@ -75,8 +75,8 @@ class qtype_shortanswer_renderer extends qtype_renderer {
         $input = html_writer::empty_tag('input', $inputattributes) . $feedbackimg;
 
         if ($placeholder) {
-            $inputinplace = html_writer::tag('label', get_string('answer'),
-                    array('for' => $inputattributes['id'], 'class' => 'accesshide'));
+            $inputinplace = html_writer::tag('label', $options->add_question_identifier_to_label(get_string('answer')),
+                    array('for' => $inputattributes['id'], 'class' => 'sr-only'));
             $inputinplace .= $input;
             $questiontext = substr_replace($questiontext, $inputinplace,
                     strpos($questiontext, $placeholder), strlen($placeholder));
@@ -86,8 +86,9 @@ class qtype_shortanswer_renderer extends qtype_renderer {
 
         if (!$placeholder) {
             $result .= html_writer::start_tag('div', array('class' => 'ablock form-inline'));
-            $result .= html_writer::tag('label', get_string('answer', 'qtype_shortanswer',
-                    html_writer::tag('span', $input, array('class' => 'answer'))),
+            $answerspan = html_writer::tag('span', $input, array('class' => 'answer'));
+            $label = $options->add_question_identifier_to_label(get_string('answercolon', 'qtype_numerical'), true);
+            $result .= html_writer::tag('label', $label . $answerspan,
                     array('for' => $inputattributes['id']));
             $result .= html_writer::end_tag('div');
         }

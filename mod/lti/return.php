@@ -82,8 +82,7 @@ if (!empty($errormsg)) {
         $links = new stdClass();
 
         if (has_capability('mod/lti:addcoursetool', $contextcourse)) {
-            $coursetooleditor = new moodle_url('/mod/lti/instructor_edit_tool_type.php',
-                array('course' => $courseid, 'action' => 'add', 'sesskey' => sesskey()));
+            $coursetooleditor = new moodle_url('mod/lti/coursetools.php', ['id' => $courseid]);
             $links->course_tool_editor = $coursetooleditor->out(false);
 
             echo get_string('lti_launch_error_unsigned_help', 'lti', $links);

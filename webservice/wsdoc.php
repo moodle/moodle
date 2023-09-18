@@ -35,7 +35,6 @@ $tokenid = required_param('id', PARAM_INT);
 $PAGE->set_context($usercontext);
 $PAGE->set_url('/user/wsdoc.php');
 $PAGE->set_title(get_string('wsdocumentation', 'webservice'));
-$PAGE->set_heading(get_string('wsdocumentation', 'webservice'));
 $PAGE->set_pagelayout('standard');
 
 // nav bar
@@ -65,7 +64,7 @@ $functions = $webservice->get_external_functions(array($token->externalserviceid
 // get all the function descriptions
 $functiondescs = array();
 foreach ($functions as $function) {
-    $functiondescs[$function->name] = external_api::external_function_info($function);
+    $functiondescs[$function->name] = \core_external\external_api::external_function_info($function);
 }
 
 // TODO: MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.

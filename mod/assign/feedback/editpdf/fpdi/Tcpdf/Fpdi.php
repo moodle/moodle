@@ -42,7 +42,7 @@ class Fpdi extends \pdf
      *
      * @string
      */
-    const VERSION = '2.3.6';
+    const VERSION = '2.3.7';
 
     /**
      * A counter for template ids.
@@ -140,6 +140,7 @@ class Fpdi extends \pdf
 
     /**
      * @inheritdoc
+     * @return string
      */
     protected function _getxobjectdict()
     {

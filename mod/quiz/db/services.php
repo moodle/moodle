@@ -199,4 +199,36 @@ $functions = [
         'capabilities'  => 'mod/quiz:view',
         'ajax'          => true,
     ],
+
+    'mod_quiz_reopen_attempt' => [
+        'classname' => 'mod_quiz\external\reopen_attempt',
+        'description' => 'Re-open an attempt that is currently in the never submitted state.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:reopenattempts',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_get_reopen_attempt_confirmation' => [
+        'classname' => 'mod_quiz\external\get_reopen_attempt_confirmation',
+        'description' => 'Verify it is OK to re-open a given quiz attempt, and if so, return a suitable confirmation message.',
+        'type' => 'read',
+        'capabilities' => 'mod/quiz:reopenattempts',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_add_random_questions' => [
+        'classname'     => 'mod_quiz\external\add_random_questions',
+        'description'   => 'Add a number of random questions to a quiz.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manage',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_update_filter_condition' => [
+        'classname'     => 'mod_quiz\external\update_filter_condition',
+        'description'   => 'Update filter condition for a random question slot.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manage',
+        'ajax'          => true,
+    ],
 ];

@@ -235,6 +235,7 @@ Feature: Test category management actions
     And "Move into" "select" should not be visible
     And I press "Cancel"
 
+  @javascript
   Scenario: Test I can assign roles for a category through the management interface.
     Given the following "categories" exist:
       | name | category | idnumber |
@@ -246,7 +247,7 @@ Feature: Test category management actions
     And I go to the courses management page
     And I should see the "Course categories and courses" management page
     And I click on "permissions" action for "Cat 1" in management category listing
-    And I select "Assign roles" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Assign roles"
     # Redirect
     And I should see "Assign roles in Category: Cat 1"
     And I should see "Please choose a role to assign"

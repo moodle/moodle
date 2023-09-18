@@ -448,13 +448,14 @@ class eventobservers_test extends \advanced_testcase {
         $msgsink = $this->redirectMessages();
 
         // Generate data.
-        $course = $this->getDataGenerator()->create_course();
+        $course = $this->getDataGenerator()->create_course(['fullname' => 'Observed course', 'shortname' => 'obscourse']);
         $toolgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
         $context = \context_user::instance($USER->id, IGNORE_MISSING);
 
         // Creating book.
         $cm = new \stdClass();
         $cm->course = $course->id;
+        $cm->name = 'Observed book';
         $book = $this->getDataGenerator()->create_module('book', $cm);
 
         // Creating rule.
@@ -468,7 +469,10 @@ class eventobservers_test extends \advanced_testcase {
 * {modulelink}
 * __{rulename}__
 * {description}
-* {eventname}';
+* {eventname}
+* {modulename}
+* {coursefullname}
+* {courseshortname}';
         $rulerecord->templateformat = FORMAT_MARKDOWN;
 
         $rule = $toolgenerator->create_rule($rulerecord);
@@ -500,6 +504,9 @@ class eventobservers_test extends \advanced_testcase {
         $this->assertStringContainsString('<li><strong>'.$rule->get_name($context).'</strong></li>', $msg->fullmessagehtml);
         $this->assertStringContainsString('<li>'.$rule->get_description($context).'</li>', $msg->fullmessagehtml);
         $this->assertStringContainsString('<li>'.$rule->get_event_name().'</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $cm->name . '</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $course->fullname . '</li>', $msg->fullmessagehtml);
+        $this->assertStringContainsString('<li>' . $course->shortname . '</li>', $msg->fullmessagehtml);
 
         $this->assertEquals(FORMAT_PLAIN, $msg->fullmessageformat);
         $this->assertStringNotContainsString('<h2>', $msg->fullmessage);
@@ -509,6 +516,10 @@ class eventobservers_test extends \advanced_testcase {
         $this->assertStringContainsString('* '.strtoupper($rule->get_name($context)), $msg->fullmessage);
         $this->assertStringContainsString('* '.$rule->get_description($context), $msg->fullmessage);
         $this->assertStringContainsString('* '.$rule->get_event_name(), $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $cm->name, $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $course->fullname, $msg->fullmessage);
+        $this->assertStringContainsString('* ' . $course->shortname, $msg->fullmessage);
+
     }
 
     /**

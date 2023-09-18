@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -429,6 +430,7 @@ class Google_Service_DeploymentManager extends Google_Service
  *   $deployments = $deploymentmanagerService->deployments;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Deployments_Resource extends Google_Service_Resource
 {
 
@@ -626,6 +628,7 @@ class Google_Service_DeploymentManager_Deployments_Resource extends Google_Servi
  *   $manifests = $deploymentmanagerService->manifests;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Manifests_Resource extends Google_Service_Resource
 {
 
@@ -687,6 +690,7 @@ class Google_Service_DeploymentManager_Manifests_Resource extends Google_Service
  *   $operations = $deploymentmanagerService->operations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Operations_Resource extends Google_Service_Resource
 {
 
@@ -746,6 +750,7 @@ class Google_Service_DeploymentManager_Operations_Resource extends Google_Servic
  *   $resources = $deploymentmanagerService->resources;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Resources_Resource extends Google_Service_Resource
 {
 
@@ -807,6 +812,7 @@ class Google_Service_DeploymentManager_Resources_Resource extends Google_Service
  *   $types = $deploymentmanagerService->types;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Types_Resource extends Google_Service_Resource
 {
 
@@ -846,6 +852,7 @@ class Google_Service_DeploymentManager_Types_Resource extends Google_Service_Res
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ConfigFile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -863,6 +870,7 @@ class Google_Service_DeploymentManager_ConfigFile extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Deployment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -955,6 +963,7 @@ class Google_Service_DeploymentManager_Deployment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentUpdate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -972,6 +981,7 @@ class Google_Service_DeploymentManager_DeploymentUpdate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentmanagerResource extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1082,6 +1092,7 @@ class Google_Service_DeploymentManager_DeploymentmanagerResource extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentmanagerResourceWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1119,6 +1130,7 @@ class Google_Service_DeploymentManager_DeploymentmanagerResourceWarnings extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentmanagerResourceWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1145,6 +1157,7 @@ class Google_Service_DeploymentManager_DeploymentmanagerResourceWarningsData ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentsCancelPreviewRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1162,6 +1175,7 @@ class Google_Service_DeploymentManager_DeploymentsCancelPreviewRequest extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentsListResponse extends Google_Collection
 {
   protected $collection_key = 'deployments';
@@ -1190,6 +1204,7 @@ class Google_Service_DeploymentManager_DeploymentsListResponse extends Google_Co
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_DeploymentsStopRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1207,6 +1222,7 @@ class Google_Service_DeploymentManager_DeploymentsStopRequest extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ImportFile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1233,6 +1249,7 @@ class Google_Service_DeploymentManager_ImportFile extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Manifest extends Google_Collection
 {
   protected $collection_key = 'imports';
@@ -1316,6 +1333,7 @@ class Google_Service_DeploymentManager_Manifest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ManifestsListResponse extends Google_Collection
 {
   protected $collection_key = 'manifests';
@@ -1344,6 +1362,7 @@ class Google_Service_DeploymentManager_ManifestsListResponse extends Google_Coll
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1553,6 +1572,7 @@ class Google_Service_DeploymentManager_Operation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1572,6 +1592,7 @@ class Google_Service_DeploymentManager_OperationError extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1607,6 +1628,7 @@ class Google_Service_DeploymentManager_OperationErrorErrors extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1644,6 +1666,7 @@ class Google_Service_DeploymentManager_OperationWarnings extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1670,6 +1693,7 @@ class Google_Service_DeploymentManager_OperationWarningsData extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_OperationsListResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -1698,6 +1722,7 @@ class Google_Service_DeploymentManager_OperationsListResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourceUpdate extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1772,6 +1797,7 @@ class Google_Service_DeploymentManager_ResourceUpdate extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourceUpdateError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1791,6 +1817,7 @@ class Google_Service_DeploymentManager_ResourceUpdateError extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourceUpdateErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1826,6 +1853,7 @@ class Google_Service_DeploymentManager_ResourceUpdateErrorErrors extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourceUpdateWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1863,6 +1891,7 @@ class Google_Service_DeploymentManager_ResourceUpdateWarnings extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourceUpdateWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1889,6 +1918,7 @@ class Google_Service_DeploymentManager_ResourceUpdateWarningsData extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_ResourcesListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -1917,6 +1947,7 @@ class Google_Service_DeploymentManager_ResourcesListResponse extends Google_Coll
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_TargetConfiguration extends Google_Collection
 {
   protected $collection_key = 'imports';
@@ -1946,6 +1977,7 @@ class Google_Service_DeploymentManager_TargetConfiguration extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_Type extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1990,6 +2022,7 @@ class Google_Service_DeploymentManager_Type extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_DeploymentManager_TypesListResponse extends Google_Collection
 {
   protected $collection_key = 'types';

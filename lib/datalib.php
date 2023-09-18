@@ -52,6 +52,12 @@ define('MAX_COURSE_CATEGORIES', 10000);
 if (!defined('LASTACCESS_UPDATE_SECS')) {
     define('LASTACCESS_UPDATE_SECS', 60);
 }
+/**
+ * The constant value when we use the search option.
+ */
+define('USER_SEARCH_STARTS_WITH', 0);
+define('USER_SEARCH_CONTAINS', 1);
+define('USER_SEARCH_EXACT_MATCH', 2);
 
 /**
  * Returns $user object of the main admin user
@@ -216,8 +222,8 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  * @param string $search the text to search for (empty string = find all)
  * @param string $u the table alias for the user table in the query being
  *     built. May be ''.
- * @param bool $searchanywhere If true (default), searches in the middle of
- *     names, otherwise only searches at start
+ * @param int $searchtype If 0(default): searches at start, 1: searches in the middle of names
+ *      2: search exact match.
  * @param array $extrafields Array of extra user fields to include in search, must be prefixed with table alias if they are not in
  *     the user table.
  * @param array $exclude Array of user ids to exclude (empty = don't exclude)
@@ -227,7 +233,7 @@ function search_users($courseid, $groupid, $searchtext, $sort='', array $excepti
  *     where clause the query, and an associative array containing any required
  *     parameters (using named placeholders).
  */
-function users_search_sql(string $search, string $u = 'u', bool $searchanywhere = true, array $extrafields = [],
+function users_search_sql(string $search, string $u = 'u', int $searchtype = USER_SEARCH_STARTS_WITH, array $extrafields = [],
         array $exclude = null, array $includeonly = null): array {
     global $DB, $CFG;
     $params = array();
@@ -237,7 +243,6 @@ function users_search_sql(string $search, string $u = 'u', bool $searchanywhere 
         $u .= '.';
     }
 
-    // If we have a $search string, put a field LIKE '$search%' condition on each field.
     if ($search) {
         $conditions = array(
             $DB->sql_fullname($u . 'firstname', $u . 'lastname'),
@@ -247,14 +252,26 @@ function users_search_sql(string $search, string $u = 'u', bool $searchanywhere 
             // Add the table alias for the user table if the field doesn't already have an alias.
             $conditions[] = strpos($field, '.') !== false ? $field : $u . $field;
         }
-        if ($searchanywhere) {
-            $searchparam = '%' . $search . '%';
-        } else {
-            $searchparam = $search . '%';
+        switch ($searchtype) {
+            case USER_SEARCH_STARTS_WITH:
+                // Put a field LIKE 'search%' condition on each field.
+                $searchparam = $search . '%';
+                break;
+            case USER_SEARCH_CONTAINS:
+                // Put a field LIKE '$search%' condition on each field.
+                $searchparam = '%' . $search . '%';
+                break;
+            case USER_SEARCH_EXACT_MATCH:
+                // Match exact the $search string.
+                $searchparam = $search;
+                break;
         }
         $i = 0;
         foreach ($conditions as $key => $condition) {
             $conditions[$key] = $DB->sql_like($condition, ":con{$i}00", false, false);
+            if ($searchtype === USER_SEARCH_EXACT_MATCH) {
+                $conditions[$key] = "$condition = :con{$i}00";
+            }
             $params["con{$i}00"] = $searchparam;
             $i++;
         }
@@ -1663,29 +1680,334 @@ function user_accesstime_log($courseid=0) {
 /// GENERAL HELPFUL THINGS  ///////////////////////////////////
 
 /**
- * Dumps a given object's information for debugging purposes
+ * Dumps a given object's information for debugging purposes. (You can actually use this function
+ * to print any type of value such as arrays or simple strings, not just objects.)
  *
- * When used in a CLI script, the object's information is written to the standard
- * error output stream. When used in a web script, the object is dumped to a
- * pre-formatted block with the "notifytiny" CSS class.
+ * When used in a web script, the object is dumped in a fancy-formatted div.
  *
- * @param mixed $object The data to be printed
- * @return void output is echo'd
+ * When used in a CLI script, the object's information is written to the standard error output
+ * stream.
+ *
+ * When used in an AJAX script, the object's information is dumped to the server error log.
+ *
+ * In text mode, private fields are shown with * and protected with +.
+ *
+ * In web view, formatting is done with Bootstrap classes. You can hover over some items to see
+ * more information, such as value types or access controls, or full field names if the names get
+ * cut off.
+ *
+ * By default, this will recurse to child objects, except where that would result in infinite
+ * recursion. To change that, set $expandclasses to an empty array (= do not recurse) or to a list
+ * of the class names that you would like to expand. You can also set values in this array to a
+ * regular expression beginning with / if you want to match a range of classes.
+ *
+ * @param mixed $item Object, array, or other item to display
+ * @param string[] $expandclasses Optional list of class patterns to recurse to
+ * @param bool $textonly If true, outputs text-only (automatically set for CLI and AJAX)
+ * @param bool $return For internal use - if true, returns value instead of echoing it
+ * @param int $depth For internal use - depth of recursion within print_object call
+ * @param \stdClass[] $done For internal use - array listing already-printed objects
+ * @return string  HTML code (or text if CLI) to display, if $return is true, otherwise empty string
  */
-function print_object($object) {
-
-    // we may need a lot of memory here
+function print_object($item, array $expandclasses = ['/./'], bool $textonly = false, bool $return = false,
+        int $depth = 0, array $done = []): string {
+    // We may need a lot of memory here.
     raise_memory_limit(MEMORY_EXTRA);
 
-    if (CLI_SCRIPT) {
-        fwrite(STDERR, print_r($object, true));
-        fwrite(STDERR, PHP_EOL);
-    } else if (AJAX_SCRIPT) {
-        foreach (explode("\n", print_r($object, true)) as $line) {
-            error_log($line);
+    // Set text (instead of HTML) mode if in CLI or AJAX script.
+    if (CLI_SCRIPT || AJAX_SCRIPT) {
+        $textonly = true;
+    }
+
+    /**
+     * Gets styling for types of variable.
+     *
+     * @param mixed $item Arbitrary PHP variable (simple primitive type) to display
+     * @return string Bootstrap class for styling the display
+     */
+    $gettypestyle = function($item): string {
+        switch (gettype($item)) {
+            case 'NULL':
+            case 'boolean':
+                return 'font-italic';
+            case 'integer':
+            case 'double':
+                return 'text-primary';
+            case 'string' :
+                return 'text-success';
+            default:
+                return '';
+        }
+    };
+
+    /**
+     * Formats and escapes the text for the contents of a variable.
+     *
+     * @param mixed $item Arbitrary PHP variable (simple primitive type) to display
+     * @return string Contents as text
+     */
+    $getobjectstr = function($item) use($textonly): string {
+        if (is_null($item)) {
+            return 'null';
+        }
+        $objectstr = (string)$item;
+        if (is_string($item)) {
+            // Quotes around strings.
+            $objectstr = "'$objectstr'";
+        } else if (is_bool($item)) {
+            // Show true or false for bools.
+            $objectstr = $item ? 'true' : 'false';
+        } else if (is_float($item)) {
+            // Add 'f' for floats.
+            $objectstr = $item . 'f';
+        }
+        if ($textonly) {
+            return $objectstr;
+        } else {
+            return s($objectstr);
+        }
+    };
+
+    if ($textonly) {
+        $out = '';
+    } else {
+        $notype = false;
+        $cssclass = $gettypestyle($item);
+        if (is_object($item) || is_array($item)) {
+            // For object and array, don't show the title on hover - it makes no sense because
+            // they're big, plus we already show the word 'array' or the object type.
+            $notype = true;
+            // Add a fancy box, with alternating colour, around the object and non-empty array.
+            if (is_object($item) || count($item) > 0) {
+                if (($depth & 1) === 0) {
+                    $cssclass .= ' bg-white rounded p-2';
+                } else {
+                    $cssclass .= ' bg-light rounded p-2';
+                }
+            }
+        }
+        if ($depth === 0) {
+            // The top-level object being printed has print-object class in case anyone wants to
+            // do extra styling.
+            $cssclass .= ' print-object';
+        }
+        $attributes = [];
+        if (!$notype) {
+            // We show the item type on hover. Note there is no need to include the actual value
+            // in the title attribute here, because the full text will be displayed anyway with
+            // wrapping if needed..
+            $attributes['title'] = gettype($item);
+        }
+        $out = html_writer::start_div($cssclass, $attributes);
+    }
+
+    // Depending on the level of nesting, we allocate a slightly different proportion (ranging
+    // from 2/12 to 5/12) of the available width for the key names.
+    $bsdepth = floor(min(6, $depth) / 2);
+    $bootstrapdt = 'col-sm-' . ($bsdepth + 2);
+    $bootstrapdd = 'col-sm-' . (12 - ($bsdepth + 2));
+
+    // This main code handles objects and arrays.
+    if (is_array($item) || is_object($item)) {
+        if (is_object($item)) {
+            // Object header: class name.
+            if ($textonly) {
+                $out .= '[' . get_class($item) . ']';
+            } else {
+                // Objects display the class name as a badge. Content goes within a <dl>.
+                $badge = html_writer::span(get_class($item), 'badge badge-primary');
+                $out .= html_writer::tag('h5', $badge);
+                $out .= html_writer::start_tag('dl', ['class' => 'row']);
+                $dl = true;
+            }
+            // Record that we have output this object already (to prevent circular refs).
+            $done[] = $item;
+            $object = true;
+            // Cast to array so we can loop through all properties.
+            $item = (array)$item;
+        } else {
+            // Array header: 'array' and a count.
+            $arrayinfo = 'array (' . count($item) . ')';
+            if ($textonly) {
+                $out .= $arrayinfo;
+            } else {
+                // Arrays show the same as objects but the badge is grey.
+                $badge = html_writer::span($arrayinfo, 'badge badge-secondary');
+                // Decide if there will be a <dl> tag - only if there is some content.
+                $dl = count($item) > 0;
+                $attributes = [];
+                if (!$dl) {
+                    // When there is no content inside the array, don't show bottom margin on heading.
+                    $attributes['class'] = 'mb-0';
+                }
+                $out .= html_writer::tag('h5', $badge, $attributes);
+                if ($dl) {
+                    $out .= html_writer::start_tag('dl', ['class' => 'row']);
+                }
+            }
+            $object = false;
+        }
+
+        // Properties.
+        foreach ($item as $key => $value) {
+            // Detect private and protected variables.
+            $matches = [];
+            $stringkey = (string)$key;
+            if (preg_match('~^\x00(.*)\x00(.*)$~', $stringkey, $matches)) {
+                $shortkey = $matches[2];
+                $access = $matches[1] == '*' ? 'protected' : 'private';
+            } else {
+                $shortkey = $stringkey;
+                $access = 'public';
+            }
+            if ($textonly) {
+                switch ($access) {
+                    case 'protected' :
+                        $shortkey = '+' . $shortkey;
+                        break;
+                    case 'private' :
+                        $shortkey = '*' . $shortkey;
+                        break;
+                }
+                $out .= PHP_EOL . '  ' . $shortkey . ' = ';
+            } else {
+                switch ($access) {
+                    case 'protected':
+                        // Protected is in normal font.
+                        $bootstrapstyle = ' font-weight-normal';
+                        break;
+                    case 'private':
+                        // Private is italic.
+                        $bootstrapstyle = ' font-weight-normal font-italic';
+                        break;
+                    default:
+                        // Public is bold, same for array keys.
+                        $bootstrapstyle = '';
+                        break;
+                }
+                $attributes = ['class' => $bootstrapdt . ' text-truncate' . $bootstrapstyle];
+                if ($object) {
+                    // For an object property, the title is the full text of the key (in case it
+                    // gets cut off) and the access modifier.
+                    $attributes['title'] = s($shortkey) . ' (' . $access . ')';
+                    $objectstr = s($shortkey);
+                } else {
+                    // For an array key, the title is the full text of the key (in case it gets
+                    // cut off) and the type of the key. Array keys can't have an access modifier.
+                    $attributes['title'] = s($shortkey) . ' (' . gettype($key) . ')';
+                    // Array keys are styled according to the normal styling for that type.
+                    $typestyle = $gettypestyle($key);
+                    if ($typestyle) {
+                        $attributes['class'] .= ' ' . $typestyle;
+                    }
+                    // Array keys also use a special object string e.g. 'true' for bool, quoted.
+                    $objectstr = $getobjectstr($key);
+                }
+                $out .= html_writer::tag('dt', $objectstr, $attributes);
+            }
+            // Consider how to display the value for this key.
+            $extraclass = '';
+            switch (gettype($value)) {
+                case 'object' :
+                    $objclass = get_class($value);
+
+                    // See if we printed it further up the tree in which case
+                    // it will definitely not be printed (infinite recursion).
+                    if (in_array($value, $done)) {
+                        if ($textonly) {
+                            $display = '[circular reference: ' . $objclass . ']';
+                        } else {
+                            $display = '[circular reference: ' . s($objclass) . ']';
+                            $extraclass = ' text-danger';
+                        }
+                        break;
+                    }
+
+                    // Recurse only to specified types.
+                    $recurse = false;
+                    foreach ($expandclasses as $pattern) {
+                        if (substr($pattern, 0, 1) === '/') {
+                            // Allow regular expressions beginning with a / symbol.
+                            if (preg_match($pattern, $objclass)) {
+                                $recurse = true;
+                                break;
+                            }
+                        } else {
+                            // Other strings must be exact match.
+                            if ($objclass === $pattern) {
+                                $recurse = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($recurse) {
+                        // Recursively display the object.
+                        $display = print_object($value, $expandclasses, $textonly, true, $depth + 1, $done);
+                        if ($textonly) {
+                            // Indent by adding spaces after each LF.
+                            $display = str_replace(PHP_EOL, PHP_EOL . '  ', $display);
+                        }
+                    } else {
+                        // Do not display the object, just a marker in square breackets.
+                        if ($textonly) {
+                            $display = '[object: ' . $objclass . ']';
+                        } else {
+                            $display = '[object: ' . s($objclass) . ']';
+                        }
+                    }
+                    break;
+
+                case 'array' :
+                    // Recursively display the array.
+                    $display = print_object($value, $expandclasses, $textonly, true, $depth + 1, $done);
+                    if ($textonly) {
+                        // Indent by adding spaces after each LF.
+                        $display = str_replace(PHP_EOL, PHP_EOL . '  ', $display);
+                    }
+                    break;
+
+                default:
+                    // Plain value - recurse to display.
+                    $display = print_object($value, [], $textonly, true, $depth + 1);
+                    break;
+            }
+            if ($textonly) {
+                $out .= $display;
+            } else {
+                $out .= html_writer::tag('dd', $display, ['class' => $bootstrapdd . $extraclass]);
+            }
+        }
+        if (!$textonly && $dl) {
+            $out .= html_writer::end_tag('dl');
         }
     } else {
-        echo html_writer::tag('pre', s(print_r($object, true)), array('class' => 'notifytiny'));
+        // For things which are not objects or arrays, just convert to string for display.
+        $out .= $getobjectstr($item);
+    }
+
+    if (!$textonly) {
+        $out .= html_writer::end_div();
+    }
+
+    // Display or return result.
+    if ($return) {
+        return $out;
+    } else {
+        if (CLI_SCRIPT) {
+            fwrite(STDERR, $out);
+            fwrite(STDERR, PHP_EOL);
+        } else if (AJAX_SCRIPT) {
+            foreach (explode(PHP_EOL, $out) as $line) {
+                error_log($line);
+            }
+        } else {
+            if ($textonly) {
+                $out = html_writer::tag('pre', s($out));
+            }
+            echo $out . "\n";
+        }
+        return '';
     }
 }
 

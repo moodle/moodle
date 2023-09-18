@@ -38,6 +38,30 @@ require_once($CFG->dirroot . '/mod/survey/lib.php');
  */
 class externallib_test extends externallib_advanced_testcase {
 
+    /** @var \stdClass course record. */
+    protected $course;
+
+    /** @var \stdClass activity record. */
+    protected $survey;
+
+    /** @var \context_module context instance. */
+    protected $context;
+
+    /** @var \StdClass course module. */
+    protected $cm;
+
+    /** @var \StdClass student record. */
+    protected $student;
+
+    /** @var \StdClass teacher record. */
+    protected $teacher;
+
+    /** @var \StdClass student role. */
+    protected $studentrole;
+
+    /** @var \StdClass teacher role. */
+    protected $teacherrole;
+
     /**
      * Set up for every test
      */

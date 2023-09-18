@@ -15,8 +15,8 @@ abstract class LtiAbstractService
     public function __construct(
         ILtiServiceConnector $serviceConnector,
         ILtiRegistration $registration,
-        array $serviceData)
-    {
+        array $serviceData
+    ) {
         $this->serviceConnector = $serviceConnector;
         $this->registration = $registration;
         $this->serviceData = $serviceData;
@@ -35,6 +35,13 @@ abstract class LtiAbstractService
     }
 
     abstract public function getScope(): array;
+
+    protected function validateScopes(array $scopes): void
+    {
+        if (empty(array_intersect($scopes, $this->getScope()))) {
+            throw new LtiException('Missing required scope', 1);
+        }
+    }
 
     protected function makeServiceRequest(IServiceRequest $request): array
     {

@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -242,6 +243,7 @@ class Google_Service_Storagetransfer extends Google_Service
  *   $googleServiceAccounts = $storagetransferService->googleServiceAccounts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_GoogleServiceAccounts_Resource extends Google_Service_Resource
 {
 
@@ -275,6 +277,7 @@ class Google_Service_Storagetransfer_GoogleServiceAccounts_Resource extends Goog
  *   $transferJobs = $storagetransferService->transferJobs;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferJobs_Resource extends Google_Service_Resource
 {
 
@@ -359,6 +362,7 @@ class Google_Service_Storagetransfer_TransferJobs_Resource extends Google_Servic
  *   $transferOperations = $storagetransferService->transferOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferOperations_Resource extends Google_Service_Resource
 {
 
@@ -470,6 +474,7 @@ class Google_Service_Storagetransfer_TransferOperations_Resource extends Google_
  *   $v1 = $storagetransferService->v1;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_V1_Resource extends Google_Service_Resource
 {
 
@@ -499,6 +504,7 @@ class Google_Service_Storagetransfer_V1_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_AwsAccessKey extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -525,6 +531,7 @@ class Google_Service_Storagetransfer_AwsAccessKey extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_AwsS3Data extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -552,6 +559,7 @@ class Google_Service_Storagetransfer_AwsS3Data extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_Date extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -587,10 +595,12 @@ class Google_Service_Storagetransfer_Date extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_Empty extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ErrorLogEntry extends Google_Collection
 {
   protected $collection_key = 'errorDetails';
@@ -618,6 +628,7 @@ class Google_Service_Storagetransfer_ErrorLogEntry extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ErrorSummary extends Google_Collection
 {
   protected $collection_key = 'errorLogEntries';
@@ -655,6 +666,7 @@ class Google_Service_Storagetransfer_ErrorSummary extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_GcsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -672,6 +684,7 @@ class Google_Service_Storagetransfer_GcsData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_GoogleServiceAccount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -689,6 +702,7 @@ class Google_Service_Storagetransfer_GoogleServiceAccount extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_HttpData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -706,6 +720,7 @@ class Google_Service_Storagetransfer_HttpData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ListOperationsResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -734,6 +749,7 @@ class Google_Service_Storagetransfer_ListOperationsResponse extends Google_Colle
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ListTransferJobsResponse extends Google_Collection
 {
   protected $collection_key = 'transferJobs';
@@ -762,6 +778,7 @@ class Google_Service_Storagetransfer_ListTransferJobsResponse extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ObjectConditions extends Google_Collection
 {
   protected $collection_key = 'includePrefixes';
@@ -807,6 +824,7 @@ class Google_Service_Storagetransfer_ObjectConditions extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_Operation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -861,22 +879,27 @@ class Google_Service_Storagetransfer_Operation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_OperationMetadata extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_OperationResponse extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_PauseTransferOperationRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_ResumeTransferOperationRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_Schedule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -915,6 +938,7 @@ class Google_Service_Storagetransfer_Schedule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_Status extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -951,10 +975,12 @@ class Google_Service_Storagetransfer_Status extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_StatusDetails extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TimeOfDay extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -999,6 +1025,7 @@ class Google_Service_Storagetransfer_TimeOfDay extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferCounters extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1151,6 +1178,7 @@ class Google_Service_Storagetransfer_TransferCounters extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferJob extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1242,6 +1270,7 @@ class Google_Service_Storagetransfer_TransferJob extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferOperation extends Google_Collection
 {
   protected $collection_key = 'errorBreakdowns';
@@ -1335,6 +1364,7 @@ class Google_Service_Storagetransfer_TransferOperation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferOptions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1370,6 +1400,7 @@ class Google_Service_Storagetransfer_TransferOptions extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_TransferSpec extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1438,6 +1469,7 @@ class Google_Service_Storagetransfer_TransferSpec extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Storagetransfer_UpdateTransferJobRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(

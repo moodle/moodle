@@ -44,6 +44,12 @@ class cache_handler {
      */
     private array $deferreditems;
 
+    /** @var string module name. */
+    private string $module;
+
+    /** @var string the directory for cache. */
+    private string $dir;
+
     /**
      * Constructor for class cache_handler.
      * This class will accept the module which will determine the location of cached files.

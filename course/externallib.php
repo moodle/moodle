@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use core_course\external\course_summary_exporter;
 use core_external\external_api;
+use core_external\external_description;
 use core_external\external_files;
 use core_external\external_format_value;
 use core_external\external_function_parameters;
@@ -141,16 +142,6 @@ class core_course_external extends external_api {
 
         //retrieve the course
         $course = $DB->get_record('course', array('id' => $params['courseid']), '*', MUST_EXIST);
-
-        if ($course->id != SITEID) {
-            // Check course format exist.
-            if (!file_exists($CFG->dirroot . '/course/format/' . $course->format . '/lib.php')) {
-                throw new moodle_exception('cannotgetcoursecontents', 'webservice', '', null,
-                                            get_string('courseformatnotfound', 'error', $course->format));
-            } else {
-                require_once($CFG->dirroot . '/course/format/' . $course->format . '/lib.php');
-            }
-        }
 
         // now security checks
         $context = context_course::instance($course->id, IGNORE_MISSING);
@@ -278,11 +269,16 @@ class core_course_external extends external_api {
                         $module['indent'] = $cm->indent;
                         $module['onclick'] = $cm->onclick;
                         $module['afterlink'] = $cm->afterlink;
+                        $activitybadgedata = $cm->get_activitybadge();
+                        if (!empty($activitybadgedata)) {
+                            $module['activitybadge'] = $activitybadgedata;
+                        }
                         $module['customdata'] = json_encode($cm->customdata);
                         $module['completion'] = $cm->completion;
                         $module['downloadcontent'] = $cm->downloadcontent;
                         $module['noviewlink'] = plugin_supports('mod', $cm->modname, FEATURE_NO_VIEW_LINK, false);
                         $module['dates'] = $activitydates;
+                        $module['groupmode'] = $cm->groupmode;
 
                         // Check module completion.
                         $completion = $completioninfo->is_enabled($cm);
@@ -471,6 +467,7 @@ class core_course_external extends external_api {
                                     'onclick' => new external_value(PARAM_RAW, 'Onclick action.', VALUE_OPTIONAL),
                                     'afterlink' => new external_value(PARAM_RAW, 'After link info to be displayed.',
                                         VALUE_OPTIONAL),
+                                    'activitybadge' => self::get_activitybadge_structure(),
                                     'customdata' => new external_value(PARAM_RAW, 'Custom data (JSON encoded).', VALUE_OPTIONAL),
                                     'noviewlink' => new external_value(PARAM_BOOL, 'Whether the module has no view page',
                                         VALUE_OPTIONAL),
@@ -492,6 +489,7 @@ class core_course_external extends external_api {
                                         VALUE_DEFAULT,
                                         []
                                     ),
+                                    'groupmode' => new external_value(PARAM_INT, 'Group mode value', VALUE_OPTIONAL),
                                     'contents' => new external_multiple_structure(
                                           new external_single_structure(
                                               array(
@@ -540,6 +538,60 @@ class core_course_external extends external_api {
                     )
                 )
             )
+        );
+    }
+
+    /**
+     * Returns description of activitybadge data.
+     *
+     * @return external_description
+     */
+    protected static function get_activitybadge_structure(): external_description {
+        return new external_single_structure(
+            [
+                'badgecontent' => new external_value(
+                    PARAM_TEXT,
+                    'The content to be displayed in the activity badge',
+                    VALUE_OPTIONAL
+                ),
+                'badgestyle' => new external_value(
+                    PARAM_TEXT,
+                    'The style for the activity badge',
+                    VALUE_OPTIONAL
+                ),
+                'badgeurl' => new external_value(
+                    PARAM_URL,
+                    'An optional URL to redirect the user when the activity badge is clicked',
+                    VALUE_OPTIONAL
+                ),
+                'badgeelementid' => new external_value(
+                    PARAM_ALPHANUMEXT,
+                    'An optional id in case the module wants to add some code for the activity badge',
+                    VALUE_OPTIONAL
+                ),
+                'badgeextraattributes' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'name' => new external_value(
+                                PARAM_TEXT,
+                                'The attribute name',
+                                VALUE_OPTIONAL
+                            ),
+                            'value' => new external_value(
+                                PARAM_TEXT,
+                                'The attribute value',
+                                VALUE_OPTIONAL
+                            ),
+                        ],
+                        'Each of the attribute names and values',
+                        VALUE_OPTIONAL
+                    ),
+                    'An optional array of extra HTML attributes to add to the badge element',
+                    VALUE_OPTIONAL
+                ),
+            ],
+            'Activity badge to display near the name',
+            VALUE_OPTIONAL
         );
     }
 
@@ -621,6 +673,7 @@ class core_course_external extends external_api {
                 // For backward-compartibility
                 $courseinfo['numsections'] = $courseformatoptions['numsections'];
             }
+            $courseinfo['pdfexportfont'] = $course->pdfexportfont;
 
             $handler = core_course\customfield\course_handler::create();
             if ($customfields = $handler->export_instance_data($course->id)) {
@@ -1955,8 +2008,8 @@ class core_course_external extends external_api {
      * Sort categories array by path
      * private function: only used by get_categories
      *
-     * @param array $category1
-     * @param array $category2
+     * @param stdClass $category1
+     * @param stdClass $category2
      * @return int result of strcmp
      * @since Moodle 2.3
      */
@@ -2433,6 +2486,7 @@ class core_course_external extends external_api {
      * @since  Moodle 3.2
      */
     protected static function get_course_public_information(core_course_list_element $course, $coursecontext) {
+        global $OUTPUT;
 
         static $categoriescache = array();
 
@@ -2520,6 +2574,12 @@ class core_course_external extends external_api {
                 ];
             }
         }
+
+        $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
+        if (!$courseimage) {
+            $courseimage = $OUTPUT->get_generated_url_for_course($coursecontext);
+        }
+        $coursereturns['courseimage'] = $courseimage;
 
         return $coursereturns;
     }
@@ -2629,7 +2689,7 @@ class core_course_external extends external_api {
      * Returns a course structure definition
      *
      * @param  boolean $onlypublicdata set to true, to retrieve only fields viewable by anyone when the course is visible
-     * @return array the course structure
+     * @return external_single_structure the course structure
      * @since  Moodle 3.2
      */
     protected static function get_course_structure($onlypublicdata = true) {
@@ -2638,6 +2698,7 @@ class core_course_external extends external_api {
             'fullname' => new external_value(PARAM_RAW, 'course full name'),
             'displayname' => new external_value(PARAM_RAW, 'course display name'),
             'shortname' => new external_value(PARAM_RAW, 'course short name'),
+            'courseimage' => new external_value(PARAM_URL, 'Course image', VALUE_OPTIONAL),
             'categoryid' => new external_value(PARAM_INT, 'category id'),
             'categoryname' => new external_value(PARAM_RAW, 'category name'),
             'sortorder' => new external_value(PARAM_INT, 'Sort order in the category', VALUE_OPTIONAL),

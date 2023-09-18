@@ -95,7 +95,8 @@ class favourite_repository implements favourite_repository_interface {
             'ordering' => false,
             'timecreated' => false,
             'timemodified' => false,
-            'id' => false
+            'id' => false,
+            'uniquekey' => false
         ];
 
         $requiredfields = array_filter($allowedfields, function($field) {

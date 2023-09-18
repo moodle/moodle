@@ -34,15 +34,18 @@ class core_comment_generator extends component_generator_base {
      * Create comment
      *
      * @param array|stdClass $record
+     * @return comment
      */
     public function create_comment($record): comment {
         $record = (array) $record;
 
-        $content = $record['content'] ?? '';
+        $content = (string) ($record['content'] ?? '');
         unset($record['content']);
 
         $comment = new comment((object) $record);
-        $comment->add($content);
+        if ($content !== '') {
+            $comment->add($content);
+        }
 
         return $comment;
     }

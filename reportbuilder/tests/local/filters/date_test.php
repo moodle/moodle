@@ -221,6 +221,17 @@ class date_test extends advanced_testcase {
      */
     public function get_sql_filter_relative_provider(): array {
         return [
+            'Before hour' => [date::DATE_BEFORE, 1, date::DATE_UNIT_HOUR, '-90 minute'],
+            'Before day' => [date::DATE_BEFORE, 1, date::DATE_UNIT_DAY, '-25 hour'],
+            'Before week' => [date::DATE_BEFORE, 1, date::DATE_UNIT_WEEK, '-10 day'],
+            'Before month' => [date::DATE_BEFORE, 1, date::DATE_UNIT_MONTH, '-7 week'],
+            'Before year' => [date::DATE_BEFORE, 1, date::DATE_UNIT_YEAR, '-15 month'],
+            'Before two hours' => [date::DATE_BEFORE, 2, date::DATE_UNIT_HOUR, '-150 minute'],
+            'Before two days' => [date::DATE_BEFORE, 2, date::DATE_UNIT_DAY, '-50 hour'],
+            'Before two weeks' => [date::DATE_BEFORE, 2, date::DATE_UNIT_WEEK, '-20 day'],
+            'Before two months' => [date::DATE_BEFORE, 2, date::DATE_UNIT_MONTH, '-15 week'],
+            'Before two years' => [date::DATE_BEFORE, 2, date::DATE_UNIT_YEAR, '-30 month'],
+
             'Last hour' => [date::DATE_LAST, 1, date::DATE_UNIT_HOUR, '-30 minute'],
             'Last day' => [date::DATE_LAST, 1, date::DATE_UNIT_DAY, '-6 hour'],
             'Last week' => [date::DATE_LAST, 1, date::DATE_UNIT_WEEK, '-3 day'],

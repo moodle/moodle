@@ -47,7 +47,7 @@ class registration {
         'contactemail', 'contactable', 'emailalert', 'emailalertemail', 'commnews', 'commnewsemail',
         'contactname', 'name', 'description', 'imageurl', 'contactphone', 'regioncode', 'geolocation', 'street'];
 
-    /** @var List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
+    /** @var array List of new FORM_FIELDS or siteinfo fields added indexed by the version when they were added.
      * If site was already registered, admin will be promted to confirm new registration data manually. Until registration is manually confirmed,
      * the scheduled task updating registration will be paused.
      * Keys of this array are not important as long as they increment, use current date to avoid confusions.
@@ -61,15 +61,17 @@ class registration {
         2019022200 => ['analyticsenabledmodels', 'analyticspredictions', 'analyticsactions', 'analyticsactionsnotuseful'],
         // Active users stats added in Moodle 3.9.
         2020022600 => ['activeusers', 'activeparticipantnumberaverage'],
+        // Database type, course date info, site theme, primary auth type added in Moodle 4.2.
+        2023021700 => ['dbtype', 'coursesnodates', 'sitetheme', 'primaryauthtype'],
     ];
 
-    /** @var Site privacy: not displayed */
+    /** @var string Site privacy: not displayed */
     const HUB_SITENOTPUBLISHED = 'notdisplayed';
 
-    /** @var Site privacy: public */
+    /** @var string Site privacy: public */
     const HUB_SITENAMEPUBLISHED = 'named';
 
-    /** @var Site privacy: public and global */
+    /** @var string Site privacy: public and global */
     const HUB_SITELINKPUBLISHED = 'linked';
 
     /** @var stdClass cached site registration information */
@@ -181,6 +183,13 @@ class registration {
         $siteinfo['participantnumberaverage'] = average_number_of_participants();
         $siteinfo['activeparticipantnumberaverage'] = average_number_of_participants(true, time() - DAYSECS * 30);
         $siteinfo['modulenumberaverage'] = average_number_of_courses_modules();
+        $siteinfo['dbtype'] = $CFG->dbtype;
+        $siteinfo['coursesnodates'] = $DB->count_records_select('course', 'enddate = ?', [0]) - 1;
+        $siteinfo['sitetheme'] = get_config('core', 'theme');
+
+        // Primary auth type.
+        $primaryauthsql = 'SELECT auth, count(auth) as tc FROM {user} GROUP BY auth ORDER BY tc DESC';
+        $siteinfo['primaryauthtype'] = $DB->get_field_sql($primaryauthsql, null, IGNORE_MULTIPLE);
 
         // Version and url.
         $siteinfo['moodlerelease'] = $CFG->release;
@@ -255,6 +264,10 @@ class registration {
             'analyticspredictions' => get_string('analyticspredictions', 'hub', $siteinfo['analyticspredictions']),
             'analyticsactions' => get_string('analyticsactions', 'hub', $siteinfo['analyticsactions']),
             'analyticsactionsnotuseful' => get_string('analyticsactionsnotuseful', 'hub', $siteinfo['analyticsactionsnotuseful']),
+            'dbtype' => get_string('dbtype', 'hub', $siteinfo['dbtype']),
+            'coursesnodates' => get_string('coursesnodates', 'hub', $siteinfo['coursesnodates']),
+            'sitetheme' => get_string('sitetheme', 'hub', $siteinfo['sitetheme']),
+            'primaryauthtype' => get_string('primaryauthtype', 'hub', $siteinfo['primaryauthtype']),
         ];
 
         foreach ($senddata as $key => $str) {
@@ -582,7 +595,7 @@ class registration {
     }
 
     /**
-     * Redirect to the site registration form if it's a new install or registration needs updating
+     * Redirect to the site registration form if it's a new install, upgrade or registration needs updating.
      *
      * @param string|moodle_url $url
      */

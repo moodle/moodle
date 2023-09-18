@@ -8,6 +8,9 @@ use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 
 class Depreciation
 {
+    /** @var float */
+    private static $zeroPointZero = 0.0;
+
     /**
      * DB.
      *
@@ -51,7 +54,7 @@ class Depreciation
             return $e->getMessage();
         }
 
-        if ($cost === 0.0) {
+        if ($cost === self::$zeroPointZero) {
             return 0.0;
         }
 
@@ -161,7 +164,7 @@ class Depreciation
             return $e->getMessage();
         }
 
-        if ($life === 0.0) {
+        if ($life === self::$zeroPointZero) {
             return ExcelError::DIV0();
         }
 
@@ -205,6 +208,7 @@ class Depreciation
         return $syd;
     }
 
+    /** @param mixed $cost */
     private static function validateCost($cost, bool $negativeValueAllowed = false): float
     {
         $cost = FinancialValidations::validateFloat($cost);
@@ -215,6 +219,7 @@ class Depreciation
         return $cost;
     }
 
+    /** @param mixed $salvage */
     private static function validateSalvage($salvage, bool $negativeValueAllowed = false): float
     {
         $salvage = FinancialValidations::validateFloat($salvage);
@@ -225,6 +230,7 @@ class Depreciation
         return $salvage;
     }
 
+    /** @param mixed $life */
     private static function validateLife($life, bool $negativeValueAllowed = false): float
     {
         $life = FinancialValidations::validateFloat($life);
@@ -235,6 +241,7 @@ class Depreciation
         return $life;
     }
 
+    /** @param mixed $period */
     private static function validatePeriod($period, bool $negativeValueAllowed = false): float
     {
         $period = FinancialValidations::validateFloat($period);
@@ -245,6 +252,7 @@ class Depreciation
         return $period;
     }
 
+    /** @param mixed $month */
     private static function validateMonth($month): int
     {
         $month = FinancialValidations::validateInt($month);
@@ -255,6 +263,7 @@ class Depreciation
         return $month;
     }
 
+    /** @param mixed $factor */
     private static function validateFactor($factor): float
     {
         $factor = FinancialValidations::validateFloat($factor);

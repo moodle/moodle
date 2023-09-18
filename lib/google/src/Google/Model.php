@@ -21,6 +21,7 @@
  * http://tools.ietf.org/html/draft-zyp-json-schema-03#section-5
  *
  */
+#[AllowDynamicProperties]
 class Google_Model implements ArrayAccess
 {
   /**

@@ -290,11 +290,11 @@ class core_webservice_renderer extends plugin_renderer_base {
 
         // display strings
         $stroperation = get_string('operation', 'webservice');
-        $strtoken = get_string('key', 'webservice');
+        $strtoken = get_string('tokenname', 'webservice');
         $strservice = get_string('service', 'webservice');
         $strcreator = get_string('tokencreator', 'webservice');
-        $strcontext = get_string('context', 'webservice');
         $strvaliduntil = get_string('validuntil', 'webservice');
+        $strlastaccess = get_string('lastaccess');
 
         $return = $this->output->heading(get_string('securitykeys', 'webservice'), 3, 'main', true);
         $return .= $this->output->box_start('generalbox webservicestokenui');
@@ -302,8 +302,8 @@ class core_webservice_renderer extends plugin_renderer_base {
         $return .= get_string('keyshelp', 'webservice');
 
         $table = new html_table();
-        $table->head = array($strtoken, $strservice, $strvaliduntil, $strcreator, $stroperation);
-        $table->align = array('left', 'left', 'left', 'center', 'left', 'center');
+        $table->head = array($strtoken, $strservice, $strvaliduntil, $strlastaccess, $strcreator, $stroperation);
+        $table->align = array('left', 'left', 'left', 'center', 'center', 'left', 'center');
         $table->width = '100%';
         $table->data = array();
 
@@ -338,11 +338,16 @@ class core_webservice_renderer extends plugin_renderer_base {
                     $validuntil = userdate($token->validuntil, get_string('strftimedatetime', 'langconfig'));
                 }
 
-                $tokenname = $token->name;
-                if (!$token->enabled) { //that is the (1 token-1ws) related ws is not enabled.
-                    $tokenname = '<span class="dimmed_text">'.$token->name.'</span>';
+                $lastaccess = '';
+                if (!empty($token->lastaccess)) {
+                    $lastaccess = userdate($token->lastaccess, get_string('strftimedatetime', 'langconfig'));
                 }
-                $row = array($token->token, $tokenname, $validuntil, $creatoratag, $reset);
+
+                $servicename = $token->servicename;
+                if (!$token->enabled) { // That is the (1 token-1ws) related ws is not enabled.
+                    $servicename = '<span class="dimmed_text">'.$token->servicename.'</span>';
+                }
+                $row = array($token->tokenname, $servicename, $validuntil, $lastaccess, $creatoratag, $reset);
 
                 if ($documentation) {
                     $doclink = new moodle_url('/webservice/wsdoc.php',

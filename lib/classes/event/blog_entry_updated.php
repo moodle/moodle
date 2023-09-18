@@ -98,34 +98,6 @@ class blog_entry_updated extends base {
     }
 
     /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \blog_entry
-     */
-    protected function get_legacy_eventdata() {
-        return $this->blogentry;
-    }
-
-    /**
-     * Legacy event name.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'blog_entry_edited';
-    }
-
-    /**
-     * Replace legacy add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'blog', 'update', 'index.php?userid=' . $this->relateduserid . '&entryid=' . $this->objectid,
-                 $this->blogentry->subject);
-    }
-
-    /**
      * Custom validations.
      *
      * @throws \coding_exception

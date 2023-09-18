@@ -23,6 +23,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 require_once("$CFG->dirroot/webservice/lib.php");
 
 /**
@@ -149,6 +153,15 @@ class webservice_rest_server extends webservice_base_server {
      * @param exception $ex the exception that we are sending
      */
     protected function send_error($ex=null) {
+        // Unless debugging is completely off, log the error to server error log.
+        if (debugging('', DEBUG_MINIMAL)) {
+            $info = get_exception_info($ex);
+            // This format is the same as default_exception_handler() in setuplib.php but with the
+            // word 'REST' instead of 'Default', to make it easy to reuse any existing processing.
+            error_log('REST exception handler: ' . $info->message . ' Debug: ' .
+                    $info->debuginfo . "\n" . format_backtrace($info->backtrace, true));
+        }
+
         $this->send_headers();
         echo $this->generate_error($ex);
     }

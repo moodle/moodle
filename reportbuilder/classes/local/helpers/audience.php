@@ -23,9 +23,8 @@ use context;
 use context_system;
 use core_collator;
 use core_component;
-use core_plugin_manager;
 use core_reportbuilder\local\audiences\base;
-use core_reportbuilder\local\models\audience as audience_model;
+use core_reportbuilder\local\models\{audience as audience_model, schedule};
 
 /**
  * Class containing report audience helper methods
@@ -231,6 +230,25 @@ class audience {
     }
 
     /**
+     * Return a list of audiences that are used by any schedule of the given report
+     *
+     * @param int $reportid
+     * @return int[] Array of audience IDs
+     */
+    public static function get_audiences_for_report_schedules(int $reportid): array {
+        global $DB;
+
+        $audiences = $DB->get_fieldset_select(schedule::TABLE, 'audiences', 'reportid = ?', [$reportid]);
+
+        // Reduce JSON encoded audience data of each schedule to an array of audience IDs.
+        $audienceids = array_reduce($audiences, static function(array $carry, string $audience): array {
+            return array_merge($carry, (array) json_decode($audience));
+        }, []);
+
+        return array_unique($audienceids, SORT_NUMERIC);
+    }
+
+    /**
      * Returns the list of audiences types in the system.
      *
      * @return array
@@ -242,14 +260,7 @@ class audience {
         foreach ($audiences as $class => $path) {
             $audienceclass = $class::instance();
             if (is_subclass_of($class, base::class) && $audienceclass->user_can_add()) {
-                [$component] = explode('\\', $class);
-
-                if ($plugininfo = core_plugin_manager::instance()->get_plugin_info($component)) {
-                    $componentname = $plugininfo->displayname;
-                } else {
-                    $componentname = get_string('site');
-                }
-
+                $componentname = $audienceclass->get_component_displayname();
                 $sources[$componentname][$class] = $audienceclass->get_name();
             }
         }

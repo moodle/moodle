@@ -33,7 +33,6 @@ $string['onlinetext'] = 'Online text';
 $string['onlinetextfilename'] = 'onlinetext.html';
 $string['onlinetextsubmission'] = 'Allow online text submission';
 $string['numwords'] = '({$a} words)';
-$string['numwordsforlog'] = 'Submission word count: {$a} words';
 $string['pluginname'] = 'Online text submissions';
 $string['privacy:metadata:assignmentid'] = 'Assignment ID';
 $string['privacy:metadata:filepurpose'] = 'Files that are embedded in the text submission.';
@@ -46,3 +45,6 @@ $string['wordlimit_help'] = 'If online text submissions are enabled, this is the
         'of words that each student will be allowed to submit.';
 $string['wordlimitexceeded'] = 'The word limit for this assignment is {$a->limit} words and you ' .
         'are attempting to submit {$a->count} words. Please review your submission and try again.';
+
+// Deprecated since Moodle 4.3.
+$string['numwordsforlog'] = 'Submission word count: {$a} words';

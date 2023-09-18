@@ -27,10 +27,9 @@ require_once("../../config.php");
 require_once("locallib.php");
 
 $id = required_param('id', PARAM_INT);
+
 $PAGE->set_url('/mod/quiz/index.php', ['id' => $id]);
-if (!$course = $DB->get_record('course', ['id' => $id])) {
-    throw new \moodle_exception('invalidcourseid');
-}
+$course = get_course($id);
 $coursecontext = context_course::instance($id);
 require_login($course);
 $PAGE->set_pagelayout('incourse');

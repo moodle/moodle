@@ -34,3 +34,4 @@ $string['userreportdesc'] = 'User reports include a user’s grades, feedback an
 $string['userreports'] = 'Select a user above to view their report';
 $string['privacy:metadata:preference:gradereport_user_view_user'] = 'Whether to view report as current user or another user in the gradebook reports';
 $string['tablesummary'] = 'The table is arranged as a list of graded items including categories of graded items. When items are in a category they will be indicated as such.';
+$string['userreport_user'] = 'User report';

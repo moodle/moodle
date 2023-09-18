@@ -176,7 +176,7 @@ class cache_helper {
      * This function explicitly does NOT use core functions as it will in some circumstances be called before Moodle has
      * finished initialising. This happens when loading configuration for instance.
      *
-     * @return string
+     * @return array
      */
     public static function early_get_cache_plugins() {
         global $CFG;
@@ -211,8 +211,9 @@ class cache_helper {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param array $keys
+     * @param array|string|int $keys
      * @return boolean
+     * @throws coding_exception
      */
     public static function invalidate_by_definition($component, $area, array $identifiers = array(), $keys = array()) {
         $cache = cache::make($component, $area, $identifiers);
@@ -859,5 +860,17 @@ class cache_helper {
             }
         }
         return $warnings;
+    }
+
+    /**
+     * A helper to determine whether a result was found.
+     *
+     * This has been deemed required after people have been confused by the fact that [] == false.
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    public static function result_found($value): bool {
+        return $value !== false;
     }
 }

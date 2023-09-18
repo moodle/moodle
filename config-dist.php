@@ -82,6 +82,19 @@ $CFG->dboptions = array(
                                 // has additional configuration according to its environment,
                                 // which the administrator can specify to alter and
                                 // override any connection options.
+    // 'ssl' => '',             // A connection mode string from the list below.
+                                // Not supported by all drivers.
+                                //   prefer       Use SSL if available - postgres default  Postgres only
+                                //   disable      Force non secure connection              Postgres only
+                                //   require      Force SSL                                Postgres and MySQL
+                                //   verify-full  Force SSL and verify root CA             Postgres and MySQL
+                                // All mode names are adopted from Postgres
+                                // and other databases align where possible:
+                                //   Postgres: https://www.postgresql.org/docs/current/libpq-connect.html#LIBPQ-CONNECT-SSLMODE
+                                //   MySql:    https://www.php.net/manual/en/mysqli.real-connect.php
+                                // It is worth noting that for MySQL require and verify-full are the same - in both cases
+                                // verification will take place if you specify hostname as a name,
+                                // and it will be omitted if you put an IP address.
     // 'fetchbuffersize' => 100000, // On PostgreSQL, this option sets a limit
                                 // on the number of rows that are fetched into
                                 // memory when doing a large recordset query
@@ -91,6 +104,10 @@ $CFG->dboptions = array(
                                 // set to zero if you are using pg_bouncer in
                                 // 'transaction' mode (it is fine in 'session'
                                 // mode).
+    // 'clientcompress' => true // Use compression protocol to communicate with the database server.
+                                // Decreases traffic from the database server.
+                                // Not needed if the databse is on the same host.
+                                // Currently supported only with mysqli, mariadb, and aurora drivers.
     /*
     'connecttimeout' => null, // Set connect timeout in seconds. Not all drivers support it.
     'readonly' => [          // Set to read-only slave details, to get safe reads
@@ -329,6 +346,9 @@ $CFG->admin = 'admin';
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
 //      $CFG->session_redis_host = '127.0.0.1';
+//      Use TLS to connect to Redis. An array of SSL context options. Usually:
+//      $CFG->session_redis_encrypt = ['cafile' => '/path/to/ca.crt']; or...
+//      $CFG->session_redis_encrypt = ['verify_peer' => false, 'verify_peer_name' => false];
 //      $CFG->session_redis_port = 6379;                     // Optional.
 //      $CFG->session_redis_database = 0;                    // Optional, default is db 0.
 //      $CFG->session_redis_auth = '';                       // Optional, default is don't set one.
@@ -417,9 +437,6 @@ $CFG->admin = 'admin';
 //
 //   Capture performance profiling data
 //   define('MDL_PERF'  , true);
-//
-//   Capture additional data from DB
-//   define('MDL_PERFDB'  , true);
 //
 //   Print to log (for passive profiling of production servers)
 //   define('MDL_PERFTOLOG'  , true);
@@ -560,18 +577,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->preventscheduledtaskchanges = true;
 //
-// As of version 2.4 Moodle serves icons as SVG images if the users browser appears
-// to support SVG.
-// For those wanting to control the serving of SVG images the following setting can
-// be defined in your config.php.
-// If it is not defined then the default (browser detection) will occur.
-//
-// To ensure they are always used when available:
-//      $CFG->svgicons = true;
-//
-// To ensure they are never used even when available:
-//      $CFG->svgicons = false;
-//
 // Some administration options allow setting the path to executable files. This can
 // potentially cause a security risk. Set this option to true to disable editing
 // those config settings via the web. They will need to be set explicitly in the
@@ -655,8 +660,12 @@ $CFG->admin = 'admin';
 // Font used in exported PDF files. When generating a PDF, Moodle embeds a subset of
 // the font in the PDF file so it will be readable on the widest range of devices.
 // The default font is 'freesans' which is part of the GNU FreeFont collection.
+// The font used to export can be set per-course - a drop down list in the course
+// settings shows all the options specified in the array here. The key must be the
+// font name (e.g., "kozminproregular") and the value is a friendly name, (e.g.,
+// "Kozmin Pro Regular").
 //
-//      $CFG->pdfexportfont = 'freesans';
+//      $CFG->pdfexportfont = ['freesans' => 'FreeSans'];
 //
 // Use the following flag to enable messagingallusers and set the default preference
 // value for existing users to allow them to be contacted by other site users.
@@ -1190,6 +1199,54 @@ $CFG->admin = 'admin';
 // you just need to set showservicesandsupportcontent setting to false.
 //
 //      $CFG->showservicesandsupportcontent = false;
+//
+//=========================================================================
+// 20. NON HTTP ONLY COOKIES
+//=========================================================================
+//
+//  Cookies in Moodle now default to HTTP only cookies. This means that they cannot be accessed by JavaScript.
+//  Upgraded sites will keep the behaviour they had before the upgrade. New sites will have HTTP only cookies enabled.
+//  To enable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = true;
+//
+//  To disable HTTP only cookies set the following:
+//
+//      $CFG->cookiehttponly = false;
+//
+// 21. SECRET PASSWORD PEPPER
+//=========================================================================
+// A pepper is a component of the salt, but stored separately.
+// By splitting them it means that if the db is compromised the partial hashes are useless.
+// Unlike a salt, the pepper is not unique and is shared for all users, and MUST be kept secret.
+//
+// A pepper needs to have at least 112 bits of entropy,
+// so the pepper itself cannot be easily brute forced if you have a known password + hash combo.
+//
+// Once a pepper is set, existing passwords will be updated on next user login.
+// Once set there is no going back without resetting all user passwords.
+// To set peppers for your site, the following setting must be set in config.php:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z'
+//      ];
+//
+// The 'passwordpeppers' array must be numerically indexed with a positive number.
+// New peppers can be added by adding a new element to the array with a higher numerical index.
+// Upon next login a users password will be rehashed with the new pepper:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+//      ];
+//
+// Peppers can be progressively removed by setting the latest pepper to an empty string:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$',
+//          3 => ''
+//      ];
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

@@ -243,7 +243,7 @@ class core_user {
         }
 
         // Start building the WHERE clause based on name.
-        list ($where, $whereparams) = users_search_sql($query, 'u', false);
+        list ($where, $whereparams) = users_search_sql($query, 'u');
 
         // We allow users to search with extra identity fields (as well as name) but only if they
         // have the permission to display those identity fields.
@@ -979,6 +979,60 @@ class core_user {
             'permissioncallback' => function($user, $preferencename) {
                 return self::is_current_user($user) && has_capability('moodle/blog:view', context_system::instance());
             });
+        $preferences['filemanager_recentviewmode'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 1,
+            'choices' => [1, 2, 3],
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentrepository'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentlicense'] = [
+            'type' => PARAM_SAFEDIR,
+            'null' => NULL_NOT_ALLOWED,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['filepicker_recentviewmode'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => 1,
+            'choices' => [1, 2, 3],
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_optionscollapsed'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_autoselectunique'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_preserveselected'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['userselector_searchtype'] = [
+            'type' => PARAM_INT,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => USER_SEARCH_STARTS_WITH,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
+        $preferences['question_bank_advanced_search'] = [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [static::class, 'is_current_user'],
+        ];
 
         $choices = [HOMEPAGE_SITE];
         if (!empty($CFG->enabledashboard)) {
@@ -1226,4 +1280,190 @@ class core_user {
         };
         return null;
     }
+
+    /**
+     * Return full name depending on context.
+     * This function should be used for displaying purposes only as the details may not be the same as it is on database.
+     *
+     * @param stdClass $user the person to get details of.
+     * @param context|null $context The context will be used to determine the visibility of the user's full name.
+     * @param array $options can include: override - if true, will not use forced firstname/lastname settings
+     * @return string Full name of the user
+     */
+    public static function get_fullname(stdClass $user, context $context = null, array $options = []): string {
+        global $CFG, $SESSION;
+
+        // Clone the user so that it does not mess up the original object.
+        $user = clone($user);
+
+        // Override options.
+        $override = $options["override"] ?? false;
+
+        if (!isset($user->firstname) && !isset($user->lastname)) {
+            return '';
+        }
+
+        // Get all of the name fields.
+        $allnames = \core_user\fields::get_name_fields();
+        if ($CFG->debugdeveloper) {
+            $missingfields = [];
+            foreach ($allnames as $allname) {
+                if (!property_exists($user, $allname)) {
+                    $missingfields[] = $allname;
+                }
+            }
+            if (!empty($missingfields)) {
+                debugging('The following name fields are missing from the user object: ' . implode(', ', $missingfields));
+            }
+        }
+
+        if (!$override) {
+            if (!empty($CFG->forcefirstname)) {
+                $user->firstname = $CFG->forcefirstname;
+            }
+            if (!empty($CFG->forcelastname)) {
+                $user->lastname = $CFG->forcelastname;
+            }
+        }
+
+        if (!empty($SESSION->fullnamedisplay)) {
+            $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
+        }
+
+        $template = null;
+        // If the fullnamedisplay setting is available, set the template to that.
+        if (isset($CFG->fullnamedisplay)) {
+            $template = $CFG->fullnamedisplay;
+        }
+        // If the template is empty, or set to language, return the language string.
+        if ((empty($template) || $template == 'language') && !$override) {
+            return get_string('fullnamedisplay', null, $user);
+        }
+
+        // Check to see if we are displaying according to the alternative full name format.
+        if ($override) {
+            if (empty($CFG->alternativefullnameformat) || $CFG->alternativefullnameformat == 'language') {
+                // Default to show just the user names according to the fullnamedisplay string.
+                return get_string('fullnamedisplay', null, $user);
+            } else {
+                // If the override is true, then change the template to use the complete name.
+                $template = $CFG->alternativefullnameformat;
+            }
+        }
+
+        $requirednames = array();
+        // With each name, see if it is in the display name template, and add it to the required names array if it is.
+        foreach ($allnames as $allname) {
+            if (strpos($template, $allname) !== false) {
+                $requirednames[] = $allname;
+            }
+        }
+
+        $displayname = $template;
+        // Switch in the actual data into the template.
+        foreach ($requirednames as $altname) {
+            if (isset($user->$altname)) {
+                // Using empty() on the below if statement causes breakages.
+                if ((string)$user->$altname == '') {
+                    $displayname = str_replace($altname, 'EMPTY', $displayname);
+                } else {
+                    $displayname = str_replace($altname, $user->$altname, $displayname);
+                }
+            } else {
+                $displayname = str_replace($altname, 'EMPTY', $displayname);
+            }
+        }
+        // Tidy up any misc. characters (Not perfect, but gets most characters).
+        // Don't remove the "u" at the end of the first expression unless you want garbled characters when combining hiragana or
+        // katakana and parenthesis.
+        $patterns = array();
+        // This regular expression replacement is to fix problems such as 'James () Kirk' Where 'Tiberius' (middlename) has not been
+        // filled in by a user.
+        // The special characters are Japanese brackets that are common enough to make allowances for them (not covered by :punct:).
+        $patterns[] = '/[[:punct:]「」]*EMPTY[[:punct:]「」]*/u';
+        // This regular expression is to remove any double spaces in the display name.
+        $patterns[] = '/\s{2,}/u';
+        foreach ($patterns as $pattern) {
+            $displayname = preg_replace($pattern, ' ', $displayname);
+        }
+
+        // Trimming $displayname will help the next check to ensure that we don't have a display name with spaces.
+        $displayname = trim($displayname);
+        if (empty($displayname)) {
+            // Going with just the first name if no alternate fields are filled out. May be changed later depending on what
+            // people in general feel is a good setting to fall back on.
+            $displayname = $user->firstname;
+        }
+        return $displayname;
+    }
+
+    /**
+     * Return profile url depending on context.
+     *
+     * @param stdClass $user the person to get details of.
+     * @param context|null $context The context will be used to determine the visibility of the user's profile url.
+     * @return moodle_url Profile url of the user
+     */
+    public static function get_profile_url(stdClass $user, context $context = null): moodle_url {
+        if (empty($user->id)) {
+            throw new coding_exception('User id is required when displaying profile url.');
+        }
+
+        // Params to be passed to the user view page.
+        $params = ['id' => $user->id];
+
+        // Get courseid if provided.
+        if (isset($options['courseid'])) {
+            $params['courseid'] = $options['courseid'];
+        }
+
+        // Get courseid from context if provided.
+        if ($context) {
+            $coursecontext = $context->get_course_context(false);
+            if ($coursecontext) {
+                $params['courseid'] = $coursecontext->instanceid;
+            }
+        }
+
+        // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
+        if (!isset($params['courseid']) || $params['courseid'] == SITEID) {
+            return new moodle_url('/user/profile.php', $params);
+        } else {
+            return new moodle_url('/user/view.php', $params);
+        }
+    }
+
+    /**
+     * Return user picture depending on context.
+     * This function should be used for displaying purposes only as the details may not be the same as it is on database.
+     *
+     * @param stdClass $user the person to get details of.
+     * @param context|null $context The context will be used to determine the visibility of the user's picture.
+     * @param array $options public properties of {@see user_picture} to be overridden
+     *     - courseid = $this->page->course->id (course id of user profile in link)
+     *     - size = 35 (size of image)
+     *     - link = true (make image clickable - the link leads to user profile)
+     *     - popup = false (open in popup)
+     *     - alttext = true (add image alt attribute)
+     *     - class = image class attribute (default 'userpicture')
+     *     - visibletoscreenreaders = true (whether to be visible to screen readers)
+     *     - includefullname = false (whether to include the user's full name together with the user picture)
+     *     - includetoken = false (whether to use a token for authentication. True for current user, int value for other user id)
+     * @return user_picture User picture object
+     */
+    public static function get_profile_picture(stdClass $user, context $context = null, array $options = []): user_picture {
+        // Create a new user picture object.
+        $userpicture = new user_picture($user);
+
+        // Override the user picture object with the options provided.
+        foreach ($options as $key => $value) {
+            if (property_exists($userpicture, $key)) {
+                $userpicture->$key = $value;
+            }
+        }
+
+        // Return the user picture.
+        return $userpicture;
+    }
+
 }

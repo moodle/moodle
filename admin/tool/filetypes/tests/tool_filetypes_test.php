@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the custom file types.
- *
- * @package tool_filetypes
- * @copyright 2014 The Open University
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
 use tool_filetypes\utils;
 
 /**
@@ -32,10 +22,13 @@ use tool_filetypes\utils;
  * @package tool_filetypes
  * @copyright 2014 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \tool_filetypes\utils
  */
 class tool_filetypes_test extends advanced_testcase {
     /**
      * Tests is_extension_invalid() function.
+     *
+     * @covers ::is_extension_invalid
      */
     public function test_is_extension_invalid() {
         // The pdf file extension already exists in default moodle minetypes.
@@ -56,6 +49,8 @@ class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests is_defaulticon_allowed() function.
+     *
+     * @covers ::is_defaulticon_allowed
      */
     public function test_is_defaulticon_allowed() {
         // You ARE allowed to set a default icon for a MIME type that hasn't
@@ -73,6 +68,8 @@ class tool_filetypes_test extends advanced_testcase {
 
     /**
      * Tests get_icons_from_path() function.
+     *
+     * @covers ::get_icons_from_path
      */
     public function test_get_icons_from_path() {
         // Get icons from the fixtures folder.
@@ -82,5 +79,15 @@ class tool_filetypes_test extends advanced_testcase {
         // For the icon with numbers after the name, only the base name is
         // returned and only one of it.
         $this->assertEquals(array('frog' => 'frog', 'zombie' => 'zombie'), $icons);
+    }
+
+    /**
+     * Test get_file_icons() function to confirm no file icons are removed/added by mistake.
+     *
+     * @covers ::get_file_icons
+     */
+    public function test_get_file_icons() {
+        $icons = utils::get_file_icons();
+        $this->assertCount(31, $icons);
     }
 }

@@ -22,10 +22,10 @@
  */
 
 import selectors from './selectors';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Prefetch from 'core/prefetch';
-import Ajax from 'core/ajax';
 import Notification from 'core/notification';
+import {setUserPreference} from 'core_user/repository';
 
 /**
  * Set up the contentbank views.
@@ -65,8 +65,10 @@ const registerListenerEvents = (contentBank) => {
                 });
 
                 const heading = fileArea.querySelector(selectors.elements.heading);
-                heading.removeAttribute('role');
-                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+                if (heading) {
+                    heading.removeAttribute('role');
+                    heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+                }
             }
             viewGrid.classList.add('active');
             viewList.classList.remove('active');
@@ -87,8 +89,10 @@ const registerListenerEvents = (contentBank) => {
                 });
 
                 const heading = fileArea.querySelector(selectors.elements.heading);
-                heading.setAttribute('role', 'row');
-                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'columnheader'));
+                if (heading) {
+                    heading.setAttribute('role', 'row');
+                    heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'columnheader'));
+                }
             }
             viewList.classList.add('active');
             viewGrid.classList.remove('active');
@@ -164,19 +168,8 @@ const setViewListPreference = function(viewList) {
         viewList = null;
     }
 
-    const request = {
-        methodname: 'core_user_update_user_preferences',
-        args: {
-            preferences: [
-                {
-                    type: 'core_contentbank_view_list',
-                    value: viewList
-                }
-            ]
-        }
-    };
-
-    return Ajax.call([request])[0].catch(Notification.exception);
+    return setUserPreference('core_contentbank_view_list', viewList)
+        .catch(Notification.exception);
 };
 
 /**

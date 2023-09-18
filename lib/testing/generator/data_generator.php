@@ -437,7 +437,7 @@ EOD;
      * Create course section if does not exist yet
      * @param array|stdClass $record must contain 'course' and 'section' attributes
      * @param array|null $options
-     * @return stdClass
+     * @return section_info
      * @throws coding_exception
      */
     public function create_course_section($record = null, array $options = null) {
@@ -539,6 +539,14 @@ EOD;
 
         if (!isset($record['descriptionformat'])) {
             $record['descriptionformat'] = FORMAT_MOODLE;
+        }
+
+        if (!isset($record['visibility'])) {
+            $record['visibility'] = GROUPS_VISIBILITY_ALL;
+        }
+
+        if (!isset($record['participation'])) {
+            $record['participation'] = true;
         }
 
         $id = groups_create_group((object)$record);
@@ -789,7 +797,20 @@ EOD;
         // If no archetype was specified we allow it to be added to all contexts,
         // otherwise we allow it in the archetype contexts.
         if (!$record['archetype']) {
-            $contextlevels = array_keys(context_helper::get_all_levels());
+            $contextlevels = [];
+            $usefallback = true;
+            foreach (context_helper::get_all_levels() as $level => $title) {
+                if (array_key_exists($title, $record)) {
+                    $usefallback = false;
+                    if (!empty($record[$title])) {
+                        $contextlevels[] = $level;
+                    }
+                }
+            }
+
+            if ($usefallback) {
+                $contextlevels = array_keys(context_helper::get_all_levels());
+            }
         } else {
             // Copying from the archetype default rol.
             $archetyperoleid = $DB->get_field(
@@ -802,7 +823,6 @@ EOD;
         set_role_contextlevels($newroleid, $contextlevels);
 
         if ($record['archetype']) {
-
             // We copy all the roles the archetype can assign, override, switch to and view.
             if ($record['archetype']) {
                 $types = array('assign', 'override', 'switch', 'view');
@@ -820,7 +840,74 @@ EOD;
             role_cap_duplicate($sourcerole, $newroleid);
         }
 
+        $allcapabilities = get_all_capabilities();
+        $foundcapabilities = array_intersect(array_keys($allcapabilities), array_keys($record));
+        $systemcontext = \context_system::instance();
+
+        $allpermissions = [
+            'inherit' => CAP_INHERIT,
+            'allow' => CAP_ALLOW,
+            'prevent' => CAP_PREVENT,
+            'prohibit' => CAP_PROHIBIT,
+        ];
+
+        foreach ($foundcapabilities as $capability) {
+            $permission = $record[$capability];
+            if (!array_key_exists($permission, $allpermissions)) {
+                throw new \coding_exception("Unknown capability permissions '{$permission}'");
+            }
+            assign_capability(
+                $capability,
+                $allpermissions[$permission],
+                $newroleid,
+                $systemcontext->id,
+                true
+            );
+        }
+
         return $newroleid;
+    }
+
+    /**
+     * Set role capabilities for the specified role.
+     *
+     * @param int $roleid The Role to set capabilities for
+     * @param array $rolecapabilities The list of capability =>permission to set for this role
+     * @param null|context $context The context to apply this capability to
+     */
+    public function create_role_capability(int $roleid, array $rolecapabilities, context $context = null): void {
+        // Map the capabilities into human-readable names.
+        $allpermissions = [
+            'inherit' => CAP_INHERIT,
+            'allow' => CAP_ALLOW,
+            'prevent' => CAP_PREVENT,
+            'prohibit' => CAP_PROHIBIT,
+        ];
+
+        // Fetch all capabilities to check that they exist.
+        $allcapabilities = get_all_capabilities();
+        foreach ($rolecapabilities as $capability => $permission) {
+            if ($permission === '') {
+                // Allow items to be skipped.
+                continue;
+            }
+
+            if (!array_key_exists($capability, $allcapabilities)) {
+                throw new \coding_exception("Unknown capability '{$capability}'");
+            }
+
+            if (!array_key_exists($permission, $allpermissions)) {
+                throw new \coding_exception("Unknown capability permissions '{$permission}'");
+            }
+
+            assign_capability(
+                $capability,
+                $allpermissions[$permission],
+                $roleid,
+                $context->id,
+                true
+            );
+        }
     }
 
     /**
@@ -951,7 +1038,7 @@ EOD;
      *
      * @param int|string $role either an int role id or a string role shortname.
      * @param int $userid
-     * @param int $contextid Defaults to the system context
+     * @param int|context $contextid Defaults to the system context
      * @return int new/existing id of the assignment
      */
     public function role_assign($role, $userid, $contextid = false) {
@@ -1132,7 +1219,7 @@ EOD;
     /**
      * Helper function used to create an LTI tool.
      *
-     * @param array $data
+     * @param stdClass $data
      * @return stdClass the tool
      */
     public function create_lti_tool($data = array()) {
@@ -1385,7 +1472,7 @@ EOD;
      *
      * @param   \stdClass   $course The course to enrol in
      * @param   string      $role The role to give within the course
-     * @param   \stdClass   $userparams User parameters
+     * @param   \stdClass|array   $userparams User parameters
      * @return  \stdClass   The created user
      */
     public function create_and_enrol($course, $role = 'student', $userparams = null, $enrol = 'manual',

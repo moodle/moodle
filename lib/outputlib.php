@@ -304,33 +304,6 @@ function theme_set_designer_mod($state) {
 }
 
 /**
- * Checks if the given device has a theme defined in config.php.
- *
- * @return bool
- */
-function theme_is_device_locked($device) {
-    global $CFG;
-    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
-    return isset($CFG->config_php_settings[$themeconfigname]);
-}
-
-/**
- * Returns the theme named defined in config.php for the given device.
- *
- * @return string or null
- */
-function theme_get_locked_theme_for_device($device) {
-    global $CFG;
-
-    if (!theme_is_device_locked($device)) {
-        return null;
-    }
-
-    $themeconfigname = core_useragent::get_device_type_cfg_var_name($device);
-    return $CFG->config_php_settings[$themeconfigname];
-}
-
-/**
  * This class represents the configuration variables of a Moodle theme.
  *
  * All the variables with access: public below (with a few exceptions that are marked)
@@ -693,6 +666,37 @@ class theme_config {
     public $activityheaderconfig = [];
 
     /**
+     * For backward compatibility with old themes.
+     * BLOCK_ADDBLOCK_POSITION_DEFAULT, BLOCK_ADDBLOCK_POSITION_FLATNAV.
+     * @var int
+     */
+    public $addblockposition;
+
+    /**
+     * editor_scss file(s) provided by this theme.
+     * @var array
+     */
+    public $editor_scss;
+
+    /**
+     * Name of the class extending \core\output\icon_system.
+     * @var string
+     */
+    public $iconsystem;
+
+    /**
+     * Theme defines its own editing mode switch.
+     * @var bool
+     */
+    public $haseditswitch = false;
+
+    /**
+     * Allows a theme to customise primary navigation by specifying the list of items to remove.
+     * @var array
+     */
+    public $removedprimarynavitems = [];
+
+    /**
      * Load the config.php file for a particular theme, and return an instance
      * of this class. (That is, this is a factory method.)
      *
@@ -762,6 +766,7 @@ class theme_config {
             $baseconfig = $config;
         }
 
+        // Ensure that each of the configurable properties defined below are also defined at the class level.
         $configurable = [
             'parents', 'sheets', 'parents_exclude_sheets', 'plugins_exclude_sheets', 'usefallback',
             'javascripts', 'javascripts_footer', 'parents_exclude_javascripts',
@@ -1596,13 +1601,16 @@ class theme_config {
 
         // Getting all the candidate functions.
         $candidates = array();
-        foreach ($this->parent_configs as $parent_config) {
+        foreach (array_reverse($this->parent_configs) as $parent_config) {
             if (!isset($parent_config->extrascsscallback)) {
                 continue;
             }
             $candidates[] = $parent_config->extrascsscallback;
         }
-        $candidates[] = $this->extrascsscallback;
+
+        if (isset($this->extrascsscallback)) {
+            $candidates[] = $this->extrascsscallback;
+        }
 
         // Calling the functions.
         foreach ($candidates as $function) {
@@ -1626,13 +1634,16 @@ class theme_config {
 
         // Getting all the candidate functions.
         $candidates = array();
-        foreach ($this->parent_configs as $parent_config) {
+        foreach (array_reverse($this->parent_configs) as $parent_config) {
             if (!isset($parent_config->prescsscallback)) {
                 continue;
             }
             $candidates[] = $parent_config->prescsscallback;
         }
-        $candidates[] = $this->prescsscallback;
+
+        if (isset($this->prescsscallback)) {
+            $candidates[] = $this->prescsscallback;
+        }
 
         // Calling the functions.
         foreach ($candidates as $function) {
@@ -2085,8 +2096,7 @@ class theme_config {
      *
      * @param string $image name of image, may contain relative path
      * @param string $component
-     * @param bool $svg|null Should SVG images also be looked for? If null, resorts to $CFG->svgicons if that is set; falls back to
-     * auto-detection of browser support otherwise
+     * @param bool $svg|null Should SVG images also be looked for? If null, falls back to auto-detection of browser support
      * @return string full file path
      */
     public function resolve_image_location($image, $component, $svg = false) {
@@ -2243,16 +2253,10 @@ class theme_config {
      * @return bool
      */
     public function use_svg_icons() {
-        global $CFG;
         if ($this->usesvg === null) {
-
-            if (!isset($CFG->svgicons)) {
-                $this->usesvg = core_useragent::supports_svg();
-            } else {
-                // Force them on/off depending upon the setting.
-                $this->usesvg = (bool)$CFG->svgicons;
-            }
+            $this->usesvg = core_useragent::supports_svg();
         }
+
         return $this->usesvg;
     }
 

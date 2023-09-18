@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['alwayslatest'] = 'Always latest';
+$string['newerversion'] = 'This preview is using an older version of the question. {$a->restartbutton}';
 $string['pluginname'] = 'Preview question';
 $string['privacy:metadata'] = 'The Preview question question bank plugin does not store any personal data.';
 // Tag related errors.
@@ -32,6 +34,8 @@ $string['tagsnotfound'] = 'Tags not found';
 // Form string(s).
 $string['previewoptions'] = 'Preview options';
 $string['questionversion'] = 'Question version';
+$string['restartnow'] = 'Use latest version';
+$string['theoptionsyouselectonlyaffectthepreview'] = 'These settings are for testing the question. The options you select only affect the preview.';
 // Preview title.
 $string['versiontitle'] = 'Version {$a}';
 $string['versiontitlelatest'] = 'Version {$a} (latest)';

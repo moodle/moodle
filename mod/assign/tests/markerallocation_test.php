@@ -32,6 +32,9 @@ require_once($CFG->dirroot . '/course/lib.php');
  */
 class markerallocation_test extends \advanced_testcase {
 
+    /** @var \stdClass course record. */
+    private $course;
+
     /**
      * Create all the needed elements to test the difference between both functions.
      */

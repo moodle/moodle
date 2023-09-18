@@ -62,20 +62,20 @@ function mnet_get_public_key($uri, $application=null) {
         new \PhpXmlRpc\Value($application->name),
     ];
     $request = new \PhpXmlRpc\Request('system/keyswap', $params);
-    $request->request_charset_encoding = 'utf-8';
 
     // Let's create a client to handle the request and the response easily.
     $client = new \PhpXmlRpc\Client($uri . $application->xmlrpc_server_url);
-    $client->setUseCurl(\PhpXmlRpc\Client::USE_CURL_ALWAYS);
-    $client->setUserAgent('Moodle');
+    $client->setOption('use_curl', \PhpXmlRpc\Client::USE_CURL_ALWAYS);
+    $client->setOption('user_agent', 'Moodle');
     $client->return_type = 'xmlrpcvals'; // This (keyswap) is not encrypted, so we can expect proper xmlrpc in this case.
-    $client->request_charset_encoding = 'utf-8';
+    $client->setOption('request_charset_encoding', 'utf-8');
+    $client->setOption('accepted_charset_encodings', ['utf-8']);
 
     // TODO: Link this to DEBUG DEVELOPER or with MNET debugging...
     // $client->setdebug(1); // See a good number of complete requests and responses.
 
-    $client->setSSLVerifyHost(0);
-    $client->setSSLVerifyPeer(false);
+    $client->setOption('verifyhost', 0);
+    $client->setOption('verifypeer', false);
 
     // TODO: It's curious that this service (keyswap) that needs
     // a custom client, different from mnet_xmlrpc_client, because
@@ -216,7 +216,12 @@ function mnet_sign_message($message, $privatekey = null) {
     // The '$sig' value below is returned by reference.
     // We initialize it first to stop my IDE from complaining.
     $sig  = '';
-    $bool = openssl_sign($message, $sig, $privatekey); // TODO: On failure?
+    $bool = openssl_sign($message, $sig, $privatekey);
+
+    // Avoid passing null values to base64_encode.
+    if ($bool === false) {
+        throw new \moodle_exception('opensslsignerror');
+    }
 
     $message = '<?xml version="1.0" encoding="iso-8859-1"?>
     <signedMessage>
@@ -283,6 +288,12 @@ function mnet_encrypt_message($message, $remote_certificate) {
 
     //        passed by ref ->     &$encryptedstring &$symmetric_keys
     $bool = openssl_seal($message, $encryptedstring, $symmetric_keys, array($publickey), 'RC4');
+
+    // Avoid passing null values to base64_encode.
+    if ($bool === false) {
+        throw new \moodle_exception('opensslsealerror');
+    }
+
     $message = $encryptedstring;
     $symmetrickey = array_pop($symmetric_keys);
 

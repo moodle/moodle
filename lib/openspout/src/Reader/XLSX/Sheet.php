@@ -1,28 +1,34 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\XLSX;
 
-use OpenSpout\Reader\SheetInterface;
+use OpenSpout\Reader\Common\ColumnWidth;
+use OpenSpout\Reader\SheetWithVisibilityInterface;
 
 /**
- * Represents a sheet within a XLSX file.
+ * @implements SheetWithVisibilityInterface<RowIterator>
  */
-class Sheet implements SheetInterface
+final class Sheet implements SheetWithVisibilityInterface
 {
-    /** @var \OpenSpout\Reader\XLSX\RowIterator To iterate over sheet's rows */
-    protected $rowIterator;
+    /** @var RowIterator To iterate over sheet's rows */
+    private RowIterator $rowIterator;
+
+    /** @var SheetHeaderReader To read the header of the sheet, containing for instance the col widths */
+    private SheetHeaderReader $headerReader;
 
     /** @var int Index of the sheet, based on order in the workbook (zero-based) */
-    protected $index;
+    private int $index;
 
     /** @var string Name of the sheet */
-    protected $name;
+    private string $name;
 
     /** @var bool Whether the sheet was the active one */
-    protected $isActive;
+    private bool $isActive;
 
     /** @var bool Whether the sheet is visible */
-    protected $isVisible;
+    private bool $isVisible;
 
     /**
      * @param RowIterator $rowIterator    The corresponding row iterator
@@ -31,27 +37,33 @@ class Sheet implements SheetInterface
      * @param bool        $isSheetActive  Whether the sheet was defined as active
      * @param bool        $isSheetVisible Whether the sheet is visible
      */
-    public function __construct($rowIterator, $sheetIndex, $sheetName, $isSheetActive, $isSheetVisible)
+    public function __construct(RowIterator $rowIterator, SheetHeaderReader $headerReader, int $sheetIndex, string $sheetName, bool $isSheetActive, bool $isSheetVisible)
     {
         $this->rowIterator = $rowIterator;
+        $this->headerReader = $headerReader;
         $this->index = $sheetIndex;
         $this->name = $sheetName;
         $this->isActive = $isSheetActive;
         $this->isVisible = $isSheetVisible;
     }
 
-    /**
-     * @return \OpenSpout\Reader\XLSX\RowIterator
-     */
-    public function getRowIterator()
+    public function getRowIterator(): RowIterator
     {
         return $this->rowIterator;
     }
 
     /**
+     * @return ColumnWidth[] a list of column-widths
+     */
+    public function getColumnWidths(): array
+    {
+        return $this->headerReader->getColumnWidths();
+    }
+
+    /**
      * @return int Index of the sheet, based on order in the workbook (zero-based)
      */
-    public function getIndex()
+    public function getIndex(): int
     {
         return $this->index;
     }
@@ -59,7 +71,7 @@ class Sheet implements SheetInterface
     /**
      * @return string Name of the sheet
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -67,7 +79,7 @@ class Sheet implements SheetInterface
     /**
      * @return bool Whether the sheet was defined as active
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return $this->isActive;
     }
@@ -75,7 +87,7 @@ class Sheet implements SheetInterface
     /**
      * @return bool Whether the sheet is visible
      */
-    public function isVisible()
+    public function isVisible(): bool
     {
         return $this->isVisible;
     }

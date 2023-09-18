@@ -33,14 +33,18 @@ abstract class external_description {
     /** @var mixed Default value */
     public $default;
 
+    /** @var bool Allow null values */
+    public $allownull;
+
     /**
      * Contructor.
      *
      * @param string $desc Description of element
      * @param int $required Whether the element value is required. Valid values are VALUE_DEFAULT, VALUE_REQUIRED, VALUE_OPTIONAL.
      * @param mixed $default The default value
+     * @param bool $allownull Allow null value
      */
-    public function __construct($desc, $required, $default) {
+    public function __construct($desc, $required, $default, $allownull = NULL_NOT_ALLOWED) {
         if (!in_array($required, [VALUE_DEFAULT, VALUE_REQUIRED, VALUE_OPTIONAL], true)) {
             $requiredstr = $required;
             if (is_array($required)) {
@@ -52,5 +56,6 @@ abstract class external_description {
         $this->desc = $desc;
         $this->required = $required;
         $this->default = $default;
+        $this->allownull = (bool)$allownull;
     }
 }

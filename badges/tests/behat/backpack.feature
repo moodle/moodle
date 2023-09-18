@@ -1,4 +1,4 @@
-@core @core_badges @_file_upload
+@core @core_badges
 Feature: Backpack badges
   Test the settings to add/update a backpack for a site and user.
   I need to verify display backpack in the my profile
@@ -37,40 +37,24 @@ Feature: Backpack badges
 
   @javascript
   Scenario: Verify backback settings
-    Given I am on homepage
-    And I log in as "admin"
-    And I navigate to "Badges > Badges settings" in site administration
-    And I set the following fields to these values:
-      | External backpack connection | 1                        |
-    And I press "Save changes"
-    And I navigate to "Badges > Manage backpacks" in site administration
-    And I click on "Move up" "link" in the "https://dc.imsglobal.org" "table_row"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name          | Test badge verify backpack |
-      | Version       | v1                         |
-      | Language      | English                    |
-      | Description   | Test badge description     |
-      | Image author  | http://author.example.com  |
-      | Image caption | Test caption image         |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I set the field "Manager" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
-    And I select "Recipients (0)" from the "jump" singleselect
-    And I press "Award badge"
-    And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
-    And I press "Award badge"
-    And I log out
-    When I am on homepage
-    And I log in as "student1"
+    Given the following "core_badges > Badge" exists:
+      | name           | Test badge verify backpack       |
+      | version        | 1                                |
+      | language       | en                               |
+      | description    | Test badge description           |
+      | image          | badges/tests/behat/badge.png     |
+      | imageauthorurl | http://author.example.com        |
+      | imagecaption   | Test caption image               |
+    And the following "core_badges > Criteria" exists:
+      | badge          | Test badge verify backpack       |
+      | role           | editingteacher                   |
+    And the following "core_badges > Issued badge" exists:
+      | badge          | Test badge verify backpack       |
+      | user           | student1                         |
+    When I log in as "student1"
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
-    Then I should see "https://dc.imsglobal.org"
-    And I should see "Not connected"
+    Then I should see "Choose..." in the "Backpack provider" "select"
 
   @javascript
   Scenario: User has been connected backpack
@@ -82,26 +66,20 @@ Feature: Backpack badges
     And I press "Save changes"
     And I navigate to "Badges > Manage backpacks" in site administration
     And I click on "Move up" "link" in the "https://dc.imsglobal.org" "table_row"
-    And I navigate to "Badges > Add a new badge" in site administration
-    And I set the following fields to these values:
-      | Name           | Test badge verify backpack |
-      | Version        | v1                         |
-      | Language       | English                    |
-      | Description    | Test badge description     |
-      | Image author   | http://author.example.com  |
-      | Image caption  | Test caption image         |
-    And I upload "badges/tests/behat/badge.png" file to "Image" filemanager
-    And I press "Create badge"
-    And I set the field "type" to "Manual issue by role"
-    And I set the field "Manager" to "1"
-    And I press "Save"
-    And I press "Enable access"
-    And I press "Continue"
-    And I select "Recipients (0)" from the "jump" singleselect
-    And I press "Award badge"
-    And I set the field "potentialrecipients[]" to "Student 1 (student1@example.com)"
-    And I press "Award badge"
-    And I log out
+    And the following "core_badges > Badge" exists:
+      | name           | Test badge verify backpack       |
+      | version        | 1                                |
+      | language       | en                               |
+      | description    | Test badge description           |
+      | image          | badges/tests/behat/badge.png     |
+      | imageauthorurl | http://author.example.com        |
+      | imagecaption   | Test caption image               |
+    And the following "core_badges > Criteria" exists:
+      | badge          | Test badge verify backpack       |
+      | role           | editingteacher                   |
+    And the following "core_badges > Issued badge" exists:
+      | badge          | Test badge verify backpack       |
+      | user           | student1                         |
     And the following "setup backpack connected" exist:
       | user     | externalbackpack         |
       | student1 | https://dc.imsglobal.org |
@@ -120,11 +98,14 @@ Feature: Backpack badges
     And I log in as "admin"
     And I navigate to "Badges > Manage backpacks" in site administration
     When I press "Add a new backpack"
-    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
+    And I set the field "apiversion" to "2"
     And I set the field "backpackweburl" to "aaa"
     And I press "Save changes"
     And I should see "Invalid URL"
     And I set the field "backpackweburl" to "http://backpackweburl.cat"
+    And I press "Save changes"
+    And I should see "You must supply a value here"
+    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
     And I press "Save changes"
     Then I should see "http://backpackweburl.cat"
     And "Delete" "icon" should exist in the "http://backpackweburl.cat" "table_row"
@@ -163,9 +144,9 @@ Feature: Backpack badges
     And I log in as "admin"
     And I navigate to "Badges > Manage backpacks" in site administration
     When I press "Add a new backpack"
-    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
-    And I set the field "backpackweburl" to "http://backpackweburl.cat"
     And I set the field "apiversion" to "2.1"
+    And I set the field "backpackweburl" to "http://backpackweburl.cat"
+    And I should not see "Backpack API URL"
     Then "Include authentication details with the backpack" "checkbox" should not be visible
     And I should not see "Badge issuer email address"
     And I should not see "Badge issuer password"
@@ -180,6 +161,7 @@ Feature: Backpack badges
     And I should see "Badge issuer password"
     And I set the field "backpackemail" to "test@test.com"
     And I set the field "password" to "123456"
+    And I set the field "backpackapiurl" to "http://backpackapiurl.cat"
     And I press "Save changes"
     And I click on "Edit" "link" in the "http://backpackweburl.cat" "table_row"
     And the field "Include authentication details with the backpack" matches value "1"
@@ -189,7 +171,6 @@ Feature: Backpack badges
     And the field "Include authentication details with the backpack" matches value "0"
     And I click on "includeauthdetails" "checkbox"
     And I should not see "test@test.com"
-    And I log out
 
   @javascript
   Scenario: View backpack form as a student
@@ -197,8 +178,27 @@ Feature: Backpack badges
     And I follow "Preferences" in the user menu
     And I follow "Backpack settings"
     When I set the field "externalbackpackid" to "https://dc.imsglobal.org"
-    Then I should not see "Email address"
+    Then I should not see "Log in to your backpack"
+    And I should not see "Email address"
     And I should not see "Password"
-    And I set the field "externalbackpackid" to "https://test.com/"
+    But I set the field "externalbackpackid" to "https://test.com/"
+    And I should see "Log in to your backpack"
     And I should see "Email address"
     And I should see "Password"
+
+  @javascript
+  Scenario: Check backpack form validation as a student
+    Given I log in as "student1"
+    And I follow "Preferences" in the user menu
+    And I follow "Backpack settings"
+    When I click on "Connect to backpack" "button"
+    Then I should see "Backpack provider can't be blank"
+    And I set the field "externalbackpackid" to "https://test.com/"
+    And I set the field "password" to ""
+    When I click on "Connect to backpack" "button"
+    Then I should see "Password can't be blank"
+    And I should not see "Email address can't be blank"
+    And I set the field "backpackemail" to ""
+    And I click on "Connect to backpack" "button"
+    And I should see "Email address can't be blank"
+    And I should see "Password can't be blank"

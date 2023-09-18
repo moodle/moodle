@@ -221,7 +221,7 @@ class cron_task extends \core\task\scheduled_task {
         global $DB;
 
         if (empty($discussionids)) {
-            $this->discussion = [];
+            $this->discussions = [];
         } else {
 
             $requiredfields = [
@@ -329,7 +329,7 @@ class cron_task extends \core\task\scheduled_task {
 
             $send = false;
             // Setup this user so that the capabilities are cached, and environment matches receiving user.
-            cron_setup_user($user);
+            \core\cron::setup_user($user);
 
             list($individualpostdata, $digestpostdata) = $this->fetch_posts_for_user($user);
 

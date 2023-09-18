@@ -37,7 +37,8 @@ class setting_validator {
     public static function section_general_shown() {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['server_url']) ||
-                !isset($CFG->bigbluebuttonbn['shared_secret'])
+                !isset($CFG->bigbluebuttonbn['shared_secret']) ||
+                !isset($CFG->bigbluebuttonbn['checksum_algorithm'])
             );
     }
 
@@ -49,7 +50,7 @@ class setting_validator {
     public static function section_default_messages_shown() {
         global $CFG;
         return (!isset($CFG->bigbluebuttonbn['welcome_default']) ||
-                !isset($CFG->bigbluebuttonbn['welcome_editable']));
+            !isset($CFG->bigbluebuttonbn['welcome_editable']));
     }
 
     /**

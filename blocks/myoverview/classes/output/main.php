@@ -152,6 +152,9 @@ class main implements renderable, templatable {
      */
     private $customfieldvalue;
 
+    /** @var bool true if grouping selector should be shown, otherwise false. */
+    protected $displaygroupingselector;
+
     /**
      * main constructor.
      * Initialize the user preferences
@@ -504,7 +507,11 @@ class main implements renderable, templatable {
                     'post',
                     \single_button::BUTTON_PRIMARY
                 );
-                return $this->generate_zero_state_data($nocoursesimg, [$button], 'request');
+                return $this->generate_zero_state_data(
+                    $nocoursesimg,
+                    [$button],
+                    ['title' => 'zero_request_title', 'intro' => 'zero_request_intro']
+                );
             }
 
             $totalcourses = $DB->count_records_select('course', 'category > 0');
@@ -526,7 +533,11 @@ class main implements renderable, templatable {
                     \single_button::BUTTON_PRIMARY
                 );
                 $buttons[] = $createbutton->export_for_template($output);
-                return $this->generate_zero_state_data($nocoursesimg, $buttons, 'nocourses');
+                return $this->generate_zero_state_data(
+                    $nocoursesimg,
+                    $buttons,
+                    ['title' => 'zero_nocourses_title', 'intro' => 'zero_nocourses_intro']
+                );
             }
 
             if ($categorytocreate = \core_course_category::get_nearest_editable_subcategory($coursecat, ['create'])) {
@@ -544,13 +555,25 @@ class main implements renderable, templatable {
                         get_string('managecourses')
                     );
                     $buttons[] = $managebutton->export_for_template($output);
-                    return $this->generate_zero_state_data($nocoursesimg, array_reverse($buttons), 'createcourses');
+                    return $this->generate_zero_state_data(
+                        $nocoursesimg,
+                        array_reverse($buttons),
+                        ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
+                    );
                 }
-                return $this->generate_zero_state_data($nocoursesimg, $buttons, 'nomanagecourses');
+                return $this->generate_zero_state_data(
+                    $nocoursesimg,
+                    $buttons,
+                    ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
+                );
             }
         }
 
-        return $this->generate_zero_state_data($nocoursesimg, [], 'nopermission');
+        return $this->generate_zero_state_data(
+            $nocoursesimg,
+            [],
+            ['title' => 'zero_default_title', 'intro' => 'zero_default_intro']
+        );
     }
 
     /**
@@ -558,10 +581,10 @@ class main implements renderable, templatable {
      *
      * @param \moodle_url $imageurl The URL to the image to show
      * @param \single_button[] $buttons
-     * @param string $scenario the scenario name (used to get title and intro strings)
+     * @param array $strings Title and intro strings for the zero state if needed.
      * @return array Context variables for the template
      */
-    private function generate_zero_state_data(\moodle_url $imageurl, array $buttons, string $scenario) {
+    private function generate_zero_state_data(\moodle_url $imageurl, array $buttons, array $strings) {
         global $CFG;
         // Documentation data.
         $dochref = new \moodle_url($CFG->docroot, ['lang' => current_language()]);
@@ -576,8 +599,8 @@ class main implements renderable, templatable {
         ];
         return [
             'nocoursesimg' => $imageurl->out(),
-            'title' => get_string("zero_{$scenario}_title", 'block_myoverview'),
-            'intro' => get_string("zero_{$scenario}_intro", 'block_myoverview', $docparams),
+            'title' => ($strings['title']) ? get_string($strings['title'], 'block_myoverview') : '',
+            'intro' => ($strings['intro']) ? get_string($strings['intro'], 'block_myoverview', $docparams) : '',
             'buttons' => $buttons,
         ];
     }

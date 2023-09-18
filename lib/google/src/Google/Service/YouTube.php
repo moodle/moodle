@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube extends Google_Service
 {
   /** Manage your YouTube account. */
@@ -1709,6 +1710,7 @@ class Google_Service_YouTube extends Google_Service
  *   $activities = $youtubeService->activities;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Activities_Resource extends Google_Service_Resource
 {
 
@@ -1804,6 +1806,7 @@ class Google_Service_YouTube_Activities_Resource extends Google_Service_Resource
  *   $captions = $youtubeService->captions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Captions_Resource extends Google_Service_Resource
 {
 
@@ -2008,6 +2011,7 @@ class Google_Service_YouTube_Captions_Resource extends Google_Service_Resource
  *   $channelBanners = $youtubeService->channelBanners;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelBanners_Resource extends Google_Service_Resource
 {
 
@@ -2055,6 +2059,7 @@ class Google_Service_YouTube_ChannelBanners_Resource extends Google_Service_Reso
  *   $channelSections = $youtubeService->channelSections;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSections_Resource extends Google_Service_Resource
 {
 
@@ -2233,6 +2238,7 @@ class Google_Service_YouTube_ChannelSections_Resource extends Google_Service_Res
  *   $channels = $youtubeService->channels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Channels_Resource extends Google_Service_Resource
 {
 
@@ -2345,6 +2351,7 @@ class Google_Service_YouTube_Channels_Resource extends Google_Service_Resource
  *   $commentThreads = $youtubeService->commentThreads;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentThreads_Resource extends Google_Service_Resource
 {
 
@@ -2453,6 +2460,7 @@ class Google_Service_YouTube_CommentThreads_Resource extends Google_Service_Reso
  *   $comments = $youtubeService->comments;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Comments_Resource extends Google_Service_Resource
 {
 
@@ -2594,6 +2602,7 @@ class Google_Service_YouTube_Comments_Resource extends Google_Service_Resource
  *   $guideCategories = $youtubeService->guideCategories;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_GuideCategories_Resource extends Google_Service_Resource
 {
 
@@ -2633,6 +2642,7 @@ class Google_Service_YouTube_GuideCategories_Resource extends Google_Service_Res
  *   $i18nLanguages = $youtubeService->i18nLanguages;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nLanguages_Resource extends Google_Service_Resource
 {
 
@@ -2665,6 +2675,7 @@ class Google_Service_YouTube_I18nLanguages_Resource extends Google_Service_Resou
  *   $i18nRegions = $youtubeService->i18nRegions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nRegions_Resource extends Google_Service_Resource
 {
 
@@ -2697,6 +2708,7 @@ class Google_Service_YouTube_I18nRegions_Resource extends Google_Service_Resourc
  *   $liveBroadcasts = $youtubeService->liveBroadcasts;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcasts_Resource extends Google_Service_Resource
 {
 
@@ -3181,6 +3193,7 @@ class Google_Service_YouTube_LiveBroadcasts_Resource extends Google_Service_Reso
  *   $liveStreams = $youtubeService->liveStreams;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreams_Resource extends Google_Service_Resource
 {
 
@@ -3413,6 +3426,7 @@ class Google_Service_YouTube_LiveStreams_Resource extends Google_Service_Resourc
  *   $playlistItems = $youtubeService->playlistItems;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItems_Resource extends Google_Service_Resource
 {
 
@@ -3553,6 +3567,7 @@ class Google_Service_YouTube_PlaylistItems_Resource extends Google_Service_Resou
  *   $playlists = $youtubeService->playlists;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Playlists_Resource extends Google_Service_Resource
 {
 
@@ -3752,6 +3767,7 @@ class Google_Service_YouTube_Playlists_Resource extends Google_Service_Resource
  *   $search = $youtubeService->search;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Search_Resource extends Google_Service_Resource
 {
 
@@ -3922,6 +3938,7 @@ class Google_Service_YouTube_Search_Resource extends Google_Service_Resource
  *   $subscriptions = $youtubeService->subscriptions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Subscriptions_Resource extends Google_Service_Resource
 {
 
@@ -4042,6 +4059,7 @@ class Google_Service_YouTube_Subscriptions_Resource extends Google_Service_Resou
  *   $thumbnails = $youtubeService->thumbnails;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Thumbnails_Resource extends Google_Service_Resource
 {
 
@@ -4083,6 +4101,7 @@ class Google_Service_YouTube_Thumbnails_Resource extends Google_Service_Resource
  *   $videoAbuseReportReasons = $youtubeService->videoAbuseReportReasons;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReportReasons_Resource extends Google_Service_Resource
 {
 
@@ -4115,6 +4134,7 @@ class Google_Service_YouTube_VideoAbuseReportReasons_Resource extends Google_Ser
  *   $videoCategories = $youtubeService->videoCategories;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoCategories_Resource extends Google_Service_Resource
 {
 
@@ -4152,6 +4172,7 @@ class Google_Service_YouTube_VideoCategories_Resource extends Google_Service_Res
  *   $videos = $youtubeService->videos;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Videos_Resource extends Google_Service_Resource
 {
 
@@ -4452,6 +4473,7 @@ class Google_Service_YouTube_Videos_Resource extends Google_Service_Resource
  *   $watermarks = $youtubeService->watermarks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Watermarks_Resource extends Google_Service_Resource
 {
 
@@ -4515,6 +4537,7 @@ class Google_Service_YouTube_Watermarks_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_AccessPolicy extends Google_Collection
 {
   protected $collection_key = 'exception';
@@ -4542,6 +4565,7 @@ class Google_Service_YouTube_AccessPolicy extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Activity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4597,6 +4621,7 @@ class Google_Service_YouTube_Activity extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4715,6 +4740,7 @@ class Google_Service_YouTube_ActivityContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsBulletin extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4733,6 +4759,7 @@ class Google_Service_YouTube_ActivityContentDetailsBulletin extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsChannelItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4751,6 +4778,7 @@ class Google_Service_YouTube_ActivityContentDetailsChannelItem extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsComment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4769,6 +4797,7 @@ class Google_Service_YouTube_ActivityContentDetailsComment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsFavorite extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4787,6 +4816,7 @@ class Google_Service_YouTube_ActivityContentDetailsFavorite extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsLike extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4805,6 +4835,7 @@ class Google_Service_YouTube_ActivityContentDetailsLike extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsPlaylistItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4841,6 +4872,7 @@ class Google_Service_YouTube_ActivityContentDetailsPlaylistItem extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsPromotedItem extends Google_Collection
 {
   protected $collection_key = 'impressionUrl';
@@ -4940,6 +4972,7 @@ class Google_Service_YouTube_ActivityContentDetailsPromotedItem extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsRecommendation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4977,6 +5010,7 @@ class Google_Service_YouTube_ActivityContentDetailsRecommendation extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsSocial extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5031,6 +5065,7 @@ class Google_Service_YouTube_ActivityContentDetailsSocial extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsSubscription extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5049,6 +5084,7 @@ class Google_Service_YouTube_ActivityContentDetailsSubscription extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityContentDetailsUpload extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5066,6 +5102,7 @@ class Google_Service_YouTube_ActivityContentDetailsUpload extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivityListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5159,6 +5196,7 @@ class Google_Service_YouTube_ActivityListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ActivitySnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5240,6 +5278,7 @@ class Google_Service_YouTube_ActivitySnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Caption extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5285,6 +5324,7 @@ class Google_Service_YouTube_Caption extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CaptionListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5340,6 +5380,7 @@ class Google_Service_YouTube_CaptionListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CaptionSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5465,6 +5506,7 @@ class Google_Service_YouTube_CaptionSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CdnSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5501,6 +5543,7 @@ class Google_Service_YouTube_CdnSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5646,6 +5689,7 @@ class Google_Service_YouTube_Channel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelAuditDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5690,6 +5734,7 @@ class Google_Service_YouTube_ChannelAuditDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelBannerResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5725,6 +5770,7 @@ class Google_Service_YouTube_ChannelBannerResource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelBrandingSettings extends Google_Collection
 {
   protected $collection_key = 'hints';
@@ -5774,6 +5820,7 @@ class Google_Service_YouTube_ChannelBrandingSettings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5801,6 +5848,7 @@ class Google_Service_YouTube_ChannelContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelContentDetailsRelatedPlaylists extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5854,6 +5902,7 @@ class Google_Service_YouTube_ChannelContentDetailsRelatedPlaylists extends Googl
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelContentOwnerDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5880,6 +5929,7 @@ class Google_Service_YouTube_ChannelContentOwnerDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelConversionPing extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5906,6 +5956,7 @@ class Google_Service_YouTube_ChannelConversionPing extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelConversionPings extends Google_Collection
 {
   protected $collection_key = 'pings';
@@ -5925,6 +5976,7 @@ class Google_Service_YouTube_ChannelConversionPings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5942,6 +5994,7 @@ class Google_Service_YouTube_ChannelId extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6035,6 +6088,7 @@ class Google_Service_YouTube_ChannelListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelLocalization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6061,10 +6115,12 @@ class Google_Service_YouTube_ChannelLocalization extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelLocalizations extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSection extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6140,6 +6196,7 @@ class Google_Service_YouTube_ChannelSection extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionContentDetails extends Google_Collection
 {
   protected $collection_key = 'playlists';
@@ -6167,6 +6224,7 @@ class Google_Service_YouTube_ChannelSectionContentDetails extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6222,6 +6280,7 @@ class Google_Service_YouTube_ChannelSectionListResponse extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionLocalization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6239,10 +6298,12 @@ class Google_Service_YouTube_ChannelSectionLocalization extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionLocalizations extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6315,6 +6376,7 @@ class Google_Service_YouTube_ChannelSectionSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSectionTargeting extends Google_Collection
 {
   protected $collection_key = 'regions';
@@ -6351,6 +6413,7 @@ class Google_Service_YouTube_ChannelSectionTargeting extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSettings extends Google_Collection
 {
   protected $collection_key = 'featuredChannelsUrls';
@@ -6486,6 +6549,7 @@ class Google_Service_YouTube_ChannelSettings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6559,6 +6623,7 @@ class Google_Service_YouTube_ChannelSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelStatistics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6612,6 +6677,7 @@ class Google_Service_YouTube_ChannelStatistics extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6647,6 +6713,7 @@ class Google_Service_YouTube_ChannelStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ChannelTopicDetails extends Google_Collection
 {
   protected $collection_key = 'topicIds';
@@ -6665,6 +6732,7 @@ class Google_Service_YouTube_ChannelTopicDetails extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Comment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6710,6 +6778,7 @@ class Google_Service_YouTube_Comment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6794,6 +6863,7 @@ class Google_Service_YouTube_CommentListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6947,6 +7017,7 @@ class Google_Service_YouTube_CommentSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentThread extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7002,6 +7073,7 @@ class Google_Service_YouTube_CommentThread extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentThreadListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7086,6 +7158,7 @@ class Google_Service_YouTube_CommentThreadListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentThreadReplies extends Google_Collection
 {
   protected $collection_key = 'comments';
@@ -7105,6 +7178,7 @@ class Google_Service_YouTube_CommentThreadReplies extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_CommentThreadSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7168,6 +7242,7 @@ class Google_Service_YouTube_CommentThreadSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ContentRating extends Google_Collection
 {
   protected $collection_key = 'djctqRatingReasons';
@@ -7762,6 +7837,7 @@ class Google_Service_YouTube_ContentRating extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_GeoPoint extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7797,6 +7873,7 @@ class Google_Service_YouTube_GeoPoint extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_GuideCategory extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7842,6 +7919,7 @@ class Google_Service_YouTube_GuideCategory extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_GuideCategoryListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7935,6 +8013,7 @@ class Google_Service_YouTube_GuideCategoryListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_GuideCategorySnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7961,6 +8040,7 @@ class Google_Service_YouTube_GuideCategorySnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nLanguage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8006,6 +8086,7 @@ class Google_Service_YouTube_I18nLanguage extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nLanguageListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8061,6 +8142,7 @@ class Google_Service_YouTube_I18nLanguageListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nLanguageSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8087,6 +8169,7 @@ class Google_Service_YouTube_I18nLanguageSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nRegion extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8132,6 +8215,7 @@ class Google_Service_YouTube_I18nRegion extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nRegionListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8187,6 +8271,7 @@ class Google_Service_YouTube_I18nRegionListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_I18nRegionSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8213,6 +8298,7 @@ class Google_Service_YouTube_I18nRegionSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ImageSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8424,6 +8510,7 @@ class Google_Service_YouTube_ImageSettings extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_IngestionInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8459,6 +8546,7 @@ class Google_Service_YouTube_IngestionInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_InvideoBranding extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8514,6 +8602,7 @@ class Google_Service_YouTube_InvideoBranding extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_InvideoPosition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8540,6 +8629,7 @@ class Google_Service_YouTube_InvideoPosition extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_InvideoPromotion extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8588,6 +8678,7 @@ class Google_Service_YouTube_InvideoPromotion extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_InvideoTiming extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8623,6 +8714,7 @@ class Google_Service_YouTube_InvideoTiming extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LanguageTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8640,6 +8732,7 @@ class Google_Service_YouTube_LanguageTag extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcast extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8725,6 +8818,7 @@ class Google_Service_YouTube_LiveBroadcast extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8815,6 +8909,7 @@ class Google_Service_YouTube_LiveBroadcastContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8908,6 +9003,7 @@ class Google_Service_YouTube_LiveBroadcastListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9016,6 +9112,7 @@ class Google_Service_YouTube_LiveBroadcastSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastStatistics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9042,6 +9139,7 @@ class Google_Service_YouTube_LiveBroadcastStatistics extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9086,6 +9184,7 @@ class Google_Service_YouTube_LiveBroadcastStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastTopic extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9122,6 +9221,7 @@ class Google_Service_YouTube_LiveBroadcastTopic extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastTopicDetails extends Google_Collection
 {
   protected $collection_key = 'topics';
@@ -9141,6 +9241,7 @@ class Google_Service_YouTube_LiveBroadcastTopicDetails extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveBroadcastTopicSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9167,6 +9268,7 @@ class Google_Service_YouTube_LiveBroadcastTopicSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStream extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9242,6 +9344,7 @@ class Google_Service_YouTube_LiveStream extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamConfigurationIssue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9286,6 +9389,7 @@ class Google_Service_YouTube_LiveStreamConfigurationIssue extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9312,6 +9416,7 @@ class Google_Service_YouTube_LiveStreamContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamHealthStatus extends Google_Collection
 {
   protected $collection_key = 'configurationIssues';
@@ -9349,6 +9454,7 @@ class Google_Service_YouTube_LiveStreamHealthStatus extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9442,6 +9548,7 @@ class Google_Service_YouTube_LiveStreamListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9495,6 +9602,7 @@ class Google_Service_YouTube_LiveStreamSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LiveStreamStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9522,6 +9630,7 @@ class Google_Service_YouTube_LiveStreamStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LocalizedProperty extends Google_Collection
 {
   protected $collection_key = 'localized';
@@ -9560,6 +9669,7 @@ class Google_Service_YouTube_LocalizedProperty extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_LocalizedString extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9586,6 +9696,7 @@ class Google_Service_YouTube_LocalizedString extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_MonitorStreamInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9621,6 +9732,7 @@ class Google_Service_YouTube_MonitorStreamInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PageInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9647,6 +9759,7 @@ class Google_Service_YouTube_PageInfo extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Playlist extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9732,6 +9845,7 @@ class Google_Service_YouTube_Playlist extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9749,6 +9863,7 @@ class Google_Service_YouTube_PlaylistContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9814,6 +9929,7 @@ class Google_Service_YouTube_PlaylistItem extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItemContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9858,6 +9974,7 @@ class Google_Service_YouTube_PlaylistItemContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItemListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9951,6 +10068,7 @@ class Google_Service_YouTube_PlaylistItemListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItemSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10042,6 +10160,7 @@ class Google_Service_YouTube_PlaylistItemSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistItemStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10059,6 +10178,7 @@ class Google_Service_YouTube_PlaylistItemStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10152,6 +10272,7 @@ class Google_Service_YouTube_PlaylistListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistLocalization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10178,10 +10299,12 @@ class Google_Service_YouTube_PlaylistLocalization extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistLocalizations extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistPlayer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10199,6 +10322,7 @@ class Google_Service_YouTube_PlaylistPlayer extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistSnippet extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -10291,6 +10415,7 @@ class Google_Service_YouTube_PlaylistSnippet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PlaylistStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10308,6 +10433,7 @@ class Google_Service_YouTube_PlaylistStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PromotedItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10354,6 +10480,7 @@ class Google_Service_YouTube_PromotedItem extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PromotedItemId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10398,6 +10525,7 @@ class Google_Service_YouTube_PromotedItemId extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_PropertyValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10424,6 +10552,7 @@ class Google_Service_YouTube_PropertyValue extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ResourceId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10468,6 +10597,7 @@ class Google_Service_YouTube_ResourceId extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SearchListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10561,6 +10691,7 @@ class Google_Service_YouTube_SearchListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SearchResult extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10607,6 +10738,7 @@ class Google_Service_YouTube_SearchResult extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SearchResultSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10679,6 +10811,7 @@ class Google_Service_YouTube_SearchResultSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Subscription extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10744,6 +10877,7 @@ class Google_Service_YouTube_Subscription extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SubscriptionContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10779,6 +10913,7 @@ class Google_Service_YouTube_SubscriptionContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SubscriptionListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10872,6 +11007,7 @@ class Google_Service_YouTube_SubscriptionListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SubscriptionSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10945,6 +11081,7 @@ class Google_Service_YouTube_SubscriptionSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_SubscriptionSubscriberSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10990,6 +11127,7 @@ class Google_Service_YouTube_SubscriptionSubscriberSnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Thumbnail extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11025,6 +11163,7 @@ class Google_Service_YouTube_Thumbnail extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ThumbnailDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11083,6 +11222,7 @@ class Google_Service_YouTube_ThumbnailDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_ThumbnailSetResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11138,10 +11278,12 @@ class Google_Service_YouTube_ThumbnailSetResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_TokenPagination extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_Video extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11337,6 +11479,7 @@ class Google_Service_YouTube_Video extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11390,6 +11533,7 @@ class Google_Service_YouTube_VideoAbuseReport extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReportReason extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11435,6 +11579,7 @@ class Google_Service_YouTube_VideoAbuseReportReason extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReportReasonListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11490,6 +11635,7 @@ class Google_Service_YouTube_VideoAbuseReportReasonListResponse extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReportReasonSnippet extends Google_Collection
 {
   protected $collection_key = 'secondaryReasons';
@@ -11518,6 +11664,7 @@ class Google_Service_YouTube_VideoAbuseReportReasonSnippet extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAbuseReportSecondaryReason extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11544,6 +11691,7 @@ class Google_Service_YouTube_VideoAbuseReportSecondaryReason extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoAgeGating extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11579,6 +11727,7 @@ class Google_Service_YouTube_VideoAgeGating extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoCategory extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11624,6 +11773,7 @@ class Google_Service_YouTube_VideoCategory extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoCategoryListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11717,6 +11867,7 @@ class Google_Service_YouTube_VideoCategoryListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoCategorySnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11752,6 +11903,7 @@ class Google_Service_YouTube_VideoCategorySnippet extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11835,6 +11987,7 @@ class Google_Service_YouTube_VideoContentDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoContentDetailsRegionRestriction extends Google_Collection
 {
   protected $collection_key = 'blocked';
@@ -11862,6 +12015,7 @@ class Google_Service_YouTube_VideoContentDetailsRegionRestriction extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoConversionPing extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11888,6 +12042,7 @@ class Google_Service_YouTube_VideoConversionPing extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoConversionPings extends Google_Collection
 {
   protected $collection_key = 'pings';
@@ -11907,6 +12062,7 @@ class Google_Service_YouTube_VideoConversionPings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoFileDetails extends Google_Collection
 {
   protected $collection_key = 'videoStreams';
@@ -12009,6 +12165,7 @@ class Google_Service_YouTube_VideoFileDetails extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoFileDetailsAudioStream extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12053,6 +12210,7 @@ class Google_Service_YouTube_VideoFileDetailsAudioStream extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoFileDetailsVideoStream extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12133,6 +12291,7 @@ class Google_Service_YouTube_VideoFileDetailsVideoStream extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoGetRatingResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12188,6 +12347,7 @@ class Google_Service_YouTube_VideoGetRatingResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12281,6 +12441,7 @@ class Google_Service_YouTube_VideoListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoLiveStreamingDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12334,6 +12495,7 @@ class Google_Service_YouTube_VideoLiveStreamingDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoLocalization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12360,10 +12522,12 @@ class Google_Service_YouTube_VideoLocalization extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoLocalizations extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoMonetizationDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12382,6 +12546,7 @@ class Google_Service_YouTube_VideoMonetizationDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoPlayer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12399,6 +12564,7 @@ class Google_Service_YouTube_VideoPlayer extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoProcessingDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12480,6 +12646,7 @@ class Google_Service_YouTube_VideoProcessingDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoProcessingDetailsProcessingProgress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12515,6 +12682,7 @@ class Google_Service_YouTube_VideoProcessingDetailsProcessingProgress extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoProjectDetails extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -12533,6 +12701,7 @@ class Google_Service_YouTube_VideoProjectDetails extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoRating extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12559,6 +12728,7 @@ class Google_Service_YouTube_VideoRating extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoRecordingDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12595,6 +12765,7 @@ class Google_Service_YouTube_VideoRecordingDetails extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoSnippet extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -12714,6 +12885,7 @@ class Google_Service_YouTube_VideoSnippet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoStatistics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12767,6 +12939,7 @@ class Google_Service_YouTube_VideoStatistics extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12847,6 +13020,7 @@ class Google_Service_YouTube_VideoStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoSuggestions extends Google_Collection
 {
   protected $collection_key = 'tagSuggestions';
@@ -12902,6 +13076,7 @@ class Google_Service_YouTube_VideoSuggestions extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoSuggestionsTagSuggestion extends Google_Collection
 {
   protected $collection_key = 'categoryRestricts';
@@ -12929,6 +13104,7 @@ class Google_Service_YouTube_VideoSuggestionsTagSuggestion extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_VideoTopicDetails extends Google_Collection
 {
   protected $collection_key = 'topicIds';
@@ -12956,6 +13132,7 @@ class Google_Service_YouTube_VideoTopicDetails extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_YouTube_WatchSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(

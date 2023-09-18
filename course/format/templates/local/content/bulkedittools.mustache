@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/content/bulkedittoggler
+    @template core_courseformat/local/content/bulkedittools
 
     Displays the bulk actions button in the page header.
 
@@ -60,8 +60,8 @@
                     data-for="bulkaction"
                     {{#title}} title="{{title}}" {{/title}}
                 >
-                    <div class="w-100 pl-2">{{#pix}}{{icon}}{{/pix}}</div>
-                    <div>{{name}}</div>
+                    <span class="w-100 pl-2">{{#pix}}{{icon}}{{/pix}}</span>
+                    <span>{{name}}</span>
                 </button>
             </li>
             {{/actions}}
@@ -74,7 +74,7 @@
                 class="btn pr-0 pb-0"
                 data-action="bulkcancel"
                 data-for="bulkcancel"
-                title="{{#str}} bulkeditoff, core_courseformat {{/str}}"
+                title="{{#str}} bulkcancel, core_courseformat {{/str}}"
             >
                 {{#pix}} e/cancel, core {{/pix}}
             </button>

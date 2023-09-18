@@ -19,6 +19,9 @@ require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_form_class.php');
 class feedback_multichoicerated_form extends feedback_item_form {
     protected $type = "multichoicerated";
 
+    /** @var object Form element */
+    protected $values;
+
     public function definition() {
         $item = $this->_customdata['item'];
         $common = $this->_customdata['common'];

@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace ZipStream;
 
+use HashContext;
 use Psr\Http\Message\StreamInterface;
-use RuntimeException;
-use ZipStream\Exception\EncodingException;
 use ZipStream\Exception\FileNotFoundException;
 use ZipStream\Exception\FileNotReadableException;
 use ZipStream\Exception\OverflowException;
@@ -15,13 +15,15 @@ use ZipStream\Option\Version;
 
 class File
 {
-    const HASH_ALGORITHM = 'crc32b';
+    public const HASH_ALGORITHM = 'crc32b';
 
-    const BIT_ZERO_HEADER = 0x0008;
-    const BIT_EFS_UTF8 = 0x0800;
+    public const BIT_ZERO_HEADER = 0x0008;
 
-    const COMPUTE = 1;
-    const SEND = 2;
+    public const BIT_EFS_UTF8 = 0x0800;
+
+    public const COMPUTE = 1;
+
+    public const SEND = 2;
 
     private const CHUNKED_READ_BLOCK_SIZE = 1048576;
 
@@ -39,6 +41,7 @@ class File
      * @var Bigint
      */
     public $len;
+
     /**
      * @var Bigint
      */
@@ -78,7 +81,7 @@ class File
     private $deflate;
 
     /**
-     * @var \HashContext
+     * @var HashContext
      */
     private $hash;
 
@@ -117,7 +120,7 @@ class File
         } else {
             $this->method = $this->zip->opt->getLargeFileMethod();
 
-            $stream = new DeflateStream(fopen($path, 'rb'));
+            $stream = new Stream(fopen($path, 'rb'));
             $this->processStream($stream);
             $stream->close();
         }
@@ -162,21 +165,17 @@ class File
             // Sets Bit 11: Language encoding flag (EFS).  If this bit is set,
             // the filename and comment fields for this file
             // MUST be encoded using UTF-8. (see APPENDIX D)
-            if (!mb_check_encoding($name, 'UTF-8') ||
-                !mb_check_encoding($comment, 'UTF-8')) {
-                throw new EncodingException(
-                    'File name and comment should use UTF-8 ' .
-                    'if one of them does not fit into ASCII range.'
-                );
+            if (mb_check_encoding($name, 'UTF-8') &&
+                mb_check_encoding($comment, 'UTF-8')) {
+                $this->bits |= self::BIT_EFS_UTF8;
             }
-            $this->bits |= self::BIT_EFS_UTF8;
         }
 
         if ($this->method->equals(Method::DEFLATE())) {
             $this->version = Version::DEFLATE();
         }
 
-        $force = (boolean)($this->bits & self::BIT_ZERO_HEADER) &&
+        $force = (bool)($this->bits & self::BIT_ZERO_HEADER) &&
             $this->zip->opt->isEnableZip64();
 
         $footer = $this->buildZip64ExtraBlock($force);
@@ -229,6 +228,97 @@ class File
     }
 
     /**
+     * Create and send data descriptor footer for this file.
+     *
+     * @return void
+     */
+    public function addFileFooter(): void
+    {
+        if ($this->bits & self::BIT_ZERO_HEADER) {
+            // compressed and uncompressed size
+            $sizeFormat = 'V';
+            if ($this->zip->opt->isEnableZip64()) {
+                $sizeFormat = 'P';
+            }
+            $fields = [
+                ['V', ZipStream::DATA_DESCRIPTOR_SIGNATURE],
+                ['V', $this->crc],              // CRC32
+                [$sizeFormat, $this->zlen],     // Length of compressed data
+                [$sizeFormat, $this->len],      // Length of original data
+            ];
+
+            $footer = ZipStream::packFields($fields);
+            $this->zip->send($footer);
+        } else {
+            $footer = '';
+        }
+        $this->totalLength = $this->hlen->add($this->zlen)->add(Bigint::init(strlen($footer)));
+        $this->zip->addToCdr($this);
+    }
+
+    public function processStream(StreamInterface $stream): void
+    {
+        $this->zlen = new Bigint();
+        $this->len = new Bigint();
+
+        if ($this->zip->opt->isZeroHeader()) {
+            $this->processStreamWithZeroHeader($stream);
+        } else {
+            $this->processStreamWithComputedHeader($stream);
+        }
+    }
+
+    /**
+     * Send CDR record for specified file.
+     *
+     * @return string
+     */
+    public function getCdrFile(): string
+    {
+        $name = static::filterFilename($this->name);
+
+        // get attributes
+        $comment = $this->opt->getComment();
+
+        // get dos timestamp
+        $time = static::dosTime($this->opt->getTime()->getTimestamp());
+
+        $footer = $this->buildZip64ExtraBlock();
+
+        $fields = [
+            ['V', ZipStream::CDR_FILE_SIGNATURE],   // Central file header signature
+            ['v', ZipStream::ZIP_VERSION_MADE_BY],  // Made by version
+            ['v', $this->version->getValue()],      // Extract by version
+            ['v', $this->bits],                     // General purpose bit flags - data descriptor flag set
+            ['v', $this->method->getValue()],       // Compression method
+            ['V', $time],                           // Timestamp (DOS Format)
+            ['V', $this->crc],                      // CRC32
+            ['V', $this->zlen->getLowFF()],         // Compressed Data Length
+            ['V', $this->len->getLowFF()],          // Original Data Length
+            ['v', strlen($name)],                   // Length of filename
+            ['v', strlen($footer)],                 // Extra data len (see above)
+            ['v', strlen($comment)],                // Length of comment
+            ['v', 0],                               // Disk number
+            ['v', 0],                               // Internal File Attributes
+            ['V', 32],                              // External File Attributes
+            ['V', $this->ofs->getLowFF()],           // Relative offset of local header
+        ];
+
+        // pack fields, then append name and comment
+        $header = ZipStream::packFields($fields);
+
+        return $header . $name . $footer . $comment;
+    }
+
+    /**
+     * @return Bigint
+     */
+    public function getTotalLength(): Bigint
+    {
+        return $this->totalLength;
+    }
+
+    /**
      * Convert a UNIX timestamp to a DOS timestamp.
      *
      * @param int $when
@@ -241,14 +331,14 @@ class File
 
         // set lower-bound on dates
         if ($d['year'] < 1980) {
-            $d = array(
+            $d = [
                 'year' => 1980,
                 'mon' => 1,
                 'mday' => 1,
                 'hours' => 0,
                 'minutes' => 0,
-                'seconds' => 0
-            );
+                'seconds' => 0,
+            ];
         }
 
         // remove extra years from 1980
@@ -266,7 +356,6 @@ class File
 
     protected function buildZip64ExtraBlock(bool $force = false): string
     {
-
         $fields = [];
         if ($this->len->isOver32($force)) {
             $fields[] = ['P', $this->len];          // Length of original data
@@ -303,49 +392,6 @@ class File
         return ZipStream::packFields($fields);
     }
 
-    /**
-     * Create and send data descriptor footer for this file.
-     *
-     * @return void
-     */
-
-    public function addFileFooter(): void
-    {
-
-        if ($this->bits & self::BIT_ZERO_HEADER) {
-            // compressed and uncompressed size
-            $sizeFormat = 'V';
-            if ($this->zip->opt->isEnableZip64()) {
-                $sizeFormat = 'P';
-            }
-            $fields = [
-                ['V', ZipStream::DATA_DESCRIPTOR_SIGNATURE],
-                ['V', $this->crc],              // CRC32
-                [$sizeFormat, $this->zlen],     // Length of compressed data
-                [$sizeFormat, $this->len],      // Length of original data
-            ];
-
-            $footer = ZipStream::packFields($fields);
-            $this->zip->send($footer);
-        } else {
-            $footer = '';
-        }
-        $this->totalLength = $this->hlen->add($this->zlen)->add(Bigint::init(strlen($footer)));
-        $this->zip->addToCdr($this);
-    }
-
-    public function processStream(StreamInterface $stream): void
-    {
-        $this->zlen = new Bigint();
-        $this->len = new Bigint();
-
-        if ($this->zip->opt->isZeroHeader()) {
-            $this->processStreamWithZeroHeader($stream);
-        } else {
-            $this->processStreamWithComputedHeader($stream);
-        }
-    }
-
     protected function processStreamWithZeroHeader(StreamInterface $stream): void
     {
         $this->bits |= self::BIT_ZERO_HEADER;
@@ -363,7 +409,7 @@ class File
             $data = $stream->read(self::CHUNKED_READ_BLOCK_SIZE);
             $total += strlen($data);
             if ($size > 0 && $total > $size) {
-                $data = substr($data, 0 , strlen($data)-($total - $size));
+                $data = substr($data, 0, strlen($data)-($total - $size));
             }
             $this->deflateData($stream, $data, $options);
             if ($options & self::SEND) {
@@ -417,71 +463,8 @@ class File
         $this->readStream($stream, self::COMPUTE);
         $stream->rewind();
 
-        // incremental compression with deflate_add
-        // makes this second read unnecessary
-        // but it is only available from PHP 7.0
-        if (!$this->deflate && $stream instanceof DeflateStream && $this->method->equals(Method::DEFLATE())) {
-            $stream->addDeflateFilter($this->opt);
-            $this->zlen = new Bigint();
-            while (!$stream->eof()) {
-                $data = $stream->read(self::CHUNKED_READ_BLOCK_SIZE);
-                $this->zlen = $this->zlen->add(Bigint::init(strlen($data)));
-            }
-            $stream->rewind();
-        }
-
         $this->addFileHeader();
         $this->readStream($stream, self::SEND);
         $this->addFileFooter();
-    }
-
-    /**
-     * Send CDR record for specified file.
-     *
-     * @return string
-     */
-    public function getCdrFile(): string
-    {
-        $name = static::filterFilename($this->name);
-
-        // get attributes
-        $comment = $this->opt->getComment();
-
-        // get dos timestamp
-        $time = static::dosTime($this->opt->getTime()->getTimestamp());
-
-        $footer = $this->buildZip64ExtraBlock();
-
-        $fields = [
-            ['V', ZipStream::CDR_FILE_SIGNATURE],   // Central file header signature
-            ['v', ZipStream::ZIP_VERSION_MADE_BY],  // Made by version
-            ['v', $this->version->getValue()],      // Extract by version
-            ['v', $this->bits],                     // General purpose bit flags - data descriptor flag set
-            ['v', $this->method->getValue()],       // Compression method
-            ['V', $time],                           // Timestamp (DOS Format)
-            ['V', $this->crc],                      // CRC32
-            ['V', $this->zlen->getLowFF()],         // Compressed Data Length
-            ['V', $this->len->getLowFF()],          // Original Data Length
-            ['v', strlen($name)],                   // Length of filename
-            ['v', strlen($footer)],                 // Extra data len (see above)
-            ['v', strlen($comment)],                // Length of comment
-            ['v', 0],                               // Disk number
-            ['v', 0],                               // Internal File Attributes
-            ['V', 32],                              // External File Attributes
-            ['V', $this->ofs->getLowFF()]           // Relative offset of local header
-        ];
-
-        // pack fields, then append name and comment
-        $header = ZipStream::packFields($fields);
-
-        return $header . $name . $footer . $comment;
-    }
-
-    /**
-     * @return Bigint
-     */
-    public function getTotalLength(): Bigint
-    {
-        return $this->totalLength;
     }
 }

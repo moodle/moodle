@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace GeoIp2\Model;
 
 /**
- * Model class for the data returned by GeoIP2 City web service and database.
+ * Model class for the data returned by City Plus web service and City
+ * database.
  *
- * The only difference between the City and Insights model classes is which
- * fields in each record may be populated. See
- * https://dev.maxmind.com/geoip/geoip2/web-services for more details.
+ * See https://dev.maxmind.com/geoip/docs/web-services?lang=en for more
+ * details.
  *
  * @property-read \GeoIp2\Record\City $city City data for the requested IP
  * address.
@@ -33,18 +33,29 @@ class City extends Country
 {
     /**
      * @ignore
+     *
+     * @var \GeoIp2\Record\City
      */
     protected $city;
+
     /**
      * @ignore
+     *
+     * @var \GeoIp2\Record\Location
      */
     protected $location;
+
     /**
      * @ignore
+     *
+     * @var \GeoIp2\Record\Postal
      */
     protected $postal;
+
     /**
      * @ignore
+     *
+     * @var array<\GeoIp2\Record\Subdivision>
      */
     protected $subdivisions = [];
 
@@ -69,20 +80,21 @@ class City extends Country
         }
 
         foreach ($raw['subdivisions'] as $sub) {
-            array_push(
-                $this->subdivisions,
+            $this->subdivisions[] =
                 new \GeoIp2\Record\Subdivision($sub, $locales)
-            );
+            ;
         }
     }
 
     /**
      * @ignore
+     *
+     * @return mixed
      */
     public function __get(string $attr)
     {
         if ($attr === 'mostSpecificSubdivision') {
-            return $this->$attr();
+            return $this->{$attr}();
         }
 
         return parent::__get($attr);

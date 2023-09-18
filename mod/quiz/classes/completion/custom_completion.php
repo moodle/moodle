@@ -69,7 +69,7 @@ class custom_completion extends activity_custom_completion {
         }
         $lastfinishedattempt = end($attempts);
         $context = context_module::instance($this->cm->id);
-        $quizobj = quiz_settings::create($this->cm->instance, $this->userid);
+        $quizobj = quiz_settings::create((int) $this->cm->instance, $this->userid);
         $accessmanager = new access_manager(
             $quizobj,
             time(),

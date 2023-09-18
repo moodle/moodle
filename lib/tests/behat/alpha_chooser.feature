@@ -127,7 +127,7 @@ Feature: Initials bar
     And I am on the "assign1" "Activity" page logged in as "teacher"
     When I follow "View all submissions"
     And I select "View gradebook" from the "jump" singleselect
-    And I press "Filter by name"
+    And I click on "Filter by name" "combobox"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
     And ".page-item.active.B" "css_element" should not exist in the ".initialbar.firstinitial" "css_element"
@@ -144,7 +144,7 @@ Feature: Initials bar
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "Last (A)"
+    And I click on "Last (A)" "combobox"
     And I select "B" in the "First name" "core_grades > initials bar"
     And I press "Apply"
     And I wait until the page is ready
@@ -165,7 +165,7 @@ Feature: Initials bar
     And I should not see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "First (B) Last (A)"
+    And I click on "First (B) Last (A)" "combobox"
     And I select "All" in the "First name" "core_grades > initials bar"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should not exist in the ".initialbar.lastinitial" "css_element"
@@ -176,7 +176,7 @@ Feature: Initials bar
     And I should see "Astudent Astudent"
     And I should see "Bstudent Astudent"
     And I should not see "Cstudent Cstudent"
-    And I press "Last (A)"
+    And I click on "Last (A)" "combobox"
     And I select "All" in the "Last name" "core_grades > initials bar"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
     And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
@@ -254,7 +254,7 @@ Feature: Initials bar
       | assign   | C1     | assign1  | TestAssignment | Test assignment description | 0                                   | 0                             |
     And I am on the "assign1" "assign Activity editing" page logged in as "admin"
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "1"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I click on "Save and return to course" "button"
     And I navigate to "Course completion" in current page administration
     And I expand all fieldsets

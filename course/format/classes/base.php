@@ -86,6 +86,8 @@ abstract class base {
     private static $instances = array();
     /** @var array plugin name => class name. */
     private static $classesforformat = array('site' => 'site');
+    /** @var sectionmanager the format section manager. */
+    protected $sectionmanager = null;
 
     /**
      * Creates a new instance of class
@@ -225,6 +227,18 @@ abstract class base {
         } else {
             self::$instances = array();
         }
+    }
+    /**
+     * Reset the current user for all courses.
+     *
+     * The course format cache resets every time the course cache resets but
+     * also when the user changes their language, all course editors
+     *
+     * @return void
+     */
+    public static function session_cache_reset_all(): void {
+        $statecache = cache::make('core', 'courseeditorstate');
+        $statecache->purge();
     }
 
     /**
@@ -454,14 +468,6 @@ abstract class base {
     /**
      * Returns true if this course format uses activity indentation.
      *
-     * Indentation is not supported by core formats anymore and may be deprecated in the future.
-     * This method will keep a default return "true" for legacy reasons but new formats should override
-     * it with a return false to prevent future deprecations.
-     *
-     * A message in a bottle: if indentation is finally deprecated, both behat steps i_indent_right_activity
-     * and i_indent_left_activity should be removed as well. Right now no core behat uses them but indentation
-     * is not officially deprecated so they are still available for the contrib formats.
-     *
      * @return bool if the course format uses indentation.
      */
     public function uses_indentation(): bool {
@@ -512,7 +518,7 @@ abstract class base {
      * Returns the display name of the given section that the course prefers.
      *
      * @param int|stdClass $section Section object from database or just field course_sections.section
-     * @return Display name that the course format prefers, e.g. "Topic 2"
+     * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
     public function get_section_name($section) {
         if (is_object($section)) {
@@ -701,6 +707,7 @@ abstract class base {
      * @param array $options options for view URL. At the moment core uses:
      *     'navigation' (bool) if true and section has no separate page, the function returns null
      *     'sr' (int) used by multipage formats to specify to which section to return
+     *     'expanded' (bool) if true the section will be shown expanded, true by default
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
@@ -720,9 +727,48 @@ abstract class base {
             return null;
         }
         if ($this->uses_sections() && $sectionno !== null) {
+            // The url includes the parameter to expand the section by default.
+            if (!array_key_exists('expanded', $options)) {
+                $options['expanded'] = true;
+            }
+            if ($options['expanded']) {
+                // This parameter is being set by default.
+                $url->param('expandsection', $sectionno);
+            }
             $url->set_anchor('section-'.$sectionno);
         }
         return $url;
+    }
+
+    /**
+     * Return the old non-ajax activity action url.
+     *
+     * BrowserKit behats tests cannot trigger javascript events,
+     * so we must translate to an old non-ajax url while non-ajax
+     * course editing is still supported.
+     *
+     * @param string $action action name the reactive action
+     * @param cm_info $cm course module
+     * @return moodle_url
+     */
+    public function get_non_ajax_cm_action_url(string $action, cm_info $cm): moodle_url {
+        $nonajaxactions = [
+            'cmDelete' => 'delete',
+            'cmDuplicate' => 'duplicate',
+            'cmHide' => 'hide',
+            'cmShow' => 'show',
+            'cmStealth' => 'stealth',
+        ];
+        if (!isset($nonajaxactions[$action])) {
+            throw new coding_exception('Unknown activity action: ' . $action);
+        }
+        $nonajaxaction = $nonajaxactions[$action];
+        $nonajaxurl = new moodle_url(
+            '/course/mod.php',
+            ['sesskey' => sesskey(), $nonajaxaction => $cm->id]
+        );
+        $nonajaxurl->param('sr', $this->get_section_number());
+        return $nonajaxurl;
     }
 
     /**
@@ -778,6 +824,58 @@ abstract class base {
             BLOCK_POS_RIGHT => array()
         );
         return $blocknames;
+    }
+
+    /**
+     * Return custom strings for the course editor.
+     *
+     * This method is mainly used to translate the "section" related strings into
+     * the specific format plugins name such as "Topics" or "Weeks".
+     *
+     * @return stdClass[] an array of objects with string "component" and "key"
+     */
+    public function get_editor_custom_strings(): array {
+        $result = [];
+        $stringmanager = get_string_manager();
+        $component = 'format_' . $this->format;
+        $formatoverridbles = [
+            'sectionavailability_title',
+            'sectiondelete_title',
+            'sectiondelete_info',
+            'sectionsdelete_title',
+            'sectionsdelete_info',
+            'sectionmove_title',
+            'sectionmove_info',
+            'sectionsavailability_title',
+            'sectionsmove_title',
+            'sectionsmove_info',
+            'selectsection'
+        ];
+        foreach ($formatoverridbles as $key) {
+            if ($stringmanager->string_exists($key, $component)) {
+                $result[] = (object)['component' => $component, 'key' => $key];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Get the proper format plugin string if it exists.
+     *
+     * If the format_PLUGINNAME does not provide a valid string,
+     * core_courseformat will be user as the component.
+     *
+     * @param string $key the string key
+     * @param string|object|array $data extra data that can be used within translation strings
+     * @param string|null $lang moodle translation language, null means use current
+     * @return string the get_string result
+     */
+    public function get_format_string(string $key, $data = null, $lang = null): string {
+        $component = 'format_' . $this->get_format();
+        if (!get_string_manager()->string_exists($key, $component)) {
+            $component = 'core_courseformat';
+        }
+        return get_string($key, $component, $data, $lang);
     }
 
     /**
@@ -1365,6 +1463,21 @@ abstract class base {
     }
 
     /**
+     * Check if the group mode can be displayed.
+     * @param cm_info $cm the activity module
+     * @return bool
+     */
+    public function show_groupmode(cm_info $cm): bool {
+        if (!plugin_supports('mod', $cm->modname, FEATURE_GROUPS, false)) {
+            return false;
+        }
+        if (!has_capability('moodle/course:manageactivities', $cm->context)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * Allows to specify for modinfo that section is not available even when it is visible and conditionally available.
      *
      * Note: affected user can be retrieved as: $section->modinfo->userid
@@ -1485,6 +1598,31 @@ abstract class base {
      */
     public function delete_module(cm_info $cm, bool $async = false) {
         course_delete_module($cm->id, $async);
+    }
+
+    /**
+     * Moves a section just after the target section.
+     *
+     * @param section_info $section the section to move
+     * @param section_info $destination the section that should be below the moved section
+     * @return boolean if the section can be moved or not
+     */
+    public function move_section_after(section_info $section, section_info $destination): bool {
+        if ($section->section == $destination->section || $section->section == $destination->section + 1) {
+            return true;
+        }
+        // The move_section_to moves relative to the section to move. However, this
+        // method will move the target section always after the destination.
+        if ($section->section > $destination->section) {
+            $newsectionnumber = $destination->section + 1;
+        } else {
+            $newsectionnumber = $destination->section;
+        }
+        return move_section_to(
+            $this->get_course(),
+            $section->section,
+            $newsectionnumber
+        );
     }
 
     /**
@@ -1734,5 +1872,41 @@ abstract class base {
         $course = $this->get_course();
         // By default, formats store some most display specifics in a user preference.
         $DB->delete_records('user_preferences', ['name' => 'coursesectionspreferences_' . $course->id]);
+    }
+
+    /**
+     * Duplicate a section
+     *
+     * @param section_info $originalsection The section to be duplicated
+     * @return section_info The new duplicated section
+     * @since Moodle 4.2
+     */
+    public function duplicate_section(section_info $originalsection): section_info {
+        if (!$this->uses_sections()) {
+            throw new moodle_exception('sectionsnotsupported', 'core_courseformat');
+        }
+
+        $course = $this->get_course();
+        $oldsectioninfo = get_fast_modinfo($course)->get_section_info($originalsection->section);
+        $newsection = course_create_section($course, $oldsectioninfo->section + 1); // Place new section after existing one.
+
+        if (!empty($originalsection->name)) {
+            $newsection->name = get_string('duplicatedsection', 'moodle', $originalsection->name);
+        } else {
+            $newsection->name = $originalsection->name;
+        }
+        $newsection->summary = $originalsection->summary;
+        $newsection->summaryformat = $originalsection->summaryformat;
+        $newsection->visible = $originalsection->visible;
+        $newsection->availability = $originalsection->availability;
+        course_update_section($course, $newsection, $newsection);
+
+        $modinfo = $this->get_modinfo();
+        foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
+            $originalcm = $modinfo->cms[$modnumber];
+            duplicate_module($course, $originalcm, $newsection->id, false);
+        }
+
+        return get_fast_modinfo($course)->get_section_info_by_id($newsection->id);
     }
 }

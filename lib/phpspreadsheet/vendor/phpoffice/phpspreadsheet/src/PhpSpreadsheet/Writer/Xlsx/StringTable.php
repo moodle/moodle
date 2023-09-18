@@ -5,28 +5,26 @@ namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Chart\ChartColor;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\RichText\Run;
 use PhpOffice\PhpSpreadsheet\Shared\StringHelper;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
-use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet as ActualWorksheet;
 
 class StringTable extends WriterPart
 {
     /**
      * Create worksheet stringtable.
      *
-     * @param Worksheet $worksheet Worksheet
      * @param string[] $existingTable Existing table to eventually merge with
      *
      * @return string[] String table for worksheet
      */
-    public function createStringTable(Worksheet $worksheet, $existingTable = null)
+    public function createStringTable(ActualWorksheet $worksheet, $existingTable = null)
     {
         // Create string lookup table
         $aStringTable = [];
-        $cellCollection = null;
-        $aFlippedStringTable = null; // For faster lookup
 
         // Is an existing table given?
         if (($existingTable !== null) && is_array($existingTable)) {
@@ -66,7 +64,7 @@ class StringTable extends WriterPart
     /**
      * Write string table to XML format.
      *
-     * @param (string|RichText)[] $stringTable
+     * @param (RichText|string)[] $stringTable
      *
      * @return string XML Output
      */
@@ -85,7 +83,7 @@ class StringTable extends WriterPart
 
         // String table
         $objWriter->startElement('sst');
-        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+        $objWriter->writeAttribute('xmlns', Namespaces::MAIN);
         $objWriter->writeAttribute('uniqueCount', (string) count($stringTable));
 
         // Loop through string table
@@ -228,9 +226,10 @@ class StringTable extends WriterPart
             if ($element->getFont() !== null) {
                 // rPr
                 $objWriter->startElement($prefix . 'rPr');
-                $size = $element->getFont()->getSize();
-                if (is_numeric($size)) {
-                    $objWriter->writeAttribute('sz', (string) (int) ($size * 100));
+                $fontSize = $element->getFont()->getSize();
+                if (is_numeric($fontSize)) {
+                    $fontSize *= (($fontSize < 100) ? 100 : 1);
+                    $objWriter->writeAttribute('sz', (string) $fontSize);
                 }
 
                 // Bold

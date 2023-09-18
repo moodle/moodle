@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace OpenSpout\Reader;
 
+use Iterator;
+
 /**
- * Interface IteratorInterface.
+ * @template T of SheetInterface
+ *
+ * @extends Iterator<T>
  */
-interface SheetIteratorInterface extends IteratorInterface
+interface SheetIteratorInterface extends Iterator
 {
     /**
-     * Cleans up what was created to iterate over the object.
+     * @return T of SheetInterface
      */
-    #[\ReturnTypeWillChange]
-    public function end();
-
-    /**
-     * @return null|SheetInterface
-     */
-    #[\ReturnTypeWillChange]
-    public function current();
+    public function current(): SheetInterface;
 }

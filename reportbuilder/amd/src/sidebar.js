@@ -89,10 +89,11 @@ export const init = (selectorId) => {
     const sidebarSearch = sidebarMenu.querySelector(reportSelectors.actions.sidebarSearch);
 
     // Debounce the event listener to allow the user to finish typing.
+    const sidebarSearchDebounce = debounce(sidebarCardFilter, DEBOUNCE_TIMER);
     sidebarSearch.addEventListener('keyup', event => {
         const pendingPromise = new Pending('core_reportbuilder/sidebar:keyup');
 
-        debounce(sidebarCardFilter, DEBOUNCE_TIMER)(event, sidebarMenu);
+        sidebarSearchDebounce(event, sidebarMenu);
         setTimeout(() => {
             pendingPromise.resolve();
         }, DEBOUNCE_TIMER);

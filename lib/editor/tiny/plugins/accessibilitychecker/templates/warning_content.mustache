@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template tiny_accessibilitychecker/warning_contenet
+    @template tiny_accessibilitychecker/warning_content
 
     Display a content warning message
 
@@ -36,10 +36,9 @@
 }}
 <div class="warning-desc">
     {{#warnings}}
-        <p>
-            {{{description}}}
-            {{#nodeData}}
-                <ol class="accessibilitywarnings">
+            <p>{{{description}}}</p>
+            <ol class="accessibilitywarnings">
+                {{#nodeData}}
                     <li>
                         {{#text}}
                             {{text}}
@@ -49,9 +48,8 @@
                         {{/src}}
                         - <a href="#" data-action="highlightfault" data-node-name="{{nodeName}}" data-node-index="{{nodeIndex}}">{{#str}} viewissue, tiny_accessibilitychecker {{/str}}</a>
                     </li>
-                </ol>
-            {{/nodeData}}
-        </p>
+                {{/nodeData}}
+            </ol>
     {{/warnings}}
     {{^warnings}}
         <p>{{#str}} nowarnings, tiny_accessibilitychecker {{/str}}</p>

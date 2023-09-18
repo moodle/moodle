@@ -110,6 +110,7 @@ class provider_test extends provider_testcase {
         $this->setUser($user);
         $context = \context_system::instance();
 
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'core_grading');

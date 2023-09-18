@@ -1,5 +1,15 @@
 This files describes API changes in /badges/*,
 information provided here is intended especially for developers.
+
+=== 4.3 ===
+* The following, deprecated since 3.11, have been removed and can no longer be used:
+ - `badges/ajax.js`
+ - `badges_check_backpack_accessibility`
+ - `badges_setup_backpack_js`
+ - `badges_local_backpack_js`
+* Functions render_badge_management and print_badge_table_actions have been deprecated when converting the
+section "Manage badges" to a Report Builder system report.
+
 === 4.0 ===
 * Function print_badge_tabs has been deprecated in favour of manage_badge_action_bar instead
 

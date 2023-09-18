@@ -8,6 +8,7 @@ $breadcrumb-divider-rtl: "◀" !default;
 // Massive, needs broken up.
 @import "moodle/variables";
 @import "moodle/core";
+@import "moodle/action-menu";
 @import "moodle/icons";
 @import "moodle/admin";
 @import "moodle/blocks";
@@ -49,3 +50,5 @@ $breadcrumb-divider-rtl: "◀" !default;
 @import "moodle/secondarynavigation";
 @import "moodle/tertiarynavigation";
 @import "moodle/process-monitor";
+@import "moodle/moodlenet";
+@import "moodle/dropdown";

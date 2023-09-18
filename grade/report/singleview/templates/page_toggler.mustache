@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/report/singleview/page_toggler
+    @template gradereport_singleview/page_toggler
 
     The small selector at the top right of the page to switch between zero states.
 
@@ -28,7 +28,7 @@
         "gradeselectactive": "true"
     }
 }}
-<div class="page-toggler d-flex">
+<div class="page-toggler d-block d-sm-flex text-nowrap">
     {{#displaylabel}}
         <p class="my-auto mr-3 text-uppercase">{{#str}}viewby, gradereport_singleview{{/str}}</p>
     {{/displaylabel}}

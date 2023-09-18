@@ -97,7 +97,7 @@ class quiz_notify_attempt_manual_grading_completed extends \core\task\scheduled_
             }
 
             if (!$course || $course->id != $quiz->course) {
-                $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+                $course = get_course($quiz->course);
                 $coursecontext = context_course::instance($quiz->course);
             }
 

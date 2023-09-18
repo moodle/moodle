@@ -51,14 +51,11 @@ Feature: Check label visibility works
     When I hide section "1"
     Then "Swanky label" label should be hidden
     And I open "Swanky label" actions menu
-    And "Swanky label" actions menu should not have "Show" item
-    And "Swanky label" actions menu should not have "Hide" item
-    And "Swanky label" actions menu should not have "Make available" item
-    And "Swanky label" actions menu should not have "Make unavailable" item
+    And "Swanky label" actions menu should not have "Availability" item
     And I click on "Edit settings" "link" in the "Swanky label" activity
     And I expand all fieldsets
-    And the "Availability" select box should contain "Hide from students"
-    And the "Availability" select box should not contain "Make available but not shown on course page"
+    And the "Availability" select box should contain "Hide on course page"
+    And the "Availability" select box should not contain "Make available but don't show on course page"
     And the "Availability" select box should not contain "Show on course page"
     And I log out
     And I log in as "student"

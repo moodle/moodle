@@ -39,15 +39,6 @@ use core\check\result;
 class adhocqueue extends check {
 
     /**
-     * Constructor
-     */
-    public function __construct() {
-        global $CFG;
-        $this->id = 'adhocqueue';
-        $this->name = get_string('checkadhocqueue', 'tool_task');
-    }
-
-    /**
      * Return result
      * @return result
      */

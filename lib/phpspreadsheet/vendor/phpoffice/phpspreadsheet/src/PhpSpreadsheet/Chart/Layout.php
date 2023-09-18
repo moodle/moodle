@@ -2,54 +2,56 @@
 
 namespace PhpOffice\PhpSpreadsheet\Chart;
 
+use PhpOffice\PhpSpreadsheet\Style\Font;
+
 class Layout
 {
     /**
      * layoutTarget.
      *
-     * @var string
+     * @var ?string
      */
     private $layoutTarget;
 
     /**
      * X Mode.
      *
-     * @var string
+     * @var ?string
      */
     private $xMode;
 
     /**
      * Y Mode.
      *
-     * @var string
+     * @var ?string
      */
     private $yMode;
 
     /**
      * X-Position.
      *
-     * @var float
+     * @var ?float
      */
     private $xPos;
 
     /**
      * Y-Position.
      *
-     * @var float
+     * @var ?float
      */
     private $yPos;
 
     /**
      * width.
      *
-     * @var float
+     * @var ?float
      */
     private $width;
 
     /**
      * height.
      *
-     * @var float
+     * @var ?float
      */
     private $height;
 
@@ -127,8 +129,11 @@ class Layout
     /** @var ?ChartColor */
     private $labelBorderColor;
 
-    /** @var ?ChartColor */
-    private $labelFontColor;
+    /** @var ?Font */
+    private $labelFont;
+
+    /** @var Properties */
+    private $labelEffects;
 
     /**
      * Create a new Layout.
@@ -172,7 +177,18 @@ class Layout
         $this->initBoolean($layout, 'numFmtLinked');
         $this->initColor($layout, 'labelFillColor');
         $this->initColor($layout, 'labelBorderColor');
-        $this->initColor($layout, 'labelFontColor');
+        $labelFont = $layout['labelFont'] ?? null;
+        if ($labelFont instanceof Font) {
+            $this->labelFont = $labelFont;
+        }
+        $labelFontColor = $layout['labelFontColor'] ?? null;
+        if ($labelFontColor instanceof ChartColor) {
+            $this->setLabelFontColor($labelFontColor);
+        }
+        $labelEffects = $layout['labelEffects'] ?? null;
+        if ($labelEffects instanceof Properties) {
+            $this->labelEffects = $labelEffects;
+        }
     }
 
     private function initBoolean(array $layout, string $name): void
@@ -192,7 +208,7 @@ class Layout
     /**
      * Get Layout Target.
      *
-     * @return string
+     * @return ?string
      */
     public function getLayoutTarget()
     {
@@ -202,7 +218,7 @@ class Layout
     /**
      * Set Layout Target.
      *
-     * @param string $target
+     * @param ?string $target
      *
      * @return $this
      */
@@ -216,7 +232,7 @@ class Layout
     /**
      * Get X-Mode.
      *
-     * @return string
+     * @return ?string
      */
     public function getXMode()
     {
@@ -226,7 +242,7 @@ class Layout
     /**
      * Set X-Mode.
      *
-     * @param string $mode
+     * @param ?string $mode
      *
      * @return $this
      */
@@ -240,7 +256,7 @@ class Layout
     /**
      * Get Y-Mode.
      *
-     * @return string
+     * @return ?string
      */
     public function getYMode()
     {
@@ -250,7 +266,7 @@ class Layout
     /**
      * Set Y-Mode.
      *
-     * @param string $mode
+     * @param ?string $mode
      *
      * @return $this
      */
@@ -264,7 +280,7 @@ class Layout
     /**
      * Get X-Position.
      *
-     * @return number
+     * @return null|float|int
      */
     public function getXPosition()
     {
@@ -274,7 +290,7 @@ class Layout
     /**
      * Set X-Position.
      *
-     * @param float $position
+     * @param ?float $position
      *
      * @return $this
      */
@@ -288,7 +304,7 @@ class Layout
     /**
      * Get Y-Position.
      *
-     * @return number
+     * @return null|float
      */
     public function getYPosition()
     {
@@ -298,7 +314,7 @@ class Layout
     /**
      * Set Y-Position.
      *
-     * @param float $position
+     * @param ?float $position
      *
      * @return $this
      */
@@ -312,7 +328,7 @@ class Layout
     /**
      * Get Width.
      *
-     * @return number
+     * @return ?float
      */
     public function getWidth()
     {
@@ -322,7 +338,7 @@ class Layout
     /**
      * Set Width.
      *
-     * @param float $width
+     * @param ?float $width
      *
      * @return $this
      */
@@ -336,7 +352,7 @@ class Layout
     /**
      * Get Height.
      *
-     * @return number
+     * @return null|float
      */
     public function getHeight()
     {
@@ -346,7 +362,7 @@ class Layout
     /**
      * Set Height.
      *
-     * @param float $height
+     * @param ?float $height
      *
      * @return $this
      */
@@ -493,14 +509,32 @@ class Layout
         return $this;
     }
 
+    public function getLabelFont(): ?Font
+    {
+        return $this->labelFont;
+    }
+
+    public function getLabelEffects(): ?Properties
+    {
+        return $this->labelEffects;
+    }
+
     public function getLabelFontColor(): ?ChartColor
     {
-        return $this->labelFontColor;
+        if ($this->labelFont === null) {
+            return null;
+        }
+
+        return $this->labelFont->getChartColor();
     }
 
     public function setLabelFontColor(?ChartColor $chartColor): self
     {
-        $this->labelFontColor = $chartColor;
+        if ($this->labelFont === null) {
+            $this->labelFont = new Font();
+            $this->labelFont->setSize(null, true);
+        }
+        $this->labelFont->setChartColorFromObject($chartColor);
 
         return $this;
     }

@@ -26,6 +26,7 @@
     * cansignup - Signup allowed?,
     * cookieshelpicon - cookies help icon details
     * error - Any errors in the form?,
+    * info - Info notification to display,
     * forgotpasswordurl - Forgot password url,
     * hasidentityproviders - Flag, set to true to hide identity providers,
     * hasinstructions - Flag, set to true to show instructions,
@@ -75,6 +76,7 @@
             "ltr": true
         },
         "error": "",
+        "info": "",
         "forgotpasswordurl": "http://localhost/stable_master/login/forgot_password.php",
         "hasidentityproviders": false,
         "hasinstructions": true,
@@ -112,10 +114,16 @@
         <a href="#" id="loginerrormessage" class="sr-only">{{error}}</a>
         <div class="alert alert-danger" role="alert">{{error}}</div>
     {{/error}}
+    {{#info}}
+        <a href="#" id="logininfomessage" class="sr-only">{{info}}</a>
+        <div class="alert alert-info" role="alert">{{info}}</div>
+    {{/info}}
     {{#cansignup}}
         <a href="{{signupurl}}" class="sr-only">{{#str}} tocreatenewaccount {{/str}}</a>
     {{/cansignup}}
     <form class="login-form" action="{{loginurl}}" method="post" id="login">
+        <input id="anchor" type="hidden" name="anchor" value="">
+        <script>document.getElementById('anchor').value = location.hash;</script>
         <input type="hidden" name="logintoken" value="{{logintoken}}">
         <div class="login-form-username form-group">
             <label for="username" class="sr-only">
@@ -140,6 +148,11 @@
                 !}}placeholder="{{#cleanstr}}password{{/cleanstr}}" {{!
                 !}}autocomplete="current-password">
         </div>
+        {{#recaptcha}}
+            <div class="login-form-recaptcha form-group">
+                {{{recaptcha}}}
+            </div>
+        {{/recaptcha}}
         <div class="login-form-submit form-group">
             <button class="btn btn-primary btn-lg" type="submit" id="loginbtn">{{#str}}login{{/str}}</button>
         </div>

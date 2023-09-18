@@ -41,10 +41,6 @@ class preset_imported extends base {
             ['action' => 'load', 'mode' => 'preview', 'id' => $this->objectid]);
     }
 
-    public function get_legacy_logdata(): array {
-        return [$this->courseid, 'tool_admin_presets', 'import', '', $this->objectid, $this->contextinstanceid];
-    }
-
     protected function init(): void {
         $this->data['crud'] = 'c';
         $this->data['edulevel'] = self::LEVEL_OTHER;

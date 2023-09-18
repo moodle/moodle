@@ -29,6 +29,7 @@ if (!class_exists('Google_Client')) {
  *
  * @author Chris Chabot <chabotc@google.com>
  */
+#[AllowDynamicProperties]
 class Google_Cache_Memcache extends Google_Cache_Abstract
 {
   private $connection = false;

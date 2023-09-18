@@ -94,6 +94,28 @@ function theme_boost_pluginfile($course, $cm, $context, $filearea, $args, $force
 }
 
 /**
+ * Get the current user preferences that are available
+ *
+ * @return array[]
+ */
+function theme_boost_user_preferences(): array {
+    return [
+        'drawer-open-block' => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => false,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+        'drawer-open-index' => [
+            'type' => PARAM_BOOL,
+            'null' => NULL_NOT_ALLOWED,
+            'default' => true,
+            'permissioncallback' => [core_user::class, 'is_current_user'],
+        ],
+    ];
+}
+
+/**
  * Returns the main SCSS content.
  *
  * @param theme_config $theme The theme config object.
@@ -135,7 +157,7 @@ function theme_boost_get_precompiled_css() {
  * Get SCSS to prepend.
  *
  * @param theme_config $theme The theme config object.
- * @return array
+ * @return string
  */
 function theme_boost_get_pre_scss($theme) {
     global $CFG;

@@ -15,8 +15,8 @@ Feature: Zero state on my overview block
 
   Scenario: Users with no permissions don't see any CTA
     Given I am on the "My courses" page logged in as "user"
-    When I should see "You're not enroled in any course"
-    Then I should see "Once you enrol in a course, it will appear here"
+    When I should see "You're not enrolled in any course"
+    Then I should see "Once you're enrolled in a course, it will appear here."
     And I should not see "Create course"
     And I should not see "Request a course"
 
@@ -41,13 +41,13 @@ Feature: Zero state on my overview block
     And I click on "Create course" "button"
     And I should see "Add a new course"
 
-  Scenario: Users with permissions to create a course but is not enroled in any existing course
+  Scenario: Users with permissions to create a course but is not enrolled in any existing course
     Given the following "course" exists:
       | fullname         | Course 1 |
       | shortname        | C1       |
     When I am on the "My courses" page logged in as "manager"
-    Then I should see "You're not enroled in any course"
-    Then I should see "To view all courses on this site, go to Manage courses."
+    Then I should see "You're not enrolled in any course"
+    Then I should see "Once you're enrolled in a course, it will appear here."
     And "Manage courses" "button" should exist
     And "Create course" "button" should exist
     And I click on "Create course" "button"
@@ -56,7 +56,7 @@ Feature: Zero state on my overview block
     And I click on "Manage courses" "button"
     And I should see "Course 1"
 
-  Scenario: Users with permissions to create but not to manage courses and is not enroled in any existing course
+  Scenario: Users with permissions to create but not to manage courses and is not enrolled in any existing course
     Given the following "permission overrides" exist:
       | capability             | permission | role     | contextlevel | reference |
       | moodle/category:manage | Prohibit   | manager  | System       |           |
@@ -64,7 +64,7 @@ Feature: Zero state on my overview block
       | fullname         | Course 1 |
       | shortname        | C1       |
     When I am on the "My courses" page logged in as "manager"
-    Then I should see "You're not enroled in any course"
+    Then I should see "You're not enrolled in any course"
     Then I should not see "To view all courses on this sie, go to Manage courses"
     And "Manage courses" "button" should not exist
     And "Create course" "button" should exist

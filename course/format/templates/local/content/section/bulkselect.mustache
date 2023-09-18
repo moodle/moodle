@@ -32,8 +32,11 @@
         data-id="{{id}}"
         data-action="toggleSelectionSection"
         data-bulkcheckbox="1"
-    />
+    >
     <label class="sr-only" for="sectionCheckbox{{id}}">
-        {{#str}} selectsection, core_courseformat, {{name}}{{/str}}
+        {{#selecttext}} {{selecttext}} {{/selecttext}}
+        {{^selecttext}}
+            {{#str}} selectsection, core_courseformat, {{name}}{{/str}}
+        {{/selecttext}}
     </label>
 </div>

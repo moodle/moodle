@@ -2870,6 +2870,54 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     }
 
     /**
+     * Test for WS returning group.
+     * @covers ::get_participant
+     * @covers ::list_participants
+     */
+    public function test_participants_info_with_groups() {
+        global $CFG;
+        $this->resetAfterTest(true);
+        $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
+
+        // Set up filtering.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', true);
+        external_settings::get_instance()->set_filter(true);
+
+        $result = $this->create_assign_with_student_and_teacher([
+            'assignsubmission_onlinetext_enabled' => 1,
+            'teamsubmission' => 1
+        ]);
+        $assignmodule = $result['assign'];
+        $student = $result['student'];
+        $teacher = $result['teacher'];
+        $course = $result['course'];
+        $context = \context_course::instance($course->id);
+
+        $gname = '<span class="multilang" lang="en">G (en)</span><span class="multilang" lang="es">G (es)</span>';
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => $gname]);
+        groups_add_member($group, $student);
+
+        $cm = get_coursemodule_from_instance('assign', $assignmodule->id);
+        new mod_assign_testable_assign($context, $cm, $course);
+
+        // Prepare submission.
+        $this->setUser($teacher);
+
+        // Test mod_assign_external::list_participants.
+        $participants = mod_assign_external::list_participants($assignmodule->id, $group->id, '', 0, 0, false, true, true);
+        $participants = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $this->assertEquals($group->id, $participants[0]['groupid']);
+        $this->assertEquals(format_string($gname, true), $participants[0]['groupname']);
+
+        // Test mod_assign_external::get_participant.
+        $participant = mod_assign_external::get_participant($assignmodule->id, $student->id, true);
+        $participant = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $participant);
+        $this->assertEquals($group->id, $participant['groupid']);
+        $this->assertEquals(format_string($gname, true), $participant['groupname']);
+    }
+
+    /**
      * Test test_view_assign
      */
     public function test_view_assign() {

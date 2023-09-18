@@ -56,6 +56,12 @@ class repository_youtube extends repository {
     private $service = null;
 
     /**
+     * Search keyword text.
+     * @var string
+     */
+    protected $keyword;
+
+    /**
      * Youtube plugin constructor
      * @param int $repositoryid
      * @param object $context

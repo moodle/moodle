@@ -545,7 +545,8 @@ class backpack_api {
     /**
      * Authenticate using the stored email and password and save the valid access tokens.
      *
-     * @return integer The id of the authenticated user.
+     * @return mixed The id of the authenticated user as returned by the backpack. Can have
+     *    different formats - numeric, empty, object with 'error' property, etc.
      */
     public function authenticate() {
         global $SESSION;
@@ -639,6 +640,8 @@ class backpack_api {
         $DB->delete_records('badge_external', array('backpackid' => $backpackid));
         $DB->delete_records('badge_backpack', array('userid' => $userid));
         $badgescache->delete($userid);
+        $this->clear_system_user_session();
+
         return true;
     }
 

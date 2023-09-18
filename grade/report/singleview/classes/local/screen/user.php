@@ -52,6 +52,9 @@ class user extends tablelike implements selectable_items {
     /** @var int $requirespaging Do we have more items than the paging limit? */
     private $requirespaging = true;
 
+    /** @var array get a valid user.  */
+    public $item = [];
+
     /**
      * Get the label for the select box that chooses items for this page.
      * @return string
@@ -99,7 +102,7 @@ class user extends tablelike implements selectable_items {
     public function init($selfitemisempty = false) {
 
         if (!$selfitemisempty) {
-            $validusers = $this->load_users();
+            $validusers = get_gradable_users($this->courseid, $this->groupid);
             if (!isset($validusers[$this->itemid])) {
                 // If the passed user id is not valid, show the first user from the list instead.
                 $this->item = reset($validusers);
@@ -116,6 +119,16 @@ class user extends tablelike implements selectable_items {
             if (grade::filter($item)) {
                 $this->items[$itemid] = $item;
             }
+        }
+
+        // If we change perpage on pagination we might end up with a page that doesn't exist.
+        if ($this->perpage) {
+            $numpages = intval(count($this->items) / $this->perpage) + 1;
+            if ($numpages <= $this->page) {
+                $this->page = 0;
+            }
+        } else {
+            $this->page = 0;
         }
 
         $this->requirespaging = count($this->items) > $this->perpage;
@@ -156,18 +169,16 @@ class user extends tablelike implements selectable_items {
         global $OUTPUT;
 
         $grade = $this->fetch_grade_or_default($item, $this->item->id);
-        $lockicon = '';
+        $gradestatus = '';
 
-        $lockeditem = $lockeditemgrade = 0;
-        if (!empty($grade->locked)) {
-            $lockeditem = 1;
-        }
-        if (!empty($grade->grade_item->locked)) {
-            $lockeditemgrade = 1;
-        }
-        // Check both grade and grade item.
-        if ($lockeditem || $lockeditemgrade) {
-             $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked', 'moodle', ['class' => 'ml-3']);
+        $context = [
+            'hidden' => $grade->is_hidden(),
+            'locked' => $grade->is_locked(),
+        ];
+
+        if (in_array(true, $context)) {
+            $context['classes'] = 'gradestatus';
+            $gradestatus = $OUTPUT->render_from_template('core_grades/status_icons', $context);
         }
 
         // Create a fake gradetreeitem so we can call get_element_header().
@@ -197,10 +208,10 @@ class user extends tablelike implements selectable_items {
         }
 
         $line = [
-            html_writer::div($itemicon . $itemcontent .  $lockicon, "{$type} d-flex align-items-center"),
+            html_writer::div($itemicon . $itemcontent, "{$type} d-flex align-items-center"),
             $this->get_item_action_menu($item),
             $this->category($item),
-            $formatteddefinition['finalgrade'],
+            $formatteddefinition['finalgrade'] . $gradestatus,
             new range($item),
             $formatteddefinition['feedback'],
             $formatteddefinition['override'],
@@ -258,8 +269,10 @@ class user extends tablelike implements selectable_items {
         $menuitems[] = new \action_menu_link_secondary($url, null, $title);
         $menu = new \action_menu($menuitems);
         $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
-        $menu->set_menu_trigger($icon);
+        $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
+        $menu->set_menu_trigger($icon, $extraclasses);
         $menu->set_menu_left();
+        $menu->set_boundary('window');
 
         return $OUTPUT->render($menu);
     }

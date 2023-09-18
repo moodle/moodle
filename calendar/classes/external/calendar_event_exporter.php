@@ -218,7 +218,7 @@ class calendar_event_exporter extends event_exporter_base {
      * Return the set of minimum and maximum date timestamp values
      * for the given event.
      *
-     * @param event_interface $event
+     * @param \core_calendar\local\event\entities\event_interface $event
      * @return array
      */
     protected function get_course_timestamp_limits($event) {
@@ -256,7 +256,7 @@ class calendar_event_exporter extends event_exporter_base {
      * Return the set of minimum and maximum date timestamp values
      * for the given event.
      *
-     * @param event_interface $event
+     * @param \core_calendar\local\event\entities\event_interface $event
      * @return array
      */
     protected function get_module_timestamp_limits($event) {
@@ -377,7 +377,7 @@ class calendar_event_exporter extends event_exporter_base {
      *
      * @deprecated since Moodle 3.6. Please use get_timestamp_min_limit().
      * @todo final deprecation. To be removed in Moodle 3.10
-     * @param DateTimeInterface $starttime The event start time
+     * @param \DateTimeInterface $starttime The event start time
      * @param array $min The module's minimum limit for the event
      * @return array Returns an array with mindaytimestamp and mindayerror keys.
      */
@@ -393,7 +393,7 @@ class calendar_event_exporter extends event_exporter_base {
      *
      * @deprecated since Moodle 3.6. Please use get_timestamp_max_limit().
      * @todo final deprecation. To be removed in Moodle 3.10
-     * @param DateTimeInterface $starttime The event start time
+     * @param \DateTimeInterface $starttime The event start time
      * @param array $max The module's maximum limit for the event
      * @return array Returns an array with maxdaytimestamp and maxdayerror keys.
      */

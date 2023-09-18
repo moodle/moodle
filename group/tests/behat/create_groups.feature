@@ -99,10 +99,9 @@ Feature: Organize students into groups
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | moodle/course:changeidnumber | Prevent |
-    And I log out
+    And the following "role capability" exists:
+      | role                         | editingteacher |
+      | moodle/course:changeidnumber | prevent        |
     And I log in as "teacher1"
     And I am on the "Course 1" "groups" page
     When I press "Create group"
@@ -111,7 +110,7 @@ Feature: Organize students into groups
       | Group name | The greatest group that never existed |
     And I press "Save changes"
     And I should see "The greatest group that never existed"
-    And I select "Groupings" from the "jump" singleselect
+    And I am on the "Course 1" "groupings" page
     And I press "Create grouping"
     And the "idnumber" "field" should be readonly
     And I set the following fields to these values:

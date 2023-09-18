@@ -1,159 +1,154 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Entity\Style;
+
+use OpenSpout\Common\Exception\InvalidArgumentException;
 
 /**
  * Represents a style to be applied to a cell.
  */
-class Style
+final class Style
 {
-    /** Default values */
+    /**
+     * Default values.
+     */
     public const DEFAULT_FONT_SIZE = 11;
     public const DEFAULT_FONT_COLOR = Color::BLACK;
     public const DEFAULT_FONT_NAME = 'Arial';
 
-    /** @var null|int Style ID */
-    private $id;
+    /** @var int Style ID */
+    private int $id = -1;
 
     /** @var bool Whether the font should be bold */
-    private $fontBold = false;
+    private bool $fontBold = false;
+
     /** @var bool Whether the bold property was set */
-    private $hasSetFontBold = false;
+    private bool $hasSetFontBold = false;
 
     /** @var bool Whether the font should be italic */
-    private $fontItalic = false;
+    private bool $fontItalic = false;
+
     /** @var bool Whether the italic property was set */
-    private $hasSetFontItalic = false;
+    private bool $hasSetFontItalic = false;
 
     /** @var bool Whether the font should be underlined */
-    private $fontUnderline = false;
+    private bool $fontUnderline = false;
+
     /** @var bool Whether the underline property was set */
-    private $hasSetFontUnderline = false;
+    private bool $hasSetFontUnderline = false;
 
     /** @var bool Whether the font should be struck through */
-    private $fontStrikethrough = false;
+    private bool $fontStrikethrough = false;
+
     /** @var bool Whether the strikethrough property was set */
-    private $hasSetFontStrikethrough = false;
+    private bool $hasSetFontStrikethrough = false;
 
     /** @var int Font size */
-    private $fontSize = self::DEFAULT_FONT_SIZE;
+    private int $fontSize = self::DEFAULT_FONT_SIZE;
+
     /** @var bool Whether the font size property was set */
-    private $hasSetFontSize = false;
+    private bool $hasSetFontSize = false;
 
     /** @var string Font color */
-    private $fontColor = self::DEFAULT_FONT_COLOR;
+    private string $fontColor = self::DEFAULT_FONT_COLOR;
+
     /** @var bool Whether the font color property was set */
-    private $hasSetFontColor = false;
+    private bool $hasSetFontColor = false;
 
     /** @var string Font name */
-    private $fontName = self::DEFAULT_FONT_NAME;
+    private string $fontName = self::DEFAULT_FONT_NAME;
+
     /** @var bool Whether the font name property was set */
-    private $hasSetFontName = false;
+    private bool $hasSetFontName = false;
 
     /** @var bool Whether specific font properties should be applied */
-    private $shouldApplyFont = false;
+    private bool $shouldApplyFont = false;
 
     /** @var bool Whether specific cell alignment should be applied */
-    private $shouldApplyCellAlignment = false;
+    private bool $shouldApplyCellAlignment = false;
+
     /** @var string Cell alignment */
-    private $cellAlignment;
+    private string $cellAlignment;
+
     /** @var bool Whether the cell alignment property was set */
-    private $hasSetCellAlignment = false;
+    private bool $hasSetCellAlignment = false;
+
+    /** @var bool Whether specific cell vertical alignment should be applied */
+    private bool $shouldApplyCellVerticalAlignment = false;
+
+    /** @var string Cell vertical alignment */
+    private string $cellVerticalAlignment;
+
+    /** @var bool Whether the cell vertical alignment property was set */
+    private bool $hasSetCellVerticalAlignment = false;
 
     /** @var bool Whether the text should wrap in the cell (useful for long or multi-lines text) */
-    private $shouldWrapText = false;
+    private bool $shouldWrapText = false;
+
     /** @var bool Whether the wrap text property was set */
-    private $hasSetWrapText = false;
+    private bool $hasSetWrapText = false;
 
     /** @var bool Whether the cell should shrink to fit to content */
-    private $shouldShrinkToFit = false;
+    private bool $shouldShrinkToFit = false;
+
     /** @var bool Whether the shouldShrinkToFit text property was set */
-    private $hasSetShrinkToFit = false;
+    private bool $hasSetShrinkToFit = false;
 
-    /** @var null|Border */
-    private $border;
-
-    /** @var bool Whether border properties should be applied */
-    private $shouldApplyBorder = false;
+    private ?Border $border = null;
 
     /** @var null|string Background color */
-    private $backgroundColor;
-
-    /** @var bool */
-    private $hasSetBackgroundColor = false;
+    private ?string $backgroundColor = null;
 
     /** @var null|string Format */
-    private $format;
+    private ?string $format = null;
 
-    /** @var bool */
-    private $hasSetFormat = false;
+    private bool $isRegistered = false;
 
-    /** @var bool */
-    private $isRegistered = false;
+    private bool $isEmpty = true;
 
-    /** @var bool */
-    private $isEmpty = true;
-
-    /**
-     * @return null|int
-     */
-    public function getId()
+    public function __sleep(): array
     {
+        $vars = get_object_vars($this);
+        unset($vars['id'], $vars['isRegistered']);
+
+        return array_keys($vars);
+    }
+
+    public function getId(): int
+    {
+        \assert(0 <= $this->id);
+
         return $this->id;
     }
 
-    /**
-     * @param int $id
-     *
-     * @return Style
-     */
-    public function setId($id)
+    public function setId(int $id): self
     {
         $this->id = $id;
 
         return $this;
     }
 
-    /**
-     * @return null|Border
-     */
-    public function getBorder()
+    public function getBorder(): ?Border
     {
         return $this->border;
     }
 
-    /**
-     * @return Style
-     */
-    public function setBorder(Border $border)
+    public function setBorder(Border $border): self
     {
-        $this->shouldApplyBorder = true;
         $this->border = $border;
         $this->isEmpty = false;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function shouldApplyBorder()
-    {
-        return $this->shouldApplyBorder;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFontBold()
+    public function isFontBold(): bool
     {
         return $this->fontBold;
     }
 
-    /**
-     * @return Style
-     */
-    public function setFontBold()
+    public function setFontBold(): self
     {
         $this->fontBold = true;
         $this->hasSetFontBold = true;
@@ -163,26 +158,17 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontBold()
+    public function hasSetFontBold(): bool
     {
         return $this->hasSetFontBold;
     }
 
-    /**
-     * @return bool
-     */
-    public function isFontItalic()
+    public function isFontItalic(): bool
     {
         return $this->fontItalic;
     }
 
-    /**
-     * @return Style
-     */
-    public function setFontItalic()
+    public function setFontItalic(): self
     {
         $this->fontItalic = true;
         $this->hasSetFontItalic = true;
@@ -192,26 +178,17 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontItalic()
+    public function hasSetFontItalic(): bool
     {
         return $this->hasSetFontItalic;
     }
 
-    /**
-     * @return bool
-     */
-    public function isFontUnderline()
+    public function isFontUnderline(): bool
     {
         return $this->fontUnderline;
     }
 
-    /**
-     * @return Style
-     */
-    public function setFontUnderline()
+    public function setFontUnderline(): self
     {
         $this->fontUnderline = true;
         $this->hasSetFontUnderline = true;
@@ -221,26 +198,17 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontUnderline()
+    public function hasSetFontUnderline(): bool
     {
         return $this->hasSetFontUnderline;
     }
 
-    /**
-     * @return bool
-     */
-    public function isFontStrikethrough()
+    public function isFontStrikethrough(): bool
     {
         return $this->fontStrikethrough;
     }
 
-    /**
-     * @return Style
-     */
-    public function setFontStrikethrough()
+    public function setFontStrikethrough(): self
     {
         $this->fontStrikethrough = true;
         $this->hasSetFontStrikethrough = true;
@@ -250,28 +218,20 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontStrikethrough()
+    public function hasSetFontStrikethrough(): bool
     {
         return $this->hasSetFontStrikethrough;
     }
 
-    /**
-     * @return int
-     */
-    public function getFontSize()
+    public function getFontSize(): int
     {
         return $this->fontSize;
     }
 
     /**
      * @param int $fontSize Font size, in pixels
-     *
-     * @return Style
      */
-    public function setFontSize($fontSize)
+    public function setFontSize(int $fontSize): self
     {
         $this->fontSize = $fontSize;
         $this->hasSetFontSize = true;
@@ -281,18 +241,12 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontSize()
+    public function hasSetFontSize(): bool
     {
         return $this->hasSetFontSize;
     }
 
-    /**
-     * @return string
-     */
-    public function getFontColor()
+    public function getFontColor(): string
     {
         return $this->fontColor;
     }
@@ -301,10 +255,8 @@ class Style
      * Sets the font color.
      *
      * @param string $fontColor ARGB color (@see Color)
-     *
-     * @return Style
      */
-    public function setFontColor($fontColor)
+    public function setFontColor(string $fontColor): self
     {
         $this->fontColor = $fontColor;
         $this->hasSetFontColor = true;
@@ -314,28 +266,20 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontColor()
+    public function hasSetFontColor(): bool
     {
         return $this->hasSetFontColor;
     }
 
-    /**
-     * @return string
-     */
-    public function getFontName()
+    public function getFontName(): string
     {
         return $this->fontName;
     }
 
     /**
      * @param string $fontName Name of the font to use
-     *
-     * @return Style
      */
-    public function setFontName($fontName)
+    public function setFontName(string $fontName): self
     {
         $this->fontName = $fontName;
         $this->hasSetFontName = true;
@@ -345,29 +289,30 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetFontName()
+    public function hasSetFontName(): bool
     {
         return $this->hasSetFontName;
     }
 
-    /**
-     * @return string
-     */
-    public function getCellAlignment()
+    public function getCellAlignment(): string
     {
         return $this->cellAlignment;
     }
 
+    public function getCellVerticalAlignment(): string
+    {
+        return $this->cellVerticalAlignment;
+    }
+
     /**
      * @param string $cellAlignment The cell alignment
-     *
-     * @return Style
      */
-    public function setCellAlignment($cellAlignment)
+    public function setCellAlignment(string $cellAlignment): self
     {
+        if (!CellAlignment::isValid($cellAlignment)) {
+            throw new InvalidArgumentException('Invalid cell alignment value');
+        }
+
         $this->cellAlignment = $cellAlignment;
         $this->hasSetCellAlignment = true;
         $this->shouldApplyCellAlignment = true;
@@ -377,35 +322,54 @@ class Style
     }
 
     /**
-     * @return bool
+     * @param string $cellVerticalAlignment The cell vertical alignment
      */
-    public function hasSetCellAlignment()
+    public function setCellVerticalAlignment(string $cellVerticalAlignment): self
+    {
+        if (!CellVerticalAlignment::isValid($cellVerticalAlignment)) {
+            throw new InvalidArgumentException('Invalid cell vertical alignment value');
+        }
+
+        $this->cellVerticalAlignment = $cellVerticalAlignment;
+        $this->hasSetCellVerticalAlignment = true;
+        $this->shouldApplyCellVerticalAlignment = true;
+        $this->isEmpty = false;
+
+        return $this;
+    }
+
+    public function hasSetCellAlignment(): bool
     {
         return $this->hasSetCellAlignment;
+    }
+
+    public function hasSetCellVerticalAlignment(): bool
+    {
+        return $this->hasSetCellVerticalAlignment;
     }
 
     /**
      * @return bool Whether specific cell alignment should be applied
      */
-    public function shouldApplyCellAlignment()
+    public function shouldApplyCellAlignment(): bool
     {
         return $this->shouldApplyCellAlignment;
     }
 
-    /**
-     * @return bool
-     */
-    public function shouldWrapText()
+    public function shouldApplyCellVerticalAlignment(): bool
+    {
+        return $this->shouldApplyCellVerticalAlignment;
+    }
+
+    public function shouldWrapText(): bool
     {
         return $this->shouldWrapText;
     }
 
     /**
      * @param bool $shouldWrap Should the text be wrapped
-     *
-     * @return Style
      */
-    public function setShouldWrapText($shouldWrap = true)
+    public function setShouldWrapText(bool $shouldWrap = true): self
     {
         $this->shouldWrapText = $shouldWrap;
         $this->hasSetWrapText = true;
@@ -414,10 +378,7 @@ class Style
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetWrapText()
+    public function hasSetWrapText(): bool
     {
         return $this->hasSetWrapText;
     }
@@ -425,7 +386,7 @@ class Style
     /**
      * @return bool Whether specific font properties should be applied
      */
-    public function shouldApplyFont()
+    public function shouldApplyFont(): bool
     {
         return $this->shouldApplyFont;
     }
@@ -434,64 +395,34 @@ class Style
      * Sets the background color.
      *
      * @param string $color ARGB color (@see Color)
-     *
-     * @return Style
      */
-    public function setBackgroundColor($color)
+    public function setBackgroundColor(string $color): self
     {
-        $this->hasSetBackgroundColor = true;
         $this->backgroundColor = $color;
         $this->isEmpty = false;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getBackgroundColor()
+    public function getBackgroundColor(): ?string
     {
         return $this->backgroundColor;
     }
 
     /**
-     * @return bool Whether the background color should be applied
-     */
-    public function shouldApplyBackgroundColor()
-    {
-        return $this->hasSetBackgroundColor;
-    }
-
-    /**
      * Sets format.
-     *
-     * @param string $format
-     *
-     * @return Style
      */
-    public function setFormat($format)
+    public function setFormat(string $format): self
     {
-        $this->hasSetFormat = true;
         $this->format = $format;
         $this->isEmpty = false;
 
         return $this;
     }
 
-    /**
-     * @return null|string
-     */
-    public function getFormat()
+    public function getFormat(): ?string
     {
         return $this->format;
-    }
-
-    /**
-     * @return bool Whether format should be applied
-     */
-    public function shouldApplyFormat()
-    {
-        return $this->hasSetFormat;
     }
 
     public function isRegistered(): bool
@@ -505,12 +436,6 @@ class Style
         $this->isRegistered = true;
     }
 
-    public function unmarkAsRegistered(): void
-    {
-        $this->setId(0);
-        $this->isRegistered = false;
-    }
-
     public function isEmpty(): bool
     {
         return $this->isEmpty;
@@ -518,12 +443,8 @@ class Style
 
     /**
      * Sets should shrink to fit.
-     *
-     * @param bool $shrinkToFit
-     *
-     * @return Style
      */
-    public function setShouldShrinkToFit($shrinkToFit = true)
+    public function setShouldShrinkToFit(bool $shrinkToFit = true): self
     {
         $this->hasSetShrinkToFit = true;
         $this->shouldShrinkToFit = $shrinkToFit;
@@ -534,15 +455,12 @@ class Style
     /**
      * @return bool Whether format should be applied
      */
-    public function shouldShrinkToFit()
+    public function shouldShrinkToFit(): bool
     {
         return $this->shouldShrinkToFit;
     }
 
-    /**
-     * @return bool
-     */
-    public function hasSetShrinkToFit()
+    public function hasSetShrinkToFit(): bool
     {
         return $this->hasSetShrinkToFit;
     }

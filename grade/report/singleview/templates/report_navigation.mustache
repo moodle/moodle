@@ -12,24 +12,24 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_user/user_navigation
-    The previous/next user navigation for the user report view.
+    @template gradereport_singleview/report_navigation
+    The previous/next user/item navigation for the singleview report.
     Context variables required for this template:
     * previoususer - (optional) The object containing information about the previous user.
-        * name - The name of the previous user.
-        * url - The URL to the previous user report.
+        * name - The name of the previous user/item.
+        * url - The URL to the previous user/item report.
     * nextuser - (optional) The object containing information about the next user.
-        * name - The name of the next user.
-        * url - The URL to the next user report.
+        * name - The name of the next user/item.
+        * url - The URL to the next user/item report.
     Example context (json):
     {
         "previoususer": {
             "name": "John Smith",
-            "url": "https://example.com/grade/report/user/index.php?id=2&userid=3"
+            "url": "https://example.com/grade/report/singleview/index.php?id=2&itemid=3"
         },
         "previoususer": {
             "name": "Jane Doe",
-            "url": "https://example.com/grade/report/user/index.php?id=2&userid=5"
+            "url": "https://example.com/grade/report/singleview/index.php?id=2&itemid=5"
         }
     }
 }}
@@ -38,10 +38,9 @@
         {{#perpageselect}}
             <div class="d-flex report-paging">
                 {{{perpageselect}}}
-                {{{pager}}}
             </div>
         {{/perpageselect}}
-        <div class="d-flex ml-auto">
+        <div class="d-flex ml-auto mt-2">
             {{#previoususer}}
                 <div class="previous d-flex">
                     <a href="{{url}}" aria-label="{{#str}} gotopreviousreport, gradereport_singleview {{/str}}">
@@ -51,7 +50,7 @@
                 </div>
             {{/previoususer}}
         </div>
-        <div class="d-flex ml-auto">
+        <div class="d-flex ml-auto mt-2">
             {{#nextuser}}
                 <div class="next d-flex ml-auto">
                     <a href="{{url}}" aria-label="{{#str}} gotonextreport, gradereport_singleview {{/str}}">

@@ -301,7 +301,7 @@ class core_enrol_external extends external_api {
      * @return array of courses
      */
     public static function get_users_courses($userid, $returnusercount = true) {
-        global $CFG, $USER, $DB;
+        global $CFG, $USER, $DB, $OUTPUT;
 
         require_once($CFG->dirroot . '/course/lib.php');
         require_once($CFG->dirroot . '/user/lib.php');
@@ -411,6 +411,11 @@ class core_enrol_external extends external_api {
                 );
             }
 
+            $courseimage = \core_course\external\course_summary_exporter::get_course_image($course);
+            if (!$courseimage) {
+                $courseimage = $OUTPUT->get_generated_url_for_course($context);
+            }
+
             $courseresult = [
                 'id' => $course->id,
                 'shortname' => $course->shortname,
@@ -421,6 +426,7 @@ class core_enrol_external extends external_api {
                 'summary' => $course->summary,
                 'summaryformat' => $course->summaryformat,
                 'format' => $course->format,
+                'courseimage' => $courseimage,
                 'showgrades' => $course->showgrades,
                 'lang' => clean_param($course->lang, PARAM_LANG),
                 'enablecompletion' => $course->enablecompletion,
@@ -469,6 +475,7 @@ class core_enrol_external extends external_api {
                     'summary'   => new external_value(PARAM_RAW, 'summary', VALUE_OPTIONAL),
                     'summaryformat' => new external_format_value('summary', VALUE_OPTIONAL),
                     'format'    => new external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site', VALUE_OPTIONAL),
+                    'courseimage' => new external_value(PARAM_URL, 'The course image URL', VALUE_OPTIONAL),
                     'showgrades' => new external_value(PARAM_BOOL, 'true if grades are shown, otherwise false', VALUE_OPTIONAL),
                     'lang'      => new external_value(PARAM_LANG, 'forced course language', VALUE_OPTIONAL),
                     'enablecompletion' => new external_value(PARAM_BOOL, 'true if completion is enabled, otherwise false',
@@ -1038,7 +1045,7 @@ class core_enrol_external extends external_api {
     /**
      * Returns description of submit_user_enrolment_form parameters.
      *
-     * @return external_function_parameters.
+     * @return external_function_parameters
      */
     public static function submit_user_enrolment_form_parameters() {
         return new external_function_parameters([

@@ -100,6 +100,7 @@ class custom_report_exporter extends persistent_exporter {
                 ],
                 'multiple' => true,
             ],
+            'classes' => ['type' => PARAM_TEXT],
             'editmode' => ['type' => PARAM_BOOL],
             'sidebarmenucards' => [
                 'type' => custom_report_column_cards_exporter::read_properties_definition(),
@@ -155,10 +156,16 @@ class custom_report_exporter extends persistent_exporter {
             if ($filterspresent) {
                 $filtersform = $this->generate_filters_form()->render();
             }
-            // Get the report attributes.
+
+            // Get the report classes and attributes.
+            $reportattributes = $report->get_attributes();
+            if (isset($reportattributes['class'])) {
+                $classes = $reportattributes['class'];
+                unset($reportattributes['class']);
+            }
             $attributes = array_map(static function($key, $value): array {
                 return ['name' => $key, 'value' => $value];
-            }, array_keys($report->get_attributes()), $report->get_attributes());
+            }, array_keys($reportattributes), $reportattributes);
         }
 
         // If we are editing we need all this information for the template.
@@ -186,6 +193,7 @@ class custom_report_exporter extends persistent_exporter {
             'filterspresent' => $filterspresent,
             'filtersform' => $filtersform,
             'attributes' => $attributes,
+            'classes' => $classes ?? '',
             'editmode' => $this->editmode,
             'javascript' => '',
         ] + $editordata;

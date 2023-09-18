@@ -375,14 +375,28 @@ class accesslib_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Create role and get event.
+        $sink = $this->redirectEvents();
         $id = create_role('New student role', 'student2', 'New student description', 'student');
-        $role = $DB->get_record('role', array('id'=>$id));
+        $events = $sink->get_events();
+        $sink->close();
+        $event = array_pop($events);
+        $role = $DB->get_record('role', ['id' => $id]);
 
         $this->assertNotEmpty($role);
         $this->assertSame('New student role', $role->name);
         $this->assertSame('student2', $role->shortname);
         $this->assertSame('New student description', $role->description);
         $this->assertSame('student', $role->archetype);
+
+        // Test triggered event.
+        $this->assertInstanceOf('\core\event\role_created', $event);
+        $this->assertSame('role', $event->target);
+        $this->assertSame('role', $event->objecttable);
+        $this->assertSame((int)$role->id, $event->objectid);
+        $this->assertEquals(context_system::instance(), $event->get_context());
+        $this->assertSame($role->shortname, $event->other['shortname']);
+        $this->assertSame($role->archetype, $event->other['archetype']);
     }
 
     /**
@@ -567,12 +581,6 @@ class accesslib_test extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertInstanceOf('moodle_url', $event->get_url());
-        $this->assertSame('role_assigned', $event::get_legacy_eventname());
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
-        $expectedlegacylog = array($course->id, 'role', 'assign',
-            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -619,11 +627,6 @@ class accesslib_test extends advanced_testcase {
         $this->assertSame('', $event->other['component']);
         $this->assertEquals(0, $event->other['itemid']);
         $this->assertInstanceOf('moodle_url', $event->get_url());
-        $roles = get_all_roles();
-        $rolenames = role_fix_names($roles, $context, ROLENAME_ORIGINAL, true);
-        $expectedlegacylog = array($course->id, 'role', 'unassign',
-            'admin/roles/assign.php?contextid='.$context->id.'&roleid='.$role->id, $rolenames[$role->id], '', $USER->id);
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -771,10 +774,6 @@ class accesslib_test extends advanced_testcase {
         $this->assertSame($role->shortname, $event->other['shortname']);
         $this->assertSame($role->description, $event->other['description']);
         $this->assertSame($role->archetype, $event->other['archetype']);
-
-        $expectedlegacylog = array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid='.$role->id,
-                                   $role->shortname, '');
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1060,10 +1059,6 @@ class accesslib_test extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_assign_updated', $event);
-        $mode = 'assign';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1095,10 +1090,6 @@ class accesslib_test extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_override_updated', $event);
-        $mode = 'override';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1130,10 +1121,6 @@ class accesslib_test extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_switch_updated', $event);
-        $mode = 'switch';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -1165,10 +1152,6 @@ class accesslib_test extends advanced_testcase {
         $sink->close();
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\role_allow_view_updated', $event);
-        $mode = 'view';
-        $baseurl = new moodle_url('/admin/roles/allow.php', array('mode' => $mode));
-        $expectedlegacylog = array(SITEID, 'role', 'edit allow ' . $mode, str_replace($CFG->wwwroot . '/', '', $baseurl));
-        $this->assertEventLegacyLogData($expectedlegacylog, $event);
     }
 
     /**
@@ -2485,6 +2468,8 @@ class accesslib_test extends advanced_testcase {
     /**
      * Tests get_user_capability_contexts() which checks a capability across all courses and categories.
      * Testing for categories only because courses results are covered by test_get_user_capability_course.
+     *
+     * @covers ::get_user_capability_contexts
      */
     public function test_get_user_capability_contexts() {
         $this->resetAfterTest();
@@ -2512,9 +2497,9 @@ class accesslib_test extends advanced_testcase {
         assign_capability($cap, CAP_PROHIBIT, $prohibitroleid, $systemcontext->id);
 
         // Create three categories (two of them nested).
-        $cat1 = $generator->create_category();
-        $cat2 = $generator->create_category();
-        $cat3 = $generator->create_category(['parent' => $cat1->id]);
+        $cat1 = $generator->create_category(['name' => 'Aardvarks']);
+        $cat2 = $generator->create_category(['name' => 'Badgers']);
+        $cat3 = $generator->create_category(['parent' => $cat1->id, 'name' => 'Cheetahs']);
 
         // Category overrides: in cat 1, empty role is allowed; in cat 2, empty role is prevented.
         assign_capability($cap, CAP_ALLOW, $emptyroleid,
@@ -2535,7 +2520,7 @@ class accesslib_test extends advanced_testcase {
         $u1 = $generator->create_user();
 
         // It returns false (annoyingly) if there are no course categories.
-        list($categories, $courses) = get_user_capability_contexts($cap, true, $u1->id, true, '', '', '', 'id');
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u1->id);
         $this->assertFalse($categories);
 
         // User 2 has allow role (system wide).
@@ -2543,7 +2528,7 @@ class accesslib_test extends advanced_testcase {
         role_assign($allowroleid, $u2->id, $systemcontext->id);
 
         // Should get $defaultcategory only. cat2 is prohibited; cat1 is prevented, so cat3 is not allowed.
-        list($categories, $courses) = get_user_capability_contexts($cap, true, $u2->id, true, '', '', '', 'id');
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u2->id);
         // Using same assert_course_ids helper even when we are checking course category ids.
         $this->assert_course_ids([$defaultcategoryid], $categories);
 
@@ -2551,8 +2536,8 @@ class accesslib_test extends advanced_testcase {
         $u3 = $generator->create_user();
         role_assign($emptyroleid, $u3->id, $systemcontext->id);
 
-        // Should get cat1 and cat3. cat2 is prohibited; no access to system level.
-        list($categories, $courses) = get_user_capability_contexts($cap, true, $u3->id, true, '', '', '', 'id');
+        // Should get cat1 and cat3. cat2 is prohibited; no access to system level. Sorted by category name.
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u3->id, true, '', '', '', 'name');
         $this->assert_course_ids([$cat1->id, $cat3->id], $categories);
 
         // User 4 has prohibit role (system wide).
@@ -2561,7 +2546,7 @@ class accesslib_test extends advanced_testcase {
 
         // Should not get any, because all of them are prohibited at system level.
         // Even if we try to allow an specific category.
-        list($categories, $courses) = get_user_capability_contexts($cap, true, $u4->id, true, '', '', '', 'id');
+        list($categories, $courses) = get_user_capability_contexts($cap, true, $u4->id);
         $this->assertFalse($categories);
     }
 
@@ -5207,7 +5192,7 @@ class accesslib_test extends advanced_testcase {
 /**
  * Context caching fixture
  */
-class context_inspection extends context_helper {
+abstract class context_inspection extends \core\context_helper {
     public static function test_context_cache_size() {
         return self::$cache_count;
     }

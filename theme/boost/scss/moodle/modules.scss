@@ -262,7 +262,7 @@ $author-image-margin-sm: 8px;
 /** Gently highlight the selected post by changing it's background to blue and then fading it out. */
 @keyframes background-highlight {
     from {
-        background-color: rgba(0, 123, 255, 0.5);
+        background-color: $modules-highlight-bg;
     }
     to {
         background-color: inherit;
@@ -300,14 +300,14 @@ $author-image-margin-sm: 8px;
     }
 
     .badge-light {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-badge-bg;
+        color: $modules-badge-color;
     }
 
     /** Style the ratings like a badge. */
     .rating-aggregate-container {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-rating-aggregate-bg;
+        color: $modules-rating-aggregate-color;
         padding: .25em .5em;
         line-height: 1;
         margin-right: .5rem;
@@ -343,7 +343,7 @@ $author-image-margin-sm: 8px;
     /** Fix muted text contrast ratios for accessibility. */
     .text-muted,
     .dimmed_text {
-        color: #707070 !important; /* stylelint-disable-line declaration-no-important */
+        color: $modules-forum-muted-color !important; /* stylelint-disable-line declaration-no-important */
     }
 
     .author-header {
@@ -369,7 +369,7 @@ $author-image-margin-sm: 8px;
     .forum-post-container {
         .replies-container {
             .forum-post-container {
-                border-top: 1px solid #dee2e6;
+                border-top: 1px solid $modules-forum-post-border-color;
                 padding-top: 1.5rem;
 
                 .replies-container .forum-post-container {
@@ -412,7 +412,7 @@ $author-image-margin-sm: 8px;
                 .author-image-container {
                     width: $author-image-width-sm;
                     margin-right: $author-image-margin-sm;
-                    padding-top: (36px - $author-image-width-sm) / 2;
+                    padding-top: (36px - $author-image-width-sm) * 0.5;
                 }
 
                 /**
@@ -486,7 +486,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     from {
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
-        border-radius: $grading-icon-button-size / 2;
+        border-radius: $grading-icon-button-size * 0.5;
         background-color: $gray-200;
     }
     to {
@@ -521,7 +521,7 @@ $grading-content-show-content-button-padding-left: calc(#{map-get($spacers, 2) *
     to {
         height: $grading-icon-button-size;
         width: $grading-icon-button-size;
-        border-radius: $grading-icon-button-size / 2;
+        border-radius: $grading-icon-button-size * 0.5;
         background-color: $gray-200;
     }
 }
@@ -1105,7 +1105,7 @@ div#dock {
         .usertext {
             float: left;
             text-align: right;
-            margin-right: $spacer / 2;
+            margin-right: $spacer * 0.5;
             height: 35px;
             .meta {
                 font-size: $font-size-sm;
@@ -1166,7 +1166,7 @@ div#dock {
     border-radius: 50%;
     color: $gray-800;
     font-weight: normal;
-    margin-right: $spacer / 4;
+    margin-right: $spacer * 0.25;
     &.size-16,
     &.size-30 {
         font-size: 0.7rem;
@@ -1176,6 +1176,10 @@ div#dock {
     &.size-35 {
         width: 35px;
         height: 35px;
+    }
+    &.size-50 {
+        width: 50px;
+        height: 50px;
     }
     &.size-64 {
         width: 64px;
@@ -1189,7 +1193,7 @@ div#dock {
 }
 
 img.userpicture {
-    margin-right: $spacer / 4;
+    margin-right: $spacer * 0.25;
 }
 
 @include media-breakpoint-down(sm) {
@@ -1199,11 +1203,6 @@ img.userpicture {
 }
 
 // Quiz module
-.path-mod-quiz .mod-quiz-edit-content {
-    // Force the quiz edit page to always be large enough to prevent scrolling when accessing the menu.
-    margin-bottom: 10rem;
-}
-
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-3,
 #page-mod-quiz-mod #id_reviewoptionshdr .col-md-9 {
     width: auto;
@@ -1248,7 +1247,8 @@ img.userpicture {
         width: 30px;
         border-radius: 3px;
         border: 0;
-        overflow: visible;
+        overflow: hidden;
+        white-space: nowrap;
         margin: 0 6px 6px 0;
     }
 
@@ -1332,8 +1332,8 @@ img.userpicture {
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
-    padding: 0;
-    margin: 0 0.4em;
+    padding: 0.5em 0 0.5em 0.1em;
+    margin: 2px;
 }
 
 /* Countdown timer. */

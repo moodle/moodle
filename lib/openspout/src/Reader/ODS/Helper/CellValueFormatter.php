@@ -1,15 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\ODS\Helper;
 
+use DateInterval;
+use DateTimeImmutable;
+use DOMElement;
+use DOMNode;
+use DOMText;
+use Exception;
+use OpenSpout\Common\Helper\Escaper\ODS;
 use OpenSpout\Reader\Exception\InvalidValueException;
 
 /**
- * This class provides helper functions to format cell values.
+ * @internal
  */
-class CellValueFormatter
+final class CellValueFormatter
 {
-    /** Definition of all possible cell types */
+    /**
+     * Definition of all possible cell types.
+     */
     public const CELL_TYPE_STRING = 'string';
     public const CELL_TYPE_FLOAT = 'float';
     public const CELL_TYPE_BOOLEAN = 'boolean';
@@ -19,7 +30,9 @@ class CellValueFormatter
     public const CELL_TYPE_PERCENTAGE = 'percentage';
     public const CELL_TYPE_VOID = 'void';
 
-    /** Definition of XML nodes names used to parse data */
+    /**
+     * Definition of XML nodes names used to parse data.
+     */
     public const XML_NODE_P = 'p';
     public const XML_NODE_TEXT_A = 'text:a';
     public const XML_NODE_TEXT_SPAN = 'text:span';
@@ -27,7 +40,9 @@ class CellValueFormatter
     public const XML_NODE_TEXT_TAB = 'text:tab';
     public const XML_NODE_TEXT_LINE_BREAK = 'text:line-break';
 
-    /** Definition of XML attributes used to parse data */
+    /**
+     * Definition of XML attributes used to parse data.
+     */
     public const XML_ATTRIBUTE_TYPE = 'office:value-type';
     public const XML_ATTRIBUTE_VALUE = 'office:value';
     public const XML_ATTRIBUTE_BOOLEAN_VALUE = 'office:boolean-value';
@@ -36,24 +51,26 @@ class CellValueFormatter
     public const XML_ATTRIBUTE_CURRENCY = 'office:currency';
     public const XML_ATTRIBUTE_C = 'text:c';
 
-    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
-    protected $shouldFormatDates;
-
-    /** @var \OpenSpout\Common\Helper\Escaper\ODS Used to unescape XML data */
-    protected $escaper;
-
-    /** @var array List of XML nodes representing whitespaces and their corresponding value */
-    private static $WHITESPACE_XML_NODES = [
+    /**
+     * List of XML nodes representing whitespaces and their corresponding value.
+     */
+    private const WHITESPACE_XML_NODES = [
         self::XML_NODE_TEXT_S => ' ',
         self::XML_NODE_TEXT_TAB => "\t",
         self::XML_NODE_TEXT_LINE_BREAK => "\n",
     ];
 
+    /** @var bool Whether date/time values should be returned as PHP objects or be formatted as strings */
+    private bool $shouldFormatDates;
+
+    /** @var ODS Used to unescape XML data */
+    private ODS $escaper;
+
     /**
-     * @param bool                                 $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
-     * @param \OpenSpout\Common\Helper\Escaper\ODS $escaper           Used to unescape XML data
+     * @param bool $shouldFormatDates Whether date/time values should be returned as PHP objects or be formatted as strings
+     * @param ODS  $escaper           Used to unescape XML data
      */
-    public function __construct($shouldFormatDates, $escaper)
+    public function __construct(bool $shouldFormatDates, ODS $escaper)
     {
         $this->shouldFormatDates = $shouldFormatDates;
         $this->escaper = $escaper;
@@ -64,52 +81,32 @@ class CellValueFormatter
      *
      * @see http://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#refTable13
      *
-     * @param \DOMElement $node
+     * @return bool|DateInterval|DateTimeImmutable|float|int|string The value associated with the cell, empty string if cell's type is void/undefined
      *
      * @throws InvalidValueException If the node value is not valid
-     *
-     * @return bool|\DateInterval|\DateTime|float|int|string The value associated with the cell, empty string if cell's type is void/undefined
      */
-    public function extractAndFormatNodeValue($node)
+    public function extractAndFormatNodeValue(DOMElement $node): bool|DateInterval|DateTimeImmutable|float|int|string
     {
         $cellType = $node->getAttribute(self::XML_ATTRIBUTE_TYPE);
 
-        switch ($cellType) {
-            case self::CELL_TYPE_STRING:
-                return $this->formatStringCellValue($node);
-
-            case self::CELL_TYPE_FLOAT:
-                return $this->formatFloatCellValue($node);
-
-            case self::CELL_TYPE_BOOLEAN:
-                return $this->formatBooleanCellValue($node);
-
-            case self::CELL_TYPE_DATE:
-                return $this->formatDateCellValue($node);
-
-            case self::CELL_TYPE_TIME:
-                return $this->formatTimeCellValue($node);
-
-            case self::CELL_TYPE_CURRENCY:
-                return $this->formatCurrencyCellValue($node);
-
-            case self::CELL_TYPE_PERCENTAGE:
-                return $this->formatPercentageCellValue($node);
-
-            case self::CELL_TYPE_VOID:
-            default:
-                return '';
-        }
+        return match ($cellType) {
+            self::CELL_TYPE_STRING => $this->formatStringCellValue($node),
+            self::CELL_TYPE_FLOAT => $this->formatFloatCellValue($node),
+            self::CELL_TYPE_BOOLEAN => $this->formatBooleanCellValue($node),
+            self::CELL_TYPE_DATE => $this->formatDateCellValue($node),
+            self::CELL_TYPE_TIME => $this->formatTimeCellValue($node),
+            self::CELL_TYPE_CURRENCY => $this->formatCurrencyCellValue($node),
+            self::CELL_TYPE_PERCENTAGE => $this->formatPercentageCellValue($node),
+            default => '',
+        };
     }
 
     /**
      * Returns the cell String value.
      *
-     * @param \DOMElement $node
-     *
      * @return string The value associated with the cell
      */
-    protected function formatStringCellValue($node)
+    private function formatStringCellValue(DOMElement $node): string
     {
         $pNodeValues = [];
         $pNodes = $node->getElementsByTagName(self::XML_NODE_P);
@@ -126,11 +123,9 @@ class CellValueFormatter
     /**
      * Returns the cell Numeric value from the given node.
      *
-     * @param \DOMElement $node
-     *
      * @return float|int The value associated with the cell
      */
-    protected function formatFloatCellValue($node)
+    private function formatFloatCellValue(DOMElement $node): float|int
     {
         $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
 
@@ -143,27 +138,19 @@ class CellValueFormatter
     /**
      * Returns the cell Boolean value from the given node.
      *
-     * @param \DOMElement $node
-     *
      * @return bool The value associated with the cell
      */
-    protected function formatBooleanCellValue($node)
+    private function formatBooleanCellValue(DOMElement $node): bool
     {
-        $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_BOOLEAN_VALUE);
-
-        return (bool) $nodeValue;
+        return (bool) $node->getAttribute(self::XML_ATTRIBUTE_BOOLEAN_VALUE);
     }
 
     /**
      * Returns the cell Date value from the given node.
      *
-     * @param \DOMElement $node
-     *
      * @throws InvalidValueException If the value is not a valid date
-     *
-     * @return \DateTime|string The value associated with the cell
      */
-    protected function formatDateCellValue($node)
+    private function formatDateCellValue(DOMElement $node): string|DateTimeImmutable
     {
         // The XML node looks like this:
         // <table:table-cell calcext:value-type="date" office:date-value="2016-05-19T16:39:00" office:value-type="date">
@@ -179,9 +166,9 @@ class CellValueFormatter
             $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_DATE_VALUE);
 
             try {
-                $cellValue = new \DateTime($nodeValue);
-            } catch (\Exception $e) {
-                throw new InvalidValueException($nodeValue);
+                $cellValue = new DateTimeImmutable($nodeValue);
+            } catch (Exception $previous) {
+                throw new InvalidValueException($nodeValue, '', 0, $previous);
             }
         }
 
@@ -191,13 +178,11 @@ class CellValueFormatter
     /**
      * Returns the cell Time value from the given node.
      *
-     * @param \DOMElement $node
+     * @return DateInterval|string The value associated with the cell
      *
      * @throws InvalidValueException If the value is not a valid time
-     *
-     * @return \DateInterval|string The value associated with the cell
      */
-    protected function formatTimeCellValue($node)
+    private function formatTimeCellValue(DOMElement $node): DateInterval|string
     {
         // The XML node looks like this:
         // <table:table-cell calcext:value-type="time" office:time-value="PT13H24M00S" office:value-type="time">
@@ -213,9 +198,9 @@ class CellValueFormatter
             $nodeValue = $node->getAttribute(self::XML_ATTRIBUTE_TIME_VALUE);
 
             try {
-                $cellValue = new \DateInterval($nodeValue);
-            } catch (\Exception $e) {
-                throw new InvalidValueException($nodeValue);
+                $cellValue = new DateInterval($nodeValue);
+            } catch (Exception $previous) {
+                throw new InvalidValueException($nodeValue, '', 0, $previous);
             }
         }
 
@@ -225,11 +210,9 @@ class CellValueFormatter
     /**
      * Returns the cell Currency value from the given node.
      *
-     * @param \DOMElement $node
-     *
      * @return string The value associated with the cell (e.g. "100 USD" or "9.99 EUR")
      */
-    protected function formatCurrencyCellValue($node)
+    private function formatCurrencyCellValue(DOMElement $node): string
     {
         $value = $node->getAttribute(self::XML_ATTRIBUTE_VALUE);
         $currency = $node->getAttribute(self::XML_ATTRIBUTE_CURRENCY);
@@ -240,29 +223,22 @@ class CellValueFormatter
     /**
      * Returns the cell Percentage value from the given node.
      *
-     * @param \DOMElement $node
-     *
      * @return float|int The value associated with the cell
      */
-    protected function formatPercentageCellValue($node)
+    private function formatPercentageCellValue(DOMElement $node): float|int
     {
         // percentages are formatted like floats
         return $this->formatFloatCellValue($node);
     }
 
-    /**
-     * @param \DOMNode $pNode
-     *
-     * @return string
-     */
-    private function extractTextValueFromNode($pNode)
+    private function extractTextValueFromNode(DOMNode $pNode): string
     {
         $textValue = '';
 
         foreach ($pNode->childNodes as $childNode) {
-            if ($childNode instanceof \DOMText) {
+            if ($childNode instanceof DOMText) {
                 $textValue .= $childNode->nodeValue;
-            } elseif ($this->isWhitespaceNode($childNode->nodeName)) {
+            } elseif ($this->isWhitespaceNode($childNode->nodeName) && $childNode instanceof DOMElement) {
                 $textValue .= $this->transformWhitespaceNode($childNode);
             } elseif (self::XML_NODE_TEXT_A === $childNode->nodeName || self::XML_NODE_TEXT_SPAN === $childNode->nodeName) {
                 $textValue .= $this->extractTextValueFromNode($childNode);
@@ -277,14 +253,10 @@ class CellValueFormatter
      *  - <text:s />
      *  - <text:tab />
      *  - <text:line-break />.
-     *
-     * @param string $nodeName
-     *
-     * @return bool
      */
-    private function isWhitespaceNode($nodeName)
+    private function isWhitespaceNode(string $nodeName): bool
     {
-        return isset(self::$WHITESPACE_XML_NODES[$nodeName]);
+        return isset(self::WHITESPACE_XML_NODES[$nodeName]);
     }
 
     /**
@@ -297,15 +269,15 @@ class CellValueFormatter
      *
      * @see https://docs.oasis-open.org/office/v1.2/os/OpenDocument-v1.2-os-part1.html#__RefHeading__1415200_253892949
      *
-     * @param \DOMElement $node The XML node representing a whitespace
+     * @param DOMElement $node The XML node representing a whitespace
      *
      * @return string The corresponding whitespace value
      */
-    private function transformWhitespaceNode($node)
+    private function transformWhitespaceNode(DOMElement $node): string
     {
         $countAttribute = $node->getAttribute(self::XML_ATTRIBUTE_C); // only defined for "<text:s>"
-        $numWhitespaces = (!empty($countAttribute)) ? (int) $countAttribute : 1;
+        $numWhitespaces = '' !== $countAttribute ? (int) $countAttribute : 1;
 
-        return str_repeat(self::$WHITESPACE_XML_NODES[$node->nodeName], $numWhitespaces);
+        return str_repeat(self::WHITESPACE_XML_NODES[$node->nodeName], $numWhitespaces);
     }
 }

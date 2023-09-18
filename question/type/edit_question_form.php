@@ -256,7 +256,6 @@ abstract class question_edit_form extends question_wizard_form {
         $this->definition_inner($mform);
 
         if (core_tag_tag::is_enabled('core_question', 'question')
-            && class_exists('qbank_tagquestion\\tags_action_column')
             && \core\plugininfo\qbank::is_plugin_enabled('qbank_tagquestion')) {
             $this->add_tag_fields($mform);
         }

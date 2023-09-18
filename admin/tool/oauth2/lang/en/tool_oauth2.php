@@ -56,7 +56,6 @@ $string['endpointurl_help'] = 'URL for this endpoint. Must use https:// protocol
 $string['endpointurl'] = 'URL';
 $string['facebook_service'] = 'Facebook';
 $string['google_service'] = 'Google';
-$string['imsobv2p1_service'] = 'Open Badges';
 $string['issuersetup'] = 'Detailed instructions on configuring the common OAuth 2 services';
 $string['issuersetuptype'] = 'Detailed instructions on setting up the {$a} OAuth 2 provider';
 $string['issueralloweddomains_help'] = 'If set, this setting is a comma separated list of domains that logins will be restricted to when using this provider.';
@@ -103,6 +102,7 @@ $string['linkedin_service'] = 'LinkedIn';
 $string['logindisplay'] = 'Display on login page as';
 $string['loginissuer'] = 'Allow login';
 $string['microsoft_service'] = 'Microsoft';
+$string['moodlenet_service'] = 'MoodleNet';
 $string['nextcloud_service'] = 'Nextcloud';
 $string['notconfigured'] = 'Not configured';
 $string['notdiscovered'] = 'Service discovery not successful';
@@ -125,9 +125,5 @@ $string['userfieldmappingdeleted'] = 'User field mapping deleted';
 $string['userfieldmappingsforissuer'] = 'User field mappings for issuer: {$a}';
 $string['privacy:metadata'] = 'The OAuth 2 services plugin does not store any personal data.';
 
-// Deprecated since Moodle 3.11.
-$string['createnewfacebookissuer'] = 'Create new Facebook service';
-$string['createnewgoogleissuer'] = 'Create new Google service';
-$string['createnewissuer'] = 'Create new custom service';
-$string['createnewmicrosoftissuer'] = 'Create new Microsoft service';
-$string['createnewnextcloudissuer'] = 'Create new Nextcloud service';
+// Deprecated since Moodle 4.3.
+$string['imsobv2p1_service'] = 'Open Badges';

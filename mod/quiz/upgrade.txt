@@ -1,12 +1,23 @@
 This files describes API changes in the quiz code.
 
+=== 4.3 ===
+
+* The method get_questions() has a new parameter 'requirequestionfullyloaded' which can be used to instruct whether the
+  questions should be fully loaded or not.
+
 === 4.2 ===
+
+* For the three quiz web services: mod_quiz_get_attempt_data, mod_quiz_get_attempt_summary and
+  mod_quiz_get_attempt_review, the ->number property of each question is now deprecated
+  (It had the wrong time and was documented wrongly.) In the future, please use the new property
+  ->questionnumber. Note, this question 'number' can include any string (e.g. 'Qs 1 & 2') so it is
+  important to applying htmlspecialchars, or equivalent, to the value if you are outputting to HTML.
 
 * The methods in the quiz_settings class which return a URL now all return a moodle_url. Previously
   some returns a moodle_url and others aa string.
-* The method quiz_settings::confirm_start_attempt_message, which was deprecated in Moodle 3.1, is now completely removed.
-* The field view_page::$startattemptwarning, which was deprecated in Moodle 3.1, is now completely removed.
+
 * 'firstslotid' value is not used in section_shuffle_updated event anymore.
+
 * The quiz has a lot of old classes in lib.php files. These have now been moved into the classes folder,
   and so are now in namespaces. Because of Moodle's class renaming support, your code should continue
   working, but output deprecated warnings, so you probably want to update. This should mostly be
@@ -77,16 +88,35 @@ This files describes API changes in the quiz code.
   - mod/quiz/renderer.php - actually, no debugging ouput for this one because of how renderer factories work.
   - mod/quiz/attemptlib.php
 
+* Various functions related to calculating grades have moved into a new class mod_quiz\grade_calculator.
+  You get that using $quizobj->get_grade_calculator(), then the following old functions have become these new methods.
+  - quiz_update_sumgrades -> recompute_quiz_sumgrades
+  - quiz_update_all_attempt_sumgrades -> recompute_all_attempt_sumgrades
+  - quiz_update_all_final_grades -> recompute_all_final_grades
+  - quiz_set_grade -> update_quiz_maximum_grade
+  - quiz_save_best_grade -> recompute_final_grade
+  - quiz_calculate_best_grade -> [no public direct replacement]
+  - quiz_calculate_best_attempt - [no replacement. It was not used.]
+
 * Final deprecation (complete removal) of the following functions which were deprecated long ago:
   - quiz_groups_member_added_handler - deprecated since 2.6
   - quiz_groups_member_removed_handler - deprecated since 2.6
   - quiz_groups_group_deleted_handler - deprecated since 2.6
   - quiz_groups_members_removed_handler - deprecated since 2.6
+  - The method quiz_settings::confirm_start_attempt_message - deprecated in Moodle 3.1
+  - The field view_page::$startattemptwarning - deprecated in Moodle 3.1
   - attempts_report::load_relevant_students - deprecated since 3.2
   - quiz_statistics_graph_get_new_colour - deprecated since 3.2
   - The file mod/quiz/report/overview/overviewgraph.php - deprecated since 3.2
   - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
   - quiz_print_overview - deprecated since 3.3
+
+* For properties that were previously only declared dynamically, a few classes now include property declarations to support PHP 8.2.
+  The affected classes are:
+   - restore_quiz_activity_structure_step
+   - attempts_report_table
+   - attempts_report
+   - quiz_overview_report (Removing $hasgroupstudents, because the parent attempts_report class has the same variable.)
 
 === 4.1 ===
 

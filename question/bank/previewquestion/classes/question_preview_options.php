@@ -42,6 +42,9 @@ class question_preview_options extends question_display_options {
     /** @var string prefix to append to field names to get user_preference names. */
     const OPTIONPREFIX = 'question_preview_options_';
 
+    /** @var int Special value for question version ID to indicate that we should always use the latest version */
+    const ALWAYS_LATEST = 0;
+
     /**
      * Constructor.
      * @param \stdClass $question

@@ -4,6 +4,7 @@ defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
 require_once($CFG->libdir.'/completionlib.php');
+require_once($CFG->libdir . '/pdflib.php');
 
 /**
  * The form for handling editing a course.
@@ -144,14 +145,28 @@ class course_edit_form extends moodleform {
             }
         }
 
+        // Get the task to change automatically the course visibility when the current day matches the course start date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\show_started_courses_task');
+        $startdatestring = 'startdate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $startdatestring = 'startdatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'startdate', get_string('startdate'));
-        $mform->addHelpButton('startdate', 'startdate');
+        $mform->addHelpButton('startdate', $startdatestring);
         $date = (new DateTime())->setTimestamp(usergetmidnight(time()));
         $date->modify('+1 day');
         $mform->setDefault('startdate', $date->getTimestamp());
 
+        // Get the task to change automatically the course visibility when the current day matches the course end date.
+        $task = \core\task\manager::get_scheduled_task('\core\task\hide_ended_courses_task');
+        $enddatestring = 'enddate';
+        if (!empty($task) && !$task->get_disabled()) {
+            // When the task is enabled, display a different help message.
+            $enddatestring = 'enddatewithtaskenabled';
+        }
         $mform->addElement('date_time_selector', 'enddate', get_string('enddate'), array('optional' => true));
-        $mform->addHelpButton('enddate', 'enddate');
+        $mform->addHelpButton('enddate', $enddatestring);
 
         if (!empty($CFG->enablecourserelativedates)) {
             $attributes = [
@@ -318,6 +333,22 @@ class course_edit_form extends moodleform {
         $mform->addHelpButton('maxbytes', 'maximumupload');
         $mform->setDefault('maxbytes', $courseconfig->maxbytes);
 
+        // PDF font.
+        if (!empty($CFG->enablepdfexportfont)) {
+            $pdf = new \pdf;
+            $fontlist = $pdf->get_export_fontlist();
+            // Show the option if the font is defined more than one.
+            if (count($fontlist) > 1) {
+                $defaultfont = $courseconfig->pdfexportfont ?? 'freesans';
+                if (empty($fontlist[$defaultfont])) {
+                    $defaultfont = current($fontlist);
+                }
+                $mform->addElement('select', 'pdfexportfont', get_string('pdfexportfont', 'course'), $fontlist);
+                $mform->addHelpButton('pdfexportfont', 'pdfexportfont', 'course');
+                $mform->setDefault('pdfexportfont', $defaultfont);
+            }
+        }
+
         // Completion tracking.
         if (completion_info::is_enabled_for_site()) {
             $mform->addElement('header', 'completionhdr', get_string('completion', 'completion'));
@@ -357,22 +388,6 @@ class course_edit_form extends moodleform {
         $options[0] = get_string('none');
         $mform->addElement('select', 'defaultgroupingid', get_string('defaultgrouping', 'group'), $options);
 
-        if ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:renameroles', $categorycontext))
-                || (!empty($course->id) && has_capability('moodle/course:renameroles', $coursecontext))) {
-            // Customizable role names in this course.
-            $mform->addElement('header', 'rolerenaming', get_string('rolerenaming'));
-            $mform->addHelpButton('rolerenaming', 'rolerenaming');
-
-            if ($roles = get_all_roles()) {
-                $roles = role_fix_names($roles, null, ROLENAME_ORIGINAL);
-                $assignableroles = get_roles_for_contextlevels(CONTEXT_COURSE);
-                foreach ($roles as $role) {
-                    $mform->addElement('text', 'role_' . $role->id, get_string('yourwordforx', '', $role->localname));
-                    $mform->setType('role_' . $role->id, PARAM_TEXT);
-                }
-            }
-        }
-
         if (core_tag_tag::is_enabled('core', 'course') &&
                 ((empty($course->id) && guess_if_creator_will_have_course_capability('moodle/course:tag', $categorycontext))
                 || (!empty($course->id) && has_capability('moodle/course:tag', $coursecontext)))) {
@@ -385,6 +400,7 @@ class course_edit_form extends moodleform {
         $handler = core_course\customfield\course_handler::create();
         $handler->set_parent_context($categorycontext); // For course handler only.
         $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
+
 
         // When two elements we need a group.
         $buttonarray = array();
@@ -455,6 +471,7 @@ class course_edit_form extends moodleform {
         // Tweak the form with values provided by custom fields in use.
         $handler  = core_course\customfield\course_handler::create();
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
+
     }
 
     /**

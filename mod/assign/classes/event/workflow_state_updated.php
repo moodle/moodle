@@ -106,19 +106,6 @@ class workflow_state_updated extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $user = $this->get_record_snapshot('user', $this->relateduserid);
-        $a = array('id' => $user->id, 'fullname' => fullname($user), 'state' => $this->other['newstate']);
-        $logmessage = get_string('setmarkingworkflowstateforlog', 'assign', $a);
-        $this->set_legacy_logdata('set marking workflow state', $logmessage);
-        return parent::get_legacy_logdata();
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

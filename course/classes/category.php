@@ -607,7 +607,11 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             if (core_text::strlen($data->idnumber) > 100) {
                 throw new moodle_exception('idnumbertoolong');
             }
-            if (strval($data->idnumber) !== '' && $DB->record_exists('course_categories', array('idnumber' => $data->idnumber))) {
+
+            // Ensure there are no other categories with the same idnumber.
+            if (strval($data->idnumber) !== '' &&
+                    $DB->record_exists_select('course_categories', 'idnumber = ? AND id != ?', [$data->idnumber, $this->id])) {
+
                 throw new moodle_exception('categoryidnumbertaken');
             }
             $newcategory->idnumber = $data->idnumber;
@@ -914,7 +918,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         // Trigger a purge for all caches listening for changes to category enrolment.
         cache_helper::purge_by_event('changesincategoryenrolment');
 
-        if (!$CFG->coursecontact || !in_array($roleid, explode(',', $CFG->coursecontact))) {
+        if (empty($CFG->coursecontact) || !in_array($roleid, explode(',', $CFG->coursecontact))) {
             // The role is not one of course contact roles.
             return;
         }
@@ -2245,8 +2249,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                     'objectid' => $childcat->id,
                     'context' => $childcat->get_context()
                 ));
-                $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id,
-                    $childcat->id));
                 $event->trigger();
             }
             fix_course_sortorder();
@@ -2437,7 +2439,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -2509,7 +2510,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -2568,7 +2568,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'show', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -3138,8 +3137,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'management.php?categoryid=' . $this->id,
-                $this->id));
             $event->trigger();
 
             // Finally reorder courses.
@@ -3170,6 +3167,9 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @return bool
      */
     public function can_request_course() {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+
         return course_request::can_request($this->get_context());
     }
 
@@ -3261,6 +3261,8 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      */
     public static function get_nearest_editable_subcategory(core_course_category $parentcat,
         array $permissionstocheck): ?core_course_category {
+        global $USER, $DB;
+
         // First, check the parent category.
         if ($parentcat->has_capabilities($permissionstocheck)) {
             return $parentcat;
@@ -3271,15 +3273,54 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             return null;
         }
 
-        // Check the child categories.
-        $subcategoryids = $parentcat->get_all_children_ids();
-        foreach ($subcategoryids as $subcategoryid) {
-            $subcategory = static::get($subcategoryid, MUST_EXIST, true);
+        // Get all course category contexts that are children of the parent category's context where
+        // a) there is a role assignment for the current user or
+        // b) there are role capability overrides for a role that the user has in this context.
+        // We never need to return the system context because it cannot be a child of another context.
+        $fields = array_keys(array_filter(self::$coursecatfields));
+        $ctxselect = context_helper::get_preload_record_columns_sql('ctx');
+        $rs = $DB->get_recordset_sql("
+                SELECT cc.". join(',cc.', $fields). ", $ctxselect
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat1
+                  JOIN {role_assignments} ra ON ra.contextid = ctx.id
+                 WHERE ctx.path LIKE :parentpath1
+                       AND ra.userid = :userid1
+            UNION
+                SELECT cc.". join(',cc.', $fields). ", $ctxselect
+                  FROM {course_categories} cc
+                  JOIN {context} ctx ON cc.id = ctx.instanceid AND ctx.contextlevel = :contextcoursecat2
+                  JOIN {role_capabilities} rc ON rc.contextid = ctx.id
+                  JOIN {role_assignments} rc_ra ON rc_ra.roleid = rc.roleid
+                  JOIN {context} rc_ra_ctx ON rc_ra_ctx.id = rc_ra.contextid
+                 WHERE ctx.path LIKE :parentpath2
+                       AND rc_ra.userid = :userid2
+                       AND (ctx.path = rc_ra_ctx.path OR ctx.path LIKE " . $DB->sql_concat("rc_ra_ctx.path", "'/%'") . ")
+        ", [
+            'contextcoursecat1' => CONTEXT_COURSECAT,
+            'contextcoursecat2' => CONTEXT_COURSECAT,
+            'parentpath1' => $parentcat->get_context()->path . '/%',
+            'parentpath2' => $parentcat->get_context()->path . '/%',
+            'userid1' => $USER->id,
+            'userid2' => $USER->id
+        ]);
+
+        // Check if user has required capabilities in any of the contexts.
+        $tocache = [];
+        $result = null;
+        foreach ($rs as $record) {
+            $subcategory = new self($record);
+            $tocache[$subcategory->id] = $subcategory;
             if ($subcategory->has_capabilities($permissionstocheck)) {
-                return $subcategory;
+                $result = $subcategory;
+                break;
             }
         }
+        $rs->close();
 
-        return null;
+        $coursecatrecordcache = cache::make('core', 'coursecatrecords');
+        $coursecatrecordcache->set_many($tocache);
+
+        return $result;
     }
 }

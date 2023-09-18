@@ -321,10 +321,6 @@ END;
 
 	protected function _insertID($table = '', $column = '')
 	{
-
-		if (!$this->seqField)
-			return false;
-
 		if ($this->schema)
 		{
 			$t = strpos($table,'.');
@@ -1151,10 +1147,11 @@ END;
 		} else
 			$hasref = false;
 
+		/** @var ADORecordset_oci8 $rs */
 		$rs = $this->Execute($stmt);
 		if ($rs) {
 			if ($rs->databaseType == 'array') {
-				oci_free_cursor($stmt[4]);
+				oci_free_statement($stmt[4]);
 			}
 			elseif ($hasref) {
 				$rs->_refcursor = $stmt[4];
@@ -1603,6 +1600,9 @@ class ADORecordset_oci8 extends ADORecordSet {
 	var $databaseType = 'oci8';
 	var $bind=false;
 	var $_fieldobjs;
+
+	/** @var resource Cursor reference */
+	var $_refcursor;
 
 	function __construct($queryID,$mode=false)
 	{

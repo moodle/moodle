@@ -21,7 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {relativeUrl} from 'core/url';
 import {saveCancel} from 'core/notification';
@@ -30,7 +30,6 @@ import Templates from 'core/templates';
 prefetchStrings('admin', ['confirmation']);
 prefetchStrings('mod_data', [
     'resettemplateconfirmtitle',
-    'resettemplateconfirm',
     'enabletemplateeditorcheck',
     'editorenable'
 ]);
@@ -43,9 +42,9 @@ prefetchStrings('core', [
  */
 const selectors = {
     toggleTemplateEditor: 'input[name="useeditor"]',
+    resetTemplateAction: '[data-action="resettemplate"]',
     resetTemplate: 'input[name="defaultform"]',
     resetAllTemplates: 'input[name="resetall"]',
-    resetButton: 'input[name="resetbutton"]',
     resetAllCheck: 'input[name="resetallcheck"]',
     editForm: '#edittemplateform',
 };
@@ -57,25 +56,31 @@ const selectors = {
  * @param {string} mode The template mode
  */
 const registerEventListeners = (instanceId, mode) => {
-    registerResetButton();
+    registerResetButton(mode);
     registerEditorToggler(instanceId, mode);
 };
 
-const registerResetButton = () => {
+const registerResetButton = (mode) => {
     const editForm = document.querySelector(selectors.editForm);
-    const resetButton = document.querySelector(selectors.resetButton);
     const resetTemplate = document.querySelector(selectors.resetTemplate);
     const resetAllTemplates = document.querySelector(selectors.resetAllTemplates);
+    const resetTemplateAction = document.querySelector(selectors.resetTemplateAction);
 
-    if (!resetButton || !resetTemplate || !editForm) {
+    if (!resetTemplateAction || !resetTemplate || !editForm) {
         return;
     }
-
-    resetButton.addEventListener('click', async(event) => {
+    prefetchStrings('mod_data', [
+        mode
+    ]);
+    resetTemplateAction.addEventListener('click', async(event) => {
         event.preventDefault();
+        const params = {
+            resetallname: "resetallcheck",
+            templatename: await getString(mode, 'mod_data'),
+        };
         saveCancel(
             getString('resettemplateconfirmtitle', 'mod_data'),
-            Templates.render('mod_data/template_editor_resetmodal', {resetallname: "resetallcheck"}),
+            Templates.render('mod_data/template_editor_resetmodal', params),
             getString('reset', 'core'),
             () => {
                 resetTemplate.value = "true";

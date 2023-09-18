@@ -25,8 +25,8 @@
 defined('MOODLE_INTERNAL') || die();
 
 
-$plugin->version   = 2022112800; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022111800; // Requires this Moodle version.
+$plugin->version   = 2023042400; // The current plugin version (Date: YYYYMMDDXX).
+$plugin->requires  = 2023041800; // Requires this Moodle version.
 $plugin->component = 'tool_lpimportcsv'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array('tool_lp' => 2022111800);
+$plugin->dependencies = array('tool_lp' => 2023041800);
 

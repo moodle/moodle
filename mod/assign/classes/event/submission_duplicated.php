@@ -95,17 +95,6 @@ class submission_duplicated extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $submission = $this->get_record_snapshot('assign_submission', $this->objectid);
-        $this->set_legacy_logdata('submissioncopied', $this->assign->format_submission_for_log($submission));
-        return parent::get_legacy_logdata();
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

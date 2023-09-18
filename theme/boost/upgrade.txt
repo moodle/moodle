@@ -1,6 +1,10 @@
 This file describes API changes in /theme/boost
 information provided here is intended especially for theme designers.
 
+=== 4.3 ===
+* The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
+* New SCSS mixin optional_animate to animate an element unless if the user has reduced motion in their preferences.
+
 === 4.0 ===
 * Following the adopted standards, breadcrumbs have been removed for pages that reside on the 1st level within a course
   e.g. participants, grades, settings, reports.

@@ -161,6 +161,12 @@ class grade_category extends grade_object {
     protected $canapplylimitrules;
 
     /**
+     * e.g. 'category', 'course' and 'mod', 'blocks', 'import', etc...
+     * @var string $itemtype
+     */
+    public $itemtype;
+
+    /**
      * Builds this category's path string based on its parents (if any) and its own id number.
      * This is typically done just before inserting this object in the DB for the first time,
      * or when a new parent is added or changed. It is a recursive function: once the calling
@@ -472,9 +478,10 @@ class grade_category extends grade_object {
      *  4. Save them in final grades of associated category grade item
      *
      * @param int $userid The user ID if final grade generation should be limited to a single user
+     * @param \core\progress\base|null $progress Optional progress indicator
      * @return bool
      */
-    public function generate_grades($userid=null) {
+    public function generate_grades($userid=null, ?\core\progress\base $progress = null) {
         global $CFG, $DB;
 
         $this->load_grade_item();
@@ -564,6 +571,12 @@ class grade_category extends grade_object {
 
                 if ($this->grade_item->id == $grade->itemid) {
                     $oldgrade = $grade;
+                }
+
+                if ($progress) {
+                    // Incrementing the progress by nothing causes it to send an update (once per second)
+                    // to the web browser so as to prevent the connection timing out.
+                    $progress->increment_progress(0);
                 }
             }
             $this->aggregate_grades($prevuser,
@@ -2523,25 +2536,21 @@ class grade_category extends grade_object {
 
         $result = $this->grade_item->set_locked($lockedstate, $cascade, true);
 
-        if ($cascade) {
-            //process all children - items and categories
-            if ($children = grade_item::fetch_all(array('categoryid'=>$this->id))) {
+        // Process all children - items and categories.
+        if ($children = grade_item::fetch_all(['categoryid' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, false);
 
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, false);
-
-                    if (empty($lockedstate) and $refresh) {
-                        //refresh when unlocking
-                        $child->refresh_grades();
-                    }
+                if (empty($lockedstate) && $refresh) {
+                    // Refresh when unlocking.
+                    $child->refresh_grades();
                 }
             }
+        }
 
-            if ($children = grade_category::fetch_all(array('parent'=>$this->id))) {
-
-                foreach ($children as $child) {
-                    $child->set_locked($lockedstate, true, true);
-                }
+        if ($children = static::fetch_all(['parent' => $this->id])) {
+            foreach ($children as $child) {
+                $child->set_locked($lockedstate, $cascade, true);
             }
         }
 
@@ -2551,7 +2560,7 @@ class grade_category extends grade_object {
     /**
      * Overrides grade_object::set_properties() to add special handling for changes to category aggregation types
      *
-     * @param stdClass $instance the object to set the properties on
+     * @param grade_category $instance the object to set the properties on
      * @param array|stdClass $params Either an associative array or an object containing property name, property value pairs
      */
     public static function set_properties(&$instance, $params) {

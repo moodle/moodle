@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_question\local\bank\question_edit_contexts;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -903,6 +904,9 @@ class question_attempt {
             global $PAGE;
             $page = $PAGE;
         }
+        if (is_null($options->versioninfo)) {
+            $options->versioninfo = (new question_edit_contexts($page->context))->have_one_edit_tab_cap('questions');
+        }
         $qoutput = $page->get_renderer('core', 'question');
         $qtoutput = $this->question->get_renderer($page);
         return $this->behaviour->render($options, $number, $qoutput, $qtoutput);
@@ -1473,11 +1477,16 @@ class question_attempt {
         if ($this->get_question(false) === $otherversion) {
             return $oldstep->get_all_data();
         } else {
+            // Update the data belonging to the question type by asking the question to do it.
             $attemptstatedata = $this->get_question(false)->update_attempt_state_data_for_new_version(
                     $oldstep, $otherversion);
 
-            foreach ($oldstep->get_behaviour_data() as $name => $value) {
-                $attemptstatedata['-' . $name] = $value;
+            // Then copy over all the behaviour and metadata variables.
+            // This terminology is explained in the class comment on {@see question_attempt_step}.
+            foreach ($oldstep->get_all_data() as $name => $value) {
+                if (substr($name, 0, 1) === '-' || substr($name, 0, 2) === ':_') {
+                    $attemptstatedata[$name] = $value;
+                }
             }
             return $attemptstatedata;
         }

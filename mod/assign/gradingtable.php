@@ -64,6 +64,8 @@ class assign_grading_table extends table_sql implements renderable {
     private $plugincache = array();
     /** @var array $scale - A list of the keys and descriptions for the custom scale */
     private $scale = null;
+    /** @var bool true if the user has this capability. Otherwise false. */
+    private $hasviewblind;
 
     /**
      * overridden constructor keeps a reference to the assignment class that is displaying this table
@@ -789,7 +791,7 @@ class assign_grading_table extends table_sql implements renderable {
         $group = false;
         $this->get_group_and_submission($row->id, $group, $submission, -1);
         if ($group) {
-            return $group->name;
+            return format_string($group->name, true, ['context' => $this->assignment->get_context()]);
         } else if ($this->assignment->get_instance()->preventsubmissionnotingroup) {
             $usergroups = $this->assignment->get_all_groups($row->id);
             if (count($usergroups) > 1) {
@@ -1419,7 +1421,7 @@ class assign_grading_table extends table_sql implements renderable {
 
         $menu = new action_menu();
         $menu->set_owner_selector('.gradingtable-actionmenu');
-        $menu->set_constraint('.gradingtable > .no-overflow');
+        $menu->set_boundary('window');
         $menu->set_menu_trigger(get_string('edit'));
         foreach ($actions as $action) {
             $menu->add($action);

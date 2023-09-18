@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -314,6 +315,7 @@ class Google_Service_Replicapoolupdater extends Google_Service
  *   $rollingUpdates = $replicapoolupdaterService->rollingUpdates;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdates_Resource extends Google_Service_Resource
 {
 
@@ -483,6 +485,7 @@ class Google_Service_Replicapoolupdater_RollingUpdates_Resource extends Google_S
  *   $zoneOperations = $replicapoolupdaterService->zoneOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_ZoneOperations_Resource extends Google_Service_Resource
 {
 
@@ -530,6 +533,7 @@ class Google_Service_Replicapoolupdater_ZoneOperations_Resource extends Google_S
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_InstanceUpdate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -566,6 +570,7 @@ class Google_Service_Replicapoolupdater_InstanceUpdate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_InstanceUpdateError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -585,6 +590,7 @@ class Google_Service_Replicapoolupdater_InstanceUpdateError extends Google_Colle
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_InstanceUpdateErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -620,6 +626,7 @@ class Google_Service_Replicapoolupdater_InstanceUpdateErrorErrors extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_InstanceUpdateList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -666,6 +673,7 @@ class Google_Service_Replicapoolupdater_InstanceUpdateList extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -875,6 +883,7 @@ class Google_Service_Replicapoolupdater_Operation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -894,6 +903,7 @@ class Google_Service_Replicapoolupdater_OperationError extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -929,6 +939,7 @@ class Google_Service_Replicapoolupdater_OperationErrorErrors extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -984,6 +995,7 @@ class Google_Service_Replicapoolupdater_OperationList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1021,6 +1033,7 @@ class Google_Service_Replicapoolupdater_OperationWarnings extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1047,6 +1060,7 @@ class Google_Service_Replicapoolupdater_OperationWarningsData extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1201,6 +1215,7 @@ class Google_Service_Replicapoolupdater_RollingUpdate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdateError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1220,6 +1235,7 @@ class Google_Service_Replicapoolupdater_RollingUpdateError extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdateErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1255,6 +1271,7 @@ class Google_Service_Replicapoolupdater_RollingUpdateErrorErrors extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdateList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1301,6 +1318,7 @@ class Google_Service_Replicapoolupdater_RollingUpdateList extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Replicapoolupdater_RollingUpdatePolicy extends Google_Model
 {
   protected $internal_gapi_mappings = array(

@@ -96,6 +96,19 @@ abstract class restore_task extends base_task {
     }
 
     /**
+     * Given a commment area, return the itemname that contains the itemid mappings
+     *
+     * By default, both are the same (commentarea = itemname), so return it. If some
+     * plugins use a different approach, this method can be overriden in its task.
+     *
+     * @param string $commentarea area defined for this comment
+     * @return string itemname that contains the related itemid mapping
+     */
+    public function get_comment_mapping_itemname($commentarea) {
+        return $commentarea;
+    }
+
+    /**
      * If the task has been executed, launch its after_restore()
      * method if available
      */
@@ -110,6 +123,28 @@ abstract class restore_task extends base_task {
         if ($this->executed && method_exists($this, 'after_restore')) {
             $this->after_restore();
         }
+    }
+
+    /**
+     * Compares the provided moodle version with the one the backup was taken from.
+     *
+     * @param int $version Moodle version number (YYYYMMDD or YYYYMMDDXX)
+     * @param string $operator Operator to compare the provided version to the backup version. {@see version_compare()}
+     * @return bool True if the comparison passes.
+     */
+    public function backup_version_compare(int $version, string $operator) {
+        return $this->plan->backup_version_compare($version, $operator);
+    }
+
+    /**
+     * Compares the provided moodle release with the one the backup was taken from.
+     *
+     * @param string $release Moodle release (X.Y or X.Y.Z)
+     * @param string $operator Operator to compare the provided release to the backup release. {@see version_compare()}
+     * @return bool True if the comparison passes.
+     */
+    public function backup_release_compare(string $release, string $operator) {
+        return $this->plan->backup_release_compare($release, $operator);
     }
 }
 

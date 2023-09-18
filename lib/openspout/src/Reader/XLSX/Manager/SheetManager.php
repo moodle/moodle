@@ -1,29 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\XLSX\Manager;
 
-use OpenSpout\Reader\Common\Entity\Options;
+use OpenSpout\Common\Helper\Escaper\XLSX;
+use OpenSpout\Reader\Common\Manager\RowManager;
 use OpenSpout\Reader\Common\XMLProcessor;
-use OpenSpout\Reader\XLSX\Creator\InternalEntityFactory;
+use OpenSpout\Reader\Wrapper\XMLReader;
+use OpenSpout\Reader\XLSX\Helper\CellValueFormatter;
+use OpenSpout\Reader\XLSX\Options;
+use OpenSpout\Reader\XLSX\RowIterator;
 use OpenSpout\Reader\XLSX\Sheet;
+use OpenSpout\Reader\XLSX\SheetHeaderReader;
 
 /**
- * This class manages XLSX sheets.
+ * @internal
  */
-class SheetManager
+final class SheetManager
 {
-    /** Paths of XML files relative to the XLSX file root */
+    /**
+     * Paths of XML files relative to the XLSX file root.
+     */
     public const WORKBOOK_XML_RELS_FILE_PATH = 'xl/_rels/workbook.xml.rels';
     public const WORKBOOK_XML_FILE_PATH = 'xl/workbook.xml';
 
-    /** Definition of XML node names used to parse data */
+    /**
+     * Definition of XML node names used to parse data.
+     */
     public const XML_NODE_WORKBOOK_PROPERTIES = 'workbookPr';
     public const XML_NODE_WORKBOOK_VIEW = 'workbookView';
     public const XML_NODE_SHEET = 'sheet';
     public const XML_NODE_SHEETS = 'sheets';
     public const XML_NODE_RELATIONSHIP = 'Relationship';
 
-    /** Definition of XML attributes used to parse data */
+    /**
+     * Definition of XML attributes used to parse data.
+     */
     public const XML_ATTRIBUTE_DATE_1904 = 'date1904';
     public const XML_ATTRIBUTE_ACTIVE_TAB = 'activeTab';
     public const XML_ATTRIBUTE_R_ID = 'r:id';
@@ -32,51 +45,41 @@ class SheetManager
     public const XML_ATTRIBUTE_ID = 'Id';
     public const XML_ATTRIBUTE_TARGET = 'Target';
 
-    /** State value to represent a hidden sheet */
+    /**
+     * State value to represent a hidden sheet.
+     */
     public const SHEET_STATE_HIDDEN = 'hidden';
 
     /** @var string Path of the XLSX file being read */
-    protected $filePath;
+    private string $filePath;
 
-    /** @var \OpenSpout\Common\Manager\OptionsManagerInterface Reader's options manager */
-    protected $optionsManager;
+    private Options $options;
 
-    /** @var \OpenSpout\Reader\XLSX\Manager\SharedStringsManager Manages shared strings */
-    protected $sharedStringsManager;
+    /** @var SharedStringsManager Manages shared strings */
+    private SharedStringsManager $sharedStringsManager;
 
-    /** @var \OpenSpout\Common\Helper\GlobalFunctionsHelper Helper to work with global functions */
-    protected $globalFunctionsHelper;
+    /** @var XLSX Used to unescape XML data */
+    private XLSX $escaper;
 
-    /** @var InternalEntityFactory Factory to create entities */
-    protected $entityFactory;
-
-    /** @var \OpenSpout\Common\Helper\Escaper\XLSX Used to unescape XML data */
-    protected $escaper;
-
-    /** @var array List of sheets */
-    protected $sheets;
+    /** @var Sheet[] List of sheets */
+    private array $sheets;
 
     /** @var int Index of the sheet currently read */
-    protected $currentSheetIndex;
+    private int $currentSheetIndex;
 
     /** @var int Index of the active sheet (0 by default) */
-    protected $activeSheetIndex;
+    private int $activeSheetIndex;
 
-    /**
-     * @param string                                              $filePath             Path of the XLSX file being read
-     * @param \OpenSpout\Common\Manager\OptionsManagerInterface   $optionsManager       Reader's options manager
-     * @param \OpenSpout\Reader\XLSX\Manager\SharedStringsManager $sharedStringsManager Manages shared strings
-     * @param \OpenSpout\Common\Helper\Escaper\XLSX               $escaper              Used to unescape XML data
-     * @param InternalEntityFactory                               $entityFactory        Factory to create entities
-     * @param mixed                                               $sharedStringsManager
-     */
-    public function __construct($filePath, $optionsManager, $sharedStringsManager, $escaper, $entityFactory)
-    {
+    public function __construct(
+        string $filePath,
+        Options $options,
+        SharedStringsManager $sharedStringsManager,
+        XLSX $escaper
+    ) {
         $this->filePath = $filePath;
-        $this->optionsManager = $optionsManager;
+        $this->options = $options;
         $this->sharedStringsManager = $sharedStringsManager;
         $this->escaper = $escaper;
-        $this->entityFactory = $entityFactory;
     }
 
     /**
@@ -85,14 +88,14 @@ class SheetManager
      *
      * @return Sheet[] Sheets within the XLSX file
      */
-    public function getSheets()
+    public function getSheets(): array
     {
         $this->sheets = [];
         $this->currentSheetIndex = 0;
         $this->activeSheetIndex = 0; // By default, the first sheet is active
 
-        $xmlReader = $this->entityFactory->createXMLReader();
-        $xmlProcessor = $this->entityFactory->createXMLProcessor($xmlReader);
+        $xmlReader = new XMLReader();
+        $xmlProcessor = new XMLProcessor($xmlReader);
 
         $xmlProcessor->registerCallback(self::XML_NODE_WORKBOOK_PROPERTIES, XMLProcessor::NODE_TYPE_START, [$this, 'processWorkbookPropertiesStartingNode']);
         $xmlProcessor->registerCallback(self::XML_NODE_WORKBOOK_VIEW, XMLProcessor::NODE_TYPE_START, [$this, 'processWorkbookViewStartingNode']);
@@ -112,12 +115,12 @@ class SheetManager
      *
      * @return int A return code that indicates what action should the processor take next
      */
-    protected function processWorkbookPropertiesStartingNode($xmlReader)
+    private function processWorkbookPropertiesStartingNode(XMLReader $xmlReader): int
     {
         // Using "filter_var($x, FILTER_VALIDATE_BOOLEAN)" here because the value of the "date1904" attribute
         // may be the string "false", that is not mapped to the boolean "false" by default...
         $shouldUse1904Dates = filter_var($xmlReader->getAttribute(self::XML_ATTRIBUTE_DATE_1904), FILTER_VALIDATE_BOOLEAN);
-        $this->optionsManager->setOption(Options::SHOULD_USE_1904_DATES, $shouldUse1904Dates);
+        $this->options->SHOULD_USE_1904_DATES = $shouldUse1904Dates;
 
         return XMLProcessor::PROCESSING_CONTINUE;
     }
@@ -127,7 +130,7 @@ class SheetManager
      *
      * @return int A return code that indicates what action should the processor take next
      */
-    protected function processWorkbookViewStartingNode($xmlReader)
+    private function processWorkbookViewStartingNode(XMLReader $xmlReader): int
     {
         // The "workbookView" node is located before "sheet" nodes, ensuring that
         // the active sheet is known before parsing sheets data.
@@ -141,7 +144,7 @@ class SheetManager
      *
      * @return int A return code that indicates what action should the processor take next
      */
-    protected function processSheetStartingNode($xmlReader)
+    private function processSheetStartingNode(XMLReader $xmlReader): int
     {
         $isSheetActive = ($this->currentSheetIndex === $this->activeSheetIndex);
         $this->sheets[] = $this->getSheetFromSheetXMLNode($xmlReader, $this->currentSheetIndex, $isSheetActive);
@@ -153,7 +156,7 @@ class SheetManager
     /**
      * @return int A return code that indicates what action should the processor take next
      */
-    protected function processSheetsEndingNode()
+    private function processSheetsEndingNode(): int
     {
         return XMLProcessor::PROCESSING_STOP;
     }
@@ -169,27 +172,27 @@ class SheetManager
      *
      * @return \OpenSpout\Reader\XLSX\Sheet Sheet instance
      */
-    protected function getSheetFromSheetXMLNode($xmlReaderOnSheetNode, $sheetIndexZeroBased, $isSheetActive)
+    private function getSheetFromSheetXMLNode(XMLReader $xmlReaderOnSheetNode, int $sheetIndexZeroBased, bool $isSheetActive): Sheet
     {
         $sheetId = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_R_ID);
+        \assert(null !== $sheetId);
 
         $sheetState = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_STATE);
         $isSheetVisible = (self::SHEET_STATE_HIDDEN !== $sheetState);
 
         $escapedSheetName = $xmlReaderOnSheetNode->getAttribute(self::XML_ATTRIBUTE_NAME);
+        \assert(null !== $escapedSheetName);
         $sheetName = $this->escaper->unescape($escapedSheetName);
 
         $sheetDataXMLFilePath = $this->getSheetDataXMLFilePathForSheetId($sheetId);
 
-        return $this->entityFactory->createSheet(
-            $this->filePath,
-            $sheetDataXMLFilePath,
+        return new Sheet(
+            $this->createRowIterator($this->filePath, $sheetDataXMLFilePath, $this->options, $this->sharedStringsManager),
+            $this->createSheetHeaderReader($this->filePath, $sheetDataXMLFilePath),
             $sheetIndexZeroBased,
             $sheetName,
             $isSheetActive,
-            $isSheetVisible,
-            $this->optionsManager,
-            $this->sharedStringsManager
+            $isSheetVisible
         );
     }
 
@@ -198,12 +201,12 @@ class SheetManager
      *
      * @return string The XML file path describing the sheet inside "workbook.xml.res", for the given sheet ID
      */
-    protected function getSheetDataXMLFilePathForSheetId($sheetId)
+    private function getSheetDataXMLFilePathForSheetId(string $sheetId): string
     {
         $sheetDataXMLFilePath = '';
 
         // find the file path of the sheet, by looking at the "workbook.xml.res" file
-        $xmlReader = $this->entityFactory->createXMLReader();
+        $xmlReader = new XMLReader();
         if ($xmlReader->openFileInZip($this->filePath, self::WORKBOOK_XML_RELS_FILE_PATH)) {
             while ($xmlReader->read()) {
                 if ($xmlReader->isPositionedOnStartingNode(self::XML_NODE_RELATIONSHIP)) {
@@ -213,9 +216,10 @@ class SheetManager
                         // In workbook.xml.rels, it is only "worksheets/sheet1.xml"
                         // In [Content_Types].xml, the path is "/xl/worksheets/sheet1.xml"
                         $sheetDataXMLFilePath = $xmlReader->getAttribute(self::XML_ATTRIBUTE_TARGET);
+                        \assert(null !== $sheetDataXMLFilePath);
 
                         // sometimes, the sheet data file path already contains "/xl/"...
-                        if (0 !== strpos($sheetDataXMLFilePath, '/xl/')) {
+                        if (!str_starts_with($sheetDataXMLFilePath, '/xl/')) {
                             $sheetDataXMLFilePath = '/xl/'.$sheetDataXMLFilePath;
 
                             break;
@@ -228,5 +232,54 @@ class SheetManager
         }
 
         return $sheetDataXMLFilePath;
+    }
+
+    private function createRowIterator(
+        string $filePath,
+        string $sheetDataXMLFilePath,
+        Options $options,
+        SharedStringsManager $sharedStringsManager
+    ): RowIterator {
+        $xmlReader = new XMLReader();
+
+        $workbookRelationshipsManager = new WorkbookRelationshipsManager($filePath);
+        $styleManager = new StyleManager(
+            $filePath,
+            $workbookRelationshipsManager->hasStylesXMLFile()
+                ? $workbookRelationshipsManager->getStylesXMLFilePath()
+                : null
+        );
+
+        $cellValueFormatter = new CellValueFormatter(
+            $sharedStringsManager,
+            $styleManager,
+            $options->SHOULD_FORMAT_DATES,
+            $options->SHOULD_USE_1904_DATES,
+            new XLSX()
+        );
+
+        return new RowIterator(
+            $filePath,
+            $sheetDataXMLFilePath,
+            $options->SHOULD_PRESERVE_EMPTY_ROWS,
+            $xmlReader,
+            new XMLProcessor($xmlReader),
+            $cellValueFormatter,
+            new RowManager()
+        );
+    }
+
+    private function createSheetHeaderReader(
+        string $filePath,
+        string $sheetDataXMLFilePath
+    ): SheetHeaderReader {
+        $xmlReader = new XMLReader();
+
+        return new SheetHeaderReader(
+            $filePath,
+            $sheetDataXMLFilePath,
+            $xmlReader,
+            new XMLProcessor($xmlReader)
+        );
     }
 }

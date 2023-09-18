@@ -41,8 +41,6 @@ class writer extends \core\dataformat\spout_base {
     /** @var $extension */
     protected $extension = ".xlsx";
 
-    /** @var $spouttype */
-    protected $spouttype = \OpenSpout\Common\Type::XLSX;
 
     /**
      * Set the title of the worksheet inside a spreadsheet

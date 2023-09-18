@@ -195,7 +195,7 @@ class portfolio_format_image extends portfolio_format_file {
     /**
      * Return all mimetypes that use image.gif (eg all images)
      *
-     * @return string
+     * @return array
      */
     public static function mimetypes() {
         return file_get_typegroup('type', 'image');

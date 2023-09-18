@@ -371,12 +371,8 @@ class page_requirements_manager {
         // Include block drag/drop if editing is on
         if ($page->user_is_editing()) {
             $params = array(
-                'courseid' => $page->course->id,
-                'pagetype' => $page->pagetype,
-                'pagelayout' => $page->pagelayout,
-                'subpage' => $page->subpage,
                 'regions' => $page->blocks->get_regions(),
-                'contextid' => $page->context->id,
+                'pagehash' => $page->get_edited_page_hash(),
             );
             if (!empty($page->cm->id)) {
                 $params['cmid'] = $page->cm->id;
@@ -387,6 +383,7 @@ class page_requirements_manager {
                                         'emptydragdropregion'),
                                   'moodle');
             $page->requires->yui_module('moodle-core-blocks', 'M.core_blocks.init_dragdrop', array($params), null, true);
+            $page->requires->js_call_amd('core_block/edit', 'init', ['pagehash' => $page->get_edited_page_hash()]);
         }
 
         // Include the YUI CSS Modules.
@@ -447,6 +444,10 @@ class page_requirements_manager {
      * @param bool $inhead initialise in head
      */
     public function js($url, $inhead = false) {
+        if ($url == '/question/qengine.js') {
+            debugging('The question/qengine.js has been deprecated. ' .
+                'Please use core_question/question_engine', DEBUG_DEVELOPER);
+        }
         $url = $this->js_fix_url($url);
         $where = $inhead ? 'head' : 'footer';
         $this->jsincludes[$where][$url->out()] = $url;
@@ -1850,6 +1851,12 @@ class YUI_config {
     public $insertBefore = 'firstthemesheet';
     public $groups = array();
     public $modules = array();
+    /** @var array The log sources that should be not be logged. */
+    public $logInclude = [];
+    /** @var array Tog sources that should be logged. */
+    public $logExclude = [];
+    /** @var string The minimum log level for YUI logging statements. */
+    public $logLevel;
 
     /**
      * @var array List of functions used by the YUI Loader group pattern recognition.

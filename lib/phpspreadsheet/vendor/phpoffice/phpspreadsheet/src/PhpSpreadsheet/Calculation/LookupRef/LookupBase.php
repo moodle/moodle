@@ -17,6 +17,7 @@ abstract class LookupBase
         }
     }
 
+    /** @param float|int|string $index_number */
     protected static function validateIndexLookup(array $lookup_array, $index_number): int
     {
         // index_number must be a number greater than or equal to 1.
@@ -33,7 +34,7 @@ abstract class LookupBase
         }
 
         // index_number must be less than or equal to the number of columns in lookup_array
-        if ((!is_array($lookup_array)) || (empty($lookup_array))) {
+        if (empty($lookup_array)) {
             throw new Exception(ExcelError::REF());
         }
 

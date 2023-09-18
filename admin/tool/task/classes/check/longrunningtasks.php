@@ -31,15 +31,6 @@ use core\task\manager;
 class longrunningtasks extends check {
 
     /**
-     * Constructor
-     */
-    public function __construct() {
-        global $CFG;
-        $this->id = 'longrunningtasks';
-        $this->name = get_string('checklongrunningtasks', 'tool_task');
-    }
-
-    /**
      * Links to the running task list
      *
      * @return \action_link|null

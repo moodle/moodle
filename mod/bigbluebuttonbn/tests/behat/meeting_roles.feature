@@ -6,7 +6,7 @@ Feature: Test that meeting roles are sent to the server
 
   Background:
     Given a BigBlueButton mock server is configured
-    And I enable "bigbluebuttonbn" "mod" plugin
+    And I accept dpa and enable bigbluebuttonbn plugin
 
   @javascript
   Scenario Outline: Users should receive the appropriate role when joining the meeting

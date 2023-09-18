@@ -100,7 +100,8 @@
             }
         }
         &:before {
-            content: $fa-var-check;
+            @extend .fa-solid;
+            content: fa-content($fa-var-check);
         }
     }
 }

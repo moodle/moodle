@@ -16,26 +16,29 @@
 
 namespace mod_quiz;
 
+use moodle_url;
 use question_bank;
 use question_engine;
-use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Quiz attempt walk through.
  *
- * @package    mod_quiz
- * @category   test
- * @copyright  2013 The Open University
- * @author     Jamie Pratt <me@jamiep.org>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \quiz_attempt
+ * @package   mod_quiz
+ * @category  test
+ * @copyright 2013 The Open University
+ * @author    Jamie Pratt <me@jamiep.org>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\quiz_attempt
  */
 class attempt_walkthrough_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     /**
      * Create a quiz with questions and walk through a quiz attempt.
@@ -154,9 +157,10 @@ class attempt_walkthrough_test extends \advanced_testcase {
      * The quiz is set to close 1 hour from now.
      * The quiz is set to use a grade period of 1 hour once time expires.
      *
+     * @param string $overduehandling value for the overduehandling quiz setting.
      * @return \stdClass the quiz that was created.
      */
-    protected function create_quiz_with_one_question(): \stdClass {
+    protected function create_quiz_with_one_question(string $overduehandling = 'graceperiod'): \stdClass {
         global $SITE;
         $this->resetAfterTest();
 
@@ -166,7 +170,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
 
         $quiz = $quizgenerator->create_instance(
                 ['course' => $SITE->id, 'timeclose' => $timeclose,
-                        'overduehandling' => 'graceperiod', 'graceperiod' => HOURSECS]);
+                        'overduehandling' => $overduehandling, 'graceperiod' => HOURSECS]);
 
         // Create a question.
         /** @var \core_question_generator $questiongenerator */
@@ -175,8 +179,9 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
+        $quizobj = quiz_settings::create($quiz->id);
         quiz_add_quiz_question($saq->id, $quiz, 0, 1);
-        quiz_update_sumgrades($quiz);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
 
         return $quiz;
     }
@@ -286,7 +291,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
 
         // Add random question to the quiz.
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $this->add_random_questions($quiz->id, 0, $cat->id, 1);
 
         // Make another category.
         $cat2 = $questiongenerator->create_question_category();
@@ -459,5 +464,121 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $gradebookitem = array_shift($gradebookgrades->items);
         $gradebookgrade = array_shift($gradebookitem->grades);
         $this->assertEquals(100, $gradebookgrade->grade);
+    }
+
+    public function test_quiz_attempt_walkthrough_abandoned_attempt_reopened_with_timelimit_override() {
+        global $DB;
+
+        $quiz = $this->create_quiz_with_one_question('autoabandon');
+        $originaltimeclose = $quiz->timeclose;
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
+
+        // Start the attempt.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+
+        // Process some responses from the student during the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($originaltimeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
+
+        // Student leaves, so cron closes the attempt when time expires.
+        $attemptobj->process_abandon($originaltimeclose + 5 * MINSECS, false);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(quiz_attempt::ABANDONED, $attemptobj->get_state());
+        $this->assertEquals(0, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+
+        // The teacher feels kind, so adds an override for the student, and re-opens the attempt.
+        $sink = $this->redirectEvents();
+        $overriddentimeclose = $originaltimeclose + HOURSECS;
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz->id,
+            'userid' => $user->id,
+            'timeclose' => $overriddentimeclose,
+        ]);
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $reopentime = $originaltimeclose + 10 * MINSECS;
+        $attemptobj->process_reopen_abandoned($reopentime);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertFalse($attemptobj->is_finished());
+        $this->assertEquals(quiz_attempt::IN_PROGRESS, $attemptobj->get_state());
+        $this->assertEquals(0, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+        $this->assertEquals($overriddentimeclose,
+                $attemptobj->get_access_manager($reopentime)->get_end_time($attemptobj->get_attempt()));
+
+        // Verify this was logged correctly.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+
+        $reopenedevent = array_shift($events);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_reopened', $reopenedevent);
+        $this->assertEquals($attemptobj->get_context(), $reopenedevent->get_context());
+        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+                $reopenedevent->get_url());
+    }
+
+    public function test_quiz_attempt_walkthrough_abandoned_attempt_reopened_after_close_time() {
+        $quiz = $this->create_quiz_with_one_question('autoabandon');
+        $originaltimeclose = $quiz->timeclose;
+
+        // Make a user to do the quiz.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
+
+        // Start the attempt.
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+
+        // Process some responses from the student during the attempt.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_submitted_actions($originaltimeclose - 30 * MINSECS, false, [1 => ['answer' => 'frog']]);
+
+        // Student leaves, so cron closes the attempt when time expires.
+        $attemptobj->process_abandon($originaltimeclose + 5 * MINSECS, false);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(quiz_attempt::ABANDONED, $attemptobj->get_state());
+        $this->assertEquals(0, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+
+        // The teacher reopens the attempt without granting more time, so previously submitted responess are graded.
+        $sink = $this->redirectEvents();
+        $reopentime = $originaltimeclose + 10 * MINSECS;
+        $attemptobj->process_reopen_abandoned($reopentime);
+
+        // Verify the attempt state.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertTrue($attemptobj->is_finished());
+        $this->assertEquals(quiz_attempt::FINISHED, $attemptobj->get_state());
+        $this->assertEquals($originaltimeclose, $attemptobj->get_submitted_date());
+        $this->assertEquals($user->id, $attemptobj->get_userid());
+        $this->assertEquals(1, $attemptobj->get_sum_marks());
+
+        // Verify this was logged correctly - there are some gradebook events between the two we want to check.
+        $events = $sink->get_events();
+        $this->assertGreaterThanOrEqual(2, $events);
+
+        $reopenedevent = array_shift($events);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_reopened', $reopenedevent);
+        $this->assertEquals($attemptobj->get_context(), $reopenedevent->get_context());
+        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+                $reopenedevent->get_url());
+
+        $submittedevent = array_pop($events);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $submittedevent);
+        $this->assertEquals($attemptobj->get_context(), $submittedevent->get_context());
+        $this->assertEquals(new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
+                $submittedevent->get_url());
     }
 }

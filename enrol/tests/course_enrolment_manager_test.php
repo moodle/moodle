@@ -29,7 +29,7 @@ use course_enrolment_manager;
 class course_enrolment_manager_test extends \advanced_testcase {
     /**
      * The course context used in tests.
-     * @var stdClass
+     * @var \stdClass
      */
     private $course = null;
     /**
@@ -250,7 +250,7 @@ class course_enrolment_manager_test extends \advanced_testcase {
      * Sets up a custom profile field and the showuseridentity option, and creates a test user
      * with suitable values set.
      *
-     * @return stdClass Test user
+     * @return \stdClass Test user
      */
     protected function setup_for_user_identity_tests(): \stdClass {
         // Configure extra fields to include one normal user field and one profile field, and

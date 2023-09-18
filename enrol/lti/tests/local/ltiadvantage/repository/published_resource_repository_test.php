@@ -44,6 +44,7 @@ class published_resource_repository_test extends \advanced_testcase {
         $mod = $generator->create_module('assign', ['course' => $course->id]);
         $mod2 = $generator->create_module('resource', ['course' => $course2->id]);
         $mod3 = $generator->create_module('assign', ['course' => $course->id, 'grade' => 0]);
+        $mod4 = $generator->create_module('workshop', ['course' => $course->id]); // Had multiple grade items.
         $courseresourcedata = (object) [
             'courseid' => $course->id,
             'membersyncmode' => 0,
@@ -71,6 +72,13 @@ class published_resource_repository_test extends \advanced_testcase {
             'membersync' => 1,
             'ltiversion' => 'LTI-1p3'
         ];
+        $module4resourcedata = (object) [
+            'courseid' => $course->id,
+            'cmid' => $mod4->cmid,
+            'membersyncmode' => 1,
+            'membersync' => 1,
+            'ltiversion' => 'LTI-1p3'
+        ];
         $coursetool = $generator->create_lti_tool($courseresourcedata);
         $coursetool = helper::get_lti_tool($coursetool->id);
         $modtool = $generator->create_lti_tool($moduleresourcedata);
@@ -79,8 +87,10 @@ class published_resource_repository_test extends \advanced_testcase {
         $mod2tool = helper::get_lti_tool($mod2tool->id);
         $mod3tool = $generator->create_lti_tool($module3resourcedata);
         $mod3tool = helper::get_lti_tool($mod3tool->id);
-        return [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $coursetool, $modtool, $mod2tool,
-            $mod3tool];
+        $mod4tool = $generator->create_lti_tool($module4resourcedata);
+        $mod4tool = helper::get_lti_tool($mod4tool->id);
+        return [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $modtool, $mod2tool,
+            $mod3tool, $mod4tool];
     }
 
     /**
@@ -90,21 +100,23 @@ class published_resource_repository_test extends \advanced_testcase {
      */
     public function test_find_all_for_user() {
         $this->resetAfterTest();
-        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3] = $this->generate_published_resources();
+        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4] = $this->generate_published_resources();
 
         $resourcerepo = new published_resource_repository();
 
         $resources = $resourcerepo->find_all_for_user($user->id);
-        $this->assertCount(3, $resources);
+        $this->assertCount(4, $resources);
         usort($resources, function($a, $b) {
             return strcmp($a->get_contextid(), $b->get_contextid());
         });
         $this->assertEquals($resources[0]->get_contextid(), \context_course::instance($course->id)->id);
         $this->assertEquals($resources[1]->get_contextid(), \context_module::instance($mod->cmid)->id);
         $this->assertEquals($resources[2]->get_contextid(), \context_module::instance($mod3->cmid)->id);
+        $this->assertEquals($resources[3]->get_contextid(), \context_module::instance($mod4->cmid)->id);
         $this->assertTrue($resources[0]->supports_grades());
         $this->assertTrue($resources[1]->supports_grades());
         $this->assertFalse($resources[2]->supports_grades());
+        $this->assertFalse($resources[3]->supports_grades()); // Multiple grade items isn't supported in content selection.
 
         $resources = $resourcerepo->find_all_for_user($user2->id);
         $this->assertCount(1, $resources);
@@ -121,27 +133,29 @@ class published_resource_repository_test extends \advanced_testcase {
      */
     public function test_find_all_by_ids_for_user() {
         $this->resetAfterTest();
-        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $tool, $tool2, $tool3, $tool4] =
+        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $tool, $tool2, $tool3, $tool4] =
             $this->generate_published_resources();
 
         $resourcerepo = new published_resource_repository();
 
-        $resources = $resourcerepo->find_all_by_ids_for_user([$tool2->id, $tool3->id, $tool4->id], $user->id);
-        $this->assertCount(2, $resources);
+        $resources = $resourcerepo->find_all_by_ids_for_user([$tool->id, $tool2->id, $tool3->id, $tool4->id], $user->id);
+        $this->assertCount(3, $resources);
         usort($resources, function ($a, $b) {
             return strcmp($a->get_contextid(), $b->get_contextid());
         });
         $this->assertEquals($resources[0]->get_contextid(), \context_module::instance($mod->cmid)->id);
         $this->assertEquals($resources[1]->get_contextid(), \context_module::instance($mod3->cmid)->id);
+        $this->assertEquals($resources[2]->get_contextid(), \context_module::instance($mod4->cmid)->id);
         $this->assertTrue($resources[0]->supports_grades());
         $this->assertFalse($resources[1]->supports_grades());
+        $this->assertFalse($resources[2]->supports_grades()); // Multiple grade items isn't supported in content selection.
 
-        $resources = $resourcerepo->find_all_by_ids_for_user([$tool2->id, $tool3->id, $tool4->id], $user2->id);
+        $resources = $resourcerepo->find_all_by_ids_for_user([$tool->id, $tool2->id, $tool3->id], $user2->id);
         $this->assertCount(1, $resources);
         $this->assertEquals($resources[0]->get_contextid(), \context_module::instance($mod2->cmid)->id);
         $this->assertFalse($resources[0]->supports_grades());
 
-        $this->assertEmpty($resourcerepo->find_all_by_ids_for_user([$tool2->id], $user2->id));
+        $this->assertEmpty($resourcerepo->find_all_by_ids_for_user([$tool->id], $user2->id));
         $this->assertEmpty($resourcerepo->find_all_by_ids_for_user([], $user2->id));
     }
 
@@ -153,7 +167,7 @@ class published_resource_repository_test extends \advanced_testcase {
     public function test_find_all_for_user_no_permissions() {
         $this->resetAfterTest();
         global $DB;
-        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $coursetool, $modtool, $mod2tool]
+        [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $modtool, $mod2tool]
             = $this->generate_published_resources();
 
         // Grant the user permissions as an editing teacher in a specific module within the course,
@@ -171,7 +185,7 @@ class published_resource_repository_test extends \advanced_testcase {
         // Now, give the user a course role of 'editingteacher' and confirm they can see the published content.
         $this->getDataGenerator()->enrol_user($modaccessonlyuser->id, $course->id, 'editingteacher');
         $resources = $resourcerepo->find_all_for_user($modaccessonlyuser->id);
-        $this->assertCount(3, $resources);
+        $this->assertCount(4, $resources);
 
         // Check other course level roles without the capability, e.g. 'teacher'.
         role_unassign($editingteacherrole->id, $modaccessonlyuser->id, \context_course::instance($course->id)->id);

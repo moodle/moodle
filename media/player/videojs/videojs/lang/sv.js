@@ -36,7 +36,7 @@ videojs.addLanguage('sv', {
   "Monospace Serif": "Monospace Serif",
   "Mute": "Ljud av",
   "No compatible source was found for this media.": "Det gick inte att hitta någon kompatibel källa för den här videon.",
-  "Non-Fullscreen": "Ej fullskärm",
+  "Exit Fullscreen": "Ej fullskärm",
   "None": "Ingen",
   "Opaque": "Opak",
   "Pause": "Pausa",

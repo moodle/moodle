@@ -15,12 +15,8 @@ Feature: Language selector menu
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I navigate to "Language > Language packs" in site administration
-    And I set the field "Available language packs" to "en_ar"
-    And I press "Install selected language pack(s)"
-    And the "Installed language packs" select box should contain "en_ar"
-    And I log out
+    And the following "language pack" exists:
+      | language | en_ar |
 
   Scenario: Logged user is presented with a language selector which is placed within the user menu
     Given I log in as "teacher1"

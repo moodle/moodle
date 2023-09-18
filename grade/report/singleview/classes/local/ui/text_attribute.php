@@ -85,10 +85,8 @@ class text_attribute extends element {
         $context->label = '';
         if (preg_match("/^feedback/", $this->name)) {
             $context->label = get_string('feedbackfor', 'gradereport_singleview', $this->label);
-            $context->tabindex = '2';
         } else if (preg_match("/^finalgrade/", $this->name)) {
             $context->label = get_string('gradefor', 'gradereport_singleview', $this->label);
-            $context->tabindex = '1';
         }
 
         return $OUTPUT->render_from_template('gradereport_singleview/text_attribute', $context);

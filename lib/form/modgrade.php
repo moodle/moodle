@@ -353,7 +353,7 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
      *
      * @param string $event Name of event
      * @param mixed $arg event arguments
-     * @param moodleform $caller calling object
+     * @param MoodleQuickForm $caller calling object
      * @return mixed
      */
     public function onQuickFormEvent($event, $arg, &$caller) {

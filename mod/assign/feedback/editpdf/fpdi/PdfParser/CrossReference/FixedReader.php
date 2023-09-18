@@ -58,6 +58,7 @@ class FixedReader extends AbstractReader implements ReaderInterface
 
     /**
      * @inheritdoc
+     * @return int|false
      */
     public function getOffsetFor($objectNumber)
     {

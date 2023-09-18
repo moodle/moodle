@@ -137,7 +137,7 @@ function behat_error_handler($errno, $errstr, $errfile, $errline) {
     // set to DEVELOPER and will always include E_NOTICE,E_USER_NOTICE... as part of E_ALL, if the current
     // error_reporting() value does not include one of those levels is because it has been forced through
     // the moodle code (see fix_utf8() for example) in that cases we respect the forced error level value.
-    $respect = array(E_NOTICE, E_USER_NOTICE, E_STRICT, E_WARNING, E_USER_WARNING);
+    $respect = array(E_NOTICE, E_USER_NOTICE, E_STRICT, E_WARNING, E_USER_WARNING, E_DEPRECATED, E_USER_DEPRECATED);
     foreach ($respect as $respectable) {
 
         // If the current value does not include this kind of errors and the reported error is
@@ -562,4 +562,25 @@ function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
         }
     }
     return $processes;
+}
+
+/**
+ * Get command flags for an option/value combination
+ *
+ * @param string $option
+ * @param string|bool|null $value
+ * @return string
+ */
+function behat_get_command_flags(string $option, $value): string {
+    $commandoptions = '';
+    if (is_bool($value)) {
+        if ($value) {
+            return " --{$option}";
+        } else {
+            return " --no-{$option}";
+        }
+    } else if ($value !== null) {
+        return " --$option=\"$value\"";
+    }
+    return '';
 }

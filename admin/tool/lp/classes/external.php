@@ -42,6 +42,7 @@ use core_competency\external\user_competency_plan_exporter;
 use core_course\external\course_module_summary_exporter;
 use core_course\external\course_summary_exporter;
 use core_external\external_api;
+use core_external\external_description;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
@@ -109,7 +110,7 @@ class external extends external_api {
     /**
      * Loads the data required to render the competency_frameworks_manage_page template.
      *
-     * @param context $pagecontext The page context
+     * @param \context $pagecontext The page context
      * @return \stdClass
      */
     public static function data_for_competency_frameworks_manage_page($pagecontext) {
@@ -873,7 +874,7 @@ class external extends external_api {
         $fields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
         $extrasearchfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
-        list($wheresql, $whereparams) = users_search_sql($query, 'u', true, $extrasearchfields);
+        list($wheresql, $whereparams) = users_search_sql($query, 'u', USER_SEARCH_CONTAINS, $extrasearchfields);
         list($sortsql, $sortparams) = users_order_by_sql('u', $query, $context);
 
         $countsql = "SELECT COUNT('x') FROM {user} u WHERE $wheresql AND u.id $filtercapsql";

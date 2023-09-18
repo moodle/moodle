@@ -26,6 +26,9 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_configselect extends adminpresets_setting {
 
+    /** @var \admin_setting_configselect $settingdata */
+    protected $settingdata;
+
     /**
      * Sets the setting value cleaning it.
      *
@@ -34,7 +37,7 @@ class adminpresets_admin_setting_configselect extends adminpresets_setting {
      */
     protected function set_value($value) {
         // When we intantiate the class we need the choices.
-        if (empty($this->settindata->choices) && method_exists($this->settingdata, 'load_choices')) {
+        if (empty($this->settingdata->choices) && method_exists($this->settingdata, 'load_choices')) {
             $this->settingdata->load_choices();
         }
 

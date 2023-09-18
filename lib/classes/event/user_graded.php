@@ -132,20 +132,6 @@ class user_graded extends base {
     }
 
     /**
-     * Return legacy log info.
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    public function get_legacy_logdata() {
-        $user = $this->get_record_snapshot('user', $this->relateduserid);
-        $fullname = fullname($user);
-        $info = $this->grade->grade_item->itemname . ': ' . $fullname;
-        $url = '/report/grader/index.php?id=' . $this->courseid;
-
-        return array($this->courseid, 'grade', 'update', $url, $info);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

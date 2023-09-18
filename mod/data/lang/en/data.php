@@ -71,8 +71,7 @@ $string['commentsaved'] = 'Comment saved';
 $string['commentsn'] = '{$a} comment(s)';
 $string['commentsoff'] = 'Comments feature is not enabled';
 $string['completiondetail:entries'] = 'Make entries: {$a}';
-$string['completionentries'] = 'Require entries';
-$string['completionentriescount'] = 'Count of entries';
+$string['completionentriescount'] = 'Add entries';
 $string['completionentriesdesc'] = 'Minimum number of entries required: {$a}';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all databases. You will still need to turn feeds on manually in the settings for each database.';
 $string['confirmdeletefield'] = 'You are about to delete this field, are you sure?';
@@ -83,7 +82,7 @@ $string['createfields'] = 'Create fields to collect different types of data.';
 $string['createtemplates'] = 'Templates define the interface of your activity. Once you create fields, templates will be created automatically. Alternatively, you can use a preset, which includes fields and templates.';
 $string['csstemplate'] = 'Custom CSS';
 $string['csvfailed'] = 'Unable to read the raw data from the CSV file';
-$string['csvfile'] = 'CSV file';
+$string['csvfile'] = 'CSV or ZIP containing a CSV file';
 $string['csvimport'] = 'CSV file import';
 $string['csvimport_help'] = 'Entries may be imported via a plain text file with a list of field names as the first line, then the data, with one record per line.';
 $string['csvwithselecteddelimiter'] = '<abbr title="Comma Separated Values">CSV</abbr>';
@@ -152,6 +151,7 @@ $string['entrieslefttoadd'] = 'You must add {$a->entriesleft} more entry/entries
 $string['entrieslefttoaddtoview'] = 'You must add {$a->entrieslefttoview} more entry/entries before you can view other participants\' entries.';
 $string['entry'] = 'Entry';
 $string['entrysaved'] = 'Your entry has been saved';
+$string['errordatafilenotfound'] = 'The file could not be imported. Accepted file types are CSV or a ZIP containing a CSV file in the format used for exporting entries.';
 $string['errormustbeteacher'] = 'You need to be a teacher to use this page!';
 $string['errorpresetexists'] = 'A preset with this name already exists.';
 $string['errorpresetexistsbutnotoverwrite'] = 'A preset with this name already exists. Choose a different name.';
@@ -191,7 +191,7 @@ $string['fieldsinformationtags'] = 'Field information';
 $string['fieldsnavigation'] = 'Fields tertiary navigation';
 $string['fieldtagdescription'] = '{$a} description';
 $string['fieldtagname'] = '{$a} name';
-$string['fieldtagid'] = '{$a} id';
+$string['fieldtagid'] = '{$a} ID';
 $string['fieldupdated'] = 'Field updated';
 $string['fieldwidth'] = 'Width';
 $string['fieldwidthlistview'] = 'Width (in pixels) in list view';
@@ -227,6 +227,7 @@ $string['importapreset'] = 'Import a preset';
 $string['importsuccess'] = 'Preset applied.';
 $string['importpresetmissingcapability'] = 'You don\'t have permission to import a preset.';
 $string['includeapproval'] = 'Include approval status';
+$string['includefiles'] = 'Include files in export';
 $string['includetags'] = 'Include tags';
 $string['includetime'] = 'Include time added/modified';
 $string['includeuserdetails'] = 'Include user details';
@@ -400,9 +401,9 @@ $string['resetalltemplates'] = 'Reset all templates';
 $string['resetalltemplatesconfirmtitle'] = 'Reset all templates?';
 $string['resetalltemplatesconfirm'] = 'You\'re about to remove all templates for your current preset. If you want to restore the templates later, you need to choose the preset again in the \'Presets\' tab.';
 $string['resetsettings'] = 'Reset filters';
-$string['resettemplate'] = 'Reset template';
+$string['resettemplate'] = 'Reset current template';
 $string['resettemplateconfirmtitle'] = 'Reset template?';
-$string['resettemplateconfirm'] = 'Resetting a template removes the existing preset and any customisations you have done to the template. You can\'t undo this action.';
+$string['resettemplateconfirm'] = 'This will permanently remove the {$a} for your current preset.';
 $string['resizingimages'] = 'Resizing image thumbnails...';
 $string['rows'] = 'rows';
 $string['rssglobaldisabled'] = 'Disabled. See site configuration variables.';
@@ -453,14 +454,10 @@ $string['unsupportedfields'] = 'Unsupported fields';
 $string['unsupportedfieldslist'] = 'The following fields cannot be exported:';
 $string['updatefield'] = 'Update an existing field';
 $string['uploadfile'] = 'Upload file';
-$string['uploadrecords'] = 'Upload entries from a file';
-$string['uploadrecords_help'] = 'Entries may be uploaded via text file. The format of the file should be as follows:
+$string['uploadrecords'] = 'Import entries';
+$string['uploadrecords_help'] = 'Import entries that you have exported from another database, either via CSV or a ZIP containing a CSV file (if files are included in the export).
 
-* Each line of the file contains one record
-* Each record is a series of data separated by the selected separator
-* The first record contains a list of fieldnames defining the format of the rest of the file
-
-The field enclosure is a character that surrounds each field in each record. It can normally be left unset.';
+Alternatively, to create a CSV file for importing, add one entry to the database and then export it. Edit the CSV file and add more entries.';
 $string['uploadrecords_link'] = 'mod/data/import';
 $string['url'] = 'URL';
 $string['usedate'] = 'Include in search.';
@@ -475,9 +472,6 @@ $string['viewtodate'] = 'Read only to';
 $string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data ID provided';
 
-// Deprecated since Moodle 3.11.
-$string['unsupportedexport'] = '({$a->fieldtype}) cannot be exported.';
-
 // Deprecated since Moodle 4.1.
 $string['buttons'] = 'Actions';
 $string['nolisttemplate'] = 'List view template is not yet defined';
@@ -491,3 +485,6 @@ $string['todatabase'] = 'to this database.';
 
 // Deprecated since Moodle 4.2.
 $string['fieldids'] = 'Field ids';
+
+// Deprecated since Moodle 4.3.
+$string['completionentries'] = 'Require entries';

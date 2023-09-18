@@ -12,7 +12,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods\Settings;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Styles;
 use PhpOffice\PhpSpreadsheet\Writer\Ods\Thumbnails;
 use ZipStream\Exception\OverflowException;
-use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 class Ods extends BaseWriter
@@ -117,10 +116,6 @@ class Ods extends BaseWriter
      */
     public function save($filename, int $flags = 0): void
     {
-        if (!$this->spreadSheet) {
-            throw new WriterException('PhpSpreadsheet object unassigned.');
-        }
-
         $this->processFlags($flags);
 
         // garbage collect
@@ -162,11 +157,7 @@ class Ods extends BaseWriter
         }
 
         // Create new ZIP stream
-        $options = new Archive();
-        $options->setEnableZip64(false);
-        $options->setOutputStream($this->fileHandle);
-
-        return new ZipStream(null, $options);
+        return ZipStream0::newZipStream($this->fileHandle);
     }
 
     /**
@@ -176,11 +167,7 @@ class Ods extends BaseWriter
      */
     public function getSpreadsheet()
     {
-        if ($this->spreadSheet !== null) {
-            return $this->spreadSheet;
-        }
-
-        throw new WriterException('No PhpSpreadsheet assigned.');
+        return $this->spreadSheet;
     }
 
     /**

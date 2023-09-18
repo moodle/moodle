@@ -18,11 +18,10 @@ declare(strict_types=1);
 
 namespace core_badges\reportbuilder\datasource;
 
-use award_criteria;
 use core_badges_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{boolean_select, date, select, text};
+use core_reportbuilder\local\filters\{boolean_select, date, select, tags, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -95,18 +94,25 @@ class users_test extends core_reportbuilder_testcase {
 
         /** @var core_badges_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
-        ($badgesite = $generator->create_badge(['name' => 'Badge 1', 'language' => 'de', 'expireperiod' => HOURSECS]))
-            ->issue($user->id, true);
-        ($badgecourse = $generator->create_badge(['name' => 'Badge 2', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]))
-            ->issue($user->id, true);
 
-        // Overall, plus specific criteria for manually awarding by role.
-        award_criteria::build(['badgeid' => $badgesite->id, 'criteriatype' => BADGE_CRITERIA_TYPE_OVERALL])
-            ->save(['agg' => BADGE_CRITERIA_AGGREGATION_ALL]);
+        $badgesite = $generator->create_badge([
+            'name' => 'Badge 1',
+            'language' => 'de',
+            'expireperiod' => HOURSECS,
+            'tags' => ['cool'],
+        ]);
+        $badgecourse = $generator->create_badge([
+            'name' => 'Badge 2',
+            'type' => BADGE_TYPE_COURSE,
+            'courseid' => $course->id,
+        ]);
 
+        $badgesite->issue($user->id, true);
+        $badgecourse->issue($user->id, true);
+
+        // Create criteria for manually awarding by role.
         $managerrole = $DB->get_field('role', 'id', ['shortname' => 'manager']);
-        award_criteria::build(['badgeid' => $badgesite->id, 'criteriatype' => BADGE_CRITERIA_TYPE_MANUAL])
-            ->save(["role_{$managerrole}" => $managerrole]);
+        $generator->create_criteria(['badgeid' => $badgesite->id, 'roleid' => $managerrole]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -116,12 +122,15 @@ class users_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname', 'sortenabled' => 1]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:name', 'sortenabled' => 1]);
 
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:namewithlink']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:criteria']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:image']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:language']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:version']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:status']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge:expiry']);
+
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
 
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge_issued:expire']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'badge_issued:visible']);
@@ -132,37 +141,57 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertCount(3, $content);
 
         // Admin user, no badge issued.
-        [, , $criteria, $image, $language, $version, $status, $expiry, $expires, $visible, $coursename] = array_values($content[0]);
+        [$fullname, $badgename, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires, $visible, $coursename]
+            = array_values($content[0]);
+        $this->assertEquals('Admin User', $fullname);
+        $this->assertEmpty($badgename);
         $this->assertEmpty($criteria);
         $this->assertEmpty($image);
         $this->assertEmpty($language);
         $this->assertEmpty($version);
         $this->assertEmpty($status);
         $this->assertEmpty($expiry);
+        $this->assertEmpty($tag);
         $this->assertEmpty($expires);
         $this->assertEmpty($visible);
         $this->assertEmpty($coursename);
 
-        // Site badge issued.
-        [, , $criteria, $image, $language, $version, $status, $expiry, $expires, $visible, $coursename] = array_values($content[1]);
+        $expectedbadgesitelink = \html_writer::link(new \moodle_url('/badges/overview.php',
+            ['id' => $badgesite->id]), ($badgesite->name));
+
+        // User issued site badge.
+        [$fullname, $badgename, $namewithlink, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires,
+            $visible, $coursename] = array_values($content[1]);
+        $this->assertEquals(fullname($user), $fullname);
+        $this->assertEquals($badgesite->name, $badgename);
+        $this->assertEquals($expectedbadgesitelink, $namewithlink);
         $this->assertStringContainsString('Awarded by: Manager', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('German', $language);
         $this->assertEquals(2, $version);
         $this->assertEquals('Available (criteria locked)', $status);
         $this->assertEquals('1 hour', $expiry);
+        $this->assertEquals('cool', $tag);
         $this->assertNotEmpty($expires);
         $this->assertEquals('Yes', $visible);
         $this->assertEquals('PHPUnit test site', $coursename);
 
-        // Course badge issued.
-        [, , $criteria, $image, $language, $version, $status, $expiry, $expires, $visible, $coursename] = array_values($content[2]);
+        $expectedbadgecourselink = \html_writer::link(new \moodle_url('/badges/overview.php',
+            ['id' => $badgecourse->id]), ($badgecourse->name));
+
+        // User issued course badge.
+        [$fullname, $badgename, $namewithlink, $criteria, $image, $language, $version, $status, $expiry, $tag, $expires,
+            $visible, $coursename] = array_values($content[2]);
+        $this->assertEquals(fullname($user), $fullname);
+        $this->assertEquals($badgecourse->name, $badgename);
+        $this->assertEquals($expectedbadgecourselink, $namewithlink);
         $this->assertEquals('Criteria for this badge have not been set up yet.', $criteria);
         $this->assertStringContainsString('Image caption', $image);
         $this->assertEquals('English', $language);
         $this->assertEquals(2, $version);
         $this->assertEquals('Available (criteria locked)', $status);
         $this->assertEquals('Never', $expiry);
+        $this->assertEmpty($tag);
         $this->assertEmpty($expires);
         $this->assertEquals('Yes', $visible);
         $this->assertEquals($course->fullname, $coursename);
@@ -175,6 +204,16 @@ class users_test extends core_reportbuilder_testcase {
      */
     public function datasource_filters_provider(): array {
         return [
+            // User.
+            'Filter user fullname' => ['user:fullname', [
+                'user:fullname_operator' => text::IS_EQUAL_TO,
+                'user:fullname_value' => 'Zoe Zebra',
+            ], true],
+            'Filter user fullname (no match)' => ['user:fullname', [
+                'user:fullname_operator' => text::IS_EQUAL_TO,
+                'user:fullname_value' => 'Alice Aardvark',
+            ], false],
+
             // Badge.
             'Filter badge name' => ['badge:name', [
                 'badge:name_operator' => text::IS_EQUAL_TO,
@@ -199,6 +238,15 @@ class users_test extends core_reportbuilder_testcase {
             'Filter badge type (no match)' => ['badge:type', [
                 'badge:type_operator' => select::EQUAL_TO,
                 'badge:type_value' => BADGE_TYPE_SITE,
+            ], false],
+
+            // Badge tag.
+            'Filter tag name' => ['tag:name', [
+                'tag:name_operator' => tags::NOT_EMPTY,
+            ], true],
+            'Filter tag name (no match)' => ['tag:name', [
+                'tag:name_operator' => tags::EQUAL_TO,
+                'tag:name_value' => [-1],
             ], false],
 
             // Badge issued.
@@ -250,16 +298,18 @@ class users_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course(['fullname' => 'Course 1']);
-        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $user = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe', 'lastname' => 'Zebra']);
 
         /** @var core_badges_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
-        $generator->create_badge([
+        $badge = $generator->create_badge([
             'name' => 'Course badge',
             'type' => BADGE_TYPE_COURSE,
             'courseid' => $course->id,
             'expireperiod' => HOURSECS,
-        ])->issue($user->id, true);
+            'tags' => ['cool'],
+        ]);
+        $badge->issue($user->id, true);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -297,11 +347,8 @@ class users_test extends core_reportbuilder_testcase {
 
         /** @var core_badges_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
-        $generator->create_badge([
-            'name' => 'Course badge',
-            'type' => BADGE_TYPE_COURSE,
-            'courseid' => $course->id,
-        ])->issue($user->id, true);
+        $badge = $generator->create_badge(['name' => 'Course badge', 'type' => BADGE_TYPE_COURSE, 'courseid' => $course->id]);
+        $badge->issue($user->id, true);
 
         $this->datasource_stress_test_columns(users::class);
         $this->datasource_stress_test_columns_aggregation(users::class);

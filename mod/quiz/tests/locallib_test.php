@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-
+require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
  * Unit tests for (some of) mod/quiz/locallib.php.
@@ -40,6 +40,8 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class locallib_test extends \advanced_testcase {
+
+    use \quiz_question_helper_test_trait;
 
     public function test_quiz_rescale_grade() {
         $quiz = new \stdClass();
@@ -104,6 +106,9 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($expectedstate, quiz_attempt_state($quiz, $attempt));
     }
 
+    /**
+     * @covers ::quiz_question_tostring
+     */
     public function test_quiz_question_tostring() {
         $question = new \stdClass();
         $question->qtype = 'multichoice';
@@ -114,6 +119,21 @@ class locallib_test extends \advanced_testcase {
         $summary = quiz_question_tostring($question);
         $this->assertEquals('<span class="questionname">The question name</span> ' .
                 '<span class="questiontext">What sort of INEQUALITY is x &lt; y[?]' . "\n" . '</span>', $summary);
+    }
+
+    /**
+     * @covers ::quiz_question_tostring
+     */
+    public function test_quiz_question_tostring_does_not_filter() {
+        $question = new \stdClass();
+        $question->qtype = 'multichoice';
+        $question->name = 'The question name';
+        $question->questiontext = '<p>No emoticons here :-)</p>';
+        $question->questiontextformat = FORMAT_HTML;
+
+        $summary = quiz_question_tostring($question);
+        $this->assertEquals('<span class="questionname">The question name</span> ' .
+                '<span class="questiontext">No emoticons here :-)' . "\n</span>", $summary);
     }
 
     /**
@@ -505,7 +525,7 @@ class locallib_test extends \advanced_testcase {
                     $tagids[] = $tagobjects[$tagname]->id;
                 }
             }
-            quiz_add_random_questions($quiz, 0, $cat->id, 1, false, $tagids);
+            $this->add_random_questions($quiz->id, 0, $cat->id, 1);
         }
 
         return [$quiz, $tagobjects];

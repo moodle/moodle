@@ -21,33 +21,53 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import $ from 'jquery';
+
 const SELECTORS = {
     GRADEPARENT: '.gradeparent',
     STUDENTHEADER: '#studentheader',
     TABLEHEADER: 'th.header',
-    BEHAT: 'body.behat-site'
+    BEHAT: 'body.behat-site',
+    USERDROPDOWN: '.userrow th .dropdown',
+    AVERAGEROWHEADER: '.lastrow th',
 };
 
 /**
  * Initialize module
  */
 export const init = () => {
-    if (document.querySelector(SELECTORS.BEHAT)) {
-        return;
-    }
-    const grader = document.querySelector(SELECTORS.GRADEPARENT);
-    const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
-    const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
-    const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
-
-    grader.querySelectorAll(SELECTORS.TABLEHEADER).forEach((tableHeader) => {
-        if (tableHeader.colSpan > 1) {
-            const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
-            if (window.right_to_left()) {
-                tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
-            } else {
-                tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
-            }
-        }
+    // The sticky positioning attributed to the user column cells affects the stacking context and makes the dropdowns
+    // within these cells to be cut off. To solve this problem, whenever one of these action menus (dropdowns) is opened
+    // we need to manually bump up the z-index value of the parent container element and revert once closed.
+    $(SELECTORS.USERDROPDOWN).on('show.bs.dropdown hide.bs.dropdown', (e) => {
+        // The closest heading element has sticky positioning which affects the stacking context in this case.
+        e.target.closest(SELECTORS.TABLEHEADER).classList.toggle('actions-menu-active');
     });
+    // Register an observer that will bump up the z-index value of the average overall row when it's pinned to prevent
+    // the row being cut-off by the user column cells or other components within the report table that have higher
+    // z-index values.
+    const observer = new IntersectionObserver(
+        ([e]) => e.target.closest('tr').classList.toggle('pinned', e.intersectionRatio < 1),
+        {threshold: [1]}
+    );
+    observer.observe(document.querySelector(SELECTORS.AVERAGEROWHEADER));
+
+    if (!document.querySelector(SELECTORS.BEHAT)) {
+        const grader = document.querySelector(SELECTORS.GRADEPARENT);
+        const tableHeaders = grader.querySelectorAll(SELECTORS.TABLEHEADER);
+        const studentHeader = grader.querySelector(SELECTORS.STUDENTHEADER);
+        const leftOffset = getComputedStyle(studentHeader).getPropertyValue('left');
+        const rightOffset = getComputedStyle(studentHeader).getPropertyValue('right');
+
+        tableHeaders.forEach((tableHeader) => {
+            if (tableHeader.colSpan > 1) {
+                const addOffset = (tableHeader.offsetWidth - studentHeader.offsetWidth);
+                if (window.right_to_left()) {
+                    tableHeader.style.right = 'calc(' + rightOffset + ' - ' + addOffset + 'px )';
+                } else {
+                    tableHeader.style.left = 'calc(' + leftOffset + ' - ' + addOffset + 'px )';
+                }
+            }
+        });
+    }
 };

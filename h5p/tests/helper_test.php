@@ -14,29 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Testing the H5P helper.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 declare(strict_types = 1);
 
 namespace core_h5p;
 
-use advanced_testcase;
+use core_h5p\local\library\autoloader;
 
 /**
  * Test class covering the H5P helper.
  *
  * @package    core_h5p
+ * @category   test
  * @copyright  2019 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core_h5p\helper
  */
 class helper_test extends \advanced_testcase {
+
+    /**
+     * Register the H5P autoloader
+     */
+    protected function setUp(): void {
+        autoloader::register();
+    }
 
     /**
      * Test the behaviour of get_display_options().
@@ -137,7 +137,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/greeting-card.h5p';
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -173,7 +173,7 @@ class helper_test extends \advanced_testcase {
         $this->setUser($user);
 
         // This is a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/greeting-card.h5p';
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
         $factory->get_framework()->set_file($file);
 
@@ -247,7 +247,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/greeting-card.h5p';
 
         // Files created by users can't be deployed.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);
@@ -275,7 +275,7 @@ class helper_test extends \advanced_testcase {
         $admin = get_admin();
 
         // Prepare a valid .H5P file.
-        $path = __DIR__ . '/fixtures/greeting-card-887.h5p';
+        $path = __DIR__ . '/fixtures/greeting-card.h5p';
 
         // Libraries can't be updated when the file has been created by users.
         $file = helper::create_fake_stored_file_from_path($path, (int)$user->id);

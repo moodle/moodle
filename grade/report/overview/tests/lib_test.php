@@ -24,7 +24,7 @@ namespace gradereport_overview;
  * @covers \grade_report_overview
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class lib_test extends \externallib_advanced_testcase {
+class lib_test extends \advanced_testcase {
 
     /**
      * Require the library file we're about to test, and other requirements.

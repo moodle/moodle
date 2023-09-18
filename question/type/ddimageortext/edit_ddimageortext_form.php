@@ -205,9 +205,10 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         if (!self::file_uploaded($data['bgimage'])) {
-            $errors["bgimage"] = get_string('formerror_nobgimage', 'qtype_'.$this->qtype());
+            $errors['bgimage'] = get_string('formerror_nobgimage', 'qtype_'.$this->qtype());
         }
 
+        $dropfound = false;
         $allchoices = array();
         for ($i = 0; $i < $data['nodropzone']; $i++) {
             $ytoppresent = (trim($data['drops'][$i]['ytop']) !== '');
@@ -219,6 +220,7 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
             $imagechoicepresent = ($choice !== '0');
 
             if ($imagechoicepresent) {
+                $dropfound = true;
                 if (!$ytoppresent) {
                     $errors["drops[$i]"] = get_string('formerror_noytop', 'qtype_ddimageortext');
                 } else if (!$ytopisint) {
@@ -247,25 +249,41 @@ class qtype_ddimageortext_edit_form extends qtype_ddtoimage_edit_form_base {
                 $allchoices[$choice] = $i;
             } else {
                 if ($ytoppresent || $xleftpresent || $labelpresent) {
+                    $dropfound = true;
                     $errors["drops[$i]"] =
                             get_string('formerror_noimageselected', 'qtype_ddimageortext');
                 }
             }
         }
+        if (!$dropfound) {
+            $errors['drops[0]'] = get_string('formerror_droprequired', 'qtype_ddimageortext');
+        }
+
+        $dragfound = false;
         for ($dragindex = 0; $dragindex < $data['noitems']; $dragindex++) {
             $label = $data['draglabel'][$dragindex];
             if ($data['drags'][$dragindex]['dragitemtype'] == 'word') {
+                if ($label !== '') {
+                    $dragfound = true;
+                }
                 $allowedtags = '<br><sub><sup><b><i><strong><em><span>';
                 $errormessage = get_string('formerror_disallowedtags', 'qtype_ddimageortext', s($allowedtags));
             } else {
+                if (self::file_uploaded($data['dragitem'][$dragindex])) {
+                    $dragfound = true;
+                }
                 $allowedtags = '';
                 $errormessage = get_string('formerror_noallowedtags', 'qtype_ddimageortext');
             }
             if ($label != strip_tags($label, $allowedtags)) {
-                $errors["drags[{$dragindex}]"] = $errormessage;
+                $errors["draglabel[{$dragindex}]"] = $errormessage;
             }
 
         }
+        if (!$dragfound) {
+            $errors['drags[0]'] = get_string('formerror_dragrequired', 'qtype_ddimageortext');
+        }
+
         return $errors;
     }
 }

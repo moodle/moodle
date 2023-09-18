@@ -201,9 +201,40 @@ class restore_plan extends base_plan implements loggable {
      */
     public function execute_after_restore() {
         // Simply iterate over each task in the plan and delegate to them the execution
+        $progress = $this->get_progress();
+        $progress->start_progress($this->get_name() .
+                ': executing execute_after_restore for all tasks', count($this->tasks));
+
+        /** @var base_task $task */
         foreach ($this->tasks as $task) {
             $task->execute_after_restore();
+            $progress->increment_progress();
         }
+        $progress->end_progress();
+    }
+
+    /**
+     * Compares the provided moodle version with the one the backup was taken from.
+     *
+     * @param int $version Moodle version number (YYYYMMDD or YYYYMMDDXX)
+     * @param string $operator Operator to compare the provided version to the backup version. {@see version_compare()}
+     * @return bool True if the comparison passes.
+     */
+    public function backup_version_compare(int $version, string $operator): bool {
+        preg_match('/(\d{' . strlen($version) . '})/', $this->get_info()->moodle_version, $matches);
+        $backupbuild = (int)$matches[1];
+        return version_compare($backupbuild, $version, $operator);
+    }
+
+    /**
+     * Compares the provided moodle release with the one the backup was taken from.
+     *
+     * @param string $release Moodle release (X.Y or X.Y.Z)
+     * @param string $operator Operator to compare the provided release to the backup release. {@see version_compare()}
+     * @return bool True if the comparison passes.
+     */
+    public function backup_release_compare(string $release, string $operator): bool {
+        return version_compare($this->get_info()->backup_release, $release, $operator);
     }
 }
 

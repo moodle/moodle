@@ -16,13 +16,13 @@
 
 namespace enrol_lti\local\ltiadvantage\task;
 
+use core\http_client;
 use core\task\scheduled_task;
 use enrol_lti\helper;
 use enrol_lti\local\ltiadvantage\entity\application_registration;
 use enrol_lti\local\ltiadvantage\entity\nrps_info;
 use enrol_lti\local\ltiadvantage\entity\resource_link;
 use enrol_lti\local\ltiadvantage\entity\user;
-use enrol_lti\local\ltiadvantage\lib\http_client;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
@@ -136,7 +136,7 @@ class sync_members extends scheduled_task {
         );
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
-        $sc = new LtiServiceConnector(new launch_cache_session(), new http_client(new \curl()));
+        $sc = new LtiServiceConnector(new launch_cache_session(), new http_client());
 
         $nrps = $resourcelink->get_names_and_roles_service();
         try {

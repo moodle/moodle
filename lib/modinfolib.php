@@ -32,6 +32,7 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
     define('MAX_MODINFO_CACHE_SIZE', 10);
 }
 
+use core_courseformat\output\activitybadge;
 
 /**
  * Information about a course that is cached in the course table 'modinfo' field (and then in
@@ -368,17 +369,33 @@ class course_modinfo {
     protected static $cacheaccessed = array();
 
     /**
+     * Store a list of known course cacherev values. This is in case people reuse a course object
+     * (with an old cacherev value) within the same request when calling things like
+     * get_fast_modinfo, after rebuild_course_cache.
+     *
+     * @var int[]
+     */
+    protected static $mincacherevs = [];
+
+    /**
      * Clears the cache used in course_modinfo::instance()
      *
      * Used in {@link get_fast_modinfo()} when called with argument $reset = true
      * and in {@link rebuild_course_cache()}
      *
+     * If the cacherev for the course is known to have updated (i.e. when doing
+     * rebuild_course_cache), it should be specified here.
+     *
      * @param null|int|stdClass $courseorid if specified removes only cached value for this course
+     * @param int $newcacherev If specified, the known cache rev for this course id will be updated
      */
-    public static function clear_instance_cache($courseorid = null) {
+    public static function clear_instance_cache($courseorid = null, int $newcacherev = 0) {
         if (empty($courseorid)) {
             self::$instancecache = array();
             self::$cacheaccessed = array();
+            // This is called e.g. in phpunit when we just want to reset the caches, so also
+            // reset the mincacherevs static cache.
+            self::$mincacherevs = [];
             return;
         }
         if (is_object($courseorid)) {
@@ -391,6 +408,11 @@ class course_modinfo {
             self::$instancecache[$courseorid] = '';
             unset(self::$instancecache[$courseorid]);
             unset(self::$cacheaccessed[$courseorid]);
+        }
+        // When clearing cache for a course, we record the new cacherev version, to make
+        // sure that any future requests for the cache use at least this version.
+        if ($newcacherev) {
+            self::$mincacherevs[(int)$courseorid] = $newcacherev;
         }
     }
 
@@ -465,6 +487,14 @@ class course_modinfo {
             // We require presence of property cacherev to validate the course cache.
             // No need to clone the $COURSE or $SITE object here because we clone it below anyway.
             $course = get_course($course->id, false);
+        }
+
+        // If we have rebuilt the course cache in this request, ensure that requested cacherev is
+        // at least that value. This ensures that we're not reusing a course object with old
+        // cacherev, which could result in using old cached data.
+        if (array_key_exists($course->id, self::$mincacherevs) &&
+                $course->cacherev < self::$mincacherevs[$course->id]) {
+            $course->cacherev = self::$mincacherevs[$course->id];
         }
 
         $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
@@ -698,18 +728,21 @@ class course_modinfo {
         $cache = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
         $cache->acquire_lock($cachekey);
-        $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-        if ($coursemodinfo !== false) {
-            foreach ($coursemodinfo->sectioncache as $sectionno => $sectioncache) {
-                if ($sectioncache->id == $sectionid) {
-                    $coursemodinfo->cacherev = -1;
-                    unset($coursemodinfo->sectioncache[$sectionno]);
-                    $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
-                    break;
+        try {
+            $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+            if ($coursemodinfo !== false) {
+                foreach ($coursemodinfo->sectioncache as $sectionno => $sectioncache) {
+                    if ($sectioncache->id == $sectionid) {
+                        $coursemodinfo->cacherev = -1;
+                        unset($coursemodinfo->sectioncache[$sectionno]);
+                        $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+                        break;
+                    }
                 }
             }
+        } finally {
+            $cache->release_lock($cachekey);
         }
-        $cache->release_lock($cachekey);
     }
 
     /**
@@ -723,13 +756,16 @@ class course_modinfo {
         $cache = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
         $cache->acquire_lock($cachekey);
-        $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-        if ($coursemodinfo !== false && array_key_exists($sectionno, $coursemodinfo->sectioncache)) {
-            $coursemodinfo->cacherev = -1;
-            unset($coursemodinfo->sectioncache[$sectionno]);
-            $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+        try {
+            $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+            if ($coursemodinfo !== false && array_key_exists($sectionno, $coursemodinfo->sectioncache)) {
+                $coursemodinfo->cacherev = -1;
+                unset($coursemodinfo->sectioncache[$sectionno]);
+                $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+            }
+        } finally {
+            $cache->release_lock($cachekey);
         }
-        $cache->release_lock($cachekey);
     }
 
     /**
@@ -743,15 +779,18 @@ class course_modinfo {
         $cache = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
         $cache->acquire_lock($cachekey);
-        $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-        $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
-        if ($hascache) {
-            $coursemodinfo->cacherev = -1;
-            unset($coursemodinfo->modinfo[$cmid]);
-            $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+        try {
             $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+            $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
+            if ($hascache) {
+                $coursemodinfo->cacherev = -1;
+                unset($coursemodinfo->modinfo[$cmid]);
+                $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+                $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+            }
+        } finally {
+            $cache->release_lock($cachekey);
         }
-        $cache->release_lock($cachekey);
     }
 
     /**
@@ -946,8 +985,8 @@ class course_modinfo {
      */
     public static function purge_course_cache(int $courseid): void {
         increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
-        $cachemodinfo = cache::make('core', 'coursemodinfo');
-        $cachemodinfo->delete($courseid);
+        // Because this is a versioned cache, there is no need to actually delete the cache item,
+        // only increase the required version number.
     }
 }
 
@@ -1754,6 +1793,28 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
+     * Get the activity badge data associated to this course module (if the module supports it).
+     * Modules can use this method to provide additional data to be displayed in the activity badge.
+     *
+     * @param renderer_base $output Output render to use, or null for default (global)
+     * @return stdClass|null The activitybadge data (badgecontent, badgestyle...) or null if the module doesn't implement it.
+     */
+    public function get_activitybadge(?renderer_base $output = null): ?stdClass {
+        global $OUTPUT;
+
+        $activibybadgeclass = activitybadge::create_instance($this);
+        if (empty($activibybadgeclass)) {
+            return null;
+        }
+
+        if (!isset($output)) {
+            $output = $OUTPUT;
+        }
+
+        return $activibybadgeclass->export_for_template($output);
+    }
+
+    /**
      * Note: Will collect view data, if not already obtained.
      * @return string Extra HTML code to display after editing icons (e.g. more icons)
      */
@@ -1763,7 +1824,15 @@ class cm_info implements IteratorAggregate {
     }
 
     /**
-     * @param moodle_core_renderer $output Output render to use, or null for default (global)
+     * Fetch the module's icon URL.
+     *
+     * This function fetches the course module instance's icon URL.
+     * This method adds a `filtericon` parameter in the URL when rendering the monologo version of the course module icon or when
+     * the plugin declares, via its `filtericon` custom data, that the icon needs to be filtered.
+     * This additional information can be used by plugins when rendering the module icon to determine whether to apply
+     * CSS filtering to the icon.
+     *
+     * @param core_renderer $output Output render to use, or null for default (global)
      * @return moodle_url Icon URL for a suitable icon to put beside this cm
      */
     public function get_icon_url($output = null) {
@@ -1773,6 +1842,7 @@ class cm_info implements IteratorAggregate {
             $output = $OUTPUT;
         }
 
+        $ismonologo = false;
         if (!empty($this->iconurl)) {
             // Support modules setting their own, external, icon image.
             $icon = $this->iconurl;
@@ -1792,6 +1862,18 @@ class cm_info implements IteratorAggregate {
             }
         } else {
             $icon = $output->image_url('monologo', $this->modname);
+            // Activity modules may only have an `icon` icon instead of a `monologo` icon.
+            // So we need to determine if the module really has a `monologo` icon.
+            $ismonologo = core_component::has_monologo_icon('mod', $this->modname);
+        }
+
+        // Determine whether the icon will be filtered in the CSS.
+        // This can be controlled by the module by declaring a 'filtericon' custom data.
+        // If the 'filtericon' custom data is not set, icon filtering will be determined whether the module has a `monologo` icon.
+        // Additionally, we need to cast custom data to array as some modules may treat it as an object.
+        $filtericon = ((array)$this->customdata)['filtericon'] ?? $ismonologo;
+        if ($filtericon) {
+            $icon->param('filtericon', 1);
         }
         return $icon;
     }
@@ -2754,21 +2836,19 @@ function rebuild_course_cache(int $courseid = 0, bool $clearonly = false, bool $
         }
     } else {
         // Clearing cache for one course, make sure it is deleted from user request cache as well.
+        // Because this is a versioned cache, there is no need to actually delete the cache item,
+        // only increase the required version number.
         increment_revision_number('course', 'cacherev', 'id = :id', array('id' => $courseid));
-        if (!$partialrebuild) {
-            // Purge all course modinfo.
-            $cachecoursemodinfo->delete($courseid);
-        }
+        $cacherev = $DB->get_field('course', 'cacherev', ['id' => $courseid]);
         // Clear memory static cache.
-        course_modinfo::clear_instance_cache($courseid);
+        course_modinfo::clear_instance_cache($courseid, $cacherev);
         // Update global values too.
         if ($courseid == $COURSE->id || $courseid == $SITE->id) {
-            $cacherev = $DB->get_field('course', 'cacherev', array('id' => $courseid));
             if ($courseid == $COURSE->id) {
                 $COURSE->cacherev = $cacherev;
             }
             if ($courseid == $SITE->id) {
-                $SITE->cachrev = $cacherev;
+                $SITE->cacherev = $cacherev;
             }
         }
     }
@@ -3022,6 +3102,12 @@ class section_info implements IteratorAggregate {
      * @var course_modinfo
      */
     private $modinfo;
+
+    /**
+     * True if has activities, otherwise false.
+     * @var bool
+     */
+    public $hasactivites;
 
     /**
      * Constructs object from database information plus extra required data.

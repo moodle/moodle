@@ -92,7 +92,7 @@ class update_overdue_attempts extends \core\task\scheduled_task {
 
                 // If we have moved on to a different course, fetch the new data.
                 if (!$course || $course->id != $quiz->course) {
-                    $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+                    $course = get_course($quiz->course);
                 }
 
                 // Make a specialised version of the quiz settings, with the relevant overrides.

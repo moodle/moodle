@@ -183,7 +183,7 @@ abstract class send_notification extends adhoc_task {
         foreach ($this->get_recipients() as $recipient) {
             try {
                 \core_user::require_active_user($recipient, true, true);
-                cron_setup_user($recipient);
+                \core\cron::setup_user($recipient);
             } catch (moodle_exception $e) {
                 // Skip sending.
                 continue;
@@ -192,7 +192,7 @@ abstract class send_notification extends adhoc_task {
             $this->send_notification_to_current_user();
         }
 
-        cron_setup_user();
+        \core\cron::setup_user();
     }
 
     /**

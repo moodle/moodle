@@ -85,11 +85,26 @@ abstract class screen {
      */
     protected $items;
 
+    /** @var int Maximum number of students that can be shown on one page */
+    protected static $maxperpage = 5000;
+
     /**
      * List of allowed values for 'perpage' setting
      * @var array $validperpage
      */
-    protected static $validperpage = [20, 50, 100, 200, 400, 1000, 5000];
+    protected static $validperpage = [20, 100];
+
+    /**
+     * To store course data
+     * @var stdClass
+     */
+    protected $course;
+
+    /**
+     * General structure representing grade items in course
+     * @var grade_structure
+     */
+    protected $structure;
 
     /**
      * Constructor
@@ -112,17 +127,19 @@ abstract class screen {
 
         $cache = \cache::make_from_params(\cache_store::MODE_SESSION, 'gradereport_singleview', 'perpage');
         $perpage = optional_param('perpage', null, PARAM_INT);
-        if (!in_array($perpage, self::$validperpage)) {
+        if (!in_array($perpage, self::$validperpage) && ($perpage !== 0)) {
             // Get from cache.
             $perpage = $cache->get(get_class($this));
         } else {
             // Save to cache.
             $cache->set(get_class($this), $perpage);
         }
-        if ($perpage) {
+        if (isset($perpage) && $perpage) {
             $this->perpage = $perpage;
         } else {
-            $this->perpage = 100;
+            // Get from cache.
+            $perpage = $cache->get(get_class($this));
+            $this->perpage = ($perpage === 0) ? $perpage : min(self::$validperpage);
         }
 
         $this->init(empty($itemid));
@@ -393,28 +410,15 @@ abstract class screen {
 
     /**
      * Load a valid list of users for this gradebook as the screen "items".
-     * @return array $users A list of enroled users.
+     *
+     * @deprecated since Moodle 4.3
+     * @return array A list of enroled users.
      */
     protected function load_users(): array {
-        global $CFG;
+        debugging('The function ' . __FUNCTION__ . '() is deprecated. Please use get_gradable_users() instead.',
+            DEBUG_DEVELOPER);
 
-        // Create a graded_users_iterator because it will properly check the groups etc.
-        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
-        $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $this->context);
-
-        require_once($CFG->dirroot.'/grade/lib.php');
-        $gui = new \graded_users_iterator($this->course, null, $this->groupid);
-        $gui->require_active_enrolment($showonlyactiveenrol);
-        $gui->init();
-
-        // Flatten the users.
-        $users = [];
-        while ($user = $gui->next_user()) {
-            $users[$user->user->id] = $user->user;
-        }
-        $gui->close();
-        return $users;
+        return get_gradable_users($this->courseid, $this->groupid);
     }
 
     /**
@@ -424,16 +428,37 @@ abstract class screen {
     public function perpage_select(): string {
         global $PAGE, $OUTPUT;
 
-        $options = array_combine(self::$validperpage, self::$validperpage);
-
         $url = new moodle_url($PAGE->url);
-        $url->remove_params(['page', 'perpage']);
+        $numusers = count($this->items);
+        // Print per-page dropdown.
+        $pagingoptions = self::$validperpage;
+        if ($this->perpage) {
+            $pagingoptions[] = $this->perpage; // To make sure the current preference is within the options.
+        }
+        $pagingoptions = array_unique($pagingoptions);
+        sort($pagingoptions);
+        $pagingoptions = array_combine($pagingoptions, $pagingoptions);
+        if ($numusers > self::$maxperpage) {
+            $pagingoptions['0'] = self::$maxperpage;
+        } else {
+            $pagingoptions['0'] = get_string('all');
+        }
 
-        $out = '';
-        $select = new \single_select($url, 'perpage', $options, $this->perpage, null, 'perpagechanger');
-        $select->label = get_string('itemsperpage', 'gradereport_singleview');
-        $out .= $OUTPUT->render($select);
+        $perpagedata = [
+            'baseurl' => $url->out(false),
+            'options' => []
+        ];
+        foreach ($pagingoptions as $key => $name) {
+            $perpagedata['options'][] = [
+                'name' => $name,
+                'value' => $key,
+                'selected' => $key == $this->perpage,
+            ];
+        }
 
-        return $out;
+        // The number of students per page is always limited even if it is claimed to be unlimited.
+        $this->perpage = $this->perpage ?: self::$maxperpage;
+        $perpagedata['pagingbar'] = $this->pager();
+        return $OUTPUT->render_from_template('gradereport_singleview/perpage', $perpagedata);;
     }
 }

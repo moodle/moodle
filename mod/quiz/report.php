@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\quiz_settings;
+
 define('NO_OUTPUT_BUFFERING', true);
 
 require_once(__DIR__ . '/../../config.php');
@@ -33,27 +35,13 @@ $q = optional_param('q', 0, PARAM_INT);
 $mode = optional_param('mode', '', PARAM_ALPHA);
 
 if ($id) {
-    if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
-        throw new \moodle_exception('coursemisconf');
-    }
-    if (!$quiz = $DB->get_record('quiz', ['id' => $cm->instance])) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
-
+    $quizobj = quiz_settings::create_for_cmid($id);
 } else {
-    if (!$quiz = $DB->get_record('quiz', ['id' => $q])) {
-        throw new \moodle_exception('invalidquizid', 'quiz');
-    }
-    if (!$course = $DB->get_record('course', ['id' => $quiz->course])) {
-        throw new \moodle_exception('invalidcourseid');
-    }
-    if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        throw new \moodle_exception('invalidcoursemodule');
-    }
+    $quizobj = quiz_settings::create($q);
 }
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
 
 $url = new moodle_url('/mod/quiz/report.php', ['id' => $cm->id]);
 if ($mode !== '') {
@@ -62,10 +50,9 @@ if ($mode !== '') {
 $PAGE->set_url($url);
 
 require_login($course, false, $cm);
-$context = context_module::instance($cm->id);
 $PAGE->set_pagelayout('report');
 $PAGE->activityheader->disable();
-$reportlist = quiz_report_list($context);
+$reportlist = quiz_report_list($quizobj->get_context());
 if (empty($reportlist)) {
     throw new \moodle_exception('erroraccessingreport', 'quiz');
 }
@@ -100,7 +87,7 @@ echo $OUTPUT->footer();
 
 // Log that this report was viewed.
 $params = [
-    'context' => $context,
+    'context' => $quizobj->get_context(),
     'other' => [
         'quizid' => $quiz->id,
         'reportname' => $mode

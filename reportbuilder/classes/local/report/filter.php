@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\report;
 use lang_string;
 use moodle_exception;
 use core_reportbuilder\local\filters\base;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\models\filter as filter_model;
 
 /**
@@ -55,6 +56,12 @@ final class filter {
 
     /** @var bool $available */
     protected $available = true;
+
+    /** @var bool $deprecated */
+    protected $deprecated = false;
+
+    /** @var string $deprecatedmessage */
+    protected $deprecatedmessage;
 
     /** @var mixed $options */
     protected $options;
@@ -213,6 +220,38 @@ final class filter {
     }
 
     /**
+     * Retrieve SQL expression and parameters for the field
+     *
+     * @param int $index
+     * @return array [$sql, [...$params]]
+     */
+    public function get_field_sql_and_params(int $index = 0): array {
+        $fieldsql = $this->get_field_sql();
+        $fieldparams = $this->get_field_params();
+
+        // Shortcut if there aren't any parameters.
+        if (empty($fieldparams)) {
+            return [$fieldsql, $fieldparams];
+        }
+
+        // Simple callback for replacement of parameter names within filter SQL.
+        $transform = function(string $param) use ($index): string {
+            return "{$param}_{$index}";
+        };
+
+        $paramnames = array_keys($fieldparams);
+        $sql = database::sql_replace_parameter_names($fieldsql, $paramnames, $transform);
+
+        $params = [];
+        foreach ($paramnames as $paramname) {
+            $paramnametransform = $transform($paramname);
+            $params[$paramnametransform] = $fieldparams[$paramname];
+        }
+
+        return [$sql, $params];
+    }
+
+    /**
      * Set the SQL expression for the field that is being filtered. It will be passed to the filter class
      *
      * @param string $sql
@@ -244,6 +283,37 @@ final class filter {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
+    }
+
+    /**
+     * Set deprecated state of the filter, in which case it will still be shown when already present in existing reports but
+     * won't be available for selection in the report editor
+     *
+     * @param string $deprecatedmessage
+     * @return self
+     */
+    public function set_is_deprecated(string $deprecatedmessage = ''): self {
+        $this->deprecated = true;
+        $this->deprecatedmessage = $deprecatedmessage;
+        return $this;
+    }
+
+    /**
+     * Return deprecated state of the filter
+     *
+     * @return bool
+     */
+    public function get_is_deprecated(): bool {
+        return $this->deprecated;
+    }
+
+    /**
+     * Return deprecated message of the filter
+     *
+     * @return string
+     */
+    public function get_is_deprecated_message(): string {
+        return $this->deprecatedmessage;
     }
 
     /**

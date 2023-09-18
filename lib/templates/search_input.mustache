@@ -28,6 +28,12 @@
         "searchstring": "Search settings",
         "value": "policy",
         "btnclass": "primary",
+        "buttonattributes": [
+            {
+                "key": "name",
+                "value": "hello"
+            }
+        ],
         "query": "themedesigner",
         "hiddenfields": [
             {
@@ -59,7 +65,10 @@
            value="{{ query }}"
         >
         <div class="input-group-append">
-            <button type="submit" class="btn {{^btnclass}}btn-submit{{/btnclass}} {{ btnclass }} search-icon">
+            <button type="submit"
+                class="btn {{^btnclass}}btn-submit{{/btnclass}} {{ btnclass }} search-icon"
+                {{#buttonattributes}}{{ key }}="{{ value }}" {{/buttonattributes}}
+            >
                 {{#pix}} a/search, core {{/pix}}
                 <span class="sr-only">{{ searchstring }}</span>
             </button>

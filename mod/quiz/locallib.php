@@ -36,10 +36,13 @@ require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
 use mod_quiz\access_manager;
+use mod_quiz\event\attempt_submitted;
+use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
+use qbank_previewquestion\question_preview_options;
 
 /**
  * @var int We show the countdown timer if there is less than this amount of time left before the
@@ -97,7 +100,7 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
     }
 
     $quiz = $quizobj->get_quiz();
-    if ($quiz->sumgrades < 0.000005 && $quiz->grade > 0.000005) {
+    if ($quiz->sumgrades < grade_calculator::ALMOST_ZERO && $quiz->grade > grade_calculator::ALMOST_ZERO) {
         throw new moodle_exception('cannotstartgradesmismatch', 'quiz',
                 new moodle_url('/mod/quiz/view.php', ['q' => $quiz->id]),
                     ['grade' => quiz_format_grade($quiz, $quiz->grade)]);
@@ -164,9 +167,8 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $qubaids = new \mod_quiz\question\qubaids_for_users_attempts(
             $quizobj->get_quizid(), $attempt->userid);
 
-    // Fully load all the questions in this quiz.
+    // Partially load all the questions in this quiz.
     $quizobj->preload_questions();
-    $quizobj->load_questions();
 
     // First load all the non-random questions.
     $randomfound = false;
@@ -174,18 +176,18 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
     $questions = [];
     $maxmark = [];
     $page = [];
-    foreach ($quizobj->get_questions() as $questiondata) {
+    foreach ($quizobj->get_questions(null, false) as $questiondata) {
         $slot += 1;
         $maxmark[$slot] = $questiondata->maxmark;
         $page[$slot] = $questiondata->page;
+        if ($questiondata->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT) {
+            throw new moodle_exception('questiondraftonly', 'mod_quiz', '', $questiondata->name);
+        }
         if ($questiondata->qtype == 'random') {
             $randomfound = true;
             continue;
         }
-        if (!$quizobj->get_quiz()->shuffleanswers) {
-            $questiondata->options->shuffleanswers = false;
-        }
-        $questions[$slot] = question_bank::make_question($questiondata);
+        $questions[$slot] = question_bank::load_question($questiondata->questionid, $quizobj->get_quiz()->shuffleanswers);
     }
 
     // Then find a question to go in place of each random question.
@@ -201,7 +203,7 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
         }
         $randomloader = new \core_question\local\bank\random_question_loader($qubaids, $usedquestionids);
 
-        foreach ($quizobj->get_questions() as $questiondata) {
+        foreach ($quizobj->get_questions(null, false) as $questiondata) {
             $slot += 1;
             if ($questiondata->qtype != 'random') {
                 continue;
@@ -211,8 +213,9 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
 
             // Deal with fixed random choices for testing.
             if (isset($questionids[$quba->next_slot_number()])) {
-                if ($randomloader->is_question_available($questiondata->category,
-                        (bool) $questiondata->questiontext, $questionids[$quba->next_slot_number()], $tagids)) {
+                $filtercondition = $questiondata->filtercondition;
+                $filters = $filtercondition['filter'] ?? [];
+                if ($randomloader->is_filtered_question_available($filters, $questionids[$quba->next_slot_number()])) {
                     $questions[$slot] = question_bank::load_question(
                             $questionids[$quba->next_slot_number()], $quizobj->get_quiz()->shuffleanswers);
                     continue;
@@ -222,8 +225,10 @@ function quiz_start_new_attempt($quizobj, $quba, $attempt, $attemptnumber, $time
             }
 
             // Normal case, pick one at random.
-            $questionid = $randomloader->get_next_question_id($questiondata->category,
-                    $questiondata->randomrecurse, $tagids);
+            $filtercondition = $questiondata->filtercondition;
+            $filters = $filtercondition['filter'] ?? [];
+            $questionid = $randomloader->get_next_filtered_question_id($filters);
+
             if ($questionid === null) {
                 throw new moodle_exception('notenoughrandomquestions', 'quiz',
                                            $quizobj->view_url(), $questiondata);
@@ -316,7 +321,11 @@ function quiz_start_attempt_built_on_last($quba, $attempt, $lastattempt) {
 
     $oldnumberstonew = [];
     foreach ($oldquba->get_attempt_iterator() as $oldslot => $oldqa) {
-        $newslot = $quba->add_question($oldqa->get_question(false), $oldqa->get_max_mark());
+        $question = $oldqa->get_question(false);
+        if ($question->status == \core_question\local\bank\question_version_status::QUESTION_STATUS_DRAFT) {
+            throw new moodle_exception('questiondraftonly', 'mod_quiz', '', $question->name);
+        }
+        $newslot = $quba->add_question($question, $oldqa->get_max_mark());
 
         $quba->start_question_based_on($newslot, $oldqa);
 
@@ -442,10 +451,11 @@ function quiz_delete_attempt($attempt, $quiz) {
     // If none, then delete record for this quiz, this user from quiz_grades
     // else recalculate best grade.
     $userid = $attempt->userid;
+    $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
     if (!$DB->record_exists('quiz_attempts', ['userid' => $userid, 'quiz' => $quiz->id])) {
         $DB->delete_records('quiz_grades', ['userid' => $userid, 'quiz' => $quiz->id]);
     } else {
-        quiz_save_best_grade($quiz, $userid);
+        $gradecalculator->recompute_final_grade($userid);
     }
 
     quiz_update_grades($quiz, $userid);
@@ -530,6 +540,7 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
 }
 
 // Functions to do with quiz grades ////////////////////////////////////////////
+// Note a lot of logic related to this is now in the grade_calculator class.
 
 /**
  * Convert the raw grade stored in $attempt into a grade out of the maximum
@@ -545,7 +556,7 @@ function quiz_repaginate_questions($quizid, $slotsperpage) {
 function quiz_rescale_grade($rawgrade, $quiz, $format = true) {
     if (is_null($rawgrade)) {
         $grade = null;
-    } else if ($quiz->sumgrades >= 0.000005) {
+    } else if ($quiz->sumgrades >= grade_calculator::ALMOST_ZERO) {
         $grade = $rawgrade * $quiz->grade / $quiz->sumgrades;
     } else {
         $grade = 0;
@@ -627,387 +638,20 @@ function quiz_has_feedback($quiz) {
 }
 
 /**
- * Update the sumgrades field of the quiz. This needs to be called whenever
- * the grading structure of the quiz is changed. For example if a question is
- * added or removed, or a question weight is changed.
- *
- * You should call {@link quiz_delete_previews()} before you call this function.
- *
- * @param stdClass $quiz a quiz.
- */
-function quiz_update_sumgrades($quiz) {
-    global $DB;
-
-    $sql = 'UPDATE {quiz}
-            SET sumgrades = COALESCE((
-                SELECT SUM(maxmark)
-                FROM {quiz_slots}
-                WHERE quizid = {quiz}.id
-            ), 0)
-            WHERE id = ?';
-    $DB->execute($sql, [$quiz->id]);
-    $quiz->sumgrades = $DB->get_field('quiz', 'sumgrades', ['id' => $quiz->id]);
-
-    if ($quiz->sumgrades < 0.000005 && quiz_has_attempts($quiz->id)) {
-        // If the quiz has been attempted, and the sumgrades has been
-        // set to 0, then we must also set the maximum possible grade to 0, or
-        // we will get a divide by zero error.
-        quiz_set_grade(0, $quiz);
-    }
-}
-
-/**
- * Update the sumgrades field of the attempts at a quiz.
- *
- * @param stdClass $quiz a quiz.
- */
-function quiz_update_all_attempt_sumgrades($quiz) {
-    global $DB;
-    $dm = new question_engine_data_mapper();
-    $timenow = time();
-
-    $sql = "UPDATE {quiz_attempts}
-            SET
-                timemodified = :timenow,
-                sumgrades = (
-                    {$dm->sum_usage_marks_subquery('uniqueid')}
-                )
-            WHERE quiz = :quizid AND state = :finishedstate";
-    $DB->execute($sql, ['timenow' => $timenow, 'quizid' => $quiz->id,
-            'finishedstate' => quiz_attempt::FINISHED]);
-}
-
-/**
- * The quiz grade is the maximum that student's results are marked out of. When it
- * changes, the corresponding data in quiz_grades and quiz_feedback needs to be
- * rescaled. After calling this function, you probably need to call
- * quiz_update_all_attempt_sumgrades, quiz_update_all_final_grades and
- * quiz_update_grades.
- *
- * @param float $newgrade the new maximum grade for the quiz.
- * @param stdClass $quiz the quiz we are updating. Passed by reference so its
- *      grade field can be updated too.
- * @return bool indicating success or failure.
- */
-function quiz_set_grade($newgrade, $quiz) {
-    global $DB;
-    // This is potentially expensive, so only do it if necessary.
-    if (abs($quiz->grade - $newgrade) < 1e-7) {
-        // Nothing to do.
-        return true;
-    }
-
-    $oldgrade = $quiz->grade;
-    $quiz->grade = $newgrade;
-
-    // Use a transaction, so that on those databases that support it, this is safer.
-    $transaction = $DB->start_delegated_transaction();
-
-    // Update the quiz table.
-    $DB->set_field('quiz', 'grade', $newgrade, ['id' => $quiz->instance]);
-
-    if ($oldgrade < 1) {
-        // If the old grade was zero, we cannot rescale, we have to recompute.
-        // We also recompute if the old grade was too small to avoid underflow problems.
-        quiz_update_all_final_grades($quiz);
-
-    } else {
-        // We can rescale the grades efficiently.
-        $timemodified = time();
-        $DB->execute("
-                UPDATE {quiz_grades}
-                SET grade = ? * grade, timemodified = ?
-                WHERE quiz = ?
-        ", [$newgrade / $oldgrade, $timemodified, $quiz->id]);
-    }
-
-    if ($oldgrade > 1e-7) {
-        // Update the quiz_feedback table.
-        $factor = $newgrade/$oldgrade;
-        $DB->execute("
-                UPDATE {quiz_feedback}
-                SET mingrade = ? * mingrade, maxgrade = ? * maxgrade
-                WHERE quizid = ?
-        ", [$factor, $factor, $quiz->id]);
-    }
-
-    // Update grade item and send all grades to gradebook.
-    quiz_grade_item_update($quiz);
-    quiz_update_grades($quiz);
-
-    $transaction->allow_commit();
-
-    // Log quiz grade updated event.
-    // We use $num + 0 as a trick to remove the useless 0 digits from decimals.
-    $cm = get_coursemodule_from_instance('quiz', $quiz->id);
-    $event = \mod_quiz\event\quiz_grade_updated::create([
-        'context' => \context_module::instance($cm->id),
-        'objectid' => $quiz->id,
-        'other' => [
-            'oldgrade' => $oldgrade + 0,
-            'newgrade' => $newgrade + 0
-        ]
-    ]);
-    $event->trigger();
-    return true;
-}
-
-/**
- * Save the overall grade for a user at a quiz in the quiz_grades table
- *
- * @param stdClass $quiz The quiz for which the best grade is to be calculated and then saved.
- * @param int $userid The userid to calculate the grade for. Defaults to the current user.
- * @param array $attempts The attempts of this user. Useful if you are
- * looping through many users. Attempts can be fetched in one master query to
- * avoid repeated querying.
- * @return bool Indicates success or failure.
- */
-function quiz_save_best_grade($quiz, $userid = null, $attempts = []) {
-    global $DB, $OUTPUT, $USER;
-
-    if (empty($userid)) {
-        $userid = $USER->id;
-    }
-
-    if (!$attempts) {
-        // Get all the attempts made by the user.
-        $attempts = quiz_get_user_attempts($quiz->id, $userid);
-    }
-
-    // Calculate the best grade.
-    $bestgrade = quiz_calculate_best_grade($quiz, $attempts);
-    $bestgrade = quiz_rescale_grade($bestgrade, $quiz, false);
-
-    // Save the best grade in the database.
-    if (is_null($bestgrade)) {
-        $DB->delete_records('quiz_grades', ['quiz' => $quiz->id, 'userid' => $userid]);
-
-    } else if ($grade = $DB->get_record('quiz_grades',
-            ['quiz' => $quiz->id, 'userid' => $userid])) {
-        $grade->grade = $bestgrade;
-        $grade->timemodified = time();
-        $DB->update_record('quiz_grades', $grade);
-
-    } else {
-        $grade = new stdClass();
-        $grade->quiz = $quiz->id;
-        $grade->userid = $userid;
-        $grade->grade = $bestgrade;
-        $grade->timemodified = time();
-        $DB->insert_record('quiz_grades', $grade);
-    }
-
-    quiz_update_grades($quiz, $userid);
-}
-
-/**
- * Calculate the overall grade for a quiz given a number of attempts by a particular user.
- *
- * @param stdClass $quiz    the quiz settings object.
- * @param array $attempts an array of all the user's attempts at this quiz in order.
- * @return float          the overall grade
- */
-function quiz_calculate_best_grade($quiz, $attempts) {
-
-    switch ($quiz->grademethod) {
-
-        case QUIZ_ATTEMPTFIRST:
-            $firstattempt = reset($attempts);
-            return $firstattempt->sumgrades;
-
-        case QUIZ_ATTEMPTLAST:
-            $lastattempt = end($attempts);
-            return $lastattempt->sumgrades;
-
-        case QUIZ_GRADEAVERAGE:
-            $sum = 0;
-            $count = 0;
-            foreach ($attempts as $attempt) {
-                if (!is_null($attempt->sumgrades)) {
-                    $sum += $attempt->sumgrades;
-                    $count++;
-                }
-            }
-            if ($count == 0) {
-                return null;
-            }
-            return $sum / $count;
-
-        case QUIZ_GRADEHIGHEST:
-        default:
-            $max = null;
-            foreach ($attempts as $attempt) {
-                if ($attempt->sumgrades > $max) {
-                    $max = $attempt->sumgrades;
-                }
-            }
-            return $max;
-    }
-}
-
-/**
- * Update the final grade at this quiz for all students.
- *
- * This function is equivalent to calling quiz_save_best_grade for all
- * users, but much more efficient.
- *
- * @param stdClass $quiz the quiz settings.
- */
-function quiz_update_all_final_grades($quiz) {
-    global $DB;
-
-    if (!$quiz->sumgrades) {
-        return;
-    }
-
-    $param = ['iquizid' => $quiz->id, 'istatefinished' => quiz_attempt::FINISHED];
-    $firstlastattemptjoin = "JOIN (
-            SELECT
-                iquiza.userid,
-                MIN(attempt) AS firstattempt,
-                MAX(attempt) AS lastattempt
-
-            FROM {quiz_attempts} iquiza
-
-            WHERE
-                iquiza.state = :istatefinished AND
-                iquiza.preview = 0 AND
-                iquiza.quiz = :iquizid
-
-            GROUP BY iquiza.userid
-        ) first_last_attempts ON first_last_attempts.userid = quiza.userid";
-
-    switch ($quiz->grademethod) {
-        case QUIZ_ATTEMPTFIRST:
-            // Because of the where clause, there will only be one row, but we
-            // must still use an aggregate function.
-            $select = 'MAX(quiza.sumgrades)';
-            $join = $firstlastattemptjoin;
-            $where = 'quiza.attempt = first_last_attempts.firstattempt AND';
-            break;
-
-        case QUIZ_ATTEMPTLAST:
-            // Because of the where clause, there will only be one row, but we
-            // must still use an aggregate function.
-            $select = 'MAX(quiza.sumgrades)';
-            $join = $firstlastattemptjoin;
-            $where = 'quiza.attempt = first_last_attempts.lastattempt AND';
-            break;
-
-        case QUIZ_GRADEAVERAGE:
-            $select = 'AVG(quiza.sumgrades)';
-            $join = '';
-            $where = '';
-            break;
-
-        default:
-        case QUIZ_GRADEHIGHEST:
-            $select = 'MAX(quiza.sumgrades)';
-            $join = '';
-            $where = '';
-            break;
-    }
-
-    if ($quiz->sumgrades >= 0.000005) {
-        $finalgrade = $select . ' * ' . ($quiz->grade / $quiz->sumgrades);
-    } else {
-        $finalgrade = '0';
-    }
-    $param['quizid'] = $quiz->id;
-    $param['quizid2'] = $quiz->id;
-    $param['quizid3'] = $quiz->id;
-    $param['quizid4'] = $quiz->id;
-    $param['statefinished'] = quiz_attempt::FINISHED;
-    $param['statefinished2'] = quiz_attempt::FINISHED;
-    $finalgradesubquery = "
-            SELECT quiza.userid, $finalgrade AS newgrade
-            FROM {quiz_attempts} quiza
-            $join
-            WHERE
-                $where
-                quiza.state = :statefinished AND
-                quiza.preview = 0 AND
-                quiza.quiz = :quizid3
-            GROUP BY quiza.userid";
-
-    $changedgrades = $DB->get_records_sql("
-            SELECT users.userid, qg.id, qg.grade, newgrades.newgrade
-
-            FROM (
-                SELECT userid
-                FROM {quiz_grades} qg
-                WHERE quiz = :quizid
-            UNION
-                SELECT DISTINCT userid
-                FROM {quiz_attempts} quiza2
-                WHERE
-                    quiza2.state = :statefinished2 AND
-                    quiza2.preview = 0 AND
-                    quiza2.quiz = :quizid2
-            ) users
-
-            LEFT JOIN {quiz_grades} qg ON qg.userid = users.userid AND qg.quiz = :quizid4
-
-            LEFT JOIN (
-                $finalgradesubquery
-            ) newgrades ON newgrades.userid = users.userid
-
-            WHERE
-                ABS(newgrades.newgrade - qg.grade) > 0.000005 OR
-                ((newgrades.newgrade IS NULL OR qg.grade IS NULL) AND NOT
-                          (newgrades.newgrade IS NULL AND qg.grade IS NULL))",
-                // The mess on the previous line is detecting where the value is
-                // NULL in one column, and NOT NULL in the other, but SQL does
-                // not have an XOR operator, and MS SQL server can't cope with
-                // (newgrades.newgrade IS NULL) <> (qg.grade IS NULL).
-            $param);
-
-    $timenow = time();
-    $todelete = [];
-    foreach ($changedgrades as $changedgrade) {
-
-        if (is_null($changedgrade->newgrade)) {
-            $todelete[] = $changedgrade->userid;
-
-        } else if (is_null($changedgrade->grade)) {
-            $toinsert = new stdClass();
-            $toinsert->quiz = $quiz->id;
-            $toinsert->userid = $changedgrade->userid;
-            $toinsert->timemodified = $timenow;
-            $toinsert->grade = $changedgrade->newgrade;
-            $DB->insert_record('quiz_grades', $toinsert);
-
-        } else {
-            $toupdate = new stdClass();
-            $toupdate->id = $changedgrade->id;
-            $toupdate->grade = $changedgrade->newgrade;
-            $toupdate->timemodified = $timenow;
-            $DB->update_record('quiz_grades', $toupdate);
-        }
-    }
-
-    if (!empty($todelete)) {
-        list($test, $params) = $DB->get_in_or_equal($todelete);
-        $DB->delete_records_select('quiz_grades', 'quiz = ? AND userid ' . $test,
-                array_merge([$quiz->id], $params));
-    }
-}
-
-/**
  * Return summary of the number of settings override that exist.
  *
  * To get a nice display of this, see the quiz_override_summary_links()
  * quiz renderer method.
  *
  * @param stdClass $quiz the quiz settings. Only $quiz->id is used at the moment.
- * @param stdClass|cm_info $cm the cm object. Only $cm->course, $cm->groupmode and
+ * @param cm_info|stdClass $cm the cm object. Only $cm->course, $cm->groupmode and
  *      $cm->groupingid fields are used at the moment.
  * @param int $currentgroup if there is a concept of current group where this method is being called
  *      (e.g. a report) pass it in here. Default 0 which means no current group.
  * @return array like 'group' => 3, 'user' => 12] where 3 is the number of group overrides,
  *      and 12 is the number of user ones.
  */
-function quiz_override_summary(stdClass $quiz, stdClass $cm, int $currentgroup = 0): array {
+function quiz_override_summary(stdClass $quiz, cm_info|stdClass $cm, int $currentgroup = 0): array {
     global $DB;
 
     if ($currentgroup) {
@@ -1214,45 +858,6 @@ function quiz_get_attempt_usertime_sql($redundantwhereclauses = '') {
 }
 
 /**
- * Return the attempt with the best grade for a quiz
- *
- * Which attempt is the best depends on $quiz->grademethod. If the grade
- * method is GRADEAVERAGE then this function simply returns the last attempt.
- * @return stdClass         The attempt with the best grade
- * @param stdClass $quiz    The quiz for which the best grade is to be calculated
- * @param array $attempts An array of all the attempts of the user at the quiz
- */
-function quiz_calculate_best_attempt($quiz, $attempts) {
-
-    switch ($quiz->grademethod) {
-
-        case QUIZ_ATTEMPTFIRST:
-            foreach ($attempts as $attempt) {
-                return $attempt;
-            }
-            break;
-
-        case QUIZ_GRADEAVERAGE: // We need to do something with it.
-        case QUIZ_ATTEMPTLAST:
-            foreach ($attempts as $attempt) {
-                $final = $attempt;
-            }
-            return $final;
-
-        default:
-        case QUIZ_GRADEHIGHEST:
-            $max = -1;
-            foreach ($attempts as $attempt) {
-                if ($attempt->sumgrades > $max) {
-                    $max = $attempt->sumgrades;
-                    $maxattempt = $attempt;
-                }
-            }
-            return $maxattempt;
-    }
-}
-
-/**
  * @return array int => lang string the options for calculating the quiz grade
  *      from the individual attempt grades.
  */
@@ -1444,9 +1049,10 @@ function quiz_question_edit_button($cmid, $question, $returnurl, $contentafteric
  * @param stdClass $quiz the quiz settings
  * @param stdClass $question the question
  * @param int $variant which question variant to preview (optional).
+ * @param int $restartversion version of the question to use when restarting the preview.
  * @return moodle_url to preview this question with the options from this quiz.
  */
-function quiz_question_preview_url($quiz, $question, $variant = null) {
+function quiz_question_preview_url($quiz, $question, $variant = null, $restartversion = null) {
     // Get the appropriate display options.
     $displayoptions = display_options::make_from_quiz($quiz,
             display_options::DURING);
@@ -1458,7 +1064,7 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
 
     // Work out the correcte preview URL.
     return \qbank_previewquestion\helper::question_preview_url($question->id, $quiz->preferredbehaviour,
-            $maxmark, $displayoptions, $variant);
+            $maxmark, $displayoptions, $variant, null, null, $restartversion);
 }
 
 /**
@@ -1467,14 +1073,22 @@ function quiz_question_preview_url($quiz, $question, $variant = null) {
  * @param bool $label if true, show the preview question label after the icon
  * @param int $variant which question variant to preview (optional).
  * @param bool $random if question is random, true.
- * @return the HTML for a preview question icon.
+ * @return string the HTML for a preview question icon.
  */
 function quiz_question_preview_button($quiz, $question, $label = false, $variant = null, $random = null) {
     global $PAGE;
     if (!question_has_capability_on($question, 'use')) {
         return '';
     }
-    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon($quiz, $question, $label, $variant, null);
+    $structure = quiz_settings::create($quiz->id)->get_structure();
+    if (!empty($question->slot)) {
+        $requestedversion = $structure->get_slot_by_number($question->slot)->requestedversion
+                ?? question_preview_options::ALWAYS_LATEST;
+    } else {
+        $requestedversion = question_preview_options::ALWAYS_LATEST;
+    }
+    return $PAGE->get_renderer('mod_quiz', 'edit')->question_preview_icon(
+            $quiz, $question, $label, $variant, $requestedversion);
 }
 
 /**
@@ -1842,7 +1456,7 @@ function quiz_send_overdue_message($attemptobj) {
     $a->courseshortname    = format_string($attemptobj->get_course()->shortname);
     // Quiz info.
     $a->quizname           = $quizname;
-    $a->quizurl            = $attemptobj->view_url();
+    $a->quizurl            = $attemptobj->view_url()->out(false);
     $a->quizlink           = '<a href="' . $a->quizurl . '">' . $quizname . '</a>';
     // Attempt info.
     $a->attemptduedate     = userdate($duedate);
@@ -1886,15 +1500,13 @@ function quiz_send_overdue_message($attemptobj) {
  *
  * This sends the confirmation and notification messages, if required.
  *
- * @param stdClass $event the event object.
+ * @param attempt_submitted $event the event object.
  */
 function quiz_attempt_submitted_handler($event) {
-    global $DB;
-
-    $course  = $DB->get_record('course', ['id' => $event->courseid]);
+    $course = get_course($event->courseid);
     $attempt = $event->get_record_snapshot('quiz_attempts', $event->objectid);
-    $quiz    = $event->get_record_snapshot('quiz', $attempt->quiz);
-    $cm      = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
+    $quiz = $event->get_record_snapshot('quiz', $attempt->quiz);
+    $cm = get_coursemodule_from_id('quiz', $event->get_context()->instanceid, $event->courseid);
     $eventdata = $event->get_data();
 
     if (!($course && $quiz && $cm && $attempt)) {
@@ -2008,6 +1620,8 @@ function quiz_get_js_module() {
             ['functiondisabledbysecuremode', 'quiz'],
             ['startattempt', 'quiz'],
             ['timesup', 'quiz'],
+            ['show', 'moodle'],
+            ['hide', 'moodle'],
         ],
     ];
 }
@@ -2059,7 +1673,7 @@ function quiz_question_tostring($question, $showicon = false, $showquestiontext 
     // Question text.
     if ($showquestiontext) {
         $questiontext = question_utils::to_plain_text($question->questiontext,
-                $question->questiontextformat, ['noclean' => true, 'para' => false]);
+                $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
         $questiontext = shorten_text($questiontext, 50);
         if ($questiontext) {
             $result .= ' ' . html_writer::span(s($questiontext), 'questiontext');
@@ -2118,9 +1732,11 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
               JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
              WHERE slot.quizid = ?
                AND qr.component = ?
-               AND qr.questionarea = ?";
+               AND qr.questionarea = ?
+               AND qr.usingcontextid = ?";
 
-    $questionslots = $DB->get_records_sql($sql, [$quiz->id, 'mod_quiz', 'slot']);
+    $questionslots = $DB->get_records_sql($sql, [$quiz->id, 'mod_quiz', 'slot',
+            context_module::instance($quiz->cmid)->id]);
 
     $currententry = get_question_bank_entry($questionid);
 
@@ -2204,7 +1820,7 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
 
     if (!$qreferenceitem) {
         // Create a new reference record for questions created already.
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->usingcontextid = context_module::instance($quiz->cmid)->id;
         $questionreferences->component = 'mod_quiz';
         $questionreferences->questionarea = 'slot';
@@ -2214,13 +1830,13 @@ function quiz_add_quiz_question($questionid, $quiz, $page = 0, $maxmark = null) 
         $DB->insert_record('question_references', $questionreferences);
 
     } else if ($qreferenceitem->itemid === 0 || $qreferenceitem->itemid === null) {
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->id = $qreferenceitem->id;
         $questionreferences->itemid = $slotid;
         $DB->update_record('question_references', $questionreferences);
     } else {
         // If the reference record exits for another quiz.
-        $questionreferences = new \StdClass();
+        $questionreferences = new stdClass();
         $questionreferences->usingcontextid = context_module::instance($quiz->cmid)->id;
         $questionreferences->component = 'mod_quiz';
         $questionreferences->questionarea = 'slot';
@@ -2273,54 +1889,18 @@ function quiz_update_section_firstslots($quizid, $direction, $afterslot, $before
  * @param int $addonpage the page on which to add the question.
  * @param int $categoryid the question category to add the question from.
  * @param int $number the number of random questions to add.
- * @param bool $includesubcategories whether to include questoins from subcategories.
- * @param int[] $tagids Array of tagids. The question that will be picked randomly should be tagged with all these tags.
+ * @deprecated Since Moodle 4.3 MDL-72321
+ * @todo Final deprecation in Moodle 4.7 MDL-78091
  */
-function quiz_add_random_questions($quiz, $addonpage, $categoryid, $number,
-        $includesubcategories, $tagids = []) {
-    global $DB;
+function quiz_add_random_questions(stdClass $quiz, int $addonpage, int $categoryid, int $number): void {
+    debugging(
+        'quiz_add_random_questions is deprecated. Please use mod_quiz\structure::add_random_questions() instead.',
+        DEBUG_DEVELOPER
+    );
 
-    $category = $DB->get_record('question_categories', ['id' => $categoryid]);
-    if (!$category) {
-        new moodle_exception('invalidcategoryid');
-    }
-
-    $catcontext = context::instance_by_id($category->contextid);
-    require_capability('moodle/question:useall', $catcontext);
-
-    // Tags for filter condition.
-    $tags = \core_tag_tag::get_bulk($tagids, 'id, name');
-    $tagstrings = [];
-    foreach ($tags as $tag) {
-        $tagstrings[] = "{$tag->id},{$tag->name}";
-    }
-    // Create the selected number of random questions.
-    for ($i = 0; $i < $number; $i++) {
-        // Set the filter conditions.
-        $filtercondition = new stdClass();
-        $filtercondition->questioncategoryid = $categoryid;
-        $filtercondition->includingsubcategories = $includesubcategories ? 1 : 0;
-        if (!empty($tagstrings)) {
-            $filtercondition->tags = $tagstrings;
-        }
-
-        if (!isset($quiz->cmid)) {
-            $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-            $quiz->cmid = $cm->id;
-        }
-
-        // Slot data.
-        $randomslotdata = new stdClass();
-        $randomslotdata->quizid = $quiz->id;
-        $randomslotdata->usingcontextid = context_module::instance($quiz->cmid)->id;
-        $randomslotdata->questionscontextid = $category->contextid;
-        $randomslotdata->maxmark = 1;
-
-        $randomslot = new \mod_quiz\local\structure\slot_random($randomslotdata);
-        $randomslot->set_quiz($quiz);
-        $randomslot->set_filter_condition($filtercondition);
-        $randomslot->insert($addonpage);
-    }
+    $settings = quiz_settings::create($quiz->id);
+    $structure = \mod_quiz\structure::create_for_quiz($settings);
+    $structure->add_random_questions($addonpage, $number, $categoryid);
 }
 
 /**

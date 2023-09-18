@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template calendar/upcoming_mini
+    @template core_calendar/upcoming_mini
 
     Calendar upcoming view for blocks.
 
@@ -47,7 +47,7 @@
             <div class="activityiconcontainer small {{{purpose}}} courseicon mr-3">
                 {{#icon}}
                 {{#iconurl}}
-                    <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon ">
+                    <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon {{iconclass}}">
                 {{/iconurl}}
                 {{^iconurl}}
                     {{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}

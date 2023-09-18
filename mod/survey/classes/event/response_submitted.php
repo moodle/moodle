@@ -78,16 +78,6 @@ class response_submitted extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, "survey", "submit", "view.php?id=" . $this->contextinstanceid, $this->other['surveyid'],
-                     $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

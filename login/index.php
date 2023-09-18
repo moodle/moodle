@@ -84,6 +84,7 @@ $PAGE->set_pagelayout('login');
 
 /// Initialize variables
 $errormsg = '';
+$infomsg = '';
 $errorcode = 0;
 
 // IOMAD - Set the theme if the server hostname matches one of ours.
@@ -201,7 +202,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     } else {
         if (empty($errormsg)) {
             $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
+            $loginrecaptcha = $frm->{'g-recaptcha-response'} ?? false;
+            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken, $loginrecaptcha);
         }
     }
 
@@ -318,7 +320,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 $passwordchangeurl = $CFG->wwwroot.'/login/change_password.php';
             }
             $days2expire = $userauth->password_expire($USER->username);
-            $PAGE->set_title("$site->fullname: $loginsite");
+            $PAGE->set_title($loginsite);
             $PAGE->set_heading("$site->fullname");
             if (intval($days2expire) > 0 && intval($days2expire) < intval($userauth->config->expiration_warning)) {
                 echo $OUTPUT->header();
@@ -344,6 +346,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
         // Discard any errors before the last redirect.
         unset($SESSION->loginerrormsg);
+        unset($SESSION->logininfomsg);
 
         // test the session actually works by redirecting to self
         $SESSION->wantsurl = $urltogo;
@@ -353,6 +356,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         if (empty($errormsg)) {
             if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
                 $errormsg = get_string("unauthorisedlogin", "", $frm->username);
+            } else if ($errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
+                $errormsg = get_string('missingrecaptchachallengefield');
             } else {
                 $errormsg = get_string("invalidlogin");
                 $errorcode = 3;
@@ -388,7 +393,7 @@ if (!empty($CFG->alternateloginurl)) {
 
     $loginurlstr = $loginurl->out(false);
 
-    if (strpos($SESSION->wantsurl, $loginurlstr) === 0) {
+    if ($SESSION->wantsurl != '' && strpos($SESSION->wantsurl, $loginurlstr) === 0) {
         // We do not want to return to alternate url.
         $SESSION->wantsurl = null;
     }
@@ -429,20 +434,17 @@ if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_i
     $show_instructions = false;
 }
 
-$potentialidps = array();
-foreach($authsequence as $authname) {
-    $authplugin = get_auth_plugin($authname);
-    $potentialidps = array_merge($potentialidps, $authplugin->loginpage_idp_list($SESSION->wantsurl));
-}
-
-if (!empty($SESSION->loginerrormsg)) {
-    // We had some errors before redirect, show them now.
-    $errormsg = $SESSION->loginerrormsg;
+if (!empty($SESSION->loginerrormsg) || !empty($SESSION->logininfomsg)) {
+    // We had some messages before redirect, show them now.
+    $errormsg = $SESSION->loginerrormsg ?? '';
+    $infomsg = $SESSION->logininfomsg ?? '';
     unset($SESSION->loginerrormsg);
+    unset($SESSION->logininfomsg);
 
 } else if ($testsession) {
     // No need to redirect here.
     unset($SESSION->loginerrormsg);
+    unset($SESSION->logininfomsg);
 
 } else if ($errormsg or !empty($frm->password)) {
     // We must redirect after every password submission.
@@ -452,7 +454,7 @@ if (!empty($SESSION->loginerrormsg)) {
     redirect(new moodle_url('/login/index.php'));
 }
 
-$PAGE->set_title("$site->fullname: $loginsite");
+$PAGE->set_title($loginsite);
 $PAGE->set_heading("$site->fullname");
 
 echo $OUTPUT->header();
@@ -467,6 +469,7 @@ if (isloggedin() and !isguestuser()) {
 } else {
     $loginform = new \core_auth\output\login($authsequence, $frm->username);
     $loginform->set_error($errormsg);
+    $loginform->set_info($infomsg);
     echo $OUTPUT->render($loginform);
 }
 

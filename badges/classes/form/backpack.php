@@ -55,6 +55,7 @@ class backpack extends external_backpack {
         $mform->addElement('hidden', 'userid', $USER->id);
         $mform->setType('userid', PARAM_INT);
         $freeze = [];
+        $status = null;
         if (isset($this->_customdata['email'])) {
             // Email will be passed in when we're in the process of verifying the user's email address,
             // so set the connection status, lock the email field, and provide options to resend the verification
@@ -68,8 +69,10 @@ class backpack extends external_backpack {
                 array('class' => 'notconnected', 'id' => 'connection-status'));
         } else {
             $sitebackpacks = badges_get_site_backpacks();
-            $choices = [];
-            $restrictedoptions = [];
+            $choices = [
+                '' => get_string('choosedots'),
+            ];
+            $restrictedoptions = [''];
             foreach ($sitebackpacks as $backpack) {
                 $choices[$backpack->id] = $backpack->backpackweburl;
                 if ($backpack->apiversion == OPEN_BADGES_V2P1) {
@@ -78,17 +81,26 @@ class backpack extends external_backpack {
             }
             $mform->addElement('select', 'externalbackpackid', get_string('backpackprovider', 'badges'), $choices);
             $mform->setType('externalbackpackid', PARAM_INT);
-            $defaultbackpack = badges_get_site_primary_backpack();
-            $mform->setDefault('externalbackpackid', $defaultbackpack->id);
+            $mform->addRule('externalbackpackid', get_string('required'), 'required');
             $mform->hideIf('password', 'externalbackpackid', 'in', $restrictedoptions);
             $mform->hideIf('backpackemail', 'externalbackpackid', 'in', $restrictedoptions);
 
-            $status = html_writer::tag('span', get_string('notconnected', 'badges'),
-                array('class' => 'notconnected', 'id' => 'connection-status'));
+            // Static form element can't be used because they don't support hideIf. This is a workaround until MDL-66251 is fixed.
+            $group = [];
+            $group[] = $mform->createElement('static', 'loginbackpackgroup', '', get_string('loginbackpacktitle', 'badges'));
+            $mform->addGroup($group, 'loginbackpackgroup', '', '', false);
+            $mform->hideIf('loginbackpackgroup', 'externalbackpackid', 'in', $restrictedoptions);
         }
-        $mform->addElement('static', 'status', get_string('status'), $status);
+
+        if ($status) {
+            // Only display the status if it's set.
+            $mform->addElement('static', 'status', get_string('status'), $status);
+        }
 
         $this->add_auth_fields($this->_customdata['email'] ?? $USER->email, !isset($this->_customdata['email']));
+        // Only display email and password when the user has selected a backpack.
+        $mform->hideIf('backpackemail', 'externalbackpackid', 'eq', '');
+        $mform->hideIf('password', 'externalbackpackid', 'eq', '');
 
         $mform->setDisableShortforms(false);
 
@@ -125,29 +137,45 @@ class backpack extends external_backpack {
      * Validates form data
      */
     public function validation($data, $files) {
-        global $CFG;
-
-        $errors = parent::validation($data, $files);
-        if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
+        // Verify that the user has selected a backpack.
+        if (empty($data['externalbackpackid'])) {
+            $errors['externalbackpackid'] = get_string('externalbackpack_required', 'badges');
             return $errors;
         }
-        // We don't need to verify the email address if we're clearing a pending email verification attempt.
-        if (!isset($data['revertbutton'])) {
-            $check = new stdClass();
-            $check->email = $data['backpackemail'];
-            $check->password = $data['password'];
-            $sitebackpack = badges_get_site_backpack($data['externalbackpackid']);
-            $bp = new \core_badges\backpack_api($sitebackpack, $check);
 
-            $result = $bp->authenticate();
-            if ($result === false || !empty($result->error)) {
-                $errors['backpackemail'] = get_string('backpackconnectionunexpectedresult', 'badges');
-                $msg = $bp->get_authentication_error();
-                if (!empty($msg)) {
-                    $errors['backpackemail'] .= '<br/><br/>';
-                    $errors['backpackemail'] .= get_string('backpackconnectionunexpectedmessage', 'badges', $msg);
-                }
-            }
+        // We don't need to verify anything for OBv2.1.
+        if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
+            return [];
+        }
+
+        // We don't need to verify the email address if we're clearing a pending email verification attempt.
+        if (isset($data['revertbutton'])) {
+            return [];
+        }
+
+        $errors = [];
+        // Email and password can't be blank.
+        if (empty($data['backpackemail'])) {
+            $errors['backpackemail'] = get_string('backpackemail_required', 'badges');
+        }
+        if (empty($data['password'])) {
+            $errors['password'] = get_string('password_required', 'badges');
+        }
+        if (!empty($errors)) {
+            return $errors;
+        }
+
+        // Check the given credentials (email and password) are valid for this backpack.
+        $check = new stdClass();
+        $check->email = $data['backpackemail'];
+        $check->password = $data['password'];
+        $sitebackpack = badges_get_site_backpack($data['externalbackpackid']);
+        $bp = new \core_badges\backpack_api($sitebackpack, $check);
+
+        $result = $bp->authenticate();
+        if ($result === false || !empty($result->error)) {
+            $msg = $bp->get_authentication_error();
+            $errors['backpackemail'] = get_string('backpackconnectionunexpectedresult', 'badges', $msg);
         }
         return $errors;
     }

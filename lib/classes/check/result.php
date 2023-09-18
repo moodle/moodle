@@ -92,9 +92,9 @@ class result implements \renderable {
     const CRITICAL = 'critical';
 
     /**
-     * @var string $state - state
+     * @var string $status - status
      */
-    protected $state = self::UNKNOWN;
+    protected $status = self::UNKNOWN;
 
     /**
      * @var string summary - should be roughly 1 line of plain text and may change depending on the state.
@@ -126,7 +126,7 @@ class result implements \renderable {
     /**
      * Constructor
      *
-     * @param int $status code
+     * @param string $status code
      * @param string $summary a 1 liner summary
      * @param string $details as a html chunk
      */
@@ -164,8 +164,8 @@ class result implements \renderable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
         return array(

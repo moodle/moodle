@@ -65,6 +65,14 @@ class external_test extends externallib_advanced_testcase {
     private $studentrole;
     /** @var stdClass teacher role object */
     private $teacherrole;
+    /** @var \stdClass student object. */
+    private $anotherstudentg1;
+    /** @var \stdClass student object. */
+    private $anotherstudentg2;
+    /** @var \stdClass group object. */
+    private $group1;
+    /** @var \stdClass group object. */
+    private $group2;
 
     /**
      * Set up for every test

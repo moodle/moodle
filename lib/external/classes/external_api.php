@@ -46,6 +46,7 @@ class external_api {
      * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
      *                        MUST_EXIST means throw exception if no record or multiple records found
      * @return \stdClass|bool description or false if not found or exception thrown
+     * @throws coding_exception for any property and/or method that is missing or invalid
      * @since Moodle 2.0
      */
     public static function external_function_info($function, $strictness = MUST_EXIST) {
@@ -67,7 +68,8 @@ class external_api {
             }
             if (!file_exists($function->classpath)) {
                 throw new coding_exception(
-                    "Cannot find file {$function->classpath} with external function implementation"
+                    "Cannot find file {$function->classpath} with external function implementation " .
+                        "for {$function->classname}::{$function->methodname}"
                 );
             }
             require_once($function->classpath);
@@ -312,6 +314,9 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function validate_parameters(external_description $description, $params) {
+        if ($params === null && $description->allownull == NULL_ALLOWED) {
+            return null;
+        }
         if ($description instanceof external_value) {
             if (is_array($params) || is_object($params)) {
                 throw new invalid_parameter_exception('Scalar type expected, array or object received.');
@@ -398,6 +403,9 @@ class external_api {
      * @since Moodle 2.0
      */
     public static function clean_returnvalue(external_description $description, $response) {
+        if ($response === null && $description->allownull == NULL_ALLOWED) {
+            return null;
+        }
         if ($description instanceof external_value) {
             if (is_array($response) || is_object($response)) {
                 throw new invalid_response_exception('Scalar type expected, array or object received.');
@@ -519,7 +527,9 @@ class external_api {
      * The passed array must either contain a contextid or a combination of context level and instance id to fetch the context.
      * For example, the context level can be "course" and instanceid can be courseid.
      *
-     * See context_helper::get_all_levels() for a list of valid context levels.
+     * See context_helper::get_all_levels() for a list of valid numeric context levels,
+     * legacy short names such as 'system', 'user', 'course' are not supported in new
+     * plugin capabilities.
      *
      * @param array $param
      * @since Moodle 2.6
@@ -527,15 +537,15 @@ class external_api {
      * @return context
      */
     protected static function get_context_from_params($param) {
-        $levels = context_helper::get_all_levels();
         if (!empty($param['contextid'])) {
             return context::instance_by_id($param['contextid'], IGNORE_MISSING);
         } else if (!empty($param['contextlevel']) && isset($param['instanceid'])) {
-            $contextlevel = "context_{$param['contextlevel']}";
-            if (!array_search($contextlevel, $levels)) {
-                throw new invalid_parameter_exception("Invalid context level = {$param['contextlevel']}");
+            // Numbers and short names are supported since Moodle 4.2.
+            $classname = \core\context_helper::parse_external_level($param['contextlevel']);
+            if (!$classname) {
+                throw new invalid_parameter_exception('Invalid context level = '.$param['contextlevel']);
             }
-            return $contextlevel::instance($param['instanceid'], IGNORE_MISSING);
+            return $classname::instance($param['instanceid'], IGNORE_MISSING);
         } else {
             // No valid context info was found.
             throw new invalid_parameter_exception(
@@ -556,7 +566,7 @@ class external_api {
             0
         );
         $level = new external_value(
-            PARAM_ALPHA,
+            PARAM_ALPHANUM, // Since Moodle 4.2 numeric context level values are supported too.
             'Context level. To be used with instanceid.',
             VALUE_DEFAULT,
             ''

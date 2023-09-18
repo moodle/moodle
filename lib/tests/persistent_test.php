@@ -700,6 +700,27 @@ class core_testable_persistent extends persistent {
 
     const TABLE = 'phpunit_persistent';
 
+    /** @var bool before validate status. */
+    public ?bool $beforevalidate;
+
+    /** @var bool before create status. */
+    public ?bool $beforecreate;
+
+    /** @var bool before update status. */
+    public ?bool $beforeupdate;
+
+    /** @var bool before delete status. */
+    public ?bool $beforedelete;
+
+    /** @var bool after create status. */
+    public ?bool $aftercreate;
+
+    /** @var bool after update status. */
+    public ?bool $afterupdate;
+
+    /** @var bool after delete status. */
+    public ?bool $afterdelete;
+
     protected static function define_properties() {
         return array(
             'shortname' => array(

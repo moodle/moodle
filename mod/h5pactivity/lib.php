@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use mod_h5pactivity\local\manager;
 use mod_h5pactivity\local\grader;
+use mod_h5pactivity\xapi\handler;
 
 /**
  * Checks if H5P activity supports a specific feature.
@@ -145,6 +146,19 @@ function h5pactivity_delete_instance(int $id): bool {
         return false;
     }
 
+    if ($cm = get_coursemodule_from_instance('h5pactivity', $activity->id)) {
+        $context = context_module::instance($cm->id);
+        $xapihandler = handler::create('mod_h5pactivity');
+        $xapihandler->wipe_states($context->id);
+    }
+
+    // Remove activity record, and all associated attempt data.
+    $attemptids = $DB->get_fieldset_select('h5pactivity_attempts', 'id', 'h5pactivityid = ?', [$id]);
+    if ($attemptids) {
+        $DB->delete_records_list('h5pactivity_attempts_results', 'attemptid', $attemptids);
+        $DB->delete_records_list('h5pactivity_attempts', 'id', $attemptids);
+    }
+
     $DB->delete_records('h5pactivity', ['id' => $id]);
 
     h5pactivity_grade_item_delete($activity);
@@ -235,7 +249,7 @@ function h5pactivity_rescale_activity_grades(stdClass $course, stdClass $cm, flo
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the H5P activity.
  *
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function h5pactivity_reset_course_form_definition(&$mform): void {
     $mform->addElement('header', 'h5pactivityheader', get_string('modulenameplural', 'mod_h5pactivity'));
@@ -270,6 +284,7 @@ function h5pactivity_reset_userdata(stdClass $data): array {
         $params = ['courseid' => $data->courseid];
         $sql = "SELECT a.id FROM {h5pactivity} a WHERE a.course=:courseid";
         if ($activities = $DB->get_records_sql($sql, $params)) {
+            $xapihandler = handler::create('mod_h5pactivity');
             foreach ($activities as $activity) {
                 $cm = get_coursemodule_from_instance('h5pactivity',
                                                      $activity->id,
@@ -277,6 +292,8 @@ function h5pactivity_reset_userdata(stdClass $data): array {
                                                      false,
                                                      MUST_EXIST);
                 mod_h5pactivity\local\attempt::delete_all_attempts ($cm);
+                $context = context_module::instance($cm->id);
+                $xapihandler->wipe_states($context->id);
             }
         }
         // Remove all grades from gradebook.
@@ -808,7 +825,7 @@ function h5pactivity_fetch_recent_activity(array $submissions, int $courseid) : 
 
             if (!isset($usersgroups[$cm->groupingid][$submission->userid])) {
                 $usersgroups[$cm->groupingid][$submission->userid] =
-                    groups_get_all_groups($course->id, $submission->userid, $cm->groupingid);
+                    groups_get_all_groups($course->id, $submission->userid, $cm->groupingid, 'g.*', false, true);
             }
 
             if (is_array($usersgroups[$cm->groupingid][$submission->userid])) {

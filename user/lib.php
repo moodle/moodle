@@ -33,7 +33,7 @@ define('USER_FILTER_STRING', 6);
  * Creates a user
  *
  * @throws moodle_exception
- * @param stdClass $user user to create
+ * @param stdClass|array $user user to create
  * @param bool $updatepassword if true, authentication plugin will update password.
  * @param bool $triggerevent set false if user_created event should not be triggred.
  *             This will not affect user_password_updated event triggering.
@@ -144,17 +144,38 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
  * Update a user with a user object (will compare against the ID)
  *
  * @throws moodle_exception
- * @param stdClass $user the user to update
+ * @param stdClass|array $user the user to update
  * @param bool $updatepassword if true, authentication plugin will update password.
  * @param bool $triggerevent set false if user_updated event should not be triggred.
  *             This will not affect user_password_updated event triggering.
  */
 function user_update_user($user, $updatepassword = true, $triggerevent = true) {
-    global $DB;
+    global $DB, $CFG;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
         $user = (object) $user;
+    }
+
+    // Communication api update for user.
+    if (core_communication\api::is_available()) {
+        $usercourses = enrol_get_users_courses($user->id);
+        $currentrecord = $DB->get_record('user', ['id' => $user->id]);
+        if (!empty($currentrecord) && isset($user->suspended) && $currentrecord->suspended !== $user->suspended) {
+            foreach ($usercourses as $usercourse) {
+                $communication = \core_communication\api::load_by_instance(
+                    'core_course',
+                    'coursecommunication',
+                    $usercourse->id
+                );
+                // If the record updated the suspended for a user.
+                if ($user->suspended === 0) {
+                    $communication->add_members_to_room([$user->id]);
+                } else if ($user->suspended === 1) {
+                    $communication->remove_members_from_room([$user->id]);
+                }
+            }
+        }
     }
 
     // Check username.
@@ -361,19 +382,13 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             foreach ($fields as $formfield) {
                 if ($formfield->is_visible() and !$formfield->is_empty()) {
 
-                    // TODO: Part of MDL-50728, this conditional coding must be moved to
-                    // proper profile fields API so they are self-contained.
-                    // We only use display_data in fields that require text formatting.
-                    if ($formfield->field->datatype == 'text' or $formfield->field->datatype == 'textarea') {
-                        $fieldvalue = $formfield->display_data();
-                    } else {
-                        // Cases: datetime, checkbox and menu.
-                        $fieldvalue = $formfield->data;
-                    }
-
-                    $userdetails['customfields'][] =
-                        array('name' => $formfield->field->name, 'value' => $fieldvalue,
-                            'type' => $formfield->field->datatype, 'shortname' => $formfield->field->shortname);
+                    $userdetails['customfields'][] = [
+                        'name' => $formfield->field->name,
+                        'value' => $formfield->data,
+                        'displayvalue' => $formfield->display_data(),
+                        'type' => $formfield->field->datatype,
+                        'shortname' => $formfield->field->shortname
+                    ];
                 }
             }
         }
@@ -400,21 +415,21 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     // Hidden user field.
     if ($canviewhiddenuserfields) {
         $hiddenfields = array();
-        // Address, phone1 and phone2 not appears in hidden fields list but require viewhiddenfields capability
-        // according to user/profile.php.
-        if (!empty($user->address) && in_array('address', $userfields)) {
-            $userdetails['address'] = $user->address;
-        }
     } else {
         $hiddenfields = array_flip(explode(',', $CFG->hiddenuserfields));
     }
 
-    if (!empty($user->phone1) && in_array('phone1', $userfields) &&
-            (in_array('phone1', $showuseridentityfields) or $canviewhiddenuserfields)) {
+
+    if (!empty($user->address) && (in_array('address', $userfields)
+            && in_array('address', $showuseridentityfields) || $isadmin)) {
+        $userdetails['address'] = $user->address;
+    }
+    if (!empty($user->phone1) && (in_array('phone1', $userfields)
+            && in_array('phone1', $showuseridentityfields) || $isadmin)) {
         $userdetails['phone1'] = $user->phone1;
     }
-    if (!empty($user->phone2) && in_array('phone2', $userfields) &&
-            (in_array('phone2', $showuseridentityfields) or $canviewhiddenuserfields)) {
+    if (!empty($user->phone2) && (in_array('phone2', $userfields)
+            && in_array('phone2', $showuseridentityfields) || $isadmin)) {
         $userdetails['phone2'] = $user->phone2;
     }
 
@@ -434,6 +449,10 @@ function user_get_user_details($user, $course = null, array $userfields = array(
 
     if (in_array('city', $userfields) && (!isset($hiddenfields['city']) or $isadmin) && $user->city) {
         $userdetails['city'] = $user->city;
+    }
+
+    if (in_array('timezone', $userfields) && (!isset($hiddenfields['timezone']) || $isadmin) && $user->timezone) {
+        $userdetails['timezone'] = $user->timezone;
     }
 
     if (in_array('suspended', $userfields) && (!isset($hiddenfields['suspended']) or $isadmin)) {
@@ -518,17 +537,25 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         }
     }
 
-    // If groups are in use and enforced throughout the course, then make sure we can meet in at least one course level group.
-    if (in_array('groups', $userfields) && !empty($course) && $canaccessallgroups) {
-        $usergroups = groups_get_all_groups($course->id, $user->id, $course->defaultgroupingid,
-                'g.id, g.name,g.description,g.descriptionformat');
-        $userdetails['groups'] = array();
-        foreach ($usergroups as $group) {
-            list($group->description, $group->descriptionformat) =
-                \core_external\util::format_text($group->description, $group->descriptionformat,
-                        $context, 'group', 'description', $group->id);
-            $userdetails['groups'][] = array('id' => $group->id, 'name' => $group->name,
-                'description' => $group->description, 'descriptionformat' => $group->descriptionformat);
+    // Return user groups.
+    if (in_array('groups', $userfields) && !empty($course)) {
+        if ($usergroups = groups_get_all_groups($course->id, $user->id)) {
+            $userdetails['groups'] = [];
+            foreach ($usergroups as $group) {
+                if ($course->groupmode == SEPARATEGROUPS && !$canaccessallgroups && $user->id != $USER->id) {
+                    // In separate groups, I only have to see the groups shared between both users.
+                    if (!groups_is_member($group->id, $USER->id)) {
+                        continue;
+                    }
+                }
+
+                $userdetails['groups'][] = [
+                    'id' => $group->id,
+                    'name' => format_string($group->name),
+                    'description' => format_text($group->description, $group->descriptionformat, ['context' => $context]),
+                    'descriptionformat' => $group->descriptionformat
+                ];
+            }
         }
     }
     // List of courses where the user is enrolled.
@@ -560,7 +587,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
     }
 
     if ($currentuser or has_capability('moodle/user:viewalldetails', $context)) {
-        $extrafields = ['auth', 'confirmed', 'lang', 'theme', 'timezone', 'mailformat'];
+        $extrafields = ['auth', 'confirmed', 'lang', 'theme', 'mailformat'];
         foreach ($extrafields as $extrafield) {
             if (in_array($extrafield, $userfields) && isset($user->$extrafield)) {
                 $userdetails[$extrafield] = $user->$extrafield;
@@ -977,7 +1004,7 @@ function user_get_user_navigation_info($user, $page, $options = array()) {
  * @param string $password plaintext password
  * @return void
  */
-function user_add_password_history($userid, $password) {
+function user_add_password_history(int $userid, #[\SensitiveParameter] string $password): void {
     global $CFG, $DB;
 
     if (empty($CFG->passwordreuselimit) or $CFG->passwordreuselimit < 0) {
@@ -985,12 +1012,18 @@ function user_add_password_history($userid, $password) {
     }
 
     // Note: this is using separate code form normal password hashing because
-    //       we need to have this under control in the future. Also the auth
-    //       plugin might not store the passwords locally at all.
+    // we need to have this under control in the future. Also, the auth
+    // plugin might not store the passwords locally at all.
+
+    // First generate a cryptographically suitable salt.
+    $randombytes = random_bytes(16);
+    $salt = substr(strtr(base64_encode($randombytes), '+', '.'), 0, 16);
+    // Then create the hash.
+    $generatedhash = crypt($password, '$6$rounds=10000$' . $salt . '$');
 
     $record = new stdClass();
     $record->userid = $userid;
-    $record->hash = password_hash($password, PASSWORD_DEFAULT);
+    $record->hash = $generatedhash;
     $record->timecreated = time();
     $DB->insert_record('user_password_history', $record);
 
@@ -1327,7 +1360,7 @@ function user_get_lastaccess_sql($columnname, $accesssince, $tableprefix, $havea
  * @param string $itemtype - Only user_roles is supported.
  * @param string $itemid - Courseid and userid separated by a :
  * @param string $newvalue - json encoded list of roleids.
- * @return \core\output\inplace_editable
+ * @return \core\output\inplace_editable|null
  */
 function core_user_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'user_roles') {
@@ -1368,4 +1401,29 @@ function user_edit_map_field_purpose($userid, $fieldname) {
     }
 
     return $purpose;
+}
+
+/**
+ * Update the users public key for the specified device and app.
+ *
+ * @param string $uuid The device UUID.
+ * @param string $appid The app id, usually something like com.moodle.moodlemobile.
+ * @param string $publickey The app generated public key.
+ * @return bool
+ * @since Moodle 4.2
+ */
+function user_update_device_public_key(string $uuid, string $appid, string $publickey): bool {
+    global $USER, $DB;
+
+    if (!$DB->get_record('user_devices',
+        ['uuid' => $uuid, 'appid' => $appid, 'userid' => $USER->id]
+    )) {
+        return false;
+    }
+
+    $DB->set_field('user_devices', 'publickey', $publickey,
+        ['uuid' => $uuid, 'appid' => $appid, 'userid' => $USER->id]
+    );
+
+    return true;
 }

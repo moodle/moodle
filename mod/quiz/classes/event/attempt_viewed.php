@@ -86,16 +86,6 @@ class attempt_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'continue attempt', 'review.php?attempt=' . $this->objectid,
-            $this->other['quizid'], $this->contextinstanceid];
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -201,13 +201,11 @@ class quiz_statistics_table extends flexible_table {
     protected function col_actions($questionstat) {
         if ($this->is_calculated_question_summary($questionstat)) {
             return '';
+        } else if ($questionstat->question->qtype === 'missingtype') {
+            return '';
         } else {
-            $random = null;
-            if ($questionstat->question->qtype === 'random') {
-                $random = true;
-            }
             return quiz_question_action_icons($this->quiz, $this->cmid,
-                    $questionstat->question, $this->baseurl, $questionstat->variant, $random);
+                    $questionstat->question, $this->baseurl, $questionstat->variant);
         }
     }
 

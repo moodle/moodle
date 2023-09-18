@@ -442,7 +442,7 @@ class provider_test extends provider_testcase {
      * Create a service.
      *
      * @param array $params The params.
-     * @return stdClass
+     * @return \stdClass
      */
     protected function create_service(array $params = []) {
         global $DB;
@@ -467,7 +467,7 @@ class provider_test extends provider_testcase {
      * Create a service user.
      *
      * @param array $params The params.
-     * @return stdClass
+     * @return \stdClass
      */
     protected function create_service_user(array $params) {
         global $DB, $USER;

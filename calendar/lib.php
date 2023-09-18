@@ -182,7 +182,7 @@ define('CALENDAR_EVENT_TYPE_ACTION', 1);
  */
 class calendar_event {
 
-    /** @var array An object containing the event properties can be accessed via the magic __get/set methods */
+    /** @var stdClass An object containing the event properties can be accessed via the magic __get/set methods */
     protected $properties = null;
 
     /** @var string The converted event discription with file paths resolved.
@@ -1066,6 +1066,18 @@ class calendar_information {
     /** @var string The calendar's view mode. */
     protected $viewmode;
 
+    /** @var \stdClass course data. */
+    public $course;
+
+    /** @var int day. */
+    protected $day;
+
+    /** @var int month. */
+    protected $month;
+
+    /** @var int year. */
+    protected $year;
+
     /**
      * Creates a new instance
      *
@@ -1660,11 +1672,14 @@ function calendar_get_events_by_id($eventids) {
 /**
  * Get control options for calendar.
  *
+ * @deprecated since Moodle 4.3
  * @param string $type of calendar
  * @param array $data calendar information
- * @return string $content return available control for the calender in html
+ * @return string $content return available control for the calendar in html
  */
 function calendar_top_controls($type, $data) {
+    debugging(__FUNCTION__ . ' has been deprecated and should not be used anymore.', DEBUG_DEVELOPER);
+
     global $PAGE, $OUTPUT;
 
     // Get the calendar type we are using.
@@ -2592,7 +2607,7 @@ function calendar_format_event_location(calendar_event $event): string {
 function calendar_show_event_type($type, $user = null) {
     $default = CALENDAR_EVENT_SITE + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP + CALENDAR_EVENT_USER;
 
-    if (get_user_preferences('calendar_persistflt', 0, $user) === 0) {
+    if ((int)get_user_preferences('calendar_persistflt', 0, $user) === 0) {
         global $SESSION;
         if (!isset($SESSION->calendarshoweventtype)) {
             $SESSION->calendarshoweventtype = $default;
@@ -2615,7 +2630,7 @@ function calendar_show_event_type($type, $user = null) {
  * @param stdClass|int $user moodle user object or id, null means current user
  */
 function calendar_set_event_type_display($type, $display = null, $user = null) {
-    $persist = get_user_preferences('calendar_persistflt', 0, $user);
+    $persist = (int)get_user_preferences('calendar_persistflt', 0, $user);
     $default = CALENDAR_EVENT_SITE + CALENDAR_EVENT_COURSE + CALENDAR_EVENT_GROUP
             + CALENDAR_EVENT_USER + CALENDAR_EVENT_COURSECAT;
     if ($persist === 0) {
@@ -3180,7 +3195,7 @@ function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid =
  * Fetch a calendar subscription and update the events in the calendar.
  *
  * @param int $subscriptionid The course ID for the calendar.
- * @return string A log of the import progress, including errors.
+ * @return array A log of the import progress, including errors.
  */
 function calendar_update_subscription_events($subscriptionid) {
     $sub = calendar_get_subscription($subscriptionid);

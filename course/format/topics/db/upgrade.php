@@ -42,5 +42,19 @@ function xmldb_format_topics_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023030700) {
+        // For sites migrating from 4.0.x or 4.1.x where the indentation was removed,
+        // we are disabling 'indentation' value by default.
+        if ($oldversion >= 2022041900) {
+            set_config('indentation', 0, 'format_topics');
+        } else {
+            set_config('indentation', 1, 'format_topics');
+        }
+        upgrade_plugin_savepoint(true, 2023030700, 'format', 'topics');
+    }
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

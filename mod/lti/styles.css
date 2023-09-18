@@ -54,12 +54,6 @@
     padding-right: 1em;
 } /* Prevent setting titles from wrapping */
 
-/* Styles for instructor_edit_tool_type.php */
-#page-mod-lti-instructor_edit_tool_type .mform .fitem .fitemtitle {
-    min-width: 18em;
-    padding-right: 1em;
-} /* Prevent setting titles from wrapping */
-
 /* Styling for tool_configure page */
 #registration-choice-container .buffer-text {
     margin: 20px;
@@ -398,8 +392,71 @@
     vertical-align: middle;
 }
 
+#accordion.modltitree {
+    border-radius: 4px;
+    padding-left: 8px;
+}
+
+#accordion.modltitree .accordion-inner {
+    padding-left: 20px;
+}
+
+#accordion.modltitree .accordion-inner .accordion p {
+    margin-bottom: 0;
+    padding-left: 15px;
+}
+
+#accordion.modltitree .accordion-group {
+    padding-left: 15px;
+    padding-bottom: 4px;
+    position: relative;
+}
+
+#accordion.modltitree .accordion-group span {
+    padding: 0 4px 0;
+}
+
+#accordion.modltitree .accordion-group .accordion-heading .accordion-toggle::before {
+    content: url([[pix:t/expanded]]);
+    position: absolute;
+    left: -5px;
+}
+
+#accordion.modltitree .accordion-group .accordion-heading .accordion-toggle.collapsed::before {
+    content: url([[pix:t/collapsed]]);
+}
+
 /* Styling for LTI view */
 #contentframe {
     border: 1px solid #ddd;
     border-radius: 4px;
+}
+
+/* Strip the caret from the action menu toggle, as the ... ellipsis icon is used. */
+#page-mod-lti-coursetools a.dropdown-toggle::after {
+    display: none;
+}
+
+/* Icons in the 'actions' column of the course tools table need to be aligned with action menus which have a 36x36 trigger. */
+#page-mod-lti-coursetools table div.tool-action-icon-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+}
+
+#page-mod-lti-coursetools table div.tool-action-icon-container i {
+    margin: 0;
+}
+
+/* The following removes the striping that lives in table_sql, which we can't change from within reportbuilder */
+#page-mod-lti-coursetools table.generaltable tbody tr:nth-of-type(2n+1),
+#page-mod-lti-coursetools table.table-striped tbody tr:nth-of-type(2n+1) {
+    background: inherit;
+}
+
+#page-mod-lti-coursetools table.generaltable tbody tr:hover,
+#page-mod-lti-coursetools table.table-striped tbody tr:hover {
+    background: #fff;
 }

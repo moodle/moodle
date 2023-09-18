@@ -86,19 +86,6 @@ class user_profile_viewed extends base {
     }
 
     /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        if ($this->contextlevel == CONTEXT_COURSE) {
-            return array($this->courseid, 'user', 'view', 'view.php?id=' . $this->relateduserid . '&course=' .
-                $this->courseid, $this->relateduserid);
-        }
-        return null;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception when validation does not pass.

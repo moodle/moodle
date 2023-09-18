@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/showmore
+
+    Displays content with 'Show more'/'Show less' feature.
+
+    Example context (json):
+    {
+        "collapsedcontent": "Hello...",
+        "expandedcontent": "Hello...<br>Is it me you're looking for? I can see it in your eyes",
+        "extraclasses": "p-3",
+        "collapsedextraclasses": "bg-secondary",
+        "expandedextraclasses": "bg-secondary"
+    }
+}}
+<div class="showmore-container collapsed {{$extraclasses}}{{extraclasses}}{{/extraclasses}}" data-region="showmore">
+    <button
+        type="button"
+        class="btn btn-sm btn-link p-0 {{$buttonextraclasses}}{{buttonextraclasses}}{{/buttonextraclasses}}"
+        aria-expanded="false"
+        data-action="toggle-content"
+    >
+        <span class="collapsed-content"> {{#str}} showmore, core {{/str}} {{#pix}} t/expandedchevron, core {{/pix}} </span>
+        <span class="expanded-content"> {{#str}} showless, core {{/str}} {{#pix}} t/collapsedchevron_up, core {{/pix}} </span>
+    </button>
+    <div class="collapsed-content {{$collapsedextraclasses}}{{collapsedextraclasses}}{{/collapsedextraclasses}}">
+        {{$collapsedcontent}}{{{collapsedcontent}}}{{/collapsedcontent}}
+    </div>
+    <div class="expanded-content {{$expandedextraclasses}}{{expandedextraclasses}}{{/expandedextraclasses}}">
+        {{$expandedcontent}}{{{expandedcontent}}}{{/expandedcontent}}
+    </div>
+</div>
+{{#js}}
+require(['core/showmore'], function(showmore) {
+    showmore.init();
+});
+{{/js}}

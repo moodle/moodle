@@ -29,7 +29,7 @@ Feature: Inline editing H5P content
   Scenario: Add H5P activity using link to content bank file
     Given the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user        | contentname        | filepath                                  |
-      | Course       | C1        | contenttype_h5p | teacher1    | Greeting card      | /h5p/tests/fixtures/greeting-card-887.h5p |
+      | Course       | C1        | contenttype_h5p | teacher1    | Greeting card      | /h5p/tests/fixtures/greeting-card.h5p     |
     And I log in as "admin"
     # Add the navigation block.
     And I am on "Course 1" course homepage with editing mode on
@@ -91,7 +91,7 @@ Feature: Inline editing H5P content
   Scenario: Add H5P activity using copy to content bank file
     Given the following "contentbank content" exist:
       | contextlevel | reference | contenttype     | user     | contentname        | filepath                                  |
-      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card-887.h5p |
+      | Course       | C1        | contenttype_h5p | admin    | Greeting card      | /h5p/tests/fixtures/greeting-card.h5p     |
     And I log in as "admin"
     # Add the navigation block.
     And I am on "Course 1" course homepage with editing mode on
@@ -154,7 +154,7 @@ Feature: Inline editing H5P content
     Given I log in as "teacher1"
     # Upload the H5P to private user files.
     And I follow "Manage private files..."
-    And I upload "h5p/tests/fixtures/greeting-card-887.h5p" file to "Files" filemanager
+    And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
     # Create an H5P activity with a private user file.
     And I am on "Course 1" course homepage with editing mode on
@@ -164,7 +164,7 @@ Feature: Inline editing H5P content
       | Description                | Description                                 |
     And I click on "Add..." "button" in the "Package file" "form_row"
     And I select "Private files" repository in file picker
-    And I click on "greeting-card-887.h5p" "file" in repository content area
+    And I click on "greeting-card.h5p" "file" in repository content area
     And I click on "Link to the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Save and display" "button"

@@ -25,45 +25,44 @@ Feature: We can use a minimum grade different than zero
     And I log in as "admin"
     And I set the following administration settings values:
       | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I press "Add grade item"
+    And I am on the "Course 1" "grades > gradebook setup" page
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 1 |
       | Minimum grade | -100 |
       | Grade category | Course 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 2 |
       | Minimum grade | 50 |
       | Grade category | Course 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 3 |
       | Maximum grade | 50 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 4 |
       | Minimum grade | -100 |
       | Grade category | Sub category 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 5 |
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | Manual item 6 |
       | Minimum grade | 50 |
       | Grade category | Sub category 2 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
@@ -72,19 +71,16 @@ Feature: We can use a minimum grade different than zero
   @javascript
   Scenario: Natural aggregation with negative and positive grade
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Sub category 1":
+    And I set the following settings for grade item "Sub category 1" of type "category" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I set the following settings for grade item "Sub category 2":
+    And I set the following settings for grade item "Sub category 2" of type "category" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I set the following settings for grade item "Course 1":
+    And I set the following settings for grade item "Course 1" of type "course" on "setup" page:
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     When I give the grade "-25.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "50.00" to the user "Student 1" for the grade item "Manual item 2"

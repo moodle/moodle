@@ -43,21 +43,17 @@ $qtypes = question_bank::get_all_qtypes();
 $pluginmanager = core_plugin_manager::instance();
 
 // Get some data we will need - question counts and which types are needed.
+// The second JOIN on question_versions (qv2) is to get the latest version of each question. 
+// (Using this sort of JOIN is a known trick for doing this in the fastest possible way.)
 $counts = $DB->get_records_sql("
         SELECT q.qtype,
                COUNT(qv.id) AS numquestions,
                SUM(CASE WHEN qv.status = :hiddenstatus THEN 1 ELSE 0 END) AS numhidden,
                SUM(CASE WHEN qv.status = :draftstatus THEN 1 ELSE 0 END) AS numdraft
-
-          FROM {question_bank_entries} qbe
-          JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                    AND qv.version = (
-                            SELECT MAX(version)
-                              FROM {question_versions}
-                             WHERE questionbankentryid = qbe.id
-                        )
-          JOIN {question} q ON q.id = qv.questionid
-
+          FROM {question} q
+          JOIN {question_versions} qv ON q.id = qv.questionid
+     LEFT JOIN {question_versions} qv2 ON qv.questionbankentryid = qv2.questionbankentryid AND qv.version < qv2.version
+         WHERE qv2.questionbankentryid IS NULL
       GROUP BY q.qtype
     ", [
         'hiddenstatus' => question_version_status::QUESTION_STATUS_HIDDEN,

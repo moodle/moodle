@@ -267,6 +267,15 @@ abstract class base implements \IteratorAggregate {
             if ($expectedcourseid != $event->data['courseid']) {
                 debugging("Inconsistent courseid - context combination detected.", DEBUG_DEVELOPER);
             }
+
+            if (method_exists($event, 'get_legacy_logdata') ||
+                method_exists($event, 'set_legacy_logdata') ||
+                method_exists($event, 'get_legacy_eventname') ||
+                method_exists($event, 'get_legacy_eventdata')
+            ) {
+                debugging("Invalid event functions defined in " . $event->data['eventname'], DEBUG_DEVELOPER);
+            }
+
         }
 
         // Let developers validate their custom data (such as $this->data['other'], contextlevel, etc.).
@@ -698,46 +707,13 @@ abstract class base implements \IteratorAggregate {
     }
 
     /**
-     * Does this event replace legacy event?
-     *
-     * Note: do not use directly!
-     *
-     * @return null|string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return null;
-    }
-
-    /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * Note: do not use directly!
-     *
-     * @return mixed
-     */
-    protected function get_legacy_eventdata() {
-        return null;
-    }
-
-    /**
-     * Doest this event replace add_to_log() statement?
-     *
-     * Note: do not use directly!
-     *
-     * @return null|array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return null;
-    }
-
-    /**
      * Validate all properties right before triggering the event.
      *
      * This throws coding exceptions for fatal problems and debugging for minor problems.
      *
      * @throws \coding_exception
      */
-    protected final function validate_before_trigger() {
+    protected function validate_before_trigger() {
         global $DB, $CFG;
 
         if (empty($this->data['crud'])) {
@@ -765,9 +741,10 @@ abstract class base implements \IteratorAggregate {
                 debugging('Number of event data fields must not be changed in event classes', DEBUG_DEVELOPER);
             }
             $encoded = json_encode($this->data['other']);
-            // The comparison here is not set to strict as whole float numbers will be converted to integers through JSON encoding /
-            // decoding and send an unwanted debugging message.
-            if ($encoded === false or $this->data['other'] != json_decode($encoded, true)) {
+            // The comparison here is not set to strict. We just need to check if the data is compatible with the JSON encoding
+            // or not and we don't need to worry about how the data is encoded. Because in some cases, the data can contain
+            // objects, and objects can be converted to a different format during encoding and decoding.
+            if ($encoded === false) {
                 debugging('other event data must be compatible with json encoding', DEBUG_DEVELOPER);
             }
             if ($this->data['userid'] and !is_number($this->data['userid'])) {
@@ -809,22 +786,6 @@ abstract class base implements \IteratorAggregate {
         $this->validate_before_trigger();
 
         $this->triggered = true;
-
-        if (isset($CFG->loglifetime) and $CFG->loglifetime != -1) {
-            if ($data = $this->get_legacy_logdata()) {
-                $manager = get_log_manager();
-                if (method_exists($manager, 'legacy_add_to_log')) {
-                    if (is_array($data[0])) {
-                        // Some events require several entries in 'log' table.
-                        foreach ($data as $d) {
-                            call_user_func_array(array($manager, 'legacy_add_to_log'), $d);
-                        }
-                    } else {
-                        call_user_func_array(array($manager, 'legacy_add_to_log'), $data);
-                    }
-                }
-            }
-        }
 
         if (PHPUNIT_TEST and \phpunit_util::is_redirecting_events()) {
             $this->dispatched = true;

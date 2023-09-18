@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -36,6 +35,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+// phpcs:ignoreFile moodle.Files.MoodleInternal.MoodleInternalGlobalState
 
 if (defined('STDIN')) {
     fwrite(STDERR, "ERROR: This script no longer supports CLI, please use admin/cli/cron.php instead\n");
@@ -49,8 +49,7 @@ define('WEB_CRON_EMULATED_CLI', 'defined'); // ugly ugly hack, do not use elsewh
 define('NO_OUTPUT_BUFFERING', true);
 
 require('../config.php');
-require_once($CFG->libdir.'/clilib.php');
-require_once($CFG->libdir.'/cronlib.php');
+require_once($CFG->libdir . '/clilib.php');
 
 // extra safety
 \core\session\manager::write_close();
@@ -71,11 +70,11 @@ if (!empty($CFG->cronremotepassword)) {
     }
 }
 
-// send mime type and encoding
+// Send mime type and encoding.
 @header('Content-Type: text/plain; charset=utf-8');
 
-// we do not want html markup in emulated CLI
+// We do not want html markup in emulated CLI.
 @ini_set('html_errors', 'off');
 
-// execute the cron
-cron_run();
+// Execute the cron, disabling keepalive.
+\core\cron::run_main_process(0);

@@ -68,7 +68,7 @@ class mod_lti_edit_types_form extends moodleform {
      * Define this form.
      */
     public function definition() {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB, $OUTPUT;
 
         $mform    =& $this->_form;
 
@@ -180,23 +180,26 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setForceLtr('lti_customparameters');
 
         if (!empty($this->_customdata->isadmin)) {
-            $options = array(
-                LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
-                LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
-                LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
-            );
-            if ($istool) {
-                // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
-                unset($options[LTI_COURSEVISIBLE_NO]);
-                $stringname = 'show_in_course_lti2';
-            } else {
-                $stringname = 'show_in_course_lti1';
+            // Only site-level preconfigured tools allow the control of course visibility in the site admin tool type form.
+            if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
+                $options = array(
+                    LTI_COURSEVISIBLE_NO => get_string('show_in_course_no', 'lti'),
+                    LTI_COURSEVISIBLE_PRECONFIGURED => get_string('show_in_course_preconfigured', 'lti'),
+                    LTI_COURSEVISIBLE_ACTIVITYCHOOSER => get_string('show_in_course_activity_chooser', 'lti'),
+                );
+                if ($istool) {
+                    // LTI2 tools can not be matched by URL, they have to be either in preconfigured tools or in activity chooser.
+                    unset($options[LTI_COURSEVISIBLE_NO]);
+                    $stringname = 'show_in_course_lti2';
+                } else {
+                    $stringname = 'show_in_course_lti1';
+                }
+                $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
+                $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
+                $mform->setDefault('lti_coursevisible', '1');
             }
-            $mform->addElement('select', 'lti_coursevisible', get_string($stringname, 'lti'), $options);
-            $mform->addHelpButton('lti_coursevisible', $stringname, 'lti');
-            $mform->setDefault('lti_coursevisible', '1');
         } else {
-            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_PRECONFIGURED);
+            $mform->addElement('hidden', 'lti_coursevisible', LTI_COURSEVISIBLE_ACTIVITYCHOOSER);
         }
         $mform->setType('lti_coursevisible', PARAM_INT);
 
@@ -242,6 +245,18 @@ class mod_lti_edit_types_form extends moodleform {
         $mform->setAdvanced('lti_secureicon');
         $mform->addHelpButton('lti_secureicon', 'secure_icon_url', 'lti');
 
+        // Restrict to course categories.
+        if (empty($this->_customdata->iscoursetool) || !$this->_customdata->iscoursetool) {
+            $mform->addElement('header', 'coursecategory', get_string('restricttocategory', 'lti'));
+            $mform->addHelpButton('coursecategory', 'restricttocategory', 'lti');
+            $records = $DB->get_records('course_categories', [], 'sortorder, id', 'id,parent,name');
+            // Convert array of objects to two dimentional array.
+            $tree = $this->lti_build_category_tree(array_map(fn($record) => (array)$record, $records));
+            $mform->addElement('html', $OUTPUT->render_from_template('mod_lti/categorynode', ['nodes' => $tree]));
+            $mform->addElement('hidden', 'lti_coursecategories');
+            $mform->setType('lti_coursecategories', PARAM_TEXT);
+        }
+
         if (!$istool) {
             // Display the lti advantage services.
             $this->get_lti_advantage_services($mform);
@@ -254,16 +269,15 @@ class mod_lti_edit_types_form extends moodleform {
             $options = array();
             $options[0] = get_string('never', 'lti');
             $options[1] = get_string('always', 'lti');
-            $options[2] = get_string('delegate', 'lti');
 
             $mform->addElement('select', 'lti_sendname', get_string('share_name_admin', 'lti'), $options);
             $mform->setType('lti_sendname', PARAM_INT);
-            $mform->setDefault('lti_sendname', '2');
+            $mform->setDefault('lti_sendname', '0');
             $mform->addHelpButton('lti_sendname', 'share_name_admin', 'lti');
 
             $mform->addElement('select', 'lti_sendemailaddr', get_string('share_email_admin', 'lti'), $options);
             $mform->setType('lti_sendemailaddr', PARAM_INT);
-            $mform->setDefault('lti_sendemailaddr', '2');
+            $mform->setDefault('lti_sendemailaddr', '0');
             $mform->addHelpButton('lti_sendemailaddr', 'share_email_admin', 'lti');
 
             // LTI Extensions.
@@ -279,7 +293,7 @@ class mod_lti_edit_types_form extends moodleform {
             $mform->setDefault('lti_acceptgrades', '2');
             $mform->addHelpButton('lti_acceptgrades', 'accept_grades_admin', 'lti');
 
-            $mform->addElement('checkbox', 'lti_forcessl', get_string('force_ssl', 'lti'), '', $options);
+            $mform->addElement('checkbox', 'lti_forcessl', get_string('force_ssl', 'lti'));
             $mform->setType('lti_forcessl', PARAM_BOOL);
             if (!empty($CFG->mod_lti_forcessl)) {
                 $mform->setDefault('lti_forcessl', '1');
@@ -389,5 +403,53 @@ class mod_lti_edit_types_form extends moodleform {
             }
         }
         return $errors;
+    }
+
+    /**
+     * Build category tree.
+     *
+     * @param array $elements
+     * @param int $parentid
+     * @return array category tree
+     */
+    public function lti_build_category_tree(array $elements, int $parentid = 0) : array {
+        $branch = [];
+
+        foreach ($elements as $element) {
+            if ($element['parent'] == $parentid) {
+                $children = $this->lti_build_category_tree($elements, $element['id']);
+                if ($children) {
+                    $element['nodes'] = $children;
+                    $element['haschildren'] = true;
+                } else {
+                    $element['nodes'] = null;
+                    $element['haschildren'] = false;
+                }
+                $branch[] = $element;
+            }
+        }
+        return $branch;
+    }
+
+    public function definition_after_data() {
+        // Add the deprecated "Delegate to teacher" option to the "Share launcher's name" and "Share launcher's email" fields for
+        // existing types which are already using this setting value. This ensures that editing the tool type won't result in a
+        // change to the existing value. Add the option as a disabled to make this clear. Once changed, it cannot be set again.
+        // This isn't supported from 4.3 onward in the creation of new tool types.
+        foreach (['lti_sendname', 'lti_sendemailaddr'] as $elementname) {
+            if ($this->_form->_defaultValues[$elementname] == LTI_SETTING_DELEGATE) {
+                $elementarr = array_filter($this->_form->_elements, function ($element) use($elementname) {
+                    return !empty($element->_attributes['name']) && $element->_attributes['name'] == $elementname;
+                });
+                /** @var MoodleQuickForm_select $element */
+                $element = array_shift($elementarr);
+
+                $element->addOption(
+                    get_string('delegate', 'mod_lti'),
+                    LTI_SETTING_DELEGATE,
+                    ['disabled' => 'disabled', 'selected' => 'selected']
+                );
+            }
+        }
     }
 }

@@ -568,7 +568,7 @@ function scorm_parse_scorm(&$scorm, $manifest) {
     $scoes = scorm_get_manifest($manifests, $scoes);
     $newscoes = array();
     $sortorder = 0;
-    if (count($scoes->elements) > 0) {
+    if (!empty($scoes->elements) && is_iterable($scoes->elements)) {
         $olditems = $DB->get_records('scorm_scoes', array('scorm' => $scorm->id));
         foreach ($scoes->elements as $manifest => $organizations) {
             foreach ($organizations as $organization => $items) {
@@ -709,15 +709,15 @@ function scorm_parse_scorm(&$scorm, $manifest) {
         }
         if (!empty($olditems)) {
             foreach ($olditems as $olditem) {
-                $DB->delete_records('scorm_scoes', array('id' => $olditem->id));
-                $DB->delete_records('scorm_scoes_data', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_scoes_track', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_objective', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_mapinfo', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_ruleconds', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_rulecond', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_rolluprule', array('scoid' => $olditem->id));
-                $DB->delete_records('scorm_seq_rolluprulecond', array('scoid' => $olditem->id));
+                $DB->delete_records('scorm_scoes', ['id' => $olditem->id]);
+                $DB->delete_records('scorm_scoes_data', ['scoid' => $olditem->id]);
+                scorm_delete_tracks($scorm->id, $olditem->id);
+                $DB->delete_records('scorm_seq_objective', ['scoid' => $olditem->id]);
+                $DB->delete_records('scorm_seq_mapinfo', ['scoid' => $olditem->id]);
+                $DB->delete_records('scorm_seq_ruleconds', ['scoid' => $olditem->id]);
+                $DB->delete_records('scorm_seq_rulecond', ['scoid' => $olditem->id]);
+                $DB->delete_records('scorm_seq_rolluprule', ['scoid' => $olditem->id]);
+                $DB->delete_records('scorm_seq_rolluprulecond', ['scoid' => $olditem->id]);
             }
         }
         if (empty($scoes->version)) {

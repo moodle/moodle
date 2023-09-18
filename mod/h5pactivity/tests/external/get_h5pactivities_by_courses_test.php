@@ -71,12 +71,12 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
 
         $params = [
             'course' => $course1->id,
-            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card-887.h5p',
+            'packagefilepath' => $CFG->dirroot.'/h5p/tests/fixtures/greeting-card.h5p',
             'introformat' => 1
         ];
         $activities[] = $this->getDataGenerator()->create_module('h5pactivity', $params);
         // Add filename and contextid to make easier the asserts.
-        $activities[1]->filename = 'greeting-card-887.h5p';
+        $activities[1]->filename = 'greeting-card.h5p';
         $context = context_module::instance($activities[1]->cmid);
         $activities[1]->contextid = $context->id;
 
@@ -104,6 +104,10 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
         $manual->enrol_user($maninstance1, $user->id, $studentrole->id);
         $manual->enrol_user($maninstance2, $user->id, $studentrole->id);
 
+        // Set admin settings.
+        set_config('enablesavestate', 1, 'mod_h5pactivity');
+        set_config('savestatefreq', 120, 'mod_h5pactivity');
+
         // Check the activities returned by the first course.
         $this->setUser($user);
         $courseids = [$course1->id];
@@ -114,6 +118,8 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
         $this->assert_activities($activities, $result);
         $this->assertNotContains('deployedfile', $result['h5pactivities'][0]);
         $this->assertNotContains('deployedfile', $result['h5pactivities'][1]);
+        $this->assertEquals(1, $result['h5pglobalsettings']['enablesavestate']);
+        $this->assertEquals(120, $result['h5pglobalsettings']['savestatefreq']);
 
         // Call the external function without passing course id.
         // Expected result, all the courses, course1 and course2.
@@ -136,11 +142,16 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
         $this->assertEquals($deployedfile['timemodified'], $result['h5pactivities'][2]['deployedfile']['timemodified']);
         $this->assertEquals($deployedfile['mimetype'], $result['h5pactivities'][2]['deployedfile']['mimetype']);
         $this->assertEquals($deployedfile['fileurl'], $result['h5pactivities'][2]['deployedfile']['fileurl']);
+        $this->assertEquals(1, $result['h5pglobalsettings']['enablesavestate']);
+        $this->assertEquals(120, $result['h5pglobalsettings']['savestatefreq']);
 
         // Unenrol user from second course.
         $manual->unenrol_user($maninstance2, $user->id);
         // Remove the last activity from the array.
         array_pop($activities);
+
+        // Disable save state.
+        set_config('enablesavestate', 0, 'mod_h5pactivity');
 
         // Call the external function without passing course id.
         $result = get_h5pactivities_by_courses::execute([]);
@@ -148,6 +159,8 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
         $this->assertCount(0, $result['warnings']);
         $this->assertCount(2, $result['h5pactivities']);
         $this->assert_activities($activities, $result);
+        $this->assertEquals(0, $result['h5pglobalsettings']['enablesavestate']);
+        $this->assertNotContains('savestatefreq', $result['h5pglobalsettings']);
 
         // Call for the second course we unenrolled the user from, expected warning.
         $result = get_h5pactivities_by_courses::execute([$course2->id]);
@@ -166,7 +179,7 @@ class get_h5pactivities_by_courses_test extends externallib_advanced_testcase {
      */
     protected function assert_activities(array $activities, array $result): void {
 
-        $total = count($result);
+        $total = count($result['h5pactivities']);
         for ($i = 0; $i < $total; $i++) {
             $this->assertEquals($activities[$i]->id, $result['h5pactivities'][$i]['id']);
             $this->assertEquals($activities[$i]->course, $result['h5pactivities'][$i]['course']);

@@ -7,7 +7,6 @@ use DateTimeInterface;
 use DateTimeZone;
 use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Exception as PhpSpreadsheetException;
@@ -161,7 +160,9 @@ class Date
     }
 
     /**
-     * @param mixed $value
+     * @param mixed $value Converts a date/time in ISO-8601 standard format date string to an Excel
+     *                         serialized timestamp.
+     *                     See https://en.wikipedia.org/wiki/ISO_8601 for details of the ISO-8601 standard format.
      *
      * @return float|int
      */
@@ -183,7 +184,7 @@ class Date
             throw new Exception("Invalid string $value supplied for datatype Date");
         }
 
-        if (preg_match('/^\\d\\d:\\d\\d:\\d\\d/', $value) == 1) {
+        if (preg_match('/^\\s*\\d?\\d:\\d\\d(:\\d\\d([.]\\d+)?)?\\s*(am|pm)?\\s*$/i', $value) == 1) {
             $newValue = fmod($newValue, 1.0);
         }
 
@@ -195,8 +196,8 @@ class Date
      *
      * @param float|int $excelTimestamp MS Excel serialized date/time value
      * @param null|DateTimeZone|string $timeZone The timezone to assume for the Excel timestamp,
-     *                                                                        if you don't want to treat it as a UTC value
-     *                                                                    Use the default (UTC) unless you absolutely need a conversion
+     *                                           if you don't want to treat it as a UTC value
+     *                                           Use the default (UTC) unless you absolutely need a conversion
      *
      * @return DateTime PHP date/time object
      */
@@ -244,8 +245,8 @@ class Date
      *
      * @param float|int $excelTimestamp MS Excel serialized date/time value
      * @param null|DateTimeZone|string $timeZone The timezone to assume for the Excel timestamp,
-     *                                                                        if you don't want to treat it as a UTC value
-     *                                                                    Use the default (UTC) unless you absolutely need a conversion
+     *                                               if you don't want to treat it as a UTC value
+     *                                               Use the default (UTC) unless you absolutely need a conversion
      *
      * @return int Unix timetamp for this date/time
      */
@@ -301,7 +302,7 @@ class Date
      * The use of Unix timestamps, and therefore this function, is discouraged.
      * They are not Y2038-safe on a 32-bit system, and have no timezone info.
      *
-     * @param int $unixTimestamp Unix Timestamp
+     * @param float|int|string $unixTimestamp Unix Timestamp
      *
      * @return false|float MS Excel serialized date/time value
      */
@@ -352,8 +353,8 @@ class Date
         }
 
         //    Calculate the Julian Date, then subtract the Excel base date (JD 2415020 = 31-Dec-1899 Giving Excel Date of 0)
-        $century = (int) substr($year, 0, 2);
-        $decade = (int) substr($year, 2, 2);
+        $century = (int) substr((string) $year, 0, 2);
+        $decade = (int) substr((string) $year, 2, 2);
         $excelDate = floor((146097 * $century) / 4) + floor((1461 * $decade) / 4) + floor((153 * $month + 2) / 5) + $day + 1721119 - $myexcelBaseDate + $excel1900isLeapYear;
 
         $excelTime = (($hours * 3600) + ($minutes * 60) + $seconds) / 86400;
@@ -364,29 +365,49 @@ class Date
     /**
      * Is a given cell a date/time?
      *
-     * @return bool
-     */
-    public static function isDateTime(Cell $cell)
-    {
-        return is_numeric($cell->getCalculatedValue()) &&
-            self::isDateTimeFormat(
-                $cell->getWorksheet()->getStyle(
-                    $cell->getCoordinate()
-                )->getNumberFormat()
-            );
-    }
-
-    /**
-     * Is a given number format a date/time?
+     * @param mixed $value
      *
      * @return bool
      */
-    public static function isDateTimeFormat(NumberFormat $excelFormatCode)
+    public static function isDateTime(Cell $cell, $value = null, bool $dateWithoutTimeOkay = true)
     {
-        return self::isDateTimeFormatCode($excelFormatCode->getFormatCode());
+        $result = false;
+        $worksheet = $cell->getWorksheetOrNull();
+        $spreadsheet = ($worksheet === null) ? null : $worksheet->getParent();
+        if ($worksheet !== null && $spreadsheet !== null) {
+            $index = $spreadsheet->getActiveSheetIndex();
+            $selected = $worksheet->getSelectedCells();
+
+            try {
+                $result = is_numeric($value ?? $cell->getCalculatedValue()) &&
+                    self::isDateTimeFormat(
+                        $worksheet->getStyle(
+                            $cell->getCoordinate()
+                        )->getNumberFormat(),
+                        $dateWithoutTimeOkay
+                    );
+            } catch (Exception $e) {
+                // Result is already false, so no need to actually do anything here
+            }
+            $worksheet->setSelectedCells($selected);
+            $spreadsheet->setActiveSheetIndex($index);
+        }
+
+        return $result;
     }
 
-    private static $possibleDateFormatCharacters = 'eymdHs';
+    /**
+     * Is a given NumberFormat code a date/time format code?
+     *
+     * @return bool
+     */
+    public static function isDateTimeFormat(NumberFormat $excelFormatCode, bool $dateWithoutTimeOkay = true)
+    {
+        return self::isDateTimeFormatCode((string) $excelFormatCode->getFormatCode(), $dateWithoutTimeOkay);
+    }
+
+    private const POSSIBLE_DATETIME_FORMAT_CHARACTERS = 'eymdHs';
+    private const POSSIBLE_TIME_FORMAT_CHARACTERS = 'Hs'; // note - no 'm' due to ambiguity
 
     /**
      * Is a given number format code a date/time?
@@ -395,7 +416,7 @@ class Date
      *
      * @return bool
      */
-    public static function isDateTimeFormatCode($excelFormatCode)
+    public static function isDateTimeFormatCode($excelFormatCode, bool $dateWithoutTimeOkay = true)
     {
         if (strtolower($excelFormatCode) === strtolower(NumberFormat::FORMAT_GENERAL)) {
             //    "General" contains an epoch letter 'e', so we trap for it explicitly here (case-insensitive check)
@@ -407,31 +428,8 @@ class Date
         }
 
         // Switch on formatcode
-        switch ($excelFormatCode) {
-            //    Explicitly defined date formats
-            case NumberFormat::FORMAT_DATE_YYYYMMDD:
-            case NumberFormat::FORMAT_DATE_YYYYMMDD2:
-            case NumberFormat::FORMAT_DATE_DDMMYYYY:
-            case NumberFormat::FORMAT_DATE_DMYSLASH:
-            case NumberFormat::FORMAT_DATE_DMYMINUS:
-            case NumberFormat::FORMAT_DATE_DMMINUS:
-            case NumberFormat::FORMAT_DATE_MYMINUS:
-            case NumberFormat::FORMAT_DATE_DATETIME:
-            case NumberFormat::FORMAT_DATE_TIME1:
-            case NumberFormat::FORMAT_DATE_TIME2:
-            case NumberFormat::FORMAT_DATE_TIME3:
-            case NumberFormat::FORMAT_DATE_TIME4:
-            case NumberFormat::FORMAT_DATE_TIME5:
-            case NumberFormat::FORMAT_DATE_TIME6:
-            case NumberFormat::FORMAT_DATE_TIME7:
-            case NumberFormat::FORMAT_DATE_TIME8:
-            case NumberFormat::FORMAT_DATE_YYYYMMDDSLASH:
-            case NumberFormat::FORMAT_DATE_XLSX14:
-            case NumberFormat::FORMAT_DATE_XLSX15:
-            case NumberFormat::FORMAT_DATE_XLSX16:
-            case NumberFormat::FORMAT_DATE_XLSX17:
-            case NumberFormat::FORMAT_DATE_XLSX22:
-                return true;
+        if (in_array($excelFormatCode, NumberFormat::DATE_TIME_OR_DATETIME_ARRAY, true)) {
+            return $dateWithoutTimeOkay || in_array($excelFormatCode, NumberFormat::TIME_OR_DATETIME_ARRAY);
         }
 
         //    Typically number, currency or accounting (or occasionally fraction) formats
@@ -443,17 +441,19 @@ class Date
         if (\strpos($excelFormatCode, '-00000') !== false) {
             return false;
         }
+        $possibleFormatCharacters = $dateWithoutTimeOkay ? self::POSSIBLE_DATETIME_FORMAT_CHARACTERS : self::POSSIBLE_TIME_FORMAT_CHARACTERS;
         // Try checking for any of the date formatting characters that don't appear within square braces
-        if (preg_match('/(^|\])[^\[]*[' . self::$possibleDateFormatCharacters . ']/i', $excelFormatCode)) {
+        if (preg_match('/(^|\])[^\[]*[' . $possibleFormatCharacters . ']/i', $excelFormatCode)) {
             //    We might also have a format mask containing quoted strings...
             //        we don't want to test for any of our characters within the quoted blocks
             if (strpos($excelFormatCode, '"') !== false) {
                 $segMatcher = false;
                 foreach (explode('"', $excelFormatCode) as $subVal) {
                     //    Only test in alternate array entries (the non-quoted blocks)
+                    $segMatcher = $segMatcher === false;
                     if (
-                        ($segMatcher = !$segMatcher) &&
-                        (preg_match('/(^|\])[^\[]*[' . self::$possibleDateFormatCharacters . ']/i', $subVal))
+                        $segMatcher &&
+                        (preg_match('/(^|\])[^\[]*[' . $possibleFormatCharacters . ']/i', $subVal))
                     ) {
                         return true;
                     }
@@ -487,13 +487,13 @@ class Date
 
         $dateValueNew = DateTimeExcel\DateValue::fromString($dateValue);
 
-        if ($dateValueNew === ExcelError::VALUE()) {
+        if (!is_float($dateValueNew)) {
             return false;
         }
 
         if (strpos($dateValue, ':') !== false) {
             $timeValue = DateTimeExcel\TimeValue::fromString($dateValue);
-            if ($timeValue === ExcelError::VALUE()) {
+            if (!is_float($timeValue)) {
                 return false;
             }
             $dateValueNew += $timeValue;

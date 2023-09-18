@@ -195,7 +195,7 @@ class core_shutdown_manager {
      * Standard shutdown sequence.
      */
     protected static function request_shutdown() {
-        global $CFG;
+        global $CFG, $OUTPUT;
 
         // Help apache server if possible.
         $apachereleasemem = false;
@@ -208,15 +208,24 @@ class core_shutdown_manager {
         }
 
         // Deal with perf logging.
-        if ((defined('MDL_PERF') && MDL_PERF) || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
+        if (MDL_PERF || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             if ($apachereleasemem) {
                 error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
             }
-            if (defined('MDL_PERFTOLOG') && MDL_PERFTOLOG) {
+            if (MDL_PERFTOLOG) {
                 $perf = get_performance_info();
                 error_log("PERF: " . $perf['txt']);
             }
-            if (defined('MDL_PERFINC') && MDL_PERFINC) {
+            if (MDL_PERFTOFOOT || debugging() || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
+                if (NO_OUTPUT_BUFFERING) {
+                    // If the performance footer was deferred then print it now.
+                    if (!CLI_SCRIPT && !WS_SERVER) {
+                        $perf = get_performance_info();
+                        echo $OUTPUT->select_element_for_replace('#perfdebugfooter', $perf['html']);
+                    }
+                }
+            }
+            if (MDL_PERFINC) {
                 $inc = get_included_files();
                 $ts  = 0;
                 foreach ($inc as $f) {
@@ -224,9 +233,9 @@ class core_shutdown_manager {
                         $fs = filesize($f);
                         $ts += $fs;
                         $hfs = display_size($fs);
-                        error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)", null, null, 0);
+                        error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)");
                     } else {
-                        error_log($f , null, null, 0);
+                        error_log($f);
                     }
                 }
                 if ($ts > 0 ) {

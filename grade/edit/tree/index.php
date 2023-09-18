@@ -47,7 +47,8 @@ require_login($course);
 $context = context_course::instance($course->id);
 require_capability('moodle/grade:manage', $context);
 
-$PAGE->requires->js_call_amd('core_grades/edittree_index', 'enhance');
+$PAGE->requires->js_call_amd('core_grades/edittree_index', 'init', [$courseid, $USER->id]);
+$PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
 /// return tracking object
 $gpr = new grade_plugin_return(array('type'=>'edit', 'plugin'=>'tree', 'courseid'=>$courseid));
@@ -110,18 +111,6 @@ switch ($action) {
                 $object->delete('grade/report/grader/category');
                 redirect($returnurl);
 
-            } else {
-                $PAGE->set_title($strgrades . ': ' . $strgraderreport);
-                $PAGE->set_heading($course->fullname);
-                echo $OUTPUT->header();
-                $strdeletecheckfull = get_string('deletecheck', '', $object->get_name());
-                $optionsyes = array('eid'=>$eid, 'confirm'=>1, 'sesskey'=>sesskey(), 'id'=>$course->id, 'action'=>'delete');
-                $optionsno  = array('id'=>$course->id);
-                $formcontinue = new single_button(new moodle_url('index.php', $optionsyes), get_string('yes'));
-                $formcancel = new single_button(new moodle_url('index.php', $optionsno), get_string('no'), 'get');
-                echo $OUTPUT->confirm($strdeletecheckfull, $formcontinue, $formcancel);
-                echo $OUTPUT->footer();
-                die;
             }
         }
         break;
@@ -246,7 +235,7 @@ if (grade_regrade_final_grades_if_required($course, $grade_edit_tree_index_check
 }
 
 $actionbar = new \core_grades\output\gradebook_setup_action_bar($context);
-print_grade_page_head($courseid, 'settings', 'setup', get_string('gradebooksetup', 'grades'),
+print_grade_page_head($courseid, 'settings', 'setup', false,
     false, false, true, null, null, null, $actionbar);
 
 // Print Table of categories and items
@@ -279,22 +268,20 @@ if ($weightsadjusted) {
 
 $tpldata->table = html_writer::table($grade_edit_tree->table);
 
+if ($moving) {
+    $tpldata->cancelmovingbutton = $OUTPUT->single_button(
+        new moodle_url('index.php', ['id' => $course->id]), get_string('cancel'), 'get');
+}
+
+$footercontent = $OUTPUT->render_from_template('core_grades/edit_tree_sticky_footer', $tpldata);
+$stickyfooter = new core\output\sticky_footer($footercontent);
+$tpldata->stickyfooter = $OUTPUT->render($stickyfooter);
+
 echo $OUTPUT->render_from_template('core_grades/edit_tree', $tpldata);
 
 echo $OUTPUT->box_end();
-
-// Print action buttons
-echo $OUTPUT->container_start('buttons mdl-align');
-
-if ($moving) {
-    echo $OUTPUT->single_button(new moodle_url('index.php', array('id'=>$course->id)), get_string('cancel'), 'get');
-}
-
-echo $OUTPUT->container_end();
 
 $PAGE->requires->js_call_amd('core_form/changechecker', 'watchFormById', ['gradetreeform']);
 
 echo $OUTPUT->footer();
 die;
-
-

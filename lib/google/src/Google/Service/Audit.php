@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Audit extends Google_Service
 {
 
@@ -121,6 +122,7 @@ class Google_Service_Audit extends Google_Service
  *   $activities = $auditService->activities;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Audit_Activities_Resource extends Google_Service_Resource
 {
 
@@ -161,6 +163,7 @@ class Google_Service_Audit_Activities_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_Activities extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -198,6 +201,7 @@ class Google_Service_Audit_Activities extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_Activity extends Google_Collection
 {
   protected $collection_key = 'events';
@@ -264,6 +268,7 @@ class Google_Service_Audit_Activity extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_ActivityActor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -308,6 +313,7 @@ class Google_Service_Audit_ActivityActor extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_ActivityEvents extends Google_Collection
 {
   protected $collection_key = 'parameters';
@@ -345,6 +351,7 @@ class Google_Service_Audit_ActivityEvents extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_ActivityEventsParameters extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -371,6 +378,7 @@ class Google_Service_Audit_ActivityEventsParameters extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Audit_ActivityId extends Google_Model
 {
   protected $internal_gapi_mappings = array(

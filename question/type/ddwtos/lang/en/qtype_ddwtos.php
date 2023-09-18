@@ -25,6 +25,7 @@
 $string['addmorechoiceblanks'] = 'Blanks for {no} more choices';
 $string['answer'] = 'Answer';
 $string['blank'] = 'blank';
+$string['blanknumber'] = 'Blank {$a}';
 $string['correctansweris'] = 'The correct answer is: {$a}';
 $string['errorlimitedchoice'] = 'Choice [[{$a}]] has been used more than once without being set to "Unlimited". Please recheck this question.';
 $string['infinite'] = 'Unlimited';

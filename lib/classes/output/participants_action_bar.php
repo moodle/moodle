@@ -68,7 +68,8 @@ class participants_action_bar implements \renderable {
         return [
             'enrolments:enrol' => [
                 'review',
-                'manageinstances'
+                'manageinstances',
+                'renameroles',
             ],
             'groups:group' => [
                 'groups'
@@ -81,7 +82,7 @@ class participants_action_bar implements \renderable {
                 'roleoverride',
                 'rolecheck',
                 'roleassign',
-            ]
+            ],
         ];
     }
 
@@ -194,15 +195,17 @@ class participants_action_bar implements \renderable {
      * Gets the url_select to be displayed in the participants page if available.
      *
      * @param \renderer_base $output
-     * @return object|null The content required to render the url_select
+     * @return object|null The content required to render the tertiary navigation
      */
     public function get_dropdown(\renderer_base $output): ?object {
         if ($urlselectcontent = $this->get_content_for_select()) {
             $activeurl = $this->find_active_page($urlselectcontent);
             $activeurl = $activeurl ?: $this->find_active_page($urlselectcontent, URL_MATCH_BASE);
-            $urlselect = new \url_select($urlselectcontent, $activeurl, null);
-            $urlselect->set_label(get_string('participantsnavigation', 'course'), ['class' => 'sr-only']);
-            return $urlselect->export_for_template($output);
+
+            $selectmenu = new select_menu('participantsnavigation', $urlselectcontent, $activeurl);
+            $selectmenu->set_label(get_string('participantsnavigation', 'course'), ['class' => 'sr-only']);
+
+            return $selectmenu->export_for_template($output);
         }
 
         return null;
@@ -213,12 +216,12 @@ class participants_action_bar implements \renderable {
      *
      * @param \renderer_base $output
      * @return array Consists of the following:
-     *              - urlselect A stdclass representing the standard navigation options to be fed into a urlselect
+     *              - navigation A stdclass representing the standard navigation options to be fed into a urlselect
      *              - renderedcontent Rendered content to be displayed in line with the tertiary nav
      */
     public function export_for_template(\renderer_base $output) {
         return [
-            'urlselect' => $this->get_dropdown($output),
+            'navigation' => $this->get_dropdown($output),
             'renderedcontent' => $this->renderedcontent,
         ];
     }

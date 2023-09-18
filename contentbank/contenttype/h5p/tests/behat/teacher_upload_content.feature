@@ -118,7 +118,7 @@ Feature: H5P file upload to content bank for non admins
     And I click on "filltheblanks.h5p" "link"
     And I click on "Select this file" "button"
     And I click on "Save changes" "button"
-    Then I should see "Sorry, this file is not valid."
+    Then I should see "Missing required library"
     And I should not see "filltheblanks.h5p"
     And I log out
     And I log in as "admin"

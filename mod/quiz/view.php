@@ -39,27 +39,17 @@ $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
 $q = optional_param('q',  0, PARAM_INT);  // Quiz ID.
 
 if ($id) {
-    if (!$cm = get_coursemodule_from_id('quiz', $id)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
-    if (!$course = $DB->get_record('course', ['id' => $cm->course])) {
-        throw new moodle_exception('coursemisconf');
-    }
+    $quizobj = quiz_settings::create_for_cmid($id, $USER->id);
 } else {
-    if (!$quiz = $DB->get_record('quiz', ['id' => $q])) {
-        throw new moodle_exception('invalidquizid', 'quiz');
-    }
-    if (!$course = $DB->get_record('course', ['id' => $quiz->course])) {
-        throw new moodle_exception('invalidcourseid');
-    }
-    if (!$cm = get_coursemodule_from_instance("quiz", $quiz->id, $course->id)) {
-        throw new moodle_exception('invalidcoursemodule');
-    }
+    $quizobj = quiz_settings::create($q, $USER->id);
 }
+$quiz = $quizobj->get_quiz();
+$cm = $quizobj->get_cm();
+$course = $quizobj->get_course();
 
 // Check login and get context.
 require_login($course, false, $cm);
-$context = context_module::instance($cm->id);
+$context = $quizobj->get_context();
 require_capability('mod/quiz:view', $context);
 
 // Cache some other capabilities we use several times.
@@ -69,10 +59,8 @@ $canpreview = has_capability('mod/quiz:preview', $context);
 
 // Create an object to manage all the other (non-roles) access rules.
 $timenow = time();
-$quizobj = quiz_settings::create($cm->instance, $USER->id);
 $accessmanager = new access_manager($quizobj, $timenow,
         has_capability('mod/quiz:ignoretimelimits', $context, null, false));
-$quiz = $quizobj->get_quiz();
 
 // Trigger course_module_viewed event and completion.
 quiz_view($quiz, $course, $cm, $context);

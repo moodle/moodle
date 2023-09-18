@@ -16,12 +16,12 @@
 /**
  * JS for the mod_form page on mod_bigbluebuttonbn plugin.
  *
- * @module      mod_bigbluebuttonbn/mod_form
+ * @module      mod_bigbluebuttonbn/modform
  * @copyright   2021 Blindside Networks Inc
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Notification from 'core/notification';
 import Templates from "core/templates";
 

@@ -20,6 +20,9 @@
  * @copyright  2014 Nikita Nikitsky, Volgograd State Technical University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+use core_question\local\bank\question_edit_contexts;
+
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->libdir . '/questionlib.php');
@@ -42,15 +45,11 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * @return qformat_xml XML question format object.
      */
     public function create_qformat($filename, $course) {
-        global $DB;
         $qformat = new qformat_xml();
-        $contexts = $DB->get_records('context');
-        $importfile = __DIR__ . '/fixtures/' .$filename;
-        $realfilename = $filename;
-        $qformat->setContexts($contexts);
+        $qformat->setContexts((new question_edit_contexts(context_course::instance($course->id)))->all());
         $qformat->setCourse($course);
-        $qformat->setFilename($importfile);
-        $qformat->setRealfilename($realfilename);
+        $qformat->setFilename(__DIR__ . '/fixtures/' . $filename);
+        $qformat->setRealfilename($filename);
         $qformat->setMatchgrades('error');
         $qformat->setCatfromfile(1);
         $qformat->setContextfromfile(1);
@@ -147,7 +146,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Simple check for importing a category with a description.
      */
     public function test_import_category() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
         $qformat = $this->create_qformat('category_with_description.xml', $course);
@@ -162,7 +161,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check importing nested categories.
      */
     public function test_import_nested_categories() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
         $qformat = $this->create_qformat('nested_categories.xml', $course);
@@ -180,7 +179,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check importing nested categories contain the right questions.
      */
     public function test_import_nested_categories_with_questions() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
         $qformat = $this->create_qformat('nested_categories_with_questions.xml', $course);
@@ -204,7 +203,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check import of an old file (without format), for backward compatability.
      */
     public function test_import_old_format() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
         $qformat = $this->create_qformat('old_format_file.xml', $course);
@@ -222,7 +221,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check the import of an xml file where the child category exists before the parent category.
      */
     public function test_import_categories_in_reverse_order() {
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
         $qformat = $this->create_qformat('categories_reverse_order.xml', $course);
@@ -240,18 +239,19 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Simple check for exporting a category.
      */
     public function test_export_category() {
+        global $SITE;
+
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->resetAfterTest(true);
-        $course = $this->getDataGenerator()->create_course();
+        $this->resetAfterTest();
         $this->setAdminUser();
         // Note while this loads $qformat with all the 'right' data from the xml file,
         // the call to setCategory, followed by exportprocess will actually only export data
         // from the database (created by the generator).
-        $qformat = $this->create_qformat('export_category.xml', $course);
+        $qformat = $this->create_qformat('export_category.xml', $SITE);
 
         $category = $generator->create_question_category([
                 'name' => 'Alpha',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Alpha category for test',
                 'infoformat' => '0',
                 'idnumber' => 'alpha-idnumber',
@@ -277,15 +277,16 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check exporting nested categories.
      */
     public function test_export_nested_categories() {
-        $this->resetAfterTest(true);
-        $course = $this->getDataGenerator()->create_course();
+        global $SITE;
+
+        $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $qformat = $this->create_qformat('nested_categories.zml', $course);
+        $qformat = $this->create_qformat('nested_categories.zml', $SITE);
 
         $categorydelta = $generator->create_question_category([
                 'name' => 'Delta',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Delta category for test',
                 'infoformat' => '2',
                 'stamp' => make_unique_id_code(),
@@ -293,7 +294,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'sortorder' => '999']);
         $categoryepsilon = $generator->create_question_category([
                 'name' => 'Epsilon',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Epsilon category for test',
                 'infoformat' => '4',
                 'stamp' => make_unique_id_code(),
@@ -301,7 +302,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'sortorder' => '999']);
         $categoryzeta = $generator->create_question_category([
                 'name' => 'Zeta',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Zeta category for test',
                 'infoformat' => '0',
                 'stamp' => make_unique_id_code(),
@@ -330,15 +331,16 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Check exporting nested categories contain the right questions.
      */
     public function test_export_nested_categories_with_questions() {
-        $this->resetAfterTest(true);
-        $course = $this->getDataGenerator()->create_course();
+        global $SITE;
+
+        $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $qformat = $this->create_qformat('nested_categories_with_questions.xml', $course);
+        $qformat = $this->create_qformat('nested_categories_with_questions.xml', $SITE);
 
         $categoryiota = $generator->create_question_category([
                 'name' => 'Iota',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Iota category for test',
                 'infoformat' => '2',
                 'stamp' => make_unique_id_code(),
@@ -357,7 +359,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $categorykappa = $generator->create_question_category([
                 'name' => 'Kappa',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Kappa category for test',
                 'infoformat' => '4',
                 'stamp' => make_unique_id_code(),
@@ -390,7 +392,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'idnumber' => '']);
         $categorylambda = $generator->create_question_category([
                 'name' => 'Lambda',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Lambda category for test',
                 'infoformat' => '0',
                 'stamp' => make_unique_id_code(),
@@ -409,7 +411,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
                 'penalty' => '1']);
         $categorymu = $generator->create_question_category([
                 'name' => 'Mu',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Mu category for test',
                 'infoformat' => '0',
                 'stamp' => make_unique_id_code(),
@@ -436,18 +438,19 @@ class qformat_xml_import_export_test extends advanced_testcase {
      * Simple check for exporting a category.
      */
     public function test_export_category_with_special_chars() {
+        global $SITE;
+
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $this->resetAfterTest(true);
-        $course = $this->getDataGenerator()->create_course();
+        $this->resetAfterTest();
         $this->setAdminUser();
         // Note while this loads $qformat with all the 'right' data from the xml file,
         // the call to setCategory, followed by exportprocess will actually only export data
         // from the database (created by the generator).
-        $qformat = $this->create_qformat('export_category.xml', $course);
+        $qformat = $this->create_qformat('export_category.xml', $SITE);
 
         $category = $generator->create_question_category([
                 'name' => 'Alpha',
-                'contextid' => '2',
+                'contextid' => context_course::instance($SITE->id)->id,
                 'info' => 'This is Alpha category for test',
                 'infoformat' => '0',
                 'idnumber' => 'The inequalities < & >',

@@ -60,12 +60,16 @@ foreach ($accounts as $account) {
 
     $menu = new action_menu();
     $menu->set_menu_trigger(get_string('edit'));
+    $menu->set_boundary('window');
     if ($canmanage) {
         $menu->add(new action_menu_link_secondary($account->get_edit_url(), null, get_string('edit')));
         if (!$account->get('archived')) {
             $deleteurl = $account->get_edit_url(['delete' => 1, 'sesskey' => sesskey()]);
-            $menu->add(new action_menu_link_secondary($deleteurl, null, get_string('deleteorarchive', 'payment'),
-                ['data-action' => 'delete']));
+            $menu->add(new action_menu_link_secondary($deleteurl, null, get_string('deleteorarchive', 'payment'), [
+                'data-modal' => 'confirmation',
+                'data-modal-type' => 'delete',
+                'data-modal-content-str' => json_encode(['accountdeleteconfirm', 'payment']),
+            ]));
         } else {
             $restoreurl = $account->get_edit_url(['restore' => 1, 'sesskey' => sesskey()]);
             $menu->add(new action_menu_link_secondary($restoreurl, null, get_string('restoreaccount', 'payment')));
@@ -85,10 +89,7 @@ if (has_capability('moodle/site:config', context_system::instance())) {
     echo html_writer::div($text, 'pb-2');
 }
 
-echo html_writer::table($table);
-
-$PAGE->requires->event_handler('[data-action=delete]', 'click', 'M.util.show_confirm_dialog',
-    array('message' => get_string('accountdeleteconfirm', 'payment')));
+echo html_writer::div(html_writer::table($table), 'position-relative');
 
 echo html_writer::div(html_writer::link(new moodle_url($PAGE->url, ['showarchived' => !$showarchived]),
     $showarchived ? get_string('hidearchived', 'payment') : get_string('showarchived', 'payment')), 'mdl-right');

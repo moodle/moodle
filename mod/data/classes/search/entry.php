@@ -239,12 +239,30 @@ class entry extends \core_search\base_mod {
         $cm = $this->get_cm('data', $entry->dataid, $doc->get('courseid'));
         $context = \context_module::instance($cm->id);
 
-        // Get the files and attach them.
-        $fs = get_file_storage();
-        $files = $fs->get_area_files($context->id, 'mod_data', 'content', $entryid, 'filename', false);
-        foreach ($files as $file) {
-            $doc->add_stored_file($file);
+        // Get all content fields which have files in them.
+        $contentssql = "
+                SELECT con.*
+                  FROM {data_content} con
+                  JOIN {files} fil
+                    ON fil.component = :component
+                   AND fil.filearea = :filearea
+                   AND fil.itemid = con.id
+                 WHERE con.recordid = :recordid
+        ";
+        $contents    = $DB->get_recordset_sql($contentssql, [
+            'recordid'  => $entryid,
+            'component' => 'mod_data',
+            'filearea'  => 'content',
+        ]);
+        foreach ($contents as $content) {
+            // Get the files and attach them.
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'mod_data', 'content', $content->id, 'filename', false);
+            foreach ($files as $file) {
+                $doc->add_stored_file($file);
+            }
         }
+        $contents->close();
     }
 
     /**
@@ -355,7 +373,7 @@ class entry extends \core_search\base_mod {
      * @param string $fieldtype
      * @return string|null It will return the class name or null if the field type is not available.
      */
-    protected function get_field_class_name($fieldtype) {
+    protected function get_field_class_name(string $fieldtype) : ?string {
         global $CFG;
 
         $fieldtype = trim($fieldtype);

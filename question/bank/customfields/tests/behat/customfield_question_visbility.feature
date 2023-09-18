@@ -43,7 +43,7 @@ Feature: The visibility of question custom fields control where they are display
   Scenario: Display custom question fields to teachers based on their visibility.
     When I choose "Edit question" action for "First question" in the question bank
     And I should see "Category for test"
-    And I click on "Expand all" "link"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I should see "Field 1"
     And I should see "Field 2"
     And I should see "Field 3"

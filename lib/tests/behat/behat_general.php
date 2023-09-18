@@ -148,7 +148,7 @@ class behat_general extends behat_base {
 
         } else if (!empty($url)) {
             // We redirect directly as we can not wait for an automatic redirection.
-            $this->getSession()->getDriver()->getClient()->request('get', $url);
+            $this->getSession()->getDriver()->getClient()->request('GET', $url);
 
         } else {
             // Reload the page if no URL was provided.
@@ -372,7 +372,7 @@ class behat_general extends behat_base {
     /**
      * Generic mouse over action. Mouse over a element of the specified type.
      *
-     * @When /^I hover over the "(?P<element_string>(?:[^"]|\\")*)" "(?P<selector_string>[^"]*) in the "(?P<container_element_string>(?:[^"]|\\")*)" "(?P<container_selector_string>[^"]*)"$/
+     * @When I hover over the :element :selectortype in the :containerelement :containerselectortype
      * @param string $element Element we look for
      * @param string $selectortype The type of what we look for
      * @param string $containerelement Element we look for
@@ -380,7 +380,7 @@ class behat_general extends behat_base {
      */
     public function i_hover_in_the(string $element, $selectortype, string $containerelement, $containerselectortype): void {
         // Gets the node based on the requested selector type and locator.
-        $node = $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerselectortype);
+        $node = $this->get_node_in_container($selectortype, $element, $containerselectortype, $containerelement);
         $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
         $node->mouseOver();
     }
@@ -462,6 +462,55 @@ class behat_general extends behat_base {
         $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
         $this->ensure_node_is_visible($node);
         $node->click();
+    }
+
+    /**
+     * Click on the element with some modifier key pressed (alt, shift, meta or control).
+     *
+     * It is important to note that not all HTML elements are compatible with this step because
+     * the webdriver limitations. For example, alt click on checkboxes with a visible label will
+     * produce a normal checkbox click without the modifier.
+     *
+     * @When I :modifier click on :element :selectortype in the :nodeelement :nodeselectortype
+     * @param string $modifier the extra modifier to press (for example, alt+shift or shift)
+     * @param string $element Element we look for
+     * @param string $selectortype The type of what we look for
+     * @param string $nodeelement Element we look in
+     * @param string $nodeselectortype The type of selector where we look in
+     */
+    public function i_key_click_on_in_the($modifier, $element, $selectortype, $nodeelement, $nodeselectortype) {
+        behat_base::require_javascript_in_session($this->getSession());
+
+        $key = null;
+        switch (strtoupper(trim($modifier))) {
+            case '':
+                break;
+            case 'SHIFT':
+                $key = behat_keys::SHIFT;
+                break;
+            case 'CTRL':
+                $key = behat_keys::CONTROL;
+                break;
+            case 'ALT':
+                $key = behat_keys::ALT;
+                break;
+            case 'META':
+                $key = behat_keys::META;
+                break;
+            default:
+                throw new \coding_exception("Unknown modifier key '$modifier'}");
+        }
+
+        $node = $this->get_node_in_container($selectortype, $element, $nodeselectortype, $nodeelement);
+        $this->ensure_node_is_visible($node);
+
+        // KeyUP and KeyDown require the element to be displayed in the current window.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyDown($key);
+        $node->click();
+        // Any click action can move the scroll. Ensure the element is still displayed.
+        $this->execute_js_on_node($node, '{{ELEMENT}}.scrollIntoView();');
+        $node->keyUp($key);
     }
 
     /**
@@ -1108,9 +1157,6 @@ EOF;
      * @param string $taskname Name of task e.g. 'mod_whatever\task\do_something'
      */
     public function i_run_the_scheduled_task($taskname) {
-        global $CFG;
-        require_once("{$CFG->libdir}/cronlib.php");
-
         $task = \core\task\manager::get_scheduled_task($taskname);
         if (!$task) {
             throw new DriverException('The "' . $taskname . '" scheduled task does not exist');
@@ -1118,7 +1164,7 @@ EOF;
 
         // Do setup for cron task.
         raise_memory_limit(MEMORY_EXTRA);
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Get lock.
         $cronlockfactory = \core\lock\lock_config::get_lock_factory('cron');
@@ -1138,7 +1184,7 @@ EOF;
 
         try {
             // Prepare the renderer.
-            cron_prepare_core_renderer();
+            \core\cron::prepare_core_renderer();
 
             // Discard task output as not appropriate for Behat output!
             ob_start();
@@ -1146,13 +1192,13 @@ EOF;
             ob_end_clean();
 
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task complete.
             \core\task\manager::scheduled_task_complete($task);
         } catch (Exception $e) {
             // Restore the previous renderer.
-            cron_prepare_core_renderer(true);
+            \core\cron::prepare_core_renderer(true);
 
             // Mark task failed and throw exception.
             \core\task\manager::scheduled_task_failed($task);
@@ -1175,11 +1221,10 @@ EOF;
      * @throws DriverException
      */
     public function i_run_all_adhoc_tasks() {
-        global $CFG, $DB;
-        require_once("{$CFG->libdir}/cronlib.php");
+        global $DB;
 
         // Do setup for cron task.
-        cron_setup_user();
+        \core\cron::setup_user();
 
         // Discard task output as not appropriate for Behat output!
         ob_start();
@@ -1193,7 +1238,7 @@ EOF;
             ob_clean();
 
             // Run the task.
-            cron_run_inner_adhoc_task($task);
+            \core\cron::run_inner_adhoc_task($task);
 
             // Check whether the task record still exists.
             // If a task was successful it will be removed.
@@ -1410,9 +1455,9 @@ EOF;
 
         // Check if value exists in specific row/column.
         // Get row xpath.
-        // GoutteDriver uses DomCrawler\Crawler and it is making XPath relative to the current context, so use descendant.
-        $rowxpath = $tablexpath."/tbody/tr[descendant::th[normalize-space(.)=" . $rowliteral .
-                    "] | descendant::td[normalize-space(.)=" . $rowliteral . "]]";
+        // Some drivers make XPath relative to the current context, so use descendant.
+        $rowxpath = $tablexpath . "/tbody/tr[descendant::*[@class='rowtitle'][normalize-space(.)=" . $rowliteral . "] | " . "
+            descendant::th[normalize-space(.)=" . $rowliteral . "] | descendant::td[normalize-space(.)=" . $rowliteral . "]]";
 
         $columnvaluexpath = $rowxpath . $columnpositionxpath . "[contains(normalize-space(.)," . $valueliteral . ")]";
 
@@ -1757,7 +1802,7 @@ EOF;
 
     /**
      * Presses a given button in the browser.
-     * NOTE: Phantomjs and goutte driver reloads page while navigating back and forward.
+     * NOTE: Phantomjs and browserkit driver reloads page while navigating back and forward.
      *
      * @Then /^I press the "(back|forward|reload)" button in the browser$/
      * @param string $button the button to press.
@@ -2266,7 +2311,7 @@ EOF;
         }
 
         // Make the provided editor the default one in $CFG->texteditors by
-        // moving it to the first [editor],atto,tiny,tinymce,textarea on the list.
+        // moving it to the first [editor],atto,tiny,textarea on the list.
         $list = explode(',', $CFG->texteditors);
         array_unshift($list, $editor);
         $list = array_unique($list);
@@ -2313,4 +2358,36 @@ EOF;
         }
     }
 
+    /**
+     * Check that the page title contains a given string.
+     *
+     * @Given the page title should contain ":title"
+     * @param string $title The string that should be present on the page title.
+     */
+    public function the_page_title_should_contain(string $title): void {
+        $session = $this->getSession();
+        if ($this->running_javascript()) {
+            // When running on JS, the page title can be changed via JS, so it's more reliable to get the actual page title via JS.
+            $actualtitle = $session->evaluateScript("return document.title");
+        } else {
+            $titleelement = $session->getPage()->find('css', 'head title');
+            if ($titleelement === null) {
+                // Throw an exception if a page title is not present on the page.
+                throw new ElementNotFoundException(
+                    $this->getSession(),
+                    '<title> element',
+                    'css',
+                    'head title'
+                );
+            }
+            $actualtitle = $titleelement->getText();
+        }
+
+        if (!str_contains($actualtitle, $title)) {
+            throw new ExpectationException(
+                "'$title' was not found from the current page title '$actualtitle'",
+                $session
+            );
+        }
+    }
 }

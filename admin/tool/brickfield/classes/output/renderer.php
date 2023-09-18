@@ -76,7 +76,6 @@ class renderer extends plugin_renderer_base {
                 $label = $tool->get_toolshortname();
             }
             $tab = new tabobject($idprefix . $toolname, $link, $label);
-            $tab->extraclass = isset($extraclass[$toolname]) ? $extraclass[$toolname] : null;
             $tabs[] = $tab;
         }
         return $this->render(new tabtree($tabs, $idprefix . $filter->tab));

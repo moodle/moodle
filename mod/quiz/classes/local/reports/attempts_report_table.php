@@ -84,6 +84,12 @@ abstract class attempts_report_table extends \table_sql {
     /** @var string The toggle group name for the checkboxes in the checkbox column. */
     protected $togglegroup = 'quiz-attempts';
 
+    /** @var string strftime format. */
+    protected $strtimeformat;
+
+    /** @var bool|null used by {@see col_state()} to cache the has_capability result. */
+    protected $canreopen = null;
+
     /**
      * Constructor.
      *
@@ -174,11 +180,27 @@ abstract class attempts_report_table extends \table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_state($attempt) {
-        if (!is_null($attempt->attempt)) {
-            return quiz_attempt::state_name($attempt->state);
-        } else {
-            return  '-';
+        if (is_null($attempt->attempt)) {
+            return '-';
         }
+
+        $display = quiz_attempt::state_name($attempt->state);
+        if ($this->is_downloading()) {
+            return $display;
+        }
+
+        $this->canreopen ??= has_capability('mod/quiz:reopenattempts', $this->context);
+        if ($attempt->state == quiz_attempt::ABANDONED && $this->canreopen) {
+            $display .= ' ' . html_writer::tag('button', get_string('reopenattempt', 'quiz'), [
+                'type' => 'button',
+                'class' => 'btn btn-secondary',
+                'data-action' => 'reopen-attempt',
+                'data-attempt-id' => $attempt->attempt,
+                'data-after-action-url' => $this->reporturl->out_as_local_url(false),
+            ]);
+        }
+
+        return $display;
     }
 
     /**
@@ -685,11 +707,12 @@ abstract class attempts_report_table extends \table_sql {
                 'data-action' => 'toggle',
                 'data-togglegroup' => $this->togglegroup,
                 'data-toggle' => 'action',
-                'disabled' => true
+                'disabled' => true,
+                'data-modal' => 'confirmation',
+                'data-modal-type' => 'delete',
+                'data-modal-content-str' => json_encode(['deleteattemptcheck', 'quiz']),
             ];
             echo html_writer::empty_tag('input', $deletebuttonparams);
-            $PAGE->requires->event_handler('#deleteattemptsbutton', 'click', 'M.util.show_confirm_dialog',
-                    ['message' => get_string('deleteattemptcheck', 'quiz')]);
         }
     }
 

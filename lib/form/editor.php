@@ -35,7 +35,7 @@ require_once('templatable_form_element.php');
 /**
  * Editor element
  *
- * It creates preffered editor (textbox/TinyMce) form element for the format (Text/HTML) selected.
+ * It creates preffered editor (textbox/Tiny) form element for the format (Text/HTML) selected.
  *
  * @package   core_form
  * @category  form
@@ -422,7 +422,8 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
             $fpoptions['subtitle'] = $subtitle_options;
         }
 
-        //If editor is required and tinymce, then set required_tinymce option to initalize tinymce validation.
+        // TODO Remove this in MDL-77334 for Moodle 4.6.
+        // If editor is required and tinymce, then set required_tinymce option to initalize tinymce validation.
         if (($editor instanceof tinymce_texteditor)  && !is_null($this->getAttribute('onchange'))) {
             $this->_options['required'] = true;
         }
@@ -453,6 +454,7 @@ class MoodleQuickForm_editor extends HTML_QuickForm_element implements templatab
         $context['id'] = $id;
         $context['value'] = $text;
         $context['format'] = $format;
+        $context['formatlabel'] = get_string('editorxformat', 'editor', $this->_label);
 
         if (!is_null($this->getAttribute('onblur')) && !is_null($this->getAttribute('onchange'))) {
             $context['changelistener'] = true;

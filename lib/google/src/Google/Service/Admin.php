@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Admin extends Google_Service
 {
   /** Manage email messages of users on your domain. */
@@ -82,6 +83,7 @@ class Google_Service_Admin extends Google_Service
  *   $mail = $adminService->mail;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Admin_Mail_Resource extends Google_Service_Resource
 {
 
@@ -103,6 +105,7 @@ class Google_Service_Admin_Mail_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Admin_MailItem extends Google_Collection
 {
   protected $collection_key = 'labels';

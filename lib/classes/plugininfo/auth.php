@@ -23,14 +23,19 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage, admin_externalpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for authentication plugins
  */
 class auth extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     public function is_uninstall_allowed() {
         global $DB;
 
@@ -97,6 +102,7 @@ class auth extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $auth = $this;       // Also to be used inside settings.php.

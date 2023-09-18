@@ -1,227 +1,65 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Entity;
 
+use DateInterval;
+use DateTimeInterface;
+use OpenSpout\Common\Entity\Cell\BooleanCell;
+use OpenSpout\Common\Entity\Cell\DateIntervalCell;
+use OpenSpout\Common\Entity\Cell\DateTimeCell;
+use OpenSpout\Common\Entity\Cell\EmptyCell;
+use OpenSpout\Common\Entity\Cell\FormulaCell;
+use OpenSpout\Common\Entity\Cell\NumericCell;
+use OpenSpout\Common\Entity\Cell\StringCell;
+use OpenSpout\Common\Entity\Comment\Comment;
 use OpenSpout\Common\Entity\Style\Style;
-use OpenSpout\Common\Helper\CellTypeHelper;
 
-class Cell
+abstract class Cell
 {
-    /**
-     * Numeric cell type (whole numbers, fractional numbers, dates).
-     */
-    public const TYPE_NUMERIC = 0;
+    public ?Comment $comment = null;
 
-    /**
-     * String (text) cell type.
-     */
-    public const TYPE_STRING = 1;
+    private Style $style;
 
-    /**
-     * Formula cell type
-     * Not used at the moment.
-     */
-    public const TYPE_FORMULA = 2;
-
-    /**
-     * Empty cell type.
-     */
-    public const TYPE_EMPTY = 3;
-
-    /**
-     * Boolean cell type.
-     */
-    public const TYPE_BOOLEAN = 4;
-
-    /**
-     * Date cell type.
-     */
-    public const TYPE_DATE = 5;
-
-    /**
-     * Error cell type.
-     */
-    public const TYPE_ERROR = 6;
-
-    /**
-     * The value of this cell.
-     *
-     * @var null|mixed
-     */
-    protected $value;
-
-    /**
-     * The cell type.
-     *
-     * @var null|int
-     */
-    protected $type;
-
-    /**
-     * The cell style.
-     *
-     * @var Style
-     */
-    protected $style;
-
-    /**
-     * @param null|mixed $value
-     */
-    public function __construct($value, Style $style = null)
+    public function __construct(?Style $style)
     {
-        $this->setValue($value);
         $this->setStyle($style);
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+    abstract public function getValue(): null|bool|string|int|float|DateTimeInterface|DateInterval;
+
+    final public function setStyle(?Style $style): void
     {
-        return (string) $this->getValue();
+        $this->style = $style ?? new Style();
     }
 
-    /**
-     * @param null|mixed $value
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-        $this->type = $this->detectType($value);
-    }
-
-    /**
-     * @return null|mixed
-     */
-    public function getValue()
-    {
-        return !$this->isError() ? $this->value : null;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValueEvenIfError()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param null|Style $style
-     */
-    public function setStyle($style)
-    {
-        $this->style = $style ?: new Style();
-    }
-
-    /**
-     * @return Style
-     */
-    public function getStyle()
+    final public function getStyle(): Style
     {
         return $this->style;
     }
 
-    /**
-     * @return null|int
-     */
-    public function getType()
+    final public static function fromValue(null|bool|string|int|float|DateTimeInterface|DateInterval $value, ?Style $style = null): self
     {
-        return $this->type;
-    }
-
-    /**
-     * @param int $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isBoolean()
-    {
-        return self::TYPE_BOOLEAN === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEmpty()
-    {
-        return self::TYPE_EMPTY === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNumeric()
-    {
-        return self::TYPE_NUMERIC === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isString()
-    {
-        return self::TYPE_STRING === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isDate()
-    {
-        return self::TYPE_DATE === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFormula()
-    {
-        return self::TYPE_FORMULA === $this->type;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isError()
-    {
-        return self::TYPE_ERROR === $this->type;
-    }
-
-    /**
-     * Get the current value type.
-     *
-     * @param null|mixed $value
-     *
-     * @return int
-     */
-    protected function detectType($value)
-    {
-        if (CellTypeHelper::isBoolean($value)) {
-            return self::TYPE_BOOLEAN;
+        if (\is_bool($value)) {
+            return new BooleanCell($value, $style);
         }
-        if (CellTypeHelper::isEmpty($value)) {
-            return self::TYPE_EMPTY;
+        if (null === $value || '' === $value) {
+            return new EmptyCell($value, $style);
         }
-        if (CellTypeHelper::isNumeric($value)) {
-            return self::TYPE_NUMERIC;
+        if (\is_int($value) || \is_float($value)) {
+            return new NumericCell($value, $style);
         }
-        if (CellTypeHelper::isDateTimeOrDateInterval($value)) {
-            return self::TYPE_DATE;
+        if ($value instanceof DateTimeInterface) {
+            return new DateTimeCell($value, $style);
         }
-        if (CellTypeHelper::isFormula($value)) {
-            return self::TYPE_FORMULA;
+        if ($value instanceof DateInterval) {
+            return new DateIntervalCell($value, $style);
         }
-        if (CellTypeHelper::isNonEmptyString($value)) {
-            return self::TYPE_STRING;
+        if (isset($value[0]) && '=' === $value[0]) {
+            return new FormulaCell($value, $style);
         }
 
-        return self::TYPE_ERROR;
+        return new StringCell($value, $style);
     }
 }

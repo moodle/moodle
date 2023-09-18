@@ -16,9 +16,11 @@
 
 namespace mod_quiz;
 
+use cm_info;
 use coding_exception;
 use context;
 use context_module;
+use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use moodle_exception;
@@ -84,25 +86,50 @@ class quiz_settings {
     }
 
     /**
-     * Static function to create a new quiz object for a specific user.
+     * Helper used by the other factory methods.
      *
-     * @param int $quizid the the quiz id.
+     * @param stdClass $quiz
+     * @param cm_info|stdClass $cm
+     * @param stdClass $course
      * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
-     * @return quiz_settings the new quiz object.
+     * @return quiz_settings the new quiz settings object.
      */
-    public static function create($quizid, $userid = null) {
-        global $DB;
-
-        $quiz = access_manager::load_quiz_and_settings($quizid);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
-
+    protected static function create_helper(stdClass $quiz, cm_info|stdClass $cm, stdClass $course, ?int $userid): self {
         // Update quiz with override information.
         if ($userid) {
             $quiz = quiz_update_effective_access($quiz, $userid);
         }
 
         return new quiz_settings($quiz, $cm, $course);
+    }
+
+    /**
+     * Static function to create a new quiz settings object from a quiz id, for a specific user.
+     *
+     * @param int $quizid the quiz id.
+     * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
+     * @return quiz_settings the new quiz settings object.
+     */
+    public static function create(int $quizid, int $userid = null): self {
+        $quiz = access_manager::load_quiz_and_settings($quizid);
+        $course = get_course($quiz->course);
+        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
+
+        return self::create_helper($quiz, $cm, $course, $userid);
+    }
+
+    /**
+     * Static function to create a new quiz settings object from a cmid, for a specific user.
+     *
+     * @param int $cmid the course-module id.
+     * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
+     * @return quiz_settings the new quiz settings object.
+     */
+    public static function create_for_cmid(int $cmid, int $userid = null): self {
+        [$course, $cm] = get_course_and_cm_from_cmid($cmid, 'quiz');
+        $quiz = access_manager::load_quiz_and_settings($cm->instance);
+
+        return self::create_helper($quiz, $cm, $course, $userid);
     }
 
     /**
@@ -311,9 +338,10 @@ class quiz_settings {
      * Get some of the question in this quiz.
      *
      * @param array|null $questionids question ids of the questions to load. null for all.
+     * @param bool $requirequestionfullyloaded Whether to require that a particular question is fully loaded.
      * @return stdClass[] the question data objects.
      */
-    public function get_questions($questionids = null) {
+    public function get_questions(?array $questionids = null, bool $requirequestionfullyloaded = true) {
         if (is_null($questionids)) {
             $questionids = array_keys($this->questions);
         }
@@ -323,7 +351,9 @@ class quiz_settings {
                 throw new moodle_exception('cannotstartmissingquestion', 'quiz', $this->view_url());
             }
             $questions[$id] = $this->questions[$id];
-            $this->ensure_question_loaded($id);
+            if ($requirequestionfullyloaded) {
+                $this->ensure_question_loaded($id);
+            }
         }
         return $questions;
     }
@@ -347,7 +377,7 @@ class quiz_settings {
      * for this quiz at this time.
      *
      * @param int $timenow the current time as a unix timestamp.
-     * @return access_manager and instance of the access_manager class
+     * @return access_manager an instance of the access_manager class
      *      for this quiz at this time.
      */
     public function get_access_manager($timenow) {
@@ -356,6 +386,15 @@ class quiz_settings {
                     has_capability('mod/quiz:ignoretimelimits', $this->context, null, false));
         }
         return $this->accessmanager;
+    }
+
+    /**
+     * Return the grade_calculator object for this quiz.
+     *
+     * @return grade_calculator
+     */
+    public function get_grade_calculator(): grade_calculator {
+        return grade_calculator::create($this);
     }
 
     /**
@@ -525,14 +564,20 @@ class quiz_settings {
         // To control if we need to look in categories for questions.
         $qcategories = [];
 
-        foreach ($this->get_questions() as $questiondata) {
+        foreach ($this->get_questions(null, false) as $questiondata) {
+            if ($questiondata->status == question_version_status::QUESTION_STATUS_DRAFT) {
+                // Skip questions where all versions are draft.
+                continue;
+            }
             if ($questiondata->qtype === 'random' && $includepotential) {
-                if (!isset($qcategories[$questiondata->category])) {
-                    $qcategories[$questiondata->category] = false;
-                }
-                if (!empty($questiondata->filtercondition)) {
-                    $filtercondition = json_decode($questiondata->filtercondition);
-                    $qcategories[$questiondata->category] = !empty($filtercondition->includingsubcategories);
+                $filtercondition = $questiondata->filtercondition;
+                if (!empty($filtercondition)) {
+                    $filter = $filtercondition['filter'];
+                    if (isset($filter['category'])) {
+                        foreach ($filter['category']['values'] as $catid) {
+                            $qcategories[$catid] = $filter['category']['filteroptions']['includesubcategories'];
+                        }
+                    }
                 }
             } else {
                 if (!in_array($questiondata->qtype, $questiontypes)) {

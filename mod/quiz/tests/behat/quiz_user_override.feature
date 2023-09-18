@@ -208,11 +208,9 @@ Feature: Quiz user override
     And the following "activities" exist:
       | activity | name      | course | idnumber | groupmode |
       | quiz     | Test quiz | C1     | quiz1    | 1         |
-    And I log in as "admin"
-    And I set the following system permissions of "Manager" role:
-      | capability       | permission |
-      | mod/quiz:attempt | Allow      |
-    And I log out
+    And the following "role capability" exists:
+      | role             | manager |
+      | mod/quiz:attempt | allow   |
     When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
     And I press "Add user override"
     And I click on "Override user" "field"

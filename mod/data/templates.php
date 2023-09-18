@@ -57,6 +57,12 @@ $PAGE->set_url($url);
 require_login($course, false, $cm);
 require_capability('mod/data:managetemplates', $context);
 
+if ($action == 'resetalltemplates') {
+    require_sesskey();
+    $manager->reset_all_templates();
+    redirect($PAGE->url, get_string('templateresetall', 'mod_data'), null, \core\output\notification::NOTIFY_SUCCESS);
+}
+
 $manager->set_template_viewed();
 
 if ($useeditor !== null) {
@@ -85,11 +91,6 @@ if (!$manager->has_fields()) {
 
 $actionbar = new \mod_data\output\action_bar($instance->id, $url);
 echo $actionbar->get_templates_action_bar();
-
-if ($action == 'resetalltemplates') {
-    $manager->reset_all_templates();
-    $notificationstr = get_string('templateresetall', 'mod_data');
-}
 
 if (($formdata = data_submitted()) && confirm_sesskey()) {
     if (!empty($formdata->defaultform)) {

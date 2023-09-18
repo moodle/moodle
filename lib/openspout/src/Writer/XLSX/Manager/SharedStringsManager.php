@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Writer\XLSX\Manager;
 
-use OpenSpout\Common\Exception\IOException;
 use OpenSpout\Common\Helper\Escaper;
 
 /**
- * This class provides functions to write shared strings.
+ * @internal
  */
-class SharedStringsManager
+final class SharedStringsManager
 {
     public const SHARED_STRINGS_FILE_NAME = 'sharedStrings.xml';
 
@@ -24,24 +25,24 @@ class SharedStringsManager
     public const DEFAULT_STRINGS_COUNT_PART = 'count="9999999999999" uniqueCount="9999999999999"';
 
     /** @var resource Pointer to the sharedStrings.xml file */
-    protected $sharedStringsFilePointer;
+    private $sharedStringsFilePointer;
 
     /** @var int Number of shared strings already written */
-    protected $numSharedStrings = 0;
+    private int $numSharedStrings = 0;
 
     /** @var Escaper\XLSX Strings escaper */
-    protected $stringsEscaper;
+    private Escaper\XLSX $stringsEscaper;
 
     /**
      * @param string       $xlFolder       Path to the "xl" folder
      * @param Escaper\XLSX $stringsEscaper Strings escaper
      */
-    public function __construct($xlFolder, $stringsEscaper)
+    public function __construct(string $xlFolder, Escaper\XLSX $stringsEscaper)
     {
-        $sharedStringsFilePath = $xlFolder.'/'.self::SHARED_STRINGS_FILE_NAME;
-        $this->sharedStringsFilePointer = fopen($sharedStringsFilePath, 'w');
-
-        $this->throwIfSharedStringsFilePointerIsNotAvailable();
+        $sharedStringsFilePath = $xlFolder.\DIRECTORY_SEPARATOR.self::SHARED_STRINGS_FILE_NAME;
+        $resource = fopen($sharedStringsFilePath, 'w');
+        \assert(false !== $resource);
+        $this->sharedStringsFilePointer = $resource;
 
         // the headers is split into different parts so that we can fseek and put in the correct count and uniqueCount later
         $header = self::SHARED_STRINGS_XML_FILE_FIRST_PART_HEADER.' '.self::DEFAULT_STRINGS_COUNT_PART.'>';
@@ -54,11 +55,9 @@ class SharedStringsManager
      * Writes the given string into the sharedStrings.xml file.
      * Starting and ending whitespaces are preserved.
      *
-     * @param string $string
-     *
      * @return int ID of the written shared string
      */
-    public function writeString($string)
+    public function writeString(string $string): int
     {
         fwrite($this->sharedStringsFilePointer, '<si><t xml:space="preserve">'.$this->stringsEscaper->escape($string).'</t></si>');
         ++$this->numSharedStrings;
@@ -70,12 +69,8 @@ class SharedStringsManager
     /**
      * Finishes writing the data in the sharedStrings.xml file and closes the file.
      */
-    public function close()
+    public function close(): void
     {
-        if (!\is_resource($this->sharedStringsFilePointer)) {
-            return;
-        }
-
         fwrite($this->sharedStringsFilePointer, '</sst>');
 
         // Replace the default strings count with the actual number of shared strings in the file header
@@ -87,17 +82,5 @@ class SharedStringsManager
         fwrite($this->sharedStringsFilePointer, sprintf("%-{$defaultStringsCountPartLength}s", 'count="'.$this->numSharedStrings.'" uniqueCount="'.$this->numSharedStrings.'"'));
 
         fclose($this->sharedStringsFilePointer);
-    }
-
-    /**
-     * Checks if the book has been created. Throws an exception if not created yet.
-     *
-     * @throws \OpenSpout\Common\Exception\IOException If the sheet data file cannot be opened for writing
-     */
-    protected function throwIfSharedStringsFilePointerIsNotAvailable()
-    {
-        if (!\is_resource($this->sharedStringsFilePointer)) {
-            throw new IOException('Unable to open shared strings file for writing.');
-        }
     }
 }

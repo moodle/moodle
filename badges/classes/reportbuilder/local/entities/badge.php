@@ -52,6 +52,8 @@ class badge extends base {
         return [
             'badge' => 'b',
             'context' => 'bctx',
+            'tag_instance' => 'bti',
+            'tag' => 'bt',
         ];
     }
 
@@ -107,6 +109,25 @@ class badge extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_field("{$badgealias}.name")
             ->set_is_sortable(true);
+
+        // Name with link.
+        $columns[] = (new column(
+            'namewithlink',
+            new lang_string('namewithlink', 'core_badges'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$badgealias}.name, {$badgealias}.id")
+            ->set_is_sortable(true)
+            ->add_callback(static function(?string $value, stdClass $row): string {
+                if (!$row->id) {
+                    return '';
+                }
+
+                $url = new moodle_url('/badges/overview.php', ['id' => $row->id]);
+                return html_writer::link($url, $row->name);
+            });
 
         // Description (note, this column contains plaintext so requires no post-processing).
         $descriptionfieldsql = "{$badgealias}.description";
@@ -210,7 +231,11 @@ class badge extends base {
             ->add_field("{$badgealias}.status")
             ->set_is_sortable(true)
             ->add_callback(static function($status): string {
-                return $status ? get_string("badgestatus_{$status}", 'core_badges') : '';
+                if ($status === null) {
+                    return '';
+                }
+
+                return get_string("badgestatus_{$status}", 'core_badges');
             });
 
         // Expiry date/period.
@@ -302,5 +327,14 @@ class badge extends base {
             ]);
 
         return $filters;
+    }
+
+    /**
+     * Return joins necessary for retrieving tags
+     *
+     * @return string[]
+     */
+    public function get_tag_joins(): array {
+        return $this->get_tag_joins_for_entity('core_badges', 'badge', $this->get_table_alias('badge') . '.id');
     }
 }

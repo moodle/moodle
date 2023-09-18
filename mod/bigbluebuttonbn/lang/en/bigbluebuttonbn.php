@@ -43,12 +43,14 @@ $string['bigbluebuttonbn:protectrecordings'] = 'Protect recordings';
 $string['bigbluebuttonbn:unprotectrecordings'] = 'Unprotect recordings';
 $string['bigbluebuttonbn:deleterecordings'] = 'Delete recordings';
 $string['bigbluebuttonbn:importrecordings'] = 'Import recordings';
+$string['bigbluebuttonbn:viewallrecordingformats'] = 'View all recording formats';
 $string['bigbluebuttonbn'] = 'BigBlueButton';
 $string['bigbluebuttondisablednotification_subject'] = 'BigBlueButton activity module disabled.';
 $string['bigbluebuttondisablednotification'] = 'The BigBlueButton activity module has been disabled and any existing BigBlueButton course activities are currently not accessible. Prior to re-enabling this plugin, please ensure that you have read and accepted the <a href="{$a}" target="_blank">data processing agreement</a> with Blindside Networks Inc.';
 $string['cannotperformaction'] = 'Cannot perform action {$a} on this recording';
 $string['enablingbigbluebutton'] = 'Enabling BigBlueButton activity';
 $string['enablingbigbluebuttondpainfo'] = 'In order to meet your data protection obligations, prior to enabling this plugin, you may need to ensure that you have read and accepted the <a href="{$a}" target="_blank">Blindside Networks data processing agreement</a>. Please consult with your own privacy professionals for advice.';
+$string['dpainfonotsigned'] = 'Before enabling this plugin, you must confirm that you have read and accepted the <a href="{$a}">Blindside Networks data processing agreement</a>.';
 $string['indicator:cognitivedepth'] = 'BigBlueButton cognitive';
 $string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in a BigBlueButton activity.';
 $string['indicator:socialbreadth'] = 'BigBlueButton social';
@@ -91,11 +93,10 @@ $string['privacy:metadata:bigbluebutton:fullname'] = 'The full name of the user 
 $string['privacy:metadata:bigbluebuttonbn_recordings'] = 'Stores metadata about recordings.';
 $string['privacy:metadata:bigbluebuttonbn_recordings:userid'] = 'The user ID of the user who last changed a recording.';
 
-$string['completionattendance'] = 'Student must attend the session for:';
+$string['completionattendance'] = 'Require attendance (minutes)';
 $string['completionattendance_desc'] = 'Enter and remain in the room for at least {$a} minute(s).';
 $string['completionattendance_event_desc'] = 'Student has entered the room and remained in the session for at least {$a} minute(s)';
-$string['completionattendancegroup'] = 'Require attendance';
-$string['completionattendancegroup_help'] = 'Attending the meeting for (n) minutes is required for completion.';
+$string['completionattendancegroup'] = 'Require attendance (minutes)';
 
 $string['completionengagementchats'] = 'Chats';
 $string['completionengagementchats_desc'] = 'Participate in {$a} chat(s).';
@@ -115,14 +116,11 @@ $string['completionengagementemojis_event_desc'] = 'Changed their emoji {$a} tim
 
 $string['completionengagement_desc'] = 'Engage in activities during the meeting.';
 $string['completionengagementgroup'] = 'Require participation';
-$string['completionengagementgroup_help'] = 'Active participation during the session is required for completion.';
 
 $string['completionupdatestate'] = 'Completion update state';
 $string['completionvalidatestate'] = 'Validate completion';
 $string['completionvalidatestatetriggered'] = 'Validate completion has been triggered.';
 
-$string['completionview'] = 'Require view';
-$string['completionview_desc'] = 'Student must view the room to complete it.';
 $string['completionview_event_desc'] = 'Has viewed the room.';
 $string['sendnotification'] = 'Send notification';
 
@@ -136,6 +134,8 @@ $string['config_guestaccess_enabled_description'] = 'Allow users without an acco
 
 $string['config_general'] = 'General settings';
 $string['config_general_description'] = 'These settings are always used.';
+$string['config_profile_picture_enabled'] = 'Show profile pictures';
+$string['config_profile_picture_enabled_description'] = 'Should profile pictures of participants be shown in BigBlueButton sessions?';
 $string['config_server_url'] = 'BigBlueButton server URL';
 $string['config_server_url_description'] = 'The default credentials are for a <a href="https://bigbluebutton.org/free-bigbluebutton-service-for-moodle/" target="_blank">free BigBlueButton service for Moodle (opens in new window)</a> provided by Blindside Networks with restrictions as follows:
 <ol>
@@ -146,6 +146,8 @@ $string['config_server_url_description'] = 'The default credentials are for a <a
 </ol>';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
 $string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server. The default secret is for a free BigBlueButton service provided by Blindside Networks.';
+$string['config_checksum_algorithm'] = 'BigBlueButton server checksum algorithm';
+$string['config_checksum_algorithm_description'] = 'SHA1 is compatible with older servers. SHA256 and SHA512 are more secure. SHA512 is FIPS 140-2 compliant.';
 
 $string['config_recording'] = 'Recording';
 $string['config_recording_description'] = 'These settings are feature specific';
@@ -182,7 +184,12 @@ $string['config_recordings_preview_default_description'] = 'If enabled the table
 $string['config_recordings_preview_editable'] = 'Preview feature can be edited';
 $string['config_recordings_preview_editable_description'] = 'Preview feature can be edited when the instance is added or updated.';
 $string['config_recordings_asc_sort'] = 'List recordings in chronological order';
-$string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order.';
+$string['config_recordings_asc_sort_description'] = 'Recordings are ordered by date, either chronological or reverse chronological order (most recent recording first).';
+
+$string['config_recording_safe_formats'] = 'Recording formats viewable by everyone';
+$string['config_recording_safe_formats_description'] = 'Select the formats which are viewable by everyone.
+All other formats are only viewable by teachers and other users with the mod/bigbluebuttonbn:viewallrecordingformats and
+ mod/bigbluebuttonbn:managerecordings capabilities.';
 
 $string['config_importrecordings'] = 'Import recordings';
 $string['config_importrecordings_description'] = 'These settings are feature specific.';
@@ -353,6 +360,7 @@ $string['index_heading_users'] = 'Users';
 $string['index_heading_viewer'] = 'Viewers';
 $string['index_heading'] = 'BigBlueButton rooms';
 $string['instanceprofilewithoutrecordings'] = 'This instance profile cannot display recordings';
+$string['managebbbextplugins'] = 'Manage BigBlueButton extension plugins';
 $string['mod_form_block_general'] = 'General';
 $string['mod_form_block_guestaccess'] = 'Guest access';
 $string['mod_form_block_room'] = 'Room settings';
@@ -416,6 +424,7 @@ $string['mod_form_locksettings'] = 'Lock settings';
 $string['report_join_info']  = '{$a} meeting(s)';
 $string['report_play_recording_info']  = '{$a} recording(s) played';
 $string['report_room_view']  = 'viewed';
+$string['progress_createbigbluebuttonbn'] = 'Creating BigBlueButton activity ({$a})';
 $string['starts_at'] = 'Starts';
 $string['started_at'] = 'Started';
 $string['ends_at'] = 'Ends';
@@ -430,7 +439,7 @@ $string['view_error_unable_join'] = 'Unable to enter the room. Please check the 
 $string['view_error_bigbluebutton'] = 'BigBlueButton responded with errors. {$a}';
 $string['view_error_create'] = 'The BigBlueButton server responded with an error message. The room could not be created.';
 $string['view_error_max_concurrent'] = 'The number of concurrent sessions allowed has been reached.';
-$string['view_error_userlimit_reached'] = 'The number of users allowed in a session has been reached.';
+$string['view_error_userlimit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_error_url_missing_parameters'] = 'There are parameters missing in this URL';
 $string['view_error_import_no_courses'] = 'There are no courses to look up for recordings.';
 $string['view_error_import_no_recordings'] = 'There are no recordings in this course for importing.';
@@ -512,6 +521,7 @@ $string['view_message_conference_not_started'] = 'The session has not started ye
 $string['view_message_conference_wait_for_moderator'] = 'Waiting for a moderator to join.';
 $string['view_message_conference_in_progress'] = 'The session is in progress.';
 $string['view_message_conference_has_ended'] = 'The session has ended.';
+$string['view_message_conference_user_limit_reached'] = 'The limit of how many users allowed in a session has been reached.';
 $string['view_message_tab_close'] = 'This tab/window must be closed manually';
 $string['view_message_recordings_disabled'] = 'Recordings are disabled on the server. BigBlueButton activities of type \'Recordings only\' cannot be used.';
 $string['view_message_cron_disabled'] = 'The list of recordings may not be up to date. Please contact the site administrator with the following information: {$a}';
@@ -641,8 +651,19 @@ $string['cachedef_currentfetch'] = 'Data to list any recording fetched recently.
 $string['cachedef_serverinfo'] = 'Remote server information';
 $string['cachedef_recordings'] = 'Recording metadata';
 $string['cachedef_validatedurls'] = 'Cache of validated URL checks';
+$string['cachedef_subplugins'] = 'Cache used by subplugin routines to accelerate when needed the plugin discovery process.';
 $string['taskname:check_pending_recordings'] = 'Fetch pending recordings';
+$string['taskname:check_dismissed_recordings'] = 'Check for recordings that haven\'t been found yet';
 $string['userlimitreached'] = 'The number of users allowed in a session has been reached.';
 $string['waitformoderator'] = 'Waiting for a moderator to join.';
 
 $string['recordingurlnotfound'] = 'The recording URL is invalid.';
+
+$string['subplugintype_bbbext'] = 'BigBlueButton activity extension';
+$string['subplugintype_bbbext_plural'] = 'BigBlueButton activity extensions';
+
+// Deprecated since Moodle 4.3.
+$string['completionview'] = 'Require view';
+$string['completionview_desc'] = 'View the room';
+$string['completionattendancegroup_help'] = 'Attending the meeting for (n) minutes is required for completion.';
+$string['completionengagementgroup_help'] = 'Active participation during the session is required for completion.';

@@ -42,6 +42,12 @@ use table_sql;
  */
 class cohort_role_assignments_table extends table_sql {
 
+    /** @var context_system */
+    protected ?context_system $context = null;
+
+    /** @var array */
+    protected array $rolenames = [];
+
     /**
      * Sets up the table.
      *

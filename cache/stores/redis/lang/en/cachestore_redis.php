@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 $string['compressor_none'] = 'No compression.';
 $string['compressor_php_gzip'] = 'Use gzip compression.';
 $string['compressor_php_zstd'] = 'Use Zstandard compression.';
+$string['encrypt_connection'] = 'Use TLS encryption.';
+$string['encrypt_connection_help'] = 'Use TLS to connect to Redis. Do not use \'tls://\' in the hostname for Redis, use this option instead.';
+$string['ca_file'] = 'CA file path';
+$string['ca_file_help'] = 'Location of Certificate Authority file on local filesystem';
 $string['pluginname'] = 'Redis';
 $string['prefix'] = 'Key prefix';
 $string['prefix_help'] = 'This prefix is used for all key names on the Redis server.

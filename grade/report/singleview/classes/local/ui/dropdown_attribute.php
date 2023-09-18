@@ -105,7 +105,6 @@ class dropdown_attribute extends element {
             'name' => $this->name,
             'value' => $this->selected,
             'text' => $options[$selected],
-            'tabindex' => 1,
             'disabled' => !empty($this->isdisabled),
             'readonly' => $this->isreadonly,
             'options' => array_map(function($option) use ($options, $selected) {

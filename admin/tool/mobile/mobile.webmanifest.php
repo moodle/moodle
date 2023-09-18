@@ -28,10 +28,8 @@
  */
 
 define('NO_DEBUG_DISPLAY', true);
-define('NO_MOODLE_COOKIES', true);
 
 require_once(__DIR__ . '/../../../config.php');
-use tool_mobile\api;
 
 header('Content-Type: application/json; charset: utf-8');
 
@@ -41,7 +39,9 @@ if (!empty($CFG->enablemobilewebservice) && !empty($mobilesettings->enablesmarta
         !empty($mobilesettings->androidappid)) {
 
     $manifest = new StdClass;
-    $manifest->short_name = format_string($SITE->shortname);
+    $manifest->short_name = format_string($SITE->shortname, true, [
+        'context' => \core\context\system::instance(),
+    ]);
     $manifest->prefer_related_applications = true;
     $manifest->icons = [(object)
         [

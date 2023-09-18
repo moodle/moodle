@@ -123,19 +123,37 @@ class mod_data_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform = & $this->_form;
-        $group = array();
-        $group[] = $mform->createElement('checkbox', 'completionentriesenabled', '',
-                get_string('completionentriescount', 'data'));
-        $group[] = $mform->createElement('text', 'completionentries',
-                get_string('completionentriescount', 'data'), array('size' => '1'));
+        $group = [];
 
-        $mform->addGroup($group, 'completionentriesgroup', get_string('completionentries', 'data'),
-                array(' '), false);
-        $mform->disabledIf('completionentries', 'completionentriesenabled', 'notchecked');
-        $mform->setDefault('completionentries', 1);
-        $mform->setType('completionentries', PARAM_INT);
+        $suffix = $this->get_suffix();
+        $completionentriesenabledel = 'completionentriesenabled' . $suffix;
+        $group[] = $mform->createElement(
+            'checkbox',
+            $completionentriesenabledel,
+            '',
+            get_string('completionentriescount', 'data')
+        );
+        $completionentriesel = 'completionentries' . $suffix;
+        $group[] = $mform->createElement(
+            'text',
+            $completionentriesel,
+            get_string('completionentriescount', 'data'),
+            ['size' => '1']
+        );
+
+        $completionentriesgroupel = 'completionentriesgroup' . $suffix;
+        $mform->addGroup(
+            $group,
+            $completionentriesgroupel,
+            '',
+            [' '],
+            false
+        );
+        $mform->hideIf($completionentriesel, $completionentriesenabledel, 'notchecked');
+        $mform->setDefault($completionentriesel, 1);
+        $mform->setType($completionentriesel, PARAM_INT);
         /* This ensures the elements are disabled unless completion rules are enabled */
-        return array('completionentriesgroup');
+        return [$completionentriesgroupel];
     }
 
     /**
@@ -145,7 +163,8 @@ class mod_data_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return ($data['completionentries'] != 0);
+        $suffix = $this->get_suffix();
+        return (!empty($data['completionentriesenabled' . $suffix]) && $data['completionentries' . $suffix] != 0);
     }
 
       /**
@@ -156,9 +175,13 @@ class mod_data_mod_form extends moodleform_mod {
        */
     public function data_preprocessing(&$defaultvalues) {
         parent::data_preprocessing($defaultvalues);
-        $defaultvalues['completionentriesenabled'] = !empty($defaultvalues['completionentries']) ? 1 : 0;
-        if (empty($defaultvalues['completionentries'])) {
-            $defaultvalues['completionentries'] = 1;
+
+        $suffix = $this->get_suffix();
+        $completionentriesenabledel = 'completionentriesenabled' . $suffix;
+        $completionentriesel = 'completionentries' . $suffix;
+        $defaultvalues[$completionentriesenabledel] = !empty($defaultvalues[$completionentriesel]) ? 1 : 0;
+        if (empty($defaultvalues[$completionentriesel])) {
+            $defaultvalues[$completionentriesel] = 1;
         }
     }
 
@@ -173,9 +196,13 @@ class mod_data_mod_form extends moodleform_mod {
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
-            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->completionentriesenabled) || !$autocompletion) {
-                $data->completionentries = 0;
+            $suffix = $this->get_suffix();
+            $completionel = 'completion' . $suffix;
+            $completionentriesenabledel = 'completionentriesenabled' . $suffix;
+            $autocompletion = !empty($data->{$completionel}) && $data->{$completionel} == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->{$completionentriesenabledel}) || !$autocompletion) {
+                $completionentriesel = 'completionentries' . $suffix;
+                $data->{$completionentriesel} = 0;
             }
         }
     }

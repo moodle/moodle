@@ -158,9 +158,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
         $this->assertEquals($glossary->id, $event->objectid);
-        $expected = array($course->id, 'glossary', 'view', 'view.php?id=' . $glossary->cmid . '&amp;tab=-1',
-            $glossary->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEquals(new \moodle_url('/mod/glossary/view.php', array('id' => $glossary->cmid, 'mode' => $mode)), $event->get_url());
         $this->assertEventContextNotUsed($event);
     }
@@ -186,8 +183,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\course_module_instance_list_viewed', $event);
         $this->assertEquals(CONTEXT_COURSE, $event->contextlevel);
         $this->assertEquals($course->id, $event->contextinstanceid);
-        $expected = array($course->id, 'glossary', 'view all', 'index.php?id='.$course->id, '');
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -221,9 +216,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_created', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "add entry",
-            "view.php?id={$glossary->cmid}&amp;mode=entry&amp;hook={$entry->id}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -257,9 +249,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_updated', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "update entry",
-            "view.php?id={$glossary->cmid}&amp;mode=entry&amp;hook={$entry->id}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -302,9 +291,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_deleted', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "delete entry",
-            "view.php?id={$glossary->cmid}&amp;mode={$prevmode}&amp;hook={$hook}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -339,10 +325,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\category_created', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        //add_to_log($course->id, "glossary", "add category", "editcategories.php?id=$cm->id", $cat->id,$cm->id);
-        $expected = array($course->id, "glossary", "add category",
-            "editcategories.php?id={$glossary->cmid}", $category->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         // Update category and trigger event.
@@ -364,10 +346,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\category_updated', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        //add_to_log($course->id, "glossary", "edit category", "editcategories.php?id=$cm->id", $hook,$cm->id);
-        $expected = array($course->id, "glossary", "edit category",
-            "editcategories.php?id={$glossary->cmid}", $category->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
 
@@ -391,10 +369,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\category_deleted', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        //add_to_log($course->id, "glossary", "delete category", "editcategories.php?id=$cm->id", $hook,$cm->id);
-        $expected = array($course->id, "glossary", "delete category",
-            "editcategories.php?id={$glossary->cmid}", $category->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -445,9 +419,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_approved', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "approve entry",
-            "showentry.php?id={$glossary->cmid}&amp;eid={$entry->id}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
 
@@ -474,9 +445,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_disapproved', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "disapprove entry",
-            "showentry.php?id={$glossary->cmid}&amp;eid={$entry->id}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -507,9 +475,6 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_glossary\event\entry_viewed', $event);
         $this->assertEquals(CONTEXT_MODULE, $event->contextlevel);
         $this->assertEquals($glossary->cmid, $event->contextinstanceid);
-        $expected = array($course->id, "glossary", "view entry",
-            "showentry.php?eid={$entry->id}", $entry->id, $glossary->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

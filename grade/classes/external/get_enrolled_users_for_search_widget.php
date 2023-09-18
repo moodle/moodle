@@ -38,6 +38,7 @@ require_once($CFG->dirroot.'/grade/lib.php');
  * @copyright  2022 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.1
+ * @deprecated
  */
 class get_enrolled_users_for_search_widget extends external_api {
 
@@ -45,6 +46,7 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters
+     * @deprecated since 4.2
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
@@ -67,6 +69,7 @@ class get_enrolled_users_for_search_widget extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @throws restricted_context_exception
+     * @deprecated since 4.2
      */
     public static function execute(int $courseid, string $actionbaseurl, ?int $groupid = 0): array {
         global $DB, $PAGE;
@@ -108,7 +111,7 @@ class get_enrolled_users_for_search_widget extends external_api {
             $userpicture->size = 1;
             $user->profileimage = $userpicture->get_url($PAGE)->out(false);
             $user->email = $guiuser->email;
-            $user->active = false; // @TODO MDL-76246
+            $user->active = false;
 
             $users[] = $user;
         }
@@ -124,6 +127,7 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Returns description of method result value.
      *
      * @return external_single_structure
+     * @deprecated since 4.2
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
@@ -158,5 +162,13 @@ class get_enrolled_users_for_search_widget extends external_api {
             'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
         ];
         return new external_single_structure($userfields);
+    }
+
+    /**
+     * Mark the function as deprecated.
+     * @return bool
+     */
+    public static function execute_is_deprecated() {
+        return true;
     }
 }

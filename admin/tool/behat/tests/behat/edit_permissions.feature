@@ -21,12 +21,15 @@ Feature: Edit capabilities
 
   Scenario: Default system capabilities modification
     Given I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
+    And I navigate to "Users > Permissions > Define roles" in site administration
+    And I click on "Edit Teacher role" "link"
+    And I fill the capabilities form with the following permissions:
       | capability | permission |
       | block/mnet_hosts:myaddinstance | Allow |
       | moodle/site:messageanyuser | Inherit |
       | moodle/grade:managesharedforms | Prevent |
       | moodle/course:request | Prohibit |
+    And I press "Save changes"
     When I follow "Edit Teacher role"
     Then "block/mnet_hosts:myaddinstance" capability has "Allow" permission
     And "moodle/site:messageanyuser" capability has "Not set" permission
@@ -48,16 +51,12 @@ Feature: Edit capabilities
     And "mod/forum:addquestion" capability has "Allow" permission
 
   Scenario: Module capabilities overrides
-    Given I log in as "teacher1"
-    And the following "activity" exists:
+    Given the following "activity" exists:
       | activity | forum                |
       | course   | C1                   |
       | idnumber | 00001                |
       | name     | I'm the name         |
-      | intro    | I'm the introduction |
-      | section  | 1                    |
-    And I am on "Course 1" course homepage with editing mode on
-    And I follow "I'm the name"
+    And I am on the "I'm the name" "forum activity" page logged in as teacher1
     And I navigate to "Permissions" in current page administration
     And I override the system permissions of "Student" role with:
       | mod/forum:deleteanypost | Prohibit |
@@ -71,13 +70,12 @@ Feature: Edit capabilities
 
   @javascript
   Scenario: Edit permissions escapes role names correctly
-    When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Settings" in current page administration
+    When I am on the "Course 1" "renameroles" page logged in as "admin"
     And I set the following fields to these values:
       | Your word for 'Teacher'             | Teacher >= editing  |
       | Your word for 'Non-editing teacher' | Teacher < "editing" |
       | Your word for 'Student'             | Studier & 'learner' |
-    And I press "Save and display"
+    And I press "Save"
     And I navigate to course participants
     Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"

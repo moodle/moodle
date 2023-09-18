@@ -135,5 +135,16 @@ function xmldb_tool_usertours_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2023053000) {
+        // Update shipped tours.
+        // Normally, we just bump the version numbers because we need to call update_shipped_tours only once.
+        manager::update_shipped_tours();
+
+        upgrade_plugin_savepoint(true, 2023053000, 'tool', 'usertours');
+    }
+
     return true;
 }

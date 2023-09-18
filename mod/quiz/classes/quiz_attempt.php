@@ -125,7 +125,7 @@ class quiz_attempt {
 
         $attempt = $DB->get_record('quiz_attempts', $conditions, '*', MUST_EXIST);
         $quiz = access_manager::load_quiz_and_settings($attempt->quiz);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+        $course = get_course($quiz->course);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
 
         // Update quiz with override information.
@@ -255,10 +255,11 @@ class quiz_attempt {
             foreach ($slots as $slot) {
                 if ($length = $this->is_real_question($slot)) {
                     // Whether question numbering is customised or is numeric and automatically incremented.
-                    if (!empty($this->slots[$slot]->displaynumber) && !is_null($this->slots[$slot]->displaynumber)) {
+                    if ($this->slots[$slot]->displaynumber !== null && $this->slots[$slot]->displaynumber !== '' &&
+                            !$this->slots[$slot]->section->shufflequestions) {
                         $this->questionnumbers[$slot] = $this->slots[$slot]->displaynumber;
                     } else {
-                        $this->questionnumbers[$slot] = $number;
+                        $this->questionnumbers[$slot] = (string) $number;
                     }
                     $number += $length;
                 } else {
@@ -361,6 +362,15 @@ class quiz_attempt {
      */
     public function get_cmid() {
         return $this->quizobj->get_cmid();
+    }
+
+    /**
+     * Get the quiz context.
+     *
+     * @return context_module the context of the quiz this attempt belongs to.
+     */
+    public function get_context(): context_module {
+        return $this->quizobj->get_context();
     }
 
     /**
@@ -900,7 +910,7 @@ class quiz_attempt {
      * @return string the displayed question number for the question in this slot.
      *      For example '1', '2', '3' or 'i'.
      */
-    public function get_question_number($slot) {
+    public function get_question_number($slot): string {
         return $this->questionnumbers[$slot];
     }
 
@@ -1634,7 +1644,7 @@ class quiz_attempt {
         }
 
         if (!$this->is_preview() && $this->attempt->state == self::FINISHED) {
-            quiz_save_best_grade($this->get_quiz(), $this->get_userid());
+            $this->recompute_final_grade();
         }
 
         $transaction->allow_commit();
@@ -1761,7 +1771,7 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         if (!$this->is_preview()) {
-            quiz_save_best_grade($this->get_quiz(), $this->attempt->userid);
+            $this->recompute_final_grade();
 
             // Trigger event.
             $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
@@ -1784,6 +1794,13 @@ class quiz_attempt {
             $this->attempt->timecheckstate = $time;
             $DB->set_field('quiz_attempts', 'timecheckstate', $time, ['id' => $this->attempt->id]);
         }
+    }
+
+    /**
+     * Needs to be called after this attempt's grade is changed, to update the overall quiz grade.
+     */
+    protected function recompute_final_grade(): void {
+        $this->quizobj->get_grade_calculator()->recompute_final_grade($this->get_userid());
     }
 
     /**
@@ -1826,6 +1843,39 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp, $studentisonline);
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * This method takes an attempt in the 'Never submitted' state, and reopens it.
+     *
+     * If, for this student, time has not expired (perhaps, because an override has
+     * been added, then the attempt is left open. Otherwise, it is immediately submitted
+     * for grading.
+     *
+     * @param int $timestamp the time to deem as now.
+     */
+    public function process_reopen_abandoned($timestamp) {
+        global $DB;
+
+        // Verify that things are as we expect.
+        if ($this->get_state() != self::ABANDONED) {
+            throw new coding_exception('Can only reopen an attempt that was never submitted.');
+        }
+
+        $transaction = $DB->start_delegated_transaction();
+        $this->attempt->timemodified = $timestamp;
+        $this->attempt->state = self::IN_PROGRESS;
+        $this->attempt->timecheckstate = null;
+        $DB->update_record('quiz_attempts', $this->attempt);
+
+        $this->fire_state_transition_event('\mod_quiz\event\attempt_reopened', $timestamp, false);
+
+        $timeclose = $this->get_access_manager($timestamp)->get_end_time($this->attempt);
+        if ($timeclose && $timestamp > $timeclose) {
+            $this->process_finish($timestamp, false, $timeclose);
+        }
 
         $transaction->allow_commit();
     }
@@ -2108,7 +2158,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2129,7 +2179,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2150,7 +2200,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage()
@@ -2173,7 +2223,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid(),
                 'page' => $this->get_currentpage(),
@@ -2197,7 +2247,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2218,7 +2268,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]
@@ -2236,7 +2286,7 @@ class quiz_attempt {
             'objectid' => $this->get_attemptid(),
             'relateduserid' => $this->get_userid(),
             'courseid' => $this->get_courseid(),
-            'context' => context_module::instance($this->get_cmid()),
+            'context' => $this->get_context(),
             'other' => [
                 'quizid' => $this->get_quizid()
             ]

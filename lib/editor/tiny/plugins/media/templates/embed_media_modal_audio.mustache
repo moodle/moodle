@@ -27,11 +27,11 @@
 {{#audio.sources}}
     <div class="tiny_media_source tiny_media_media_source">
         <div class="mb-1">
-            <label for="url-input">
+            <label for="audio-audio-url-input">
                 {{#str}} audiosourcelabel, tiny_media {{/str}}
             </label>
             <div class="input-group input-append w-100">
-                <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{.}}"/>
+                <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{.}}"/>
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -55,11 +55,11 @@
 {{^audio}}
     <div class="tiny_media_source tiny_media_media_source">
         <div class="mb-1">
-            <label for="url-input">
+            <label for="audio-audio-url-input">
                 {{#str}} audiosourcelabel, tiny_media {{/str}}
             </label>
             <div class="input-group input-append w-100">
-                <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -158,14 +158,14 @@
             </div>
             <div class="form-check">
                 <input type="checkbox" class="form-check-input tiny_media_mute"
-                       id="vadvancedsettings_media-mute-toggle {{# audio.muted }}checked{{/ audio.muted }}"/>
-                <label class="form-check-label" for="vadvancedsettings_media-mute-toggle">
+                       id="aadvancedsettings_media-mute-toggle" {{# audio.muted }}checked{{/ audio.muted }}/>
+                <label class="form-check-label" for="aadvancedsettings_media-mute-toggle">
                     {{#str}} mute, tiny_media {{/str}}
                 </label>
             </div>
             <div class="form-check">
                 <input type="checkbox" class="form-check-input tiny_media_loop"
-                       id="vadvancedsettings_media-loop-toggle" {{# audio.loop }}checked{{/ audio.loop }}/>
+                       id="aadvancedsettings_media-loop-toggle" {{# audio.loop }}checked{{/ audio.loop }}/>
                 <label class="form-check-label" for="aadvancedsettings_media-loop-toggle">
                     {{#str}} loop, tiny_media {{/str}}
                 </label>
@@ -243,11 +243,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="subtitle-audio-url-input">
                                     {{#str}} subtitlessourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -255,8 +255,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                            <label class="w-100" for="subtitle-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="subtitle-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -270,8 +270,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                            <label class="w-100" for="subtitle-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="subtitle-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
@@ -293,11 +293,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="subtitle-audio-url-input">
                                     {{#str}} subtitlessourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -305,8 +305,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                            <label class="w-100" for="subtitle-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="subtitle-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -320,8 +320,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                            <label class="w-100" for="subtitle-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="subtitle-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default"/>
@@ -351,11 +351,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="caption-audio-url-input">
                                     {{#str}} captionssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -363,8 +363,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                            <label class="w-100" for="caption-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="caption-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -378,8 +378,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                            <label class="w-100" for="caption-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="caption-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
@@ -401,11 +401,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="caption-audio-url-input">
                                     {{#str}} captionssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                                     <span class="input-group-append">
                 <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
             </span>
@@ -413,8 +413,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                            <label class="w-100" for="caption-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="caption-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -428,8 +428,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                            <label class="w-100" for="caption-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="caption-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default"/>
@@ -459,11 +459,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="description-audio-url-input">
                                     {{#str}} descriptionssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -471,8 +471,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                            <label class="w-100" for="description-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="description-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -486,8 +486,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                            <label class="w-100" for="description-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="description-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
@@ -509,11 +509,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="description-audio-url-input">
                                     {{#str}} descriptionssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                                     <span class="input-group-append">
                 <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
             </span>
@@ -521,8 +521,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                            <label class="w-100" for="description-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="description-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -536,8 +536,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                            <label class="w-100" for="description-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="description-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default"/>
@@ -567,11 +567,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="chapter-audio-url-input">
                                     {{#str}} chapterssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -579,8 +579,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                            <label class="w-100" for="chapter-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="chapter-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -594,8 +594,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                            <label class="w-100" for="chapter-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="chapter-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
@@ -617,11 +617,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="chapter-audio-url-input">
                                     {{#str}} chapterssourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                                     <span class="input-group-append">
                 <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
             </span>
@@ -629,8 +629,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                            <label class="w-100" for="chapter-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="chapter-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -644,8 +644,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                            <label class="w-100" for="chapter-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="chapter-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default"/>
@@ -676,11 +676,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="metadata-audio-url-input">
                                     {{#str}} metadatasourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
                                     <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
@@ -688,8 +688,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
+                            <label class="w-100" for="metadata-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="metadata-audio-lang-input" class="custom-select tiny_media_track_lang_entry" data-value="{{srclang}}">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -703,8 +703,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
+                            <label class="w-100" for="metadata-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="metadata-audio-track-input" class="form-control tiny_media_track_label_entry" type="text" value="{{label}}"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default" {{# defaultTrack }}checked{{/ defaultTrack }}/>
@@ -726,11 +726,11 @@
                     <div class="mb-1 tiny_media_track">
                         <div class="tiny_media_source tiny_media_track_source">
                             <div class="mb-1">
-                                <label for="url-input">
+                                <label for="metadata-audio-url-input">
                                     {{#str}} metadatasourcelabel, tiny_media {{/str}}
                                 </label>
                                 <div class="input-group input-append w-100">
-                                    <input id="url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
                                     <span class="input-group-append">
                 <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
             </span>
@@ -738,8 +738,8 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
-                            <select id="lang-input" class="custom-select tiny_media_track_lang_entry">
+                            <label class="w-100" for="metadata-audio-lang-input">{{#str}} srclang, tiny_media {{/str}}</label>
+                            <select id="metadata-audio-lang-input" class="custom-select tiny_media_track_lang_entry">
                                 <optgroup label="{{#str}} languagesinstalled, tiny_media {{/str}}">
                                     {{#langsinstalled}}
                                         <option value="{{code}}" {{#default}}selected="selected"{{/default}}>{{lang}}</option>
@@ -753,8 +753,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label class="w-100" for="track-input">{{#str}} label, tiny_media {{/str}}</label>
-                            <input id="track-input" class="form-control tiny_media_track_label_entry" type="text"/>
+                            <label class="w-100" for="metadata-audio-track-input">{{#str}} label, tiny_media {{/str}}</label>
+                            <input id="metadata-audio-track-input" class="form-control tiny_media_track_label_entry" type="text"/>
                         </div>
                         <div class="form-check">
                             <input type="checkbox" class="form-check-input tiny_media_track_default"/>

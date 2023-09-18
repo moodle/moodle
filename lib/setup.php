@@ -281,21 +281,25 @@ if (!defined('PHPUNIT_TEST')) {
     define('PHPUNIT_TEST', false);
 }
 
-// Performance tests needs to always display performance info, even in redirections.
+// Performance tests needs to always display performance info, even in redirections;
+// MDL_PERF_TEST is used in https://github.com/moodlehq/moodle-performance-comparison scripts.
 if (!defined('MDL_PERF_TEST')) {
     define('MDL_PERF_TEST', false);
-} else {
-    // We force the ones we need.
-    if (!defined('MDL_PERF')) {
-        define('MDL_PERF', true);
-    }
-    if (!defined('MDL_PERFDB')) {
-        define('MDL_PERFDB', true);
-    }
-    if (!defined('MDL_PERFTOFOOT')) {
-        define('MDL_PERFTOFOOT', true);
-    }
 }
+// Make sure all MDL_PERF* constants are always defined.
+if (!defined('MDL_PERF')) {
+    define('MDL_PERF', MDL_PERF_TEST);
+}
+if (!defined('MDL_PERFTOFOOT')) {
+    define('MDL_PERFTOFOOT', MDL_PERF_TEST);
+}
+if (!defined('MDL_PERFTOLOG')) {
+    define('MDL_PERFTOLOG', false);
+}
+if (!defined('MDL_PERFINC')) {
+    define('MDL_PERFINC', false);
+}
+// Note that PHPUnit and Behat tests should pass with both MDL_PERF true and false.
 
 // When set to true MUC (Moodle caching) will be disabled as much as possible.
 // A special cache factory will be used to handle this situation and will use special "disabled" equivalents objects.
@@ -388,7 +392,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.17.2';
+$CFG->yui3version = '3.18.1';
 
 // Patching the upstream YUI release.
 // For important information on patching YUI modules, please see http://docs.moodle.org/dev/YUI/Patching.
@@ -850,6 +854,8 @@ foreach ($pluginswithfunction as $plugins) {
 }
 
 \core\session\manager::start();
+// Prevent ignoresesskey hack from getting carried over to a next page.
+unset($USER->ignoresesskey);
 
 if (!empty($CFG->proxylogunsafe) || !empty($CFG->proxyfixunsafe)) {
     if (!empty($CFG->proxyfixunsafe)) {
@@ -947,6 +953,7 @@ if (!isset($CFG->theme)) {
 if (isset($_GET['lang']) and ($lang = optional_param('lang', '', PARAM_SAFEDIR))) {
     if (get_string_manager()->translation_exists($lang, false)) {
         $SESSION->lang = $lang;
+        \core_courseformat\base::session_cache_reset_all();
     }
 }
 unset($lang);

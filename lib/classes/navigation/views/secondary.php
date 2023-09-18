@@ -89,6 +89,7 @@ class secondary extends view {
                 'grades' => 2,
                 'badgesview' => 7,
                 'competencies' => 8,
+                'communication' => 14,
             ],
             self::TYPE_CUSTOM => [
                 'contentbank' => 5,
@@ -122,6 +123,7 @@ class secondary extends view {
                 'backup' => 9,
                 'restore' => 10,
                 'competencybreakdown' => 11,
+                'sendtomoodlenet' => 16,
             ],
             self::TYPE_CUSTOM => [
                 'advgrading' => 2,

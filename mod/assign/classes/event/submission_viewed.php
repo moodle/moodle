@@ -93,17 +93,6 @@ class submission_viewed extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $logmessage = get_string('viewsubmissionforuser', 'assign', $this->relateduserid);
-        $this->set_legacy_logdata('view submission', $logmessage);
-        return parent::get_legacy_logdata();
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

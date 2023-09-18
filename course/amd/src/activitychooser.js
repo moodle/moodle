@@ -26,20 +26,25 @@ import * as Repository from 'core_course/local/activitychooser/repository';
 import selectors from 'core_course/local/activitychooser/selectors';
 import CustomEvents from 'core/custom_interaction_events';
 import * as Templates from 'core/templates';
-import * as ModalFactory from 'core/modal_factory';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
+import Modal from 'core/modal';
 import Pending from 'core/pending';
 
 // Set up some JS module wide constants that can be added to in the future.
 
 // Tab config options.
 const ALLACTIVITIESRESOURCES = 0;
-const ONLYALL = 1;
 const ACTIVITIESRESOURCES = 2;
+const ALLACTIVITIESRESOURCESREC = 3;
+const ONLYALLREC = 4;
+const ACTIVITIESRESOURCESREC = 5;
+
 
 // Module types.
 const ACTIVITY = 0;
 const RESOURCE = 1;
+
+let initialized = false;
 
 /**
  * Set up the activity chooser.
@@ -64,6 +69,12 @@ export const init = (courseId, chooserConfig) => {
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  */
 const registerListenerEvents = (courseId, chooserConfig) => {
+
+    // Ensure we only add our listeners once.
+    if (initialized) {
+        return;
+    }
+
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -167,6 +178,8 @@ const registerListenerEvents = (courseId, chooserConfig) => {
             }
         });
     });
+
+    initialized = true;
 };
 
 /**
@@ -212,8 +225,20 @@ const templateDataBuilder = (data, chooserConfig) => {
     const favourites = data.filter(mod => mod.favourite === true);
     const recommended = data.filter(mod => mod.recommended === true);
 
-    // Both of these modes need Activity & Resource tabs.
-    if ((tabMode === ALLACTIVITIESRESOURCES || tabMode === ACTIVITIESRESOURCES) && tabMode !== ONLYALL) {
+    // Whether the activities and resources tabs should be displayed or not.
+    const showActivitiesAndResources = (tabMode) => {
+        const acceptableModes = [
+            ALLACTIVITIESRESOURCES,
+            ALLACTIVITIESRESOURCESREC,
+            ACTIVITIESRESOURCES,
+            ACTIVITIESRESOURCESREC,
+        ];
+
+        return acceptableModes.indexOf(tabMode) !== -1;
+    };
+
+    // These modes need Activity & Resource tabs.
+    if (showActivitiesAndResources(tabMode)) {
         // Filter the incoming data to find activities then resources.
         activities = data.filter(mod => mod.archetype === ACTIVITY);
         resources = data.filter(mod => mod.archetype === RESOURCE);
@@ -221,18 +246,27 @@ const templateDataBuilder = (data, chooserConfig) => {
         showResources = true;
 
         // We want all of the previous information but no 'All' tab.
-        if (tabMode === ACTIVITIESRESOURCES) {
+        if (tabMode === ACTIVITIESRESOURCES || tabMode === ACTIVITIESRESOURCESREC) {
             showAll = false;
         }
     }
 
+    const recommendedBeforeTabs = [
+        ALLACTIVITIESRESOURCESREC,
+        ONLYALLREC,
+        ACTIVITIESRESOURCESREC,
+    ];
+    // Whether the recommended tab should be displayed before the All/Activities/Resources tabs.
+    const recommendedBeginning = recommendedBeforeTabs.indexOf(tabMode) !== -1;
+
     // Given the results of the above filters lets figure out what tab to set active.
     // We have some favourites.
     const favouritesFirst = !!favourites.length;
+    const recommendedFirst = favouritesFirst === false && recommendedBeginning === true && !!recommended.length;
     // We are in tabMode 2 without any favourites.
-    const activitiesFirst = showAll === false && favouritesFirst === false;
+    const activitiesFirst = showAll === false && favouritesFirst === false && recommendedFirst === false;
     // We have nothing fallback to show all modules.
-    const fallback = showAll === true && favouritesFirst === false;
+    const fallback = showAll === true && favouritesFirst === false && recommendedFirst === false;
 
     return {
         'default': data,
@@ -244,6 +278,8 @@ const templateDataBuilder = (data, chooserConfig) => {
         showResources: showResources,
         favourites: favourites,
         recommended: recommended,
+        recommendedFirst: recommendedFirst,
+        recommendedBeginning: recommendedBeginning,
         favouritesFirst: favouritesFirst,
         fallback: fallback,
     };
@@ -253,27 +289,21 @@ const templateDataBuilder = (data, chooserConfig) => {
  * Given an object we want to build a modal ready to show
  *
  * @method buildModal
- * @param {Promise} bodyPromise
+ * @param {Promise} body
  * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal ready to display immediately and render body in later.
  */
-const buildModal = (bodyPromise, footer) => {
-    return ModalFactory.create({
-        type: ModalFactory.types.DEFAULT,
-        title: getString('addresourceoractivity'),
-        body: bodyPromise,
-        footer: footer.customfootertemplate,
-        large: true,
-        scrollable: false,
-        templateContext: {
-            classes: 'modchooser'
-        }
-    })
-    .then(modal => {
-        modal.show();
-        return modal;
-    });
-};
+const buildModal = (body, footer) => Modal.create({
+    body,
+    title: getString('addresourceoractivity'),
+    footer: footer.customfootertemplate,
+    large: true,
+    scrollable: false,
+    templateContext: {
+        classes: 'modchooser'
+    },
+    show: true,
+});
 
 /**
  * A small helper function to handle the case where there are no more favourites

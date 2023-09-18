@@ -714,6 +714,7 @@ class file_storage_test extends \advanced_testcase {
 
         // Create three aliases linking the same original: $aliasfile1 and $aliasfile2 are
         // created via create_file_from_reference(), $aliasfile3 created from $aliasfile2.
+        /** @var \stored_file $originalfile */
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -1862,6 +1863,7 @@ class file_storage_test extends \advanced_testcase {
         $repos = repository::get_instances(array('type'=>'user'));
         $repo = reset($repos);
 
+        /** @var \stored_file $file */
         $file = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -1892,6 +1894,7 @@ class file_storage_test extends \advanced_testcase {
 
         // Create two aliases linking the same original.
 
+        /** @var \stored_file $originalfile */
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -2185,6 +2188,29 @@ class file_storage_test extends \advanced_testcase {
     public function test_mimetype_from_file_known(string $filepath, string $expectedmimetype): void {
         $mimetype = \file_storage::mimetype_from_file($filepath);
         $this->assertEquals($expectedmimetype, $mimetype);
+    }
+
+    /**
+     * Test that get_pathname_hash returns the same file hash for pathnames
+     * with and without trailing / leading slash.
+     *
+     * @covers ::get_pathname_hash
+     *
+     */
+    public function test_get_pathname_hash(): void {
+        $contextid = 2;
+        $component = 'mod_test';
+        $filearea = 'data';
+        $itemid = 0;
+        $filepath1 = '/path';
+        $filepath2 = '/path/';
+        $filepath3 = 'path/';
+        $filename = 'example.jpg';
+        $hash1 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath1, $filename);
+        $hash2 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath2, $filename);
+        $hash3 = \file_storage::get_pathname_hash($contextid, $component, $filearea, $itemid, $filepath3, $filename);
+        $this->assertEquals($hash1, $hash2);
+        $this->assertEquals($hash2, $hash3);
     }
 
 }

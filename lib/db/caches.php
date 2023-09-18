@@ -77,6 +77,19 @@ $definitions = array(
         'simpledata' => true,
     ),
 
+    // Hook callbacks cache.
+    // There is a static cache in hook manager, data is fetched once per page on first hook execution.
+    // This cache needs to be invalidated during upgrades when code changes and when callbacks
+    // overrides are updated.
+    'hookcallbacks' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => false,
+        // WARNING: Manual cache purge may be required when overriding hook callbacks.
+        'canuselocalstore' => true,
+    ),
+
     // Cache for question definitions. This is used by the question_bank class.
     // Users probably do not need to know about this cache. They will just call
     // question_bank::load_question.
@@ -119,6 +132,14 @@ $definitions = array(
         'staticaccelerationsize' => 2, // The original cache used 1, we've increased that to two.
     ),
 
+    // Whether a course currently has hidden groups.
+    'coursehiddengroups' => array(
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true, // The course id the groupings exist for.
+        'simpledata' => true, // Booleans.
+        'staticacceleration' => true, // Likely there will be a couple of calls to this.
+    ),
+
     // Used to cache calendar subscriptions.
     'calendar_subscriptions' => array(
         'mode' => cache_store::MODE_APPLICATION,
@@ -139,23 +160,13 @@ $definitions = array(
         'ttl' => 900,
     ),
 
-    // Cache the capabilities list DB table. See get_all_capabilities in accesslib.
+    // Cache the capabilities list DB table. See get_all_capabilities and get_deprecated_capability_info in accesslib.
     'capabilities' => array(
         'mode' => cache_store::MODE_APPLICATION,
         'simplekeys' => true,
         'simpledata' => true,
         'staticacceleration' => true,
-        'staticaccelerationsize' => 1,
-        'ttl' => 3600, // Just in case.
-    ),
-
-    // Cache the deprecated capabilities list. See get_deprecated_capability_info in accesslib.
-    'deprecatedcapabilities' => array(
-        'mode' => cache_store::MODE_APPLICATION,
-        'simplekeys' => false, // We need to hash the key.
-        'simpledata' => true,
-        'staticacceleration' => true,
-        'staticaccelerationsize' => 1,
+        'staticaccelerationsize' => 2, // Should be main capabilities and deprecated capabilities.
         'ttl' => 3600, // Just in case.
     ),
 
@@ -574,5 +585,18 @@ $definitions = array(
         'staticacceleration' => true,
         'canuselocalstore' => true,
         'staticaccelerationsize' => 100,
+    ],
+
+    // Cache if a user has the capability to share to MoodleNet.
+    'moodlenet_usercanshare' => [
+        'mode' => cache_store::MODE_SESSION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'ttl' => 1800,
+        'invalidationevents' => [
+            'changesincoursecat',
+            'changesincategoryenrolment',
+            'changesincourse',
+        ],
     ],
 );

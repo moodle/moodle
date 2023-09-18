@@ -149,10 +149,18 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
                 array('class' => 'qtext'));
 
-        $result .= html_writer::start_tag('div', array('class' => 'ablock no-overflow visual-scroll-x'));
+        $result .= html_writer::start_tag('fieldset', array('class' => 'ablock no-overflow visual-scroll-x'));
         if ($question->showstandardinstruction == 1) {
-            $result .= html_writer::tag('div', $this->prompt(), array('class' => 'prompt'));
+            $legendclass = '';
+            $questionnumber = $options->add_question_identifier_to_label($this->prompt(), true, true);
+        } else {
+            $questionnumber = $options->add_question_identifier_to_label(get_string('answer'), true, true);
+            $legendclass = 'sr-only';
         }
+        $legendattrs = [
+            'class' => 'prompt h6 font-weight-normal ' . $legendclass,
+        ];
+        $result .= html_writer::tag('legend', $questionnumber, $legendattrs);
 
         $result .= html_writer::start_tag('div', array('class' => 'answer'));
         foreach ($radiobuttons as $key => $radio) {
@@ -166,7 +174,7 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
             [$qa->get_outer_question_div_unique_id()]);
         $result .= $this->after_choices($qa, $options);
 
-        $result .= html_writer::end_tag('div'); // Ablock.
+        $result .= html_writer::end_tag('fieldset'); // Ablock.
 
         if ($qa->get_state() == question_state::$invalid) {
             $result .= html_writer::nonempty_tag('div',

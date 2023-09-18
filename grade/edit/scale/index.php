@@ -172,7 +172,7 @@ if ($scales = grade_scale::fetch_all_global()) {
 $actionbar = new \core_grades\output\scales_action_bar($context);
 
 if ($courseid) {
-    print_grade_page_head($courseid, 'scale', 'scale', get_string('coursescales', 'grades'),
+    print_grade_page_head($courseid, 'scale', 'scale', false,
         false, false, true, null, null, null, $actionbar);
 } else {
     $renderer = $PAGE->get_renderer('core_grades');

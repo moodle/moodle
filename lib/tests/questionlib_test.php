@@ -72,6 +72,7 @@ class questionlib_test extends \advanced_testcase {
         // Generate an assignment with due date (will generate a course event).
         $quiz = $this->getDataGenerator()->create_module('quiz', $options);
 
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
 
         switch ($type) {
@@ -168,6 +169,7 @@ class questionlib_test extends \advanced_testcase {
         // Create a couple of categories and questions.
         $context1 = \context_coursecat::instance($coursecat1->id);
         $context2 = \context_coursecat::instance($coursecat2->id);
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $questioncat1 = $questiongenerator->create_question_category(array('contextid' =>
             $context1->id));
@@ -281,6 +283,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
@@ -303,6 +306,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
@@ -320,6 +324,33 @@ class questionlib_test extends \advanced_testcase {
                 'to avoid errors, but this may mean that some data like ' .
                 'files, tags, are not cleaned up.');
         $this->assertFalse($DB->record_exists('question', ['id' => $q1->id]));
+    }
+
+    /**
+     * Test deleting a broken question whose category refers to a missing context
+     */
+    public function test_question_delete_question_missing_context() {
+        global $DB;
+
+        $coursecategory = $this->getDataGenerator()->create_category();
+        $context = $coursecategory->get_context();
+
+        /** @var \core_question_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $questioncategory = $generator->create_question_category(['contextid' => $context->id]);
+        $question = $generator->create_question('shortanswer', null, ['category' => $questioncategory->id]);
+
+        // Now delete the context, to simulate what happens in old sites where
+        // referential integrity has failed.
+        $DB->delete_records('context', ['id' => $context->id]);
+
+        question_delete_question($question->id);
+
+        $this->assertDebuggingCalled('Deleting question ' . $question->id .
+            ' which is no longer linked to a context. Assuming system context ' .
+            'to avoid errors, but this may mean that some data like ' .
+            'files, tags, are not cleaned up.');
+        $this->assertFalse($DB->record_exists('question', ['id' => $question->id]));
     }
 
     /**
@@ -1634,7 +1665,8 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
-        $questiongenerator = $generator->get_plugin_generator('core_question');
+         /** @var \core_question_generator $questiongenerator */
+         $questiongenerator = $generator->get_plugin_generator('core_question');
 
         $category = $generator->create_category();
         $context = \context_coursecat::instance($category->id);
@@ -1715,6 +1747,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
         $otheruser = $generator->create_user();
@@ -1761,6 +1794,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
         $otheruser = $generator->create_user();
@@ -1807,6 +1841,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
         $otheruser = $generator->create_user();
@@ -1853,6 +1888,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
         $otheruser = $generator->create_user();
@@ -1909,6 +1945,7 @@ class questionlib_test extends \advanced_testcase {
 
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
         $otheruser = $generator->create_user();
@@ -1945,6 +1982,7 @@ class questionlib_test extends \advanced_testcase {
     public function test_question_has_capability_on_wrong_param_type() {
         // Create the test data.
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $user = $generator->create_user();
 
@@ -1976,6 +2014,7 @@ class questionlib_test extends \advanced_testcase {
     public function test_question_categorylist_parents() {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $generator->get_plugin_generator('core_question');
         $category = $generator->create_category();
         $context = \context_coursecat::instance($category->id);
@@ -1998,6 +2037,7 @@ class questionlib_test extends \advanced_testcase {
      */
     public function find_next_unused_idnumber_cases(): array {
         return [
+            [null, null],
             ['id', null],
             ['id1a', null],
             ['id001', 'id002'],
@@ -2020,10 +2060,10 @@ class questionlib_test extends \advanced_testcase {
      * Test core_question_find_next_unused_idnumber in the case when there are no other questions.
      *
      * @dataProvider find_next_unused_idnumber_cases
-     * @param string $oldidnumber value to pass to core_question_find_next_unused_idnumber.
+     * @param string|null $oldidnumber value to pass to core_question_find_next_unused_idnumber.
      * @param string|null $expectednewidnumber expected result.
      */
-    public function test_core_question_find_next_unused_idnumber(string $oldidnumber, ?string $expectednewidnumber) {
+    public function test_core_question_find_next_unused_idnumber(?string $oldidnumber, ?string $expectednewidnumber) {
         $this->assertSame($expectednewidnumber, core_question_find_next_unused_idnumber($oldidnumber, 0));
     }
 
@@ -2120,6 +2160,7 @@ class questionlib_test extends \advanced_testcase {
     public function test_is_latest() {
         global $DB;
         $this->resetAfterTest();
+        /** @var \core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat1 = $generator->create_question_category(['name' => 'My category', 'sortorder' => 1, 'idnumber' => 'myqcat']);
         $question = $generator->create_question('shortanswer', null, ['name' => 'q1', 'category' => $qcat1->id]);
@@ -2140,6 +2181,7 @@ class questionlib_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
@@ -2176,6 +2218,7 @@ class questionlib_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
@@ -2205,6 +2248,7 @@ class questionlib_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));
@@ -2235,6 +2279,7 @@ class questionlib_test extends \advanced_testcase {
         $this->resetAfterTest();
         // Setup.
         $context = \context_system::instance();
+        /** @var \core_question_generator $qgen */
         $qgen = $this->getDataGenerator()->get_plugin_generator('core_question');
         $qcat = $qgen->create_question_category(array('contextid' => $context->id));
         $q1 = $qgen->create_question('shortanswer', null, array('category' => $qcat->id));

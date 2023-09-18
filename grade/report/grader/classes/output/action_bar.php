@@ -16,9 +16,9 @@
 
 namespace gradereport_grader\output;
 
-use moodle_url;
+use core\output\comboboxsearch;
 use core_grades\output\general_action_bar;
-use core_grades\output\gradebook_dropdown;
+use moodle_url;
 
 /**
  * Renderable class for the action bar elements in the grader report.
@@ -29,6 +29,9 @@ use core_grades\output\gradebook_dropdown;
  */
 class action_bar extends \core_grades\output\action_bar {
 
+    /** @var string $usersearch The content that the current user is looking for. */
+    protected string $usersearch = '';
+
     /**
      * The class constructor.
      *
@@ -36,6 +39,8 @@ class action_bar extends \core_grades\output\action_bar {
      */
     public function __construct(\context_course $context) {
         parent::__construct($context);
+
+        $this->usersearch = optional_param('searchvalue', '', PARAM_NOTAGS);
     }
 
     /**
@@ -52,9 +57,10 @@ class action_bar extends \core_grades\output\action_bar {
      *
      * @param \renderer_base $output renderer to be used to render the action bar elements.
      * @return array
+     * @throws \moodle_exception
      */
     public function export_for_template(\renderer_base $output): array {
-        global $PAGE;
+        global $PAGE, $OUTPUT, $SESSION, $USER;
         // If in the course context, we should display the general navigation selector in gradebook.
         $courseid = $this->context->instanceid;
         // Get the data used to output the general navigation selector.
@@ -74,7 +80,7 @@ class action_bar extends \core_grades\output\action_bar {
                 $this->context,
                 '/grade/report/grader/index.php'
             );
-            $initialselector = new gradebook_dropdown(
+            $initialselector = new comboboxsearch(
                 false,
                 $initialscontent->buttoncontent,
                 $initialscontent->dropdowncontent,
@@ -85,6 +91,62 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['initialselector'] = $initialselector->export_for_template($output);
             $data['groupselector'] = $gradesrenderer->group_selector($course);
+
+            $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
+            $searchinput = $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [
+                'currentvalue' => $this->usersearch,
+                'courseid' => $courseid,
+                'resetlink' => $resetlink->out(false),
+                'group' => 0,
+            ]);
+            $searchdropdown = new comboboxsearch(
+                true,
+                $searchinput,
+                null,
+                'user-search dropdown d-flex',
+                null,
+                'usersearchdropdown overflow-auto',
+                null,
+                false,
+            );
+            $data['searchdropdown'] = $searchdropdown->export_for_template($output);
+
+            // The collapsed column dialog is aligned to the edge of the screen, we need to place it such that it also aligns.
+            $collapsemenudirection = right_to_left() ? 'dropdown-menu-left' : 'dropdown-menu-right';
+
+            $collapse = new comboboxsearch(
+                true,
+                get_string('collapsedcolumns', 'gradereport_grader', 0),
+                null,
+                'collapse-columns',
+                'collapsecolumn',
+                'collapsecolumndropdown p-3 flex-column ' . $collapsemenudirection,
+                null,
+                true,
+            );
+            $data['collapsedcolumns'] = [
+                'classes' => 'd-none',
+                'content' => $collapse->export_for_template($output)
+            ];
+
+            if ($course->groupmode == VISIBLEGROUPS || has_capability('moodle/site:accessallgroups', $this->context)) {
+                $allowedgroups = groups_get_all_groups($course->id, 0, $course->defaultgroupingid);
+            } else {
+                $allowedgroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+            }
+
+            if (!empty($SESSION->gradereport["filterfirstname-{$this->context->id}"]) ||
+                !empty($SESSION->gradereport["filterlastname-{$this->context->id}"]) ||
+                groups_get_course_group($course, true, $allowedgroups) ||
+                $this->usersearch) {
+                $reset = new moodle_url('/grade/report/grader/index.php', [
+                    'id' => $courseid,
+                    'group' => 0,
+                    'sifirst' => '',
+                    'silast' => ''
+                ]);
+                $data['pagereset'] = $reset->out(false);
+            }
         }
 
         return $data;

@@ -18,6 +18,7 @@ namespace mod_quiz\local\reports;
 
 use coding_exception;
 use context_module;
+use mod_quiz\quiz_settings;
 use moodle_url;
 use stdClass;
 use table_sql;
@@ -63,6 +64,17 @@ abstract class attempts_report extends report_base {
     /** @var boolean caches the results of {@see should_show_grades()}. */
     protected $showgrades = null;
 
+    /** @var quiz_settings|null quiz settings object. Set in the init method. */
+    protected $quizobj = null;
+
+    /**
+     * Can be used in subclasses to cache this information, but it will only get set if you set it.
+     * @example an example use in quiz_overview_report.
+     *
+     * @var bool
+     */
+    protected $hasgroupstudents;
+
     /**
      *  Initialise various aspects of this report.
      *
@@ -80,8 +92,8 @@ abstract class attempts_report extends report_base {
      */
     public function init($mode, $formclass, $quiz, $cm, $course): array {
         $this->mode = $mode;
-
-        $this->context = context_module::instance($cm->id);
+        $this->quizobj = new quiz_settings($quiz, $cm, $course);
+        $this->context = $this->quizobj->get_context();
 
         [$currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins] = $this->get_students_joins(
                 $cm, $course);
@@ -226,6 +238,8 @@ abstract class attempts_report extends report_base {
         $table->column_class('lastname', 'bold');
         $table->column_class('firstname', 'bold');
         $table->column_class('fullname', 'bold');
+
+        $table->column_sticky('fullname');
     }
 
     /**
@@ -234,8 +248,10 @@ abstract class attempts_report extends report_base {
      * @param array $headers the columns headings. Added to.
      */
     protected function add_state_column(&$columns, &$headers) {
+        global $PAGE;
         $columns[] = 'state';
         $headers[] = get_string('attemptstate', 'quiz');
+        $PAGE->requires->js_call_amd('mod_quiz/reopen_attempt_ui', 'init');
     }
 
     /**

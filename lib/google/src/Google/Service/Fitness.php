@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness extends Google_Service
 {
   /** View your activity information in Google Fit. */
@@ -359,6 +360,7 @@ class Google_Service_Fitness extends Google_Service
  *   $users = $fitnessService->users;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Users_Resource extends Google_Service_Resource
 {
 }
@@ -371,6 +373,7 @@ class Google_Service_Fitness_Users_Resource extends Google_Service_Resource
  *   $dataSources = $fitnessService->dataSources;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness_UsersDataSources_Resource extends Google_Service_Resource
 {
 
@@ -506,6 +509,7 @@ class Google_Service_Fitness_UsersDataSources_Resource extends Google_Service_Re
  *   $datasets = $fitnessService->datasets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness_UsersDataSourcesDatasets_Resource extends Google_Service_Resource
 {
 
@@ -611,6 +615,7 @@ class Google_Service_Fitness_UsersDataSourcesDatasets_Resource extends Google_Se
  *   $dataset = $fitnessService->dataset;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness_UsersDataset_Resource extends Google_Service_Resource
 {
 
@@ -641,6 +646,7 @@ class Google_Service_Fitness_UsersDataset_Resource extends Google_Service_Resour
  *   $sessions = $fitnessService->sessions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Fitness_UsersSessions_Resource extends Google_Service_Resource
 {
 
@@ -712,6 +718,7 @@ class Google_Service_Fitness_UsersSessions_Resource extends Google_Service_Resou
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_AggregateBucket extends Google_Collection
 {
   protected $collection_key = 'dataset';
@@ -777,6 +784,7 @@ class Google_Service_Fitness_AggregateBucket extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_AggregateBy extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -803,6 +811,7 @@ class Google_Service_Fitness_AggregateBy extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_AggregateRequest extends Google_Collection
 {
   protected $collection_key = 'aggregateBy';
@@ -880,6 +889,7 @@ class Google_Service_Fitness_AggregateRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_AggregateResponse extends Google_Collection
 {
   protected $collection_key = 'bucket';
@@ -899,6 +909,7 @@ class Google_Service_Fitness_AggregateResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Application extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -943,6 +954,7 @@ class Google_Service_Fitness_Application extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_BucketByActivity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -969,6 +981,7 @@ class Google_Service_Fitness_BucketByActivity extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_BucketBySession extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -986,6 +999,7 @@ class Google_Service_Fitness_BucketBySession extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_BucketByTime extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1003,6 +1017,7 @@ class Google_Service_Fitness_BucketByTime extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_DataPoint extends Google_Collection
 {
   protected $collection_key = 'value';
@@ -1085,6 +1100,7 @@ class Google_Service_Fitness_DataPoint extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_DataSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1159,6 +1175,7 @@ class Google_Service_Fitness_DataSource extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_DataType extends Google_Collection
 {
   protected $collection_key = 'field';
@@ -1187,6 +1204,7 @@ class Google_Service_Fitness_DataType extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_DataTypeField extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1222,6 +1240,7 @@ class Google_Service_Fitness_DataTypeField extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Dataset extends Google_Collection
 {
   protected $collection_key = 'point';
@@ -1277,6 +1296,7 @@ class Google_Service_Fitness_Dataset extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Device extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1330,6 +1350,7 @@ class Google_Service_Fitness_Device extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_ListDataSourcesResponse extends Google_Collection
 {
   protected $collection_key = 'dataSource';
@@ -1349,6 +1370,7 @@ class Google_Service_Fitness_ListDataSourcesResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_ListSessionsResponse extends Google_Collection
 {
   protected $collection_key = 'session';
@@ -1387,6 +1409,7 @@ class Google_Service_Fitness_ListSessionsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_MapValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1404,6 +1427,7 @@ class Google_Service_Fitness_MapValue extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Session extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1494,6 +1518,7 @@ class Google_Service_Fitness_Session extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_Value extends Google_Collection
 {
   protected $collection_key = 'mapVal';
@@ -1540,6 +1565,7 @@ class Google_Service_Fitness_Value extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Fitness_ValueMapValEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(

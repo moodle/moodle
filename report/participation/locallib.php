@@ -38,11 +38,6 @@ function report_participation_get_log_table_name() {
     // Get preferred reader.
     if (!empty($readers)) {
         foreach ($readers as $readerpluginname => $reader) {
-            // If legacy reader is preferred reader.
-            if ($readerpluginname == 'logstore_legacy') {
-                break;
-            }
-
             // If sql_internal_table_reader is preferred reader.
             if ($reader instanceof \core\log\sql_internal_table_reader) {
                 $logtable = $reader->get_internal_log_table_name();
@@ -189,12 +184,14 @@ function report_participation_print_filter_form($course, $timefrom, $minlog, $ac
 
     $actionoptions = report_participation_get_action_options();
 
-    // TODO: we need a new list of roles that are visible here.
     $context = context_course::instance($course->id);
     $roles = get_roles_used_in_context($context);
+    $rolesviewable = get_viewable_roles($context);
+
     $guestrole = get_guest_role();
-    $roles[$guestrole->id] = $guestrole;
-    $roleoptions = role_fix_names($roles, $context, ROLENAME_ALIAS, true);
+    $roleoptions = array_intersect_key($rolesviewable, $roles) + [
+        $guestrole->id => role_get_name($guestrole, $context),
+    ];
 
     $modinfo = get_fast_modinfo($course);
 

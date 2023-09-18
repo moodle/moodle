@@ -83,7 +83,7 @@ class behat_form_radio extends behat_form_checkbox {
                 $this->trigger_on_change();
             }
         } else {
-            // Goutte does not accept a check nor a click in an input[type=radio].
+            // BrowserKit does not accept a check nor a click in an input[type=radio].
             $this->field->setValue($this->field->getAttribute('value'));
         }
     }

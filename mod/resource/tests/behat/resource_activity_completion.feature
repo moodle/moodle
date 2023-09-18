@@ -33,8 +33,7 @@ Feature: View activity completion information for file resources
       | resource | C1     | Myfile | <display> | 0        | 0        | 0        | 1          | mod/resource/tests/fixtures/samplefile.txt | 620        | 450         | 1        |
     And I am on "Course 1" course homepage with editing mode on
     # Teacher view.
-    And the manual completion button for "Myfile" should exist
-    And the manual completion button for "Myfile" should be disabled
+    And "Myfile" should have the "Mark as done" completion condition
     # Student view.
     When I am on the "Course 1" course page logged in as student1
     Then the manual completion button for "Myfile" should exist
@@ -61,11 +60,10 @@ Feature: View activity completion information for file resources
     And I press "Save and display"
     And I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
-      | Completion tracking | Students can manually mark the activity as completed |
+      | Students must manually mark the activity as done | 1 |
     And I click on "Save and return to course" "button"
     # Teacher view.
-    And the manual completion button for "Myfile" should exist
-    And the manual completion button for "Myfile" should be disabled
+    And "Myfile" should have the "Mark as done" completion condition
     And I am on the "Myfile" "resource activity" page
     And the manual completion button for "Myfile" should exist
     And the manual completion button for "Myfile" should be disabled
@@ -88,8 +86,8 @@ Feature: View activity completion information for file resources
     And I press "Save and display"
     And I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity   | 1                                                 |
     And I press "Save and display"
     # Teacher view.
     And I am on the "Myfile" "resource activity" page

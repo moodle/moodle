@@ -92,7 +92,7 @@ $strcalendar = get_string('calendar', 'calendar');
 
 $PAGE->navbar->add($strcalendar, $viewcalendarurl);
 $PAGE->navbar->add($title);
-$PAGE->set_title($site->shortname.': '.$strcalendar.': '.$title);
+$PAGE->set_title($strcalendar.': '.$title);
 $PAGE->set_heading($COURSE->fullname);
 if ($course) {
     $PAGE->set_secondary_navigation(false);

@@ -25,6 +25,9 @@ namespace core_analytics;
  */
 class dataset_manager_test extends \advanced_testcase {
 
+    /** @var array Store dataset top rows. */
+    protected array $sharedtoprows = [];
+
     /**
      * setUp
      *

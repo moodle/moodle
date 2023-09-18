@@ -142,9 +142,8 @@ class core_webservice_external extends \core_external\external_api {
                         $version = $componentversions[$function->component];
                     }
                 } else {
-                    // Function component should always have a version.php,
-                    // otherwise the function should have been described with component => 'moodle'.
-                    throw new moodle_exception('missingversionfile', 'webservice', '', $function->component);
+                    // Ignore this component or plugin, it was probably incorrectly uninstalled.
+                    continue;
                 }
             }
             $functioninfo['version'] = $version;
@@ -157,8 +156,9 @@ class core_webservice_external extends \core_external\external_api {
         $siteinfo['mobilecssurl'] = !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '';
 
         // Retrieve some advanced features. Only enable/disable ones (bool).
-        $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
-                                    "enablecompletion", "enablebadges", "messagingallusers", "enablecustomreports");
+        $advancedfeatures = ["usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
+            "enablecompletion", "enablebadges", "messagingallusers", "enablecustomreports", "enableglobalsearch"];
+
         foreach ($advancedfeatures as $feature) {
             if (isset($CFG->{$feature})) {
                 $siteinfo['advancedfeatures'][] = array(

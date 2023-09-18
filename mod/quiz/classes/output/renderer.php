@@ -247,7 +247,7 @@ class renderer extends plugin_renderer_base {
 
         if ($attemptobj->get_access_manager(time())->attempt_must_be_in_popup()) {
             $this->page->requires->js_init_call('M.mod_quiz.secure_window.init_close_button',
-                    [$url], false, quiz_get_js_module());
+                    [$url->out(false)], false, quiz_get_js_module());
             return html_writer::empty_tag('input', ['type' => 'button',
                     'value' => get_string('finishreview', 'quiz'),
                     'id' => 'secureclosebutton',
@@ -380,20 +380,22 @@ class renderer extends plugin_renderer_base {
         }
         $extrainfo[] = html_writer::tag('span', $flaglabel, ['class' => 'flagstate']);
 
-        if (is_numeric($button->number)) {
+        if ($button->isrealquestion) {
             $qnostring = 'questionnonav';
         } else {
             $qnostring = 'questionnonavinfo';
         }
 
+        $tooltip = get_string('questionx', 'question', s($button->number)) . ' - ' . $button->statestring;
+
         $a = new stdClass();
-        $a->number = $button->number;
+        $a->number = s($button->number);
         $a->attributes = implode(' ', $extrainfo);
         $tagcontents = html_writer::tag('span', '', ['class' => 'thispageholder']) .
                 html_writer::tag('span', '', ['class' => 'trafficlight']) .
                 get_string($qnostring, 'quiz', $a);
         $tagattributes = ['class' => implode(' ', $classes), 'id' => $button->id,
-                'title' => $button->statestring, 'data-quiz-page' => $button->page];
+                'title' => $tooltip, 'data-quiz-page' => $button->page];
 
         if ($button->url) {
             return html_writer::link($button->url, $tagcontents, $tagattributes);
@@ -1032,7 +1034,7 @@ class renderer extends plugin_renderer_base {
      * Output the page information
      *
      * @param stdClass $quiz the quiz settings.
-     * @param stdClass $cm the course_module object.
+     * @param cm_info|stdClass $cm the course_module object.
      * @param context $context the quiz context.
      * @param array $messages any access messages that should be described.
      * @param bool $quizhasquestions does quiz has questions added.
@@ -1101,6 +1103,8 @@ class renderer extends plugin_renderer_base {
         // Prepare table header.
         $table = new html_table();
         $table->attributes['class'] = 'generaltable quizattemptsummary';
+        $table->caption = get_string('summaryofattempts', 'quiz');
+        $table->captionhide = true;
         $table->head = [];
         $table->align = [];
         $table->size = [];
@@ -1357,11 +1361,11 @@ class renderer extends plugin_renderer_base {
      * Render a summary of the number of group and user overrides, with corresponding links.
      *
      * @param stdClass $quiz the quiz settings.
-     * @param stdClass $cm the cm object.
+     * @param cm_info|stdClass $cm the cm object.
      * @param int $currentgroup currently selected group, if there is one.
      * @return string HTML fragment for the link.
      */
-    public function quiz_override_summary_links(stdClass $quiz, stdClass $cm, $currentgroup = 0): string {
+    public function quiz_override_summary_links(stdClass $quiz, cm_info|stdClass $cm, $currentgroup = 0): string {
 
         $baseurl = new moodle_url('/mod/quiz/overrides.php', ['cmid' => $cm->id]);
         $counts = quiz_override_summary($quiz, $cm, $currentgroup);

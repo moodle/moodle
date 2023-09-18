@@ -35,7 +35,7 @@ Feature: See the competencies for an activity on the course competencies page.
     And I select "Test-Comp2" of the competency tree
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     And I am on the PageName1 "page activity editing" page
-    And I follow "Expand all"
+    And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Course competencies" to "Test-Comp1"
     And I press "Save and return to course"
     And I log out

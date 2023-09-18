@@ -58,7 +58,7 @@ class writer_test extends \advanced_testcase {
         $handle = fopen($file, "w");
         fwrite($handle, $content);
         /** @var \OpenSpout\Reader\XLSX\Reader $reader */
-        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromType(\OpenSpout\Common\Type::XLSX);
+        $reader = \OpenSpout\Reader\Common\Creator\ReaderFactory::createFromFileByMimeType($file);
         $reader->open($file);
 
         /** @var \OpenSpout\Reader\XLSX\Sheet[] $sheets */

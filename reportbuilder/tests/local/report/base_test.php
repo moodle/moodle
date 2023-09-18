@@ -19,9 +19,13 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\report;
 
 use advanced_testcase;
+use coding_exception;
 use context_system;
+use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\system_report_available;
 use core_reportbuilder\system_report_factory;
+use lang_string;
+use ReflectionClass;
 
 /**
  * Unit tests for report base class
@@ -68,6 +72,80 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test for adding SQL base condition to a report
+     */
+    public function test_add_base_condition_sql(): void {
+        $this->resetAfterTest();
+
+        $parameter = database::generate_param_name();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+        $systemreport->add_base_condition_sql("username = :{$parameter}", [$parameter => 'admin']);
+
+        [$where, $params] = $systemreport->get_base_condition();
+        $this->assertEquals("username = :{$parameter}", $where);
+        $this->assertEquals([$parameter => 'admin'], $params);
+    }
+
+    /**
+     * Test for adding multiple SQL base condition to a report
+     */
+    public function test_add_base_condition_sql_multiple(): void {
+        $this->resetAfterTest();
+
+        [$paramusername, $paramemail] = database::generate_param_names(2);
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+        $systemreport->add_base_condition_sql("username = :{$paramusername}", [$paramusername => 'admin']);
+        $systemreport->add_base_condition_sql("email = :{$paramemail}", [$paramemail => 'admin@example.com']);
+
+        [$where, $params] = $systemreport->get_base_condition();
+        $this->assertEquals("username = :{$paramusername} AND email = :{$paramemail}", $where);
+        $this->assertEquals([$paramusername => 'admin', $paramemail => 'admin@example.com'], $params);
+    }
+
+    /**
+     * Test for adding empty SQL base condition to a report
+     */
+    public function test_add_base_condition_sql_empty_clause(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+        $systemreport->add_base_condition_sql('username IS NOT NULL');
+        $systemreport->add_base_condition_sql('');
+
+        [$where, $params] = $systemreport->get_base_condition();
+        $this->assertEquals("username IS NOT NULL", $where);
+        $this->assertEmpty($params);
+    }
+
+    /**
+     * Test for adding SQL base condition to a report with invalid parameter
+     */
+    public function test_add_base_condition_sql_invalid_parameter(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Invalid parameter names');
+        $systemreport->add_base_condition_sql("username = :param", ['param' => 'admin']);
+    }
+
+    /**
+     * Test getting report base conditions, where none have been set
+     */
+    public function test_get_base_condition_default(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        [$where, $params] = $systemreport->get_base_condition();
+        $this->assertEmpty($where);
+        $this->assertEmpty($params);
+    }
+
+    /**
      * Test for get_filter_instances
      */
     public function test_get_filter_instances(): void {
@@ -109,6 +187,56 @@ class base_test extends advanced_testcase {
         $contextcourse = \context_course::instance($course->id);
         $systemreport2 = system_report_factory::create(system_report_available::class, $contextcourse);
         $this->assertEquals($contextcourse, $systemreport2->get_context());
+    }
+
+    /**
+     * Test entity annotation
+     */
+    public function test_annotate_entity(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $method->invoke($systemreport, 'test', new lang_string('yes'));
+        $this->assertEquals(new lang_string('yes'), $systemreport->get_entity_title('test'));
+    }
+
+    /**
+     * Test entity annotation for invalid entity name
+     */
+    public function test_annotate_entity_invalid(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Entity name must be comprised of alphanumeric character, underscore or dash');
+        $method->invoke($systemreport, '', new lang_string('yes'));
+    }
+
+    /**
+     * Test entity annotation for duplicated entity name
+     */
+    public function test_annotate_entity_duplicate(): void {
+        $this->resetAfterTest();
+
+        $systemreport = system_report_factory::create(system_report_available::class, context_system::instance());
+
+        $method = (new ReflectionClass($systemreport))->getMethod('annotate_entity');
+        $method->setAccessible(true);
+
+        $method->invoke($systemreport, 'test', new lang_string('yes'));
+
+        // Adding a second time with the same name should trigger exception.
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Duplicate entity name (test)');
+        $method->invoke($systemreport, 'test', new lang_string('no'));
     }
 
     /**

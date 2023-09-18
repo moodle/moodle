@@ -265,7 +265,7 @@ switch ($action) {
                         'url'=>moodle_url::make_draftfile_url($storedfile->get_itemid(), $storedfile->get_filepath(), $storedfile->get_filename())->out(),
                         'id'=>$storedfile->get_itemid(),
                         'file'=>$storedfile->get_filename(),
-                        'icon' => $OUTPUT->image_url(file_file_icon($storedfile, 32))->out(),
+                        'icon' => $OUTPUT->image_url(file_file_icon($storedfile))->out(),
                     );
                 }
                 // Repository plugin callback

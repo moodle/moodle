@@ -236,7 +236,9 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         echo $this->get_dynamic_table_html_start();
         echo $this->render_reset_button();
 
-        echo $OUTPUT->render(new notification(get_string('nothingtodisplay'), notification::NOTIFY_INFO, false));
+        if ($notice = $this->report->get_default_no_results_notice()) {
+            echo $OUTPUT->render(new notification($notice->out(), notification::NOTIFY_INFO, false));
+        }
 
         echo $this->get_dynamic_table_html_end();
     }

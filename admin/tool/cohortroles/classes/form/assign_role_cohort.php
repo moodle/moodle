@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Assign role to cohort form.
- *
- * @package    tool_cohortroles
- * @copyright  2015 Damyon Wiese
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_cohortroles\form;
 defined('MOODLE_INTERNAL') || die();
 
@@ -56,7 +48,7 @@ class assign_role_cohort extends moodleform {
         }
 
         $options = array(
-            'ajax' => 'tool_lp/form-user-selector',
+            'ajax' => 'core_user/form_user_selector',
             'multiple' => true
         );
         $mform->addElement('autocomplete', 'userids', get_string('selectusers', 'tool_cohortroles'), array(), $options);
@@ -73,12 +65,11 @@ class assign_role_cohort extends moodleform {
 
         $context = context_system::instance();
         $options = array(
-            'ajax' => 'tool_lp/form-cohort-selector',
             'multiple' => true,
             'data-contextid' => $context->id,
             'data-includes' => 'all'
         );
-        $mform->addElement('autocomplete', 'cohortids', get_string('selectcohorts', 'tool_cohortroles'), array(), $options);
+        $mform->addElement('cohort', 'cohortids', get_string('selectcohorts', 'tool_cohortroles'), $options);
         $mform->addRule('cohortids', null, 'required');
         $mform->addElement('submit', 'submit', get_string('assign', 'tool_cohortroles'));
     }

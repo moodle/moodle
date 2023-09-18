@@ -63,3 +63,16 @@ Feature: Test creating a drag and drop markers question
     And the following fields match these values:
       | id_showmisplaced  | 1 |
       | id_shuffleanswers | 1 |
+
+  @javascript @_file_upload
+  Scenario: Question must have at least one marker and one drop zone
+    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    And I press "Create a new question ..."
+    And I set the field "Drag and drop markers" to "1"
+    And I click on "Add" "button" in the "Choose a question type to add" "dialogue"
+    And I set the field "Question name" to "Drag and drop markers"
+    And I set the field "Question text" to "Markers, who need markers?"
+    And I upload "question/type/ddmarker/tests/fixtures/mkmap.png" file to "Background image" filemanager
+    And I press "Save changes"
+    Then I should see "You must add at least one marker to this question."
+    And I should see "You must define at least one drop zone for this question."

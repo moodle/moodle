@@ -31,12 +31,12 @@
  */
 
 import Config from 'core/config';
-import ModalFactory from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {getFirst} from 'core/normalise';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {getCourseEditor} from 'core_courseformat/courseeditor';
 import {processMonitor} from 'core/process_monitor';
 import {debounce} from 'core/utils';
@@ -314,7 +314,6 @@ class HandlerManager {
                     this.lastHandlers[extension] ?? null
                 )
             ),
-            type: ModalFactory.types.SAVE_CANCEL,
             saveButtonText: getString('upload', 'moodle'),
         };
         // Create the modal.
@@ -405,7 +404,7 @@ class HandlerManager {
      */
     modalBodyRenderedPromise(modalParams) {
         return new Promise((resolve, reject) => {
-            ModalFactory.create(modalParams).then((modal) => {
+            ModalSaveCancel.create(modalParams).then((modal) => {
                 modal.setRemoveOnClose(true);
                 // Handle body loading event.
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {
@@ -469,13 +468,9 @@ async function loadCourseHandlerManager(courseId) {
     if (handlerManagers[courseId] !== undefined) {
         return handlerManagers[courseId];
     }
-    try {
-        const handlerManager = new HandlerManager(courseId);
-        await handlerManager.loadHandlers();
-        handlerManagers[courseId] = handlerManager;
-    } catch (error) {
-        throw error;
-    }
+    const handlerManager = new HandlerManager(courseId);
+    await handlerManager.loadHandlers();
+    handlerManagers[courseId] = handlerManager;
     return handlerManagers[courseId];
 }
 
@@ -544,13 +539,8 @@ const queueFileUpload = async function(courseId, sectionId, sectionNum, fileInfo
  */
 export const uploadFilesToCourse = async function(courseId, sectionId, sectionNum, files) {
     // Get the course handlers.
-    let handlerManager;
-    try {
-        handlerManager = await loadCourseHandlerManager(courseId);
-        await loadErrorStrings(courseId);
-    } catch (error) {
-        throw error;
-    }
+    const handlerManager = await loadCourseHandlerManager(courseId);
+    await loadErrorStrings(courseId);
     for (let index = 0; index < files.length; index++) {
         const fileInfo = files[index];
         await queueFileUpload(courseId, sectionId, sectionNum, fileInfo, handlerManager);

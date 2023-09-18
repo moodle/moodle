@@ -16,6 +16,7 @@
 
 namespace core_course\output;
 
+use core\output\select_menu;
 use core_completion\manager;
 use moodle_url;
 use renderable;
@@ -57,12 +58,18 @@ class completion_action_bar implements templatable, renderable {
      *               completion pages.
      */
     public function export_for_template(renderer_base $output): array {
-        $urlselect = new url_select(manager::get_available_completion_options($this->courseid),
-            $this->currenturl->out(false), null, 'coursecompletionactionselect');
-        $urlselect->set_label(get_string('coursecompletionnavigation', 'completion'), ['class' => 'sr-only']);
+        $selectmenu = new select_menu(
+            'coursecompletionnavigation',
+            manager::get_available_completion_options($this->courseid),
+            $this->currenturl->out(false)
+        );
+        $selectmenu->set_label(
+            get_string('coursecompletionnavigation', 'completion'),
+            ['class' => 'sr-only']
+        );
 
         return [
-            'urlselect' => $urlselect->export_for_template($output),
+            'navigation' => $selectmenu->export_for_template($output),
         ];
     }
 }

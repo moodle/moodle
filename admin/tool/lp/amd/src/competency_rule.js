@@ -16,7 +16,7 @@
 /**
  * Competency rule base module.
  *
- * @module     tool_lp/competencyrule
+ * @module     tool_lp/competency_rule
  * @copyright  2015 Frédéric Massart - FMCorz.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -71,14 +71,12 @@ define(['jquery'], function($) {
         return null;
     };
 
-    // eslint-disable-line valid-jsdoc
     /**
      * Return the type of the module.
      *
      * @return {String}
      * @method getType
      */
-    // eslint-enable-line valid-jsdoc
     Rule.prototype.getType = function() {
         throw new Error('Not implemented');
     };

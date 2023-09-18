@@ -93,6 +93,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             redirect($PAGE->url);
 
         } else if ($action === 'delete') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
 
@@ -116,6 +117,10 @@ if ($canconfig and $action and confirm_sesskey()) {
                             echo $OUTPUT->footer();
                             die();
                         }
+                    }
+                    // Update communication for instance and given action.
+                    if (core_communication\api::is_available() && $instance->enrol !== 'guest') {
+                        $plugin->update_communication($instance->id, 'remove', $course->id);
                     }
                     $plugin->delete_instance($instance);
                     redirect($PAGE->url);
@@ -144,6 +149,7 @@ if ($canconfig and $action and confirm_sesskey()) {
             }
 
         } else if ($action === 'disable') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
             if ($plugin->can_hide_show_instance($instance)) {
@@ -166,16 +172,25 @@ if ($canconfig and $action and confirm_sesskey()) {
                             die();
                         }
                     }
+                    // Update communication for instance and given action.
+                    if (core_communication\api::is_available() && $instance->enrol !== 'guest') {
+                        $plugin->update_communication($instance->id, 'remove', $course->id);
+                    }
                     $plugin->update_status($instance, ENROL_INSTANCE_DISABLED);
                     redirect($PAGE->url);
                 }
             }
 
         } else if ($action === 'enable') {
+
             $instance = $instances[$instanceid];
             $plugin = $plugins[$instance->enrol];
             if ($plugin->can_hide_show_instance($instance)) {
                 if ($instance->status != ENROL_INSTANCE_ENABLED) {
+                    // Update communication for instance and given action.
+                    if (core_communication\api::is_available() && $instance->enrol !== 'guest') {
+                        $plugin->update_communication($instance->id, 'add', $course->id);
+                    }
                     $plugin->update_status($instance, ENROL_INSTANCE_ENABLED);
                     redirect($PAGE->url);
                 }
@@ -187,7 +202,6 @@ if ($canconfig and $action and confirm_sesskey()) {
 
 echo $OUTPUT->header();
 echo $OUTPUT->render_participants_tertiary_nav($course);
-echo $OUTPUT->heading(get_string('enrolmentinstances', 'enrol'));
 
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthnormal');
 

@@ -79,16 +79,6 @@ class edit_page_viewed extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return [$this->courseid, 'quiz', 'editquestions', 'view.php?id=' . $this->contextinstanceid,
-            $this->other['quizid'], $this->contextinstanceid];
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

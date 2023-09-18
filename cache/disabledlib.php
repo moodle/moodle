@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/cache/locallib.php');
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_disabled extends cache {
+class cache_disabled extends cache implements cache_loader_with_locking {
 
     /**
      * Constructs the cache.
@@ -204,20 +204,30 @@ class cache_disabled extends cache {
     /**
      * Pretend that we got a lock to avoid errors.
      *
-     * @param string $key
+     * @param int|string $key
      * @return bool
      */
-    public function acquire_lock(string $key) : bool {
+    public function acquire_lock($key) : bool {
         return true;
     }
 
     /**
      * Pretend that we released a lock to avoid errors.
      *
-     * @param string $key
-     * @return void
+     * @param int|string $key
+     * @return bool
      */
-    public function release_lock(string $key) : bool {
+    public function release_lock($key) : bool {
+        return true;
+    }
+
+    /**
+     * Pretend that we have a lock to avoid errors.
+     *
+     * @param int|string $key
+     * @return bool
+     */
+    public function check_lock_state($key) : bool {
         return true;
     }
 }
@@ -294,8 +304,13 @@ class cache_factory_disabled extends cache_factory {
                 $definition = $this->create_definition($component, $area);
                 // The cachestore_static class returns true to all three 'SUPPORTS_' checks so it
                 // can be used with all definitions.
-                $cache = new cachestore_static('TEMP:' . $component . '/' . $area);
-                $cache->initialise($definition);
+                $store = new cachestore_static('TEMP:' . $component . '/' . $area);
+                $store->initialise($definition);
+                // We need to use a cache loader wrapper rather than directly returning the store,
+                // or it wouldn't have support for versioning. The cache_application class is used
+                // (rather than cache_request which might make more sense logically) because it
+                // includes support for locking, which might be necessary for some caches.
+                $cache = new cache_application($definition, $store);
                 self::$tempcaches[$key] = $cache;
             }
             return $cache;

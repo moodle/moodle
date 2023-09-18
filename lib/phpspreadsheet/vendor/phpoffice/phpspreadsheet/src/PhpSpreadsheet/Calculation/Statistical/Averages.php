@@ -115,18 +115,17 @@ class Averages extends AggregateBase
         $aCount = 0;
         // Loop through arguments
         foreach (Functions::flattenArrayIndexed($args) as $k => $arg) {
-            if ((is_bool($arg)) && (!Functions::isMatrixValue($k))) {
+            if (is_numeric($arg)) {
+                // do nothing
+            } elseif (is_bool($arg)) {
+                $arg = (int) $arg;
+            } elseif (!Functions::isMatrixValue($k)) {
+                $arg = 0;
             } else {
-                if ((is_numeric($arg)) || (is_bool($arg)) || ((is_string($arg) && ($arg != '')))) {
-                    if (is_bool($arg)) {
-                        $arg = (int) $arg;
-                    } elseif (is_string($arg)) {
-                        $arg = 0;
-                    }
-                    $returnValue += $arg;
-                    ++$aCount;
-                }
+                return ExcelError::VALUE();
             }
+            $returnValue += $arg;
+            ++$aCount;
         }
 
         if ($aCount > 0) {
@@ -197,7 +196,7 @@ class Averages extends AggregateBase
         return $returnValue;
     }
 
-    protected static function filterArguments($args)
+    protected static function filterArguments(array $args): array
     {
         return array_filter(
             $args,
@@ -208,11 +207,13 @@ class Averages extends AggregateBase
         );
     }
 
-    //
-    //    Special variant of array_count_values that isn't limited to strings and integers,
-    //        but can work with floating point numbers as values
-    //
-    private static function modeCalc($data)
+    /**
+     * Special variant of array_count_values that isn't limited to strings and integers,
+     * but can work with floating point numbers as values.
+     *
+     * @return float|string
+     */
+    private static function modeCalc(array $data)
     {
         $frequencyArray = [];
         $index = 0;

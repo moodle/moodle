@@ -50,15 +50,10 @@ class file_storage implements H5PFileStorage {
     public const CACHED_ASSETS_FILEAREA = 'cachedassets';
     /** The export file area */
     public const EXPORT_FILEAREA = 'export';
+    /** The export css file area */
+    public const CSS_FILEAREA = 'css';
     /** The icon filename */
     public const ICON_FILENAME = 'icon.svg';
-
-    /**
-     * The editor file area.
-     * @deprecated since Moodle 3.10 MDL-68909. Please do not use this constant any more.
-     * @todo MDL-69530 This will be deleted in Moodle 4.2.
-     */
-    public const EDITOR_FILEAREA = 'editor';
 
     /**
      * @var \context $context Currently we use the system context everywhere.

@@ -66,7 +66,7 @@ class statement implements JsonSerializable {
     /** @var string The statement stored. */
     protected $stored = null;
 
-    /** @var authority The statement authority. */
+    /** @var item_actor The statement authority. */
     protected $authority = null;
 
     /** @var string The statement version. */
@@ -414,7 +414,7 @@ class statement implements JsonSerializable {
     /**
      * Return the statement authority if it is defined.
      *
-     * @return item|null
+     * @return item_actor|null
      */
     public function get_authority(): ?item_actor {
         return $this->authority;

@@ -25,7 +25,7 @@
 import Notification from "core/notification";
 import * as Templates from "core/templates";
 import * as Str from "core/str";
-import * as ModalFactory from "core/modal_factory";
+import ModalAlert from "core/local/modal/alert";
 
 /** @var SELECTOR List of CSS selectors. */
 const SELECTOR = {
@@ -71,12 +71,10 @@ export const clearLoadingAlert = () => {
  * Display validation failed modal.
  */
 export const showValidationFailedModal = () => {
-    ModalFactory.create({
-        type: ModalFactory.types.ALERT,
+    ModalAlert.create({
         title: Str.get_string('sebkeysvalidationfailed', 'quizaccess_seb'),
         body: Str.get_string('invalidkeys', 'quizaccess_seb'),
         large: false,
-    }).then((modal) => {
-        modal.show();
-    }).fail(Notification.exception);
+        show: true,
+    }).catch(Notification.exception);
 };

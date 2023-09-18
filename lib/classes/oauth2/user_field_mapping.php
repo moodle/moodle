@@ -43,6 +43,9 @@ class user_field_mapping extends persistent {
      * @return array
      */
     private static function get_user_fields() {
+        global $CFG;
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+
         return array_merge(\core_user::AUTHSYNCFIELDS, ['picture', 'username'], get_profile_field_names());
     }
 

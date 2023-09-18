@@ -34,19 +34,16 @@ Feature: display_availability
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
+    And the following "activities" exist:
+      | activity | course | section | name   |
+      | page     | C1     | 1       | Page 1 |
+      | page     | C1     | 2       | Page 2 |
+      | page     | C1     | 3       | Page 3 |
 
   @javascript
   Scenario: Activity availability display
     # Set up.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-
-    # Add a Page with 1 restriction.
-    When I add a "Page" to section "1"
-    And I set the following fields to these values:
-      | Name         | Page 1 |
-      | Description  | Test   |
-      | Page content | Test   |
+    Given I am on the "Page 1" "page activity editing" page logged in as "teacher1"
     And I expand all fieldsets
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
@@ -56,11 +53,7 @@ Feature: display_availability
     And I press "Save and return to course"
 
     # Add a Page with 2 restrictions - one is set to hide from students if failed.
-    And I add a "Page" to section "2"
-    And I set the following fields to these values:
-      | Name         | Page 2 |
-      | Description  | Test   |
-      | Page content | Test   |
+    And I am on the "Page 2" "page activity editing" page
     And I expand all fieldsets
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
@@ -75,32 +68,28 @@ Feature: display_availability
     And I set the field "Method of comparison" to "is equal to"
     And I press "Save and return to course"
 
-    # Add another Page with no restrictions.
-    And I add a "Page" to section "3" and I fill the form with:
-      | Name         | Page 3 |
-      | Description  | Test   |
-      | Page content | Test   |
-
     # Page 1 should show in single-line format, showing the date
-    Then I should see "Available until" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "2013" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "2013" in the "#section-1 .availabilityinfo" "css_element"
-    And "li" "css_element" should not exist in the "#section-1 .availabilityinfo" "css_element"
+    Then I should see "Available until" in the "Page 1" "core_availability > Activity availability"
+    And I should see "2013" in the "Page 1" "core_availability > Activity availability"
+    And I should see "2013" in the "Page 1" "core_availability > Activity availability"
+    And "li" "css_element" should not exist in the "Page 1" "core_availability > Activity availability"
+    And "Show more" "button" should not exist in the "Page 1" "core_availability > Activity availability"
 
     # Page 2 should show in list format.
-    And "li" "css_element" should exist in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "Not available unless:" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "It is before" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "hidden otherwise" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "Email address" in the "#section-2 .availabilityinfo" "css_element"
+    And "li" "css_element" should exist in the "Page 2" "core_availability > Activity availability"
+    And I should see "Not available unless:" in the "Page 2" "core_availability > Activity availability"
+    And I should see "It is before" in the "Page 2" "core_availability > Activity availability"
+    And I should see "hidden otherwise" in the "Page 2" "core_availability > Activity availability"
+    And I click on "Show more" "button" in the "Page 2" "activity"
+    And I should see "Email address" in the "Page 2" "core_availability > Activity availability"
+    And I click on "Show less" "button" in the "Page 2" "core_availability > Activity availability"
+    And I should not see "Email address" in the "Page 2" "core_availability > Activity availability"
 
     # Page 3 should not have available info.
-    And "#section-3 .availabilityinfo" "css_element" should not exist
+    And "Page 3" "core_availability > Activity availability" should not exist
 
     # Change to student view.
-    Given I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "C1" "Course" page logged in as "student1"
 
     # Page 1 display still there but should not be a link.
     Then I should see "Page 1" in the "#section-1" "css_element"
@@ -119,8 +108,8 @@ Feature: display_availability
   @javascript
   Scenario: Section availability display
     # Set up.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    Given I am on the "C1" "Course" page logged in as "teacher1"
+    And I turn editing mode on
 
     # Add a restriction to section 1 (visible to students).
     When I edit the section "1"
@@ -129,6 +118,11 @@ Feature: display_availability
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the field "direction" to "until"
     And I set the field "x[year]" to "2013"
+    And I press "Add restriction..."
+    And I click on "User profile" "button" in the "Add restriction..." "dialogue"
+    And I set the field "User profile field" to "Email address"
+    And I set the field "Value to compare against" to "email@example.com"
+    And I set the field "Method of comparison" to "is equal to"
     And I press "Save changes"
 
     # Section 2 is the same but hidden from students
@@ -144,29 +138,13 @@ Feature: display_availability
     # This is necessary because otherwise it fails in Chrome, see MDL-44959
     And I am on "Course 1" course homepage
 
-    # Add Pages to each section.
-    And I add a "Page" to section "1" and I fill the form with:
-      | Name         | Page 1 |
-      | Description  | Test   |
-      | Page content | Test   |
-    And I add a "Page" to section "2" and I fill the form with:
-      | Name         | Page 2 |
-      | Description  | Test   |
-      | Page content | Test   |
-    And I add a "Page" to section "3" and I fill the form with:
-      | Name         | Page 3 |
-      | Description  | Test   |
-      | Page content | Test   |
-
     # Check display
-    Then I should see "Available until" in the "#section-1 .availabilityinfo" "css_element"
-    And I should see "Available until" in the "#section-2 .availabilityinfo" "css_element"
-    And I should see "hidden otherwise" in the "#section-2 .availabilityinfo" "css_element"
+    Then I should see "Not available unless" in the "section-1" "core_availability > Section availability"
+    And I should see "Available until" in the "section-2" "core_availability > Section availability"
+    And I should see "hidden otherwise" in the "section-2" "core_availability > Section availability"
 
     # Change to student view.
-    Given I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" "Course" page logged in as "student1"
 
     # The contents of both sections should be hidden.
     Then I should not see "Page 1" in the "region-main" "region"
@@ -175,7 +153,11 @@ Feature: display_availability
 
     # Section 1 should be visible and show info.
     And I should see "Topic 1" in the "region-main" "region"
-    And I should see "Available until" in the "#section-1 .availabilityinfo" "css_element"
+    And I should see "Not available unless" in the "section-1" "core_availability > Section availability"
+    And I click on "Show more" "button" in the "section-1" "core_availability > Section availability"
+    And I should see "Email address" in the "section-1" "core_availability > Section availability"
+    And I click on "Show less" "button" in the "section-1" "core_availability > Section availability"
+    And I should not see "Email address" in the "section-1" "core_availability > Section availability"
 
     # Section 2 should not be available at all
     And I should not see "Topic 2" in the "region-main" "region"

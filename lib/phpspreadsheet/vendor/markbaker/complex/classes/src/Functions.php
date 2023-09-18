@@ -36,11 +36,7 @@ class Functions
     {
         $complex = Complex::validateComplexArgument($complex);
 
-        $square = clone $complex;
-        $square = Operations::multiply($square, $complex);
-        $invsqrt = new Complex(1.0);
-        $invsqrt = Operations::subtract($invsqrt, $square);
-        $invsqrt = self::sqrt($invsqrt);
+        $invsqrt = self::sqrt(Operations::subtract(1, Operations::multiply($complex, $complex)));
         $adjust = new Complex(
             $complex->getReal() - $invsqrt->getImaginary(),
             $complex->getImaginary() + $invsqrt->getReal()
@@ -56,6 +52,9 @@ class Functions
     /**
      * Returns the inverse hyperbolic cosine of a complex number.
      *
+     * Formula from Wolfram Alpha:
+     *   cosh^(-1)z = ln(z + sqrt(z + 1) sqrt(z - 1)).
+     *
      * @param     Complex|mixed    $complex    Complex number or a numeric value.
      * @return    Complex          The inverse hyperbolic cosine of the complex argument.
      * @throws    Exception        If argument isn't a valid real or complex number.
@@ -68,11 +67,15 @@ class Functions
             return new Complex(\acosh($complex->getReal()));
         }
 
-        $acosh = self::acos($complex)
-            ->reverse();
-        if ($acosh->getReal() < 0.0) {
-            $acosh = $acosh->invertReal();
-        }
+        $acosh = self::ln(
+            Operations::add(
+                $complex,
+                Operations::multiply(
+                    self::sqrt(Operations::add($complex, 1)),
+                    self::sqrt(Operations::subtract($complex, 1))
+                )
+            )
+        );
 
         return $acosh;
     }
@@ -212,10 +215,7 @@ class Functions
     {
         $complex = Complex::validateComplexArgument($complex);
 
-        $square = Operations::multiply($complex, $complex);
-        $invsqrt = new Complex(1.0);
-        $invsqrt = Operations::subtract($invsqrt, $square);
-        $invsqrt = self::sqrt($invsqrt);
+        $invsqrt = self::sqrt(Operations::subtract(1, Operations::multiply($complex, $complex)));
         $adjust = new Complex(
             $invsqrt->getReal() - $complex->getImaginary(),
             $invsqrt->getImaginary() + $complex->getReal()
@@ -277,15 +277,30 @@ class Functions
         $uResult = $d1Value->divideBy($d2Value);
         $uResult = self::ln($uResult);
 
+        $realMultiplier = -0.5;
+        $imaginaryMultiplier = 0.5;
+
+        if (abs($uResult->getImaginary()) === M_PI) {
+            // If we have an imaginary value at the max or min (PI or -PI), then we need to ensure
+            //    that the primary is assigned for the correct quadrant.
+            $realMultiplier = (
+                ($uResult->getImaginary() === M_PI && $uResult->getReal() > 0.0) ||
+                ($uResult->getImaginary() === -M_PI && $uResult->getReal() < 0.0)
+            ) ? 0.5 : -0.5;
+        }
+
         return new Complex(
-            (($uResult->getImaginary() == M_PI) ? -M_PI : $uResult->getImaginary()) * -0.5,
-            $uResult->getReal() * 0.5,
+            $uResult->getImaginary() * $realMultiplier,
+            $uResult->getReal() * $imaginaryMultiplier,
             $complex->getSuffix()
         );
     }
 
     /**
      * Returns the inverse hyperbolic tangent of a complex number.
+     *
+     * Formula from Wolfram Alpha:
+     *  tanh^(-1)z = 1/2 [ln(1 + z) - ln(1 - z)].
      *
      * @param     Complex|mixed    $complex    Complex number or a numeric value.
      * @return    Complex          The inverse hyperbolic tangent of the complex argument.
@@ -304,12 +319,15 @@ class Functions
             }
         }
 
-        $iComplex = clone $complex;
-        $iComplex = $iComplex->invertImaginary()
-            ->reverse();
-        return self::atan($iComplex)
-            ->invertReal()
-            ->reverse();
+        $atanh = Operations::multiply(
+            Operations::subtract(
+                self::ln(Operations::add(1.0, $complex)),
+                self::ln(Operations::subtract(1.0, $complex))
+            ),
+            0.5
+        );
+
+        return $atanh;
     }
 
     /**

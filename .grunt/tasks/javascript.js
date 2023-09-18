@@ -30,10 +30,9 @@
  * @param {String} srcPath the  matched src path
  * @return {String} The rewritten destination path.
  */
-
 const babelRename = function(destPath, srcPath) {
-    destPath = srcPath.replace('src', 'build');
-    destPath = destPath.replace('.js', '.min.js');
+    destPath = srcPath.replace(`amd/src`, `amd/build`);
+    destPath = destPath.replace(/\.js$/, '.min.js');
     return destPath;
 };
 
@@ -152,11 +151,7 @@ module.exports = grunt => {
                             //
                             // It also adds the Moodle plugin name to the AMD module definition
                             // so that it can be imported as expected in other modules.
-                            path.resolve('.grunt/babel-plugin-add-module-to-define.js'),
-                            '@babel/plugin-syntax-dynamic-import',
-                            '@babel/plugin-syntax-import-meta',
-                            ['@babel/plugin-proposal-class-properties', {'loose': false}],
-                            '@babel/plugin-proposal-json-strings'
+                            path.resolve('.grunt/babel-plugin-add-module-to-define.js')
                         ],
                         presets: [
                             ['@babel/preset-env', {

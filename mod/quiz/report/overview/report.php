@@ -25,6 +25,7 @@
 use mod_quiz\local\reports\attempts_report;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,11 +43,6 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
 class quiz_overview_report extends attempts_report {
 
     /**
-     * @var bool whether there are actually students to show, given the options.
-     */
-    protected $hasgroupstudents;
-
-    /**
      * @var array|null cached copy of qbank_helper::get_question_structure for use during regrades.
      */
     protected $structureforregrade = null;
@@ -59,7 +55,7 @@ class quiz_overview_report extends attempts_report {
     protected $newquestionidsforold = null;
 
     public function display($quiz, $cm, $course) {
-        global $DB, $OUTPUT, $PAGE;
+        global $DB, $PAGE;
 
         list($currentgroup, $studentsjoins, $groupstudentsjoins, $allowedjoins) = $this->init(
                 'overview', 'quiz_overview_settings_form', $quiz, $cm, $course);
@@ -113,7 +109,6 @@ class quiz_overview_report extends attempts_report {
             $allowedjoins = new \core\dml\sql_join();
         }
 
-        $this->course = $course; // Hack to make this available in process_actions.
         $this->process_actions($quiz, $cm, $currentgroup, $groupstudentsjoins, $allowedjoins, $options->get_url());
 
         $hasquestions = quiz_has_questions($quiz->id);
@@ -140,7 +135,9 @@ class quiz_overview_report extends attempts_report {
                             $quiz, $groupstudentsjoins);
                     if ($currentgroup) {
                         $a= new stdClass();
-                        $a->groupname = groups_get_group_name($currentgroup);
+                        $a->groupname = format_string(groups_get_group_name($currentgroup), true, [
+                            'context' => $this->context,
+                        ]);
                         $a->coursestudents = get_string('participants');
                         $a->countregradeneeded = $regradesneeded;
                         $regradealldrydolabel =
@@ -236,7 +233,10 @@ class quiz_overview_report extends attempts_report {
                 if ($DB->record_exists_sql($sql, $groupstudentsjoins->params)) {
                     $data = quiz_report_grade_bands($bandwidth, $bands, $quiz->id, $groupstudentsjoins);
                     $chart = self::get_chart($labels, $data);
-                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', groups_get_group_name($currentgroup));
+                    $groupname = format_string(groups_get_group_name($currentgroup), true, [
+                        'context' => $this->context,
+                    ]);
+                    $graphname = get_string('overviewreportgraphgroup', 'quiz_overview', $groupname);
                     // Numerical range data should display in LTR even for RTL languages.
                     echo $output->chart($chart, $graphname, ['dir' => 'ltr']);
                 }
@@ -301,7 +301,12 @@ class quiz_overview_report extends attempts_report {
      */
     protected function start_regrade($quiz, $cm) {
         require_capability('mod/quiz:regrade', $this->context);
-        $this->print_header_and_tabs($cm, $this->course, $quiz, $this->mode);
+        $this->print_header_and_tabs(
+            $cm,
+            get_course($cm->course),
+            $quiz,
+            $this->mode
+        );
     }
 
     /**
@@ -420,7 +425,6 @@ class quiz_overview_report extends attempts_report {
      */
     protected function get_new_question_for_regrade(stdClass $attempt,
             question_usage_by_activity $quba, int $slot): question_definition {
-        global $DB;
 
         // If the cache is empty, get information about all the slots.
         if ($this->structureforregrade === null) {
@@ -430,14 +434,17 @@ class quiz_overview_report extends attempts_report {
                     $attempt->quiz, $this->context);
         }
 
+        // Because of 'Redo question in attempt' feature, we need to find the original slot number.
+        $originalslot = $quba->get_question_attempt_metadata($slot, 'originalslot') ?? $slot;
+
         // If this is a non-random slot, we will have the right info cached.
-        if ($this->structureforregrade[$slot]->qtype != 'random') {
+        if ($this->structureforregrade[$originalslot]->qtype != 'random') {
             // This is a non-random slot.
-            return question_bank::load_question($this->structureforregrade[$slot]->questionid);
+            return question_bank::load_question($this->structureforregrade[$originalslot]->questionid);
         }
 
         // We must be dealing with a random question. Check that cache.
-        $currentquestion = $quba->get_question_attempt($slot)->get_question(false);
+        $currentquestion = $quba->get_question_attempt($originalslot)->get_question(false);
         if (isset($this->newquestionidsforold[$currentquestion->id])) {
             return question_bank::load_question($this->newquestionidsforold[$currentquestion->id]);
         }
@@ -685,8 +692,9 @@ class quiz_overview_report extends attempts_report {
      * @param stdClass $quiz the quiz settings.
      */
     protected function update_overall_grades($quiz) {
-        quiz_update_all_attempt_sumgrades($quiz);
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = $this->quizobj->get_grade_calculator();
+        $gradecalculator->recompute_all_attempt_sumgrades();
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 

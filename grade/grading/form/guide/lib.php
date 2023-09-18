@@ -962,7 +962,7 @@ class gradingform_guide_instance extends gradingform_instance {
             if (!empty($this->validationerrors)) {
                 foreach ($this->validationerrors as $id => $err) {
                     $a = new stdClass();
-                    $a->criterianame = s($criteria[$id]['shortname']);
+                    $a->criterianame = format_text($criteria[$id]['shortname'], FORMAT_HTML);
                     $a->maxscore = $criteria[$id]['maxscore'];
                     if ($this->validationerrors[$id]['score'] < 0) {
                         $html .= html_writer::tag('div', get_string('err_scoreisnegative', 'gradingform_guide', $a),

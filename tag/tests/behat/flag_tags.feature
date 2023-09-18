@@ -17,12 +17,10 @@ Feature: Users can flag tags and manager can reset flags
     And the following "tags" exist:
       | name         | isstandard |
       | Neverusedtag | 1          |
-    And I log in as "admin"
-    And I set the following system permissions of "Authenticated user" role:
-      | capability                   | permission |
-      | moodle/site:viewparticipants | Allow      |
-      | moodle/user:viewdetails      | Allow      |
-    And I log out
+    And the following "role capability" exists:
+      | role                         | user  |
+      | moodle/site:viewparticipants | allow |
+      | moodle/user:viewdetails      | allow |
     And I log in as "user2"
     And I turn editing mode on
     And the following config values are set as admin:

@@ -22,6 +22,8 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true);
+
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
@@ -57,27 +59,34 @@ if ($delete === md5($course->timemodified)) {
     $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
-    $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
+    $PAGE->set_title($strdeletingcourse);
     $PAGE->set_heading($SITE->fullname);
 
     echo $OUTPUT->header();
     echo $OUTPUT->heading($strdeletingcourse);
     // This might take a while. Raise the execution time limit.
     core_php_time_limit::raise();
+
     // We do this here because it spits out feedback as it goes.
+    echo $OUTPUT->footer();
+    echo $OUTPUT->select_element_for_append();
+
+    // Preemptively reset the navcache before closing, so it remains the same on shutdown.
+    navigation_cache::destroy_volatile_caches();
+    \core\session\manager::write_close();
+
     delete_course($course);
     echo $OUTPUT->heading( get_string("deletedcourse", "", $courseshortname) );
     // Update course count in categories.
     fix_course_sortorder();
     echo $OUTPUT->continue_button($categoryurl);
-    echo $OUTPUT->footer();
     exit; // We must exit here!!!
 }
 
 $strdeletecheck = get_string("deletecheck", "", $courseshortname);
 
 $PAGE->navbar->add($strdeletecheck);
-$PAGE->set_title("$SITE->shortname: $strdeletecheck");
+$PAGE->set_title($strdeletecheck);
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
 

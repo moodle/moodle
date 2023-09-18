@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Container extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -235,6 +236,7 @@ class Google_Service_Container extends Google_Service
  *   $projects = $containerService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Container_Projects_Resource extends Google_Service_Resource
 {
 }
@@ -247,6 +249,7 @@ class Google_Service_Container_Projects_Resource extends Google_Service_Resource
  *   $zones = $containerService->zones;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Container_ProjectsZones_Resource extends Google_Service_Resource
 {
 
@@ -278,6 +281,7 @@ class Google_Service_Container_ProjectsZones_Resource extends Google_Service_Res
  *   $clusters = $containerService->clusters;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Container_ProjectsZonesClusters_Resource extends Google_Service_Resource
 {
 
@@ -390,6 +394,7 @@ class Google_Service_Container_ProjectsZonesClusters_Resource extends Google_Ser
  *   $operations = $containerService->operations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Container_ProjectsZonesOperations_Resource extends Google_Service_Resource
 {
 
@@ -434,6 +439,7 @@ class Google_Service_Container_ProjectsZonesOperations_Resource extends Google_S
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Container_Cluster extends Google_Collection
 {
   protected $collection_key = 'instanceGroupUrls';
@@ -634,6 +640,7 @@ class Google_Service_Container_Cluster extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_ClusterUpdate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -651,6 +658,7 @@ class Google_Service_Container_ClusterUpdate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_CreateClusterRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -669,6 +677,7 @@ class Google_Service_Container_CreateClusterRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_ListClustersResponse extends Google_Collection
 {
   protected $collection_key = 'clusters';
@@ -688,6 +697,7 @@ class Google_Service_Container_ListClustersResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_ListOperationsResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -707,6 +717,7 @@ class Google_Service_Container_ListOperationsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_MasterAuth extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -760,6 +771,7 @@ class Google_Service_Container_MasterAuth extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_NodeConfig extends Google_Collection
 {
   protected $collection_key = 'oauthScopes';
@@ -796,6 +808,7 @@ class Google_Service_Container_NodeConfig extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_Operation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -867,6 +880,7 @@ class Google_Service_Container_Operation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_ServerConfig extends Google_Collection
 {
   protected $collection_key = 'validNodeVersions';
@@ -894,6 +908,7 @@ class Google_Service_Container_ServerConfig extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Container_UpdateClusterRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(

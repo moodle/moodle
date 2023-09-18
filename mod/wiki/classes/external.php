@@ -457,15 +457,17 @@ class mod_wiki_external extends external_api {
             throw new moodle_exception('cannotviewpage', 'wiki');
         } else if ($subwiki->id != -1) {
 
-            // Set sort param.
             $options = $params['options'];
-            if (!empty($options['sortby'])) {
-                if ($options['sortdirection'] != 'ASC' && $options['sortdirection'] != 'DESC') {
-                    // Invalid sort direction. Use default.
-                    $options['sortdirection'] = 'ASC';
-                }
-                $sort = $options['sortby'] . ' ' . $options['sortdirection'];
-            }
+
+            // Set sort param.
+            $sort = get_safe_orderby([
+                'id' => 'id',
+                'title' => 'title',
+                'timecreated' => 'timecreated',
+                'timemodified' => 'timemodified',
+                'pageviews' => 'pageviews',
+                'default' => 'title',
+            ], $options['sortby'], $options['sortdirection'], false);
 
             $pages = wiki_get_page_list($subwiki->id, $sort);
             $caneditpages = wiki_user_can_edit($subwiki);

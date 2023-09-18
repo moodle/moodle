@@ -1,6 +1,11 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 4.2 ===
+* The mod_assignment plugin has been completely removed from core.
+  It has been moved to github repository https://github.com/moodlehq/moodle-mod_assignment.
+  It should only be used/re-installed to restore backups older than 1.9.
+
 === 4.1 ===
 
 * The callback get_shortcuts() is now removed. Please use get_course_content_items and get_all_content_items instead.
@@ -270,4 +275,3 @@ optional - no changes needed in older code:
   (http://docs.moodle.org/dev/Comments_2.0)
 * new ratings API
   (http://docs.moodle.org/dev/Ratings_2.0)
-

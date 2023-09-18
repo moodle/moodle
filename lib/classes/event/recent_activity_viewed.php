@@ -65,15 +65,6 @@ class recent_activity_viewed extends base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, "course", "recent", "recent.php?id=$this->courseid", $this->courseid);
-    }
-
-    /**
      * Returns relevant URL.
      *
      * @return \moodle_url

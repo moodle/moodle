@@ -191,7 +191,7 @@ function book_reset_userdata($data) {
 /**
  * The elements to add the course reset form.
  *
- * @param moodleform $mform
+ * @param MoodleQuickForm $mform
  */
 function book_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'bookheader', get_string('modulenameplural', 'book'));

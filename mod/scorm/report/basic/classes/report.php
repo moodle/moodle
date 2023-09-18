@@ -274,32 +274,32 @@ class report extends \mod_scorm\report {
                 $csvexport->add_data($headers);
             }
             // Construct the SQL.
-            $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').' AS uniqueid, ';
+            $select = 'SELECT DISTINCT '.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(sa.attempt, 0)').' AS uniqueid, ';
             // TODO Does not support custom user profile fields (MDL-70456).
             $userfields = \core_user\fields::for_identity($coursecontext, false)->with_userpic()->including('idnumber');
             $selectfields = $userfields->get_sql('u', false, '', 'userid')->selects;
-            $select .= 'st.scormid AS scormid, st.attempt AS attempt ' . $selectfields . ' ';
+            $select .= 'sa.scormid AS scormid, sa.attempt AS attempt ' . $selectfields . ' ';
 
-            // This part is the same for all cases - join users and scorm_scoes_track tables.
+            // This part is the same for all cases - join users and user tracking tables.
             $from = 'FROM {user} u ';
-            $from .= 'LEFT JOIN {scorm_scoes_track} st ON st.userid = u.id AND st.scormid = '.$scorm->id;
+            $from .= 'LEFT JOIN {scorm_attempt} sa ON sa.userid = u.id AND sa.scormid = '.$scorm->id;
             switch ($attemptsmode) {
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH:
                     // Show only students with attempts.
-                    $where = " WHERE u.id IN ({$allowedlistsql}) AND st.userid IS NOT NULL";
+                    $where = " WHERE u.id IN ({$allowedlistsql}) AND sa.userid IS NOT NULL";
                     break;
                 case SCORM_REPORT_ATTEMPTS_STUDENTS_WITH_NO:
                     // Show only students without attempts.
-                    $where = " WHERE u.id IN ({$allowedlistsql}) AND st.userid IS NULL";
+                    $where = " WHERE u.id IN ({$allowedlistsql}) AND sa.userid IS NULL";
                     break;
                 case SCORM_REPORT_ATTEMPTS_ALL_STUDENTS:
                     // Show all students with or without attempts.
-                    $where = " WHERE u.id IN ({$allowedlistsql}) AND (st.userid IS NOT NULL OR st.userid IS NULL)";
+                    $where = " WHERE u.id IN ({$allowedlistsql}) AND (sa.userid IS NOT NULL OR sa.userid IS NULL)";
                     break;
             }
 
-            $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(st.attempt, 0)').')) AS nbresults, ';
-            $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'st.attempt').')) AS nbattempts, ';
+            $countsql = 'SELECT COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'COALESCE(sa.attempt, 0)').')) AS nbresults, ';
+            $countsql .= 'COUNT(DISTINCT('.$DB->sql_concat('u.id', '\'#\'', 'sa.attempt').')) AS nbattempts, ';
             $countsql .= 'COUNT(DISTINCT(u.id)) AS nbusers ';
             $countsql .= $from.$where;
 

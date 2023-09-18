@@ -1,181 +1,90 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Entity\Style;
 
 use OpenSpout\Writer\Exception\Border\InvalidNameException;
 use OpenSpout\Writer\Exception\Border\InvalidStyleException;
 use OpenSpout\Writer\Exception\Border\InvalidWidthException;
 
-class BorderPart
+final class BorderPart
 {
-    /**
-     * @var string the style of this border part
-     */
-    protected $style;
-
-    /**
-     * @var string the name of this border part
-     */
-    protected $name;
-
-    /**
-     * @var string the color of this border part
-     */
-    protected $color;
-
-    /**
-     * @var string the width of this border part
-     */
-    protected $width;
-
-    /**
-     * @var array allowed style constants for parts
-     */
-    protected static $allowedStyles = [
-        'none',
-        'solid',
-        'dashed',
-        'dotted',
-        'double',
+    public const allowedStyles = [
+        Border::STYLE_NONE,
+        Border::STYLE_SOLID,
+        Border::STYLE_DASHED,
+        Border::STYLE_DOTTED,
+        Border::STYLE_DOUBLE,
     ];
 
-    /**
-     * @var array allowed names constants for border parts
-     */
-    protected static $allowedNames = [
-        'left',
-        'right',
-        'top',
-        'bottom',
+    public const allowedNames = [
+        Border::LEFT,
+        Border::RIGHT,
+        Border::TOP,
+        Border::BOTTOM,
     ];
 
-    /**
-     * @var array allowed width constants for border parts
-     */
-    protected static $allowedWidths = [
-        'thin',
-        'medium',
-        'thick',
+    public const allowedWidths = [
+        Border::WIDTH_THIN,
+        Border::WIDTH_MEDIUM,
+        Border::WIDTH_THICK,
     ];
 
+    private string $style;
+    private string $name;
+    private string $color;
+    private string $width;
+
     /**
-     * @param string $name  @see  BorderPart::$allowedNames
+     * @param string $name  @see  BorderPart::allowedNames
      * @param string $color A RGB color code
-     * @param string $width @see BorderPart::$allowedWidths
-     * @param string $style @see BorderPart::$allowedStyles
+     * @param string $width @see BorderPart::allowedWidths
+     * @param string $style @see BorderPart::allowedStyles
      *
      * @throws InvalidNameException
      * @throws InvalidStyleException
      * @throws InvalidWidthException
      */
-    public function __construct($name, $color = Color::BLACK, $width = Border::WIDTH_MEDIUM, $style = Border::STYLE_SOLID)
-    {
-        $this->setName($name);
-        $this->setColor($color);
-        $this->setWidth($width);
-        $this->setStyle($style);
+    public function __construct(
+        string $name,
+        string $color = Color::BLACK,
+        string $width = Border::WIDTH_MEDIUM,
+        string $style = Border::STYLE_SOLID
+    ) {
+        if (!\in_array($name, self::allowedNames, true)) {
+            throw new InvalidNameException($name);
+        }
+        if (!\in_array($style, self::allowedStyles, true)) {
+            throw new InvalidStyleException($style);
+        }
+        if (!\in_array($width, self::allowedWidths, true)) {
+            throw new InvalidWidthException($width);
+        }
+
+        $this->name = $name;
+        $this->color = $color;
+        $this->width = $width;
+        $this->style = $style;
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @param string $name The name of the border part @see BorderPart::$allowedNames
-     *
-     * @throws InvalidNameException
-     */
-    public function setName($name)
-    {
-        if (!\in_array($name, self::$allowedNames, true)) {
-            throw new InvalidNameException($name);
-        }
-        $this->name = $name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getStyle()
+    public function getStyle(): string
     {
         return $this->style;
     }
 
-    /**
-     * @param string $style The style of the border part @see BorderPart::$allowedStyles
-     *
-     * @throws InvalidStyleException
-     */
-    public function setStyle($style)
-    {
-        if (!\in_array($style, self::$allowedStyles, true)) {
-            throw new InvalidStyleException($style);
-        }
-        $this->style = $style;
-    }
-
-    /**
-     * @return string
-     */
-    public function getColor()
+    public function getColor(): string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color The color of the border part @see Color::rgb()
-     */
-    public function setColor($color)
-    {
-        $this->color = $color;
-    }
-
-    /**
-     * @return string
-     */
-    public function getWidth()
+    public function getWidth(): string
     {
         return $this->width;
-    }
-
-    /**
-     * @param string $width The width of the border part @see BorderPart::$allowedWidths
-     *
-     * @throws InvalidWidthException
-     */
-    public function setWidth($width)
-    {
-        if (!\in_array($width, self::$allowedWidths, true)) {
-            throw new InvalidWidthException($width);
-        }
-        $this->width = $width;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllowedStyles()
-    {
-        return self::$allowedStyles;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllowedNames()
-    {
-        return self::$allowedNames;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getAllowedWidths()
-    {
-        return self::$allowedWidths;
     }
 }

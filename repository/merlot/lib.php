@@ -34,6 +34,18 @@ require_once($CFG->dirroot . '/repository/lib.php');
  */
 class repository_merlot extends repository {
 
+    /** @var string merlot keyword. */
+    protected $keyword;
+
+    /** @var string merlot author. */
+    protected $author;
+
+    /** @var string merlot license key. */
+    protected $licensekey;
+
+    /** @var string API URL. */
+    protected $api;
+
     public function __construct($repositoryid, $context = SYSCONTEXTID, $options = array()) {
         parent::__construct($repositoryid, $context, $options);
         $this->keyword = optional_param('merlot_keyword', '', PARAM_RAW);
@@ -91,11 +103,11 @@ class repository_merlot extends repository {
         $xml = simplexml_load_string($content);
         foreach ($xml->results->material as $entry) {
             $list[] = array(
-                'title'=>(string)$entry->title,
-                'thumbnail'=>$OUTPUT->image_url(file_extension_icon($entry->title, 90))->out(false),
-                'date'=>userdate((int)$entry->creationDate),
-                'size'=>'',
-                'source'=>(string)$entry->URL
+                'title' => (string)$entry->title,
+                'thumbnail' => $OUTPUT->image_url(file_extension_icon($entry->title))->out(false),
+                'date' => userdate((int)$entry->creationDate),
+                'size' => '',
+                'source' => (string)$entry->URL,
             );
         }
         return $list;
@@ -172,4 +184,3 @@ class repository_merlot extends repository {
         return false;
     }
 }
-

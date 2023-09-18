@@ -105,7 +105,6 @@ class manager {
             'adminpresets_auth_shibboleth_admin_setting_special_idp_configtextarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_auth_shibboleth_admin_setting_special_wayf_select' => 'adminpresets_admin_setting_configselect',
             'adminpresets_editor_atto_toolbar_setting' => 'adminpresets_admin_setting_configtext',
-            'adminpresets_editor_tinymce_json_setting_textarea' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_database_admin_setting_category' => 'adminpresets_admin_setting_configselect',
             'adminpresets_enrol_flatfile_role_setting' => 'adminpresets_admin_setting_configtext',
             'adminpresets_enrol_ldap_admin_setting_category' => 'adminpresets_admin_setting_configselect',
@@ -184,7 +183,8 @@ class manager {
      * @param boolean $sitedbvalues Indicates if $dbsettings comes from the site db or not
      * @param array $settings Array format $array['plugin']['settingname'] = settings_types child class
      * @param array|false $children Array of admin_category children or false
-     * @return    array Array format $array['plugin']['settingname'] = settings_types child class
+     * @return \core_adminpresets\local\setting\adminpresets_setting[][] Array format
+     *    $array['plugin']['settingname'] = adminpresets_setting child class
      */
     public function get_settings(array $dbsettings, bool $sitedbvalues = false, array $settings = [], $children = false): array {
         global $DB;

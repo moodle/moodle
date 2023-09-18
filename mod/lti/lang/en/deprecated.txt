@@ -1,0 +1,17 @@
+lti:addmanualinstance,mod_lti
+edittype,mod_lti
+deletetype,mod_lti
+cannot_delete,mod_lti
+cannot_edit,mod_lti
+global_tool_types,mod_lti
+course_tool_types,mod_lti
+using_tool_cartridge,mod_lti
+using_tool_configuration,mod_lti
+domain_mismatch,mod_lti
+custom_config,mod_lti
+tool_config_not_found,mod_lti
+tooltypeadded,mod_lti
+tooltypedeleted,mod_lti
+tooltypenotdeleted,mod_lti
+tooltypeupdated,mod_lti
+forced_help,mod_lti

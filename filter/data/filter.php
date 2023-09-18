@@ -123,7 +123,7 @@ class filter_data extends moodle_text_filter {
             usort($contents, 'filter_data::sort_entries_by_length');
 
             foreach ($contents as $content) {
-                $href_tag_begin = '<a class="data autolink dataid'.$content->dataid.'" title="'.$content->content.'" '.
+                $href_tag_begin = '<a class="data autolink dataid'.$content->dataid.'" title="'.s($content->content).'" '.
                                   'href="'.$CFG->wwwroot.'/mod/data/view.php?d='.$content->dataid.
                                   '&amp;rid='.$content->recordid.'">';
                 $contentlist[] = new filterobject($content->content, $href_tag_begin, '</a>', false, true);

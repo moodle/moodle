@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20221216" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20230826" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -105,6 +105,7 @@
         <FIELD NAME="originalcourseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="the id of the source course when a new course originates from a restore of another course on the same site."/>
         <FIELD NAME="showactivitydates" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to display activity dates to user. 0 = do not display, 1 = display activity dates"/>
         <FIELD NAME="showcompletionconditions" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Whether to display completion conditions to user. 0 = do not display, 1 = display conditions"/>
+        <FIELD NAME="pdfexportfont" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -216,6 +217,36 @@
         <INDEX NAME="timecompleted" UNIQUE="false" FIELDS="timecompleted"/>
         <INDEX NAME="useridcourse" UNIQUE="true" FIELDS="userid, course"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="communication" COMMENT="Communication records">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="instanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the instance where the communication is a part of"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Component of the instance where the communication room is a part of"/>
+        <FIELD NAME="instancetype" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="The type of the instance for the given component"/>
+        <FIELD NAME="provider" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the selected communication provider"/>
+        <FIELD NAME="roomname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Name of the communication room"/>
+        <FIELD NAME="avatarfilename" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="Name of the avatar file name for the communication instance"/>
+        <FIELD NAME="active" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The communication instance is active or not"/>
+        <FIELD NAME="avatarsynced" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Indicate if the avatar has been synced with the provider"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="communication_user" COMMENT="Communication user records mapping">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="commid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the communication instance"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="ID of the moodle user to map with communication instance"/>
+        <FIELD NAME="synced" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user is synced or not"/>
+        <FIELD NAME="deleted" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The user need to be deleted or not"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="commid" TYPE="foreign" FIELDS="commid" REFTABLE="communication" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
     </TABLE>
     <TABLE NAME="enrol" COMMENT="Instances of enrolment plugins used in courses, fields marked as custom have a plugin defined meaning, core does not touch them. Create a new linked table if you need even more custom fields.">
       <FIELDS>
@@ -1475,7 +1506,7 @@
         <FIELD NAME="questionarea" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false" COMMENT="Depending on the component, which area the question is used in (e.g. slot for quiz)."/>
         <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Plugin specific id (e.g. slotid for quiz) where its used."/>
         <FIELD NAME="questionbankentryid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="ID of the question bank entry this question is part of."/>
-        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Version number for the question where NULL means use the latest ready version."/>
+        <FIELD NAME="version" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Version number for the question where NULL means use the latest non-draft version."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -2321,6 +2352,8 @@
         <FIELD NAME="descriptionformat" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="enrolmentkey" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="picture" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="visibility" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Visibility of group membership"/>
+        <FIELD NAME="participation" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="Can this group be selected when participating in activities?"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
       </FIELDS>
@@ -2870,6 +2903,7 @@
         <FIELD NAME="validuntil" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="timestampt - valid until data"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="created timestamp"/>
         <FIELD NAME="lastaccess" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="last access timestamp"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="token name, used to identify the token at the table view"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
@@ -3386,6 +3420,7 @@
         <FIELD NAME="version" TYPE="char" LENGTH="32" NOTNULL="true" SEQUENCE="false" COMMENT="The device version, 6.1.2, 4.2.2 etc.."/>
         <FIELD NAME="pushid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="the device PUSH token/key/identifier/registration id"/>
         <FIELD NAME="uuid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The device vendor UUID"/>
+        <FIELD NAME="publickey" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="The app generated public key"/>
         <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
         <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
       </FIELDS>
@@ -4575,6 +4610,9 @@
         <KEY NAME="usercreated" TYPE="foreign" FIELDS="usercreated" REFTABLE="user" REFFIELDS="id"/>
         <KEY NAME="usermodified" TYPE="foreign" FIELDS="usermodified" REFTABLE="user" REFFIELDS="id"/>
       </KEYS>
+      <INDEXES>
+        <INDEX NAME="report-filter" UNIQUE="true" FIELDS="reportid, uniqueidentifier, iscondition"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="reportbuilder_audience" COMMENT="Defines report audience">
       <FIELDS>
@@ -4760,6 +4798,42 @@
         <INDEX NAME="coursemoduleid" UNIQUE="false" FIELDS="coursemoduleid" COMMENT="For quick access via course-module (e.g. when displaying course module settings page and we need to determine whether anyone has completed it)."/>
         <INDEX NAME="userid-coursemoduleid" UNIQUE="true" FIELDS="userid, coursemoduleid"/>
       </INDEXES>
+    </TABLE>
+    <TABLE NAME="xapi_states" COMMENT="The stored xAPI states">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="component" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="The component name"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The Agent Id (usually the plugin instance)"/>
+        <FIELD NAME="stateid" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Component identified for the state data"/>
+        <FIELD NAME="statedata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="JSON state data"/>
+        <FIELD NAME="registration" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Optional registration identifier"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="component-itemid" UNIQUE="false" FIELDS="component, itemid"/>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="timemodified" UNIQUE="false" FIELDS="timemodified"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="moodlenet_share_progress" COMMENT="Records MoodleNet share progress">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="type" TYPE="int" LENGTH="2" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="cmid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="resourceurl" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
     </TABLE>
   </TABLES>
 </XMLDB>

@@ -45,6 +45,9 @@ class brickfield_accessibility_guideline {
     /** @var array An array of all the severity levels for every test */
     public $severity = [];
 
+    /** @var array To store all the tests. */
+    public array $tests = [];
+
     /**
      * The class constructor.
      * @param object $dom The current DOMDocument object

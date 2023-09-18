@@ -952,7 +952,7 @@ class behat_course extends behat_base {
      * @param string $menuitem
      */
     public function actions_menu_should_have_item($activityname, $menuitem) {
-        $activitynode = $this->get_activity_node($activityname);
+        $activitynode = $this->get_activity_action_menu_node($activityname);
 
         $notfoundexception = new ExpectationException('"' . $activityname . '" doesn\'t have a "' .
             $menuitem . '" item', $this->getSession());
@@ -968,7 +968,7 @@ class behat_course extends behat_base {
      * @param string $menuitem
      */
     public function actions_menu_should_not_have_item($activityname, $menuitem) {
-        $activitynode = $this->get_activity_node($activityname);
+        $activitynode = $this->get_activity_action_menu_node($activityname);
 
         try {
             $this->find('named_partial', array('link', $menuitem), false, $activitynode);
@@ -977,6 +977,20 @@ class behat_course extends behat_base {
         } catch (ElementNotFoundException $e) {
             // This is good, the menu item should not be there.
         }
+    }
+
+    /**
+     * Returns the DOM node of the activity action menu.
+     *
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $activityname The activity name
+     * @return \Behat\Mink\Element\NodeElement
+     */
+    protected function get_activity_action_menu_node($activityname) {
+        $activityname = behat_context_helper::escape($activityname);
+        $xpath = "//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][contains(., $activityname)]" .
+            "//div[contains(@class, 'action-menu')]";
+        return $this->find('xpath', $xpath);
     }
 
     /**
@@ -1038,8 +1052,14 @@ class behat_course extends behat_base {
         // Not using chain steps here because the exceptions catcher have problems detecting
         // JS modal windows and avoiding interacting them at the same time.
         if ($this->running_javascript()) {
-            $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('delete'), "button", "Confirm", "dialogue")
+            $this->execute(
+                'behat_general::i_click_on_in_the',
+                [
+                    get_string('delete'),
+                    "button",
+                    get_string('cmdelete_title', 'core_courseformat'),
+                    "dialogue"
+                ]
             );
         } else {
             $this->execute("behat_forms::press_button", get_string('yes'));

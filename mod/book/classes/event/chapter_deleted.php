@@ -67,16 +67,6 @@ class chapter_deleted extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        $chapter = $this->get_record_snapshot('book_chapters', $this->objectid);
-        return array($this->courseid, 'book', 'update', 'view.php?id='.$this->contextinstanceid, $chapter->bookid, $this->contextinstanceid);
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

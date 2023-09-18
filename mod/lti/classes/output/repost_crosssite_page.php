@@ -48,6 +48,12 @@ use stdClass;
  */
 class repost_crosssite_page implements renderable, templatable {
 
+    /** @var array POST params. */
+    protected $params;
+
+    /** @var string URL to repost to. */
+    protected string $url;
+
     /**
      * Constructor
      *

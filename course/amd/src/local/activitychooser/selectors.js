@@ -16,7 +16,7 @@
 /**
  * Define all of the selectors we will be using on the grading interface.
  *
- * @module     core_course/local/chooser/selectors
+ * @module     core_course/local/activitychooser/selectors
  * @copyright  2019 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

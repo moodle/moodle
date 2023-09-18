@@ -603,6 +603,8 @@ class stateactions_test extends \advanced_testcase {
      * @param int|string|null $sectionvalue the section field value
      * @param string|null $cmfield the cm field to check
      * @param int|string|null $cmvalue the cm field value
+     * @param string|null $targetsection optional target section reference
+     * @param string|null $targetcm optional target cm reference
      * @return array an array of elements to do extra validations (course, references, results)
      */
     protected function basic_state_text(
@@ -616,7 +618,9 @@ class stateactions_test extends \advanced_testcase {
         ?string $sectionfield = null,
         $sectionvalue = 0,
         ?string $cmfield = null,
-        $cmvalue = 0
+        $cmvalue = 0,
+        ?string $targetsection = null,
+        ?string $targetcm = null
     ): array {
         $this->resetAfterTest();
 
@@ -651,6 +655,8 @@ class stateactions_test extends \advanced_testcase {
             $updates,
             $course,
             $this->translate_references($references, $idrefs),
+            ($targetsection) ? $references[$targetsection] : null,
+            ($targetcm) ? $references[$targetcm] : null,
         );
 
         // Format results in a way we can compare easily.
@@ -1075,5 +1081,342 @@ class stateactions_test extends \advanced_testcase {
         $this->assertArrayNotHasKey($references['cm3'], $cms);
         $this->assertArrayHasKey($references['cm4'], $cms);
         $this->assertArrayHasKey($references['cm5'], $cms);
+    }
+
+    /**
+     * Test for cm_moveright
+     *
+     * @covers ::cm_moveright
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_moveright(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_moveright',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            ['put' => 4],
+            null,
+            null,
+            null,
+            null,
+            'indent',
+            1
+        );
+    }
+
+    /**
+     * Test for cm_moveleft
+     *
+     * @covers ::cm_moveleft
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_moveleft(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_moveleft',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            ['put' => 4],
+            null,
+            null,
+            null,
+            null,
+            'indent',
+            0
+        );
+    }
+
+    /**
+     * Test for cm_nogroups
+     *
+     * @covers ::cm_nogroups
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_nogroups(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_nogroups',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            ['put' => 4],
+            null,
+            null,
+            null,
+            null,
+            'groupmode',
+            NOGROUPS
+        );
+    }
+
+    /**
+     * Test for cm_visiblegroups
+     *
+     * @covers ::cm_visiblegroups
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_visiblegroups(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_visiblegroups',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            ['put' => 4],
+            null,
+            null,
+            null,
+            null,
+            'groupmode',
+            VISIBLEGROUPS
+        );
+    }
+
+    /**
+     * Test for cm_separategroups
+     *
+     * @covers ::cm_separategroups
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_cm_separategroups(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->basic_state_text(
+            'cm_separategroups',
+            $role,
+            ['cm0', 'cm1', 'cm2', 'cm3'],
+            $expectedexception,
+            ['put' => 4],
+            null,
+            null,
+            null,
+            null,
+            'groupmode',
+            SEPARATEGROUPS
+        );
+    }
+
+    /**
+     * Test for section_move_after
+     *
+     * @covers ::section_move_after
+     * @dataProvider section_move_after_provider
+     * @param string[] $sectiontomove the sections to move
+     * @param string $targetsection the target section reference
+     * @param string[] $finalorder the final sections order
+     * @param string[] $updatedcms the list of cms in the state updates
+     * @param int $totalputs the total amount of put updates
+     */
+    public function test_section_move_after(
+        array $sectiontomove,
+        string $targetsection,
+        array $finalorder,
+        array $updatedcms,
+        int $totalputs
+    ): void {
+        $this->resetAfterTest();
+
+        $course = $this->create_course('topics', 8, []);
+
+        $references = $this->course_references($course);
+
+        // Add some activities to the course. One visible and one hidden in both sections 1 and 2.
+        $references["cm0"] = $this->create_activity($course->id, 'assign', 1, true);
+        $references["cm1"] = $this->create_activity($course->id, 'book', 1, false);
+        $references["cm2"] = $this->create_activity($course->id, 'glossary', 2, true);
+        $references["cm3"] = $this->create_activity($course->id, 'page', 2, false);
+        $references["cm4"] = $this->create_activity($course->id, 'forum', 3, false);
+        $references["cm5"] = $this->create_activity($course->id, 'wiki', 3, false);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
+        $this->setUser($user);
+
+        // Initialise stateupdates.
+        $courseformat = course_get_format($course->id);
+        $updates = new stateupdates($courseformat);
+
+        // Execute the method.
+        $actions = new stateactions();
+        $actions->section_move_after(
+            $updates,
+            $course,
+            $this->translate_references($references, $sectiontomove),
+            $references[$targetsection]
+        );
+
+        // Format results in a way we can compare easily.
+        $results = $this->summarize_updates($updates);
+
+        // Validate we have all the expected entries.
+        $this->assertEquals(0, $results['create']['count']);
+        $this->assertEquals(0, $results['remove']['count']);
+        // Moving a section puts:
+        // - The course state.
+        // - All sections state.
+        // - The cm states related to the moved and target sections.
+        $this->assertEquals($totalputs, $results['put']['count']);
+
+        // Course state should contain the sorted list of sections (section zero + 8 sections).
+        $finalsectionids = $this->translate_references($references, $finalorder);
+        $coursestate = reset($results['put']['course']);
+        $this->assertEquals($finalsectionids, $coursestate->sectionlist);
+        // All sections should be present in the update.
+        $this->assertCount(9, $results['put']['section']);
+        // Only cms from the affected sections should be updated.
+        $cmids = $this->translate_references($references, $updatedcms);
+        $cms = $results['put']['cm'];
+        foreach ($cmids as $cmid) {
+            $this->assertArrayHasKey($cmid, $cms);
+        }
+    }
+
+    /**
+     * Provider for test_section_move_after.
+     *
+     * @return array the testing scenarios
+     */
+    public function section_move_after_provider(): array {
+        return [
+            'Move sections down' => [
+                'sectiontomove' => ['section2', 'section4'],
+                'targetsection' => 'section7',
+                'finalorder' => [
+                    'section0',
+                    'section1',
+                    'section3',
+                    'section5',
+                    'section6',
+                    'section7',
+                    'section2',
+                    'section4',
+                    'section8',
+                ],
+                'updatedcms' => ['cm2', 'cm3'],
+                'totalputs' => 12,
+            ],
+            'Move sections up' => [
+                'sectiontomove' => ['section3', 'section5'],
+                'targetsection' => 'section1',
+                'finalorder' => [
+                    'section0',
+                    'section1',
+                    'section3',
+                    'section5',
+                    'section2',
+                    'section4',
+                    'section6',
+                    'section7',
+                    'section8',
+                ],
+                'updatedcms' => ['cm0', 'cm1', 'cm4', 'cm5'],
+                'totalputs' => 14,
+            ],
+            'Move sections in the middle' => [
+                'sectiontomove' => ['section2', 'section5'],
+                'targetsection' => 'section3',
+                'finalorder' => [
+                    'section0',
+                    'section1',
+                    'section3',
+                    'section2',
+                    'section5',
+                    'section4',
+                    'section6',
+                    'section7',
+                    'section8',
+                ],
+                'updatedcms' => ['cm2', 'cm3', 'cm4', 'cm5'],
+                'totalputs' => 14,
+            ],
+            'Move sections on top' => [
+                'sectiontomove' => ['section3', 'section5'],
+                'targetsection' => 'section0',
+                'finalorder' => [
+                    'section0',
+                    'section3',
+                    'section5',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section6',
+                    'section7',
+                    'section8',
+                ],
+                'updatedcms' => ['cm4', 'cm5'],
+                'totalputs' => 12,
+            ],
+            'Move sections on bottom' => [
+                'sectiontomove' => ['section3', 'section5'],
+                'targetsection' => 'section8',
+                'finalorder' => [
+                    'section0',
+                    'section1',
+                    'section2',
+                    'section4',
+                    'section6',
+                    'section7',
+                    'section8',
+                    'section3',
+                    'section5',
+                ],
+                'updatedcms' => ['cm4', 'cm5'],
+                'totalputs' => 12,
+            ],
+        ];
+    }
+
+    /**
+     * Test for section_move_after capability checks.
+     *
+     * @covers ::section_move_after
+     * @dataProvider basic_role_provider
+     * @param string $role the user role
+     * @param bool $expectedexception if it will expect an exception.
+     */
+    public function test_section_move_after_capabilities(
+        string $role = 'editingteacher',
+        bool $expectedexception = false
+    ): void {
+        $this->resetAfterTest();
+        // We want modules to be deleted for good.
+        set_config('coursebinenable', 0, 'tool_recyclebin');
+
+        $info = $this->basic_state_text(
+            'section_move_after',
+            $role,
+            ['section2'],
+            $expectedexception,
+            ['put' => 9],
+            null,
+            0,
+            null,
+            0,
+            null,
+            0,
+            'section0'
+        );
     }
 }

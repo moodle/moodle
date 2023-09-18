@@ -1,0 +1,69 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template gradereport_grader/collapse/collapsebody
+
+    The body of the column collapsing dropdown that contains the form and subsequent results from the search.
+
+    Example context (json):
+    {
+        "results": [
+            {
+                "name": "42",
+                "displayName": "The meaning of life",
+                "category": "Hitchhikers grade category"
+            }
+        ],
+        "searchTerm": "Meaning of",
+        "userid": "42"
+    }
+}}
+<div class="flex-column h-100 w-100">
+    <span class="d-none" data-region="userid" data-userid="{{userid}}" aria-hidden="true"></span>
+
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchcollapsedcolumns, core_grades
+        {{/str}}{{/placeholder}}
+        {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="collapse-listbox"
+            aria-autocomplete="list"
+            data-input-element="collapse-input-{{uniqid}}"
+        {{/additionalattributes}}
+    {{/ core/search_input_auto }}
+    <input type="hidden" name="search" id="collapse-input-{{uniqid}}"/>
+
+    <form class="columnsdropdownform flex-column h-100">
+        <ul id="collapse-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true">
+            {{>gradereport_grader/collapse/collapseresults}}
+        </ul>
+        <div class="d-flex mt-2">
+            <div class="d-flex align-items-center form-check">
+                <label id="check-all" for="check-all-input" class="selected-option-info text-truncate form-check-label d-block" tabindex="-1">
+                    <input disabled id="check-all-input" class="form-check-input" type="checkbox" data-action="selectall" aria-label="{{#str}}selectall, core{{/str}}">
+                    {{#str}}selectall, core{{/str}}
+                </label>
+            </div>
+            <div class="flex-row ml-auto">
+                <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">
+                <input disabled class="btn btn-primary pull-right" data-action="save" type="submit" value="{{#str}}expand{{/str}}">
+            </div>
+        </div>
+    </form>
+</div>

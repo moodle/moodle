@@ -21,9 +21,7 @@ Feature: We can customise the letter boundary of a course in gradebook version 2
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | grade |
       | assign | C1 | a1 | Test assignment one | Submit something! | 100 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Course grade settings" in the course gradebook
+    And I am on the "Course 1" "grades > course grade settings" page logged in as "teacher1"
     And I set the following fields to these values:
       | Grade display type | Letter |
     And I press "Save changes"
@@ -40,5 +38,5 @@ Feature: We can customise the letter boundary of a course in gradebook version 2
     And I am on "Course 1" course homepage with editing mode off
     And I navigate to "View > Grader report" in the course gradebook
     Then the following should exist in the "user-grades" table:
-      | -1-       | -4- | -5- |
-      | Student 1 | F   | F   |
+      | -1-       |  -1-                    | -3- | -4- |
+      | Student 1 |  student1@example.com   | F   | F   |

@@ -105,6 +105,19 @@ class notes extends datasource {
             'note:publishstate',
             'course:fullname',
             'note:content',
+            'note:timecreated',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'recipient:fullname' => SORT_ASC,
+            'note:timecreated' => SORT_ASC,
         ];
     }
 

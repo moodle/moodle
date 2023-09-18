@@ -59,7 +59,7 @@ abstract class portfolio_plugin_base {
     /** @var bool whether this instance is visible or not */
     protected $visible;
 
-    /** @var array admin configured config use {@link set_config} and {@get_config} to access */
+    /** @var stdClass admin configured config use {@see set_config} and {@see get_config} to access */
     protected $config;
 
     /** @var array user config cache. keyed on userid and then on config field => value use {@link get_user_config} and {@link set_user_config} to access. */
@@ -634,7 +634,7 @@ abstract class portfolio_plugin_base {
      * like name, visible etc.
      *
      * @param string $field property name
-     * @return array|string|int|boolean value of the field
+     * @return mixed value of the field
      */
     public final function get($field) {
         // This is a legacy change to the way files are get/set.

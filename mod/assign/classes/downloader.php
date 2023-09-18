@@ -176,7 +176,7 @@ class downloader {
         if ($this->instance->teamsubmission) {
             $submissiongroup = $manager->get_submission_group($student->id);
             if ($submissiongroup) {
-                $groupname = $submissiongroup->name;
+                $groupname = format_string($submissiongroup->name, true, ['context' => $manager->get_context()]);
                 $groupinfo = '_' . $submissiongroup->id;
             } else {
                 $groupname = get_string('defaultteam', 'mod_assign');
@@ -280,7 +280,7 @@ class downloader {
             $this->instance->name,
         ];
         if (!empty($this->groupid)) {
-            $filenameparts[] = groups_get_group_name($this->groupid);
+            $filenameparts[] = format_string(groups_get_group_name($this->groupid), true, ['context' => $manager->get_context()]);
         }
         $filenameparts[] = $manager->get_course_module()->id;
 

@@ -111,7 +111,10 @@ class cli_helper {
         $form = new \admin_uploaduser_form1();
         [$elements, $defaults] = $form->get_form_for_cli();
         $options += $this->prepare_form_elements_for_cli($elements, $defaults);
-        $form = new \admin_uploaduser_form2(null, ['columns' => ['type1'], 'data' => []]);
+        // Specify pseudo-column 'type1' to force the form to populate the legacy role mapping selector
+        // but only if user is allowed to assign roles in courses (otherwise form validation will fail).
+        $columns = uu_allowed_roles() ? ['type1'] : [];
+        $form = new \admin_uploaduser_form2(null, ['columns' => $columns, 'data' => []]);
         [$elements, $defaults] = $form->get_form_for_cli();
         $options += $this->prepare_form_elements_for_cli($elements, $defaults);
         return $options;

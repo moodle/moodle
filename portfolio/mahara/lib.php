@@ -50,6 +50,9 @@ class portfolio_plugin_mahara extends portfolio_plugin_pull_base {
     private $totalsize; // total size of all included files added together
     private $continueurl; // if we've been sent back a specific url to continue to (eg folder id)
 
+    /** @var mnet_environment the equivalent of old $MNET global. */
+    public $mnet;
+
     protected function init() {
         $this->mnet = get_mnet_environment();
     }

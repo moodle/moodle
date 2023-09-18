@@ -14,26 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * core_contentbank specific renderers
- *
- * @package   core_contentbank
- * @copyright  2020 Ferran Recio <ferran@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_contentbank\output;
 
+use context_course;
+use context_coursecat;
+use core_contentbank\content;
 use core_contentbank\contentbank;
 use renderable;
 use templatable;
 use renderer_base;
 use stdClass;
-use core_contentbank\content;
 
 /**
  * Class containing data for bank content
  *
+ * @package    core_contentbank
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -138,7 +133,9 @@ class bankcontent implements renderable, templatable {
         }
         $options = [];
         foreach ($this->allowedcategories as $allowedcategory) {
-            $options[$allowedcategory->ctxid] = $allowedcategory->name;
+            $options[$allowedcategory->ctxid] = format_string($allowedcategory->name, true, [
+                'context' => context_coursecat::instance($allowedcategory->ctxinstance),
+            ]);
         }
         if (!empty($options)) {
             $allowedcontexts['categories'] = [get_string('coursecategories') => $options];
@@ -147,21 +144,24 @@ class bankcontent implements renderable, templatable {
         foreach ($this->allowedcourses as $allowedcourse) {
             // Don't add the frontpage course to the list.
             if ($allowedcourse->id != $SITE->id) {
-                $options[$allowedcourse->ctxid] = $allowedcourse->shortname;
+                $options[$allowedcourse->ctxid] = format_string($allowedcourse->fullname, true, [
+                    'context' => context_course::instance($allowedcourse->ctxinstance),
+                ]);
             }
         }
         if (!empty($options)) {
             $allowedcontexts['courses'] = [get_string('courses') => $options];
         }
         if (!empty($allowedcontexts)) {
-            $url = new \moodle_url('/contentbank/index.php');
+            $strchoosecontext = get_string('choosecontext', 'core_contentbank');
             $singleselect = new \single_select(
-                $url,
+                new \moodle_url('/contentbank/index.php'),
                 'contextid',
                 $allowedcontexts,
                 $this->context->id,
-                get_string('choosecontext', 'core_contentbank')
+                $strchoosecontext
             );
+            $singleselect->set_label($strchoosecontext, ['class' => 'sr-only']);
             $data->allowedcontexts = $singleselect->export_for_template($output);
         }
 

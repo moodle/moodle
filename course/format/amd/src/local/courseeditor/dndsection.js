@@ -26,7 +26,7 @@
  */
 
 import {BaseComponent, DragDrop} from 'core/reactive';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import Templates from 'core/templates';
 

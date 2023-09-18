@@ -560,7 +560,9 @@ ORDER BY
      * @return array of records. See the SQL in this function to see the fields available.
      */
     public function load_questions_usages_latest_steps(qubaid_condition $qubaids, $slots = null, $fields = null) {
-        if ($slots !== null) {
+        if ($slots === []) {
+            return [];
+        } else if ($slots !== null) {
             [$slottest, $params] = $this->db->get_in_or_equal($slots, SQL_PARAMS_NAMED, 'slot');
             $slotwhere = " AND qa.slot {$slottest}";
         } else {
@@ -1173,11 +1175,11 @@ ORDER BY
     }
 
     /**
-     * Return a subquery that computes the sum of the marks for all the questions
-     * in a usage. Which useage to compute the sum for is controlled bu the $qubaid
+     * Return a sub-query that computes the sum of the marks for all the questions
+     * in a usage. Which usage to compute the sum for is controlled by the $qubaid
      * parameter.
      *
-     * See {@link quiz_update_all_attempt_sumgrades()} for an example of the usage of
+     * See {@see \mod_quiz\grade_calculator::recompute_all_attempt_sumgrades()} for an example of the usage of
      * this method.
      *
      * This method may be called publicly.

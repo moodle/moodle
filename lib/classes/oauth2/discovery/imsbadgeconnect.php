@@ -82,6 +82,16 @@ class imsbadgeconnect extends base_definition {
                     $issuer->set('image', $url);
                     $issuer->update();
                 }
+            } else if ($key == 'apiBase') {
+                (new endpoint(0, (object) [
+                    'issuerid' => $issuer->get('id'),
+                    'name' => $key,
+                    'url' => $value,
+                ]))->create();
+            } else if ($key == 'name') {
+                // Get and update issuer name.
+                $issuer->set('name', $value);
+                $issuer->update();
             }
         }
     }
@@ -124,7 +134,7 @@ class imsbadgeconnect extends base_definition {
                 $request = [
                     'client_name' => $SITE->fullname,
                     'client_uri' => $hosturl,
-                    'logo_uri' => $hosturl . 'pix/f/moodle-256.png',
+                    'logo_uri' => $hosturl . 'pix/moodlelogo.png',
                     'tos_uri' => $hosturl,
                     'policy_uri' => $hosturl,
                     'software_id' => 'moodle',

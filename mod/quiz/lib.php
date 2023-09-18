@@ -26,11 +26,14 @@
  */
 
 
+use qbank_managecategories\helper;
+
 defined('MOODLE_INTERNAL') || die();
 
 use mod_quiz\access_manager;
-use mod_quiz\form\add_random_form;
+use mod_quiz\grade_calculator;
 use mod_quiz\question\bank\custom_view;
+use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\question\qubaids_for_quiz;
 use mod_quiz\question\qubaids_for_users_attempts;
@@ -39,6 +42,7 @@ use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
 
 require_once($CFG->dirroot . '/calendar/lib.php');
+require_once($CFG->dirroot . '/question/editlib.php');
 
 /**#@+
  * Option controlling what options are offered on the quiz settings form.
@@ -149,7 +153,8 @@ function quiz_update_instance($quiz, $mform) {
     quiz_after_add_or_update($quiz);
 
     if ($oldquiz->grademethod != $quiz->grademethod) {
-        quiz_update_all_final_grades($quiz);
+        $gradecalculator = quiz_settings::create($quiz->id)->get_grade_calculator();
+        $gradecalculator->recompute_all_final_grades();
         quiz_update_grades($quiz);
     }
 
@@ -415,7 +420,7 @@ function quiz_delete_all_attempts($quiz) {
 /**
  * Delete all the attempts belonging to a user in a particular quiz.
  *
- * @param stdClass $quiz The quiz object.
+ * @param \mod_quiz\quiz_settings $quiz The quiz object.
  * @param stdClass $user The user object.
  */
 function quiz_delete_user_attempts($quiz, $user) {
@@ -461,7 +466,7 @@ function quiz_get_best_grade($quiz, $userid) {
  * @return bool whether this is a graded quiz.
  */
 function quiz_has_grades($quiz) {
-    return $quiz->grade >= 0.000005 && $quiz->sumgrades >= 0.000005;
+    return $quiz->grade >= grade_calculator::ALMOST_ZERO && $quiz->sumgrades >= grade_calculator::ALMOST_ZERO;
 }
 
 /**
@@ -1114,6 +1119,7 @@ function quiz_process_options($quiz) {
     // Combing the individual settings into the review columns.
     $quiz->reviewattempt = quiz_review_option_form_to_db($quiz, 'attempt');
     $quiz->reviewcorrectness = quiz_review_option_form_to_db($quiz, 'correctness');
+    $quiz->reviewmaxmarks = quiz_review_option_form_to_db($quiz, 'maxmarks');
     $quiz->reviewmarks = quiz_review_option_form_to_db($quiz, 'marks');
     $quiz->reviewspecificfeedback = quiz_review_option_form_to_db($quiz, 'specificfeedback');
     $quiz->reviewgeneralfeedback = quiz_review_option_form_to_db($quiz, 'generalfeedback');
@@ -1171,31 +1177,21 @@ function quiz_review_option_form_to_db($fromform, $field) {
  * @return \core\output\inplace_editable|void
  */
 function mod_quiz_inplace_editable(string $itemtype, int $itemid, string $newvalue): \core\output\inplace_editable {
+    global $DB;
+
     if ($itemtype === 'slotdisplaynumber') {
-        global $DB;
-        $record = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
-        $quiz = $DB->get_record('quiz', ['id' => $record->quizid], '*', MUST_EXIST);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
-        $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+        // Work out which quiz and slot this is.
+        $slot = $DB->get_record('quiz_slots', ['id' => $itemid], '*', MUST_EXIST);
+        $quizobj = quiz_settings::create($slot->quizid);
 
-        // Call validate_context for course module to check access and set current context.
-        $context = context_module::instance($cm->id);
+        // Validate the context, and check the required capability.
+        $context = $quizobj->get_context();
         \core_external\external_api::validate_context($context);
-
-        // Check permission of the user to update this item (customise question number).
         require_capability('mod/quiz:manage', $context);
 
-        $quizobj = new quiz_settings($quiz, $cm, $course);
+        // Update the value - truncating the size of the DB column.
         $structure = $quizobj->get_structure();
-        $warning = false;
-        // Clean input and update the record.
-        $record->displaynumber = s(clean_param($newvalue, PARAM_RAW));
-
-        // Truncate the string if the input string exceeds the size of the displaynumber field (16 chars) in the database.
-        if (strlen($record->displaynumber) > 16) {
-            $record->displaynumber = substr($record->displaynumber, 0, 16);
-        }
-        $structure->update_slot_display_number($itemid, $record->displaynumber);
+        $structure->update_slot_display_number($itemid, core_text::substr($newvalue, 0, 16));
 
         // Prepare the element for the output.
         return $structure->make_slot_display_number_in_place_editable($itemid, $context);
@@ -1475,32 +1471,22 @@ function quiz_get_post_actions() {
 }
 
 /**
+ * Standard callback used by questions_in_use.
+ *
  * @param array $questionids of question ids.
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
-    global $DB;
-    list($test, $params) = $DB->get_in_or_equal($questionids);
-    $params['component'] = 'mod_quiz';
-    $params['questionarea'] = 'slot';
-    $sql = "SELECT qs.id
-              FROM {quiz_slots} qs
-              JOIN {question_references} qr ON qr.itemid = qs.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-             WHERE qv.questionid $test
-               AND qr.component = ?
-               AND qr.questionarea = ?";
-    return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
-            $questionids, new qubaid_join('{quiz_attempts} quiza',
-            'quiza.uniqueid', 'quiza.preview = 0'));
+    return question_engine::questions_in_use($questionids,
+            new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid',
+                'quiza.preview = 0'));
 }
 
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the quiz.
  *
- * @param $mform the course reset form that is being built.
+ * @param MoodleQuickForm $mform the course reset form that is being built.
  */
 function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));
@@ -1959,8 +1945,7 @@ function quiz_check_updates_since(cm_info $cm, $from, $filter = []) {
     $updates->questions = (object) ['updated' => false];
     $quizobj = quiz_settings::create($cm->instance, $USER->id);
     $quizobj->preload_questions();
-    $quizobj->load_questions();
-    $questionids = array_keys($quizobj->get_questions());
+    $questionids = array_keys($quizobj->get_questions(null, false));
     if (!empty($questionids)) {
         list($questionsql, $params) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
         $select = 'id ' . $questionsql . ' AND (timemodified > :time1 OR timecreated > :time2)';
@@ -2117,7 +2102,7 @@ function mod_quiz_core_calendar_provide_event_action(calendar_event $event,
  * when printing this activity in a course listing.  See get_array_of_activities() in course/lib.php.
  *
  * @param stdClass $coursemodule The coursemodule object (record).
- * @return cached_cm_info An object on information that the courses
+ * @return cached_cm_info|false An object on information that the courses
  *                        will know about (most noticeably, an icon).
  */
 function quiz_get_coursemodule_info($coursemodule) {
@@ -2409,27 +2394,27 @@ function mod_quiz_core_calendar_event_timestart_updated(\calendar_event $event, 
  * @param array $args The fragment arguments.
  * @return string The rendered mform fragment.
  */
-function mod_quiz_output_fragment_quiz_question_bank($args) {
-    global $CFG, $DB, $PAGE;
-    require_once($CFG->dirroot . '/mod/quiz/locallib.php');
-    require_once($CFG->dirroot . '/question/editlib.php');
+function mod_quiz_output_fragment_quiz_question_bank($args): string {
+    global $PAGE;
 
-    $querystring = preg_replace('/^\?/', '', $args['querystring']);
+    // Retrieve params.
     $params = [];
+    $extraparams = [];
+    $querystring = parse_url($args['querystring'], PHP_URL_QUERY);
     parse_str($querystring, $params);
 
-    // Build the required resources. The $params are all cleaned as
-    // part of this process.
-    list($thispageurl, $contexts, $cmid, $cm, $quiz, $pagevars) =
-            question_build_edit_resources('editq', '/mod/quiz/edit.php', $params, custom_view::DEFAULT_PAGE_SIZE);
+    $viewclass = \mod_quiz\question\bank\custom_view::class;
+    $extraparams['view'] = $viewclass;
 
-    // Get the course object and related bits.
-    $course = $DB->get_record('course', ['id' => $quiz->course], '*', MUST_EXIST);
+    // Build required parameters.
+    [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
+            build_required_parameters_for_custom_view($params, $extraparams);
+
+    $course = get_course($cm->course);
     require_capability('mod/quiz:manage', $contexts->lowest());
 
-    // Create quiz question bank view.
-    $questionbank = new custom_view($contexts, $thispageurl, $course, $cm, $quiz);
-    $questionbank->set_quiz_has_attempts(quiz_has_attempts($quiz->id));
+    // Custom View.
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
 
     // Output.
     $renderer = $PAGE->get_renderer('mod_quiz', 'edit');
@@ -2450,32 +2435,54 @@ function mod_quiz_output_fragment_quiz_question_bank($args) {
  * @return string The rendered mform fragment.
  */
 function mod_quiz_output_fragment_add_random_question_form($args) {
-    global $CFG;
+    global $PAGE, $OUTPUT;
 
-    $contexts = new \core_question\local\bank\question_edit_contexts($args['context']);
-    $formoptions = [
-        'contexts' => $contexts,
-        'cat' => $args['cat']
+    $extraparams = [];
+
+    // Build required parameters.
+    [$contexts, $thispageurl, $cm, $pagevars, $extraparams] =
+            build_required_parameters_for_custom_view($args, $extraparams);
+
+    // Additional param to differentiate with other question bank view.
+    $extraparams['view'] = mod_quiz\question\bank\random_question_view::class;
+
+    $course = get_course($cm->course);
+    require_capability('mod/quiz:manage', $contexts->lowest());
+
+    // Custom View.
+    $questionbank = new mod_quiz\question\bank\random_question_view($contexts, $thispageurl, $course, $cm, $pagevars, $extraparams);
+
+    $renderer = $PAGE->get_renderer('mod_quiz', 'edit');
+    $questionbankoutput = $renderer->question_bank_contents($questionbank, $pagevars);
+
+    $maxrand = 100;
+    for ($i = 1; $i <= min(100, $maxrand); $i++) {
+        $randomcount[] = ['value' => $i, 'name' => $i];
+    }
+
+    // Parent category select.
+    $usablecontexts = $contexts->having_cap('moodle/question:useall');
+    $categoriesarray = helper::question_category_options($usablecontexts);
+    $catoptions = [];
+    foreach ($categoriesarray as $group => $opts) {
+        // Options for each category group.
+        $categories = [];
+        foreach ($opts as $context => $name) {
+            $categories[] = ['value' => $context, 'name' => $name];
+        }
+        $catoptions[] = ['label' => $group, 'options' => $categories];
+    }
+
+    // Template data.
+    $data = [
+        'questionbank' => $questionbankoutput,
+        'randomoptions' => $randomcount,
+        'questioncategoryoptions' => $catoptions,
     ];
-    $formdata = [
-        'category' => $args['cat'],
-        'addonpage' => $args['addonpage'],
-        'returnurl' => $args['returnurl'],
-        'cmid' => $args['cmid']
-    ];
 
-    $form = new add_random_form(
-        new \moodle_url('/mod/quiz/addrandom.php'),
-        $formoptions,
-        'post',
-        '',
-        null,
-        true,
-        $formdata
-    );
-    $form->set_data($formdata);
+    $result = $OUTPUT->render_from_template('mod_quiz/add_random_question_form', $data);
 
-    return $form->render();
+    return $result;
 }
 
 /**
@@ -2523,17 +2530,72 @@ function quiz_delete_references($quizid): void {
 }
 
 /**
+ * Question data fragment to get the question html via ajax call.
+ *
+ * @param array $args
+ * @return string
+ */
+function mod_quiz_output_fragment_question_data(array $args): string {
+    // Return if there is no args.
+    if (empty($args)) {
+        return '';
+    }
+
+    // Retrieve params from query string.
+    [$params, $extraparams] = \core_question\local\bank\filter_condition_manager::extract_parameters_from_fragment_args($args);
+
+    // Build required parameters.
+    $cmid = clean_param($args['cmid'], PARAM_INT);
+    $thispageurl = new \moodle_url('/mod/quiz/edit.php', ['cmid' => $cmid]);
+    $thiscontext = \context_module::instance($cmid);
+    $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    $course = get_course($params['courseid']);
+    [, $cm] = get_module_from_cmid($cmid);
+
+    // Custom question bank View.
+    $viewclass = clean_param($args['view'], PARAM_NOTAGS);
+    $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
+
+    // Question table.
+    return $questionbank->display_questions_table();
+}
+
+/**
+ * Build required parameters for question bank custom view
+ *
+ * @param array $params the page parameters
+ * @param array $extraparams additional parameters
+ * @return array
+ */
+function build_required_parameters_for_custom_view(array $params, array $extraparams): array {
+    // Retrieve questions per page.
+    $viewclass = $extraparams['view'] ?? null;
+    $defaultpagesize = $viewclass ? $viewclass::DEFAULT_PAGE_SIZE : DEFAULT_QUESTIONS_PER_PAGE;
+    // Build the required params.
+    [$thispageurl, $contexts, $cmid, $cm, , $pagevars] = question_build_edit_resources(
+            'editq',
+            '/mod/quiz/edit.php',
+            array_merge($params, $extraparams),
+            $defaultpagesize);
+
+    // Add cmid so we can retrieve later in extra params.
+    $extraparams['cmid'] = $cmid;
+
+    return [$contexts, $thispageurl, $cm, $pagevars, $extraparams];
+}
+
+/**
  * Implement the calculate_question_stats callback.
  *
  * This enables quiz statistics to be shown in statistics columns in the database.
  *
  * @param context $context return the statistics related to this context (which will be a quiz context).
- * @return all_calculated_for_qubaid_condition|null The statistics for this quiz, if any, else null.
+ * @return all_calculated_for_qubaid_condition|null The statistics for this quiz, if available, else null.
  */
 function mod_quiz_calculate_question_stats(context $context): ?all_calculated_for_qubaid_condition {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
     $cm = get_coursemodule_from_id('quiz', $context->instanceid);
     $report = new quiz_statistics_report();
-    return $report->calculate_questions_stats_for_question_bank($cm->instance);
+    return $report->calculate_questions_stats_for_question_bank($cm->instance, false);
 }

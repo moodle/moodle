@@ -220,8 +220,8 @@ function url_get_coursemodule_info($coursemodule) {
     $info = new cached_cm_info();
     $info->name = $url->name;
 
-    //note: there should be a way to differentiate links from normal resources
-    $info->icon = url_guess_icon($url->externalurl, 24);
+    // Note: there should be a way to differentiate links from normal resources.
+    $info->icon = url_guess_icon($url->externalurl);
 
     $display = url_get_final_display_type($url);
 
@@ -245,6 +245,8 @@ function url_get_coursemodule_info($coursemodule) {
     }
 
     $info->customdata['display'] = $display;
+    // The icon will be filtered from now on because the custom icons have been updated.
+    $info->customdata['filtericon'] = true;
 
     return $info;
 }

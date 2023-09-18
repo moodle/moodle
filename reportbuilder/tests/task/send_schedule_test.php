@@ -157,22 +157,47 @@ class send_schedule_test extends advanced_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
 
         // Create a report that won't return any data.
-        $report = $generator->create_report(['name' => 'Myself', 'source' => users::class]);
+        $report = $generator->create_report(['name' => 'Myself', 'source' => users::class, 'default' => false]);
 
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username']);
         $generator->create_condition(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username']);
+
         manager::get_report_from_persistent($report)->set_condition_values([
             'user:username_operator' => text::IS_EQUAL_TO,
             'user:username_value' => 'baconlettucetomato',
         ]);
 
+        $audience = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
         $schedule = $generator->create_schedule([
             'reportid' => $report->get('id'),
             'name' => 'My schedule',
+            'audiences' => json_encode([$audience->get_persistent()->get('id')]),
             'reportempty' => schedule::REPORT_EMPTY_DONT_SEND,
         ]);
 
         $this->expectOutputString("Sending schedule: My schedule\n" .
-            "  Empty report, skipping\n");
+            "  Empty report, skipping\n" .
+            "Sending schedule complete\n");
+        $sendschedule = new send_schedule();
+        $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
+        $sendschedule->execute();
+    }
+
+    /**
+     * Test executing task for a schedule that contains no recipients
+     */
+    public function test_execute_schedule_no_recipients(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $schedule = $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule']);
+
+        $this->expectOutputString("Sending schedule: My schedule\n" .
+            "Sending schedule complete\n");
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
         $sendschedule->execute();

@@ -344,8 +344,8 @@ class rule_test extends \advanced_testcase {
         // Check that correct error message is returned.
         $errormsg = $this->make_rule()->prevent_access();
         $this->assertNotEmpty($errormsg);
-        $this->assertStringContainsString("The config key or browser exam keys could not be validated. "
-            . "Please ensure you are using the Safe Exam Browser with correct configuration file.", $errormsg);
+        $this->assertStringContainsString("The Safe Exam Browser keys could not be validated. "
+            . "Check that you're using Safe Exam Browser with the correct configuration file.", $errormsg);
         $this->assertStringContainsString($this->get_seb_download_link(), $errormsg);
         $this->assertStringContainsString($this->get_seb_launch_link(), $errormsg);
         $this->assertStringContainsString($this->get_seb_config_download_link(), $errormsg);
@@ -601,8 +601,8 @@ class rule_test extends \advanced_testcase {
         // Check that correct error message is returned.
         $errormsg = $this->make_rule()->prevent_access();
         $this->assertNotEmpty($errormsg);
-        $this->assertStringContainsString("The config key or browser exam keys could not be validated. "
-            . "Please ensure you are using the Safe Exam Browser with correct configuration file.", $errormsg);
+        $this->assertStringContainsString("The Safe Exam Browser keys could not be validated. "
+            . "Check that you're using Safe Exam Browser with the correct configuration file.", $errormsg);
 
         if ($downloadseblink) {
             $this->assertStringContainsString($this->get_seb_download_link(), $errormsg);

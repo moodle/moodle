@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Helper\Escaper;
 
 /**
- * Interface EscaperInterface.
+ * @internal
  */
 interface EscaperInterface
 {
@@ -14,7 +16,7 @@ interface EscaperInterface
      *
      * @return string The escaped string
      */
-    public function escape($string);
+    public function escape(string $string): string;
 
     /**
      * Unescapes the given string to make it compatible with PHP.
@@ -23,5 +25,5 @@ interface EscaperInterface
      *
      * @return string The unescaped string
      */
-    public function unescape($string);
+    public function unescape(string $string): string;
 }

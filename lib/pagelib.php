@@ -125,6 +125,11 @@ class moodle_page {
     const STATE_DONE = 3;
 
     /**
+     * The separator used for separating page title elements.
+     */
+    const TITLE_SEPARATOR = ' | ';
+
+    /**
      * @var int The current state of the page. The state a page is within
      * determines what actions are possible for it.
      */
@@ -523,7 +528,7 @@ class moodle_page {
 
     /**
      * Please do not call this method directly, use the ->category syntax. {@link moodle_page::__get()}.
-     * @return stdClass the category that the page course belongs to. If there isn't one
+     * @return stdClass|null the category that the page course belongs to. If there isn't one
      * (that is, if this is the front page course) returns null.
      */
     protected function magic_get_category() {
@@ -906,7 +911,7 @@ class moodle_page {
 
     /**
      * Returns the primary navigation object
-     * @return primary
+     * @return primaryoutput
      */
     protected function magic_get_primarynavcombined() {
         if ($this->_primarynavcombined === null) {
@@ -1367,14 +1372,47 @@ class moodle_page {
 
     /**
      * Sets the title for the page.
+     *
      * This is normally used within the title tag in the head of the page.
      *
+     * Some tips for providing a meaningful page title:
+     * - The page title must be accurate and informative.
+     * - If the page causes a change of context (e.g. a search functionality), it should describe the result or change of context
+     *   to the user.
+     * - It should be concise.
+     * - If possible, it should uniquely identify the page.
+     * - The most identifying information should come first. (e.g. Submit assignment | Assignment | Moodle)
+     *
+     * For more information, see
+     * {@link https://www.w3.org/WAI/WCAG21/Understanding/page-titled Understanding Success Criterion 2.4.2: Page Titled}
+     *
      * @param string $title the title that should go in the <head> section of the HTML of this page.
+     * @param bool $appendsitename Appends site name at the end of the given title. It is encouraged to append the site name as this
+     *                              especially helps with accessibility. If it's necessary to override this, please keep in mind
+     *                              to ensure that the title provides a concise summary of the page being displayed.
      */
-    public function set_title($title) {
+    public function set_title($title, bool $appendsitename = true) {
+        global $CFG;
+
         $title = format_string($title);
         $title = strip_tags($title);
         $title = str_replace('"', '&quot;', $title);
+
+        if ($appendsitename) {
+            // Append the site name at the end of the page title.
+            $sitenamedisplay = 'shortname';
+            if (!empty($CFG->sitenameintitle)) {
+                $sitenamedisplay = $CFG->sitenameintitle;
+            }
+            $site = get_site();
+            if (empty(trim($site->{$sitenamedisplay}))) {
+                // If for some reason the site name is not yet set, fall back to 'Moodle'.
+                $title .= self::TITLE_SEPARATOR . 'Moodle';
+            } else {
+                $title .= self::TITLE_SEPARATOR . format_string($site->{$sitenamedisplay});
+            }
+        }
+
         $this->_title = $title;
     }
 
@@ -1637,6 +1675,120 @@ class moodle_page {
         throw new coding_exception('verify_https_required() cannot be used anymore.');
     }
 
+    /**
+     * Allows to 'serialize' the edited page information and store it in the session cache
+     *
+     * Due to Moodle architectural decision and non-SPA approach, a lot of page setup is
+     * happening in the actual page php file, for example, setting course/cm/context,
+     * setting layout and pagetype, requiring capabilities, setting specific block editing
+     * capabilities.
+     *
+     * When storing this information in the session cache we can pass the pagehash (cache key)
+     * as an argument to web services in AJAX requests and retrieve all data associated with
+     * the page without actually executing PHP code on that page.
+     *
+     * @return string|null
+     */
+    public function get_edited_page_hash(): ?string {
+        global $SESSION;
+        if (!$this->user_is_editing()) {
+            return null;
+        }
+        $url = new moodle_url($this->url);
+        $url->set_anchor(null);
+        $data = [
+            'contextid' => $this->context->id,
+            'url' => $url->out_as_local_url(false),
+        ];
+        if (($cm = $this->cm) && $cm->id) {
+            $data['cmid'] = $cm->id;
+        } else if (($course = $this->course) && $course->id) {
+            $data['courseid'] = $course->id;
+        }
+        $keys = ['pagelayout', 'pagetype', 'subpage'];
+        foreach ($keys as $key) {
+            if ("{$this->$key}" !== "") {
+                $data[$key] = $this->$key;
+            }
+        }
+        if ($this->_blockseditingcap !== 'moodle/site:manageblocks') {
+            $data['bcap'] = $this->_blockseditingcap;
+        }
+        if (!empty($this->_othereditingcaps)) {
+            $data['caps'] = $this->_othereditingcaps;
+        }
+        if ($this->_forcelockallblocks) {
+            $data['forcelock'] = true;
+        }
+        $hash = md5(json_encode($data + ['sesskey' => sesskey()]));
+        $SESSION->editedpages = ($SESSION->editedpages ?? []);
+        $SESSION->editedpages[$hash] = $data;
+        return $hash;
+    }
+
+    /**
+     * Retrieves a page that is being edited from the session cache
+     *
+     * {@see self::get_edited_page_hash()}
+     *
+     * @param string $hash
+     * @param int $strictness
+     * @return self|null
+     */
+    public static function retrieve_edited_page(string $hash, $strictness = IGNORE_MISSING): ?self {
+        global $CFG, $SESSION;
+        $data = $SESSION->editedpages[$hash] ?? null;
+        if (!$data || !is_array($data)
+                || $hash !== md5(json_encode($data + ['sesskey' => sesskey()]))) {
+            // This can happen if the session cache becomes corrupt or the user logged out and back
+            // in in another window and changed their session. Refreshing the page will generate
+            // and store the correct page hash.
+            if ($strictness === MUST_EXIST) {
+                throw new moodle_exception('editedpagenotfound');
+            }
+            return null;
+        }
+
+        if (!empty($CFG->moodlepageclass)) {
+            if (!empty($CFG->moodlepageclassfile)) {
+                require_once($CFG->moodlepageclassfile);
+            }
+            $classname = $CFG->moodlepageclass;
+        } else {
+            $classname = self::class;
+        }
+        /** @var moodle_page $page */
+        $page = new $classname();
+        $page->set_context(context::instance_by_id($data['contextid']));
+        if (array_key_exists('cmid', $data)) {
+            [$course, $cm] = get_course_and_cm_from_cmid($data['cmid']);
+            $page->set_cm($cm, $course);
+        } else if (array_key_exists('courseid', $data)) {
+            $page->set_course(get_course($data['courseid']));
+        }
+        $page->set_url(new moodle_url($data['url']));
+        $keys = ['pagelayout', 'pagetype', 'subpage'];
+        foreach ($keys as $key) {
+            if (array_key_exists($key, $data)) {
+                $func = "set_{$key}";
+                $page->$func($data[$key]);
+            }
+        }
+        if (array_key_exists('bcap', $data)) {
+            $page->set_blocks_editing_capability($data['bcap']);
+        }
+        if (array_key_exists('caps', $data)) {
+            foreach ($data['caps'] as $cap) {
+                $page->set_other_editing_capability($cap);
+            }
+        }
+        if (array_key_exists('forcelock', $data)) {
+            $page->force_lock_all_blocks();
+        }
+        $page->blocks->add_custom_regions_for_pagetype($page->pagetype);
+        return $page;
+    }
+
     // Initialisation methods =====================================================
     // These set various things up in a default way.
 
@@ -1664,11 +1816,7 @@ class moodle_page {
                     '/settings.php?section=maintenancemode">' . get_string('maintenancemode', 'admin') .
                     '</a> ' . $this->button);
 
-            $title = $this->title;
-            if ($title) {
-                $title .= ' - ';
-            }
-            $this->set_title($title . get_string('maintenancemode', 'admin'));
+            $this->set_title(get_string('maintenancemode', 'admin'));
         }
 
         $this->initialise_standard_body_classes();
@@ -1782,22 +1930,17 @@ class moodle_page {
             }
         }
 
-        $devicetheme = core_useragent::get_device_type_theme($this->devicetypeinuse);
-
-        // The user is using another device than default, and we have a theme for that, we should use it.
-        $hascustomdevicetheme = core_useragent::DEVICETYPE_DEFAULT != $this->devicetypeinuse && !empty($devicetheme);
-
         foreach ($themeorder as $themetype) {
 
             switch ($themetype) {
                 case 'course':
-                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcoursethemes) && !empty($this->_course->theme)) {
                         return $this->_course->theme;
                     }
                 break;
 
                 case 'category':
-                    if (!empty($CFG->allowcategorythemes) && !empty($this->_course) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcategorythemes) && !empty($this->_course)) {
                         $categories = $this->categories;
                         foreach ($categories as $category) {
                             if (!empty($category->theme)) {
@@ -1814,7 +1957,7 @@ class moodle_page {
                 break;
 
                 case 'user':
-                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowuserthemes) && !empty($USER->theme)) {
                         if ($mnetpeertheme) {
                             return $mnetpeertheme;
                         } else {
@@ -1824,7 +1967,7 @@ class moodle_page {
                 break;
 
                 case 'cohort':
-                    if (!empty($CFG->allowcohortthemes) && !empty($USER->cohorttheme) && !$hascustomdevicetheme) {
+                    if (!empty($CFG->allowcohortthemes) && !empty($USER->cohorttheme)) {
                         return $USER->cohorttheme;
                     }
                 break;
@@ -1833,16 +1976,12 @@ class moodle_page {
                     if ($mnetpeertheme) {
                         return $mnetpeertheme;
                     }
-                    // First try for the device the user is using.
-                    if (!empty($devicetheme)) {
-                        return $devicetheme;
+
+                    // Use theme if it is set in config.
+                    if (!empty($CFG->theme)) {
+                        return $CFG->theme;
                     }
-                    // Next try for the default device (as a fallback).
-                    $devicetheme = core_useragent::get_device_type_theme(core_useragent::DEVICETYPE_DEFAULT);
-                    if (!empty($devicetheme)) {
-                        return $devicetheme;
-                    }
-                    // The default device theme isn't set up - use the overall default theme.
+                    // Use the overall default theme.
                     return theme_config::DEFAULT_THEME;
             }
         }
@@ -1873,7 +2012,7 @@ class moodle_page {
         }
 
         if (is_null($script)) {
-            $script = ltrim($SCRIPT, '/');
+            $script = ltrim($SCRIPT ?? '', '/');
             $len = strlen($CFG->admin);
             if (substr($script, 0, $len) == $CFG->admin) {
                 $script = 'admin' . substr($script, $len);

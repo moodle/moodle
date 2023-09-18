@@ -505,7 +505,7 @@ class user extends external_api {
                                 new external_single_structure(
                                     [
                                         'id' => new external_value(PARAM_INT, 'Grade item id'),
-                                        'itemname' => new external_value(PARAM_TEXT, 'Grade item name'),
+                                        'itemname' => new external_value(PARAM_CLEANHTML, 'Grade item name'),
                                         'itemtype' => new external_value(PARAM_ALPHA, 'Grade item type'),
                                         'itemmodule' => new external_value(PARAM_PLUGIN, 'Grade item module'),
                                         'iteminstance' => new external_value(PARAM_INT, 'Grade item instance'),

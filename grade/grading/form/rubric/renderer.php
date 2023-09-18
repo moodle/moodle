@@ -119,7 +119,10 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $criteriontemplate .= html_writer::tag('td', $description, $descriptiontdparams);
 
         // Levels table.
-        $levelsrowparams = array('id' => '{NAME}-criteria-{CRITERION-id}-levels');
+        $levelsrowparams = [
+            'id' => '{NAME}-criteria-{CRITERION-id}-levels',
+            'aria-label' => get_string('levelsgroup', 'gradingform_rubric'),
+        ];
         // Add radiogroup role only when not previewing or editing.
         $isradiogroup = !in_array($mode, [
             gradingform_rubric_controller::DISPLAY_EDIT_FULL,
@@ -127,15 +130,13 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
             gradingform_rubric_controller::DISPLAY_PREVIEW,
             gradingform_rubric_controller::DISPLAY_PREVIEW_GRADED,
         ]);
-        if ($isradiogroup) {
-            $levelsrowparams['role'] = 'radiogroup';
-        }
+        $levelsrowparams['role'] = $isradiogroup ? 'radiogroup' : 'list';
         $levelsrow = html_writer::tag('tr', $levelsstr, $levelsrowparams);
 
-        $levelstableparams = array(
+        $levelstableparams = [
             'id' => '{NAME}-criteria-{CRITERION-id}-levels-table',
-            'aria-label' => get_string('levelsgroup', 'gradingform_rubric')
-        );
+            'role' => 'none',
+        ];
         $levelsstrtable = html_writer::tag('table', $levelsrow, $levelstableparams);
         $levelsclass = 'levels';
         if (isset($criterion['error_levels'])) {
@@ -311,7 +312,11 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
                 } else {
                     $tdattributes['aria-checked'] = 'false';
                 }
+            } else {
+                $tdattributes['role'] = 'listitem';
             }
+        } else {
+            $tdattributes['role'] = 'listitem';
         }
 
         $leveltemplateparams = array(
@@ -395,11 +400,12 @@ class gradingform_rubric_renderer extends plugin_renderer_base {
         $rubrictemplate = html_writer::start_tag('div', array('id' => 'rubric-{NAME}', 'class' => 'clearfix gradingform_rubric'.$classsuffix));
 
         // Rubric table.
-        $rubrictableparams = array(
+        $rubrictableparams = [
             'class' => 'criteria',
             'id' => '{NAME}-criteria',
-            'aria-label' => get_string('rubric', 'gradingform_rubric'));
-        $rubrictable = html_writer::tag('table', $criteriastr, $rubrictableparams);
+        ];
+        $caption = html_writer::tag('caption', get_string('rubric', 'gradingform_rubric'), ['class' => 'sr-only']);
+        $rubrictable = html_writer::tag('table', $caption . $criteriastr, $rubrictableparams);
         $rubrictemplate .= $rubrictable;
         if ($mode == gradingform_rubric_controller::DISPLAY_EDIT_FULL) {
             $value = get_string('addcriterion', 'gradingform_rubric');

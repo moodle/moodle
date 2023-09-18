@@ -11,6 +11,8 @@ class HttpException extends GeoIp2Exception
 {
     /**
      * The URI queried.
+     *
+     * @var string
      */
     public $uri;
 

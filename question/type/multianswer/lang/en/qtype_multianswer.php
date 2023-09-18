@@ -38,6 +38,7 @@ $string['layoutselectinline'] = 'Drop-down menu in-line in the text';
 $string['layoutundefined'] = 'Undefined layout';
 $string['layoutvertical'] = 'Vertical column of radio buttons';
 $string['missingsubquestion'] = 'This subquestion is missing from your system and cannot be displayed.';
+$string['multichoicex'] = 'Multiple choice {$a}';
 $string['nooptionsforsubquestion'] = 'Unable to get options for question part # {$a->sub} (question->id={$a->id})';
 $string['noquestions'] = 'The Cloze(multianswer) question "<strong>{$a}</strong>" does not contain any question';
 $string['pleaseananswerallparts'] = 'Please answer all parts of the question.';

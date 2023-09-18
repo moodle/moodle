@@ -169,7 +169,7 @@ UpdatableMembersCombo.prototype.refreshMembers = function () {
     document.getElementById("deletegroup").disabled = selectionCount == 0;
 
     if(singleSelection) {
-        var sUrl = this.wwwRoot+"/group/index.php?id="+this.courseId+"&group="+groupId+"&act_ajax_getmembersingroup";
+        var sUrl = this.wwwRoot + "/group/index.php?id=" + this.courseId + "&group=" + groupId + "&action=ajax_getmembersingroup";
         var self = this;
         YUI().use('io', function (Y) {
             Y.io(sUrl, {

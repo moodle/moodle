@@ -24,13 +24,13 @@ abstract class Coordinate
     const DEFAULT_RANGE = 'A1:A1';
 
     /**
-     * Coordinate from string.
+     * Convert string coordinate to [0 => int column index, 1 => int row index].
      *
      * @param string $cellAddress eg: 'A1'
      *
      * @return array{0: string, 1: string} Array containing column and row (indexes 0 and 1)
      */
-    public static function coordinateFromString($cellAddress)
+    public static function coordinateFromString($cellAddress): array
     {
         if (preg_match(self::A1_COORDINATE_REGEX, $cellAddress, $matches)) {
             return [$matches['col'], $matches['row']];
@@ -44,7 +44,7 @@ abstract class Coordinate
     }
 
     /**
-     * Get indexes from a string coordinates.
+     * Convert string coordinate to [0 => int column index, 1 => int row index, 2 => string column string].
      *
      * @param string $coordinates eg: 'A1', '$B$12'
      *
@@ -263,7 +263,7 @@ abstract class Coordinate
     /**
      * Column index from string.
      *
-     * @param string $columnAddress eg 'A'
+     * @param ?string $columnAddress eg 'A'
      *
      * @return int Column index (A = 1)
      */
@@ -273,6 +273,7 @@ abstract class Coordinate
         //    caching using a static within the method is faster than a class static,
         //        though it's additional memory overhead
         static $indexCache = [];
+        $columnAddress = $columnAddress ?? '';
 
         if (isset($indexCache[$columnAddress])) {
             return $indexCache[$columnAddress];
@@ -411,8 +412,10 @@ abstract class Coordinate
         //    Sort the result by column and row
         $sortKeys = [];
         foreach ($cellList as $coordinate) {
+            $column = '';
+            $row = 0;
             sscanf($coordinate, '%[A-Z]%d', $column, $row);
-            $key = (--$row * 16384) + self::columnIndexFromString($column);
+            $key = (--$row * 16384) + self::columnIndexFromString((string) $column);
             $sortKeys[$key] = $coordinate;
         }
         ksort($sortKeys);
@@ -458,7 +461,7 @@ abstract class Coordinate
             $currentColumnIndex = $startColumnIndex;
             $currentRow = $startRow;
 
-            self::validateRange($cellBlock, $startColumnIndex, $endColumnIndex, $currentRow, $endRow);
+            self::validateRange($cellBlock, $startColumnIndex, $endColumnIndex, (int) $currentRow, (int) $endRow);
 
             // Loop cells
             while ($currentColumnIndex < $endColumnIndex) {
@@ -505,7 +508,7 @@ abstract class Coordinate
 
             [$column, $row] = self::coordinateFromString($coord);
             $row = (int) (ltrim($row, '$'));
-            $hashCode = $column . '-' . (is_object($value) ? $value->getHashCode() : $value);
+            $hashCode = $column . '-' . ((is_object($value) && method_exists($value, 'getHashCode')) ? $value->getHashCode() : $value);
 
             if (!isset($hashedValues[$hashCode])) {
                 $hashedValues[$hashCode] = (object) [

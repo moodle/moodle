@@ -247,7 +247,7 @@ class contentbank {
 
         if ($categories === false || $courses === false) {
             list($categories, $courses) = get_user_capability_contexts($capability, true, $userid, true,
-                'shortname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'shortname', 'name');
+                'fullname, ctxlevel, ctxinstance, ctxid', 'name, ctxlevel, ctxinstance, ctxid', 'fullname', 'name');
             $categoriescache->set($userid, $categories);
             $coursescache->set($userid, $courses);
         }
@@ -258,8 +258,6 @@ class contentbank {
     /**
      * Create content from a file information.
      *
-     * @throws file_exception If file operations fail
-     * @throws dml_exception if the content creation fails
      * @param \context $context Context where to upload the file and content.
      * @param int $userid Id of the user uploading the file.
      * @param stored_file $file The file to get information from

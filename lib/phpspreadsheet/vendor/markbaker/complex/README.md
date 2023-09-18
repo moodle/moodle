@@ -68,7 +68,7 @@ together with functions for
 # Installation
 
 ```shell
-composer require markbaker/complex:^3.0
+composer require markbaker/complex:^1.0
 ```
 
 # Important BC Note
@@ -78,7 +78,7 @@ If you've previously been using procedural calls to functions and operations usi
 You'll need to replace `markbaker/complex`in your `composer.json` file with the new library, but otherwise there should be no difference in the namespacing, or in the way that you have called the Complex functions in the past, so no actual code changes are required.
 
 ```shell
-composer require markbaker/complex-functions:^1.0
+composer require markbaker/complex-functions:^3.0
 ```
 
 You should not reference this library (`markbaker/complex`) in your `composer.json`, composer wil take care of that for you.

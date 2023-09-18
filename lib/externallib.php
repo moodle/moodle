@@ -24,9 +24,15 @@
 
 use core_external\util;
 
+defined('MOODLE_INTERNAL') || die;
+
 // Please note that this file and all of the classes and functions listed below will be deprecated from Moodle 4.6.
 // This deprecation is delayed to aid plugin developers when maintaining plugins for multiple Moodle versions.
 // See MDL-76583 for further information.
+
+// If including this file for unit testing, it _must_ be run in an isolated process to prevent
+// any side effect upon other tests.
+require_phpunit_isolation();
 
 class_alias(\core_external\external_api::class, 'external_api');
 class_alias(\core_external\restricted_context_exception::class, 'restricted_context_exception');
@@ -103,7 +109,7 @@ function external_create_service_token($servicename, $contextid) {
 /**
  * Delete all pre-built services (+ related tokens) and external functions information defined in the specified component.
  *
- * @param string $component name of component (moodle, mod_assignment, etc.)
+ * @param string $component name of component (moodle, etc.)
  */
 function external_delete_descriptions($component) {
     util::delete_service_descriptions($component);

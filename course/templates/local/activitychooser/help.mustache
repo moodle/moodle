@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/chooser_help
+    @template core_course/local/activitychooser/help
 
     Chooser help / more information template.
 
@@ -25,15 +25,21 @@
         "name": "assign",
         "title": "Assignment",
         "link": "http://yourmoodle/modedit.php?id=x&itemtype=y",
-        "icon": "<img class='icon' src='http://urltooptionicon'>",
+        "icon": "<img class='icon' src='http://urltooptionicon' alt='Icon'>",
         "help": "This is a description of the assignment activity",
         "archetype": 0,
         "componentname": "mod_assign",
         "favourite": 1
     }
 }}
-<div class="optionsummary" tabindex="-1" data-region="chooser-option-summary-container" aria-labelledby="optionsummary_label" aria-describedby="optionsumary_desc">
-    <div class="content text-left mb-5 p-2 px-sm-5 py-sm-4" data-region="chooser-option-summary-content-container">
+<div
+    class="optionsummary d-flex flex-column rounded-bottom"
+    tabindex="-1"
+    data-region="chooser-option-summary-container"
+    aria-labelledby="optionsummary_label-{{uniqid}}"
+    aria-describedby="optionsumary_desc-{{uniqid}}"
+>
+    <div class="content flex-grow-1 text-left p-2 px-sm-5 py-sm-4" data-region="chooser-option-summary-content-container">
         <div class="heading mb-4">
             <h5 id="optionsummary_label-{{uniqid}}" data-region="summary-header" tabindex="0">
                 {{{icon}}}
@@ -45,7 +51,7 @@
         </div>
     </div>
     {{^showFooter}}
-        <div class="fixed-bottom position-absolute py-3 px-4 border-top modal-footer">
+        <div class="modal-footer">
             {{>core_course/local/activitychooser/footer_partial}}
         </div>
     {{/showFooter}}

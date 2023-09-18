@@ -184,7 +184,20 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
-        $course = self::getDataGenerator()->create_course();
+        $generator = self::getDataGenerator();
+
+        // Create complex user profile field supporting multi-lang.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
+        $generator->create_custom_profile_field(
+            [
+                'datatype' => 'menu',
+                'shortname' => 'employmentstatus', 'name' => 'Employment status',
+                'param1' => $statuses
+            ]
+        );
+
+        $course = $generator->create_course();
         $user1 = array(
             'username' => 'usernametest1',
             'idnumber' => 'idnumbertest1',
@@ -200,14 +213,16 @@ class externallib_test extends externallib_advanced_testcase {
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
             'country' => 'AU',
+            'profile_field_jobposition' => 'Manager',
+            'profile_field_employmentstatus' => explode('\n', $statuses)[2],
         );
-        $user1 = self::getDataGenerator()->create_user($user1);
+        $user1 = $generator->create_user($user1);
         if (!empty($CFG->usetags)) {
             require_once($CFG->dirroot . '/user/editlib.php');
             $user1->interests = array('Cinema', 'Tennis', 'Dance', 'Guitar', 'Cooking');
             useredit_update_interests($user1, $user1->interests);
         }
-        $user2 = self::getDataGenerator()->create_user(
+        $user2 = $generator->create_user(
                 array('username' => 'usernametest2', 'idnumber' => 'idnumbertest2'));
 
         $generatedusers = array();
@@ -218,9 +233,9 @@ class externallib_test extends externallib_advanced_testcase {
         $roleid = $this->assignUserCapability('moodle/user:viewdetails', $context->id);
 
         // Enrol the users in the course.
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, $roleid, 'manual');
-        $this->getDataGenerator()->enrol_user($USER->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user1->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($user2->id, $course->id, $roleid, 'manual');
+        $generator->enrol_user($USER->id, $course->id, $roleid, 'manual');
 
         // call as admin and receive all possible fields.
         $this->setAdminUser();
@@ -290,6 +305,13 @@ class externallib_test extends externallib_advanced_testcase {
                 // Default language and no theme were used for the user.
                 $this->assertEquals($CFG->lang, $returneduser['lang']);
                 $this->assertEmpty($returneduser['theme']);
+
+                if ($returneduser['id'] == $user1->id) {
+                    $this->assertCount(1, $returneduser['customfields']);
+                    $dbvalue = explode('\n', $statuses)[2];
+                    $this->assertEquals($dbvalue, $returneduser['customfields'][0]['value']);
+                    $this->assertEquals('Other', $returneduser['customfields'][0]['displayvalue']);
+                }
             }
         }
 
@@ -357,6 +379,12 @@ class externallib_test extends externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($return->user2->id, $return->course->id, $return->roleid, 'manual');
         $this->getDataGenerator()->enrol_user($USER->id, $return->course->id, $return->roleid, 'manual');
 
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G1']);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $return->course->id, 'name' => 'G2']);
+
+        groups_add_member($group1->id, $return->user1->id);
+        groups_add_member($group2->id, $return->user2->id);
+
         return $return;
     }
 
@@ -400,6 +428,9 @@ class externallib_test extends externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $enrolledusers = external_api::clean_returnvalue(core_user_external::get_course_user_profiles_returns(), $enrolledusers);
+        // Check we get the requested user and that is in a group.
+        $this->assertCount(1, $enrolledusers);
+        $this->assertCount(1, $enrolledusers[0]['groups']);
 
         foreach($enrolledusers as $enrolleduser) {
             if ($enrolleduser['username'] == $data->user1->username) {
@@ -1014,6 +1045,55 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertNotEmpty($file);
     }
 
+
+    /**
+     * Test add_user_private_files quota
+     */
+    public function test_add_user_private_files_quota() {
+        global $USER, $CFG, $DB;
+
+        $this->resetAfterTest(true);
+
+        $context = \context_system::instance();
+        $roleid = $this->assignUserCapability('moodle/user:manageownfiles', $context->id);
+
+        $context = \context_user::instance($USER->id);
+        $contextid = $context->id;
+        $component = "user";
+        $filearea = "draft";
+        $itemid = 0;
+        $filepath = "/";
+        $filename = "Simple.txt";
+        $filecontent = base64_encode("Let us create a nice simple file");
+        $contextlevel = null;
+        $instanceid = null;
+        $browser = get_file_browser();
+
+        // Call the files api to create a file.
+        $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
+            $filename, $filecontent, $contextlevel, $instanceid);
+        $draftfile = external_api::clean_returnvalue(core_files_external::upload_returns(), $draftfile);
+        $draftid = $draftfile['itemid'];
+
+        // Call the external function to add the file to private files.
+        core_user_external::add_user_private_files($draftid);
+
+        // Force the quota so we are sure it won't be space to add the new file.
+        $fileareainfo = file_get_file_area_info($contextid, 'user', 'private');
+        $CFG->userquota = $fileareainfo['filesize_without_references'] + 1;
+
+        // Generate a new draftitemid for the same testfile.
+        $draftfile = core_files_external::upload($contextid, $component, $filearea, $itemid, $filepath,
+            $filename, $filecontent, $contextlevel, $instanceid);
+        $draftid = $draftfile['itemid'];
+
+        $this->expectException('moodle_exception');
+        $this->expectExceptionMessage(get_string('maxareabytes', 'error'));
+
+        // Call the external function to include the new file.
+        core_user_external::add_user_private_files($draftid);
+    }
+
     /**
      * Test add user device
      */
@@ -1029,7 +1109,8 @@ class externallib_test extends externallib_advanced_testcase {
                 'platform' => 'Android',
                 'version' => '4.2.2',
                 'pushid' => 'apushdkasdfj4835',
-                'uuid' => 'asdnfl348qlksfaasef859'
+                'uuid' => 'asdnfl348qlksfaasef859',
+                'publickey' => null,
                 );
 
         // Call the external function.
@@ -1050,8 +1131,9 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Test update an existing device.
         $device['pushid'] = 'different than before';
+        $device['publickey'] = 'MFsxCzAJBgNVBAYTAkZSMRMwEQYDVQQ';
         $warnings = core_user_external::add_user_device($device['appid'], $device['name'], $device['model'], $device['platform'],
-                                                        $device['version'], $device['pushid'], $device['uuid']);
+            $device['version'], $device['pushid'], $device['uuid'], $device['publickey']);
         $warnings = external_api::clean_returnvalue(core_user_external::add_user_device_returns(), $warnings);
 
         $this->assertEquals(1, $DB->count_records('user_devices'));
@@ -1271,7 +1353,7 @@ class externallib_test extends externallib_advanced_testcase {
             ),
             array(
                 'name' => 'htmleditor',
-                'value' => 'tinymce',
+                'value' => 'tiny',
                 'userid' => $user2->id,
             )
         );
@@ -1284,7 +1366,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Get preference from DB to avoid cache.
         $this->assertEquals('atto', $DB->get_field('user_preferences', 'value',
             array('userid' => $user1->id, 'name' => 'htmleditor')));
-        $this->assertEquals('tinymce', $DB->get_field('user_preferences', 'value',
+        $this->assertEquals('tiny', $DB->get_field('user_preferences', 'value',
             array('userid' => $user2->id, 'name' => 'htmleditor')));
     }
 

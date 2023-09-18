@@ -45,6 +45,9 @@ class mod_lti_generator extends testing_module_generator {
 
         if (!isset($record->toolurl)) {
             $record->toolurl = '';
+        } else {
+            $toolurl = new moodle_url($record->toolurl);
+            $record->toolurl = $toolurl->out(false);
         }
         if (!isset($record->resourcekey)) {
             $record->resourcekey = '12345';
@@ -65,7 +68,7 @@ class mod_lti_generator extends testing_module_generator {
             $record->instructorchoiceacceptgrades = 1;
         }
         if (!isset($record->typeid)) {
-            $record->typeid = null;
+            $record->typeid = 0;
         }
         return parent::create_instance($record, (array)$options);
     }
@@ -86,15 +89,92 @@ class mod_lti_generator extends testing_module_generator {
     }
 
     /**
+     * Split type creation data into 'type' and 'config' components, based on input array key prefixes.
+     *
+     * The $data array contains both the type data and config data that will be passed to lti_add_type(). This must be split into
+     * two params (type, config) based on the array key prefixes ({@see lti_add_type()} for how the two params are handled):
+     * - NO prefix: denotes 'type' data.
+     * - 'lti_' prefix: denotes 'config' data.
+     * - 'ltiservice_' prefix: denotes 'config' data, specifically config for service plugins.
+     *
+     * @param array $data array of type and config data containing prefixed keys.
+     * @return array containing separated objects for type and config data. E.g. ['type' = stdClass, 'config' => stdClass]
+     */
+    protected function get_type_and_config_from_data(array $data): array {
+        // Grab any non-prefixed fields; these are the type fields. The rest is considered config.
+        $type = array_filter(
+            $data,
+            fn($val, $key) => !str_contains($key, 'lti_') && !str_contains($key, 'ltiservice_'),
+            ARRAY_FILTER_USE_BOTH
+        );
+        $config = array_diff_key($data, $type);
+
+        return ['type' => (object) $type, 'config' => (object) $config];
+    }
+
+    /**
      * Create a tool type.
      *
-     * @param array $type
-     * @param array|null $config
+     * @param array $data
+     * @return int ID of created tool
      */
-    public function create_tool_types(array $type, ?array $config = null) {
-        if (!isset($type['baseurl'])) {
+    public function create_tool_types(array $data): int {
+        if (!isset($data['baseurl'])) {
             throw new coding_exception('Must specify baseurl when creating a LTI tool type.');
         }
-        lti_add_type((object) $type, (object) $config);
+        $data['baseurl'] = (new moodle_url($data['baseurl']))->out(false); // Permits relative URLs in behat features.
+
+        // Sensible defaults permitting the tool type to be used in a launch.
+        $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_sendname'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+
+        ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
+
+        return lti_add_type(type: $type, config: $config);
+    }
+
+    /**
+     * Create a course tool type.
+     *
+     * @param array $type the type info.
+     * @return int ID of created tool.
+     * @throws coding_exception if any required fields are missing.
+     */
+    public function create_course_tool_types(array $type): int {
+        global $SITE;
+
+        if (!isset($type['baseurl'])) {
+            throw new coding_exception('Must specify baseurl when creating a course tool type.');
+        }
+        if (!isset($type['course']) || $type['course'] == $SITE->id) {
+            throw new coding_exception('Must specify a non-site course when creating a course tool type.');
+        }
+
+        $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
+        $type['coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['state'] = LTI_TOOL_STATE_CONFIGURED; // The default for course tools.
+
+        // Sensible defaults permitting the tool type to be used in a launch.
+        $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
+
+        // Required for cartridge processing support.
+        $type['lti_toolurl'] = $type['baseurl'];
+        $type['lti_description'] = $type['description'] ?? '';
+        $type['lti_icon'] = $type['icon'] ?? '';
+        $type['lti_secureicon'] = $type['secureicon'] ?? '';
+        if (!empty($type['name'])) {
+            $type['lti_typename'] = $type['name'];
+        }
+
+        ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($type);
+
+        lti_load_type_if_cartridge($config);
+        return lti_add_type(type: $type, config: $config);
     }
 }

@@ -28,37 +28,37 @@
         "isactive": 1,
         "uniqid": "0",
         "accessvisible": 1,
-        "hascmrestrictions": 0
+        "hascmrestrictions": 0,
+        "indent": 1
     }
 }}
 <li class="courseindex-item
         {{#isactive}}active{{/isactive}}
         {{#hascmrestrictions}}restrictions{{/hascmrestrictions}}
         {{^accessvisible}}dimmed{{/accessvisible}}
-        {{#url}} d-flex {{/url}} {{^url}} d-flex-noedit {{/url}}"
-    id="{{uniqid}}-course-index-cm-{{id}}"
+        d-flex
+        {{#indent}} indented {{/indent}}"
+    id="course-index-cm-{{id}}"
     data-for="cm"
     data-id="{{id}}"
     role="treeitem"
 >
     <span class="completioninfo" data-for="cm_completion" data-value="NaN"></span>
-    {{#url}}
-        {{#uservisible}}
-            <a class="courseindex-link text-truncate" href="{{{url}}}" data-for="cm_name" tabindex="-1">
-                {{{name}}}
-            </a>
-        {{/uservisible}}
-        {{^uservisible}}
-            <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
-                {{{name}}}
-            </a>
-        {{/uservisible}}
-    {{/url}}
-    {{^url}}
-    <span class="courseindex-name text-truncate" data-for="cm_name">
+    {{#uservisible}}
+    <a
+        class="courseindex-link text-truncate"
+        {{#url}} href="{{{url}}}" {{/url}}{{^url}} href="#{{{anchor}}}" data-anchor="true" {{/url}}
+        data-for="cm_name"
+        tabindex="-1"
+    >
         {{{name}}}
-    </span>
-    {{/url}}
+    </a>
+    {{/uservisible}}
+    {{^uservisible}}
+    <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
+        {{{name}}}
+    </a>
+    {{/uservisible}}
     <span class="courseindex-locked ml-1" data-for="cm_name">
         {{#pix}} t/locked, core {{/pix}}
     </span>
@@ -66,6 +66,6 @@
 </li>
 {{#js}}
 require(['core_courseformat/local/courseindex/cm'], function(component) {
-    component.init('{{uniqid}}-course-index-cm-{{id}}');
+    component.init('course-index-cm-{{id}}');
 });
 {{/js}}

@@ -28,9 +28,6 @@ class external_value extends external_description {
     /** @var mixed Value type PARAM_XX */
     public $type;
 
-    /** @var bool Allow null values */
-    public $allownull;
-
     /**
      * Constructor for the external_value class.
      *
@@ -47,8 +44,7 @@ class external_value extends external_description {
         $default = null,
         $allownull = NULL_ALLOWED
     ) {
-        parent::__construct($desc, $required, $default);
+        parent::__construct($desc, $required, $default, $allownull);
         $this->type = $type;
-        $this->allownull = $allownull;
     }
 }

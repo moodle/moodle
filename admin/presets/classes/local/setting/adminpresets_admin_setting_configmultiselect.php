@@ -26,34 +26,8 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_configmultiselect extends adminpresets_setting {
 
-    /**
-     * Ensure that the $value values are setting choices.
-     *
-     * @param mixed $value Setting value
-     * @return mixed Returns false if wrong param value
-     */
-    protected function set_value($value) {
-        if ($value) {
-            $options = explode(',', $value);
-            foreach ($options as $option) {
-
-                foreach ($this->settingdata->choices as $key => $choice) {
-
-                    if ($key == $option) {
-                        $this->value = $option;
-                        $this->set_visiblevalue();
-                        return true;
-                    }
-                }
-            }
-
-            $value = implode(',', $options);
-        }
-        $this->value = $value;
-        $this->set_visiblevalue();
-
-        return true;
-    }
+    /** @var \admin_setting_configmultiselect $settingdata */
+    protected $settingdata;
 
     protected function set_visiblevalue() {
         $values = explode(',', $this->value);
@@ -61,7 +35,8 @@ class adminpresets_admin_setting_configmultiselect extends adminpresets_setting 
 
         foreach ($values as $value) {
 
-            if (!empty($this->settingdata->choices[$value])) {
+            // Ensure that each value exists as a setting choice.
+            if (array_key_exists($value, $this->settingdata->choices)) {
                 $visiblevalues[] = $this->settingdata->choices[$value];
             }
         }

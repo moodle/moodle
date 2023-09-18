@@ -23,6 +23,7 @@ if (!class_exists('Google_Client')) {
  * Manage large file uploads, which may be media but can be any type
  * of sizable data.
  */
+#[AllowDynamicProperties]
 class Google_Http_MediaFileUpload
 {
   const UPLOAD_MEDIA_TYPE = 'media';

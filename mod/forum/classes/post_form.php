@@ -151,7 +151,9 @@ class mod_forum_post_form extends moodleform {
                 $mform->addHelpButton('pinned', 'discussionpinned', 'forum');
             }
 
-            if (empty($post->id) && $manageactivities) {
+            if (empty($post->id) && ($manageactivities ||
+                    ($forum->type == 'qanda' && has_capability('mod/forum:canmailnow', $modcontext)))
+            ) {
                 $mform->addElement('checkbox', 'mailnow', get_string('mailnow', 'forum'));
             }
 
@@ -174,7 +176,7 @@ class mod_forum_post_form extends moodleform {
                     // We must make this check because all groups are returned for a visible grouped activity.
                     if (forum_user_can_post_discussion($forum, $groupid, null, $cm, $modcontext)) {
                         // Build the data for the groupinfo select.
-                        $groupinfo[$groupid] = $group->name;
+                        $groupinfo[$groupid] = format_string($group->name, true, ['context' => $modcontext]);
                     } else {
                         unset($groupdata[$groupid]);
                     }
@@ -283,7 +285,7 @@ class mod_forum_post_form extends moodleform {
         if ($inpagereply) {
             $mform->addElement('hidden', 'discussionsubscribe');
             $mform->setType('discussionsubscribe', PARAM_INT);
-            $mform->disable_form_change_checker();
+
             $buttonarray = array();
             $buttonarray[] = &$mform->createElement('submit', 'submitbutton', $submitstring);
             $buttonarray[] = &$mform->createElement('button', 'cancelbtn',

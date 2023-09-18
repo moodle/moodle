@@ -32,6 +32,7 @@ $string['addaquestion'] = 'a new question';
 $string['addasection'] = 'a new section heading';
 $string['addarandomquestion'] = 'a random question';
 $string['addarandomquestion_help'] = 'When a random question is added, it results in a randomly-chosen question from the category being inserted into the quiz. This means that different students are likely to get a different selection of questions, and when a quiz allows multiple attempts then each attempt is likely to contain a new selection of questions.';
+$string['addarandomquestion_success'] = 'Random questions have been added';
 $string['addarandomselectedquestion'] = 'Add a random selected question ...';
 $string['adddescriptionlabel'] = 'Add a description item';
 $string['addingquestion'] = 'Adding a question';
@@ -184,12 +185,11 @@ $string['comments'] = 'Comments';
 $string['completedon'] = 'Completed on';
 $string['completiondetail:minattempts'] = 'Make attempts: {$a}';
 $string['completiondetail:passorexhaust'] = 'Receive a pass grade or complete all available attempts';
-$string['completionminattempts'] = 'Minimum number of attempts:';
+$string['completionminattempts'] = 'Minimum attempts';
 $string['completionminattemptsdesc'] = 'Minimum number of attempts required: {$a}';
-$string['completionminattemptsgroup'] = 'Require attempts';
 $string['completionminattemptserror'] = 'Minimum number of attempts must be lower or equal to attempts allowed.';
 $string['completionpassorattemptsexhausteddesc'] = 'Student must achieve a passing grade, or exhaust all available attempts to complete this activity';
-$string['completionattemptsexhausted'] = 'Or all available attempts completed';
+$string['completionattemptsexhausted'] = 'Passing grade and all available attempts completed';
 $string['completionattemptsexhausted_help'] = 'Mark quiz complete when the student has exhausted the maximum number of attempts.';
 $string['configadaptive'] = 'If you choose Yes for this option then the student will be allowed multiple responses to a question even within the same attempt at the quiz.';
 $string['configattemptsallowed'] = 'Restriction on the number of attempts students are allowed at the quiz.';
@@ -370,10 +370,11 @@ $string['eventpagebreakcreated'] = 'Page break created';
 $string['eventpagebreakdeleted'] = 'Page break deleted';
 $string['eventquestionmanuallygraded'] = 'Question manually graded';
 $string['eventquizattemptabandoned'] = 'Quiz attempt abandoned';
-$string['eventquizattempttimelimitexceeded'] = 'Quiz attempt time limit exceeded';
 $string['eventquizattemptregraded'] = 'Quiz attempt regraded';
+$string['eventquizattemptreopened'] = 'Quiz attempt reopened';
 $string['eventquizattemptstarted'] = 'Quiz attempt started';
 $string['eventquizattemptsubmitted'] = 'Quiz attempt submitted';
+$string['eventquizattempttimelimitexceeded'] = 'Quiz attempt time limit exceeded';
 $string['eventquizgradeupdated'] = 'Quiz grade updated';
 $string['eventquizrepaginated'] = 'Quiz re-paginated';
 $string['eventreportviewed'] = 'Quiz report viewed';
@@ -508,8 +509,6 @@ $string['layoutasshown'] = 'Page layout as shown.';
 $string['layoutasshownwithpages'] = 'Page layout as shown. <small>(Automatic new page every {$a} questions.)</small>';
 $string['layoutshuffledandpaged'] = 'Questions randomly shuffled with {$a} questions per page.';
 $string['layoutshuffledsinglepage'] = 'Questions randomly shuffled, all on one page.';
-$string['legacyquizaccessrulescron'] = 'Legacy cron quiz access rules';
-$string['legacyquizreportscron'] = 'Legacy cron quiz reports';
 $string['link'] = 'Link';
 $string['listitems'] = 'Listing of items in quiz';
 $string['literal'] = 'Literal';
@@ -531,6 +530,15 @@ $string['messageprovider:attempt_grading_complete'] = 'Notification that your at
 $string['messageprovider:submission'] = 'Notification of your students\' quiz submissions';
 $string['max'] = 'Max';
 $string['maxmark'] = 'Maximum mark';
+$string['maxmarks'] = 'Max Marks';
+$string['maxmarks_help'] = 'Max marks determines whether the grade information are hidden or how it is displayed:
+
+* To hide the grade information completely, do not tick this checkbox (Marks checkbox is disabled automatically).
+
+* To show Max marks only: tick this checkbox and not the Marks checkbox.
+
+* To show both Max marks and Marks, tick this checkbox as well as the Marks checkbox.';
+
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
 $string['missingcorrectanswer'] = 'Correct answer must be specified';
@@ -735,6 +743,8 @@ $string['questiondependencyadd'] = 'No restriction on when question {$a->thisq} 
 $string['questiondependencyfree'] = 'No restriction on this question';
 $string['questiondependencyremove'] = 'Question {$a->thisq} cannot be attempted until the previous question {$a->previousq} has been completed • Click to change';
 $string['questiondependsonprevious'] = 'This question cannot be attempted until the previous question has been completed.';
+$string['questiondraftonly'] = 'The question {$a} is in draft status. To use it in the quiz, go to the question bank and change the status to ready.';
+$string['questiondraftwillnotwork'] = 'This question is in draft status. To use it in the quiz, go to the question bank and change the status to ready.';
 $string['questioninuse'] = 'The question \'{$a->questionname}\' is currently being used in: <br />{$a->quiznames}<br />The question will not be deleted from these quizzes but only from the category list.';
 $string['questionmissing'] = 'Question for this session is missing';
 $string['questionname'] = 'Question name';
@@ -791,6 +801,7 @@ $string['quizordernotrandom'] = 'Order of quiz not shuffled';
 $string['quizorderrandom'] = '* Order of quiz is shuffled';
 $string['quiz:preview'] = 'Preview quizzes';
 $string['quiz:regrade'] = 'Regrade quiz attempts';
+$string['quiz:reopenattempts'] = 'Reopen never submitted quiz attempts';
 $string['quizreport'] = 'Quiz report';
 $string['quiz:reviewmyattempts'] = 'Review your own attempts';
 $string['quizsettings'] = 'Quiz settings';
@@ -806,6 +817,8 @@ $string['randomfromexistingcategory'] = 'Random question from an existing catego
 $string['randomfromunavailabletag'] = '{$a} (unavailable)';
 $string['randomnumber'] = 'Number of random questions';
 $string['randomnosubcat'] = 'Questions from this category only, not its subcategories.';
+$string['randomqname'] = 'Random question based on filter condition';
+$string['randomqnametags'] = 'Random question based on filter condition with tags: {$a}';
 $string['randomquestion'] = 'Random question';
 $string['randomquestion_help'] = 'A random question is a way of inserting a randomly-chosen question from a specified category or by a specified tag into an activity.';
 $string['randomquestiontags'] = 'Tags';
@@ -836,6 +849,13 @@ $string['removepagebreak'] = 'Remove page break';
 $string['removeselected'] = 'Remove selected';
 $string['rename'] = 'Rename';
 $string['renderingserverconnectfailed'] = 'The server {$a} failed to process an RQP request. Check that the URL is correct.';
+$string['reopenattempt'] = 'Reopen';
+$string['reopenattemptareyousuremessage'] = 'This will reopen attempt {$a->attemptnumber} by {$a->attemptuser}.';
+$string['reopenattemptareyousuretitle'] = 'Reopen attempt?';
+$string['reopenattemptwrongstate'] = 'Attempt {$a->attemptid} is in the wrong state ({$a->state}) to be reopened.';
+$string['reopenedattemptwillbeinprogress'] = 'The attempt will remain open and can be continued.';
+$string['reopenedattemptwillbeinprogressuntil'] = 'The attempt will remain open and can be continued until the quiz closes on {$a}.';
+$string['reopenedattemptwillbesubmitted'] = 'The attempt will be immediately submitted for grading.';
 $string['reorderquestions'] = 'Reorder questions';
 $string['reordertool'] = 'Show the reordering tool';
 $string['repaginate'] = 'Repaginate with {$a} questions per page';
@@ -1031,6 +1051,8 @@ $string['unfinished'] = 'open';
 $string['ungraded'] = 'Ungraded';
 $string['unit'] = 'Unit';
 $string['unknowntype'] = 'Question type not supported at line {$a}. The question will be ignored';
+$string['updatefilterconditon'] = 'Update filter conditions';
+$string['updatefilterconditon_success'] = 'Successfully updated filter conditions';
 $string['updateoverdueattemptstask'] = 'Updating overdue quiz attempts';
 $string['updatesettings'] = 'Update quiz settings';
 $string['updatequizslotswithrandomxofy'] = 'Updating quiz slots with "random" question data ({$a->done}/{$a->total})';
@@ -1063,9 +1085,6 @@ $string['questionversionlatest'] = 'v{$a} (latest)';
 $string['alwayslatest'] = 'Always latest';
 $string['gobacktoquiz'] = 'Go back';
 
-// Deprecated since Moodle 3.11.
-$string['completionattemptsexhausteddesc'] = 'Complete if all available attempts are exhausted';
-
 // Deprecated since Moodle 4.0.
 $string['completionpass'] = 'Require passing grade';
 $string['completionpassdesc'] = 'Student must achieve a passing grade to complete this activity';
@@ -1073,3 +1092,7 @@ $string['completionpass_help'] = 'If enabled, this activity is considered comple
 $string['completiondetail:passgrade'] = 'Receive a pass grade';
 $string['gradetopassnotset'] = 'This quiz does not yet have a grade to pass set. It may be set in the Grade section of the quiz settings.';
 $string['basicideasofquiz'] = 'The basic ideas of quiz-making';
+
+// Deprecated since Moodle 4.3.
+$string['completionminattemptsgroup'] = 'Require attempts';
+

@@ -166,6 +166,7 @@ $defaults['groupmodeforce'] = $courseconfig->groupmodeforce;
 $defaults['visible'] = $courseconfig->visible;
 $defaults['lang'] =  $courseconfig->lang;
 $defaults['enablecompletion'] = $courseconfig->enablecompletion;
+$defaults['showactivitydates'] = $courseconfig->showactivitydates;
 
 // Course template.
 if (isset($options['templatecourse'])) {
@@ -184,7 +185,7 @@ if ($options['restorefile'] && !file_exists($options['restorefile'])) {
 $processoroptions['restorefile'] = $options['restorefile'];
 
 // Emulate normal session.
-cron_setup_user();
+\core\cron::setup_user();
 
 // Let's get started!
 $content = file_get_contents($options['file']);

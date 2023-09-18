@@ -77,16 +77,6 @@ class report_viewed extends \core\event\base {
         return new \moodle_url('/mod/choice/report.php', array('id' => $this->contextinstanceid));
     }
 
-    /**
-     * replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        $url = new \moodle_url('report.php', array('id' => $this->contextinstanceid));
-        return array($this->courseid, 'choice', 'report', $url->out(), $this->objectid, $this->contextinstanceid);
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'choice', 'restore' => 'choice');
     }

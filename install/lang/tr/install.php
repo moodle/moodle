@@ -32,11 +32,11 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Yönetici dizini';
 $string['availablelangs'] = 'Kullanılabilir dil paketleri';
 $string['chooselanguagehead'] = 'Dil seçin';
-$string['chooselanguagesub'] = 'Lütfen, SADECE kurulum için bir dil seçin. Site ve kullanıcı dillerini sonraki ekranda seçebilirsiniz.';
-$string['clialreadyconfigured'] = 'config.php halihazırda mevcut, lütfen eğer bu siteyi yüklemek istiyorsanız şu dizini kullanın: admin/cli/install_database.php';
+$string['chooselanguagesub'] = 'Lütfen kurulum için bir dil seçin. Bu dil aynı zamanda site için varsayılan dil olarak kullanılacaktır, ancak daha sonra değiştirilebilir.';
+$string['clialreadyconfigured'] = 'config.php yapılandırma dosyası zaten mevcut. Bu siteye Moodle yüklemek için lütfen admin/cli/install_database.php dosyasını kullanın.';
 $string['clialreadyinstalled'] = 'Config.php zaten var. Sitenizi güncellemek istiyorsanız bu adresi kullanın: admin/cli/install_database.php';
 $string['cliinstallheader'] = 'Moodle {$a} komut satırı kurulum programı';
-$string['clitablesexist'] = 'Veritabanı tabloları zaten var. CLI kurulumu devam edemez.';
+$string['clitablesexist'] = 'Veritabanı tabloları zaten mevcut; CLI kurulumu devam edemiyor.';
 $string['databasehost'] = 'Veritabanı sunucusu';
 $string['databasename'] = 'Veritabanı adı';
 $string['databasetypehead'] = 'Veritabanı sürücüsü seçin';
@@ -49,17 +49,16 @@ $string['environmentsub2'] = 'Her Moodle dağıtımı, bazı PHP versiyon gereks
 $string['errorsinenvironment'] = 'Ortam kontrolu başarısız oldu!';
 $string['installation'] = 'Kurulum';
 $string['langdownloaderror'] = 'Maalesef "{$a}" dil paketi kurulamadı. Kuruluma İngilizce olarak devam edilecek.';
-$string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek limiti şu anda {$a} olarak ayarlanmış durumda.</p>
+$string['memorylimithelp'] = '<p>Sunucunuz için PHP bellek sınırı şu anda {$a} olarak ayarlanmıştır.</p>
 
 <p>Özellikle bir çok modülü etkinleştirilmiş ve/veya çok fazla kullanıcınız
 varsa bu durum daha sonra bazı bellek sorunlarına sebep olabilir.</p>
 
-<p>Mümkünse size PHP\'e daha yüksek limitli bir bellek ayarı yapmanızı,
-örneğin, 40M, öneriyoruz. İşte bunu yapabilmeniz için size bir kaç yol:</p>
-
+<p>PHP\'yi mümkünse 40M gibi daha yüksek bir limitle yapılandırmanızı öneririz.
+Bunu yapmanın birkaç yolunu bulabilirsiniz:</p>
 <ol>
 <li>Bunu yapmaya yetkiliyseniz, PHP\'yi <i>--enable-memory-limit</i> ile yeniden derleyin.
-Bu, Moodle\'nın kendi kendine bellek limitini ayarlasına izin verecek.</li>
+Bu, Moodle\'nın kendi kendine bellek limitini ayarlasına izin verecektir.</li>
 
 <li>php.ini dosyasına erişim hakkınız varsa, <b>memory_limit</b> ayarını 40M gibi
 bir ayarla değiştirin. Erişim hakkınız yoksa, bunu sistem yöneticinizden sizin
@@ -92,14 +91,14 @@ $string['pathsunsecuredataroot'] = 'Veri yolu güvenli değil';
 $string['pathswrongadmindir'] = 'Yönetici klasörü yok';
 $string['phpextension'] = '{$a} PHP eklentisi';
 $string['phpversion'] = 'PHP sürümü';
-$string['phpversionhelp'] = '<p>Moodle, PHP sürümünün en az 4.3.0 veya 5.1.0 olmasını gerektirir (5.0.x sürümünde çok fazla hata var).</p>
-<p>Şu anda çalışan sürüm: {$a}</p>
-<p>PHP\'yi güncellemeli veya PHP\'nin yeni sürümünü kullananan bir hostinge taşınmalısınız!</p>';
+$string['phpversionhelp'] = '<p>Moodle en az 5.6.5 veya 7.1 PHP sürümü gerektirir (7.0.x bazı motor sınırlamalarına sahiptir).</p>
+<p>Şu anda {$a} sürümünü çalıştırıyorsunuz.</p>
+<p>PHP\'yi yükseltmeli veya daha yeni bir PHP sürümüne sahip bir ana bilgisayara geçmelisiniz.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
-$string['welcomep20'] = 'Bilgisayarınıza <strong>{$a->packname} {$a->packversion}</strong> paketini başarıyla kurdunuz. Tebrikler!';
-$string['welcomep30'] = '<strong>{$a->installername}</strong>\'nin bu sürümü <strong>Moodle</strong>\'da bir ortam oluşturmak için uygulamaları içerir:';
+$string['welcomep20'] = 'Bu sayfayı <strong>{$a->packname} {$a->packversion}</strong> paketini ilgisayarınıza başarıyla kurduğunuz için görüyorsunuz. Tebrikler!';
+$string['welcomep30'] = '<strong> {$a-> installername} </strong>\'in bu sürümü, <strong> Moodle </strong>\'ın çalışacağı bir ortam oluşturmak için uygulamaları içerir:';
 $string['welcomep40'] = 'Bu paket <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong> sürümünü de içerir.';
-$string['welcomep50'] = 'Bu paketteki tüm uygulamaların kullanımı her biri kendine ait olan lisanslar tarafından yönetilir. <strong>{$a->installername}</strong> paketinin tamamı <a href="http://www.opensource.org/docs/definition_plain.html">açık kaynak</a> kodludur ve <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> lisansı altında dağıtılır.';
-$string['welcomep60'] = 'Aşağıdaki sayfalar <strong>Moodle</strong>ın kurulumu ve yapılandırılması için size basitçe yol gösterecektir. Varsayılan ayarları kabul edebilir veya ihtiyaçlarınıza göre bunları değiştirebilirsiniz.';
+$string['welcomep50'] = 'Bu paketteki tüm uygulamaların kullanımı ilgili lisanslarına tabidir.  Eksiksiz <strong>{$a->installername}</strong> paketi <a href="https://www.opensource.org/docs/definition_plain.html">açık kaynak</a>\'tır ve altında dağıtılır <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a> lisansı.';
+$string['welcomep60'] = 'Aşağıdaki sayfalar, bilgisayarınızda <strong> Moodle </strong>\'ı yapılandırmak ve kurmak için izlemeniz gereken bazı kolay adımlarla sizi yönlendirecektir. Varsayılan ayarları kabul edebilir veya isteğe bağlı olarak kendi ihtiyacınıza göre değiştirebilirsiniz';
 $string['welcomep70'] = '<strong>Moodle</strong> kurulumu için aşağıdaki "İleri" tuşuna basın.';
 $string['wwwroot'] = 'Web adresi';

@@ -19,6 +19,9 @@ LTI-Tool-Provider-Library-PHP repo has been archived so it doesn't accept pull r
 * MDL-71920: Migrated from curl_exec and friends to use our Moodle curl wrapper,
 so we can better handle site security settings
 
+This local change has been made without the accompanying pull request as the upstream library is archived:
+* $FULLME is used as the URL for OAuth, to fix reverse proxy support (see MDL-64152)
+
 It is recommended by upstream to install depdencies via composer - but the composer installation is bundled
 with an autoloader so it's better to do it manually.
 
@@ -64,3 +67,12 @@ In case of any changes we may need to update
 enrol/lti/classes/data_connector.php
 enrol/lti/db/install.xml
 enrol/lti/db/upgrade.php
+
+* MDL-78144 PHP 8.2 compliance.
+  To temporarily prevent the PHP 8.2 warning about the deprecation of dynamic properties,
+  the #[\AllowDynamicProperties] attribute was added on top of the classes.
+  Below is a handy command to add the attribute above the class line:
+  ```
+  cd lib/ltiprovider/src
+  for file in `find . -name '*.php' `; do sed -i '/^class /i #[\\AllowDynamicProperties]' $file; done
+  ```

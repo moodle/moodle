@@ -64,6 +64,9 @@ class user implements \core_analytics\analysable {
      */
     protected $usercontext = null;
 
+    /** @var int Store current Unix timestamp. */
+    protected int $now = 0;
+
     /**
      * Constructor.
      *

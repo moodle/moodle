@@ -57,6 +57,9 @@ class brickfield_accessibility_test {
     /** @var array An array of translatable strings */
     public $strings = array('en' => '');
 
+    /** @var mixed Any additional options passed by htmlchecker. */
+    public $options;
+
     /**
      * The class constructor. We pass items by reference so we can alter the DOM if necessary
      * @param object $dom The DOMDocument object
@@ -377,18 +380,60 @@ class brickfield_accessibility_test {
     }
 
     /**
+     * Returns an array of the newwindowphrases for all enabled language packs.
+     * @return array of the newwindowphrases for all enabled language packs.
+     */
+    public static function get_all_newwindowphrases(): array {
+        // Need to process all enabled lang versions of newwindowphrases.
+        return static::get_all_phrases('newwindowphrases');
+    }
+
+    /**
      * Returns an array of the invalidlinkphrases for all enabled language packs.
      * @return array of the invalidlinkphrases for all enabled language packs.
      */
     public static function get_all_invalidlinkphrases(): array {
         // Need to process all enabled lang versions of invalidlinkphrases.
+        return static::get_all_phrases('invalidlinkphrases');
+    }
+
+    /**
+     * Returns an array of the relevant phrases for all enabled language packs.
+     * @param string $stringname the language string identifier you want get the phrases for.
+     * @return array of the invalidlinkphrases for all enabled language packs.
+     */
+    protected static function get_all_phrases(string $stringname): array {
+        $stringmgr = get_string_manager();
         $allstrings = [];
-        $enabledlangs = get_string_manager()->get_list_of_translations();
+
+        // Somehow, an invalid string was requested. Add exception handling for this in the future.
+        if (!$stringmgr->string_exists($stringname, manager::PLUGINNAME)) {
+            return $allstrings;
+        }
+
+        // Need to process all enabled lang versions of invalidlinkphrases.
+        $enabledlangs = $stringmgr->get_list_of_translations();
         foreach ($enabledlangs as $lang => $value) {
-            $tmpstring = (string)new \lang_string('invalidlinkphrases', manager::PLUGINNAME, null, $lang);
+            $tmpstring = (string)new \lang_string($stringname, manager::PLUGINNAME, null, $lang);
             $tmplangarray = explode('|', $tmpstring);
             $allstrings = array_merge($allstrings, $tmplangarray);
         }
+        // Removing duplicates if a lang is enabled, yet using default 'en' due to no relevant lang file.
+        $allstrings = array_unique($allstrings);
         return $allstrings;
+    }
+
+    /**
+     * Assesses whether a string contains any readable text, which is text that
+     * contains any characters other than whitespace characters.
+     *
+     * @param string $text
+     * @return bool
+     */
+    public static function is_text_readable(string $text): bool {
+        // These characters in order are a space, tab, line feed, carriage return,
+        // NUL-byte, vertical tab and non-breaking space unicode character \xc2\xa0.
+        $emptycharacters = " \t\n\r\0\x0B\xc2\xa0";
+        return trim($text, $emptycharacters) != '';
     }
 }

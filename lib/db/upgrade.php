@@ -2984,5 +2984,622 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023020800.00);
     }
 
+    if ($oldversion < 2023021700.01) {
+        // Define field pdfexportfont to be added to course.
+        $table = new xmldb_table('course');
+        $field = new xmldb_field('pdfexportfont', XMLDB_TYPE_CHAR, '50', null, false, false, null, 'showcompletionconditions');
+
+        // Conditionally launch add field pdfexportfont.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023021700.01);
+    }
+
+    if ($oldversion < 2023022000.00) {
+        // Remove grade_report_showquickfeedback, grade_report_enableajax, grade_report_showeyecons,
+        // grade_report_showlocks, grade_report_showanalysisicon preferences for every user.
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showquickfeedback']);
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_enableajax']);
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showeyecons']);
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showlocks']);
+        $DB->delete_records('user_preferences', ['name' => 'grade_report_showanalysisicon']);
+
+        // The grade_report_showquickfeedback, grade_report_enableajax, grade_report_showeyecons,
+        // grade_report_showlocks, grade_report_showanalysisicon settings have been removed.
+        unset_config('grade_report_showquickfeedback');
+        unset_config('grade_report_enableajax');
+        unset_config('grade_report_showeyecons');
+        unset_config('grade_report_showlocks');
+        unset_config('grade_report_showanalysisicon');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023022000.00);
+    }
+
+    if ($oldversion < 2023030300.01) {
+        $sql = "SELECT preset.*
+                  FROM {adminpresets} preset
+            INNER JOIN {adminpresets_it} it ON preset.id = it.adminpresetid
+                 WHERE it.name = :name AND it.value = :value AND preset.iscore > 0";
+        // Some settings and plugins have been added/removed to the Starter and Full preset. Add them to the core presets if
+        // they haven't been included yet.
+        $params = ['name' => get_string('starterpreset', 'core_adminpresets'), 'iscore' => 1];
+        $starterpreset = $DB->get_record('adminpresets', $params);
+        if (!$starterpreset) {
+            // Starter admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('starterpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $starterpreset = $DB->get_record('adminpresets', $params);
+        }
+        if (!$starterpreset) {
+            // We tried, but we didn't find starter by name. Let's find a core preset that sets 'usecomments' setting to 0.
+            $params = ['name' => 'usecomments', 'value' => '0'];
+            $starterpreset = $DB->get_record_sql($sql, $params);
+        }
+
+        $params = ['name' => get_string('fullpreset', 'core_adminpresets')];
+        $fullpreset = $DB->get_record_select('adminpresets', 'name = :name and iscore > 0', $params);
+        if (!$fullpreset) {
+            // Full admin preset might have been created using the English name.
+            $name = get_string_manager()->get_string('fullpreset', 'core_adminpresets', null, 'en');
+            $params['name'] = $name;
+            $fullpreset = $DB->get_record_select('adminpresets', 'name = :name and iscore > 0', $params);
+        }
+        if (!$fullpreset) {
+            // We tried, but we didn't find full by name. Let's find a core preset that sets 'usecomments' setting to 1.
+            $params = ['name' => 'usecomments', 'value' => '1'];
+            $fullpreset = $DB->get_record_sql($sql, $params);
+        }
+
+        $settings = [
+            // Settings. Set Activity chooser tabs to "Starred, Recommended, All"(5) for Starter and back it to default(3) for Full.
+            [
+                'presetid' => $starterpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '4',
+            ],
+            [
+                'presetid' => $fullpreset->id,
+                'plugin' => 'none',
+                'name' => 'activitychoosertabmode',
+                'value' => '3',
+            ],
+        ];
+        foreach ($settings as $notused => $setting) {
+            $params = ['adminpresetid' => $setting['presetid'], 'plugin' => $setting['plugin'], 'name' => $setting['name']];
+            if (!$record = $DB->get_record('adminpresets_it', $params)) {
+                $record = new \stdClass();
+                $record->adminpresetid = $setting['presetid'];
+                $record->plugin = $setting['plugin'];
+                $record->name = $setting['name'];
+                $record->value = $setting['value'];
+                $DB->insert_record('adminpresets_it', $record);
+            } else {
+                $record->value = $setting['value'];
+                $DB->update_record('adminpresets_it', $record);
+            }
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023030300.01);
+    }
+
+    if ($oldversion < 2023030300.02) {
+        // If cachestore_mongodb is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/cache/stores/mongodb/version.php')) {
+            // Clean config.
+            unset_all_config_for_plugin('cachestore_mongodb');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023030300.02);
+    }
+
+    if ($oldversion < 2023030300.03) {
+        // If editor_tinymce is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/lib/editor/tinymce/version.php')) {
+            // Clean config.
+            uninstall_plugin('editor', 'tinymce');
+            $DB->delete_records('user_preferences', [
+                'name' => 'htmleditor',
+                'value' => 'tinymce',
+            ]);
+
+            if ($editors = get_config('core', 'texteditors')) {
+                $editors = array_flip(explode(',', $editors));
+                unset($editors['tinymce']);
+                set_config('texteditors', implode(',', array_flip($editors)));
+            }
+        }
+        upgrade_main_savepoint(true, 2023030300.03);
+    }
+
+    if ($oldversion < 2023031000.02) {
+        // If editor_tinymce is no longer present, remove it's sub-plugins too.
+        if (!file_exists($CFG->dirroot . '/lib/editor/tinymce/version.php')) {
+            $DB->delete_records_select(
+                'config_plugins',
+                $DB->sql_like('plugin', ':plugin'),
+                ['plugin' => $DB->sql_like_escape('tinymce_') . '%']
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023031000.02);
+    }
+
+    if ($oldversion < 2023031400.01) {
+        // Define field id to be added to groups.
+        $table = new xmldb_table('groups');
+        $field = new xmldb_field('visibility', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '0', 'picture');
+
+        // Conditionally launch add field visibility.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field participation to be added to groups.
+        $field = new xmldb_field('participation', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, '1', 'visibility');
+
+        // Conditionally launch add field participation.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023031400.01);
+    }
+
+    if ($oldversion < 2023031400.02) {
+
+        // Define table xapi_states to be created.
+        $table = new xmldb_table('xapi_states');
+
+        // Adding fields to table xapi_states.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('component', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('itemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('stateid', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('statedata', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('registration', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table xapi_states.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Adding indexes to table xapi_states.
+        $table->add_index('component-itemid', XMLDB_INDEX_NOTUNIQUE, ['component', 'itemid']);
+        $table->add_index('userid', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        $table->add_index('timemodified', XMLDB_INDEX_NOTUNIQUE, ['timemodified']);
+
+        // Conditionally launch create table for xapi_states.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        if (!isset($CFG->xapicleanupperiod)) {
+            set_config('xapicleanupperiod', WEEKSECS * 8);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023031400.02);
+    }
+
+    if ($oldversion < 2023040600.01) {
+        // If logstore_legacy is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/admin/tool/log/store/legacy/version.php')) {
+            uninstall_plugin('logstore', 'legacy');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023040600.01);
+    }
+
+    if ($oldversion < 2023041100.00) {
+        // Add public key field to user_devices table.
+        $table = new xmldb_table('user_devices');
+        $field = new xmldb_field('publickey', XMLDB_TYPE_TEXT, null, null, null, null, null, 'uuid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023041100.00);
+    }
+
+    if ($oldversion < 2023042000.00) {
+        // If mod_assignment is no longer present, remove it.
+        if (!file_exists($CFG->dirroot . '/mod/assignment/version.php')) {
+            // Delete all mod_assignment grade_grades orphaned data.
+            $DB->delete_records_select(
+                'grade_grades', "itemid IN (SELECT id FROM {grade_items} WHERE itemtype = 'mod' AND itemmodule = 'assignment')"
+            );
+
+            // Delete all mod_assignment grade_grades_history orphaned data.
+            $DB->delete_records('grade_grades_history', ['source' => 'mod/assignment']);
+
+            // Delete all mod_assignment grade_items orphaned data.
+            $DB->delete_records('grade_items', ['itemtype' => 'mod', 'itemmodule' => 'assignment']);
+
+            // Delete all mod_assignment grade_items_history orphaned data.
+            $DB->delete_records('grade_items_history', ['itemtype' => 'mod', 'itemmodule' => 'assignment']);
+
+            // Delete core mod_assignment subplugins.
+            uninstall_plugin('assignment', 'offline');
+            uninstall_plugin('assignment', 'online');
+            uninstall_plugin('assignment', 'upload');
+            uninstall_plugin('assignment', 'uploadsingle');
+
+            // Delete other mod_assignment subplugins.
+            $pluginnamelike = $DB->sql_like('plugin', ':pluginname');
+            $subplugins = $DB->get_fieldset_select('config_plugins', 'plugin', "$pluginnamelike AND name = :name", [
+                'pluginname' => $DB->sql_like_escape('assignment_') . '%',
+                'name' => 'version',
+            ]);
+            foreach ($subplugins as $subplugin) {
+                [$plugin, $subpluginname] = explode('_', $subplugin, 2);
+                uninstall_plugin($plugin, $subpluginname);
+            }
+
+            // Delete mod_assignment.
+            uninstall_plugin('mod', 'assignment');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023042000.00);
+    }
+
+    // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    if ($oldversion < 2023051500.00) {
+        // Define communication table.
+        $table = new xmldb_table('communication');
+
+        // Adding fields to table communication.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field('instanceid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('component', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'instanceid');
+        $table->add_field('instancetype', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'component');
+        $table->add_field('provider', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'instancerype');
+        $table->add_field('roomname', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'provider');
+        $table->add_field('avatarfilename', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'roomname');
+        $table->add_field('active', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 1, 'avatarfilename');
+
+        // Add key.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for communication.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Define communication user table.
+        $table = new xmldb_table('communication_user');
+
+        // Adding fields to table communication.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE);
+        $table->add_field('commid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'id');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null, 'commid');
+        $table->add_field('synced', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'userid');
+        $table->add_field('deleted', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'synced');
+
+        // Add keys.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('commid', XMLDB_KEY_FOREIGN, ['commid'], 'communication', ['id']);
+        $table->add_key('userid', XMLDB_KEY_FOREIGN, ['userid'], 'user', ['id']);
+
+        // Conditionally launch create table for communication.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023051500.00);
+    }
+
+    if ($oldversion < 2023062200.00) {
+        // Remove device specific fields for themes from config table.
+        unset_config('thememobile');
+        unset_config('themelegacy');
+        unset_config('themetablet');
+
+        upgrade_main_savepoint(true, 2023062200.00);
+    }
+
+    if ($oldversion < 2023062700.01) {
+        // Define field name to be added to external_tokens.
+        $table = new xmldb_table('external_tokens');
+        $field = new xmldb_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null, 'lastaccess');
+        // Conditionally launch add field name.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Update the old external tokens.
+        $sql = 'UPDATE {external_tokens}
+                   SET name = ' . $DB->sql_concat(
+                       // We only need the prefix, so leave the third param with an empty string.
+                           "'" . get_string('tokennameprefix', 'webservice', '') . "'",
+                           "id");
+        $DB->execute($sql);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023062700.01);
+    }
+
+    if ($oldversion < 2023062900.01) {
+
+        // Define field avatarsynced to be added to communication.
+        $table = new xmldb_table('communication');
+        $field = new xmldb_field('avatarsynced', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'active');
+
+        // Conditionally launch add field avatarsynced.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023062900.01);
+    }
+
+    if ($oldversion < 2023080100.00) {
+        // Upgrade yaml mime type for existing yaml and yml files.
+        $filetypes = [
+            '%.yaml' => 'application/yaml',
+            '%.yml' => 'application/yaml,'
+        ];
+
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($filetypes as $extension => $mimetype) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                $mimetype,
+                $select,
+                [$extension]
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023080100.00);
+    }
+
+    if ($oldversion < 2023081500.00) {
+        upgrade_core_licenses();
+        upgrade_main_savepoint(true, 2023081500.00);
+    }
+
+    if ($oldversion < 2023081800.01) {
+        // Remove enabledevicedetection and devicedetectregex from config table.
+        unset_config('enabledevicedetection');
+        unset_config('devicedetectregex');
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023081800.01);
+    }
+
+    if ($oldversion < 2023082200.01) {
+        // Some MIME icons have been removed and replaced with existing icons. They need to be upgraded for custom MIME types.
+        $replacedicons = [
+            'avi' => 'video',
+            'base' => 'database',
+            'bmp' => 'image',
+            'html' => 'markup',
+            'jpeg' => 'image',
+            'mov' => 'video',
+            'mp3' => 'audio',
+            'mpeg' => 'video',
+            'png' => 'image',
+            'quicktime' => 'video',
+            'tiff' => 'image',
+            'wav' => 'audio',
+            'wmv' => 'video',
+        ];
+
+        $custom = [];
+        if (!empty($CFG->customfiletypes)) {
+            if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
+                // It's set in config.php, so the MIME icons can't be upgraded automatically.
+                echo("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
+            } else {
+                // It's a JSON string in the config table.
+                $custom = json_decode($CFG->customfiletypes);
+            }
+        }
+
+        $changed = false;
+        foreach ($custom as $customentry) {
+            if (!empty($customentry->icon) && array_key_exists($customentry->icon, $replacedicons)) {
+                $customentry->icon = $replacedicons[$customentry->icon];
+                $changed = true;
+            }
+        }
+
+        if ($changed) {
+            // Save the new customfiletypes.
+            set_config('customfiletypes', json_encode($custom));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.01);
+    }
+
+    if ($oldversion < 2023082200.02) {
+        // Some MIME icons have been removed. They need to be replaced to 'unknown' for custom MIME types.
+        $removedicons = array_flip([
+            'clip-353',
+            'edit',
+            'env',
+            'explore',
+            'folder-open',
+            'help',
+            'move',
+            'parent',
+        ]);
+
+        $custom = [];
+        if (!empty($CFG->customfiletypes)) {
+            if (array_key_exists('customfiletypes', $CFG->config_php_settings)) {
+                // It's set in config.php, so the MIME icons can't be upgraded automatically.
+                echo("\nYou need to manually check customfiletypes in config.php because some MIME icons have been removed!\n");
+            } else {
+                // It's a JSON string in the config table.
+                $custom = json_decode($CFG->customfiletypes);
+            }
+        }
+
+        $changed = false;
+        foreach ($custom as $customentry) {
+            if (!empty($customentry->icon) && array_key_exists($customentry->icon, $removedicons)) {
+                // The icon has been removed, so set it to unknown.
+                $customentry->icon = 'unknown';
+                $changed = true;
+            }
+        }
+
+        if ($changed) {
+            // Save the new customfiletypes.
+            set_config('customfiletypes', json_encode($custom));
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.02);
+    }
+
+    if ($oldversion < 2023082200.04) {
+
+        // Remove any non-unique filters/conditions.
+        $duplicates = $DB->get_records_sql("
+            SELECT MIN(id) AS id, reportid, uniqueidentifier, iscondition
+              FROM {reportbuilder_filter}
+          GROUP BY reportid, uniqueidentifier, iscondition
+            HAVING COUNT(*) > 1");
+
+        foreach ($duplicates as $duplicate) {
+            $DB->delete_records_select(
+                'reportbuilder_filter',
+                'id <> :id AND reportid = :reportid AND uniqueidentifier = :uniqueidentifier AND iscondition = :iscondition',
+                (array) $duplicate
+            );
+        }
+
+        // Define index report-filter (unique) to be added to reportbuilder_filter.
+        $table = new xmldb_table('reportbuilder_filter');
+        $index = new xmldb_index('report-filter', XMLDB_INDEX_UNIQUE, ['reportid', 'uniqueidentifier', 'iscondition']);
+
+        // Conditionally launch add index report-filter.
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082200.04);
+    }
+
+    if ($oldversion < 2023082600.02) {
+        // Get all the ids of users who still have md5 hashed passwords.
+        if ($DB->sql_regex_supported()) {
+            // If the database supports regex, we can add an exact check for md5.
+            $condition = 'password ' . $DB->sql_regex() . ' :pattern';
+            $params = ['pattern' => "^[a-fA-F0-9]{32}$"];
+        } else {
+            // Otherwise, we need to use a NOT LIKE condition and rule out bcrypt.
+            $condition = $DB->sql_like('password', ':pattern', true, false, true);
+            $params = ['pattern' => '$2y$%'];
+        }
+
+        // Regardless of database regex support we check the hash length which should be enough.
+        // But extra regex or like matching makes sure.
+        $sql = "SELECT id FROM {user} WHERE LENGTH(password) = 32 AND $condition";
+        $userids = $DB->get_fieldset_sql($sql, $params);
+
+        // Update the password for each user with a new SHA-512 hash.
+        // Users won't know this password, but they can reset it. This is a security measure,
+        // in case the database is compromised or the hash has been leaked elsewhere.
+        foreach ($userids as $userid) {
+            $password = base64_encode(random_bytes(24)); // Generate a new password for the user.
+
+            $user = new \stdClass();
+            $user->id = $userid;
+            $user->password = hash_internal_user_password($password);
+            $DB->update_record('user', $user, true);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.02);
+    }
+
+    if ($oldversion < 2023082600.03) {
+        // The previous default configuration had a typo, check for its presence and correct if necessary.
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        if (strpos($sensiblesettings, 'smtppass@none') !== false) {
+            $newsensiblesettings = str_replace('smtppass@none', 'smtppass@@none', $sensiblesettings);
+            set_config('sensiblesettings', $newsensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.03);
+    }
+
+    if ($oldversion < 2023082600.05) {
+        unset_config('completiondefault');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023082600.05);
+    }
+
+    if ($oldversion < 2023090100.00) {
+        // Upgrade MIME type for existing PSD files.
+        $DB->set_field_select(
+            'files',
+            'mimetype',
+            'image/vnd.adobe.photoshop',
+            $DB->sql_like('filename', '?', false),
+            ['%.psd']
+        );
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090100.00);
+    }
+
+    if ($oldversion < 2023090200.01) {
+
+        // Define table moodlenet_share_progress to be created.
+        $table = new xmldb_table('moodlenet_share_progress');
+
+        // Adding fields to table moodlenet_share_progress.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('type', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('cmid', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('resourceurl', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, null, null, null);
+
+        // Adding keys to table moodlenet_share_progress.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for moodlenet_share_progress.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023090200.01);
+    }
+
+    if ($oldversion < 2023091300.03) {
+        // Delete all the searchanywhere prefs in user_preferences table.
+        $DB->delete_records('user_preferences', ['name' => 'userselector_searchanywhere']);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023091300.03);
+    }
+
     return true;
 }

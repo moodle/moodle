@@ -223,4 +223,18 @@ export default class {
         });
         return items;
     }
+
+    /**
+     * Check is some activities of a list can be stealth.
+     *
+     * @param {Object} state the current state.
+     * @param {Number[]} cmIds the module ids to check
+     * @returns {Boolean} if any of the activities can be stealth.
+     */
+    canUseStealth(state, cmIds) {
+        return cmIds.some(cmId => {
+            const cminfo = state.cm.get(cmId);
+            return cminfo?.allowstealth ?? false;
+        });
+    }
 }

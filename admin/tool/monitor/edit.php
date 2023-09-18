@@ -90,7 +90,7 @@ if (!empty($ruleid)) {
 
 // Modify the lists to add the choosers.
 $eventlist = array_merge(array('' => get_string('choosedots')), $eventlist);
-$pluginlist = array_merge(array('' => get_string('choosedots')), $pluginlist);
+$pluginlist = array_merge(['' => [0 => get_string('choosedots')]], $pluginlist);
 $mform = new tool_monitor\rule_form(null, array('eventlist' => $eventlist, 'pluginlist' => $pluginlist, 'rule' => $rule,
         'courseid' => $courseid, 'subscriptioncount' => $subscriptioncount));
 

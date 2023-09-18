@@ -31,7 +31,7 @@ Feature: Activity completion in the quiz activity with unlocked and re-grading.
       | idnumber            | quiz1          |
       | name                | Test quiz name |
       | section             | 1              |
-      | gradepass           | 10.00          |
+      | gradepass           | 8              |
       | grade               | 10             |
       | grademethod         | 1              |
       | completion          | 2              |
@@ -54,14 +54,21 @@ Feature: Activity completion in the quiz activity with unlocked and re-grading.
     And I am on "Course 1" course homepage
     And I follow "Test quiz name"
     And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
-    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "done"
     And I log out
-    When I am on the "Test quiz name" "quiz activity" page logged in as teacher1
+    When I am on the "Course 1" course page logged in as teacher1
+    And I navigate to "Reports > Activity completion" in current page administration
+    And "Completed (achieved pass grade)" "icon" should exist in the "Student 1" "table_row"
+    And I am on the "Test quiz name" "quiz activity" page
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I press "Unlock completion settings"
     And I set the following fields to these values:
-      | gradepass | 8 |
+      | gradepass | 10 |
     And I press "Save and return to course"
     And I navigate to "Reports > Activity completion" in current page administration
-    Then "Completed (achieved pass grade)" "icon" should exist in the "Student 1" "table_row"
+    Then "Completed (achieved pass grade)" "icon" should not exist in the "Student 1" "table_row"
+    And I log out
+    And I am on the "Test quiz name" "quiz activity" page logged in as student1
+    And the "Receive a grade" completion condition of "Test quiz name" is displayed as "done"
+    And the "Receive a passing grade" completion condition of "Test quiz name" is displayed as "failed"

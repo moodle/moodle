@@ -70,10 +70,10 @@ class core_files_renderer extends plugin_renderer_base {
                 if ($file['filesize']) {
                     $filesize = display_size($file['filesize']);
                 }
-                $fileicon = file_file_icon($file, 24);
+                $fileicon = file_file_icon($file);
                 $filetype = get_mimetype_description($file);
             } else {
-                $fileicon = file_folder_icon(24);
+                $fileicon = file_folder_icon();
             }
             $table->data[] = array(
                 html_writer::link($file['url'], $this->output->pix_icon($fileicon, get_string('icon')) . ' ' . $file['filename']),
@@ -567,6 +567,9 @@ class files_tree_viewer implements renderable {
     public $tree;
     public $path;
     public $context;
+
+    /** @var array file tree viewer options. */
+    protected array $options = [];
 
     /**
      * Constructor of moodle_file_tree_viewer class

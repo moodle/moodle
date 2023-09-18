@@ -29,67 +29,52 @@ Feature: The activity results block displays student low scores
       | course                        | C1              |
       | idnumber                      | 0001            |
       | name                          | Test assignment |
-      | intro                         | Offline text    |
-      | section                       | 1               |
       | assignsubmission_file_enabled | 0               |
+    And the following "grade grades" exist:
+      | gradeitem       | user     | grade |
+      | Test assignment | student1 | 90.00 |
+      | Test assignment | student2 | 80.00 |
+      | Test assignment | student3 | 70.00 |
+      | Test assignment | student4 | 60.00 |
+      | Test assignment | student5 | 50.00 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "View > Grader report" in the course gradebook
-    And I give the grade "90.00" to the user "Student 1" for the grade item "Test assignment"
-    And I give the grade "80.00" to the user "Student 2" for the grade item "Test assignment"
-    And I give the grade "70.00" to the user "Student 3" for the grade item "Test assignment"
-    And I give the grade "60.00" to the user "Student 4" for the grade item "Test assignment"
-    And I give the grade "50.00" to the user "Student 5" for the grade item "Test assignment"
-    And I press "Save changes"
-    And I am on "Course 1" course homepage
 
   Scenario: Configure the block on the course page to show 1 low score
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 low score as a fraction
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 low score as a absolute number
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 1 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as percentages
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 3 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50%" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -98,14 +83,11 @@ Feature: The activity results block displays student low scores
     And I should see "70%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as fractions
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 3 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00/100.00" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -114,14 +96,11 @@ Feature: The activity results block displays student low scores
     And I should see "70.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores as absolute numbers
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 3 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
-    And I press "Save changes"
     Then I should see "Student 5" in the "Activity results" "block"
     And I should see "50.00" in the "Activity results" "block"
     And I should see "Student 4" in the "Activity results" "block"
@@ -132,14 +111,11 @@ Feature: The activity results block displays student low scores
   Scenario: Try to configure the block on the course page to show multiple low scores using ID numbers
     Given the following config values are set as admin:
       | showuseridentity | idnumber,email |
-    And I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    And I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 3 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display only ID numbers |
-    And I press "Save changes"
     Then I should see "User S5" in the "Activity results" "block"
     And I should see "50.00%" in the "Activity results" "block"
     And I should see "User S4" in the "Activity results" "block"
@@ -148,14 +124,11 @@ Feature: The activity results block displays student low scores
     And I should see "70.00%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple low scores using anonymous names
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 0 |
       | config_showworst | 3 |
       | config_gradeformat | Percentages |
       | config_nameformat | Anonymous results |
-    And I press "Save changes"
     Then I should see "User" in the "Activity results" "block"
     And I should see "50.00%" in the "Activity results" "block"
     And I should see "60.00%" in the "Activity results" "block"

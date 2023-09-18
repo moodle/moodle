@@ -2,11 +2,12 @@
 
 namespace Packback\Lti1p3;
 
+use Exception;
 use Firebase\JWT\JWT;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Psr7\Response;
 use Packback\Lti1p3\Interfaces\ICache;
-use Packback\Lti1p3\Interfaces\IHttpClient;
-use Packback\Lti1p3\Interfaces\IHttpException;
-use Packback\Lti1p3\Interfaces\IHttpResponse;
 use Packback\Lti1p3\Interfaces\ILtiRegistration;
 use Packback\Lti1p3\Interfaces\ILtiServiceConnector;
 use Packback\Lti1p3\Interfaces\IServiceRequest;
@@ -14,14 +15,13 @@ use Packback\Lti1p3\Interfaces\IServiceRequest;
 class LtiServiceConnector implements ILtiServiceConnector
 {
     public const NEXT_PAGE_REGEX = '/<([^>]*)>; ?rel="next"/i';
-
     private $cache;
     private $client;
     private $debuggingMode = false;
 
     public function __construct(
         ICache $cache,
-        IHttpClient $client
+        Client $client
     ) {
         $this->cache = $cache;
         $this->client = $client;
@@ -100,7 +100,7 @@ class LtiServiceConnector implements ILtiServiceConnector
         return $response;
     }
 
-    public function getResponseHeaders(IHttpResponse $response): ?array
+    public function getResponseHeaders(Response $response): ?array
     {
         $responseHeaders = $response->getHeaders();
         array_walk($responseHeaders, function (&$value) {
@@ -110,7 +110,7 @@ class LtiServiceConnector implements ILtiServiceConnector
         return $responseHeaders;
     }
 
-    public function getResponseBody(IHttpResponse $response): ?array
+    public function getResponseBody(Response $response): ?array
     {
         $responseBody = (string) $response->getBody();
 
@@ -127,7 +127,7 @@ class LtiServiceConnector implements ILtiServiceConnector
 
         try {
             $response = $this->makeRequest($request);
-        } catch (IHttpException $e) {
+        } catch (ClientException $e) {
             $status = $e->getResponse()->getStatusCode();
 
             // If the error was due to invalid authentication and the request
@@ -156,7 +156,7 @@ class LtiServiceConnector implements ILtiServiceConnector
         string $key = null
     ): array {
         if ($request->getMethod() !== ServiceRequest::METHOD_GET) {
-            throw new \Exception('An invalid method was specified by an LTI service requesting all items.');
+            throw new Exception('An invalid method was specified by an LTI service requesting all items.');
         }
 
         $results = [];
@@ -212,7 +212,7 @@ class LtiServiceConnector implements ILtiServiceConnector
 
     private function getNextUrl(array $headers)
     {
-        $subject = $headers['Link'] ?? '';
+        $subject = $headers['Link'] ?? $headers['link'] ?? '';
         preg_match(static::NEXT_PAGE_REGEX, $subject, $matches);
 
         return $matches[1] ?? null;

@@ -162,10 +162,18 @@ class user_repository {
                     "to user '{$ltiuser->userid}' and can't be associated with another user '{$userrecord->id}'.");
             }
 
-            $userrecord->timemodified = $timenow;
-            $ltiuserrecord->timemodified = $timenow;
-            \user_update_user($userrecord);
+            // Only update the Moodle user record if something has changed.
+            $rawuser = \core_user::get_user($userrecord->id);
+            $userfieldstocompare = array_intersect_key(
+                (array) $rawuser,
+                (array) $userrecord
+            );
+            if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
+                \user_update_user($userrecord);
+            }
             unset($userrecord->id);
+
+            $ltiuserrecord->timemodified = $timenow;
             $DB->update_record($this->ltiuserstable, $ltiuserrecord);
         } else {
             // Validate uniqueness of the lti user, in the case of a stale object coming in to be saved.
@@ -173,8 +181,17 @@ class user_repository {
                 throw new \coding_exception("Cannot create duplicate LTI user '{$user->get_localid()}' for resource " .
                     "'{$user->get_resourceid()}'.");
             }
+
+            // Only update the Moodle user record if something has changed.
             $userid = $userrecord->id;
-            \user_update_user($userrecord);
+            $rawuser = \core_user::get_user($userid);
+            $userfieldstocompare = array_intersect_key(
+                (array) $rawuser,
+                (array) $userrecord
+            );
+            if (!empty(array_diff((array) $userrecord, $userfieldstocompare))) {
+                \user_update_user($userrecord);
+            }
             unset($userrecord->id);
 
             // Create the lti_user record, holding details that have a lifespan equal to that of the enrolment instance.
@@ -218,7 +235,8 @@ class user_repository {
                       FROM {{$this->ltiuserstable}} lu
                       JOIN {user} u
                         ON (u.id = lu.userid)
-                     WHERE lu.id = :id";
+                     WHERE lu.id = :id
+                       AND lu.ltideploymentid IS NOT NULL";
 
             $record = $DB->get_record_sql($sql, ['id' => $id], MUST_EXIST);
             return $this->user_from_record($record);
@@ -245,7 +263,8 @@ class user_repository {
                       JOIN {user} u
                         ON (u.id = lu.userid)
                      WHERE lu.userid = :userid
-                       AND lu.toolid = :resourceid";
+                       AND lu.toolid = :resourceid
+                       AND lu.ltideploymentid IS NOT NULL";
 
             $params = ['userid' => $userid, 'resourceid' => $resourceid];
             $record = $DB->get_record_sql($sql, $params, MUST_EXIST);
@@ -270,6 +289,7 @@ class user_repository {
                   JOIN {user} u
                     ON (u.id = lu.userid)
                  WHERE lu.toolid = :resourceid
+                   AND lu.ltideploymentid IS NOT NULL
               ORDER BY lu.lastaccess DESC";
 
         $records = $DB->get_records_sql($sql, ['resourceid' => $resourceid]);

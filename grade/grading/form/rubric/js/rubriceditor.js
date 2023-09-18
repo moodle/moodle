@@ -68,7 +68,7 @@ M.gradingform_rubriceditor.editmode = function(el, editmode, focustb) {
     var ta = el.one('textarea')
     if (!editmode && ta.hasClass('hiddenelement')) return;
     if (editmode && !ta.hasClass('hiddenelement')) return;
-    var pseudotablink = '<input type="text" size="1" class="pseudotablink"/>',
+    var pseudotablink = '<span class="pseudotablink" tabindex="0"></span>',
         taplain = ta.get('parentNode').one('.plainvalue'),
         tbplain = null,
         tb = el.one('.score input[type=text]')
@@ -149,11 +149,6 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
         newid = M.gradingform_rubriceditor.calculatenewid('#rubric-'+name+' .criterion');
         newlevid = M.gradingform_rubriceditor.calculatenewid('#rubric-'+name+' .level');
     }
-    var dialog_options = {
-        'scope' : this,
-        'callbackargs' : [e, true],
-        'callback' : M.gradingform_rubriceditor.buttonclick
-    };
     if (chunks.length == 3 && action == 'addcriterion') {
         // ADD NEW CRITERION
         var levelsscores = [0], levidx = 1
@@ -215,8 +210,20 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
-            dialog_options['message'] = M.util.get_string('confirmdeletecriterion', 'gradingform_rubric')
-            M.util.show_confirm_dialog(e, dialog_options);
+            M.util.js_pending('gradingform_rubriceditor:deleteConfirmation');
+            require(['core/notification', 'core/str'], function(Notification, Str) {
+                Notification.saveCancelPromise(
+                    Str.get_string('confirmation', 'admin'),
+                    Str.get_string('confirmdeletecriterion', 'gradingform_rubric'),
+                    Str.get_string('yes', 'moodle')
+                ).then(function() {
+                    M.gradingform_rubriceditor.buttonclick.apply(this, [e, true]);
+                    return;
+                }.bind(this)).catch(function() {
+                    // User cancelled.
+                });
+                M.util.js_complete('gradingform_rubriceditor:deleteConfirmation');
+            }.bind(this));
         }
     } else if (chunks.length == 4 && action == 'duplicate') {
         // Duplicate criterion.
@@ -259,8 +266,20 @@ M.gradingform_rubriceditor.buttonclick = function(e, confirmed) {
             Y.one('#'+name+'-criteria-'+chunks[2]+'-'+chunks[3]+'-'+chunks[4]).remove()
             M.gradingform_rubriceditor.assignclasses(elements_str)
         } else {
-            dialog_options['message'] = M.util.get_string('confirmdeletelevel', 'gradingform_rubric')
-            M.util.show_confirm_dialog(e, dialog_options);
+            M.util.js_pending('gradingform_rubriceditor:deleteLevelConfirmation');
+            require(['core/notification', 'core/str'], function(Notification, Str) {
+                Notification.saveCancelPromise(
+                    Str.get_string('confirmation', 'admin'),
+                    Str.get_string('confirmdeletelevel', 'gradingform_rubric'),
+                    Str.get_string('yes', 'moodle')
+                ).then(function() {
+                    M.gradingform_rubriceditor.buttonclick.apply(this, [e, true]);
+                    return;
+                }.bind(this)).catch(function() {
+                    // User cancelled.
+                });
+                M.util.js_complete('gradingform_rubriceditor:deleteLevelConfirmation');
+            }.bind(this));
         }
     } else {
         // unknown action

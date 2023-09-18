@@ -509,6 +509,7 @@ function wiki_get_missing_or_empty_pages($swid) {
  * Get pages list in wiki
  * @param int $swid sub wiki id
  * @param string $sort How to sort the pages. By default, title ASC.
+ * @return stdClass[]
  */
 function wiki_get_page_list($swid, $sort = 'title ASC') {
     global $DB;
@@ -648,7 +649,7 @@ function wiki_parse_content($markup, $pagecontent, $options = array()) {
  * !!!!!! IMPORTANT !!!!!!
  * It is critical that you call format_string on the content before it is used.
  *
- * @param string|page_wiki $link name of a page
+ * @param string|stdClass $link name of a page or page object.
  * @param array $options
  * @return array Array('content' => string, 'url' => string, 'new' => bool, 'link_info' => array)
  *

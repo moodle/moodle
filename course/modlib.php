@@ -405,10 +405,6 @@ function edit_module_post_actions($moduleinfo, $course) {
         }
     }
 
-    // To be removed (deprecated) with MDL-67526 (both lines).
-    require_once($CFG->libdir.'/plagiarismlib.php');
-    plagiarism_save_form_elements($moduleinfo);
-
     // Allow plugins to extend the course module form.
     $moduleinfo = plugin_extend_coursemodule_edit_post_actions($moduleinfo, $course);
 
@@ -468,7 +464,10 @@ function set_moduleinfo_defaults($moduleinfo) {
     }
 
     // Convert the 'use grade' checkbox into a grade-item number: 0 if checked, null if not.
-    if (isset($moduleinfo->completionusegrade) && $moduleinfo->completionusegrade) {
+    if (isset($moduleinfo->completionusegrade) &&
+        $moduleinfo->completionusegrade &&
+        !isset($moduleinfo->completiongradeitemnumber
+        )) {
         $moduleinfo->completiongradeitemnumber = 0;
     } else if (!isset($moduleinfo->completiongradeitemnumber)) {
         // If there is no gradeitemnumber set, make sure to disable completionpassgrade.
@@ -850,10 +849,11 @@ function get_moduleinfo_data($cm, $course) {
  * @param  stdClass $course  course object
  * @param  string $modulename  module name
  * @param  int $section section number
+ * @param  string $suffix the suffix to add to the name of the completion rules.
  * @return array module information about other required data
  * @since  Moodle 3.2
  */
-function prepare_new_moduleinfo_data($course, $modulename, $section) {
+function prepare_new_moduleinfo_data($course, $modulename, $section, string $suffix = '') {
     global $CFG;
 
     list($module, $context, $cw) = can_add_moduleinfo($course, $modulename, $section);
@@ -874,7 +874,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     $data->downloadcontent  = DOWNLOAD_COURSE_CONTENT_ENABLED;
 
     // Apply completion defaults.
-    $defaults = \core_completion\manager::get_default_completion($course, $module);
+    $defaults = \core_completion\manager::get_default_completion($course, $module, true, $suffix);
     foreach ($defaults as $key => $value) {
         $data->$key = $value;
     }
@@ -882,7 +882,7 @@ function prepare_new_moduleinfo_data($course, $modulename, $section) {
     if (plugin_supports('mod', $data->modulename, FEATURE_MOD_INTRO, true)) {
         $draftid_editor = file_get_submitted_draft_itemid('introeditor');
         file_prepare_draft_area($draftid_editor, null, null, null, null, array('subdirs'=>true));
-        $data->introeditor = array('text'=>'', 'format'=>FORMAT_HTML, 'itemid'=>$draftid_editor); // TODO: add better default
+        $data->introeditor = array('text' => '', 'format' => editors_get_preferred_format(), 'itemid' => $draftid_editor);
     }
 
     if (plugin_supports('mod', $data->modulename, FEATURE_ADVANCED_GRADING, false)

@@ -23,14 +23,19 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for activity modules
  */
 class mod extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
@@ -51,6 +56,18 @@ class mod extends base {
 
         // Only set visibility if it's different from the current value.
         if ($module->visible != $enabled) {
+            if ($enabled && component_callback_exists("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
+                // This callback may be used to perform actions that must be completed prior to enabling a plugin.
+                // Example of this may include:
+                // - making a configuration change
+                // - adding an alert
+                // - checking a pre-requisite
+                //
+                // If the return value is falsy, then the change will be prevented.
+                if (!component_callback("mod_{$pluginname}", 'pre_enable_plugin_actions')) {
+                    return false;
+                }
+            }
             // Set module visibility.
             $DB->set_field('modules', 'visible', $enabled, ['id' => $module->id]);
             $haschanged = true;
@@ -122,6 +139,7 @@ class mod extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $module = $this;     // Also can be used inside settings.php.

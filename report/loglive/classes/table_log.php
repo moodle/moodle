@@ -230,13 +230,7 @@ class report_loglive_table_log extends table_sql {
      * @return string HTML for the event name column
      */
     public function col_eventname($event) {
-        // Event name.
-        if ($this->filterparams->logreader instanceof logstore_legacy\log\store) {
-            // Hack for support of logstore_legacy.
-            $eventname = $event->eventname;
-        } else {
-            $eventname = $event->get_name();
-        }
+        $eventname = $event->get_name();
         if ($url = $event->get_url()) {
             $eventname = $this->action_link($url, $eventname, 'action');
         }
@@ -278,7 +272,7 @@ class report_loglive_table_log extends table_sql {
         // Get extra event data for origin and realuserid.
         $logextra = $event->get_logextra();
 
-        $url = new moodle_url("/iplookup/index.php?ip={$logextra['ip']}&user=$event->userid");
+        $url = new moodle_url("/iplookup/index.php?popup=1&ip={$logextra['ip']}&user=$event->userid");
         return $this->action_link($url, $logextra['ip'], 'ip');
     }
 
@@ -293,7 +287,7 @@ class report_loglive_table_log extends table_sql {
      */
     protected function action_link(moodle_url $url, $text, $name = 'popup') {
         global $OUTPUT;
-        $link = new action_link($url, $text, new popup_action('click', $url, $name, array('height' => 440, 'width' => 700)));
+        $link = new action_link($url, $text, new popup_action('click', $url, $name, array('height' => 550, 'width' => 700)));
         return $OUTPUT->render($link);
     }
 

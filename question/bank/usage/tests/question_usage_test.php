@@ -63,7 +63,7 @@ class question_usage_test extends \advanced_testcase {
 
             $question = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
             quiz_add_quiz_question($question->id, $quiz, $page);
-            $questions [] = $question;
+            $questions[] = $question;
         }
 
         $timenow = time();

@@ -31,6 +31,7 @@ $string['privacy:metadata:tokens'] = 'A record of tokens for interacting with Mo
 $string['privacy:metadata:tokens:creatorid'] = 'The ID of the user who created the token';
 $string['privacy:metadata:tokens:iprestriction'] = 'IP restricted to use this token';
 $string['privacy:metadata:tokens:lastaccess'] = 'The date when the token was last used';
+$string['privacy:metadata:tokens:name'] = 'The token name';
 $string['privacy:metadata:tokens:privatetoken'] = 'A more private token occasionally used to validate certain operations, such as SSO';
 $string['privacy:metadata:tokens:timecreated'] = 'The date when the token was created';
 $string['privacy:metadata:tokens:token'] = 'The user\'s token';

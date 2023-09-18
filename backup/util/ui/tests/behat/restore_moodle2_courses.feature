@@ -12,16 +12,16 @@ Feature: Restore Moodle 2 course backups
       | Course 3 | C3 | 0 | topics | 2 | 0 |
       | Course 4 | C4 | 0 | topics | 20 | 0 |
     And the following "activities" exist:
-      | activity | course | idnumber | name | intro | section | externalurl           |
-      | assign | C3 | assign1 | Test assign name | Assign description | 1 |           |
-      | data | C3 | data1 | Test database name | Database description | 2 |           |
-      | url      | C1     | url1     | Test URL name | Test URL description | 3       | http://www.moodle.org |
+      | activity | course | idnumber | name               | intro                | section | externalurl           |
+      | assign   | C3     | assign1  | Test assign name   | Assign description   | 1       |                       |
+      | data     | C3     | data1    | Test database name | Database description | 2       |                       |
+      | forum    | C1     | 0001     | Test forum name    |                      | 1       |                       |
+      | url      | C1     | url1     | Test URL name      | Test URL description | 3       | http://www.moodle.org |
+    And the following "blocks" exist:
+      | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
+      | activity_modules | Course       | C1        | course-view-*   | side-pre      |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum name |
-      | Description | Test forum description |
-    And I add the "Activities" block
 
   @javascript
   Scenario: Restore a course in another existing course
@@ -63,10 +63,11 @@ Feature: Restore Moodle 2 course backups
   Scenario: Restore a backup into the same course removing it's contents before that
     When I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |
-    And I am on "Course 1" course homepage
-    And I add a "Forum" to section "1" and I fill the form with:
-      | Forum name | Test forum post backup name |
-      | Description | Test forum post backup description |
+    And the following "activity" exists:
+      | activity | forum                              |
+      | course   | C1                                 |
+      | section  | 1                                  |
+      | name     | Test forum post backup name        |
     And I am on the "Course 1" "restore" page
     And I merge "test_backup.mbz" backup into the current course after deleting it's contents using this options:
       | Schema | Section 3 | 0 |

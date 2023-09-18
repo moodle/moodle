@@ -45,6 +45,9 @@ class forum_portfolio_caller extends portfolio_module_caller_base {
     private $posts;
     private $keyedfiles; // just using multifiles isn't enough if we're exporting a full thread
 
+    /** @var context_module context instance. */
+    private $modcontext;
+
     /**
      * @return array
      */

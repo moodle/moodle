@@ -94,6 +94,8 @@ require_once($CFG->dirroot . '/mod/assign/renderable.php');
 require_once($CFG->dirroot . '/mod/assign/gradingtable.php');
 require_once($CFG->libdir . '/portfolio/caller.php');
 
+use mod_assign\event\submission_removed;
+use mod_assign\event\submission_status_updated;
 use \mod_assign\output\grading_app;
 use \mod_assign\output\assign_header;
 use \mod_assign\output\assign_submission_status;
@@ -192,6 +194,9 @@ class assign {
 
     /** @var mixed This var can vary between false for no overrides to a stdClass of the overrides for a group */
     private $overridedata;
+
+    /** @var float grade value. */
+    public $grade;
 
     /**
      * Constructor for the base assign class.
@@ -660,12 +665,14 @@ class assign {
         } else if ($action == 'downloadall') {
             $o .= $this->download_submissions();
         } else if ($action == 'submit') {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->check_submit_for_grading($mform);
         } else if ($action == 'grantextension') {
             $o .= $this->view_grant_extension($mform);
         } else if ($action == 'revealidentities') {
             $o .= $this->view_reveal_identities_confirm($mform);
         } else if ($action == 'removesubmissionconfirm') {
+            $PAGE->add_body_class('limitedwidth');
             $o .= $this->view_remove_submission_confirm();
         } else if ($action == 'plugingradingbatchoperation') {
             $o .= $this->view_plugin_grading_batch_operation($mform);
@@ -2742,7 +2749,7 @@ class assign {
 
                 // Override the language and timezone of the "current" user, so that
                 // mail is customised for the receiver.
-                cron_setup_user($user, $course);
+                \core\cron::setup_user($user, $course);
 
                 // Context lookups are already cached.
                 $coursecontext = context_course::instance($course->id);
@@ -2822,7 +2829,7 @@ class assign {
             }
             mtrace('Done processing ' . count($submissions) . ' assignment submissions');
 
-            cron_setup_user();
+            \core\cron::setup_user();
 
             // Free up memory just to be sure.
             unset($courses);
@@ -3343,7 +3350,7 @@ class assign {
         }
 
         $grouping = $this->get_instance()->teamsubmissiongroupingid;
-        $return = groups_get_all_groups($this->get_course()->id, $userid, $grouping);
+        $return = groups_get_all_groups($this->get_course()->id, $userid, $grouping, 'g.*', false, true);
 
         $this->usergroups[$userid] = $return;
 
@@ -3693,42 +3700,10 @@ class assign {
     }
 
     /**
-     * Util function to add a message to the log.
-     *
      * @deprecated since 2.7 - Use new events system instead.
-     *             (see http://docs.moodle.org/dev/Migrating_logging_calls_in_plugins).
-     *
-     * @param string $action The current action
-     * @param string $info A detailed description of the change. But no more than 255 characters.
-     * @param string $url The url to the assign module instance.
-     * @param bool $return If true, returns the arguments, else adds to log. The purpose of this is to
-     *                     retrieve the arguments to use them with the new event system (Event 2).
-     * @return void|array
      */
-    public function add_to_log($action = '', $info = '', $url='', $return = false) {
-        global $USER;
-
-        $fullurl = 'view.php?id=' . $this->get_course_module()->id;
-        if ($url != '') {
-            $fullurl .= '&' . $url;
-        }
-
-        $args = array(
-            $this->get_course()->id,
-            'assign',
-            $action,
-            $fullurl,
-            $info,
-            $this->get_course_module()->id
-        );
-
-        if ($return) {
-            // We only need to call debugging when returning a value. This is because the call to
-            // call_user_func_array('add_to_log', $args) will trigger a debugging message of it's own.
-            debugging('The mod_assign add_to_log() function is now deprecated.', DEBUG_DEVELOPER);
-            return $args;
-        }
-        call_user_func_array('add_to_log', $args);
+    public function add_to_log() {
+        throw new coding_exception(__FUNCTION__ . ' has been deprecated, please do not use it any more');
     }
 
     /**
@@ -4110,7 +4085,7 @@ class assign {
             // and show errors.
             $mform->is_validated();
         }
-        $o .= $this->get_renderer()->heading(get_string('gradenoun'), 3);
+
         $o .= $this->get_renderer()->render(new assign_form('gradingform', $mform));
 
         if (count($allsubmissions) > 1) {
@@ -4296,7 +4271,7 @@ class assign {
                                                '',
                                                array('class'=>'gradeform'));
         }
-        $o .= $this->get_renderer()->heading(get_string('gradenoun'), 3);
+
         $o .= $this->get_renderer()->render(new assign_form('gradingform', $mform));
 
         if (count($allsubmissions) > 1 && $attemptnumber == -1) {
@@ -4537,7 +4512,10 @@ class assign {
                                  'context'=>$this->get_context(),
                                  'markingworkflow'=>$markingworkflow,
                                  'markingallocation'=>$markingallocation);
-        $classoptions = array('class'=>'gradingbatchoperationsform');
+        $classoptions = [
+            'class' => 'gradingbatchoperationsform',
+            'data-double-submit-protection' => 'off',
+        ];
 
         $gradingbatchoperationsform = new mod_assign_grading_batch_operations_form(null,
                                                                                    $batchformparams,
@@ -5015,7 +4993,11 @@ class assign {
                                  'context'=>$this->get_context(),
                                  'markingworkflow'=>$this->get_instance()->markingworkflow,
                                  'markingallocation'=>$markingallocation);
-        $formclasses = array('class'=>'gradingbatchoperationsform');
+        $formclasses = [
+            'class' => 'gradingbatchoperationsform',
+            'data-double-submit-protection' => 'off'
+        ];
+
         $mform = new mod_assign_grading_batch_operations_form(null,
                                                               $batchformparams,
                                                               'post',
@@ -5438,32 +5420,39 @@ class assign {
             $grader = null;
             $gradingmanager = get_grading_manager($this->get_context(), 'mod_assign', 'submissions');
 
+            $gradingcontrollergrade = '';
             if ($hasgrade) {
                 if ($controller = $gradingmanager->get_active_controller()) {
                     $menu = make_grades_menu($this->get_instance()->grade);
                     $controller->set_grade_range($menu, $this->get_instance()->grade > 0);
-                    $gradefordisplay = $controller->render_grade($PAGE,
-                                                                 $grade->id,
-                                                                 $gradingitem,
-                                                                 $gradebookgrade->str_long_grade,
-                                                                 $cangrade);
+                    $gradingcontrollergrade = $controller->render_grade(
+                        $PAGE,
+                        $grade->id,
+                        $gradingitem,
+                        '',
+                        $cangrade
+                    );
+                    $gradefordisplay = $gradebookgrade->str_long_grade;
                 } else {
                     $gradefordisplay = $this->display_grade($gradebookgrade->grade, false);
                 }
                 $gradeddate = $gradebookgrade->dategraded;
 
-                // Only display the grader if it is in the right state.
-                if (in_array($gradingstatus, [ASSIGN_GRADING_STATUS_GRADED, ASSIGN_MARKING_WORKFLOW_STATE_RELEASED])){
-                    if (isset($grade->grader) && $grade->grader > 0) {
-                        $grader = $DB->get_record('user', array('id' => $grade->grader));
-                    } else if (isset($gradebookgrade->usermodified)
-                        && $gradebookgrade->usermodified > 0
-                        && has_capability('mod/assign:grade', $this->get_context(), $gradebookgrade->usermodified)) {
-                        // Grader not provided. Check that usermodified is a user who can grade.
-                        // Case 1: When an assignment is reopened an empty assign_grade is created so the feedback
-                        // plugin can know which attempt it's referring to. In this case, usermodifed is a student.
-                        // Case 2: When an assignment's grade is overrided via the gradebook, usermodified is a grader
-                        $grader = $DB->get_record('user', array('id' => $gradebookgrade->usermodified));
+                // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
+                if (has_capability('mod/assign:showhiddengrader', $this->context) || !$this->is_hidden_grader()) {
+                    // Only display the grader if it is in the right state.
+                    if (in_array($gradingstatus, [ASSIGN_GRADING_STATUS_GRADED, ASSIGN_MARKING_WORKFLOW_STATE_RELEASED])) {
+                        if (isset($grade->grader) && $grade->grader > 0) {
+                            $grader = $DB->get_record('user', array('id' => $grade->grader));
+                        } else if (isset($gradebookgrade->usermodified)
+                            && $gradebookgrade->usermodified > 0
+                            && has_capability('mod/assign:grade', $this->get_context(), $gradebookgrade->usermodified)) {
+                            // Grader not provided. Check that usermodified is a user who can grade.
+                            // Case 1: When an assignment is reopened an empty assign_grade is created so the feedback
+                            // plugin can know which attempt it's referring to. In this case, usermodifed is a student.
+                            // Case 2: When an assignment's grade is overrided via the gradebook, usermodified is a grader.
+                            $grader = $DB->get_record('user', array('id' => $gradebookgrade->usermodified));
+                        }
                     }
                 }
             }
@@ -5473,25 +5462,18 @@ class assign {
             if ($grade) {
                 \mod_assign\event\feedback_viewed::create_from_grade($this, $grade)->trigger();
             }
-            $feedbackstatus = new assign_feedback_status($gradefordisplay,
-                                                  $gradeddate,
-                                                  $grader,
-                                                  $this->get_feedback_plugins(),
-                                                  $grade,
-                                                  $this->get_course_module()->id,
-                                                  $this->get_return_action(),
-                                                  $this->get_return_params(),
-                                                  $viewfullnames);
-
-            // Show the grader's identity if 'Hide Grader' is disabled or has the 'Show Hidden Grader' capability.
-            $showgradername = (
-                    has_capability('mod/assign:showhiddengrader', $this->context) or
-                    !$this->is_hidden_grader()
+            $feedbackstatus = new assign_feedback_status(
+                $gradefordisplay,
+                $gradeddate,
+                $grader,
+                $this->get_feedback_plugins(),
+                $grade,
+                $this->get_course_module()->id,
+                $this->get_return_action(),
+                $this->get_return_params(),
+                $viewfullnames,
+                $gradingcontrollergrade
             );
-
-            if (!$showgradername) {
-                $feedbackstatus->grader = false;
-            }
 
             return $feedbackstatus;
         }
@@ -6759,7 +6741,15 @@ class assign {
             return false;
         }
 
-        if ($instance->requiresubmissionstatement && empty($data->submissionstatement) && $USER->id == $userid) {
+        $adminconfig = $this->get_admin_config();
+
+        $submissionstatement = '';
+        if ($instance->requiresubmissionstatement) {
+            $submissionstatement = $this->get_submissionstatement($adminconfig, $instance, $this->context);
+        }
+
+        if (!empty($submissionstatement) && $instance->requiresubmissionstatement
+                && empty($data->submissionstatement) && $USER->id == $userid) {
             return false;
         }
 
@@ -7365,65 +7355,17 @@ class assign {
     }
 
     /**
-     * Take a grade object and print a short summary for the log file.
-     * The size limit for the log file is 255 characters, so be careful not
-     * to include too much information.
-     *
      * @deprecated since 2.7
-     *
-     * @param stdClass $grade
-     * @return string
      */
-    public function format_grade_for_log(stdClass $grade) {
-        global $DB;
-
-        $user = $DB->get_record('user', array('id' => $grade->userid), '*', MUST_EXIST);
-
-        $info = get_string('gradestudent', 'assign', array('id'=>$user->id, 'fullname'=>fullname($user)));
-        if ($grade->grade != '') {
-            $info .= get_string('gradenoun') . ': ' . $this->display_grade($grade->grade, false) . '. ';
-        } else {
-            $info .= get_string('nograde', 'assign');
-        }
-        return $info;
+    public function format_grade_for_log() {
+        throw new coding_exception(__FUNCTION__ . ' has been deprecated, please do not use it any more');
     }
 
     /**
-     * Take a submission object and print a short summary for the log file.
-     * The size limit for the log file is 255 characters, so be careful not
-     * to include too much information.
-     *
      * @deprecated since 2.7
-     *
-     * @param stdClass $submission
-     * @return string
      */
-    public function format_submission_for_log(stdClass $submission) {
-        global $DB;
-
-        $info = '';
-        if ($submission->userid) {
-            $user = $DB->get_record('user', array('id' => $submission->userid), '*', MUST_EXIST);
-            $name = fullname($user);
-        } else {
-            $group = $this->get_submission_group($submission->userid);
-            if ($group) {
-                $name = $group->name;
-            } else {
-                $name = get_string('defaultteam', 'assign');
-            }
-        }
-        $status = get_string('submissionstatus_' . $submission->status, 'assign');
-        $params = array('id'=>$submission->userid, 'fullname'=>$name, 'status'=>$status);
-        $info .= get_string('submissionlog', 'assign', $params) . ' <br>';
-
-        foreach ($this->submissionplugins as $plugin) {
-            if ($plugin->is_enabled() && $plugin->is_visible()) {
-                $info .= '<br>' . $plugin->format_for_log($submission);
-            }
-        }
-
-        return $info;
+    public function format_submission_for_log() {
+        throw new coding_exception(__FUNCTION__ . ' has been deprecated, please do not use it any more');
     }
 
     /**
@@ -7942,9 +7884,12 @@ class assign {
             $gradingstatus = $this->get_grading_status($userid);
             if ($gradingstatus != ASSIGN_MARKING_WORKFLOW_STATE_RELEASED) {
                 if ($grade->grade && $grade->grade != -1) {
-                    $assigngradestring = html_writer::span(
-                        make_grades_menu($settings->grade)[grade_floatval($grade->grade)], 'currentgrade'
-                    );
+                    if ($settings->grade > 0) {
+                        $assigngradestring = format_float($grade->grade, $this->get_grade_item()->get_decimals());
+                    } else {
+                        $assigngradestring = make_grades_menu($settings->grade)[grade_floatval($grade->grade)];
+                    }
+                    $assigngradestring = html_writer::span($assigngradestring, 'currentgrade');
                     $label = get_string('currentassigngrade', 'assign');
                     $mform->addElement('static', 'currentassigngrade', $label, $assigngradestring);
                 }
@@ -8211,6 +8156,7 @@ class assign {
      *
      * @param int $userid
      * @return boolean
+     * @throws coding_exception
      */
     public function remove_submission($userid) {
         global $USER;
@@ -8248,9 +8194,8 @@ class assign {
             $completion->update_state($this->get_course_module(), COMPLETION_INCOMPLETE, $userid);
         }
 
-        if ($submission->userid != 0) {
-            \mod_assign\event\submission_status_updated::create_from_submission($this, $submission)->trigger();
-        }
+        submission_removed::create_from_submission($this, $submission)->trigger();
+        submission_status_updated::create_from_submission($this, $submission)->trigger();
         return true;
     }
 
@@ -9617,8 +9562,8 @@ class assign {
      * Get the correct submission statement depending on single submisison, team submission or team submission
      * where all team memebers must submit.
      *
-     * @param array $adminconfig
-     * @param assign $instance
+     * @param stdClass $adminconfig
+     * @param stdClass $instance
      * @param context $context
      *
      * @return string

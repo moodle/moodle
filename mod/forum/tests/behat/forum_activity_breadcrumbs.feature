@@ -12,10 +12,10 @@ Feature: A teacher or admin can view breadcrumbs in the reply, delete, split, ed
       | user     | course | role    |
       | teacher  | C1     | editingteacher |
     And the following "activity" exists:
-      | course   | C1                             |
-      | activity | forum                          |
-      | intro    | Test forum description         |
-      | name     | Test forum name                |
+      | course   | C1              |
+      | activity | forum           |
+      | name     | Test forum name |
+      | idnumber | forum1          |
 
   Scenario: A teacher views add discussion topics advanced page
     Given I am on the "Test forum name" "forum activity" page logged in as teacher
@@ -26,15 +26,14 @@ Feature: A teacher or admin can view breadcrumbs in the reply, delete, split, ed
     And I should see "Test forum name" in the ".breadcrumb" "css_element"
 
   Scenario: A teacher adds posts and then verifies the breadcrumbs in the links
-    Given I log in as "teacher"
-    And I am on "Course 1" course homepage
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Test post subject one |
-      | Message | Test post message one |
-    And I reply "Test post subject one" post from "Test forum name" forum with:
-      | Subject                 | Reply 1 to discussion 1               |
-      | Message                 | Discussion contents 1, second message |
-    And I should see "Settings" in the "//div[@class='ml-auto dropdown']" "xpath_element"
+    Given the following "mod_forum > discussions" exist:
+      | user     | forum  | name                  | message               |
+      | teacher  | forum1 | Test post subject one | Test post message one |
+    And the following "mod_forum > posts" exist:
+      | user    | parentsubject         | subject                 | message                               |
+      | teacher | Test post subject one | Reply 1 to discussion 1 | Discussion contents 1, second message |
+    And I am on the "Test forum name" "forum activity" page logged in as teacher
+    And I follow "Test post subject one"
     When I follow "Edit"
     Then I should see "Edit discussion topic"
     And I should see "Edit discussion topic" in the ".breadcrumb" "css_element"

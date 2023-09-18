@@ -88,6 +88,7 @@ class duration extends base {
             MINSECS => get_string('filterdateminutes', 'core_reportbuilder'),
             HOURSECS => get_string('filterdatehours', 'core_reportbuilder'),
             DAYSECS => get_string('filterdatedays', 'core_reportbuilder'),
+            WEEKSECS => get_string('filterdateweeks', 'core_reportbuilder'),
         ];
 
         $elements[] = $mform->createElement('select', "{$this->name}_unit", $unitlabel, $units);

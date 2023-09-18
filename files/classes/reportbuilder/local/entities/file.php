@@ -109,11 +109,12 @@ class file extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$filesalias}.filesize, {$filesalias}.filename")
+            ->add_field("{$filesalias}.filesize")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
             ->set_is_sortable(true)
             ->add_callback(static function($filesize, stdClass $fileinfo): string {
                 // Absent file size and/or directory should not return output.
-                if ($fileinfo->filesize === null || $fileinfo->filename === '.') {
+                if ($fileinfo->filesize === null || $fileinfo->directory) {
                     return '';
                 }
                 return display_size($fileinfo->filesize);
@@ -138,20 +139,21 @@ class file extends base {
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$filesalias}.mimetype, {$filesalias}.filename")
+            ->add_field("{$filesalias}.mimetype")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
             ->set_is_sortable(true)
             ->add_callback(static function($mimetype, stdClass $fileinfo): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
                 // Absent mime type and/or directory has pre-determined output.
-                if ($fileinfo->filename === '.') {
-                    return get_string('directory');
-                } else if ($fileinfo->mimetype === null) {
+                if ($fileinfo->mimetype === null && !$fileinfo->directory) {
                     return '';
+                } else if ($fileinfo->directory) {
+                    return get_string('directory');
                 }
 
-                return get_mimetype_description($fileinfo, true);
+                return get_mimetype_description($fileinfo->mimetype);
             });
 
         // Author.
@@ -198,6 +200,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:name\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -219,6 +222,7 @@ class file extends base {
             ->add_fields("{$filesalias}.contextid, " . context_helper::get_preload_record_columns_sql($contextalias))
             // Sorting may not order alphabetically, but will at least group contexts together.
             ->set_is_sortable(true)
+            ->set_is_deprecated('See \'context:link\' for replacement')
             ->add_callback(static function($contextid, stdClass $context): string {
                 if ($contextid === null) {
                     return '';
@@ -229,6 +233,17 @@ class file extends base {
 
                 return html_writer::link($context->get_url(), $context->get_context_name());
             });
+
+        // Content hash.
+        $columns[] = (new column(
+             'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$filesalias}.contenthash")
+            ->set_is_sortable(true);
 
         // Component.
         $columns[] = (new column(
@@ -352,6 +367,16 @@ class file extends base {
                     return $license->fullname;
                 }, $licenses);
             });
+
+        // Content hash.
+        $filters[] = (new filter(
+            text::class,
+            'contenthash',
+            new lang_string('contenthash', 'core_files'),
+            $this->get_entity_name(),
+            "{$filesalias}.contenthash"
+        ))
+            ->add_joins($this->get_joins());
 
         // Time created.
         $filters[] = (new filter(

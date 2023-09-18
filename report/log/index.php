@@ -94,11 +94,6 @@ if (($edulevel != -1)) {
 if ($origin !== '') {
     $params['origin'] = $origin;
 }
-// Legacy store hack, as edulevel is not supported.
-if ($logreader == 'logstore_legacy') {
-    $params['edulevel'] = -1;
-    $edulevel = -1;
-}
 $url = new moodle_url("/report/log/index.php", $params);
 
 $PAGE->set_url('/report/log/index.php', array('id' => $id));
@@ -143,7 +138,7 @@ if ($PAGE->user_allowed_editing() && $adminediting != -1) {
 
 if ($course->id == $SITE->id) {
     admin_externalpage_setup('reportlog', '', null, '', array('pagelayout' => 'report'));
-    $PAGE->set_title($SITE->shortname .': '. $strlogs);
+    $PAGE->set_title($strlogs);
     $PAGE->set_primary_active_tab('siteadminnode');
 } else {
     $PAGE->set_title($course->shortname .': '. $strlogs);

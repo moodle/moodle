@@ -29,6 +29,9 @@ use \core_privacy\local\request\approved_contextlist;
 use \core_privacy\local\request\approved_userlist;
 use \core_privacy\local\request\writer;
 use \core_privacy\tests\provider_testcase;
+use core_xapi\local\statement\item_activity;
+use core_xapi\test_helper;
+use stdClass;
 
 /**
  * Privacy tests class for mod_h5pactivity.
@@ -37,6 +40,7 @@ use \core_privacy\tests\provider_testcase;
  * @category   test
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \mod_h5pactivity\privacy\provider
  */
 class provider_test extends provider_testcase {
 
@@ -49,7 +53,10 @@ class provider_test extends provider_testcase {
     /** @var stdClass User with some attempt. */
     protected $student2;
 
-    /** @var context context_module of the H5P activity. */
+    /** @var stdClass User with some attempt. */
+    protected $student3;
+
+    /** @var \context context_module of the H5P activity. */
     protected $context;
 
     /**
@@ -149,24 +156,22 @@ class provider_test extends provider_testcase {
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $this->h5pactivity_setup_test_scenario_data();
+        $this->h5pactivity_setup_test_scenario_data(true);
 
-        // Before deletion, we should have 4 entries in the attempts table.
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(4, $count);
-        // Before deletion, we should have 12 entries in the results table.
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(12, $count);
+        // Check data before deletion.
+        $this->assertEquals(6, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(18, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(2, $DB->count_records('xapi_states'));
 
         // Delete data based on the context.
         provider::delete_data_for_all_users_in_context($this->context);
 
         // After deletion, the attempts entries should have been deleted.
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(0, $count);
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts'));
         // After deletion, the results entries should have been deleted.
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(0, $count);
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts_results'));
+        // After deletion, the xapi states should have been deleted.
+        $this->assertEquals(0, $DB->count_records('xapi_states'));
     }
 
     /**
@@ -177,16 +182,14 @@ class provider_test extends provider_testcase {
 
         $this->resetAfterTest(true);
         $this->setAdminUser();
-        $this->h5pactivity_setup_test_scenario_data();
+        $this->h5pactivity_setup_test_scenario_data(true);
 
         $params = ['userid' => $this->student1->id];
 
-        // Before deletion, we should have 4 entries in the attempts table.
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(4, $count);
-        // Before deletion, we should have 12 entries in the results table.
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(12, $count);
+        // Check data before deletion.
+        $this->assertEquals(6, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(18, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(2, $DB->count_records('xapi_states'));
 
         // Save student1 attempts ids.
         $attemptsids = $DB->get_records_menu('h5pactivity_attempts', $params, '', 'attempt, id');
@@ -197,16 +200,15 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_user($approvedcontextlist);
 
         // After deletion, the h5pactivity_attempts entries for the first student should have been deleted.
-        $count = $DB->count_records('h5pactivity_attempts', $params);
-        $this->assertEquals(0, $count);
-
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(2, $count);
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts', $params));
+        $this->assertEquals(4, $DB->count_records('h5pactivity_attempts'));
         // After deletion, the results entries for the first student should have been deleted.
         $count = $DB->count_records_select('h5pactivity_attempts_results', $resultselect, $attemptids);
         $this->assertEquals(0, $count);
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(6, $count);
+        $this->assertEquals(12, $DB->count_records('h5pactivity_attempts_results'));
+        // After deletion, the results entries for the first student should have been deleted.
+        $this->assertEquals(0, $DB->count_records('xapi_states', $params));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
 
         // Confirm that the h5pactivity hasn't been removed.
         $h5pactivitycount = $DB->get_records('h5pactivity');
@@ -216,10 +218,9 @@ class provider_test extends provider_testcase {
         $approvedcontextlist = new approved_contextlist($this->student0, 'h5pactivity', [$this->context->id]);
         provider::delete_data_for_user($approvedcontextlist);
 
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(2, $count);
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(6, $count);
+        $this->assertEquals(4, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(12, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
     }
 
     /**
@@ -235,12 +236,10 @@ class provider_test extends provider_testcase {
         // Create student2 with 2 attempts.
         $this->h5pactivity_setup_test_scenario_data(true);
 
-        // Before deletion, we should have 6 entries in the attempts table.
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(6, $count);
-        // Before deletion, we should have 18 entries in the results table.
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(18, $count);
+        // Check data before deletion.
+        $this->assertEquals(6, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(18, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(2, $DB->count_records('xapi_states'));
 
         // Save student1 and student2 attempts ids.
         $params1 = ['userid' => $this->student1->id];
@@ -256,18 +255,17 @@ class provider_test extends provider_testcase {
         provider::delete_data_for_users($approvedlist);
 
         // After deletion, the h5pactivity_attempts entries for student1 and student2 should have been deleted.
-        $count = $DB->count_records('h5pactivity_attempts', $params1);
-        $this->assertEquals(0, $count);
-        $count = $DB->count_records('h5pactivity_attempts', $params2);
-        $this->assertEquals(0, $count);
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts', $params1));
+        $this->assertEquals(0, $DB->count_records('h5pactivity_attempts', $params2));
+        $this->assertEquals(0, $DB->count_records('xapi_states', $params1));
+        $this->assertEquals(0, $DB->count_records('xapi_states', $params2));
 
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(2, $count);
+        $this->assertEquals(2, $DB->count_records('h5pactivity_attempts'));
         // After deletion, the results entries for the first and second student should have been deleted.
         $count = $DB->count_records_select('h5pactivity_attempts_results', $resultselect, $attemptids);
         $this->assertEquals(0, $count);
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(6, $count);
+        $this->assertEquals(6, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
 
         // Confirm that the h5pactivity hasn't been removed.
         $h5pactivitycount = $DB->get_records('h5pactivity');
@@ -278,10 +276,9 @@ class provider_test extends provider_testcase {
         $approvedlist = new approved_userlist($this->context, $component, $approveduserids);
         provider::delete_data_for_users($approvedlist);
 
-        $count = $DB->count_records('h5pactivity_attempts');
-        $this->assertEquals(2, $count);
-        $count = $DB->count_records('h5pactivity_attempts_results');
-        $this->assertEquals(6, $count);
+        $this->assertEquals(2, $DB->count_records('h5pactivity_attempts'));
+        $this->assertEquals(6, $DB->count_records('h5pactivity_attempts_results'));
+        $this->assertEquals(1, $DB->count_records('xapi_states'));
     }
 
     /**
@@ -291,7 +288,8 @@ class provider_test extends provider_testcase {
      * @param bool $extrauser generate a 3rd user (default false).
      */
     protected function h5pactivity_setup_test_scenario_data(bool $extrauser = false): void {
-        global $DB;
+        global $CFG, $USER;
+        require_once($CFG->dirroot.'/lib/xapi/tests/helper.php');
 
         $generator = $this->getDataGenerator();
 
@@ -301,19 +299,24 @@ class provider_test extends provider_testcase {
         $cm = get_coursemodule_from_id('h5pactivity', $activity->cmid, 0, false, MUST_EXIST);
         $this->context = \context_module::instance($activity->cmid);
 
-        // Users enrolments.
-        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
-
+        /** @var \mod_h5pactivity_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
 
-        // Create student0 withot any attempt.
+        // Create student0 without any attempt.
         $this->student0 = $this->getDataGenerator()->create_and_enrol($course, 'student');
 
-        // Create student1 with 2 attempts.
+        // Create student1 with 2 attempts and 1 xapi state.
         $this->student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
         $params = ['cmid' => $cm->id, 'userid' => $this->student1->id];
         $generator->create_content($activity, $params);
         $generator->create_content($activity, $params);
+        $currentuser = $USER;
+        $this->setUser($this->student1);
+        test_helper::create_state([
+            'activity' => item_activity::create_from_id($this->context->id),
+            'component' => 'mod_h5pactivity',
+        ], true);
+        $this->setUser($currentuser);
 
         // Create student2 with 2 attempts.
         $this->student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
@@ -326,6 +329,14 @@ class provider_test extends provider_testcase {
             $params = ['cmid' => $cm->id, 'userid' => $this->student3->id];
             $generator->create_content($activity, $params);
             $generator->create_content($activity, $params);
+            // Add 1 xapi state.
+            $currentuser = $USER;
+            $this->setUser($this->student3);
+            test_helper::create_state([
+                'activity' => item_activity::create_from_id($this->context->id),
+                'component' => 'mod_h5pactivity',
+            ], true);
+            $this->setUser($currentuser);
         }
     }
 }

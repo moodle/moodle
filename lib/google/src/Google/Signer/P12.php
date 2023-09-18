@@ -26,6 +26,7 @@ if (!class_exists('Google_Client')) {
  *
  * @author Brian Eaton <beaton@google.com>
  */
+#[AllowDynamicProperties]
 class Google_Signer_P12 extends Google_Signer_Abstract
 {
   // OpenSSL private key resource

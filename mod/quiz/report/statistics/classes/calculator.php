@@ -121,21 +121,28 @@ class calculator {
         return $quizstats;
     }
 
-    /** @var integer Time after which statistics are automatically recomputed. */
+    /**
+     * @var int previously, the time after which statistics are automatically recomputed.
+     * @deprecated since Moodle 4.3. Use of pre-computed stats is no longer time-limited.
+     * @todo MDL-78091 Final deprecation in Moodle 4.7
+     */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
      * Load cached statistics from the database.
      *
-     * @param $qubaids \qubaid_condition
-     * @return calculated The statistics for overall attempt scores or false if not cached.
+     * @param \qubaid_condition $qubaids
+     * @return calculated|false The statistics for overall attempt scores or false if not cached.
      */
     public function get_cached($qubaids) {
         global $DB;
 
-        $timemodified = time() - self::TIME_TO_CACHE;
-        $fromdb = $DB->get_record_select('quiz_statistics', 'hashcode = ? AND timemodified > ?',
-                                         [$qubaids->get_hash_code(), $timemodified]);
+        $lastcalculatedtime = $this->get_last_calculated_time($qubaids);
+        if (!$lastcalculatedtime) {
+            return false;
+        }
+        $fromdb = $DB->get_record('quiz_statistics', ['hashcode' => $qubaids->get_hash_code(),
+                'timemodified' => $lastcalculatedtime]);
         $stats = new calculated();
         $stats->populate_from_record($fromdb);
         return $stats;
@@ -145,14 +152,17 @@ class calculator {
      * Find time of non-expired statistics in the database.
      *
      * @param $qubaids \qubaid_condition
-     * @return integer|boolean Time of cached record that matches this qubaid_condition or false is non found.
+     * @return int|bool Time of cached record that matches this qubaid_condition or false is non found.
      */
     public function get_last_calculated_time($qubaids) {
         global $DB;
-
-        $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('quiz_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                         [$qubaids->get_hash_code(), $timemodified]);
+        $lastcalculatedtime = $DB->get_field('quiz_statistics', 'COALESCE(MAX(timemodified), 0)',
+                ['hashcode' => $qubaids->get_hash_code()]);
+        if ($lastcalculatedtime) {
+            return $lastcalculatedtime;
+        } else {
+            return false;
+        }
     }
 
     /**

@@ -24,14 +24,20 @@ namespace core_user;
  * @licensehttp://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class profilelib_test extends \advanced_testcase {
+
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/user/profile/lib.php");
+    }
+
     /**
      * Tests profile_get_custom_fields function and checks it is consistent
      * with profile_user_record.
      */
     public function test_get_custom_fields() {
-        global $CFG;
-        require_once($CFG->dirroot . '/user/profile/lib.php');
-
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -235,8 +241,7 @@ class profilelib_test extends \advanced_testcase {
      * Tests the profile_get_custom_field_data_by_shortname function when working normally.
      */
     public function test_profile_get_custom_field_data_by_shortname_normal() {
-        global $DB, $CFG;
-        require_once($CFG->dirroot . '/user/profile/lib.php');
+        global $DB;
 
         $this->resetAfterTest();
 
@@ -268,9 +273,6 @@ class profilelib_test extends \advanced_testcase {
      * Tests the profile_get_custom_field_data_by_shortname function with a field that doesn't exist.
      */
     public function test_profile_get_custom_field_data_by_shortname_missing() {
-        global $CFG;
-        require_once($CFG->dirroot . '/user/profile/lib.php');
-
         $this->assertNull(profile_get_custom_field_data_by_shortname('speciality'));
     }
 
@@ -306,10 +308,6 @@ class profilelib_test extends \advanced_testcase {
         bool $casesensitive,
         bool $expectmatch
     ): void {
-        global $CFG;
-
-        require_once("{$CFG->dirroot}/user/profile/lib.php");
-
         $this->resetAfterTest();
 
         $this->getDataGenerator()->create_custom_profile_field([
@@ -327,5 +325,27 @@ class profilelib_test extends \advanced_testcase {
         } else {
             $this->assertNull($customfield);
         }
+    }
+
+    /**
+     * Test profile field loading via profile_get_user_field helper
+     *
+     * @covers ::profile_get_user_field
+     */
+    public function test_profile_get_user_field(): void {
+        $this->resetAfterTest();
+
+        $profilefield = $this->getDataGenerator()->create_custom_profile_field([
+            'shortname' => 'fruit',
+            'name' => 'Fruit',
+            'datatype' => 'text',
+        ]);
+        $user = $this->getDataGenerator()->create_user(['profile_field_fruit' => 'Apple']);
+
+        $fieldinstance = profile_get_user_field('text', $profilefield->id, $user->id);
+        $this->assertInstanceOf(\profile_field_text::class, $fieldinstance);
+        $this->assertEquals($profilefield->id, $fieldinstance->fieldid);
+        $this->assertEquals($user->id, $fieldinstance->userid);
+        $this->assertEquals('Apple', $fieldinstance->data);
     }
 }

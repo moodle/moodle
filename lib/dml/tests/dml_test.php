@@ -432,9 +432,18 @@ class dml_test extends \database_driver_testcase {
         $this->assertIsArray($sqlarray);
         $this->assertCount(2, $sqlarray[1]);
 
-        // Params exceeding 30 chars length.
-        $sql = "SELECT * FROM {{$tablename}} WHERE name = :long_placeholder_with_more_than_30";
-        $params = array('long_placeholder_with_more_than_30' => 'record1');
+        // Correct param with xmldb_field::NAME_MAX_LENGTH works ok.
+        $correctparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH, 'x');
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :{$correctparam} AND course = :course";
+        $params = array($correctparam => 'record1', 'course' => 1);
+        $sqlarray = $DB->fix_sql_params($sql, $params);
+        $this->assertIsArray($sqlarray);
+        $this->assertCount(2, $sqlarray[1]);
+
+        // Incorrect param exceeding xmldb_field::NAME_MAX_LENGTH chars length.
+        $incorrectparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH + 1, 'x');
+        $sql = "SELECT * FROM {{$tablename}} WHERE name = :{$incorrectparam} AND course = :course";
+        $params = array($incorrectparam => 'record1', 'course' => 1);
         try {
             $DB->fix_sql_params($sql, $params);
             $this->fail("Expecting an exception, none occurred");
@@ -512,7 +521,7 @@ SELECT * FROM {users}
 -- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
 -- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
 -- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
--- line 508 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
+-- line 517 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 
@@ -567,6 +576,7 @@ EOD;
     }
 
     public function test_tweak_param_names() {
+
         // Note the tweak_param_names() method is only available in the oracle driver,
         // hence we look for expected results indirectly, by testing various DML methods.
         // with some "extreme" conditions causing the tweak to happen.
@@ -576,15 +586,23 @@ EOD;
         $table = $this->get_test_table();
         $tablename = $table->getName();
 
+        // Prepare some long column names.
+        $intnearmax = str_pad('long_int_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
+        $decnearmax = str_pad('long_dec_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
+        $strnearmax = str_pad('long_str_columnname_near_', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
+        $intmax = str_pad('long_int_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
+        $decmax = str_pad('long_dec_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
+        $strmax = str_pad('long_str_columnname_max', \xmldb_field::NAME_MAX_LENGTH, 'x');
+
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        // Add some columns with 28 chars in the name.
-        $table->add_field('long_int_columnname_with_28c', XMLDB_TYPE_INTEGER, '10');
-        $table->add_field('long_dec_columnname_with_28c', XMLDB_TYPE_NUMBER, '10,2');
-        $table->add_field('long_str_columnname_with_28c', XMLDB_TYPE_CHAR, '100');
-        // Add some columns with 30 chars in the name.
-        $table->add_field('long_int_columnname_with_30cxx', XMLDB_TYPE_INTEGER, '10');
-        $table->add_field('long_dec_columnname_with_30cxx', XMLDB_TYPE_NUMBER, '10,2');
-        $table->add_field('long_str_columnname_with_30cxx', XMLDB_TYPE_CHAR, '100');
+        // Add some correct columns with \xmldb_field::NAME_MAX_LENGTH minus 1 chars in the name.
+        $table->add_field($intnearmax, XMLDB_TYPE_INTEGER, '10');
+        $table->add_field($decnearmax, XMLDB_TYPE_NUMBER, '10,2');
+        $table->add_field($strnearmax, XMLDB_TYPE_CHAR, '100');
+        // Add some correct columns with xmldb_table::NAME_MAX_LENGTH chars in the name.
+        $table->add_field($intmax, XMLDB_TYPE_INTEGER, '10');
+        $table->add_field($decmax, XMLDB_TYPE_NUMBER, '10,2');
+        $table->add_field($strmax, XMLDB_TYPE_CHAR, '100');
 
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
 
@@ -594,12 +612,12 @@ EOD;
 
         // Test insert record.
         $rec1 = new \stdClass();
-        $rec1->long_int_columnname_with_28c = 28;
-        $rec1->long_dec_columnname_with_28c = 28.28;
-        $rec1->long_str_columnname_with_28c = '28';
-        $rec1->long_int_columnname_with_30cxx = 30;
-        $rec1->long_dec_columnname_with_30cxx = 30.30;
-        $rec1->long_str_columnname_with_30cxx = '30';
+        $rec1->{$intnearmax} = 62;
+        $rec1->{$decnearmax} = 62.62;
+        $rec1->{$strnearmax} = '62';
+        $rec1->{$intmax} = 63;
+        $rec1->{$decmax} = 63.63;
+        $rec1->{$strmax} = '63';
 
         // Insert_record().
         $rec1->id = $DB->insert_record($tablename, $rec1);
@@ -610,24 +628,24 @@ EOD;
         $this->assertEquals($rec1, $DB->get_record($tablename, array('id' => $rec1->id)));
 
         // Set_field().
-        $rec1->long_int_columnname_with_28c = 280;
-        $DB->set_field($tablename, 'long_int_columnname_with_28c', $rec1->long_int_columnname_with_28c,
-            array('id' => $rec1->id, 'long_int_columnname_with_28c' => 28));
-        $rec1->long_dec_columnname_with_28c = 280.28;
-        $DB->set_field($tablename, 'long_dec_columnname_with_28c', $rec1->long_dec_columnname_with_28c,
-            array('id' => $rec1->id, 'long_dec_columnname_with_28c' => 28.28));
-        $rec1->long_str_columnname_with_28c = '280';
-        $DB->set_field($tablename, 'long_str_columnname_with_28c', $rec1->long_str_columnname_with_28c,
-            array('id' => $rec1->id, 'long_str_columnname_with_28c' => '28'));
-        $rec1->long_int_columnname_with_30cxx = 300;
-        $DB->set_field($tablename, 'long_int_columnname_with_30cxx', $rec1->long_int_columnname_with_30cxx,
-            array('id' => $rec1->id, 'long_int_columnname_with_30cxx' => 30));
-        $rec1->long_dec_columnname_with_30cxx = 300.30;
-        $DB->set_field($tablename, 'long_dec_columnname_with_30cxx', $rec1->long_dec_columnname_with_30cxx,
-            array('id' => $rec1->id, 'long_dec_columnname_with_30cxx' => 30.30));
-        $rec1->long_str_columnname_with_30cxx = '300';
-        $DB->set_field($tablename, 'long_str_columnname_with_30cxx', $rec1->long_str_columnname_with_30cxx,
-            array('id' => $rec1->id, 'long_str_columnname_with_30cxx' => '30'));
+        $rec1->{$intnearmax} = 620;
+        $DB->set_field($tablename, $intnearmax, $rec1->{$intnearmax},
+            array('id' => $rec1->id, $intnearmax => 62));
+        $rec1->{$decnearmax} = 620.62;
+        $DB->set_field($tablename, $decnearmax, $rec1->{$decnearmax},
+            array('id' => $rec1->id, $decnearmax => 62.62));
+        $rec1->{$strnearmax} = '620';
+        $DB->set_field($tablename, $strnearmax, $rec1->{$strnearmax},
+            array('id' => $rec1->id, $strnearmax => '62'));
+        $rec1->{$intmax} = 630;
+        $DB->set_field($tablename, $intmax, $rec1->{$intmax},
+            array('id' => $rec1->id, $intmax => 63));
+        $rec1->{$decmax} = 630.63;
+        $DB->set_field($tablename, $decmax, $rec1->{$decmax},
+            array('id' => $rec1->id, $decmax => 63.63));
+        $rec1->{$strmax} = '630';
+        $DB->set_field($tablename, $strmax, $rec1->{$strmax},
+            array('id' => $rec1->id, $strmax => '63'));
         $this->assertEquals($rec1, $DB->get_record($tablename, array('id' => $rec1->id)));
 
         // Delete_records().
@@ -653,43 +671,45 @@ EOD;
         $this->assertEquals($rec1, reset($recs));
 
         // Get_fieldset_select().
-        $select = 'id = :id AND
-                   long_int_columnname_with_28c = :long_int_columnname_with_28c AND
-                   long_dec_columnname_with_28c = :long_dec_columnname_with_28c AND
-                   long_str_columnname_with_28c = :long_str_columnname_with_28c AND
-                   long_int_columnname_with_30cxx = :long_int_columnname_with_30cxx AND
-                   long_dec_columnname_with_30cxx = :long_dec_columnname_with_30cxx AND
-                   long_str_columnname_with_30cxx = :long_str_columnname_with_30cxx';
-        $fields = $DB->get_fieldset_select($tablename, 'long_int_columnname_with_28c', $select, (array)$rec1);
+        $select = "id = :id AND
+                   $intnearmax = :$intnearmax AND
+                   $decnearmax = :$decnearmax AND
+                   $strnearmax = :$strnearmax AND
+                   $intmax = :$intmax AND
+                   $decmax = :$decmax AND
+                   $strmax = :$strmax";
+        $fields = $DB->get_fieldset_select($tablename, $intnearmax, $select, (array)$rec1);
         $this->assertCount(1, $fields);
-        $this->assertEquals($rec1->long_int_columnname_with_28c, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, 'long_dec_columnname_with_28c', $select, (array)$rec1);
-        $this->assertEquals($rec1->long_dec_columnname_with_28c, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, 'long_str_columnname_with_28c', $select, (array)$rec1);
-        $this->assertEquals($rec1->long_str_columnname_with_28c, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, 'long_int_columnname_with_30cxx', $select, (array)$rec1);
-        $this->assertEquals($rec1->long_int_columnname_with_30cxx, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, 'long_dec_columnname_with_30cxx', $select, (array)$rec1);
-        $this->assertEquals($rec1->long_dec_columnname_with_30cxx, reset($fields));
-        $fields = $DB->get_fieldset_select($tablename, 'long_str_columnname_with_30cxx', $select, (array)$rec1);
-        $this->assertEquals($rec1->long_str_columnname_with_30cxx, reset($fields));
+        $this->assertEquals($rec1->{$intnearmax}, reset($fields));
+        $fields = $DB->get_fieldset_select($tablename, $decnearmax, $select, (array)$rec1);
+        $this->assertEquals($rec1->{$decnearmax}, reset($fields));
+        $fields = $DB->get_fieldset_select($tablename, $strnearmax, $select, (array)$rec1);
+        $this->assertEquals($rec1->{$strnearmax}, reset($fields));
+        $fields = $DB->get_fieldset_select($tablename, $intmax, $select, (array)$rec1);
+        $this->assertEquals($rec1->{$intmax}, reset($fields));
+        $fields = $DB->get_fieldset_select($tablename, $decmax, $select, (array)$rec1);
+        $this->assertEquals($rec1->{$decmax}, reset($fields));
+        $fields = $DB->get_fieldset_select($tablename, $strmax, $select, (array)$rec1);
+        $this->assertEquals($rec1->{$strmax}, reset($fields));
 
         // Overlapping placeholders (progressive str_replace).
-        $overlapselect = 'id = :p AND
-                   long_int_columnname_with_28c = :param1 AND
-                   long_dec_columnname_with_28c = :param2 AND
-                   long_str_columnname_with_28c = :param_with_29_characters_long AND
-                   long_int_columnname_with_30cxx = :param_with_30_characters_long_ AND
-                   long_dec_columnname_with_30cxx = :param_ AND
-                   long_str_columnname_with_30cxx = :param__';
+        $nearmaxparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH - 1, 'x');
+        $maxparam = str_pad('allowed_long_param', \xmldb_field::NAME_MAX_LENGTH, 'x');
+        $overlapselect = "id = :p AND
+                   $intnearmax = :param1 AND
+                   $decnearmax = :param2 AND
+                   $strnearmax = :{$nearmaxparam} AND
+                   $intmax = :{$maxparam} AND
+                   $decmax = :param_ AND
+                   $strmax = :param__";
         $overlapparams = array(
             'p' => $rec1->id,
-            'param1' => $rec1->long_int_columnname_with_28c,
-            'param2' => $rec1->long_dec_columnname_with_28c,
-            'param_with_29_characters_long' => $rec1->long_str_columnname_with_28c,
-            'param_with_30_characters_long_' => $rec1->long_int_columnname_with_30cxx,
-            'param_' => $rec1->long_dec_columnname_with_30cxx,
-            'param__' => $rec1->long_str_columnname_with_30cxx);
+            'param1' => $rec1->{$intnearmax},
+            'param2' => $rec1->{$decnearmax},
+            $nearmaxparam => $rec1->{$strnearmax},
+            $maxparam => $rec1->{$intmax},
+            'param_' => $rec1->{$decmax},
+            'param__' => $rec1->{$strmax});
         $recs = $DB->get_records_select($tablename, $overlapselect, $overlapparams);
         $this->assertCount(1, $recs);
         $this->assertEquals($rec1, reset($recs));
@@ -4366,29 +4386,68 @@ EOD;
         $tablename = $table->getName();
 
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('description', XMLDB_TYPE_TEXT, 'big', null, null, null, null);
+        $table->add_field('charshort', XMLDB_TYPE_CHAR, '255');
+        $table->add_field('charlong', XMLDB_TYPE_CHAR, '1333');
+        $table->add_field('description', XMLDB_TYPE_TEXT, 'big');
         $table->add_key('primary', XMLDB_KEY_PRIMARY, array('id'));
         $dbman->create_table($table);
 
-        $DB->insert_record($tablename, array('description'=>'áéíóú'));
-        $DB->insert_record($tablename, array('description'=>'dxxx'));
-        $DB->insert_record($tablename, array('description'=>'bcde'));
+        // Regarding 1300 length - all drivers except Oracle support larger values (2K+), but this hits a limit on Oracle.
+        $DB->insert_record($tablename, [
+            'charshort' => 'áéíóú',
+            'charlong' => str_repeat('A', 512),
+            'description' => str_repeat('X', 1300),
+        ]);
+        $DB->insert_record($tablename, [
+            'charshort' => 'dxxx',
+            'charlong' => str_repeat('B', 512),
+            'description' => str_repeat('Y', 1300),
+        ]);
+        $DB->insert_record($tablename, [
+            'charshort' => 'bcde',
+            'charlong' => str_repeat('C', 512),
+            'description' => str_repeat('Z', 1300),
+        ]);
 
-        // Fieldnames and values mixed.
-        $sql = 'SELECT id, ' . $DB->sql_concat('description', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
-        $this->assertCount(3, $records);
-        $this->assertSame('áéíóúharcoded123.45test', $records[1]->result);
+        // Char (short) fieldnames and values.
+        $fieldsql = $DB->sql_concat('charshort', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            'áéíóúharcoded123.45test',
+            'dxxxharcoded123.45test',
+            'bcdeharcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
+        // Char (long) fieldnames and values.
+        $fieldsql = $DB->sql_concat('charlong', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            str_repeat('A', 512) . 'harcoded123.45test',
+            str_repeat('B', 512) . 'harcoded123.45test',
+            str_repeat('C', 512) . 'harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
+        // Text fieldnames and values.
+        $fieldsql = $DB->sql_concat('description', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            str_repeat('X', 1300) . 'harcoded123.45test',
+            str_repeat('Y', 1300) . 'harcoded123.45test',
+            str_repeat('Z', 1300) . 'harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
         // Integer fieldnames and values.
-        $sql = 'SELECT id, ' . $DB->sql_concat('id', "'harcoded'", '?', '?') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array(123.45, 'test'));
-        $this->assertCount(3, $records);
-        $this->assertSame('1harcoded123.45test', $records[1]->result);
+        $fieldsql = $DB->sql_concat('id', "'harcoded'", '?', '?');
+        $this->assertEqualsCanonicalizing([
+            '1harcoded123.45test',
+            '2harcoded123.45test',
+            '3harcoded123.45test',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, '', [123.45, 'test']));
+
         // All integer fieldnames.
-        $sql = 'SELECT id, ' . $DB->sql_concat('id', 'id', 'id') . ' AS result FROM {' . $tablename . '}';
-        $records = $DB->get_records_sql($sql, array());
-        $this->assertCount(3, $records);
-        $this->assertSame('111', $records[1]->result);
+        $fieldsql = $DB->sql_concat('id', 'id', 'id');
+        $this->assertEqualsCanonicalizing([
+            '111',
+            '222',
+            '333',
+        ], $DB->get_fieldset_select($tablename, $fieldsql, ''));
 
     }
 

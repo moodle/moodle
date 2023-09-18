@@ -34,4 +34,13 @@ $tasks = [
         'month' => '*',
         'dayofweek' => '*'
     ],
+    [
+        'classname' => 'mod_bigbluebuttonbn\task\check_dismissed_recordings',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*/10', // Every 10 days.
+        'month' => '*',
+        'dayofweek' => '*'
+    ],
 ];

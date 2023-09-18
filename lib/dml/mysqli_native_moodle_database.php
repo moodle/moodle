@@ -41,6 +41,12 @@ class mysqli_native_moodle_database extends moodle_database {
         can_use_readonly as read_slave_can_use_readonly;
     }
 
+    /** @var array $sslmodes */
+    private static $sslmodes = [
+        'require',
+        'verify-full'
+    ];
+
     /** @var mysqli $mysqli */
     protected $mysqli = null;
     /** @var bool is compressed row format supported cache */
@@ -398,6 +404,10 @@ class mysqli_native_moodle_database extends moodle_database {
         } else if ($this->get_row_format() !== 'Barracuda') {
             $this->compressedrowformatsupported = false;
 
+        } else if ($this->get_dbtype() === 'auroramysql') {
+            // Aurora MySQL doesn't support COMPRESSED and falls back to COMPACT if you try to use it.
+            $this->compressedrowformatsupported = false;
+
         } else {
             // All the tests passed, we can safely use ROW_FORMAT=Compressed in sql statements.
             $this->compressedrowformatsupported = true;
@@ -533,6 +543,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
+     * @throws moodle_exception
+     * @throws dml_connection_exception if error
      */
     public function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, array $dboptions=null): bool {
         $driverstatus = $this->driver_installed();
@@ -573,16 +585,31 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, $this->dboptions['connecttimeout']);
         }
 
+        $flags = 0;
+        if ($this->dboptions['clientcompress'] ?? false) {
+            $flags |= MYSQLI_CLIENT_COMPRESS;
+        }
+        if (isset($this->dboptions['ssl'])) {
+            $sslmode = $this->dboptions['ssl'];
+            if (!in_array($sslmode, self::$sslmodes, true)) {
+                throw new moodle_exception("Invalid 'dboptions''ssl' value '$sslmode'");
+            }
+            $flags |= MYSQLI_CLIENT_SSL;
+            if ($sslmode === 'verify-full') {
+                $flags |= MYSQLI_CLIENT_SSL_VERIFY_SERVER_CERT;
+            }
+        }
+
         $conn = null;
         $dberr = null;
         try {
             // real_connect() is doing things we don't expext.
-            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
+            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket, $flags);
         } catch (\Exception $e) {
             $dberr = "$e";
         }
         if (!$conn) {
-            $dberr = $dberr ?: $this->mysqli->connect_error;
+            $dberr = $dberr ?: "{$this->mysqli->connect_error} ({$this->mysqli->connect_errno})";
             $this->mysqli = null;
             throw new dml_connection_exception($dberr);
         }
@@ -1656,7 +1683,7 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param mixed $params data record as object or array
+     * @param stdClass|array $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1703,7 +1730,8 @@ class mysqli_native_moodle_database extends moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
+     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
+     *        Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.

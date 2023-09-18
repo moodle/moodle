@@ -79,8 +79,8 @@ class token_table extends \table_sql {
         $headers = [];
         $columns = [];
 
-        $headers[] = get_string('token', 'webservice');
-        $columns[] = 'token';
+        $headers[] = get_string('tokenname', 'webservice');
+        $columns[] = 'name';
         $headers[] = get_string('user');
         $columns[] = 'fullname';
         $headers[] = get_string('service', 'webservice');
@@ -89,6 +89,8 @@ class token_table extends \table_sql {
         $columns[] = 'iprestriction';
         $headers[] = get_string('validuntil', 'webservice');
         $columns[] = 'validuntil';
+        $headers[] = get_string('lastaccess');
+        $columns[] = 'lastaccess';
         if ($this->showalltokens) {
             // Only need to show creator if you can see tokens created by other people.
             $headers[] = get_string('tokencreator', 'webservice');
@@ -132,9 +134,23 @@ class token_table extends \table_sql {
      */
     public function col_validuntil($data) {
         if (empty($data->validuntil)) {
-            return '';
+            return get_string('validuntil_empty', 'webservice');
         } else {
             return userdate($data->validuntil, get_string('strftimedatetime', 'langconfig'));
+        }
+    }
+
+    /**
+     * Generate the last access column
+     *
+     * @param \stdClass $data
+     * @return string
+     */
+    public function col_lastaccess(\stdClass $data): string {
+        if (empty($data->lastaccess)) {
+            return get_string('never');
+        } else {
+            return userdate($data->lastaccess, get_string('strftimedatetime', 'langconfig'));
         }
     }
 
@@ -184,8 +200,13 @@ class token_table extends \table_sql {
      *
      * @param \stdClass $data Data for the current row
      * @return string Content for the column
+     *
+     * @deprecated since Moodle 4.3 MDL-76656. Please do not use this function anymore.
+     * @todo MDL-78605 Final deprecation in Moodle 4.7.
      */
     public function col_token($data) {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated - please do not use it any more. ', DEBUG_DEVELOPER);
+
         global $USER;
         // Hide the token if it wasn't created by the current user.
         if ($data->creatorid != $USER->id) {
@@ -193,6 +214,16 @@ class token_table extends \table_sql {
         }
 
         return $data->token;
+    }
+
+    /**
+     * Generate the name column.
+     *
+     * @param \stdClass $data Data for the current row
+     * @return string Content for the column
+     */
+    public function col_name($data) {
+        return $data->name;
     }
 
     /**
@@ -267,7 +298,7 @@ class token_table extends \table_sql {
 
         $params = ['tokenmode' => EXTERNAL_TOKEN_PERMANENT];
 
-        $selectfields = "SELECT t.id, t.token, t.iprestriction, t.validuntil, t.creatorid,
+        $selectfields = "SELECT t.id, t.name, t.iprestriction, t.validuntil, t.creatorid, t.lastaccess,
                                 u.id AS userid, $usernamefields,
                                 s.id AS serviceid, s.name AS servicename, s.shortname AS serviceshortname,
                                 $creatorfields ";
@@ -286,9 +317,9 @@ class token_table extends \table_sql {
             $params['userid'] = $USER->id;
         }
 
-        if ($this->filterdata->token !== '') {
-            $sql .= " AND " . $DB->sql_like("t.token", ":token");
-            $params['token'] = "%" . $DB->sql_like_escape($this->filterdata->token) . "%";
+        if ($this->filterdata->name !== '') {
+            $sql .= " AND " . $DB->sql_like("t.name", ":name", false, false);
+            $params['name'] = "%" . $DB->sql_like_escape($this->filterdata->name) . "%";
         }
 
         if (!empty($this->filterdata->users)) {

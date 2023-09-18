@@ -113,7 +113,9 @@ class lesson_override_form extends moodleform {
 
                 $groupchoices = array();
                 foreach ($groups as $group) {
-                    $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    if ($group->visibility != GROUPS_VISIBILITY_NONE) {
+                        $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    }
                 }
                 unset($groups);
 

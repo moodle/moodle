@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Reader\CSV;
 
 use OpenSpout\Reader\SheetIteratorInterface;
 
 /**
- * Iterate over CSV unique "sheet".
+ * @implements SheetIteratorInterface<Sheet>
  */
-class SheetIterator implements SheetIteratorInterface
+final class SheetIterator implements SheetIteratorInterface
 {
     /** @var Sheet The CSV unique "sheet" */
-    protected $sheet;
+    private Sheet $sheet;
 
     /** @var bool Whether the unique "sheet" has already been read */
-    protected $hasReadUniqueSheet = false;
+    private bool $hasReadUniqueSheet = false;
 
     /**
      * @param Sheet $sheet Corresponding unique sheet
      */
-    public function __construct($sheet)
+    public function __construct(Sheet $sheet)
     {
         $this->sheet = $sheet;
     }
@@ -28,7 +30,6 @@ class SheetIterator implements SheetIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.rewind.php
      */
-    #[\ReturnTypeWillChange]
     public function rewind(): void
     {
         $this->hasReadUniqueSheet = false;
@@ -39,7 +40,6 @@ class SheetIterator implements SheetIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.valid.php
      */
-    #[\ReturnTypeWillChange]
     public function valid(): bool
     {
         return !$this->hasReadUniqueSheet;
@@ -50,7 +50,6 @@ class SheetIterator implements SheetIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.next.php
      */
-    #[\ReturnTypeWillChange]
     public function next(): void
     {
         $this->hasReadUniqueSheet = true;
@@ -61,7 +60,6 @@ class SheetIterator implements SheetIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.current.php
      */
-    #[\ReturnTypeWillChange]
     public function current(): Sheet
     {
         return $this->sheet;
@@ -72,18 +70,8 @@ class SheetIterator implements SheetIteratorInterface
      *
      * @see http://php.net/manual/en/iterator.key.php
      */
-    #[\ReturnTypeWillChange]
     public function key(): int
     {
         return 1;
-    }
-
-    /**
-     * Cleans up what was created to iterate over the object.
-     */
-    #[\ReturnTypeWillChange]
-    public function end(): void
-    {
-        // do nothing
     }
 }

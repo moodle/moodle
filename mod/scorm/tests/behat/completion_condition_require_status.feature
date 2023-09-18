@@ -24,7 +24,7 @@ Feature: Scorm multi-sco completion
       | course                   | C1                                                       |
       | name                     | Basic Multi-sco SCORM package                            |
       | completion               | 2                                                        |
-      # Show activity as complete when conditions are met
+      # Add requirements
       | completionstatusallscos  | 0                                                        |
       | packagefilepath          | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
       | completionstatusrequired | 4                                                        |
@@ -49,7 +49,7 @@ Feature: Scorm multi-sco completion
       | course                  | C1                                                       |
       | name                    | ADV Multi-sco SCORM package                              |
       | completion              | 2                                                        |
-      # Show activity as complete when conditions are met
+      # Add requirements
       | packagefilepath         | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12.zip |
       | completionstatusallscos | 1                                                        |
     And I am on the "ADV Multi-sco SCORM package" "scorm activity" page logged in as student1

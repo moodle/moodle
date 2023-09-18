@@ -59,9 +59,9 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Get the expected attachment.
      *
-     * @param stored_file $file
+     * @param \stored_file $file
      * @param array $values
-     * @param moodle_url|null $url
+     * @param \moodle_url|null $url
      * @return array
      */
     protected function get_expected_attachment(\stored_file $file, array $values  = [], ?\moodle_url $url = null): array {
@@ -94,7 +94,7 @@ class externallib_test extends externallib_advanced_testcase {
                 'license' => $file->get_license(),
                 'filenameshort' => $file->get_filename(),
                 'filesizeformatted' => display_size((int) $file->get_filesize()),
-                'icon' => $file->is_directory() ? file_folder_icon(128) : file_file_icon($file, 128),
+                'icon' => $file->is_directory() ? file_folder_icon() : file_file_icon($file),
                 'timecreatedformatted' => userdate($file->get_timecreated()),
                 'timemodifiedformatted' => userdate($file->get_timemodified()),
                 'url' => $url->out(),
@@ -1901,6 +1901,8 @@ class externallib_test extends externallib_advanced_testcase {
 
     /*
      * Test set_lock_state.
+     *
+     * @covers \mod_forum\event\discussion_lock_updated
      */
     public function test_set_lock_state() {
         global $DB;
@@ -1916,6 +1918,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record->course = $course->id;
         $record->type = 'news';
         $forum = self::getDataGenerator()->create_module('forum', $record);
+        $context = \context_module::instance($forum->cmid);
 
         $record = new \stdClass();
         $record->course = $course->id;
@@ -1937,16 +1940,38 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Set the lock.
         self::setAdminUser();
+        $sink = $this->redirectEvents(); // Capturing the event.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, 0);
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertTrue($result['locked']);
         $this->assertNotEquals(0, $result['times']['locked']);
 
+        // Check that the event contains the expected values.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\discussion_lock_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertStringContainsString(' locked the discussion:', $event->get_description());
+
         // Unset the lock.
+        $sink = $this->redirectEvents(); // Capturing the event.
         $result = mod_forum_external::set_lock_state($forum->id, $discussion->id, time());
         $result = external_api::clean_returnvalue(mod_forum_external::set_lock_state_returns(), $result);
         $this->assertFalse($result['locked']);
         $this->assertEquals('0', $result['times']['locked']);
+
+        // Check that the event contains the expected values.
+        $events = $sink->get_events();
+        $this->assertCount(1, $events);
+        $event = reset($events);
+        $this->assertInstanceOf('\mod_forum\event\discussion_lock_updated', $event);
+        $this->assertEquals($context, $event->get_context());
+        $this->assertEventContextNotUsed($event);
+        $this->assertNotEmpty($event->get_name());
+        $this->assertStringContainsString(' unlocked the discussion:', $event->get_description());
     }
 
     /*
@@ -2138,7 +2163,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check default values for capabilities.
         $enabledcaps = array('canviewdiscussion', 'canstartdiscussion', 'canreplypost', 'canviewrating', 'cancreateattachment',
-            'canexportownpost', 'cancantogglefavourite', 'candeleteownpost', 'canallowforcesubscribe');
+            'canexportownpost', 'cancantogglefavourite', 'cancanmailnow', 'candeleteownpost', 'canallowforcesubscribe');
 
         unset($result['warnings']);
         foreach ($result as $capname => $capvalue) {

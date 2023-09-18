@@ -18,6 +18,8 @@ namespace mod_quiz\question\bank;
 
 use core_question\local\bank\question_version_status;
 use core_question\local\bank\random_question_loader;
+use core_question\question_reference_manager;
+use qbank_tagquestion\tag_condition;
 use qubaid_condition;
 
 defined('MOODLE_INTERNAL') || die();
@@ -110,6 +112,7 @@ class qbank_helper {
                        slot.displaynumber,
                        slot.requireprevious,
                        qsr.filtercondition,
+                       qsr.usingcontextid,
                        qv.status,
                        qv.id AS versionid,
                        qv.version,
@@ -134,7 +137,9 @@ class qbank_helper {
              -- just before the commit that added this comment.
              -- For relevant question_bank_entries, this gets the latest non-draft slot number.
              LEFT JOIN (
-                   SELECT lv.questionbankentryid, MAX(lv.version) AS version
+                   SELECT lv.questionbankentryid,
+                          MAX(CASE WHEN lv.status <> :draft THEN lv.version END) AS usableversion,
+                          MAX(lv.version) AS anyversion
                      FROM {quiz_slots} lslot
                      JOIN {question_references} lqr ON lqr.usingcontextid = :quizcontextid2 AND lqr.component = 'mod_quiz'
                                         AND lqr.questionarea = 'slot' AND lqr.itemid = lslot.id
@@ -142,13 +147,14 @@ class qbank_helper {
                     WHERE lslot.quizid = :quizid2
                           $slotidtest2
                       AND lqr.version IS NULL
-                      AND lv.status <> :draft
                  GROUP BY lv.questionbankentryid
              ) latestversions ON latestversions.questionbankentryid = qr.questionbankentryid
 
              LEFT JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-                                       -- Either specified version, or latest ready version.
-                                       AND qv.version = COALESCE(qr.version, latestversions.version)
+                                       -- Either specified version, or latest usable version, or a draft version.
+                                       AND qv.version = COALESCE(qr.version,
+                                           latestversions.usableversion,
+                                           latestversions.anyversion)
              LEFT JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
              LEFT JOIN {question} q ON q.id = qv.questionid
 
@@ -169,11 +175,12 @@ class qbank_helper {
 
             if ($slot->filtercondition) {
                 // Unpack the information about a random question.
-                $filtercondition = json_decode($slot->filtercondition);
                 $slot->questionid = 's' . $slot->id; // Sometimes this is used as an array key, so needs to be unique.
-                $slot->category = $filtercondition->questioncategoryid;
-                $slot->randomrecurse = (bool) $filtercondition->includingsubcategories;
-                $slot->randomtags = isset($filtercondition->tags) ? (array) $filtercondition->tags : [];
+                $filter = json_decode($slot->filtercondition, true);
+                $slot->filtercondition = question_reference_manager::convert_legacy_set_reference_filter_condition($filter);
+
+                $slot->category = $slot->filtercondition['filter']['category']['values'][0] ?? 0;
+
                 $slot->qtype = 'random';
                 $slot->name = get_string('random', 'quiz');
                 $slot->length = 1;
@@ -183,7 +190,6 @@ class qbank_helper {
                 $slot->category = 0;
                 $slot->qtype = 'missingtype';
                 $slot->name = get_string('missingquestion', 'quiz');
-                $slot->maxmark = 0;
                 $slot->questiontext = ' ';
                 $slot->questiontextformat = FORMAT_HTML;
                 $slot->length = 1;
@@ -206,9 +212,12 @@ class qbank_helper {
      */
     public static function get_tag_ids_for_slot(\stdClass $slotdata): array {
         $tagids = [];
-        foreach ($slotdata->randomtags as $taginfo) {
-            [$id] = explode(',', $taginfo, 2);
-            $tagids[] = $id;
+        if (!isset($slotdata->filtercondition['filter'])) {
+            return $tagids;
+        }
+        $filter = $slotdata->filtercondition['filter'];
+        if (isset($filter['qtagids'])) {
+            $tagids = $filter['qtagids']['values'];
         }
         return $tagids;
     }
@@ -220,10 +229,19 @@ class qbank_helper {
      * @return string that can be used to display the random slot.
      */
     public static function describe_random_question(\stdClass $slotdata): string {
-        global $DB;
-        $category = $DB->get_record('question_categories', ['id' => $slotdata->category]);
-        return \question_bank::get_qtype('random')->question_name(
-               $category, $slotdata->randomrecurse, $slotdata->randomtags);
+        $qtagids = self::get_tag_ids_for_slot($slotdata);
+
+        if ($qtagids) {
+            $tagnames = [];
+            $tags = \core_tag_tag::get_bulk($qtagids, 'id, name');
+            foreach ($tags as $tag) {
+                $tagnames[] = $tag->name;
+            }
+            $description = get_string('randomqnametags', 'mod_quiz', implode(",", $tagnames));
+        } else {
+            $description = get_string('randomqname', 'mod_quiz');
+        }
+        return shorten_text($description, 255);
     }
 
     /**
@@ -247,8 +265,9 @@ class qbank_helper {
 
         // Random question.
         $randomloader = new random_question_loader($qubaids, []);
-        $newqusetionid = $randomloader->get_next_question_id($slotdata->category,
-                $slotdata->randomrecurse, self::get_tag_ids_for_slot($slotdata));
+        $fitlercondition = $slotdata->filtercondition;
+        $filter = $fitlercondition['filter'] ?? [];
+        $newqusetionid = $randomloader->get_next_filtered_question_id($filter);
 
         if ($newqusetionid === null) {
             throw new \moodle_exception('notenoughrandomquestions', 'quiz');

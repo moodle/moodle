@@ -67,7 +67,7 @@ class controlmenu implements named_templatable, renderable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
@@ -151,6 +151,17 @@ class controlmenu implements named_templatable, renderable {
                 'name' => $streditsection,
                 'pixattr' => ['class' => ''],
                 'attr' => ['class' => 'icon edit'],
+            ];
+
+            $duplicatesectionurl = clone($baseurl);
+            $duplicatesectionurl->param('section', $section->section);
+            $duplicatesectionurl->param('duplicatesection', $section->section);
+            $controls['duplicate'] = [
+                'url' => $duplicatesectionurl,
+                'icon' => 't/copy',
+                'name' => get_string('duplicate'),
+                'pixattr' => ['class' => ''],
+                'attr' => ['class' => 'icon duplicate'],
             ];
         }
 
@@ -265,7 +276,7 @@ class controlmenu implements named_templatable, renderable {
                     'name' => $strdelete,
                     'pixattr' => ['class' => ''],
                     'attr' => [
-                        'class' => 'icon editing_delete',
+                        'class' => 'icon editing_delete text-danger',
                         'data-action' => 'deleteSection',
                         'data-id' => $section->id,
                     ],

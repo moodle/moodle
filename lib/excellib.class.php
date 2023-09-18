@@ -50,7 +50,7 @@ use \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
  * @package moodlecore
  */
 class MoodleExcelWorkbook {
-    /** @var PhpSpreadsheet */
+    /** @var \PhpOffice\PhpSpreadsheet\Spreadsheet */
     protected $objspreadsheet;
 
     /** @var string */

@@ -200,6 +200,11 @@ abstract class restore_activity_task extends restore_task {
             }
         }
 
+        // The xAPI state (conditionally).
+        if ($this->get_setting_value('xapistate')) {
+            $this->add_step(new restore_xapistate_structure_step('activity_xapistate', 'xapistate.xml'));
+        }
+
         // At the end, mark it as built
         $this->built = true;
     }
@@ -244,16 +249,6 @@ abstract class restore_activity_task extends restore_task {
             // Fallback to parent
             return parent::get_setting($name);
         }
-    }
-
-    /**
-     * Given a commment area, return the itemname that contains the itemid mappings
-     *
-     * By default both are the same (commentarea = itemname), so return it. If some
-     * module uses a different approach, this method can be overriden in its taks
-     */
-    public function get_comment_mapping_itemname($commentarea) {
-        return $commentarea;
     }
 
     /**

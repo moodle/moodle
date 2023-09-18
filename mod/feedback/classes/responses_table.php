@@ -78,6 +78,9 @@ class mod_feedback_responses_table extends table_sql {
     /** @var array the data structure containing the table data for the external function */
     protected $dataforexternal = [];
 
+    /** @var bool true if elements per page > 0, otherwise false. */
+    protected $pageable;
+
     /**
      * Constructor
      *
@@ -289,6 +292,8 @@ class mod_feedback_responses_table extends table_sql {
      * are only needed when outputting or downloading data.
      */
     protected function add_all_values_to_output() {
+        global $DB;
+
         $tablecolumns = array_keys($this->columns);
         $tableheaders = $this->headers;
 
@@ -308,7 +313,7 @@ class mod_feedback_responses_table extends table_sql {
             if ($columnscount++ < self::TABLEJOINLIMIT) {
                 // Mysql has a limit on the number of tables in the join, so we only add limited number of columns here,
                 // the rest will be added in {@link self::build_table()} and {@link self::build_table_chunk()} functions.
-                $this->sql->fields .= ", v{$nr}.value AS val{$nr}";
+                $this->sql->fields .= ", " . $DB->sql_cast_to_char("v{$nr}.value") . " AS val{$nr}";
                 $this->sql->from .= " LEFT OUTER JOIN {feedback_value} v{$nr} " .
                     "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
                 $this->sql->params["itemid{$nr}"] = $item->id;
@@ -560,7 +565,7 @@ class mod_feedback_responses_table extends table_sql {
             $from = '{feedback_completed} c';
             $params = [];
             foreach ($columnsgroup as $nr => $item) {
-                $fields .= ", v{$nr}.value AS val{$nr}";
+                $fields .= ", " . $DB->sql_cast_to_char("v{$nr}.value") . " AS val{$nr}";
                 $from .= " LEFT OUTER JOIN {feedback_value} v{$nr} " .
                     "ON v{$nr}.completed = c.id AND v{$nr}.item = :itemid{$nr}";
                 $params["itemid{$nr}"] = $item->id;

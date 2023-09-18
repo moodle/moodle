@@ -135,7 +135,7 @@ abstract class resource_base {
     /**
      * Get the resource's service.
      *
-     * @return mixed
+     * @return service_base
      */
     public function get_service() {
 

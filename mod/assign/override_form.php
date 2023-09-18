@@ -128,7 +128,9 @@ class assign_override_form extends moodleform {
 
                 $groupchoices = array();
                 foreach ($groups as $group) {
-                    $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    if ($group->visibility != GROUPS_VISIBILITY_NONE) {
+                        $groupchoices[$group->id] = format_string($group->name, true, $this->context);
+                    }
                 }
                 unset($groups);
 
@@ -315,8 +317,8 @@ class assign_override_form extends moodleform {
         }
 
         if (!empty($data['allowsubmissionsfromdate']) && !empty($data['duedate'])) {
-            if ($data['duedate'] < $data['allowsubmissionsfromdate']) {
-                $errors['duedate'] = get_string('duedatevalidation', 'assign');
+            if ($data['duedate'] <= $data['allowsubmissionsfromdate']) {
+                $errors['duedate'] = get_string('duedateaftersubmissionvalidation', 'assign');
             }
         }
 

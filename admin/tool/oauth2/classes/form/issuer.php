@@ -108,7 +108,7 @@ class issuer extends persistent {
         $mform->addHelpButton('clientsecret', 'issuerclientsecret', 'tool_oauth2');
 
         // Use basic authentication.
-        $mform->addElement('checkbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
+        $mform->addElement('advcheckbox', 'basicauth', get_string('usebasicauth', 'tool_oauth2'));
         $mform->addHelpButton('basicauth', 'usebasicauth', 'tool_oauth2');
 
         // Base Url.
@@ -179,7 +179,8 @@ class issuer extends persistent {
         $mform->hideIf('acceptrisk', 'requireconfirmation', 'checked');
 
 
-        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
+        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1'
+                || $this->type == 'moodlenet' || $issuer->get('servicetype') == 'moodlenet') {
             $mform->addRule('baseurl', null, 'required', null, 'client');
         } else {
             $mform->addRule('clientid', null, 'required', null, 'client');
@@ -244,7 +245,6 @@ class issuer extends persistent {
      * @return array of additional errors, or overridden errors.
      */
     protected function extra_validation($data, $files, array &$errors) {
-        $errors = [];
         if ($data->showonloginpage != \core\oauth2\issuer::SERVICEONLY) {
             if (!strlen(trim($data->loginscopes))) {
                 $errors['loginscopes'] = get_string('required');

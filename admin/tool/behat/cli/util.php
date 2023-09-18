@@ -57,7 +57,7 @@ list($options, $unrecognized) = cli_get_params(
         'torun'       => 0,
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
-        'axe'         => false,
+        'axe'         => true,
     ),
     array(
         'h' => 'help',
@@ -73,7 +73,7 @@ $help = "
 Behat utilities to manage the test environment
 
 Usage:
-  php util.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--axe|--help] [--parallel=value [--maxruns=value]]
+  php util.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--no-axe|--help] [--parallel=value [--maxruns=value]]
 
 Options:
 --install      Installs the test environment for acceptance tests
@@ -82,7 +82,7 @@ Options:
 --disable      Disables test environment
 --diag         Get behat test environment status code
 --updatesteps  Update feature step file.
---axe          Include axe accessibility tests
+--no-axe       Disable axe accessibility tests.
 
 -j, --parallel Number of parallel behat run operation
 -m, --maxruns Max parallel processes to be executed at one time.
@@ -94,7 +94,7 @@ Options:
 Example from Moodle root directory:
 \$ php admin/tool/behat/cli/util.php --enable --parallel=4
 
-More info in http://docs.moodle.org/dev/Acceptance_testing#Running_tests
+More info in https://moodledev.io/general/development/tools/behat/running
 ";
 
 if (!empty($options['help'])) {
@@ -320,12 +320,7 @@ function commands_to_execute($options) {
     }
 
     foreach ($extraoptions as $option => $value) {
-        if ($options[$option]) {
-            $extra .= " --$option";
-            if ($value) {
-                $extra .= "=\"$value\"";
-            }
-        }
+        $extra .= behat_get_command_flags($option, $value);
     }
 
     if (empty($options['parallel'])) {
@@ -360,7 +355,7 @@ function print_combined_drop_output($processes) {
                 $op = $process->getIncrementalOutput();
                 if (trim($op)) {
                     $update = preg_filter('#^\s*([FS\.\-]+)(?:\s+\d+)?\s*$#', '$1', $op);
-                    $strlentoprint = strlen($update);
+                    $strlentoprint = $update ? strlen($update) : 0;
 
                     // If not enough dots printed on line then just print.
                     if ($strlentoprint < $remainingprintlen) {

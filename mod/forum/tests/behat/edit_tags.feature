@@ -20,11 +20,10 @@ Feature: Edited forum posts handle tags correctly
       | course   | C1              |
       | activity | forum           |
       | name     | Test forum name |
-    And I am on the "Course 1" Course page logged in as teacher1
-    And I add a new discussion to "Test forum name" forum with:
-      | Subject | Teacher post subject |
-      | Message | Teacher post message |
-    And I log out
+      | idnumber | forum1          |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name                 | message              |
+      | teacher1 | forum1 | Teacher post subject | Teacher post message |
 
   @javascript
   Scenario: Forum post edition of custom tags works as expected
@@ -46,7 +45,6 @@ Feature: Edited forum posts handle tags correctly
     And I follow "Add standard tags"
     And I set the field "Enter comma-separated list of new tags" to "OT1, OT2, OT3"
     And I press "Continue"
-    And I log out
     And I am on the "Test forum name" "forum activity" page logged in as teacher1
     And I click on "Add discussion topic" "link"
     And I click on "Advanced" "button"

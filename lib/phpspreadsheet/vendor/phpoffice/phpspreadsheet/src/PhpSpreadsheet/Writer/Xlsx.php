@@ -31,7 +31,6 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Workbook;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet;
 use ZipArchive;
 use ZipStream\Exception\OverflowException;
-use ZipStream\Option\Archive;
 use ZipStream\ZipStream;
 
 class Xlsx extends BaseWriter
@@ -342,7 +341,7 @@ class Xlsx extends BaseWriter
                     //signed macros ?
                     // Yes : add the certificate file and the related rels file
                     $zipContent['xl/vbaProjectSignature.bin'] = $this->spreadSheet->getMacrosCertificate();
-                    $zipContent['xl/_rels/vbaProject.bin.rels'] = $this->getWriterPartRelsVBA()->writeVBARelationships($this->spreadSheet);
+                    $zipContent['xl/_rels/vbaProject.bin.rels'] = $this->getWriterPartRelsVBA()->writeVBARelationships();
                 }
             }
         }
@@ -455,14 +454,17 @@ class Xlsx extends BaseWriter
             }
 
             // Add comment relationship parts
-            if (count($this->spreadSheet->getSheet($i)->getComments()) > 0) {
+            $legacy = $unparsedLoadedData['sheets'][$this->spreadSheet->getSheet($i)->getCodeName()]['legacyDrawing'] ?? null;
+            if (count($this->spreadSheet->getSheet($i)->getComments()) > 0 || $legacy !== null) {
                 // VML Comments relationships
                 $zipContent['xl/drawings/_rels/vmlDrawing' . ($i + 1) . '.vml.rels'] = $this->getWriterPartRels()->writeVMLDrawingRelationships($this->spreadSheet->getSheet($i));
 
                 // VML Comments
-                $zipContent['xl/drawings/vmlDrawing' . ($i + 1) . '.vml'] = $this->getWriterPartComments()->writeVMLComments($this->spreadSheet->getSheet($i));
+                $zipContent['xl/drawings/vmlDrawing' . ($i + 1) . '.vml'] = $legacy ?? $this->getWriterPartComments()->writeVMLComments($this->spreadSheet->getSheet($i));
+            }
 
-                // Comments
+            // Comments
+            if (count($this->spreadSheet->getSheet($i)->getComments()) > 0) {
                 $zipContent['xl/comments' . ($i + 1) . '.xml'] = $this->getWriterPartComments()->writeComments($this->spreadSheet->getSheet($i));
 
                 // Media
@@ -477,7 +479,9 @@ class Xlsx extends BaseWriter
             // Add unparsed relationship parts
             if (isset($unparsedLoadedData['sheets'][$sheetCodeName]['vmlDrawings'])) {
                 foreach ($unparsedLoadedData['sheets'][$sheetCodeName]['vmlDrawings'] as $vmlDrawing) {
-                    $zipContent[$vmlDrawing['filePath']] = $vmlDrawing['content'];
+                    if (!isset($zipContent[$vmlDrawing['filePath']])) {
+                        $zipContent[$vmlDrawing['filePath']] = $vmlDrawing['content'];
+                    }
                 }
             }
 
@@ -541,11 +545,7 @@ class Xlsx extends BaseWriter
 
         $this->openFileHandle($filename);
 
-        $options = new Archive();
-        $options->setEnableZip64(false);
-        $options->setOutputStream($this->fileHandle);
-
-        $this->zip = new ZipStream(null, $options);
+        $this->zip = ZipStream0::newZipStream($this->fileHandle);
 
         $this->addZipFiles($zipContent);
 
@@ -714,7 +714,7 @@ class Xlsx extends BaseWriter
         $filename = $drawing->getPath();
         $imageData = getimagesize($filename);
 
-        if (is_array($imageData)) {
+        if (!empty($imageData)) {
             switch ($imageData[2]) {
                 case 1: // GIF, not supported by BIFF8, we convert to PNG
                     $image = imagecreatefromgif($filename);

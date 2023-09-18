@@ -16,6 +16,7 @@
 
 namespace core_courseformat\output\local\content;
 
+use core\moodlenet\utilities;
 use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
@@ -82,7 +83,67 @@ class bulkedittools implements named_templatable, renderable {
      * @return array of edit control items
      */
     protected function cm_control_items(): array {
+        global $USER;
+        $format = $this->format;
+        $context = $format->get_context();
+        $user = $USER;
+
         $controls = [];
+
+        if (has_capability('moodle/course:activityvisibility', $context, $user)) {
+            $controls['availability'] = [
+                'icon' => 't/show',
+                'action' => 'cmAvailability',
+                'name' => get_string('availability'),
+                'title' => get_string('cmavailability', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+        }
+
+
+        $duplicatecapabilities = ['moodle/backup:backuptargetimport', 'moodle/restore:restoretargetimport'];
+        if (has_all_capabilities($duplicatecapabilities, $context, $user)) {
+            $controls['duplicate'] = [
+                'icon' => 't/copy',
+                'action' => 'cmDuplicate',
+                'name' => get_string('duplicate'),
+                'title' => get_string('cmsduplicate', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+        }
+
+
+        $hasmanageactivities = has_capability('moodle/course:manageactivities', $context, $user);
+        if ($hasmanageactivities) {
+            $controls['move'] = [
+                'icon' => 'i/dragdrop',
+                'action' => 'moveCm',
+                'name' => get_string('move'),
+                'title' => get_string('cmsmove', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+
+            $controls['delete'] = [
+                'icon' => 'i/delete',
+                'action' => 'cmDelete',
+                'name' => get_string('delete'),
+                'title' => get_string('cmsdelete', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+        }
+
+        $usercanshare = utilities::can_user_share($context, $user->id, 'course');
+        if ($usercanshare) {
+            $controls['sharetomoodlenet'] = [
+                'id' => 'cmShareToMoodleNet',
+                'icon' => 'i/share',
+                'action' => 'cmShareToMoodleNet',
+                'name' => get_string('moodlenet:sharetomoodlenet'),
+                'title' => get_string('moodlenet:sharetomoodlenet'),
+                'bulk' => 'cm',
+            ];
+        }
+
         return $controls;
     }
 
@@ -95,7 +156,45 @@ class bulkedittools implements named_templatable, renderable {
      * @return array of edit control items
      */
     protected function section_control_items(): array {
+        global $USER;
+        $format = $this->format;
+        $context = $format->get_context();
+        $sectionreturn = $format->get_section_number();
+        $user = $USER;
+
         $controls = [];
+
+        if (has_capability('moodle/course:sectionvisibility', $context, $user)) {
+            $controls['availability'] = [
+                'icon' => 't/show',
+                'action' => 'sectionAvailability',
+                'name' => get_string('availability'),
+                'title' => $this->format->get_format_string('sectionsavailability'),
+                'bulk' => 'section',
+            ];
+        }
+
+        if (!$sectionreturn && has_capability('moodle/course:movesections', $context, $user)) {
+            $controls['move'] = [
+                'icon' => 'i/dragdrop',
+                'action' => 'moveSection',
+                'name' => get_string('move', 'moodle'),
+                'title' => $this->format->get_format_string('sectionsmove'),
+                'bulk' => 'section',
+            ];
+        }
+
+        $deletecapabilities = ['moodle/course:movesections', 'moodle/course:update'];
+        if (!$sectionreturn && has_all_capabilities($deletecapabilities, $context, $user)) {
+            $controls['delete'] = [
+                'icon' => 'i/delete',
+                'action' => 'deleteSection',
+                'name' => get_string('delete'),
+                'title' => $this->format->get_format_string('sectionsdelete'),
+                'bulk' => 'section',
+            ];
+        }
+
         return $controls;
     }
 }

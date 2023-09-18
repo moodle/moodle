@@ -40,6 +40,7 @@ Feature: A teacher can preview questions in the question bank
     And "Numerical" "icon" should exist
     And I should see "Version"
     And I click on "Preview options" "link"
+    And I should see "These settings are for testing the question. The options you select only affect the preview."
     And I should see "Question version"
 
   Scenario: Preview lets the teacher see what happens when an answer is saved
@@ -68,7 +69,7 @@ Feature: A teacher can preview questions in the question bank
     When I press "Preview options"
     And I set the field "How questions behave" to "Immediate feedback"
     And I set the field "Marked out of" to "3"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     And I set the field "Answer:" to "3.1"
     And I press "Check"
     Then the state of "What is pi to two d.p.?" question is shown as "Incorrect"
@@ -88,25 +89,81 @@ Feature: A teacher can preview questions in the question bank
   Scenario: Preview a question with very small grade
     When I press "Preview options"
     And I set the field "Marked out of" to "0.00000123456789"
-    And I press "Start again with these options"
+    And I press "Save preview options and start again"
     Then the field "Marked out of" matches value "0.00000123456789"
 
   Scenario: Question version is updated when edited and teacher can change question version
-    And I should see "Version 1"
+    Given I should see "Version 1"
     And I press "Close preview"
     And I choose "Edit question" action for "Test question to be previewed" in the question bank
     And I set the field "Question name" to "New version"
     And I set the field "Question text" to "New text version"
     And I click on "submitbutton" "button"
     And I choose "Preview" action for "New version" in the question bank
-    Then I should see "Version 2"
+    When I expand all fieldsets
+    And I should see "Version 2"
     And I should see "(latest)"
     And I should see "New version"
     And I should see "New text version"
     And I should not see "Test question to be previewed"
     And I should not see "Version 1"
+    And I should see "1" in the "Question version" "select"
+    And I should see "2" in the "Question version" "select"
+    And I set the field "Question version" to "1"
+    And I press "Save preview options and start again"
+    Then I should see "Version 1"
+    And I should not see "Version 2"
+    And I should not see "(latest)"
+
+  Scenario: The preview always uses the latest question version by default.
+    Given the following "core_question > updated questions" exist:
+      | questioncategory | question                      | questiontext       |
+      | Test questions   | Test question to be previewed | Question version 2 |
+    And I should see "Version 1 (latest)"
+    And I expand all fieldsets
+    And the field "Question version" matches value "Always latest"
+    And I set the field "Answer:" to "3.14"
+    And I press "Submit and finish"
+    And I should see "Version 1"
+    When I press "Start again"
+    Then I should not see "Version 1"
+    And I should see "Version 2 (latest)"
+
+  Scenario: Detect a newer version during always latest preview and offer to switch to the latest
+    Given I should not see "This preview is using version 1"
+    And the following "core_question > updated questions" exist:
+      | questioncategory | question                      | questiontext       |
+      | Test questions   | Test question to be previewed | Question version 2 |
+    And I should see "Version 1 (latest)"
+    And I set the field "Answer:" to "3.14"
+    When I press "Submit and finish"
+    And I should see "This preview is using an older version of the question."
+    And I press "Use latest version"
+    Then I should not see "Version 1"
+    And I should see "Version 2 (latest)"
+
+  Scenario: Previewing from the question history will not always show the latest version
+    Given I press "Close preview"
+    And the following "core_question > updated questions" exist:
+      | questioncategory | question                      | questiontext       |
+      | Test questions   | Test question to be previewed | Question version 2 |
+    And I choose "History" action for "Test question to be previewed" in the question bank
+    And I choose "Preview" action for "Test question to be previewed" in the question bank
+    And I should see "Version 1 (of 2)"
+    And I expand all fieldsets
+    And the field "Question version" matches value "1"
+    And I set the field "Answer:" to "3.14"
+    And I press "Submit and finish"
+    And I should see "Version 1 (of 2)"
+    And I should not see "The latest version is 2."
+    And the following "core_question > updated questions" exist:
+      | questioncategory | question                      | questiontext       |
+      | Test questions   | Test question to be previewed | Question version 3 |
+    When I press "Start again"
+    Then I should see "Version 1 (of 3)"
+    And I should not see "Version 3 (latest)"
 
   Scenario: Question preview can be closed
     And I press "Close preview"
     Then I should not see "(latest)"
-    And I should see "Course 1"
+    And I should see "Test quiz"

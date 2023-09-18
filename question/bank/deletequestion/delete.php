@@ -33,6 +33,7 @@ $deleteselected = optional_param('deleteselected', false, PARAM_BOOL);
 $returnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $cmid = optional_param('cmid', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$deleteall = optional_param('deleteall', false, PARAM_BOOL);
 
 if ($returnurl) {
     $returnurl = new moodle_url($returnurl);
@@ -79,17 +80,7 @@ if ($deleteselected && ($confirm = optional_param('confirm', '', PARAM_ALPHANUM)
     $deleteselected = required_param('deleteselected', PARAM_RAW);
     if ($confirm == md5($deleteselected)) {
         if ($questionlist = explode(',', $deleteselected)) {
-            // For each question either hide it if it is in use or delete it.
-            foreach ($questionlist as $questionid) {
-                $questionid = (int)$questionid;
-                question_require_capability_on($questionid, 'edit');
-                if (questions_in_use(array($questionid))) {
-                    $DB->set_field('question_versions', 'status',
-                        \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $questionid]);
-                } else {
-                    question_delete_question($questionid);
-                }
-            }
+            \qbank_deletequestion\helper::delete_questions($questionlist, $deleteall);
         }
         redirect($returnurl);
     } else {
@@ -103,18 +94,11 @@ if ($deleteselected) {
     // Make a list of all the questions that are selected.
     $rawquestions = $_REQUEST; // This code is called by both POST forms and GET links, so cannot use data_submitted.
     $questionlist = '';  // Comma separated list of ids of questions to be deleted.
-    $questionnames = ''; // String with names of questions separated by <br/> with an asterix in front of those that are in use.
-    $inuse = false;      // Set to true if at least one of the questions is in use.
     foreach ($rawquestions as $key => $value) {    // Parse input for question ids.
         if (preg_match('!^q([0-9]+)$!', $key, $matches)) {
             $key = $matches[1];
             $questionlist .= $key.',';
             question_require_capability_on((int)$key, 'edit');
-            if (questions_in_use(array($key))) {
-                $questionnames .= '* ';
-                $inuse = true;
-            }
-            $questionnames .= $DB->get_field('question', 'name', array('id' => $key)) . '<br />';
         }
     }
     if (!$questionlist) { // No questions were selected.
@@ -122,16 +106,25 @@ if ($deleteselected) {
     }
     $questionlist = rtrim($questionlist, ',');
 
-    // Add an explanation about questions in use.
-    if ($inuse) {
-        $questionnames .= '<br />'.get_string('questionsinuse', 'question');
-    }
-    $deleteurl = new \moodle_url('/question/bank/deletequestion/delete.php',
-            array('deleteselected' => $questionlist, 'confirm' => md5($questionlist),
-            'sesskey' => sesskey(), 'returnurl' => $returnurl, 'cmid' => $cmid, 'courseid' => $courseid));
-
+    $deleteurl = new \moodle_url(
+        '/question/bank/deletequestion/delete.php',
+        [
+            'deleteselected' => $questionlist,
+            'deleteall' => $deleteall,
+            'confirm' => md5($questionlist),
+            'sesskey' => sesskey(),
+            'returnurl' => $returnurl->out_as_local_url(false),
+            'cmid' => $cmid,
+            'courseid' => $courseid,
+        ],
+    );
     $continue = new \single_button($deleteurl, get_string('delete'), 'post');
-    echo $OUTPUT->confirm(get_string('deletequestionscheck', 'question', $questionnames), $continue, $returnurl);
+
+    $questionids = explode(',', $questionlist);
+    [$displayoptions, $message] = qbank_deletequestion\helper::get_delete_confirmation_message($questionids,
+        $deleteall);
+
+    echo $OUTPUT->confirm($message, $continue, $returnurl, $displayoptions);
 }
 
 echo $OUTPUT->footer();

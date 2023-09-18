@@ -383,10 +383,12 @@ class HTML_QuickForm_element extends HTML_Common
     {
         switch ($event) {
             case 'createElement':
-                static::__construct($arg[0], $arg[1], $arg[2], $arg[3], $arg[4]);
+                static::__construct($arg[0], $arg[1], $arg[2], $arg[3], $arg[4], $arg[5]);
                 if ($caller->getAttribute('data-random-ids') && !$this->getAttribute('id')) {
                     $this->_generateId();
-                    $this->updateAttributes(array('id' => $this->getAttribute('id') . '_' . random_string()));
+                    $attributes = $this->getAttributes();
+                    $attributes['id'] = $this->getAttribute('id') . '_' . random_string();
+                    $this->updateAttributes($attributes);
                 }
                 break;
             case 'addElement':

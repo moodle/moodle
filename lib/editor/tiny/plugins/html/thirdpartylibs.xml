@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/codemirror-lazy.js</location>
+    <name>codemirror</name>
+    <description>CodeMirror is a versatile text editor implemented in JavaScript for the browser.</description>
+    <version>6.0.1</version>
+    <license>MIT</license>
+    <repository>https://github.com/codemirror/</repository>
+  </library>
+  <library>
+    <location>amd/src/beautify</location>
+    <name>js-beautify</name>
+    <description>Beautifier for javascript.</description>
+    <version>1.14.8</version>
+    <license>MIT</license>
+    <repository>https://github.com/beautify-web/js-beautify/</repository>
+  </library>
+</libraries>

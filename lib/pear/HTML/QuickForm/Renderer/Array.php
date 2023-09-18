@@ -138,7 +138,7 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
     * false: leave labels as defined
     * @var bool
     */
-    var $staticLabels = false;
+    var $_staticLabels = false;
 
    /**
     * Constructor
@@ -187,7 +187,6 @@ class HTML_QuickForm_Renderer_Array extends HTML_QuickForm_Renderer
         if ($this->_collectHidden) {
             $this->_ary['hidden'] = '';
         }
-        $this->_elementIdx     = 1;
         $this->_currentSection = null;
         $this->_sectionCount   = 0;
     } // end func startForm

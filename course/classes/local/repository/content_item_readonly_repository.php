@@ -26,6 +26,7 @@ namespace core_course\local\repository;
 
 defined('MOODLE_INTERNAL') || die();
 
+use core_component;
 use core_course\local\entity\content_item;
 use core_course\local\entity\lang_string_title;
 use core_course\local\entity\string_title;
@@ -195,12 +196,20 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
 
+            $icon = 'monologo';
+            // Quick check for monologo icons.
+            // Plugins that don't have monologo icons will be displayed as is and CSS filter will not be applied.
+            $hasmonologoicons = core_component::has_monologo_icon('mod', $mod->name);
+            $iconclass = '';
+            if (!$hasmonologoicons) {
+                $iconclass = 'nofilter';
+            }
             $contentitem = new content_item(
                 $mod->id,
                 $mod->name,
                 new lang_string_title("modulename", $mod->name),
                 new \moodle_url('/course/mod.php', ['id' => $course->id, 'add' => $mod->name]),
-                $OUTPUT->pix_icon('monologo', '', $mod->name, ['class' => 'icon activityicon']),
+                $OUTPUT->pix_icon($icon, '', $mod->name, ['class' => "activityicon $iconclass"]),
                 $help,
                 $archetype,
                 'mod_' . $mod->name,

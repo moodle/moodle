@@ -60,7 +60,7 @@ TPL;
         $search = $this->searchcriterion;
 
         // If there is a specific type (given, when or then) required.
-        if (strpos($search, '&&') !== false) {
+        if ($search && strpos($search, '&&') !== false) {
             list($search, $type) = explode('&&', $search);
         }
 

@@ -73,7 +73,7 @@ if ($data = $mform->get_data()) {
     }
 }
 
-print_grade_page_head($courseid, 'settings', 'coursesettings', get_string('coursegradesettings', 'grades'));
+print_grade_page_head($courseid, 'settings', 'coursesettings');
 
 // The settings could have been changed due to a notice shown in print_grade_page_head, we need to refresh them.
 $settings = grade_get_settings($course->id);

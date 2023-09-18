@@ -26,6 +26,8 @@
 
 namespace core_question\statistics\questions;
 
+use question_bank;
+
 /**
  * A collection of all the question statistics calculated for an activity instance.
  *
@@ -36,7 +38,11 @@ namespace core_question\statistics\questions;
  */
 class all_calculated_for_qubaid_condition {
 
-    /** @var int Time after which statistics are automatically recomputed. */
+    /**
+     * @var int previously, the time after which statistics are automatically recomputed.
+     * @deprecated since Moodle 4.3. Use of pre-computed stats is no longer time-limited.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
+     */
     const TIME_TO_CACHE = 900; // 15 minutes.
 
     /**
@@ -195,9 +201,9 @@ class all_calculated_for_qubaid_condition {
     public function get_cached($qubaids) {
         global $DB;
 
-        $timemodified = time() - self::TIME_TO_CACHE;
-        $questionstatrecs = $DB->get_records_select('question_statistics', 'hashcode = ? AND timemodified > ?',
-                                                    array($qubaids->get_hash_code(), $timemodified));
+        $timemodified = self::get_last_calculated_time($qubaids);
+        $questionstatrecs = $DB->get_records('question_statistics',
+                ['hashcode' => $qubaids->get_hash_code(), 'timemodified' => $timemodified]);
 
         $questionids = array();
         foreach ($questionstatrecs as $fromdb) {
@@ -214,7 +220,13 @@ class all_calculated_for_qubaid_condition {
                 } else {
                     $this->subquestionstats[$fromdb->questionid] = new calculated_for_subquestion();
                     $this->subquestionstats[$fromdb->questionid]->populate_from_record($fromdb);
-                    $this->subquestionstats[$fromdb->questionid]->question = $this->subquestions[$fromdb->questionid];
+                    if (isset($this->subquestions[$fromdb->questionid])) {
+                        $this->subquestionstats[$fromdb->questionid]->question =
+                                $this->subquestions[$fromdb->questionid];
+                    } else {
+                        $this->subquestionstats[$fromdb->questionid]->question =
+                                question_bank::get_qtype('missingtype', false)->make_deleted_instance($fromdb->questionid, 1);
+                    }
                 }
             }
         }
@@ -243,25 +255,35 @@ class all_calculated_for_qubaid_condition {
      */
     public function get_last_calculated_time($qubaids) {
         global $DB;
-
-        $timemodified = time() - self::TIME_TO_CACHE;
-        return $DB->get_field_select('question_statistics', 'timemodified', 'hashcode = ? AND timemodified > ?',
-                                     array($qubaids->get_hash_code(), $timemodified), IGNORE_MULTIPLE);
+        $lastcalculatedtime = $DB->get_field('question_statistics', 'COALESCE(MAX(timemodified), 0)',
+                ['hashcode' => $qubaids->get_hash_code()]);
+        if ($lastcalculatedtime) {
+            return $lastcalculatedtime;
+        } else {
+            return false;
+        }
     }
 
     /**
-     * Save stats to db.
+     * Save stats to db, first cleaning up any old ones.
      *
      * @param \qubaid_condition $qubaids Which question usages are we caching the stats of?
      */
     public function cache($qubaids) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+        $timemodified = time();
+
         foreach ($this->get_all_slots() as $slot) {
-            $this->for_slot($slot)->cache($qubaids);
+            $this->for_slot($slot)->cache($qubaids, $timemodified);
         }
 
         foreach ($this->get_all_subq_ids() as $subqid) {
-            $this->for_subq($subqid)->cache($qubaids);
+            $this->for_subq($subqid)->cache($qubaids, $timemodified);
         }
+
+        $transaction->allow_commit();
     }
 
     /**

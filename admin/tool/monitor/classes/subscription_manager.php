@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class subscription_manager {
 
-    /** @const Period of time, in days, after which an inactive subscription will be removed completely.*/
+    /** @var Period of time, in days, after which an inactive subscription will be removed completely.*/
     const INACTIVE_SUBSCRIPTION_LIFESPAN_IN_DAYS = 30;
 
     /**
@@ -194,10 +194,9 @@ class subscription_manager {
                 if (!is_null($coursecontext)) {
                     $context = $coursecontext;
                     $courseid = $subscription->courseid;
-                } else if (!empty($subscription->courseid) && ($coursecontext =
+                } else if (!empty($subscription->courseid) && ($context =
                         \context_course::instance($subscription->courseid, IGNORE_MISSING))) {
                     $courseid = $subscription->courseid;
-                    $context = $coursecontext;
                 } else {
                     $courseid = 0;
                     $context = \context_system::instance();

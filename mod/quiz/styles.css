@@ -265,21 +265,6 @@ table.quizattemptsummary .noreviewmessage {
     margin-right: auto;
 }
 
-#page-mod-quiz-view .generalbox#feedback {
-    width: 70%;
-    margin-left: auto;
-    margin-right: auto;
-    padding-bottom: 15px;
-}
-
-#page-mod-quiz-view .generalbox#feedback h2 {
-    margin: 0;
-}
-
-#page-mod-quiz-view .generalbox#feedback h3 {
-    text-align: left;
-}
-
 #page-mod-quiz-view .generalbox#feedback .overriddennotice {
     text-align: center;
     font-size: 0.7em;
@@ -321,7 +306,8 @@ table.quizattemptsummary .noreviewmessage {
 }
 
 body.path-mod-quiz .gradedattempt,
-body.path-mod-quiz table tbody tr.gradedattempt > td {
+body.path-mod-quiz table tbody tr.gradedattempt > td,
+body.path-mod-quiz table tbody tr.gradedattempt > td.sticky-column {
     border-color: #bce8f1;
     background-color: #d9edf7;
 }
@@ -381,6 +367,7 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-comment .mform fieldset {
     margin: 0;
+    border-bottom: none;
 }
 
 #page-mod-quiz-comment .que {
@@ -575,6 +562,18 @@ table.quizreviewsummary td.cell {
     min-width: 2em;
     display: inline-block;
 }
+#page-mod-quiz-edit li.section .slotnumber.unshuffled {
+    display: inline-block;
+}
+#page-mod-quiz-edit li.section .slotnumber.shuffled {
+    display: none;
+}
+#page-mod-quiz-edit li.section.shuffled .slotnumber.unshuffled {
+    display: none;
+}
+#page-mod-quiz-edit li.section.shuffled .slotnumber.shuffled {
+    display: inline-block;
+}
 
 #page-mod-quiz-edit .section-heading {
     margin-left: 20px;
@@ -677,8 +676,8 @@ table.quizreviewsummary td.cell {
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer {
     background: white;
-    padding: 0.2em;
-    margin: 0.4em;
+    padding: 0.5em 0 0.5em 0.1em;
+    margin: 2px;
 }
 
 #page-mod-quiz-edit ul.slots li.section li.activity .instancemaxmarkcontainer .editicon {
@@ -1099,28 +1098,28 @@ table#categoryquestions {
     text-align: right;
 }
 #page-mod-quiz-edit .inplaceeditable .quickeditlink {
-    color: #0f6cbf;
+    color: var(--primary);
     text-decoration: none;
     background-color: transparent;
     padding-left: 1px;
     margin: 0;
 }
-#page-mod-quiz-edit .qickeditlink .aalink {
-    color: #0f6cbf;
+#page-mod-quiz-edit .quickeditlink .aalink {
+    color: var(--primary);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
-#page-mod-quiz-edit .qickedition {
-    color: #0f6cbf;
+#page-mod-quiz-edit .quickedition {
+    color: var(--primary);
     text-align: right;
     width: 10px;
     margin: 2px;
 }
-#page-mod-quiz-edit .qickedition .visibleifjs {
+#page-mod-quiz-edit .quickedition .visibleifjs {
     text-align: right;
 }
-#page-mod-quiz-edit .qickeditlink {
+#page-mod-quiz-edit .quickeditlink {
     text-align: right;
 }
 

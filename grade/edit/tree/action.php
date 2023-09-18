@@ -92,7 +92,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_locked(1, true, true);
+            $object->set_locked(1, false, true);
         }
         break;
 
@@ -104,7 +104,7 @@ switch ($action) {
             if ($type == 'grade' and empty($object->id)) {
                 $object->insert();
             }
-            $object->set_locked(0, true, true);
+            $object->set_locked(0, false, true);
         }
         break;
 

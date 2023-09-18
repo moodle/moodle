@@ -92,7 +92,6 @@ class lib_test extends \advanced_testcase {
         $expected->userid = $user->id;
         $expected->content = $fakepost->message;
         $expected->pathnamehashes = array($fi->get_pathnamehash());
-        $this->assertEventLegacyData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -2230,9 +2229,6 @@ class lib_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
         $this->assertEquals($context, $event->get_context());
-        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
-            $discussion->id, $forum->cmid);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -2815,6 +2811,40 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue(forum_user_has_posted_discussion($forum->id, $author->id));
         $this->assertTrue(forum_user_has_posted_discussion($forum->id, $author->id, $group1->id));
         $this->assertTrue(forum_user_has_posted_discussion($forum->id, $author->id, $group2->id));
+    }
+
+    /**
+     * Test the logic for forum_get_user_posted_mailnow where the user can select if qanda forum post should be sent without delay
+     *
+     * @covers ::forum_get_user_posted_mailnow
+     */
+    public function test_forum_get_user_posted_mailnow() {
+        $this->resetAfterTest();
+
+        // Create a forum.
+        $course = $this->getDataGenerator()->create_course();
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $author = $this->getDataGenerator()->create_user();
+        $authorid = $author->id;
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        // Create a discussion.
+        $record = new \stdClass();
+        $record->course = $forum->course;
+        $record->forum = $forum->id;
+        $record->userid = $authorid;
+        $discussion = $generator->create_discussion($record);
+        $did = $discussion->id;
+
+        // Return False if no post exists with 'mailnow' selected.
+        $generator->create_post(['userid' => $authorid, 'discussion' => $did, 'forum' => $forum->id, 'mailnow' => 0]);
+        $result = forum_get_user_posted_mailnow($did, $authorid);
+        $this->assertFalse($result);
+
+        // Return True only if any post has 'mailnow' selected.
+        $generator->create_post(['userid' => $authorid, 'discussion' => $did, 'forum' => $forum->id, 'mailnow' => 1]);
+        $result = forum_get_user_posted_mailnow($did, $authorid);
+        $this->assertTrue($result);
     }
 
     /**

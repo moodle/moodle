@@ -1,0 +1,58 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_user/comboboxsearch/resultitem
+
+    Template for the individual result item.
+
+    Context variables required for this template:
+    * id - User system ID.
+    * fullname - Users' full name.
+    * profileimageurl - Link for the users' large profile image.
+    * matchingField - The field in the user object that matched the search criteria.
+    * matchingFieldName - The name of the field that was matched upon for A11y purposes.
+    * link - The link used to redirect upon self to show only this specific user.
+
+    Example context (json):
+    {
+        "id": 2,
+        "fullname": "Foo bar",
+        "profileimageurl": "http://foo.bar/pluginfile.php/79/user/icon/boost/f1?rev=7630",
+        "matchingField": "<span class=\"font-weight-bold\">Foo</span> bar",
+        "matchingFieldName": "Fullname",
+        "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+    }
+}}
+{{<core/local/comboboxsearch/resultitem }}
+    {{$arialabel}}{{#str}}viewresults, core, {{fullname}}{{/str}}{{/arialabel}}
+    {{$content}}
+        <span class="d-block px-2 w-25">
+            {{#profileimageurl}}
+                <img class="userpicture w-100 mx-auto d-block" src="{{profileimageurl}}" alt=""/>
+            {{/profileimageurl}}
+            {{^profileimageurl}}
+                <span class="userinitials"></span>
+            {{/profileimageurl}}
+        </span>
+        <span class="d-block pr-3 w-75">
+                <span class="d-block w-100 p-0 text-truncate font-weight-bold">
+                    {{fullname}}
+                </span>
+            <span class="d-block w-100 pull-left text-truncate small" aria-hidden="true">
+                {{{matchingField}}}
+            </span>
+            <span class="sr-only" aria-label="{{#str}}usermatchedon, core{{/str}}">{{matchingFieldName}}</span>
+        </span>
+    {{/content}}
+{{/core/local/comboboxsearch/resultitem}}

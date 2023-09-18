@@ -37,7 +37,7 @@ class frontend extends \core_availability\frontend {
     /**
      * @var array Cached init parameters
      */
-    protected $cacheparams = [];
+    protected $cacheinitparams = [];
 
     /**
      * @var string IDs of course, cm, and section for cache (if any)

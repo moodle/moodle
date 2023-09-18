@@ -22,12 +22,10 @@
  */
 
 import * as repository from './repository';
-import {exception as displayException} from 'core/notification';
+import {exception as displayException, saveCancelPromise} from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString, get_strings as getStrings} from 'core/str';
+import {getString, getStrings} from 'core/str';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
-import ModalFactory from 'core/modal_factory';
-import ModalEvents from 'core/modal_events';
 import Pending from 'core/pending';
 
 const stringsWithKeys = {
@@ -53,9 +51,12 @@ const getStringsForYui = () => {
 
     // Return an object with the matching string keys (we want an object with {<stringkey>: <stringvalue>...}).
     return getStrings(stringMap)
-        .then((stringArray) => Object.assign({}, ...Object.keys(stringsWithKeys).map(
-            (key, index) => ({[key]: stringArray[index]})))
-        ).catch();
+        .then((stringArray) => Object.assign(
+            {},
+            ...Object.keys(stringsWithKeys).map(
+                (key, index) => ({[key]: stringArray[index]})
+            )
+        ));
 };
 
 const getYuiInstance = lang => new Promise(resolve => {
@@ -205,33 +206,12 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
         payload.additionaloptions = JSON.stringify(payload.additionaloptions);
         if (element.dataset.requireConfirmation === "1") {
             // Create the confirmation dialogue.
-            return new Promise((resolve) =>
-                ModalFactory.create({
-                    title: getString('confirm'),
-                    body: recordingConfirmationMessage(payload),
-                    type: ModalFactory.types.SAVE_CANCEL
-                }).then(async(modal) => {
-                    modal.setSaveButtonText(await getString('ok', 'moodle'));
-
-                    // Handle save event.
-                    modal.getRoot().on(ModalEvents.save, () => {
-                        resolve(true);
-                    });
-
-                    // Handle hidden event.
-                    modal.getRoot().on(ModalEvents.hidden, () => {
-                        // Destroy when hidden.
-                        modal.destroy();
-                        resolve(false);
-                    });
-
-                    modal.show();
-
-                    return modal;
-                }).catch(displayException)
-            ).then((proceed) =>
-                proceed ? repository.updateRecording(payload) : () => null
-            );
+            return saveCancelPromise(
+                getString('confirm'),
+                recordingConfirmationMessage(payload),
+                getString('ok', 'moodle'),
+            )
+            .then(() => repository.updateRecording(payload));
         } else {
             return repository.updateRecording(payload);
         }

@@ -43,7 +43,9 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "a random question"
-    And I open the autocomplete suggestions list
+    And I add question bank filter "Tag"
+    And I click on "Tag" "field"
+    And I press the down key
     Then "foo" "autocomplete_suggestions" should exist
     And "bar" "autocomplete_suggestions" should exist
 
@@ -51,21 +53,16 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "a random question"
-    And I set the field "Category" to "Top for Course 1"
-    And I wait until the page is ready
-    And I open the autocomplete suggestions list
-    And I click on "foo" item in the autocomplete list
-    Then I should see "question 1 name"
-    And I should see "question 3 name"
-    And I should not see "question 2 name"
-    And I should not see "question 4 name"
-    And I set the field "Category" to "Questions Category 1"
+    And I apply question bank filter "Category" with value "Questions Category 1"
+    And I apply question bank filter "Tag" with value "foo"
+    And I click on "Apply filters" "button"
     And I wait until the page is ready
     And I should see "question 1 name"
     And I should not see "question 3 name"
     And I should not see "question 2 name"
     And I should not see "question 4 name"
-    And I click on "Include questions from subcategories too" "checkbox"
+    And I set the field "Also show questions from subcategories" to "1"
+    And I click on "Apply filters" "button"
     And I wait until the page is ready
     And I should see "question 1 name"
     And I should see "question 3 name"
@@ -76,10 +73,11 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "a random question"
-    And I set the field "Tags" to "foo"
+    And I apply question bank filter "Tag" with value "foo"
+    And I select "1" from the "randomcount" singleselect
     And I press "Add random question"
-    And I should see "Random (Questions Category 1, tags: foo)" on quiz page "1"
-    And I click on "(See questions)" "link"
+    And I should see "Random question based on filter condition with tags: foo" on quiz page "1"
+    When I click on "Configure question" "link" in the "Random question based on filter condition with tags: foo" "list_item"
     Then I should see "Questions Category 1"
     And I should see "foo"
     And I should see "question 1 name"
@@ -101,8 +99,8 @@ Feature: Adding random questions to a quiz based on category and tags
     And I follow "New category"
     And I set the following fields to these values:
       | Name            | New Random category |
-      | Parent category |  Top for Quiz 1     |
+      | Parent category |  Default for Quiz 1 |
     And I press "Create category and add random question"
-    And I should see "Random (New Random category)" on quiz page "1"
-    And I click on "(See questions)" "link"
-    Then I should see "Top for Quiz 1"
+    And I should see "Random question based on filter condition" on quiz page "1"
+    And I click on "Configure question" "link" in the "Random question based on filter condition" "list_item"
+    Then I should see "New Random category"

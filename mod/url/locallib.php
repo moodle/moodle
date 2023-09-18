@@ -75,7 +75,7 @@ function url_fix_submitted_url($url) {
  *
  * This function does not include any XSS protection.
  *
- * @param string $url
+ * @param stdClass $url
  * @param object $cm
  * @param object $course
  * @param object $config
@@ -277,7 +277,7 @@ function url_print_workaround($url, $cm, $course) {
     }
 
     echo '<div class="urlworkaround">';
-    print_string('clicktoopen', 'url', "<a href=\"$fullurl\" $extra>$fullurl</a>");
+    print_string('clicktoopen', 'url', html_writer::link($fullurl, format_string($cm->name)));
     echo '</div>';
 
     echo $OUTPUT->footer();
@@ -289,7 +289,6 @@ function url_print_workaround($url, $cm, $course) {
  * @param object $url
  * @param object $cm
  * @param object $course
- * @return does not return
  */
 function url_display_embed($url, $cm, $course) {
     global $PAGE, $OUTPUT;
@@ -298,7 +297,7 @@ function url_display_embed($url, $cm, $course) {
     $fullurl  = url_get_full_url($url, $cm, $course);
     $title    = $url->name;
 
-    $link = html_writer::tag('a', $fullurl, array('href'=>str_replace('&amp;', '&', $fullurl)));
+    $link = html_writer::link($fullurl, format_string($cm->name));
     $clicktoopen = get_string('clicktoopen', 'url', $link);
     $moodleurl = new moodle_url($fullurl);
 
@@ -529,12 +528,16 @@ function url_get_encrypted_parameter($url, $config) {
 /**
  * Optimised mimetype detection from general URL
  * @param $fullurl
- * @param int $size of the icon.
+ * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string|null mimetype or null when the filetype is not relevant.
  */
-function url_guess_icon($fullurl, $size = null) {
+function url_guess_icon($fullurl, $unused = null) {
     global $CFG;
     require_once("$CFG->libdir/filelib.php");
+
+    if ($unused !== null) {
+        debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
+    }
 
     if (substr_count($fullurl, '/') < 3 or substr($fullurl, -1) === '/') {
         // Most probably default directory - index.php, index.html, etc. Return null because
@@ -552,10 +555,10 @@ function url_guess_icon($fullurl, $size = null) {
         return null;
     }
 
-    $icon = file_extension_icon($fullurl, $size);
-    $htmlicon = file_extension_icon('.htm', $size);
-    $unknownicon = file_extension_icon('', $size);
-    $phpicon = file_extension_icon('.php', $size); // Exception for php files.
+    $icon = file_extension_icon($fullurl);
+    $htmlicon = file_extension_icon('.htm');
+    $unknownicon = file_extension_icon('');
+    $phpicon = file_extension_icon('.php'); // Exception for php files.
 
     // We do not want to return those icon types, the module icon is more appropriate.
     if ($icon === $unknownicon || $icon === $htmlicon || $icon === $phpicon) {

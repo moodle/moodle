@@ -75,16 +75,6 @@ class essay_attempt_viewed extends \core\event\base {
     }
 
     /**
-     * Replace add_to_log() statement.
-     *
-     * @return array of parameters to be passed to legacy add_to_log() function.
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'lesson', 'view grade', 'essay.php?id=' . $this->contextinstanceid . '&mode=grade&attemptid='
-            . $this->objectid, get_string('manualgrading', 'lesson'), $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -129,6 +129,24 @@ class badge {
     /** @var array Badge criteria */
     public $criteria = array();
 
+    /** @var int|null Total users which have the award. Called from badges_get_badges() */
+    public $awards;
+
+    /** @var string|null The name of badge status. Called from badges_get_badges() */
+    public $statstring;
+
+    /** @var int|null The date the badges were issued. Called from badges_get_badges() */
+    public $dateissued;
+
+    /** @var string|null Unique hash. Called from badges_get_badges() */
+    public $uniquehash;
+
+    /** @var string|null Message format. Called from file_prepare_standard_editor() */
+    public $messageformat;
+
+    /** @var array Message editor. Called from file_prepare_standard_editor() */
+    public $message_editor = [];
+
     /**
      * Constructs with badge details.
      *
@@ -164,7 +182,7 @@ class badge {
     /**
      * Use to get context instance of a badge.
      *
-     * @return context instance.
+     * @return \context|void instance.
      */
     public function get_context() {
         if ($this->type == BADGE_TYPE_SITE) {
@@ -240,7 +258,16 @@ class badge {
         foreach (get_object_vars($this) as $k => $v) {
             $fordb->{$k} = $v;
         }
+        // TODO: We need to making it more simple.
+        // Since the variables are not exist in the badge table,
+        // unsetting them is a must to avoid errors.
         unset($fordb->criteria);
+        unset($fordb->awards);
+        unset($fordb->statstring);
+        unset($fordb->dateissued);
+        unset($fordb->uniquehash);
+        unset($fordb->messageformat);
+        unset($fordb->message_editor);
 
         $fordb->timemodified = time();
         if ($DB->update_record_raw('badge', $fordb)) {
@@ -275,6 +302,7 @@ class badge {
         $fordb->usermodified = $USER->id;
         $fordb->timecreated = time();
         $fordb->timemodified = time();
+        $tags = $this->get_badge_tags();
         unset($fordb->id);
 
         if ($fordb->notification > 1) {
@@ -286,6 +314,8 @@ class badge {
 
         if ($new = $DB->insert_record('badge', $fordb, true)) {
             $newbadge = new badge($new);
+            // Copy badge tags.
+            \core_tag_tag::set_item_tags('core_badges', 'badge', $newbadge->id, $this->get_context(), $tags);
 
             // Copy badge image.
             $fs = get_file_storage();
@@ -718,6 +748,9 @@ class badge {
         $DB->delete_records_select('badge_related', $relatedsql, $relatedparams);
         $DB->delete_records('badge_alignment', array('badgeid' => $this->id));
 
+        // Delete all tags.
+        \core_tag_tag::remove_all_item_tags('core_badges', 'badge', $this->id);
+
         // Finally, remove badge itself.
         $DB->delete_records('badge', array('id' => $this->id));
 
@@ -948,5 +981,14 @@ class badge {
         }
 
         return $issuer;
+    }
+
+    /**
+     * Get tags of badge.
+     *
+     * @return array Badge tags.
+     */
+    public function get_badge_tags(): array {
+        return array_values(\core_tag_tag::get_item_tags_array('core_badges', 'badge', $this->id));
     }
 }

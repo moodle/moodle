@@ -138,10 +138,11 @@ class mod_choice_mod_form extends moodleform_mod {
      */
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
-        // Set up completion section even if checkbox is not ticked
+        // Set up completion section even if checkbox is not ticked.
         if (!empty($data->completionunlocked)) {
-            if (empty($data->completionsubmit)) {
-                $data->completionsubmit = 0;
+            $suffix = $this->get_suffix();
+            if (empty($data->{'completionsubmit' . $suffix})) {
+                $data->{'completionsubmit' . $suffix} = 0;
             }
         }
     }
@@ -165,17 +166,19 @@ class mod_choice_mod_form extends moodleform_mod {
         return $errors;
     }
 
-    function add_completion_rules() {
+    public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'choice'));
+        $suffix = $this->get_suffix();
+        $completionsubmitel = 'completionsubmit' . $suffix;
+        $mform->addElement('checkbox', $completionsubmitel, '', get_string('completionsubmit', 'choice'));
         // Enable this completion rule by default.
-        $mform->setDefault('completionsubmit', 1);
-        return array('completionsubmit');
+        $mform->setDefault($completionsubmitel, 1);
+        return [$completionsubmitel];
     }
 
-    function completion_rule_enabled($data) {
-        return !empty($data['completionsubmit']);
+    public function completion_rule_enabled($data) {
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
     }
 }
-

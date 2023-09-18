@@ -40,5 +40,4 @@ class core_geopattern extends \RedeyeVentures\GeoPattern\GeoPattern {
     public function datauri() {
         return $this->toDataURI();
     }
-
 }

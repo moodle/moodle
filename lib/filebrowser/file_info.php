@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class file_info {
 
-    /** @var stdClass File context */
+    /** @var context File context */
     protected $context;
 
     /** @var file_browser File browser instance */

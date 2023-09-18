@@ -18,21 +18,17 @@ Feature: Confirm that conditions on completion no longer cause a bug
   @javascript
   Scenario: Multiple completion conditions on glossary
     # Set up course.
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" "course" page logged in as "teacher1"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the field "Enable completion tracking" to "Yes"
     And I press "Save and display"
     And I turn editing mode on
-
     # Add a couple of Pages with manual completion.
-    And I add a "Page" to section "1" and I fill the form with:
-      | Name         | Page1 |
-      | Page content | x     |
-    And I add a "Page" to section "1" and I fill the form with:
-      | Name         | Page2 |
-      | Page content | x     |
+    And the following "activities" exist:
+      | activity | course | name  | completion |
+      | page     | C1     | Page1 | 1          |
+      | page     | C1     | Page2 | 1          |
 
     # Add a Glossary.
     When I add a "Glossary" to section "1"
@@ -48,6 +44,7 @@ Feature: Confirm that conditions on completion no longer cause a bug
     And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
     And I set the field with xpath "//div[contains(concat(' ', normalize-space(@class), ' '), ' availability-item ')][preceding-sibling::div]//select[@name='cm']" to "Page2"
     And I press "Save and return to course"
+    And I click on "Show more" "button" in the "TestGlossary" "core_availability > Activity availability"
     Then I should see "Not available unless:" in the ".activity.glossary" "css_element"
     And I should see "The activity Page1 is marked complete" in the ".activity.glossary" "css_element"
     And I should see "The activity Page2 is marked complete" in the ".activity.glossary" "css_element"

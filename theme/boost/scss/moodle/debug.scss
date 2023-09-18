@@ -81,20 +81,20 @@ body.behat-site {
 .phpinfo .e,
 .phpinfo .v,
 .phpinfo .h {
-    border: 1px solid #000;
+    border: 1px solid $phpinfo-border-color;
     font-size: 0.8em;
     vertical-align: baseline;
-    color: #000;
-    background-color: #ccc;
+    color: $phpinfo-color;
+    background-color: $phpinfo-bg;
 }
 
 .phpinfo .e {
-    background-color: #ccf;
+    background-color: $phpinfo-e-bg;
     font-weight: bold;
 }
 
 .phpinfo .h {
-    background-color: #99c;
+    background-color: $phpinfo-h-bg;
     font-weight: bold;
 }
 

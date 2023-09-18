@@ -25,9 +25,15 @@
 import {BaseComponent} from 'core/reactive';
 import {disableStickyFooter, enableStickyFooter} from 'core/sticky-footer';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
+import {
+    selectAllBulk,
+    switchBulkSelection,
+    checkAllBulkSelected
+} from 'core_courseformat/local/content/actions/bulkselection';
+import Notification from 'core/notification';
 
 // Load global strings.
 prefetchStrings(
@@ -85,7 +91,7 @@ export default class Component extends BaseComponent {
         }
         const selectAll = this.getElement(this.selectors.SELECTALL);
         if (selectAll) {
-            this.addEventListener(selectAll, 'change', this._selectAllClick);
+            this.addEventListener(selectAll, 'click', this._selectAllClick);
         }
     }
 
@@ -108,6 +114,8 @@ export default class Component extends BaseComponent {
      * @param {Object} param.element details the update details (state.bulk in this case).
      */
     _refreshEnabled({element}) {
+        this._updatePageTitle(element.enabled).catch(Notification.exception);
+
         if (element.enabled) {
             enableStickyFooter();
         } else {
@@ -135,7 +143,8 @@ export default class Component extends BaseComponent {
      * @param {Object} param.element the affected element (bulk in this case).
      */
     async _refreshSelectCount({element: bulk}) {
-        const selectedCount = await getString('bulkselection', 'core_courseformat', bulk.selection.length);
+        const stringName = (bulk.selection.length > 1) ? 'bulkselection_plural' : 'bulkselection';
+        const selectedCount = await getString(stringName, 'core_courseformat', bulk.selection.length);
         const selectedElement = this.getElement(this.selectors.COUNT);
         if (selectedElement) {
             selectedElement.innerHTML = selectedCount;
@@ -153,15 +162,17 @@ export default class Component extends BaseComponent {
         if (!selectall) {
             return;
         }
-        if (bulk.selectedType === '') {
-            selectall.checked = false;
-            selectall.disabled = true;
-            return;
-        }
-
-        selectall.disabled = false;
-        const maxSelection = document.querySelectorAll(this.selectors.SELECTABLE).length;
-        selectall.checked = (bulk.selection.length == maxSelection);
+        selectall.disabled = (bulk.selectedType === '');
+        // The changechecker module can prevent the checkbox form changing it's value.
+        // To avoid that we leave the sniffer to act before changing the value.
+        const pending = new Pending(`courseformat/bulktools:refreshSelectAll`);
+        setTimeout(
+            () => {
+                selectall.checked = checkAllBulkSelected(this.reactive);
+                pending.resolve();
+            },
+            100
+        );
     }
 
     /**
@@ -176,6 +187,7 @@ export default class Component extends BaseComponent {
         const enabled = (bulk.selectedType !== '');
         this.getElements(this.selectors.ACTIONS).forEach(action => {
             action.classList.toggle(this.classes.DISABLED, !enabled);
+            action.tabIndex = (enabled) ? 0 : -1;
 
             const actionTool = action.closest(this.selectors.ACTIONTOOL);
             const isHidden = (action.dataset.bulk != displayType);
@@ -197,20 +209,20 @@ export default class Component extends BaseComponent {
     }
 
     /**
-     * Select all elements click handler.
+     * Handle special select all cases.
      * @param {Event} event
      */
     _selectAllClick(event) {
-        const target = event.target;
-        const bulk = this.reactive.get('bulk');
-        if (bulk.selectedType === '') {
+        event.preventDefault();
+        if (event.altKey) {
+            switchBulkSelection(this.reactive);
             return;
         }
-        if (!target.checked) {
+        if (checkAllBulkSelected(this.reactive)) {
             this._handleUnselectAll();
             return;
         }
-        this._handleSelectAll(bulk);
+        selectAllBulk(this.reactive, true);
     }
 
     /**
@@ -218,8 +230,7 @@ export default class Component extends BaseComponent {
      */
     _handleUnselectAll() {
         const pending = new Pending(`courseformat/content:bulktUnselectAll`);
-        // Re-enable bulk will clean the selection and the selection type.
-        this.reactive.dispatch('bulkEnable', true);
+        selectAllBulk(this.reactive, false);
         // Wait for a while and focus on the first checkbox.
         setTimeout(() => {
             document.querySelector(this.selectors.SELECTABLE)?.focus();
@@ -228,20 +239,45 @@ export default class Component extends BaseComponent {
     }
 
     /**
-     * Process a select all selectable elements.
-     * @param {Object} bulk the state bulk data
-     * @param {String} bulk.selectedType the current selected type (section/cm)
+     * Updates the <title> attribute of the page whenever bulk editing is toggled.
+     *
+     * This helps users, especially screen reader users, to understand the current state of the course homepage.
+     *
+     * @param {Boolean} enabled True when bulk editing is turned on. False, otherwise.
+     * @returns {Promise<void>}
+     * @private
      */
-    _handleSelectAll(bulk) {
-        const selectableIds = [];
-        const selectables = document.querySelectorAll(this.selectors.SELECTABLE);
-        if (selectables.length == 0) {
-            return;
+    async _updatePageTitle(enabled) {
+        const enableBulk = document.querySelector(this.selectors.BULKBTN);
+        let params, bulkEditTitle, editingTitle;
+        if (enableBulk.dataset.sectiontitle) {
+            // Section editing mode.
+            params = {
+                course: enableBulk.dataset.coursename,
+                sectionname: enableBulk.dataset.sectionname,
+                sectiontitle: enableBulk.dataset.sectiontitle,
+            };
+            bulkEditTitle = await getString('coursesectiontitlebulkediting', 'moodle', params);
+            editingTitle = await getString('coursesectiontitleediting', 'moodle', params);
+        } else {
+            // Whole course editing mode.
+            params = {
+                course: enableBulk.dataset.coursename
+            };
+            bulkEditTitle = await getString('coursetitlebulkediting', 'moodle', params);
+            editingTitle = await getString('coursetitleediting', 'moodle', params);
         }
-        selectables.forEach(selectable => {
-            selectableIds.push(selectable.dataset.id);
-        });
-        const mutation = (bulk.selectedType === 'cm') ? 'cmSelect' : 'sectionSelect';
-        this.reactive.dispatch(mutation, selectableIds);
+        const pageTitle = document.title;
+        if (enabled) {
+            // Use bulk editing string for the page title.
+            // At this point, the current page title should be the normal editing title.
+            // So replace the normal editing title with the bulk editing title.
+            document.title = pageTitle.replace(editingTitle, bulkEditTitle);
+        } else {
+            // Use the normal editing string for the page title.
+            // At this point, the current page title should be the bulk editing title.
+            // So replace the bulk editing title with the normal editing title.
+            document.title = pageTitle.replace(bulkEditTitle, editingTitle);
+        }
     }
 }

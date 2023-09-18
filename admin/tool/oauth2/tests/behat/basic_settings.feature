@@ -142,40 +142,6 @@ Feature: Basic OAuth2 functionality
     And I should see "Identity issuer deleted"
     And I should not see "Testing service modified"
 
-  Scenario: Create, edit and delete standard service for Open Badges
-    Given I press "Open Badges"
-    And I should see "Create new service: Open Badges"
-    And I set the following fields to these values:
-      | Client ID                  | thisistheclientid                         |
-      | Client secret              | supersecret                               |
-      | Service base URL           | https://dc.imsglobal.org/                 |
-    When I press "Save changes"
-    Then I should see "Changes saved"
-    And I should see "Open Badges"
-    And "Allow services" "icon" should exist in the "Open Badges" "table_row"
-    And "Do not allow login" "icon" should exist in the "Open Badges" "table_row"
-    And "Service discovery successful" "icon" should exist in the "Open Badges" "table_row"
-    And the "src" attribute of "table.admintable th img" "css_element" should contain "IMS-Global-Logo.png"
-    And I click on "Configure endpoints" "link" in the "Open Badges" "table_row"
-    And I should see "https://dc.imsglobal.org/.well-known/badgeconnect.json" in the "discovery_endpoint" "table_row"
-    And I should see "authorization_endpoint"
-    And I navigate to "Server > OAuth 2 services" in site administration
-    And I click on "Configure user field mappings" "link" in the "Open Badges" "table_row"
-    And I should not see "given_name"
-    And I should not see "middle_name"
-    And I navigate to "Server > OAuth 2 services" in site administration
-    And I click on "Edit" "link" in the "Open Badges" "table_row"
-    And I set the following fields to these values:
-      | Name                       | IMS Global                                |
-    And I press "Save changes"
-    And I should see "Changes saved"
-    And I should see "IMS Global"
-    And I click on "Delete" "link" in the "IMS Global" "table_row"
-    And I should see "Are you sure you want to delete the identity issuer \"IMS Global\"?"
-    And I press "Continue"
-    And I should see "Identity issuer deleted"
-    And I should not see "IMS Global"
-
   Scenario: Create, edit and delete valid custom OIDC service
     Given I press "Custom"
     And I should see "Create new service: Custom"
@@ -218,9 +184,13 @@ Feature: Basic OAuth2 functionality
       | Name                       | Invalid custom service                    |
       | Client ID                  | thisistheclientid                         |
       | Client secret              | supersecret                               |
-      | Service base URL           | https://dc.imsglobal.org/                 |
+      | Service base URL           | http://dc.imsglobal.org/                 |
     When I press "Save changes"
-    Then I should see "Could not discover end points for identity issuer: Invalid custom service"
+    Then I should see "For security reasons only https connections are allowed, sorry"
+    And I set the following fields to these values:
+      | Service base URL           | https://dc.imsglobal.org/                 |
+    And I press "Save changes"
+    And I should see "Could not discover end points for identity issuer: Invalid custom service"
     And I should see "URL: https://dc.imsglobal.org/.well-known/openid-configuration"
     And "Allow services" "icon" should exist in the "Invalid custom service" "table_row"
     And "Do not allow login" "icon" should exist in the "Invalid custom service" "table_row"
@@ -358,3 +328,21 @@ Feature: Basic OAuth2 functionality
     And I navigate to "Server > OAuth 2 services" in site administration
     And "Allow login" "icon" should exist in the "Empty custom service" "table_row"
     And "Do not allow services" "icon" should exist in the "Empty custom service" "table_row"
+
+  @javascript
+  Scenario: Changes to "Authenticate token requests via HTTP headers" are saved
+    Given I press "Custom"
+    And I set the following fields to these values:
+      | Name                              | Custom service                     |
+      | Client ID                         | thisistheclientid                  |
+      | Client secret                     | supersecret                        |
+    And I press "Save changes"
+    When I click on "Edit" "link" in the "Custom service" "table_row"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    And the field "Authenticate token requests via HTTP headers" matches value "1"
+    And I click on "Authenticate token requests via HTTP headers" "checkbox"
+    And I press "Save changes"
+    And I click on "Edit" "link" in the "Custom service" "table_row"
+    Then the field "Authenticate token requests via HTTP headers" matches value ""

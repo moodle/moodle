@@ -35,3 +35,6 @@ $string['cliincorrectvalueerror'] = 'Eraro, malĝusta valoro "{$a->value}"  por 
 $string['cliincorrectvalueretry'] = 'Malĝusta valoro, bonvolu reprovi';
 $string['clitypevalue'] = 'tajpvaloro';
 $string['clitypevaluedefault'] = 'tajpvaloro, tajpu Enigklavon por uzi defaŭltan valoron ({$a})';
+$string['cliunknowoption'] = 'Nerekonata opcio:
+  {$a}
+Bonvolu uzi --helpopcion.';

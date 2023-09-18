@@ -170,6 +170,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         // Ensure that the quiz data was exported correctly.
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 
@@ -366,6 +367,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         // Ensure that nothing was exported.
+        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data_in_any_context());
 

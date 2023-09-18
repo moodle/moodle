@@ -176,8 +176,9 @@ class license_manager {
 
         if (!empty($licensetodelete)) {
             if ($licensetodelete->custom == self::CUSTOM_LICENSE) {
-                // Check that the license is not in use by any files, if so it cannot be deleted.
-                $countfilesusinglicense = $DB->count_records('files', ['license' => $licenseshortname]);
+                // Check that the license is not in use by any non-draft files, if so it cannot be deleted.
+                $countfilesselect = 'license = :license AND NOT (component = \'user\' AND filearea = \'draft\')';
+                $countfilesusinglicense = $DB->count_records_select('files', $countfilesselect, ['license' => $licenseshortname]);
                 if ($countfilesusinglicense > 0) {
                     throw new moodle_exception('cannotdeletelicenseinuse', 'license');
                 }

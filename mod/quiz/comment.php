@@ -90,7 +90,7 @@ if (data_submitted() && confirm_sesskey()) {
         $params = [
             'objectid' => $attemptobj->get_question_attempt($slot)->get_question_id(),
             'courseid' => $attemptobj->get_courseid(),
-            'context' => context_module::instance($attemptobj->get_cmid()),
+            'context' => $attemptobj->get_quizobj()->get_context(),
             'other' => [
                 'quizid' => $attemptobj->get_quizid(),
                 'attemptid' => $attemptobj->get_attemptid(),
@@ -122,7 +122,7 @@ echo $attemptobj->render_question_for_commenting($slot);
 </div>
 <fieldset class="hidden">
     <div>
-        <div class="fitem fitem_actionbuttons fitem_fsubmit">
+        <div class="fitem fitem_actionbuttons fitem_fsubmit mt-3">
             <fieldset class="felement fsubmit">
                 <input id="id_submitbutton" type="submit" name="submit" class="btn btn-primary" value="<?php
                         print_string('save', 'quiz'); ?>"/>

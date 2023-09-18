@@ -50,6 +50,6 @@ class external_function_parameters extends external_single_structure {
                 }
             }
         }
-        parent::__construct($keys, $desc, $required, $default);
+        parent::__construct($keys, $desc, $required, $default, NULL_NOT_ALLOWED);
     }
 }

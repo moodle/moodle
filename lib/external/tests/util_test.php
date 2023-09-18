@@ -33,9 +33,22 @@ class util_test extends \advanced_testcase {
      * Store the global DB for restore between tests.
      */
     public function setUp(): void {
-        global $CFG, $DB;
+        global $DB;
+
         $this->db = $DB;
         external_settings::reset();
+    }
+
+    /**
+     * A helper to include the legacy external functions.
+     */
+    protected function include_legacy_functions(): void {
+        global $CFG;
+
+        $this->assertTrue(
+            $this->isInIsolation(),
+            'Inclusion of the legacy test functions requires the test to be run in isolation.',
+        );
 
         // Note: This is retained for testing of the old functions.
         require_once("{$CFG->libdir}/externallib.php");
@@ -235,8 +248,10 @@ class util_test extends \advanced_testcase {
      * Test the format_text function.
      *
      * @covers \core_external\util::format_text
+     * @runInSeparateProcess
      */
     public function test_format_text(): void {
+        $this->include_legacy_functions();
         $settings = external_settings::get_instance();
 
         $settings->set_raw(true);
@@ -335,9 +350,11 @@ class util_test extends \advanced_testcase {
      * Teset the format_string function.
      *
      * @covers \core_external\util::format_string
+     * @runInSeparateProcess
      */
     public function test_external_format_string(): void {
         $this->resetAfterTest();
+        $this->include_legacy_functions();
         $settings = external_settings::get_instance();
 
         // Enable multilang filter to on content and heading.

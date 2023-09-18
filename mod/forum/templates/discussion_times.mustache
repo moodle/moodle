@@ -17,7 +17,8 @@
 {{!
     @template mod_forum/discussion_times
 
-    Template to display the discussion times.
+    Template to display the discussion times. Note that this template is used only as a partial from within discussion_list, which
+    requires the language strings be passed through the cleanstr helper
 
     Classes required for JS:
     * none
@@ -40,20 +41,20 @@
 <ul>
 {{#start}}
     <li>
-        {{#str}} displaystartdate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/str}}
+        {{#cleanstr}} displaystartdate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/cleanstr}}
     </li>
 {{/start}}
 {{#end}}
     <li>
-        {{#str}} displayenddate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/str}}
+        {{#cleanstr}} displayenddate, mod_forum, {{#userdate}}{{.}}, {{#str}}strftimerecentfull {{/str}}{{/userdate}} {{/cleanstr}}
     </li>
 {{/end}}
     <li>
     {{#visible}}
-        {{#str}} timedvisible, mod_forum {{/str}}
+        {{#cleanstr}} timedvisible, mod_forum {{/cleanstr}}
     {{/visible}}
     {{^visible}}
-        {{#str}} timedhidden, mod_forum {{/str}}
+        {{#cleanstr}} timedhidden, mod_forum {{/cleanstr}}
     {{/visible}}
     </li>
 </ul>

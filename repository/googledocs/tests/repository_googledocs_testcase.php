@@ -42,7 +42,7 @@ abstract class repository_googledocs_testcase extends \advanced_testcase {
             'title' => $name,
             'path' => repository_googledocs\helper::build_node_path($id, $name, $path),
             'date' => $modified,
-            'thumbnail' => "{$CFG->wwwroot}/theme/image.php/_s/boost/core/1/" . file_folder_icon(64),
+            'thumbnail' => "{$CFG->wwwroot}/theme/image.php/boost/core/1/" . file_folder_icon(),
             'thumbnail_height' => 64,
             'thumbnail_width' => 64,
             'children' => [],

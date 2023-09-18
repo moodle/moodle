@@ -16,7 +16,7 @@
 /**
  * Format topics section extra logic component.
  *
- * @module     format_topics/mutations
+ * @module     format_topics/section
  * @copyright  2022 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

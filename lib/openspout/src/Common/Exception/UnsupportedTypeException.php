@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OpenSpout\Common\Exception;
 
-class UnsupportedTypeException extends SpoutException
+final class UnsupportedTypeException extends OpenSpoutException
 {
 }
