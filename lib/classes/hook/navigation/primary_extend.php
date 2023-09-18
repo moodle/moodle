@@ -17,6 +17,7 @@
 namespace core\hook\navigation;
 
 use core\hook\described_hook;
+use core\hook\stoppable_trait;
 use core\navigation\views\primary;
 
 /**
@@ -28,9 +29,7 @@ use core\navigation\views\primary;
  */
 class primary_extend implements described_hook,
         \Psr\EventDispatcher\StoppableEventInterface {
-
-    /** @var bool $stopped propagation is stopped */
-    protected $stopped = false;
+    use stoppable_trait;
 
     /**
      * Creates new hook.
@@ -65,24 +64,5 @@ class primary_extend implements described_hook,
      */
     public static function get_hook_tags(): array {
         return ['navigation'];
-    }
-
-    /**
-     * Allows plugins to notify the hook dispatcher that hook propagation should be stopped
-     */
-    public function stop(): void {
-        $this->stopped = true;
-    }
-
-    /**
-     * Is propagation stopped?
-     *
-     * This will typically only be used by the Dispatcher to determine if the
-     * previous listener halted propagation.
-     * @return bool True if the Event is complete and no further listeners should be called.
-     *              False to continue calling listeners.
-     */
-    public function isPropagationStopped(): bool {
-        return $this->stopped;
     }
 }
