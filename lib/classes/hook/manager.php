@@ -54,6 +54,9 @@ final class manager implements
     /** @var array list of all deprecated lib.php plugin callbacks. */
     private $alldeprecations = [];
 
+    /** @var array list of redirected callbacks in PHPUnit tests */
+    private $redirectedcallbacks = [];
+
     /**
      * Constructor can be used only from factory methods.
      */
@@ -87,6 +90,32 @@ final class manager implements
         $instance = new self();
         $instance->load_callbacks($componentfiles);
         return $instance;
+    }
+
+    /**
+     * Override hook callbacks for testing purposes.
+     *
+     * @param string $hookname
+     * @param callable $callback
+     * @return void
+     */
+    public function phpunit_redirect_hook(string $hookname, callable $callback): void {
+        if (!PHPUNIT_TEST) {
+            throw new \coding_exception('Invalid call of manager::phpunit_redirect_hook() outside of tests');
+        }
+        $this->redirectedcallbacks[$hookname] = $callback;
+    }
+
+    /**
+     * Cancel all redirections of hook callbacks.
+     *
+     * @return void
+     */
+    public function phpunit_stop_redirections(): void {
+        if (!PHPUNIT_TEST) {
+            throw new \coding_exception('Invalid call of manager::phpunit_stop_redirections() outside of tests');
+        }
+        $this->redirectedcallbacks = [];
     }
 
     /**
@@ -213,6 +242,14 @@ final class manager implements
         if (!function_exists('setup_DB')) {
             debugging('Hooks cannot be dispatched yet', DEBUG_DEVELOPER);
             return $event;
+        }
+
+        if (PHPUNIT_TEST) {
+            $hookclassname = get_class($event);
+            if (isset($this->redirectedcallbacks[$hookclassname])) {
+                call_user_func($this->redirectedcallbacks[$hookclassname], $event);
+                return $event;
+            }
         }
 
         $callbacks = $this->getListenersForEvent($event);
