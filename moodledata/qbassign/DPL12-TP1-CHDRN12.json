@@ -1,0 +1,30 @@
+{
+	"title" : "1.2 Master Challenge 1",
+	"question": "Write a Java program to create an email counter. This email counter will keep the count of the following data:<br> ● emails sent last month <br> ● data (in GB) used last month <br> ● user active or inactive <br> ● user active hours <br> ● initial letter of the username<br> ● signature<br><br>Follow the instructions below:<br>1. Create variables for the above data using int, double, char, boolean and String datatypes.<br>2. Determine the variables that should be protected and declare them as final.<br>3. Initialize these variables and print the values accordingly.<br>4. Also, print additional details for the email counter like, user name, and email id.<br>5. Give documentation comments also.<br><br>Here is a sample output:<br><img src='https://learn.qubitsedu.com/images/DPL12U1S02Image1.png' width='45%' height='95%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

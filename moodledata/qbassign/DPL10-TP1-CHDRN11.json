@@ -1,0 +1,30 @@
+{
+	"title" : "1.2 Master Challenge 1",
+	"question": "Develop a program that constructs a table showcasing the square and cube of numbers ranging from 1 to 10 . This table should consist  of three distinct columns: the first indicating the original number, the second exhibiting its square, and the third demonstrating its cube. Employ string formatting for appropriately aligning the columns. Below is an illustration of the expected output. <br> <img src='https://learn.qubitsedu.com/images/DPL10U1S02Image1.png' width='40%' height='80%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL10-TP1-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

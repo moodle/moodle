@@ -1,0 +1,30 @@
+{
+	"title" : "1.5 Master Challenge 3",
+	"question": "Create a program that divides a number entered by the user by its square root. The program should handle the following exceptions:<br>● ValueError: If the user enters a negative number, raise a ValueError with the message 'Cannot calculate the square root of a negative number'.<br>● TypeError: If the user enters a non-numeric value, raise a TypeError with the message 'Input must be a number'.<br>● ZeroDivisionError: If the user enters 0, raise a ZeroDivisionError with the message 'Cannot calculate division by zero'.<br>If no exceptions are raised, the program should print the results of dividing the number by its square root.<br>For example:<br>Input: 4<br>Output: 2.0<br><br>Input: -4<br>Output: Cannot calculate the square root of a negative number.<br><br>Input: abc<br>Output: Input must be a number.<br><br>Input: 0<br>Output: Cannot calculate division by zero.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL10-TP1-CHDRN22",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

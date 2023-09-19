@@ -1,0 +1,30 @@
+{
+	"title" : "1.1 Master Challenge 1",
+	"question": "The following paragraph by an author needs formatting:<br><br>What is GPS? GPS,or Global Positioning System, is a radio navigation system that uses satellites to work. It helps to determine the position of an object on Earth using radio frequencies. GPS mainly comprises a space segment having satellites, a control segment having ground antennas and control stations, and a user segment consisting of receivers. A network of low-earth orbit satellites work together in this system, also called a constellation, to provide positioning, navigation, and timing services. The radars available at the ground control station ensure their accuracy, and the GPS receivers catch any signal that may emanate from them.<br><br>This challenge requires you to fix the organization of this essay. Each new sentence should start from a new line.<br><br>The final output should look like this:<br><img src='https://learn.qubitsedu.com/images/DPL12U1S01Image1.png' width='55%' height='85%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN9",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

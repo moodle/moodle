@@ -211,6 +211,66 @@
               "uid": "DPL07-TP1-CHDRN6",
               "fname": "DPL07-TP1-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN7",
+              "fname": "DPL07-TP1-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN8",
+              "fname": "DPL07-TP1-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN9",
+              "fname": "DPL07-TP1-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN10",
+              "fname": "DPL07-TP1-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN11",
+              "fname": "DPL07-TP1-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN12",
+              "fname": "DPL07-TP1-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN13",
+              "fname": "DPL07-TP1-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN14",
+              "fname": "DPL07-TP1-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN15",
+              "fname": "DPL07-TP1-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN16",
+              "fname": "DPL07-TP1-CHDRN16.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-TP1-CHDRN17",
+              "fname": "DPL07-TP1-CHDRN17.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL07-U01-CHDRN1",
+              "fname": "DPL07-U01-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -260,6 +320,11 @@
               "uid": "DPL07-TP2-CHDRN6",
               "fname": "DPL07-TP2-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL07-U02-CHDRN1",
+              "fname": "DPL07-U02-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -309,6 +374,11 @@
               "uid": "DPL07-TP3-CHDRN6",
               "fname": "DPL07-TP3-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL07-U03-CHDRN1",
+              "fname": "DPL07-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -358,6 +428,11 @@
               "uid": "DPL07-TP4-CHDRN6",
               "fname": "DPL07-TP4-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL07-U04-CHDRN1",
+              "fname": "DPL07-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -407,6 +482,11 @@
               "uid": "DPL07-TP5-CHDRN6",
               "fname": "DPL07-TP5-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL07-U05-CHDRN1",
+              "fname": "DPL07-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -440,281 +520,6 @@
           "teacheronly": "no"
         }
       ]
-    },
-    "chapters": [
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Unit 1: Introduction to Python",
-        "type": "topic",
-        "uid": "DPL07-TP1-000",
-        "children": [
-          {
-            "title": "Unit 1 Summary",
-            "uid": "DPL07-TP1-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_Intro",
-            "type": "page"
-          },
-          {
-            "title": "1.1 - Starting Up With Python",
-            "uid": "DPL07-TP1-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S01",
-            "type": "page"
-          },
-          {
-            "title": "1.2 - My First Program",
-            "uid": "DPL07-TP1-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S02",
-            "type": "page"
-          },
-          {
-            "title": "1.3 - Variables",
-            "uid": "DPL07-TP1-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S03",
-            "type": "page"
-          },
-          {
-            "title": "1.4 - Tokens Of Python",
-            "uid": "DPL07-TP1-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U01_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP1-CHDRN6",
-            "fname": "DPL07-TP1-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Unit 2: Numbers and Operations",
-        "type": "topic",
-        "uid": "DPL07-TP2-000",
-        "children": [
-          {
-            "title": "Unit 2 Summary",
-            "uid": "DPL07-TP2-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_Intro",
-            "type": "page"
-          },
-          {
-            "title": "2.1 - Data Type And Conversion",
-            "uid": "DPL07-TP2-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S01",
-            "type": "page"
-          },
-          {
-            "title": "2.2 - Arithmetic Operations On Numbers",
-            "uid": "DPL07-TP2-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S02",
-            "type": "page"
-          },
-          {
-            "title": "2.3 - Arithmetic Operations Using Python",
-            "uid": "DPL07-TP2-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S03",
-            "type": "page"
-          },
-          {
-            "title": "2.4 - More On Arithmetic Operations",
-            "uid": "DPL07-TP2-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U02_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP2-CHDRN6",
-            "fname": "DPL07-TP2-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Unit 3: Strings, Lists and Python Graphic",
-        "type": "topic",
-        "uid": "DPL07-TP3-000",
-        "children": [
-          {
-            "title": "Unit 3 Summary",
-            "uid": "DPL07-TP3-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_Intro",
-            "type": "page"
-          },
-          {
-            "title": "3.1 - Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
-            "uid": "DPL07-TP3-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S01",
-            "type": "page"
-          },
-          {
-            "title": "3.2 - Working With Strings",
-            "uid": "DPL07-TP3-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S02",
-            "type": "page"
-          },
-          {
-            "title": "3.3 - Lists",
-            "uid": "DPL07-TP3-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S03",
-            "type": "page"
-          },
-          {
-            "title": "3.4 - Draw Shapes",
-            "uid": "DPL07-TP3-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP3-CHDRN6",
-            "fname": "DPL07-TP3-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Unit 4: Flow Control",
-        "type": "topic",
-        "uid": "DPL07-TP4-000",
-        "children": [
-          {
-            "title": "Unit 4 Summary",
-            "uid": "DPL07-TP4-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Intro",
-            "type": "page"
-          },
-          {
-            "title": "4.1 - More On Python Operators",
-            "uid": "DPL07-TP4-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S01",
-            "type": "page"
-          },
-          {
-            "title": "4.2 - If Control Structure",
-            "uid": "DPL07-TP4-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S02",
-            "type": "page"
-          },
-          {
-            "title": "4.3 - For Loop In Python",
-            "uid": "DPL07-TP4-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S03",
-            "type": "page"
-          },
-          {
-            "title": "4.4 - While Loop In Python",
-            "uid": "DPL07-TP4-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP4-CHDRN6",
-            "fname": "DPL07-TP4-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Unit 5: AI Based Emotion Recognition App",
-        "type": "topic",
-        "uid": "DPL07-TP4-000",
-        "children": [
-          {
-            "title": "Unit 5 Summary",
-            "uid": "DPL07-TP5-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Intro",
-            "type": "page"
-          },
-          {
-            "title": "5.1 - Introduction To Web APIS",
-            "uid": "DPL07-TP5-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S01",
-            "type": "page"
-          },
-          {
-            "title": "5.2 - Camera And Database",
-            "uid": "DPL07-TP5-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S02",
-            "type": "page"
-          },
-          {
-            "title": "5.3 - Age And Gender Detection App",
-            "uid": "DPL07-TP5-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S03",
-            "type": "page"
-          },
-          {
-            "title": "5.4 - Emotion Detection App",
-            "uid": "DPL07-TP5-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP5-CHDRN6",
-            "fname": "DPL07-TP5-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DPL07/DPL07-TP1-000.mdx",
-        "title": "Capstone Project",
-        "type": "topic",
-        "uid": "DPL07-TP6-000",
-        "children": [
-          {
-            "title": "Capstone Project - Store Price Calculator",
-            "uid": "DPL07-TP6-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U04_Capstone",
-            "type": "page"
-          },
-          {
-            "title": "Capstone Project - AI Based Emotion Comparison App",
-            "uid": "DPL07-TP6-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Capstone",
-            "type": "page"
-          },
-          {
-            "uid": "DPL07-TP6-CHDRN3",
-            "fname": "DPL07-TP6-CHDRN3.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      }
-    ]
+    }
   }
 ]

@@ -1,0 +1,30 @@
+{
+	"title" : "1.1 Master Challenge 3",
+	"question": "Create a program that outputs a timeline of significant school events that have impacted your life. The timeline should be displayed vertically, with earlier events appearing near the top and later events near the bottom.<br><br>Output format:<br>Your program should produce an output that adheres to the following formatting rules:<br>●  The title 'School events timeline' should be displayed at the top.<br>●  The class should be displayed on the left side of the output.<br>●  A vertical line (|) should be displayed next to the class. It should run all the way down the output.<br>●  The class should be left-aligned, with at least one space between the class and the vertical line.<br>●  Four lines of space should separate each class.<br>●  To the right of the vertical line, display the month and year in which each event took place, for example, 4/01, separated by a space.<br>●  To the right of the date, briefly describe the event.<br>Timeline content:<br>Make a list of at least five significant school-related events that have impacted you. Some examples include<br>●  Academic achievements<br>●  School tours, excursions, or visits<br>●  Sports achievements<br>●  Achievements or participation in extracurricular activities like music, dance, theater, sports, and so on.<br>●  Participation in school clubs, house events, competitions, and other activities.<br><br>Incremental grades:<br>●  The timeline should begin with your grade when the first event occurred. The grade should increment in one-year periods, appearing after every four lines in the output.<br><br>Research how to use tabs (\t) in your print statements  to enhance the layout of your timeline.<br><br>Here is a sample output:<br><img src='https://learn.qubitsedu.com/images/DPL12U1S01Image3.png' width='40%' height='85%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}
