@@ -49,6 +49,6 @@ export const loadInfo = (id, info) => {
             large: true,
             show: true,
             removeOnClose: true,
-        }, link);
+        });
     });
 };

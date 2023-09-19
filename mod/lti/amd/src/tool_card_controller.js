@@ -635,42 +635,50 @@
      * @param {JQuery} element jQuery object representing the tool card.
      */
     var registerModal = function(element) {
-        var trigger = $('#' + element.data('uniqid') + '-' + element.data('deploymentid'));
-        var context = {
-            'uniqid': element.data('uniqid'),
-            'platformid': element.data('platformid'),
-            'clientid': element.data('clientid'),
-            'deploymentid': element.data('deploymentid'),
-            'urls': {
-                'publickeyset': element.data('publickeyseturl'),
-                'accesstoken': element.data('accesstokenurl'),
-                'authrequest': element.data('authrequesturl')
-            }
-        };
-        var bodyPromise = templates.render('mod_lti/tool_config_modal_body', context);
-        var mailTo = 'mailto:?subject=' + encodeURIComponent(element.data('mailtosubject')) +
-            '&body=' + encodeURIComponent(element.data('platformidstr')) + ':%20' +
-            encodeURIComponent(element.data('platformid')) + '%0D%0A' +
-            encodeURIComponent(element.data('clientidstr')) + ':%20' +
-            encodeURIComponent(element.data('clientid')) + '%0D%0A' +
-            encodeURIComponent(element.data('deploymentidstr')) + ':%20' +
-            encodeURIComponent(element.data('deploymentid')) + '%0D%0A' +
-            encodeURIComponent(element.data('publickeyseturlstr')) + ':%20' +
-            encodeURIComponent(element.data('publickeyseturl')) + '%0D%0A' +
-            encodeURIComponent(element.data('accesstokenurlstr')) + ':%20' +
-            encodeURIComponent(element.data('accesstokenurl')) + '%0D%0A' +
-            encodeURIComponent(element.data('authrequesturlstr')) + ':%20' +
-            encodeURIComponent(element.data('authrequesturl')) + '%0D%0A';
-        context = {
-            'mailto': mailTo
-        };
-        var footerPromise = templates.render('mod_lti/tool_config_modal_footer', context);
-        Modal.create({
-          large: true,
-          title: element.data('modaltitle'),
-          body: bodyPromise,
-          footer: footerPromise,
-        }, trigger);
+        const configurationLink = element.find('#' + element.data('uniqid') + '-' + element.data('deploymentid'));
+        if (!configurationLink.length) {
+            return;
+        }
+        const trigger = configurationLink.get(0);
+        trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            var context = {
+                'uniqid': element.data('uniqid'),
+                'platformid': element.data('platformid'),
+                'clientid': element.data('clientid'),
+                'deploymentid': element.data('deploymentid'),
+                'urls': {
+                    'publickeyset': element.data('publickeyseturl'),
+                    'accesstoken': element.data('accesstokenurl'),
+                    'authrequest': element.data('authrequesturl')
+                }
+            };
+            var bodyPromise = templates.render('mod_lti/tool_config_modal_body', context);
+            var mailTo = 'mailto:?subject=' + encodeURIComponent(element.data('mailtosubject')) +
+                '&body=' + encodeURIComponent(element.data('platformidstr')) + ':%20' +
+                encodeURIComponent(element.data('platformid')) + '%0D%0A' +
+                encodeURIComponent(element.data('clientidstr')) + ':%20' +
+                encodeURIComponent(element.data('clientid')) + '%0D%0A' +
+                encodeURIComponent(element.data('deploymentidstr')) + ':%20' +
+                encodeURIComponent(element.data('deploymentid')) + '%0D%0A' +
+                encodeURIComponent(element.data('publickeyseturlstr')) + ':%20' +
+                encodeURIComponent(element.data('publickeyseturl')) + '%0D%0A' +
+                encodeURIComponent(element.data('accesstokenurlstr')) + ':%20' +
+                encodeURIComponent(element.data('accesstokenurl')) + '%0D%0A' +
+                encodeURIComponent(element.data('authrequesturlstr')) + ':%20' +
+                encodeURIComponent(element.data('authrequesturl')) + '%0D%0A';
+            context = {
+                'mailto': mailTo
+            };
+            var footerPromise = templates.render('mod_lti/tool_config_modal_footer', context);
+            Modal.create({
+                large: true,
+                title: element.data('modaltitle'),
+                body: bodyPromise,
+                footer: footerPromise,
+                show: true
+            });
+        });
     };
 
     return /** @alias module:mod_lti/tool_card_controller */ {
