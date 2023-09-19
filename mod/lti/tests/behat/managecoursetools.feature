@@ -19,11 +19,11 @@ Feature: Manage course tools
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "LTI External tools" in current page administration
     And I should see "LTI External tools are add-on apps"
-    And I should see "There are no LTI external tools yet"
+    And I should see "There are no LTI External tools yet."
     When I click on "Add tool" "link"
     And I press "Cancel"
     Then I should see "LTI External tools are add-on apps"
-    And I should see "There are no LTI external tools yet"
+    And I should see "There are no LTI External tools yet."
     And I click on "Add tool" "link"
     And I set the following fields to these values:
       | Tool name        | Teaching Tool 1                 |
@@ -125,7 +125,7 @@ Feature: Manage course tools
     And I choose "Delete" in the open action menu
     And I should see "This will delete Test tool from the available LTI tools in your course."
     And I click on "Delete" "button" in the "Delete Test tool" "dialogue"
-    And I should see "Test tool removed"
+    And I should see "Test tool deleted"
     And I should not see "Test tool" in the "reportbuilder-table" "table"
 
   @javascript
