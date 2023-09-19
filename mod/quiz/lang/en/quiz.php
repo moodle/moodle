@@ -520,7 +520,7 @@ $string['manualgradequestion'] = 'Manually grade question {$a->question} in {$a-
 $string['mark'] = 'Submit';
 $string['markall'] = 'Submit page';
 $string['marks'] = 'Marks';
-$string['marks_help'] = 'The numerical marks for each question, and the overall attempt score.';
+$string['marks_help'] = 'The mark obtained for each question and the overall attempt score. You can only select Marks if Maximum marks is selected.';
 $string['match'] = 'Matching';
 $string['matchanswer'] = 'Matching answer';
 $string['matchanswerno'] = 'Matching answer {$a}';
@@ -530,14 +530,8 @@ $string['messageprovider:attempt_grading_complete'] = 'Notification that your at
 $string['messageprovider:submission'] = 'Notification of your students\' quiz submissions';
 $string['max'] = 'Max';
 $string['maxmark'] = 'Maximum mark';
-$string['maxmarks'] = 'Max Marks';
-$string['maxmarks_help'] = 'Max marks determines whether the grade information are hidden or how it is displayed:
-
-* To hide the grade information completely, do not tick this checkbox (Marks checkbox is disabled automatically).
-
-* To show Max marks only: tick this checkbox and not the Marks checkbox.
-
-* To show both Max marks and Marks, tick this checkbox as well as the Marks checkbox.';
+$string['maxmarks'] = 'Maximum marks';
+$string['maxmarks_help'] = 'The maximum mark available for each question.';
 
 $string['min'] = 'Min';
 $string['minutes'] = 'Minutes';
