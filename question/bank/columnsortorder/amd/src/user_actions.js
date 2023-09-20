@@ -26,7 +26,7 @@ import * as actions from 'qbank_columnsortorder/actions';
 import * as repository from 'qbank_columnsortorder/repository';
 import {get_string as getString} from 'core/str';
 import ModalEvents from 'core/modal_events';
-import ModalFactory from 'core/modal_factory';
+import ModalSaveCancel from 'core/modal_save_cancel';
 import Notification from "core/notification";
 import SortableList from 'core/sortable_list';
 import Templates from "core/templates";
@@ -237,22 +237,20 @@ const setUpResizeActions = uiRoot => {
  * @returns {Promise<void>}
  */
 const showResizeModal = async(currentHeader, uiRoot) => {
-
     const initialWidth = currentHeader.offsetWidth;
 
-    const modal = await ModalFactory.create({
+    const modal = await ModalSaveCancel.create({
         title: getString('resizecolumn', 'qbank_columnsortorder', currentHeader.textContent),
-        type: ModalFactory.types.SAVE_CANCEL,
-        body: Templates.render('qbank_columnsortorder/resize_modal', {})
+        body: Templates.render('qbank_columnsortorder/resize_modal', {}),
+        show: true,
     });
     const root = modal.getRoot();
     root.on(ModalEvents.cancel, () => {
-        currentHeader.style.width = initialWidth + 'px';
+        currentHeader.style.width = `${initialWidth}px`;
     });
     root.on(ModalEvents.save, () => {
         repository.setColumnSize(serialiseColumnSizes(uiRoot)).catch(Notification.exception);
     });
-    modal.show();
 
     const body = await modal.bodyPromise;
     const input = body.get(0).querySelector('input');
@@ -260,7 +258,7 @@ const showResizeModal = async(currentHeader, uiRoot) => {
 
     input.addEventListener('change', e => {
         const newWidth = e.target.value;
-        currentHeader.style.width = newWidth + 'px';
+        currentHeader.style.width = `${newWidth}px`;
     });
 };
 
