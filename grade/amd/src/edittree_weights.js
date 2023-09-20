@@ -91,6 +91,9 @@ const recalculateNaturalWeights = (categoryElement) => {
     // Does the grade item require normalising?
     let requiresNormalising = false;
 
+    // Is there an error in the weight calculations?
+    let erroneous = false;
+
     // This array keeps track of the id and weight of every grade item that has been overridden.
     const overrideArray = {};
 
@@ -202,13 +205,29 @@ const recalculateNaturalWeights = (categoryElement) => {
                 overrideArray[childElement.dataset.itemid].weight < 0) {
             if (overrideArray[childElement.dataset.itemid].weight < 0) {
                 weightInput.value = formatWeight(0);
-            } else {
+            }
+
+            // Zero is a special case. If the total is zero then we need to set the weight of the parent category to zero.
+            if (normaliseTotal !== 0) {
+                erroneous = true;
                 const error = normaliseTotal > 100 ? 'erroroverweight' : 'errorunderweight';
                 // eslint-disable-next-line promise/always-return,promise/catch-or-return
                 getString(error, 'core_grades').then((errorString) => {
                     errorArea.textContent = errorString;
                 });
                 weightInput.classList.add('is-invalid');
+            }
+        }
+    }
+
+    if (!erroneous) {
+        const categoryGradeMax = parseFloat(categoryElement.dataset.grademax);
+        if (categoryGradeMax !== totalGradeMax) {
+            // The category grade max is not the same as the total grade max, so we need to update the category grade max.
+            categoryElement.dataset.grademax = totalGradeMax;
+            const parentCategory = document.querySelector(selectors.categoryByIdentifier(categoryElement.dataset.parentCategory));
+            if (parentCategory && (parseInt(parentCategory.dataset.aggregation) === grade.aggregation.sum)) {
+                recalculateNaturalWeights(parentCategory);
             }
         }
     }
