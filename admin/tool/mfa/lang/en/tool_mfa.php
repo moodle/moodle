@@ -125,7 +125,6 @@ $string['settings:debugmode_help'] = 'Debug mode will display a small notificati
 $string['settings:duration'] = 'Secret validity duration';
 $string['settings:duration_help'] = 'The duration that generated secrets are valid.';
 $string['settings:enabled'] = 'MFA plugin enabled';
-$string['settings:enabled_help'] = '';
 $string['settings:enablefactor'] = 'Enable factor';
 $string['settings:enablefactor_help'] = 'Check this control to allow the factor to be used for MFA authentication.';
 $string['settings:general'] = 'General MFA settings';

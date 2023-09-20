@@ -38,7 +38,6 @@ if ($hassiteconfig) {
     $settings->add(new admin_setting_heading('tool_mfa/settings', $heading, ''));
 
     $name = new lang_string('settings:enabled', 'tool_mfa');
-    $description = new lang_string('settings:enabled_help', 'tool_mfa');
     $settings->add(new admin_setting_configcheckbox('tool_mfa/enabled', $name, '', false));
 
     $name = new lang_string('settings:lockout', 'tool_mfa');
