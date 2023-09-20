@@ -78,7 +78,7 @@ class column_manager_test extends advanced_testcase {
         $this->randomstring = random_string();
     }
 
-    public function test_settings_provider(): array {
+    public static function settings_provider(): array {
         return [
             'Test set_column_order' => [
                 'setting' => 'enabledcol',
@@ -104,7 +104,7 @@ class column_manager_test extends advanced_testcase {
     /**
      * Test setting config settings
      *
-     * @dataProvider test_settings_provider
+     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param string $dataproperty The property of the test class to pass to the function.
@@ -124,7 +124,7 @@ class column_manager_test extends advanced_testcase {
     /**
      * Test setting user preferences
      *
-     * @dataProvider test_settings_provider
+     * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
      * @param string $dataproperty The property of the test class to pass to the function.
