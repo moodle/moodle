@@ -32,7 +32,6 @@ use qbank_columnsortorder\tests\external_function_testcase;
  * @covers \qbank_columnsortorder\external\set_hidden_columns
  */
 class set_hidden_columns_test extends external_function_testcase {
-
     /**
      * @var string Fully-qualified external function class to test.
      */

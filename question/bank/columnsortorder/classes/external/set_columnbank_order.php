@@ -65,9 +65,7 @@ class set_columnbank_order extends external_api {
         [
             'columns' => $columns,
             'global' => $global,
-        ]
-            = self::validate_parameters(self::execute_parameters(),
-        [
+        ] = self::validate_parameters(self::execute_parameters(), [
             'columns' => $columns,
             'global' => $global,
         ]);

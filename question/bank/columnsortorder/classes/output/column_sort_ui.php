@@ -33,8 +33,7 @@ use templatable;
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_sort_ui implements templatable, renderable {
-
+class column_sort_ui implements renderable, templatable {
     /**
      * @var int The minimum custom width for a column.
      */
@@ -88,7 +87,7 @@ class column_sort_ui implements templatable, renderable {
 
         $params['urltomanageqbanks'] = get_string('qbankgotomanageqbanks', 'qbank_columnsortorder', $urltoredirect->out());
         $params['previewurl'] = new moodle_url('/question/bank/columnsortorder/sortcolumns.php', [
-            'preview' => true
+            'preview' => true,
         ]);
         return $params;
     }

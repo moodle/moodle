@@ -42,8 +42,12 @@ class set_hidden_columns extends external_api {
             'columns' => new external_multiple_structure(
                 new external_value(PARAM_TEXT, 'Plugin name for the hidden column', VALUE_REQUIRED)
             ),
-            'global' => new external_value(PARAM_BOOL, 'Set global config setting, rather than user preference',
-                    VALUE_DEFAULT, false),
+            'global' => new external_value(
+                PARAM_BOOL,
+                'Set global config setting, rather than user preference',
+                VALUE_DEFAULT,
+                false
+            ),
         ]);
     }
 
@@ -65,12 +69,13 @@ class set_hidden_columns extends external_api {
         [
             'columns' => $columns,
             'global' => $global,
-        ]
-            = self::validate_parameters(self::execute_parameters(),
-        [
-            'columns' => $columns,
-            'global' => $global,
-        ]);
+        ] = self::validate_parameters(
+            self::execute_parameters(),
+            [
+                'columns' => $columns,
+                'global' => $global,
+            ]
+        );
 
         $context = context_system::instance();
         self::validate_context($context);

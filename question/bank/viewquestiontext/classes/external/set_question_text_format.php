@@ -60,11 +60,12 @@ class set_question_text_format extends external_api {
     public static function execute(int $format): void {
         [
             'format' => $format,
-        ]
-            = self::validate_parameters(self::execute_parameters(),
-        [
-            'format' => $format,
-        ]);
+        ] = self::validate_parameters(
+            self::execute_parameters(),
+            [
+                'format' => $format,
+            ]
+        );
 
         if (!in_array($format, [question_text_format::OFF, question_text_format::PLAIN, question_text_format::FULL])) {
             throw new \invalid_parameter_exception('$format must be one of question_text_format::OFF, ::PLAIN or ::FULL.');

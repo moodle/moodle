@@ -40,7 +40,7 @@ class plugin_feature extends plugin_features_base {
      *
      * @return ?column_manager_base
      */
-    public function get_column_manager() : ?column_manager_base {
+    public function get_column_manager(): ?column_manager_base {
         return new column_manager();
     }
 
@@ -52,7 +52,7 @@ class plugin_feature extends plugin_features_base {
      * @param int $categoryid The current question category ID.
      * @return \renderable[]
      */
-    public function get_question_bank_controls(view $qbank, context $context, int $categoryid) : array {
+    public function get_question_bank_controls(view $qbank, context $context, int $categoryid): array {
         global $PAGE;
         $PAGE->requires->js_call_amd('qbank_columnsortorder/user_actions', 'init');
         $returnurl = new \moodle_url($qbank->returnurl);

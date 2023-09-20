@@ -39,8 +39,12 @@ class set_column_size extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'sizes' => new external_value(PARAM_TEXT, 'Size for each column', VALUE_REQUIRED),
-            'global' => new external_value(PARAM_BOOL, 'Set global config setting, rather than user preference',
-                    VALUE_DEFAULT, false),
+            'global' => new external_value(
+                PARAM_BOOL,
+                'Set global config setting, rather than user preference',
+                VALUE_DEFAULT,
+                false
+            ),
         ]);
     }
 
@@ -61,12 +65,13 @@ class set_column_size extends external_api {
         [
             'sizes' => $sizes,
             'global' => $global,
-        ]
-            = self::validate_parameters(self::execute_parameters(),
-        [
-            'sizes' => $sizes,
-            'global' => $global,
-        ]);
+        ] = self::validate_parameters(
+            self::execute_parameters(),
+            [
+                'sizes' => $sizes,
+                'global' => $global,
+            ]
+        );
 
         $context = context_system::instance();
         self::validate_context($context);

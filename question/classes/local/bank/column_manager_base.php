@@ -27,7 +27,6 @@ namespace core_question\local\bank;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class column_manager_base {
-
     /**
      * Sort the list of columns
      *

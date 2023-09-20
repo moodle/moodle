@@ -31,7 +31,6 @@ use core_question\local\bank\column_base;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class column_action_move extends column_action_base {
-
     /** @var string Label for the Move action.  */
     protected string $move;
 
@@ -41,13 +40,14 @@ class column_action_move extends column_action_base {
 
     public function get_action_menu_link(column_base $column): ?\action_menu_link {
         return new \action_menu_link_secondary(
-                new \moodle_url('/question/edit.php'),
-                null,
-                $this->move,
-                [
-                    'title' => get_string('movecolumn', 'qbank_columnsortorder', $column->get_title()),
-                    'data-action' => 'move',
-                    'data-column' => get_class($column),
-                ]);
+            new \moodle_url('/question/edit.php'),
+            null,
+            $this->move,
+            [
+                'title' => get_string('movecolumn', 'qbank_columnsortorder', $column->get_title()),
+                'data-action' => 'move',
+                'data-column' => get_class($column),
+            ]
+        );
     }
 }

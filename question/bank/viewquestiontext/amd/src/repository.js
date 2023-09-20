@@ -30,12 +30,9 @@ import {call as fetchMany} from 'core/ajax';
  * @param {Number} format The question text format.
  * @return {Promise}
  */
-export const setQuestionTextFormat = (format) => {
-    const responses = fetchMany([{
-        methodname: 'qbank_viewquestiontext_set_question_text_format',
-        args: {
-            format
-        },
-    }]);
-    return responses[0];
-};
+export const setQuestionTextFormat = (format) => fetchMany([{
+    methodname: 'qbank_viewquestiontext_set_question_text_format',
+    args: {
+        format,
+    },
+}])[0];

@@ -31,13 +31,13 @@ import {call as fetchMany} from 'core/ajax';
  * @param {Boolean} global Set global config setting, rather than user preference
  * @return {Promise}
  */
-export const setHiddenColumns = (columns, global = false) => {
-    const responses = fetchMany([{
-        methodname: 'qbank_columnsortorder_set_hidden_columns',
-        args: {columns: columns, global: global},
-    }]);
-    return responses[0];
-};
+export const setHiddenColumns = (columns, global = false) => fetchMany([{
+    methodname: 'qbank_columnsortorder_set_hidden_columns',
+    args: {
+        columns,
+        global,
+    },
+}])[0];
 
 /**
  * Save the order of columns
@@ -46,12 +46,13 @@ export const setHiddenColumns = (columns, global = false) => {
  * @param {Boolean} global Set global config setting, rather than user preference
  * @return {Promise}
  */
-export const setColumnbankOrder = (columns, global = false) => {
-    return fetchMany([{
-        methodname: 'qbank_columnsortorder_set_columnbank_order',
-        args: {columns: columns, global: global},
-    }])[0];
-};
+export const setColumnbankOrder = (columns, global = false) => fetchMany([{
+    methodname: 'qbank_columnsortorder_set_columnbank_order',
+    args: {
+        columns,
+        global,
+    },
+}])[0];
 
 /**
  * Save the column widths
@@ -60,9 +61,10 @@ export const setColumnbankOrder = (columns, global = false) => {
  * @param {Boolean} global Set global config setting, rather than user preference
  * @return {Promise}
  */
-export const setColumnSize = (sizes, global = false) => {
-    return fetchMany([{
-        methodname: 'qbank_columnsortorder_set_column_size',
-        args: {sizes: sizes, global: global},
-    }])[0];
-};
+export const setColumnSize = (sizes, global = false) => fetchMany([{
+    methodname: 'qbank_columnsortorder_set_column_size',
+    args: {
+        sizes,
+        global,
+    },
+}])[0];

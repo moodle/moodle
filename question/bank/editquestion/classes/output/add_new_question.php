@@ -27,8 +27,7 @@ use renderer_base;
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class add_new_question implements \templatable, \renderable {
-
+class add_new_question implements \renderable, \templatable {
     /** @var int $categoryid The ID of the category the quesiton will be added to. */
     protected int $categoryid;
 
@@ -57,10 +56,12 @@ class add_new_question implements \templatable, \renderable {
         if ($this->canadd) {
             $this->params['category'] = $this->categoryid;
             $url = new \moodle_url('/question/bank/editquestion/addquestion.php', $this->params);
-            $addquestiondisplay['buttonhtml'] = $output->single_button($url,
-                    get_string('createnewquestion', 'question'),
-                    'get');
-            $addquestiondisplay['qtypeform'] = editquestion_helper::print_choose_qtype_to_add_form(array());
+            $addquestiondisplay['buttonhtml'] = $output->single_button(
+                $url,
+                get_string('createnewquestion', 'question'),
+                'get'
+            );
+            $addquestiondisplay['qtypeform'] = editquestion_helper::print_choose_qtype_to_add_form([]);
         }
         return $addquestiondisplay;
     }

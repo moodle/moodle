@@ -31,8 +31,7 @@ use qbank_columnsortorder\column_manager;
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class column_sort_preview implements templatable, renderable {
-
+class column_sort_preview implements renderable, templatable {
     /** @var string Rendered preview HTML. */
     protected string $preview;
 

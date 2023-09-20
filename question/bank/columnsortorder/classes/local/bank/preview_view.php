@@ -28,7 +28,6 @@ use qbank_columnsortorder\column_manager;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preview_view extends view {
-
     /**
      * Use global settings for the column manager.
      *

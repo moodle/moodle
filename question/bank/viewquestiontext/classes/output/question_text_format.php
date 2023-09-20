@@ -28,8 +28,7 @@ use renderer_base;
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class question_text_format implements \templatable, \renderable {
-
+class question_text_format implements \renderable, \templatable {
     /**
      * @var int Question text is off.
      */

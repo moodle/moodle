@@ -30,7 +30,6 @@ use renderer_base;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_column implements \renderable, \templatable {
-
     /** @var column_manager The column manager for getting the list of hidden columns. */
     protected column_manager $columnmanager;
 

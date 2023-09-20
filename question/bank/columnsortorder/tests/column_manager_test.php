@@ -39,7 +39,6 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  * @covers \qbank_columnsortorder\column_manager
  */
 class column_manager_test extends advanced_testcase {
-
     /** @var \stdClass course record. */
     protected $course;
 
@@ -84,20 +83,20 @@ class column_manager_test extends advanced_testcase {
                 'setting' => 'enabledcol',
                 'function' => 'set_column_order',
                 'dataproperty' => 'columns',
-                'csv' => true
+                'csv' => true,
             ],
             'Test set_hidden_columns' => [
                 'setting' => 'hiddencols',
                 'function' => 'set_hidden_columns',
                 'dataproperty' => 'columns',
-                'csv' => true
+                'csv' => true,
             ],
             'Test set_column_size' => [
                 'setting' => 'colsize',
                 'function' => 'set_column_size',
                 'dataproperty' => 'randomstring',
-                'csv' => false
-            ]
+                'csv' => false,
+            ],
         ];
     }
 
@@ -252,8 +251,10 @@ class column_manager_test extends advanced_testcase {
         $randomplugin1 = $plugins[$randomplugins[0]];
         $randomplugin2 = $plugins[$randomplugins[1]];
 
-        $disabledcols = array_filter($this->columns,
-                fn($column) => str_starts_with($column, $randomplugin1) || str_starts_with($column, $randomplugin2));
+        $disabledcols = array_filter(
+            $this->columns,
+            fn($column) => str_starts_with($column, $randomplugin1) || str_starts_with($column, $randomplugin2)
+        );
         $enabledcols = array_diff($this->columns, $disabledcols);
 
         set_config('enabledcol', implode(',', $enabledcols), 'qbank_columnsortorder');

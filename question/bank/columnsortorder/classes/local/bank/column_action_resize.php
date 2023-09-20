@@ -31,7 +31,6 @@ use core_question\local\bank\column_base;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class column_action_resize extends column_action_base {
-
     /** @var string Label for the resize action. */
     protected string $resize;
 
@@ -48,6 +47,7 @@ class column_action_resize extends column_action_base {
                 'title' => get_string('resizecolumn', 'qbank_columnsortorder', $column->get_title()),
                 'data-action' => 'resize',
                 'data-column' => get_class($column),
-            ]);
+            ]
+        );
     }
 }

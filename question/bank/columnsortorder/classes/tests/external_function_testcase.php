@@ -29,7 +29,6 @@ namespace qbank_columnsortorder\tests;
  * Class defining resuable tests methods for external functions
  */
 abstract class external_function_testcase extends \advanced_testcase {
-
     /**
      * @var string Fully-qualified external function class to test.
      */

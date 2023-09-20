@@ -32,7 +32,6 @@ use qbank_columnsortorder\tests\external_function_testcase;
  * @covers \qbank_columnsortorder\external\set_column_size
  */
 class set_column_size_test extends external_function_testcase {
-
     /**
      * @var string Fully-qualified external function class to test.
      */
@@ -60,7 +59,7 @@ class set_column_size_test extends external_function_testcase {
         foreach ($questionlistcolumns as $columnnobject) {
             $columnsizes[] = (object)[
                 'column' => $columnnobject->name,
-                'width' => rand(1, 100) . 'px'
+                'width' => rand(1, 100) . 'px',
             ];
         }
         return json_encode($columnsizes);

@@ -27,7 +27,6 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_qbank_columnsortorder extends behat_base {
-
     public static function get_exact_named_selectors(): array {
         return [
             new behat_component_named_selector('column header', [

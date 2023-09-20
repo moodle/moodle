@@ -37,7 +37,7 @@ require_sesskey();
 $validformats = [
     \qbank_viewquestiontext\output\question_text_format::OFF,
     \qbank_viewquestiontext\output\question_text_format::PLAIN,
-    \qbank_viewquestiontext\output\question_text_format::FULL
+    \qbank_viewquestiontext\output\question_text_format::FULL,
 ];
 if (!in_array($format, $validformats)) {
     throw new \invalid_parameter_exception('$format must be one of question_text_format::OFF, ::PLAIN or ::FULL.');

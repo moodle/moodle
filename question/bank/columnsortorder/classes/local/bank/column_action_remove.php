@@ -30,7 +30,6 @@ use core_question\local\bank\column_base;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class column_action_remove extends column_action_base {
-
     /** @var bool True if we are changing global config, false for user preferences. */
     protected bool $global;
 
@@ -65,14 +64,15 @@ class column_action_remove extends column_action_base {
             $actionurl->param('global', $this->global);
         }
         return new \action_menu_link_secondary(
-                $actionurl,
-                null,
-                $this->remove,
-                [
-                    'class' => 'action-link',
-                    'title' => get_string('removecolumn', 'qbank_columnsortorder', $column->get_title()),
-                    'data-action' => 'remove',
-                    'data-column' => $column->get_column_id(),
-                ]);
+            $actionurl,
+            null,
+            $this->remove,
+            [
+                'class' => 'action-link',
+                'title' => get_string('removecolumn', 'qbank_columnsortorder', $column->get_title()),
+                'data-action' => 'remove',
+                'data-column' => $column->get_column_id(),
+            ]
+        );
     }
 }

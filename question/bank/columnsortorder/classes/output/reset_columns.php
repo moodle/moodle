@@ -29,7 +29,6 @@ use renderer_base;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class reset_columns implements \renderable, \templatable {
-
     /** @var \moodle_url The current page URL to redirect back to. */
     protected \moodle_url $returnurl;
 

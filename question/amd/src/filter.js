@@ -71,8 +71,9 @@ export const init = (
     const filterSet = document.querySelector(`#${filterRegionId}`);
 
     const viewData = {
-        view: view,
-        cmid: cmid,
+        extraparams,
+        cmid,
+        view,
         cat: defaultcategoryid,
         courseid: defaultcourseid,
         filter: {},
@@ -80,7 +81,6 @@ export const init = (
         qpage: 0,
         qperpage: perpage,
         sortdata: {},
-        extraparams: extraparams,
         lastchanged: document.querySelector(SELECTORS.LASTCHANGED_FIELD)?.value ?? null,
     };
 
