@@ -3208,7 +3208,6 @@ function print_maintenance_message() {
 
     $PAGE->set_pagetype('maintenance-message');
     $PAGE->set_pagelayout('maintenance');
-    $PAGE->set_title(strip_tags($SITE->fullname));
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->heading(get_string('sitemaintenance', 'admin'));

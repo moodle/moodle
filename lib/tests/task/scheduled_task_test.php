@@ -26,22 +26,52 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @category test
  * @copyright 2013 Damyon Wiese
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core\task\scheduled_task
  */
 class scheduled_task_test extends \advanced_testcase {
 
     /**
-     * Test the cron scheduling method
+     * Data provider for {@see test_eval_cron_field}
+     *
+     * @return array
      */
-    public function test_eval_cron_field() {
+    public static function eval_cron_provider(): array {
+        return [
+            // At every 3rd <unit>.
+            ['*/3', 0, 29, [0, 3, 6, 9, 12, 15, 18, 21, 24, 27]],
+            // At <unit> 1 and every 2nd <unit>.
+            ['1,*/2', 0, 29, [0, 1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28]],
+            // At every <unit> from 1 through 10 and every <unit> from 5 through 15.
+            ['1-10,5-15', 0, 29, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]],
+            // At every <unit> from 1 through 10 and every 2nd <unit> from 5 through 15.
+            ['1-10,5-15/2', 0, 29, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15]],
+            // At every <unit> from 1 through 10 and every 2nd <unit> from 5 through 29.
+            ['1-10,5/2', 0, 29, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29]],
+            // At <unit> 1, 2, 3.
+            ['1,2,3,1,2,3', 0, 29, [1, 2, 3]],
+            // Invalid.
+            ['-1,10,80', 0, 29, []],
+            // Invalid.
+            ['-1', 0, 29, []],
+        ];
+    }
+
+    /**
+     * Test the cron scheduling method
+     *
+     * @param string $field
+     * @param int $min
+     * @param int $max
+     * @param int[] $expected
+     *
+     * @dataProvider eval_cron_provider
+     *
+     * @covers ::eval_cron_field
+     */
+    public function test_eval_cron_field(string $field, int $min, int $max, array $expected): void {
         $testclass = new scheduled_test_task();
 
-        $this->assertEquals(20, count($testclass->eval_cron_field('*/3', 0, 59)));
-        $this->assertEquals(31, count($testclass->eval_cron_field('1,*/2', 0, 59)));
-        $this->assertEquals(15, count($testclass->eval_cron_field('1-10,5-15', 0, 59)));
-        $this->assertEquals(13, count($testclass->eval_cron_field('1-10,5-15/2', 0, 59)));
-        $this->assertEquals(3, count($testclass->eval_cron_field('1,2,3,1,2,3', 0, 59)));
-        $this->assertEquals(0, count($testclass->eval_cron_field('-1,10,80', 0, 59)));
-        $this->assertEquals(0, count($testclass->eval_cron_field('-1', 0, 59)));
+        $this->assertEquals($expected, $testclass->eval_cron_field($field, $min, $max));
     }
 
     public function test_get_next_scheduled_time() {

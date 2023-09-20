@@ -107,7 +107,7 @@ $PAGE->set_secondary_active_tab('server');
 $PAGE->navbar->add($oldextension ? s($oldextension) : $title);
 $PAGE->set_context($context);
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title($SITE->fullname. ': ' . $title);
+$PAGE->set_title($title);
 
 // Display the page.
 echo $OUTPUT->header();

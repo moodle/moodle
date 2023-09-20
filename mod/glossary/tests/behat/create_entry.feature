@@ -30,3 +30,19 @@ Feature: Create a glossary entry.
       | Keyword(s) | "                               |
     And I press "Save changes"
     Then I should see "One or more keywords contain a special character which cannot be used."
+
+  @javascript @_file_upload
+  Scenario: Create glossary entry with attached file
+    Given I am on the "Test glossary" "glossary activity" page logged in as student1
+    # As a student, add a glossary entry with attachment
+    And I press "Add entry"
+    And I set the following fields to these values:
+      | Concept    | Entry 1                                   |
+      | Definition | Definition of Entry 1                     |
+      | Attachment | mod/glossary/tests/fixtures/musicians.xml |
+    And I press "Save changes"
+    # Confirm you can download attachment from student's entry as teacher
+    When I am on the "Test glossary" "glossary activity" page logged in as teacher1
+    Then I should see "Entry 1"
+    And I should see "musicians.xml"
+    And following "musicians.xml" should download between "1" and "3000" bytes

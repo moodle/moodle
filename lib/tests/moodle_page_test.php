@@ -325,11 +325,66 @@ class moodle_page_test extends \advanced_testcase {
         $this->assertSame('a heading <a href="#">edit</a><p></p>', $this->testpage->heading);
     }
 
-    public function test_set_title() {
-        // Exercise SUT.
-        $this->testpage->set_title('a title');
+    /**
+     * Data provider for {@see test_set_title}.
+     *
+     * @return array
+     */
+    public function set_title_provider(): array {
+        return [
+            'Do not append the site name' => [
+                'shortname', false, '', false
+            ],
+            'Site not yet installed not configured defaults to site shortname' => [
+                null, true, 'shortname'
+            ],
+            '$CFG->sitenameintitle not configured defaults to site shortname' => [
+                null, true, 'shortname'
+            ],
+            '$CFG->sitenameintitle set to shortname' => [
+                'shortname', true, 'shortname'
+            ],
+            '$CFG->sitenameintitle set to fullname' => [
+                'fullname', true, 'fullname'
+            ],
+        ];
+    }
+
+    /**
+     * Test for set_title
+     *
+     * @dataProvider set_title_provider
+     * @param string|null $config The config value for $CFG->sitenameintitle.
+     * @param bool $appendsitename The $appendsitename parameter
+     * @param string $expected The expected site name to be appended to the title.
+     * @param bool $sitenameset To simulate the absence of the site name being set in the site.
+     * @return void
+     * @covers ::set_title
+     */
+    public function test_set_title(?string $config, bool $appendsitename, string $expected, bool $sitenameset = true): void {
+        global $CFG, $SITE;
+
+        if ($config !== null) {
+            $CFG->sitenameintitle = $config;
+        }
+
+        $title = "A title";
+        if ($appendsitename) {
+            if ($sitenameset) {
+                $expectedtitle = $title . moodle_page::TITLE_SEPARATOR . $SITE->{$expected};
+            } else {
+                // Simulate site fullname and shortname being empty for any reason.
+                $SITE->fullname = null;
+                $SITE->shortname = null;
+                $expectedtitle = $title . moodle_page::TITLE_SEPARATOR . 'Moodle';
+            }
+        } else {
+            $expectedtitle = $title;
+        }
+
+        $this->testpage->set_title($title, $appendsitename);
         // Validated.
-        $this->assertSame('a title', $this->testpage->title);
+        $this->assertSame($expectedtitle, $this->testpage->title);
     }
 
     public function test_default_pagelayout() {

@@ -57,7 +57,7 @@ if ($delete === md5($course->timemodified)) {
     $strdeletingcourse = get_string("deletingcourse", "", $courseshortname);
 
     $PAGE->navbar->add($strdeletingcourse);
-    $PAGE->set_title("$SITE->shortname: $strdeletingcourse");
+    $PAGE->set_title($strdeletingcourse);
     $PAGE->set_heading($SITE->fullname);
 
     echo $OUTPUT->header();
@@ -77,7 +77,7 @@ if ($delete === md5($course->timemodified)) {
 $strdeletecheck = get_string("deletecheck", "", $courseshortname);
 
 $PAGE->navbar->add($strdeletecheck);
-$PAGE->set_title("$SITE->shortname: $strdeletecheck");
+$PAGE->set_title($strdeletecheck);
 $PAGE->set_heading($SITE->fullname);
 echo $OUTPUT->header();
 

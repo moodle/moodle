@@ -32,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['admindirname'] = 'Adminmappe';
 $string['availablelangs'] = 'Tilgjengelige språkpakker';
 $string['chooselanguagehead'] = 'Velg et språk';
-$string['chooselanguagesub'] = 'Velg et språk for installasjonen. Dette språket vil også bli brukt som standardspråk for nettstedet, men det kan endres senere.';
+$string['chooselanguagesub'] = 'Velg et språk for installasjonen. Dette språket vil også bli brukt som standardspråk for portalen, men det kan endres senere.';
 $string['clialreadyconfigured'] = 'Konfigurasjonsfilen config.php finnes allerede. Vennligst bruk admin/cli/install_database.php hvis du vil installere Moodle på denne portalen.';
 $string['clialreadyinstalled'] = 'Filen config.php eksisterer allerede. Vennligst bruk admin/cli/install_database.php hvis du vil oppgradere Moodle på denne portalen.';
 $string['cliinstallheader'] = 'Moodle {$a} kommandolinje installasjonsprogram';
