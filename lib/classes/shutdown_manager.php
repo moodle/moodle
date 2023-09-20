@@ -244,5 +244,10 @@ class core_shutdown_manager {
                 }
             }
         }
+
+        // Print any closing buffered tags.
+        if (!empty($CFG->closingtags)) {
+            echo $CFG->closingtags;
+        }
     }
 }

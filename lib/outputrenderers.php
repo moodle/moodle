@@ -1549,6 +1549,20 @@ class core_renderer extends renderer_base {
 
         $this->page->set_state(moodle_page::STATE_DONE);
 
+        // Here we remove the closing body and html tags and store them to be added back
+        // in the shutdown handler so we can have valid html with streaming script tags
+        // which are rendered after the visible footer.
+        $tags = '';
+        preg_match('#\<\/body>#i', $footer, $matches);
+        $tags .= $matches[0];
+        $footer = str_replace($matches[0], '', $footer);
+
+        preg_match('#\<\/html>#i', $footer, $matches);
+        $tags .= $matches[0];
+        $footer = str_replace($matches[0], '', $footer);
+
+        $CFG->closingtags = $tags;
+
         return $output . $footer;
     }
 
