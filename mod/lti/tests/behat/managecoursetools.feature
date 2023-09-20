@@ -34,11 +34,13 @@ Feature: Manage course tools
     And I should see "A short description of the tool" in the "Teaching Tool 1" "table_row"
 
   Scenario: Viewing a site level tool in the course tools table
+    # The first tool isn't visible in courses, the next two are, and the last tool is in a pending state and is not visible.
     Given the following "mod_lti > tool types" exist:
-      | name         | description         | baseurl                   | coursevisible |
-      | Example tool | Another description | https://example.com/tool1 | 0             |
-      | Test tool 2  | Tool2 description   | https://example.com/tool2 | 1             |
-      | Test tool 3  | Tool3 description   | https://example.com/tool3 | 2             |
+      | name         | description         | baseurl                   | coursevisible | state |
+      | Example tool | Another description | https://example.com/tool1 | 0             | 1     |
+      | Test tool 2  | Tool2 description   | https://example.com/tool2 | 1             | 1     |
+      | Test tool 3  | Tool3 description   | https://example.com/tool3 | 2             | 1     |
+      | Test tool 4  | Tool4 description   | https://example.com/tool4 | 2             | 2     |
     And I am on the "Course 1" course page logged in as teacher1
     When I navigate to "LTI External tools" in current page administration
     Then I should see "Test tool 2" in the "reportbuilder-table" "table"
@@ -46,6 +48,7 @@ Feature: Manage course tools
     And I should see "Test tool 3" in the "reportbuilder-table" "table"
     And "You don't have permission to edit this tool" "icon" should exist in the "Test tool 3" "table_row"
     And I should not see "Example tool" in the "reportbuilder-table" "table"
+    And I should not see "Test tool 4" in the "reportbuilder-table" "table"
 
   Scenario: Viewing course tools without the capability to add/edit but having the capability to use
     Given the following "role capability" exists:
