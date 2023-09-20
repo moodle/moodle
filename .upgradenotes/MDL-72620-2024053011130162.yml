@@ -1,0 +1,11 @@
+issueNumber: MDL-72620
+notes:
+  repository_onedrive:
+    - message: >
+        The following previously deprecated methods have been removed and can no
+        longer be used:
+
+        - `can_import_skydrive_files`
+
+        - `import_skydrive_files`
+      type: removed

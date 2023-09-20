@@ -15,17 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Microsoft Live Skydrive Repository Plugin
- *
- * @package    repository_onedrive
- * @copyright  2012 Lancaster University Network Services Ltd
- * @author     Dan Poltawski <dan.poltawski@luns.net.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * Microsoft onedrive repository plugin.
  *
  * @package    repository_onedrive
@@ -1010,81 +999,19 @@ class repository_onedrive extends repository {
     }
 
     /**
-     * Return true if any instances of the skydrive repo exist - and we can import them.
-     *
-     * @return bool
      * @deprecated since Moodle 4.0
-     * @todo MDL-72620 This will be deleted in Moodle 4.4.
      */
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public static function can_import_skydrive_files() {
-        global $DB;
-
-        $skydrive = $DB->get_record('repository', ['type' => 'skydrive'], 'id', IGNORE_MISSING);
-        $onedrive = $DB->get_record('repository', ['type' => 'onedrive'], 'id', IGNORE_MISSING);
-
-        if (empty($skydrive) || empty($onedrive)) {
-            return false;
-        }
-
-        $ready = true;
-        try {
-            $issuer = \core\oauth2\api::get_issuer(get_config('onedrive', 'issuerid'));
-            if (!$issuer->get('enabled')) {
-                $ready = false;
-            }
-            if (!$issuer->is_configured()) {
-                $ready = false;
-            }
-        } catch (dml_missing_record_exception $e) {
-            $ready = false;
-        }
-        if (!$ready) {
-            return false;
-        }
-
-        $sql = "SELECT count('x')
-                  FROM {repository_instances} i, {repository} r
-                 WHERE r.type=:plugin AND r.id=i.typeid";
-        $params = array('plugin' => 'skydrive');
-        return $DB->count_records_sql($sql, $params) > 0;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
-     * Import all the files that were created with the skydrive repo to this repo.
-     *
-     * @return bool
      * @deprecated since Moodle 4.0
-     * @todo MDL-72620 This will be deleted in Moodle 4.4.
      */
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
     public static function import_skydrive_files() {
-        global $DB;
-
-        debugging('import_skydrive_files() is deprecated. Please migrate your files from repository_skydrive to ' .
-            'repository_onedrive before it will be completely removed.', DEBUG_DEVELOPER);
-
-        if (!self::can_import_skydrive_files()) {
-            return false;
-        }
-        // Should only be one of each.
-        $skydrivetype = repository::get_type_by_typename('skydrive');
-
-        $skydriveinstances = repository::get_instances(['type' => 'skydrive']);
-        $skydriveinstance = reset($skydriveinstances);
-        $onedriveinstances = repository::get_instances(['type' => 'onedrive']);
-        $onedriveinstance = reset($onedriveinstances);
-
-        // Update all file references.
-        $DB->set_field('files_reference', 'repositoryid', $onedriveinstance->id, ['repositoryid' => $skydriveinstance->id]);
-
-        // Delete and disable the skydrive repo.
-        $skydrivetype->delete();
-        core_plugin_manager::reset_caches();
-
-        $sql = "SELECT count('x')
-                  FROM {repository_instances} i, {repository} r
-                 WHERE r.type=:plugin AND r.id=i.typeid";
-        $params = array('plugin' => 'skydrive');
-        return $DB->count_records_sql($sql, $params) == 0;
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -1100,17 +1027,6 @@ class repository_onedrive extends repository {
         $url = $url->out();
 
         $mform->addElement('static', null, '', get_string('oauth2serviceslink', 'repository_onedrive', $url));
-
-        if (self::can_import_skydrive_files()) {
-            debugging('can_import_skydrive_files() is deprecated. Please migrate your files from repository_skydrive to ' .
-            'repository_onedrive before it will be completely removed.', DEBUG_DEVELOPER);
-
-            $notice = get_string('skydrivefilesexist', 'repository_onedrive');
-            $url = new moodle_url('/repository/onedrive/importskydrive.php');
-            $attrs = ['class' => 'btn btn-primary'];
-            $button = $OUTPUT->action_link($url, get_string('importskydrivefiles', 'repository_onedrive'), null, $attrs);
-            $mform->addElement('static', null, '', $OUTPUT->notification($notice) . $button);
-        }
 
         parent::type_config_form($mform);
         $options = [];
