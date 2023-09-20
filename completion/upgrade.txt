@@ -1,6 +1,11 @@
 This file describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `completion_info::display_help_icon`
+  - `completion_info::print_help_icon`
+
 === 4.3 ===
 * A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any
   form.
