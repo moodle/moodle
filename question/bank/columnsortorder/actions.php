@@ -90,9 +90,9 @@ switch ($action) {
         break;
 
     case 'reset':
-        $columnmanager::set_hidden_columns([], $global);
-        $columnmanager::set_column_order([], $global);
-        $columnmanager::set_column_size('', $global);
+        $columnmanager::set_hidden_columns(null, $global);
+        $columnmanager::set_column_order(null, $global);
+        $columnmanager::set_column_size(null, $global);
         break;
 }
 redirect(new moodle_url($returnurl));

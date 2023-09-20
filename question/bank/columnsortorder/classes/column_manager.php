@@ -116,32 +116,36 @@ class column_manager extends column_manager_base {
     /**
      * Sets column order in the qbank_columnsortorder plugin config.
      *
-     * @param array $columns Column order to set.
+     * @param ?array $columns Column order to set. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_column_order(array $columns, bool $global = false) : void {
-        $columns = implode(',', $columns);
+    public static function set_column_order(?array $columns, bool $global = false) : void {
+        if (!is_null($columns)) {
+            $columns = implode(',', $columns);
+        }
         self::save_preference('enabledcol', $columns, $global);
     }
 
     /**
      * Hidden Columns.
      *
-     * @param array $columns hidden columns
+     * @param ?array $columns List of hidden columns. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_hidden_columns(array $columns, bool $global = false) : void {
-        $columns = implode(',', $columns);
+    public static function set_hidden_columns(?array $columns, bool $global = false) : void {
+        if (!is_null($columns)) {
+            $columns = implode(',', $columns);
+        }
         self::save_preference('hiddencols', $columns, $global);
     }
 
     /**
      * Column size.
      *
-     * @param string $sizes columns with width
+     * @param ?string $sizes columns with width. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_column_size(string $sizes, bool $global = false) : void {
+    public static function set_column_size(?string $sizes, bool $global = false) : void {
         self::save_preference('colsize', $sizes, $global);
     }
 
@@ -149,10 +153,10 @@ class column_manager extends column_manager_base {
      * Save Preferences.
      *
      * @param string $name name of a configuration
-     * @param string $value value of a configuration
+     * @param ?string $value value of a configuration. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    private static function save_preference(string $name, string $value, bool $global = false): void {
+    private static function save_preference(string $name, ?string $value, bool $global = false): void {
         if ($global) {
             require_capability('moodle/site:config', context_system::instance());
             set_config($name, $value, 'qbank_columnsortorder');

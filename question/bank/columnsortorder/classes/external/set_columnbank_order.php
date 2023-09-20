@@ -41,7 +41,11 @@ class set_columnbank_order extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'columns' => new external_multiple_structure(
-                new external_value(PARAM_TEXT, 'Plugin name for the column', VALUE_REQUIRED)
+                new external_value(PARAM_TEXT, 'Plugin name for the column', VALUE_REQUIRED),
+                'List of column in the desired order',
+                VALUE_DEFAULT,
+                null,
+                NULL_ALLOWED,
             ),
             'global' => new external_value(PARAM_BOOL, 'Set global config setting, rather than user preference',
                     VALUE_DEFAULT, false),
@@ -58,10 +62,10 @@ class set_columnbank_order extends external_api {
     /**
      * Set columns order.
      *
-     * @param array $columns List of column names in the desired order.
+     * @param ?array $columns List of column names in the desired order. Null value clears the setting.
      * @param bool $global Set global config setting, rather than user preference
      */
-    public static function execute(array $columns, bool $global = false): void {
+    public static function execute(?array $columns, bool $global = false): void {
         [
             'columns' => $columns,
             'global' => $global,

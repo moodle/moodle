@@ -38,7 +38,12 @@ class set_column_size extends external_api {
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
-            'sizes' => new external_value(PARAM_TEXT, 'Size for each column', VALUE_REQUIRED),
+            'sizes' => new external_value(
+                PARAM_TEXT,
+                'Size for each column, as a JSON string representing [column => size]',
+                VALUE_DEFAULT,
+                null,
+            ),
             'global' => new external_value(
                 PARAM_BOOL,
                 'Set global config setting, rather than user preference',
@@ -58,10 +63,10 @@ class set_column_size extends external_api {
      * Set sizes for columns
      * Save against user preference if component is specified
      *
-     * @param string $sizes json string representing [column => size].
+     * @param ?string $sizes json string representing [column => size]. Null value clears the setting.
      * @param bool $global Set global config setting, rather than user preference
      */
-    public static function execute(string $sizes, bool $global = false): void {
+    public static function execute(?string $sizes, bool $global = false): void {
         [
             'sizes' => $sizes,
             'global' => $global,

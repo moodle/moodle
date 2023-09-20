@@ -101,11 +101,7 @@ export const setupActionButtons = (uiRoot, global = false) => {
                 }
                 await repository.setHiddenColumns(hiddenColumns, global);
             } else if (action === 'reset') {
-                await Promise.all([
-                    repository.setColumnbankOrder([], global),
-                    repository.setHiddenColumns([], global),
-                    repository.setColumnSize('', global),
-                ]);
+                await repository.resetColumns(global);
             }
             const actionUrl = new URL(actionLink.href);
             const returnUrl = new URL(actionUrl.searchParams.get('returnurl').replaceAll('&amp;', '&'));

@@ -68,3 +68,32 @@ export const setColumnSize = (sizes, global = false) => fetchMany([{
         global,
     },
 }])[0];
+
+/**
+ * Reset all settings.
+ *
+ * @param {Boolean} global Reset global config settings, rather than user preference
+ * @return {Promise}
+ */
+export const resetColumns = (global = false) => Promise.all(
+    fetchMany([
+        {
+            methodname: 'qbank_columnsortorder_set_column_size',
+            args: {
+                global,
+            },
+        },
+        {
+            methodname: 'qbank_columnsortorder_set_columnbank_order',
+            args: {
+                global,
+            },
+        },
+        {
+            methodname: 'qbank_columnsortorder_set_hidden_columns',
+            args: {
+                global,
+            },
+        },
+    ])
+);

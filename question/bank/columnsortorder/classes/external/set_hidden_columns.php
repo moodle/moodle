@@ -40,7 +40,11 @@ class set_hidden_columns extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'columns' => new external_multiple_structure(
-                new external_value(PARAM_TEXT, 'Plugin name for the hidden column', VALUE_REQUIRED)
+                new external_value(PARAM_TEXT, 'Plugin name for the hidden column', VALUE_REQUIRED),
+                'List of hidden columns',
+                VALUE_DEFAULT,
+                null,
+                NULL_ALLOWED,
             ),
             'global' => new external_value(
                 PARAM_BOOL,
@@ -62,10 +66,10 @@ class set_hidden_columns extends external_api {
      * Set hidden columns
      * Save against user preference if specified
      *
-     * @param array $columns list of hidden columns.
+     * @param ?array $columns List of hidden columns. Null value clears the setting.
      * @param bool $global Set global config setting, rather than user preference
      */
-    public static function execute(array $columns, bool $global = false): void {
+    public static function execute(?array $columns, bool $global = false): void {
         [
             'columns' => $columns,
             'global' => $global,
