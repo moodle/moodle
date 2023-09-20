@@ -1,0 +1,7 @@
+issueNumber: MDL-79496
+notes:
+  core_webservice:
+    - message: >-
+        The `token_table` and `token_filter` classes have been deprecated, in
+        favour of new report builder implementation.
+      type: deprecated
