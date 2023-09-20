@@ -71,7 +71,6 @@ class resume_autosave_session extends external_api {
         string $elementid,
         ?int $draftid
     ): array {
-        global $DB, $USER;
 
         [
             'contextid' => $contextid,
@@ -87,10 +86,15 @@ class resume_autosave_session extends external_api {
             'draftid' => $draftid,
         ]);
 
-        $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
-        $sessiondata = $manager->resume_autosave_session($draftid);
+        $drafttext = '';
+
+        // May have been called by a non-logged in user.
+        if (isloggedin() && !isguestuser()) {
+            $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
+            $drafttext = $manager->resume_autosave_session($draftid)->drafttext;
+        }
         return [
-            'drafttext' => $sessiondata->drafttext,
+            'drafttext' => $drafttext,
         ];
     }
 
