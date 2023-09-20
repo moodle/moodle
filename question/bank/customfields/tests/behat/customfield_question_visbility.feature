@@ -42,7 +42,7 @@ Feature: The visibility of question custom fields control where they are display
   Scenario: Display custom question fields to teachers based on their visibility.
     When I am on the "First question" "core_question > edit" page
     Then I should see "Category for test"
-    And I click on "Expand all" "link"
+    And I expand all fieldsets
     And I should see "Field 1"
     And I should see "Field 2"
     And I should see "Field 3"
