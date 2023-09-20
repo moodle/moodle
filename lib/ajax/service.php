@@ -64,7 +64,7 @@ if ($requests === null) {
     $lasterror = json_last_error_msg();
     throw new coding_exception('Invalid json in request: ' . $lasterror);
 }
-$responses = array();
+$responses = [];
 
 // Defines the external settings required for Ajax processing.
 $settings = external_settings::get_instance();
@@ -75,7 +75,7 @@ $settings->set_raw(false);
 
 $haserror = false;
 foreach ($requests as $request) {
-    $response = array();
+    $response = [];
     $methodname = clean_param($request['methodname'], PARAM_ALPHANUMEXT);
     $index = clean_param($request['index'], PARAM_INT);
     $args = $request['args'];
@@ -109,7 +109,7 @@ if ($cacherequest && !$haserror) {
     // 90 days only - based on Moodle point release cadence being every 3 months.
     $lifetime = 60 * 60 * 24 * 90;
 
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
     header('Pragma: ');
     header('Cache-Control: public, max-age=' . $lifetime . ', immutable');
     header('Accept-Ranges: none');
