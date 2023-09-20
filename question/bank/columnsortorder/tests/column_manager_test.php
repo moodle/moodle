@@ -39,62 +39,60 @@ require_once($CFG->dirroot . '/question/classes/external.php');
  * @covers \qbank_columnsortorder\column_manager
  */
 class column_manager_test extends advanced_testcase {
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \core_question\local\bank\view  */
-    protected $questionbank;
-
-    /** @var array  */
-    protected $columns;
-
-    /** @var \qbank_columnsortorder\column_manager  */
-    protected $columnmanager;
-
-    /** @var string */
-    protected $randomstring;
 
     /**
-     * Setup testcase.
+     * Generate a course and return a question bank view for the course context.
+     *
+     * @return view
      */
-    public function setUp(): void {
-        $this->resetAfterTest(true);
-        $this->setAdminUser();
-        $this->course = $this->getDataGenerator()->create_course();
-        // Creates question bank view.
-        $this->questionbank = new view(
-            new question_edit_contexts(context_course::instance($this->course->id)),
+    protected static function get_question_bank(): view {
+        $course = self::getDataGenerator()->create_course();
+        $questionbank = new view(
+            new question_edit_contexts(context_course::instance($course->id)),
             new moodle_url('/'),
-            $this->course
+            $course
         );
-
-        // Get current view columns.
-        $this->columns = [];
-        foreach ($this->questionbank->get_visiblecolumns() as $column) {
-            $this->columns[] = $column->get_column_id();
-        }
-        $this->columnmanager = new column_manager(true);
-        $this->randomstring = random_string();
+        return $questionbank;
     }
 
+    /**
+     * Return an array of visible columns for the question bank.
+     *
+     * @param view $questionbank
+     * @return array
+     */
+    protected static function get_columns(view $questionbank): array {
+        $columns = [];
+        foreach ($questionbank->get_visiblecolumns() as $column) {
+            $columns[] = $column->get_column_id();
+        }
+        return $columns;
+    }
+
+    /**
+     * Provide examples for testing each column setting function, with test data and data format.
+     *
+     * @return array[]
+     */
     public static function settings_provider(): array {
+        $questionbank = self::get_question_bank();
         return [
             'Test set_column_order' => [
                 'setting' => 'enabledcol',
                 'function' => 'set_column_order',
-                'dataproperty' => 'columns',
+                'data' => self::get_columns($questionbank),
                 'csv' => true,
             ],
             'Test set_hidden_columns' => [
                 'setting' => 'hiddencols',
                 'function' => 'set_hidden_columns',
-                'dataproperty' => 'columns',
+                'data' => self::get_columns($questionbank),
                 'csv' => true,
             ],
             'Test set_column_size' => [
                 'setting' => 'colsize',
                 'function' => 'set_column_size',
-                'dataproperty' => 'randomstring',
+                'data' => random_string(),
                 'csv' => false,
             ],
         ];
@@ -106,12 +104,13 @@ class column_manager_test extends advanced_testcase {
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param string $dataproperty The property of the test class to pass to the function.
+     * @param mixed $data The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_settings(string $setting, string $function, string $dataproperty, bool $csv): void {
-        $data = $this->{$dataproperty};
+    public function test_settings(string $setting, string $function, mixed $data, bool $csv): void {
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
         column_manager::{$function}($data, true);
@@ -121,17 +120,37 @@ class column_manager_test extends advanced_testcase {
     }
 
     /**
+     * Test passing null clears the corresponding config setting.
+     *
+     * @dataProvider settings_provider
+     * @param string $setting The name of the setting being saved
+     * @param string $function The name of the function being called
+     * @param mixed $data The property of the test class to pass to the function.
+     * @param bool $csv True of the data is stored as a comma-separated list.
+     * @return void
+     */
+    public function test_reset_settings(string $setting, string $function, mixed $data, bool $csv): void {
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
+        $initial = $csv ? implode(',', $data) : $data;
+        set_config($setting, $initial, 'qbank_columnsortorder');
+        $this->assertEquals($initial, get_config('qbank_columnsortorder', $setting));
+        column_manager::{$function}(null, true);
+        $this->assertFalse(get_config('qbank_columnsortorder', $setting));
+    }
+
+    /**
      * Test setting user preferences
      *
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param string $dataproperty The property of the test class to pass to the function.
+     * @param mixed $data The data to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_settings_user(string $setting, string $function, string $dataproperty, bool $csv): void {
-        $data = $this->{$dataproperty};
+    public function test_settings_user(string $setting, string $function, mixed $data, bool $csv): void {
+        $this->resetAfterTest(true);
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
         column_manager::{$function}($data);
@@ -141,12 +160,35 @@ class column_manager_test extends advanced_testcase {
     }
 
     /**
+     * Test passing null clears the corresponding user preference.
+     *
+     * @dataProvider settings_provider
+     * @param string $setting The name of the setting being saved
+     * @param string $function The name of the function being called
+     * @param mixed $data The property of the test class to pass to the function.
+     * @param bool $csv True of the data is stored as a comma-separated list.
+     * @return void
+     */
+    public function test_reset_user_settings(string $setting, string $function, mixed $data, bool $csv): void {
+        $this->setAdminUser();
+        $this->resetAfterTest(true);
+        $initial = $csv ? implode(',', $data) : $data;
+        set_user_preference('qbank_columnsortorder_' . $setting, $initial);
+        $this->assertEquals($initial, get_user_preferences('qbank_columnsortorder_' . $setting));
+        column_manager::{$function}(null);
+        $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
+    }
+
+    /**
      * Test function get_columns in helper class, that proper data is returned.
      *
      * @covers ::get_columns
      */
     public function test_getcolumns_function(): void {
-        $questionlistcolumns = $this->columnmanager->get_columns();
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $columnmanager = new column_manager(true);
+        $questionlistcolumns = $columnmanager->get_columns();
         $this->assertIsArray($questionlistcolumns);
         foreach ($questionlistcolumns as $columnnobject) {
             $this->assertObjectHasAttribute('class', $columnnobject);
@@ -161,17 +203,21 @@ class column_manager_test extends advanced_testcase {
      * @return void
      */
     public function test_get_sorted_columns(): void {
-        $neworder = $this->columns;
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
+        $neworder = $columns;
         shuffle($neworder);
         set_config('enabledcol', implode(',', $neworder), 'qbank_columnsortorder');
 
-        $this->columnmanager = new column_manager(true);
+        $columnmanager = new column_manager(true);
         $columnstosort = [];
-        foreach ($this->columns as $column) {
+        foreach ($columns as $column) {
             $columnstosort[$column] = $column;
         }
 
-        $sortedcolumns = $this->columnmanager->get_sorted_columns($columnstosort);
+        $sortedcolumns = $columnmanager->get_sorted_columns($columnstosort);
 
         $expectedorder = ['core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column' => 0];
         foreach ($neworder as $columnid) {
@@ -186,19 +232,25 @@ class column_manager_test extends advanced_testcase {
      * @return void
      */
     public function test_disable_columns(): void {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
         // Set up enabledcol with all plugins.
-        set_config('enabledcol', implode(',', $this->columns), 'qbank_columnsortorder');
-        $this->columnmanager = new column_manager();
+        set_config('enabledcol', implode(',', $columns), 'qbank_columnsortorder');
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
+        $columnmanager = new column_manager(true);
         $this->assertFalse(get_config('qbank_columnsortorder', 'disabledcol'));
 
         // Disable a random plugin.
-        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $plugincolumns = array_filter($columns, fn($column) => str_starts_with($column, 'qbank_'));
         $randomcolumn = $plugincolumns[array_rand($plugincolumns, 1)];
         $randomplugin = explode('\\', $randomcolumn)[0];
-        $this->columnmanager->disable_columns($randomplugin);
+        $columnmanager->disable_columns($randomplugin);
 
         // The enabledcol setting should now contain all columns except the disabled plugin.
-        $expectedconfig = array_filter($this->columns, fn($column) => !str_starts_with($column, $randomplugin));
+        $expectedconfig = array_filter($columns, fn($column) => !str_starts_with($column, $randomplugin));
         sort($expectedconfig);
         $newconfig = explode(',', get_config('qbank_columnsortorder', 'enabledcol'));
         sort($newconfig);
@@ -215,9 +267,14 @@ class column_manager_test extends advanced_testcase {
      * @covers \qbank_columnsortorder\event\plugin_observer
      */
     public function test_plugin_enabled_disabled_observers(): void {
-        $neworder = $this->columnmanager->get_sorted_columns($this->columns);
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
+        $columnmanager = new column_manager(true);
+        $neworder = $columnmanager->get_sorted_columns($columns);
         shuffle($neworder);
-        $this->columnmanager::set_column_order($neworder, true);
+        $columnmanager::set_column_order($neworder, true);
         // Get the list of enabled columns, excluding core columns (we can't disable those).
         $currentconfig = get_config('qbank_columnsortorder', 'enabledcol');
         $currentconfig = array_filter(explode(',', $currentconfig), fn($class) => !str_starts_with($class, 'core'));
@@ -244,27 +301,31 @@ class column_manager_test extends advanced_testcase {
      * @return void
      */
     public function test_enable_columns() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
         // Set up disablecol with columns from 2 random plugins, and enabledcol with all other columns.
-        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $plugincolumns = array_filter($columns, fn($column) => str_starts_with($column, 'qbank_'));
         $plugins = array_unique(array_map(fn($column) => explode('\\', $column)[0], $plugincolumns));
         $randomplugins = array_rand($plugins, 2);
         $randomplugin1 = $plugins[$randomplugins[0]];
         $randomplugin2 = $plugins[$randomplugins[1]];
 
         $disabledcols = array_filter(
-            $this->columns,
+            $columns,
             fn($column) => str_starts_with($column, $randomplugin1) || str_starts_with($column, $randomplugin2)
         );
-        $enabledcols = array_diff($this->columns, $disabledcols);
+        $enabledcols = array_diff($columns, $disabledcols);
 
         set_config('enabledcol', implode(',', $enabledcols), 'qbank_columnsortorder');
         set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
 
         // Enable one of the disabled plugins.
-        $this->columnmanager = new column_manager(true);
-        $this->columnmanager->enable_columns($randomplugin1);
+        $columnmanager = new column_manager(true);
+        $columnmanager->enable_columns($randomplugin1);
         // The enabledcol setting should now contain all columns except the remaining disabled plugin.
-        $expectedenabled = array_filter($this->columns, fn($column) => !str_starts_with($column, $randomplugin2));
+        $expectedenabled = array_filter($columns, fn($column) => !str_starts_with($column, $randomplugin2));
         $expecteddisabled = array_filter($disabledcols, fn($column) => str_starts_with($column, $randomplugin2));
         sort($expectedenabled);
         sort($expecteddisabled);
@@ -283,25 +344,29 @@ class column_manager_test extends advanced_testcase {
      * @return void
      */
     public function test_get_disabled_columns(): void {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+        $questionbank = $this->get_question_bank();
+        $columns = $this->get_columns($questionbank);
         // Set up disablecol with columns from 2 random plugins, and enabledcol with all other columns.
-        $plugincolumns = array_filter($this->columns, fn($column) => str_starts_with($column, 'qbank_'));
+        $plugincolumns = array_filter($columns, fn($column) => str_starts_with($column, 'qbank_'));
         $randomcolumn = $plugincolumns[array_rand($plugincolumns, 1)];
         $randomplugin = explode('\\', $randomcolumn)[0];
 
-        $disabledcols = array_filter($this->columns, fn($column) => str_starts_with($column, $randomplugin));
+        $disabledcols = array_filter($columns, fn($column) => str_starts_with($column, $randomplugin));
 
         set_config('disabledcol', implode(',', $disabledcols), 'qbank_columnsortorder');
 
-        $this->columnmanager = new column_manager(true);
+        $columnmanager = new column_manager(true);
         $expecteddisablednames = [];
         foreach ($disabledcols as $disabledcolid) {
             [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $disabledcolid, 2);
-            $columnobject = $columnclass::from_column_name($this->questionbank, $columnname);
+            $columnobject = $columnclass::from_column_name($questionbank, $columnname);
             $expecteddisablednames[$disabledcolid] = (object) [
                 'disabledname' => $columnobject->get_title(),
             ];
         }
-        $disablednames = $this->columnmanager->get_disabled_columns();
+        $disablednames = $columnmanager->get_disabled_columns();
         $this->assertEquals($expecteddisablednames, $disablednames);
     }
 }
