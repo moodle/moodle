@@ -521,8 +521,10 @@ Feature: We can use calculated grade totals
     And "//span[@class='grateitemheader'][@title='Link to Test assignment one &amp; Assignment']" "xpath_element" should not exist
     And I set the field "Override weight of Test assignment one &" to "1"
     And I set the field "Weight of Test assignment one &" to "0"
+    And I should see "490.00" in the "Course total" "table_row"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment six" to "0"
+    And I should see "480.00" in the "Course total" "table_row"
     And I set the field "Override weight of Test assignment nine" to "1"
     And I set the field "Weight of Test assignment nine" to "100"
     And I press "Save changes"

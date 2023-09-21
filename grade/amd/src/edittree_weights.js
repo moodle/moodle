@@ -32,6 +32,7 @@ import {prefetchStrings} from 'core/prefetch';
 const selectors = {
     weightOverrideCheckbox: 'input[type="checkbox"][name^="weightoverride_"]',
     weightOverrideInput: 'input[type="text"][name^="weight_"]',
+    aggregationForCategory: category => `[data-aggregationforcategory='${category}']`,
     childrenByCategory: category => `tr[data-parent-category="${category}"]`,
     categoryByIdentifier: identifier => `tr.category[data-category="${identifier}"]`,
 };
@@ -190,21 +191,21 @@ const recalculateNaturalWeights = (categoryElement) => {
 
         if (!oldExtraCreditCalculation && itemAggregationCoefficient > 0 && !weightCheckbox.checked) {
             // For an item with extra credit ignore other weights and overrides.
-            weightInput.value = totalGradeMax ? formatWeight(itemGradeMax * 100 / totalGradeMax) : 0;
+            weightInput.value = totalGradeMax ? formatFloat(itemGradeMax * 100 / totalGradeMax) : 0;
         } else if (!weightCheckbox.checked) {
             // Calculations with a grade maximum of zero will cause problems. Just set the weight to zero.
             if (totalOverriddenWeight >= 100 || totalNonOverriddenGradeMax === 0 || itemGradeMax === 0) {
                 // There is no more weight to distribute.
-                weightInput.value = formatWeight(0);
+                weightInput.value = formatFloat(0);
             } else {
                 // Calculate this item's weight as a percentage of the non-overridden total grade maxes
                 // then convert it to a proportion of the available non-overridden weight.
-                weightInput.value = formatWeight((itemGradeMax / totalNonOverriddenGradeMax) * (100 - totalOverriddenWeight));
+                weightInput.value = formatFloat((itemGradeMax / totalNonOverriddenGradeMax) * (100 - totalOverriddenWeight));
             }
         } else if ((!automaticGradeItemsPresent && normaliseTotal !== 100) || requiresNormalising ||
                 overrideArray[childElement.dataset.itemid].weight < 0) {
             if (overrideArray[childElement.dataset.itemid].weight < 0) {
-                weightInput.value = formatWeight(0);
+                weightInput.value = formatFloat(0);
             }
 
             // Zero is a special case. If the total is zero then we need to set the weight of the parent category to zero.
@@ -225,6 +226,11 @@ const recalculateNaturalWeights = (categoryElement) => {
         if (categoryGradeMax !== totalGradeMax) {
             // The category grade max is not the same as the total grade max, so we need to update the category grade max.
             categoryElement.dataset.grademax = totalGradeMax;
+            const relatedCategoryAggregationRow = document.querySelector(
+                selectors.aggregationForCategory(categoryElement.dataset.category)
+            );
+            relatedCategoryAggregationRow.querySelector('.column-range').innerHTML = formatFloat(totalGradeMax, 2, 2);
+
             const parentCategory = document.querySelector(selectors.categoryByIdentifier(categoryElement.dataset.parentCategory));
             if (parentCategory && (parseInt(parentCategory.dataset.aggregation) === grade.aggregation.sum)) {
                 recalculateNaturalWeights(parentCategory);
@@ -234,13 +240,18 @@ const recalculateNaturalWeights = (categoryElement) => {
 };
 
 /**
- * Formats a weight value as a string with up to 3 decimal places.
+ * Formats a floating-point number as a string with the specified number of decimal places.
+ * Unnecessary trailing zeros are removed up to the specified minimum number of decimal places.
  *
- * @param {number} weight The weight value to be formatted.
+ * @param {number} number The float value to be formatted.
+ * @param {number} [decimalPoints=3] The number of decimal places to use.
+ * @param {number} [minDecimals=1] The minimum number of decimal places to use.
  * @returns {string} The formatted weight value with the specified decimal places.
  */
-const formatWeight = (weight) => {
-    return weight.toFixed(3).replace(/0{0,2}$/, '').replace('.', decimalSeparator);
+const formatFloat = (number, decimalPoints = 3, minDecimals = 1) => {
+    return number.toFixed(decimalPoints)
+        .replace(new RegExp(`0{0,${decimalPoints - minDecimals}}$`), '')
+        .replace('.', decimalSeparator);
 };
 
 /**
@@ -276,7 +287,7 @@ export const init = (decSep, oldCalculation) => {
             // This is only required if we are using natural weights.
             if (parseInt(categoryElement.dataset.aggregation) === grade.aggregation.sum) {
                 const weightElement = gradeItemRow.querySelector(selectors.weightOverrideInput);
-                weightElement.value = formatWeight(parseWeight(weightElement.value));
+                weightElement.value = formatFloat(parseWeight(weightElement.value));
                 recalculateNaturalWeights(categoryElement);
             }
         }
