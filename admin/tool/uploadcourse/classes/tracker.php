@@ -173,6 +173,10 @@ class tool_uploadcourse_tracker {
             } else {
                 $outcome = $OUTPUT->pix_icon('i/invalid', '');
             }
+
+            // Ensure our data is suitable for HTML output.
+            $data = array_map('s', $data);
+
             echo html_writer::start_tag('tr', array('class' => 'r' . $this->rownb % 2));
             echo html_writer::tag('td', $line, array('class' => 'c' . $ci++));
             echo html_writer::tag('td', $outcome, array('class' => 'c' . $ci++));
