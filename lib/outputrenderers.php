@@ -1489,7 +1489,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function footer() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PERF;
 
         $output = '';
 
@@ -1519,6 +1519,7 @@ class core_renderer extends renderer_base {
                 if (NO_OUTPUT_BUFFERING) {
                     // If the output buffer was off then we render a placeholder and stream the
                     // performance debugging into it at the very end in the shutdown handler.
+                    $PERF->perfdebugdeferred = true;
                     $performanceinfo .= html_writer::tag('div',
                         get_string('perfdebugdeferred', 'admin'),
                         [

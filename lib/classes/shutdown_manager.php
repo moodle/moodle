@@ -195,7 +195,7 @@ class core_shutdown_manager {
      * Standard shutdown sequence.
      */
     protected static function request_shutdown() {
-        global $CFG, $OUTPUT;
+        global $CFG, $OUTPUT, $PERF;
 
         // Help apache server if possible.
         $apachereleasemem = false;
@@ -216,14 +216,9 @@ class core_shutdown_manager {
                 $perf = get_performance_info();
                 error_log("PERF: " . $perf['txt']);
             }
-            if (MDL_PERFTOFOOT || debugging() || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
-                if (NO_OUTPUT_BUFFERING) {
-                    // If the performance footer was deferred then print it now.
-                    if (!CLI_SCRIPT && !WS_SERVER) {
-                        $perf = get_performance_info();
-                        echo $OUTPUT->select_element_for_replace('#perfdebugfooter', $perf['html']);
-                    }
-                }
+            if (!empty($PERF->perfdebugdeferred)) {
+                $perf = get_performance_info();
+                echo $OUTPUT->select_element_for_replace('#perfdebugfooter', $perf['html']);
             }
             if (MDL_PERFINC) {
                 $inc = get_included_files();
