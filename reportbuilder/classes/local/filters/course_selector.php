@@ -62,8 +62,7 @@ class course_selector extends base {
             return ['', []];
         }
 
-        $paramprefix = database::generate_param_name() . '_';
-        [$courseselect, $courseparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, $paramprefix);
+        [$courseselect, $courseparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, database::generate_param_name('_'));
 
         return ["{$fieldsql} $courseselect", array_merge($params, $courseparams)];
     }

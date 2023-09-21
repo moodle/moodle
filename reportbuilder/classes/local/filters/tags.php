@@ -116,13 +116,13 @@ class tags extends base {
             $select = "{$fieldsql} IS NULL";
         } else if ($operator === self::EQUAL_TO && !empty($tags)) {
             [$tagselect, $tagselectparams] = $DB->get_in_or_equal($tags, SQL_PARAMS_NAMED,
-                database::generate_param_name() . '_');
+                database::generate_param_name('_'));
 
             $select = "{$fieldsql} {$tagselect}";
             $params = array_merge($params, $tagselectparams);
         } else if ($operator === self::NOT_EQUAL_TO && !empty($tags)) {
             [$tagselect, $tagselectparams] = $DB->get_in_or_equal($tags, SQL_PARAMS_NAMED,
-                database::generate_param_name() . '_', false);
+                database::generate_param_name('_'), false);
 
             // We should also return those elements that aren't tagged at all.
             $select = "COALESCE({$fieldsql}, 0) {$tagselect}";
