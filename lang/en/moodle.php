@@ -1373,7 +1373,7 @@ $string['moodlenet:cannotconnecttoserver'] = 'Cannot connect to MoodleNet server
 $string['moodlenet:configoauthservice'] = 'Select a MoodleNet OAuth 2 service to enable sharing to that MoodleNet site. If the service doesn\'t exist yet, you will need to <a href="{$a}">create</a> it.';
 $string['moodlenet:eventresourceexported'] = 'Resource exported';
 $string['moodlenet:gotomoodlenet'] = 'Go to MoodleNet drafts';
-$string['moodlenet:issuerisnotauthorized'] = 'MoodleNet issuer is not authorized';
+$string['moodlenet:issuerisnotauthorized'] = 'MoodleNet issuer is not authorised';
 $string['moodlenet:issuerisnotenabled'] = 'MoodleNet issuer is not enabled';
 $string['moodlenet:issuerisnotset'] = 'MoodleNet issuer is not set at site administration';
 $string['moodlenet:outboundsettings'] = 'MoodleNet outbound settings';
