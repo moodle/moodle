@@ -311,7 +311,13 @@ class phpunit_util extends testing_util {
     public static function reset_database() {
         global $DB;
 
-        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+        if (defined('PHPUNIT_ISOLATED_TEST') && PHPUNIT_ISOLATED_TEST && self::$lastdbwrites === null) {
+            // This is an isolated test and the lastdbwrites has not yet been initialised.
+            // Isolated test runs are reset by the test runner before the run starts.
+            self::$lastdbwrites = $DB->perf_get_writes();
+        }
+
+        if (!is_null(self::$lastdbwrites) && self::$lastdbwrites == $DB->perf_get_writes()) {
             return false;
         }
 
