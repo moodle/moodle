@@ -39,6 +39,34 @@ class configure_form extends \moodleform {
     protected $communication;
 
     /**
+     * Class constructor
+     *
+     * @param \stdClass $course Course object
+     * @param int|null $instanceid Instance ID
+     * @param string|null $instancetype Instance type
+     * @param string|null $component Component name
+     * @param string|null $selectedcommunication Selected communication service (provider)
+     */
+    public function __construct(
+        \stdClass $course,
+        ?int $instanceid = null,
+        ?string $instancetype = null,
+        ?string $component = null,
+        ?string $selectedcommunication = null,
+    ) {
+        parent::__construct(
+            null,
+            [
+                'instance' => $course,
+                'instanceid' => $instanceid,
+                'instancetype' => $instancetype,
+                'component' => $component,
+                'selectedcommunication' => $selectedcommunication,
+            ],
+        );
+    }
+
+    /**
      * Defines the form fields.
      */
     public function definition() {
@@ -56,6 +84,8 @@ class configure_form extends \moodleform {
         );
         $this->communication->form_definition($mform);
         $this->communication->set_data($instance);
+
+        $this->set_form_definition_for_provider();
 
         // Form buttons.
         $buttonarray = [];
@@ -77,11 +107,24 @@ class configure_form extends \moodleform {
     }
 
     /**
-     * Fill in the communication page data depending on provider selected.
+     * Defines the requested/current provider
+     *
+     * Get the selected communication service (provider),
+     * and then use it to show the provider form fields.
      */
-    public function definition_after_data() {
-        $mform = $this->_form;
-        // Add communication plugins to the form with respect to the provider.
-        $this->communication->form_definition_for_provider($mform);
+    private function set_form_definition_for_provider(): void {
+        $instance = $this->_customdata['instance'];
+        if ($selectedcommunication = $this->_customdata['selectedcommunication']) {
+            // First is to check whether the selected communication was selected from the form.
+            $provider = $selectedcommunication;
+        } else if (isset($instance->selectedcommunication)) {
+            // If the form is not yet submitted, get the value from the DB.
+            $provider = $instance->selectedcommunication;
+        } else {
+            // Otherwise, set to PROVIDER_NONE.
+            $provider = \core_communication\processor::PROVIDER_NONE;
+        }
+
+        $this->communication->form_definition_for_provider($this->_form, $provider);
     }
 }

@@ -30,6 +30,7 @@ require_login();
 $instanceid = required_param('instanceid', PARAM_INT);
 $instancetype = required_param('instancetype', PARAM_TEXT);
 $component = required_param('component', PARAM_COMPONENT);
+$selectedcommunication = optional_param('selectedcommunication', null, PARAM_PLUGIN);
 
 $instanceinfo = [
     'instanceid' => $instanceid,
@@ -66,8 +67,16 @@ $PAGE->add_body_class('limitedwidth');
 
 // Append the instance data before passing to form object.
 $instanceinfo['instance'] = $instance;
+
 // Get our form definitions.
-$form = new \core_communication\form\configure_form(null, $instanceinfo);
+$form = new \core_communication\form\configure_form(
+    course: $instanceinfo['instance'],
+    instanceid: $instanceinfo['instanceid'],
+    instancetype: $instanceinfo['instancetype'],
+    component: $instanceinfo['component'],
+    selectedcommunication: $selectedcommunication
+);
+
 
 if ($form->is_cancelled()) {
 
