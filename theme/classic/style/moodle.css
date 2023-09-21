@@ -33220,7 +33220,7 @@ fieldset.coursesearchbox label {
   overflow: auto;
   margin: 0.125rem 0 0;
   padding: 0.5rem 0;
-  z-index: 2;
+  z-index: 3;
 }
 
 .form-autocomplete-suggestions li {
