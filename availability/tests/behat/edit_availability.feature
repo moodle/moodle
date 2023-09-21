@@ -235,16 +235,16 @@ Feature: edit_availability
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I press "Save changes"
-    # Testing edit settings link
-    And "Edit settings" "link" should exist in the "section-1" "core_availability > Section availability"
-    When I click on "Edit settings" "link" in the "section-1" "core_availability > Section availability"
+    # Testing edit restrictions link
+    And "Edit restrictions" "link" should exist in the "section-1" "core_availability > Section availability"
+    When I click on "Edit restrictions" "link" in the "section-1" "core_availability > Section availability"
     Then I should see "Restrict access"
     And I should not see "General"
     And I should see "Collapse all"
     And I should not see "Expand all"
     And I click on "Cancel" "button"
     And I am on "Course 1" course homepage with editing mode off
-    And I should not see "Edit settings"
+    And I should not see "Edit restrictions"
 
   @javascript
   Scenario: Edit activity availability using course page link
@@ -254,12 +254,12 @@ Feature: edit_availability
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     When I press "Save and return to course"
-    # Edit settings link not displayed when editing mode is off.
-    Then "Edit settings" "link" should not exist in the "MyForum" "core_availability > Activity availability"
-    # Testing edit settings link
+    # Edit restrictions link not displayed when editing mode is off.
+    Then "Edit restrictions" "link" should not exist in the "MyForum" "core_availability > Activity availability"
+    # Testing edit restrictions link
     But I am on "Course 1" course homepage with editing mode on
-    And "Edit settings" "link" should exist in the "MyForum" "core_availability > Activity availability"
-    And I click on "Edit settings" "link" in the "MyForum" "core_availability > Activity availability"
+    And "Edit restrictions" "link" should exist in the "MyForum" "core_availability > Activity availability"
+    And I click on "Edit restrictions" "link" in the "MyForum" "core_availability > Activity availability"
     And I should see "Restrict access"
     And I should not see "Content"
     And I should see "Collapse all"

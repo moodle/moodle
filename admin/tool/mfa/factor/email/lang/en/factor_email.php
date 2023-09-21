@@ -23,14 +23,13 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['email:accident'] = 'If you did not request this email, click continue to attempt to invalidate the login attempt.
-    If you clicked this link by accident, click cancel, and no action will be taken.';
+$string['email:accident'] = 'If you didn\'t request the email, click continue to invalidate the login attempt. If you clicked the link by accident, click cancel, and no action will be taken.';
 $string['email:browseragent'] = 'The browser details for this request are: \'{$a}\'';
 $string['email:geoinfo'] = 'This request appears to have originated from approximately:';
 $string['email:greeting'] = 'Hello {$a} &#128075;';
 $string['email:ipinfo'] = 'Login request details:';
-$string['email:link'] = 'this verification link';
-$string['email:loginlink'] = 'Or, if you\'re on the same device, use {$a}.';
+$string['email:link'] = 'verification link';
+$string['email:loginlink'] = 'Or, if you\'re on the same device, use this {$a}.';
 $string['email:message'] = 'Here\'s your verification code for {$a->sitename} ({$a->siteurl}).';
 $string['email:originatingip'] = 'This login request was made from \'{$a}\'';
 $string['email:revokelink'] = 'If this wasn\'t you, you can {$a}.';
@@ -44,22 +43,22 @@ $string['error:badcode'] = 'Code was not found. This may be an old link, a new c
 $string['error:parameters'] = 'Incorrect page parameters.';
 $string['error:wrongverification'] = 'Wrong code. Try again.';
 $string['event:unauthemail'] = 'Unauthorised email received';
-$string['info'] = '<p>Built-in factor. Uses e-mail address mentioned in user profile for sending verification codes</p>';
+$string['info'] = 'Built-in factor. A verification code is sent to the user\'s email.';
 $string['logindesc'] = 'We\'ve just sent a 6-digit code to your email: {$a}';
 $string['loginoption'] = 'Have a code emailed to you';
 $string['loginskip'] = "I didn't receive a code";
 $string['loginsubmit'] = 'Continue';
 $string['logintitle'] = "Verify it's you by email";
-$string['pluginname'] = 'E-Mail Factor';
-$string['privacy:metadata'] = 'The E-Mail Factor plugin does not store any personal data';
+$string['pluginname'] = 'Email';
+$string['privacy:metadata'] = 'The Email factor plugin does not store any personal data';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
 $string['settings:suspend'] = 'Suspend unauthorised accounts';
 $string['settings:suspend_help'] = 'Check this to suspend user accounts if an unauthorised email verification is received.';
-$string['setupfactor'] = 'E-Mail Factor setup';
+$string['setupfactor'] = 'Email factor setup';
 $string['summarycondition'] = 'has valid email setup';
-$string['unauthloginattempt'] = 'The user with id {$a->userid} made an unauthorised login attempt using email verification from
-IP {$a->ip} with browser agent {$a->useragent}';
-$string['unauthemail'] = 'Unauthorised Email';
+$string['unauthloginattempt'] = 'The user with ID {$a->userid} made an unauthorised login attempt using email verification from
+IP {$a->ip} with browser agent {$a->useragent}.';
+$string['unauthemail'] = 'Unauthorised email';
 $string['verificationcode'] = 'Enter verification code for confirmation';
-$string['verificationcode_help'] = 'Verification code has been sent to your email address';
+$string['verificationcode_help'] = 'A verification code has been sent to your email.';

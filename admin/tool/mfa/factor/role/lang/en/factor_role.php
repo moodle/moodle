@@ -23,8 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Role Factor';
-$string['privacy:metadata'] = 'The  user capability factor plugin does not store any personal data';
+$string['pluginname'] = 'Role';
+$string['privacy:metadata'] = 'The Role factor plugin does not store any personal data.';
 $string['settings:roles'] = 'Non-passing roles';
 $string['settings:roles_help'] = 'Select the roles that will not pass this factor. This allows you to force these roles to use other factors to authenticate.';
 $string['summarycondition'] = 'does NOT have any of the following roles assigned in any context: {$a}';

@@ -24,22 +24,22 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['action:revoke'] = 'Revoke TOTP authenticator';
+$string['action:revoke'] = 'Revoke time-based one-time password (TOTP) authenticator';
 $string['devicename'] = 'Device label';
-$string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can setup multiple devices so this label helps track which ones are being used. You should setup each device with their own unique code so they can be revoked separately.';
+$string['devicename_help'] = 'This is the device you have an authenticator app installed on. You can set up multiple devices so this label helps track which ones are being used. You should set up each device with their own unique code so they can be revoked separately.';
 $string['devicenameexample'] = 'eg "Work iPhone 11"';
-$string['error:alreadyregistered'] = 'This TOTP secret has already been registered';
+$string['error:alreadyregistered'] = 'This time-based one-time password (TOTP) secret has already been registered.';
 $string['error:codealreadyused'] = 'This code has already been used to authenticate. Please wait for a new code to be generated, and try again.';
 $string['error:futurecode'] = 'This code is invalid. Please verify the time on your authenticator device is correct and try again.
     Current system time is {$a}.';
 $string['error:oldcode'] = 'This code is too old. Please verify the time on your authenticator device is correct and try again.
     Current system time is {$a}.';
 $string['error:wrongverification'] = 'Incorrect verification code';
-$string['factorsetup'] = 'Setup App';
-$string['info'] = '<p>Use any TOTP authenticator app to get a verification code on your phone even when it is offline.</p>
-eg. <ul><li><a href="https://authy.com/download/">Twilio Authy</a></li>
-<li><a href="https://www.microsoft.com/en-us/account/authenticator#getapp">Microsoft Authenticator</a></li>
-<li>Google Authenticator for <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a> or <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank">Android</a></li></ul>
+$string['factorsetup'] = 'App setup';
+$string['info'] = '<p>Use any time-based one-time password (TOTP) authenticator app on your device to generate a verification code, even when it is offline.</p>
+
+<p>For example <a href="https://2fas.com/">2FAS Auth</a>, <a href="https://freeotp.github.io/">FreeOTP</a>, Google Authenticator, Microsoft Authenticator or Twilio Authy.</p>
+
 <p>Note: Please ensure your device time and date has been set to "Auto" or "Network provided".</p>';
 $string['logindesc'] = 'Use the authenticator app in your mobile device to generate a code.';
 $string['loginoption'] = 'Use Authenticator application';
@@ -47,7 +47,7 @@ $string['loginskip'] = 'I don\'t have my device';
 $string['loginsubmit'] = 'Continue';
 $string['logintitle'] = 'Verify it\'s you by mobile app';
 $string['pluginname'] = 'Authenticator app';
-$string['privacy:metadata'] = 'The TOTP factor plugin does not store any personal data';
+$string['privacy:metadata'] = 'The Authenticator app factor plugin does not store any personal data.';
 $string['settings:totplink'] = 'Show mobile app setup link';
 $string['settings:totplink_help'] = 'If enabled the user will see a 3rd setup option with a direct otpauth:// link';
 $string['settings:window'] = 'TOTP verification window';
