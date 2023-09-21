@@ -478,7 +478,7 @@ class communication_feature_test extends \advanced_testcase {
 
         // Test if the power level is set according to the context.
         $this->assertEquals(
-            matrix_constants::POWER_LEVEL_MODERATOR,
+            matrix_constants::POWER_LEVEL_MOODLE_MODERATOR,
             $communicationprocessor->get_room_provider()->get_user_allowed_power_level($user1->id)
         );
         $this->assertEquals(

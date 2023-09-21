@@ -563,14 +563,22 @@ class communication_feature implements
 
     /**
      * Set the matrix power level with the room.
+     *
+     * Users with a non-moodle power level are not typically removed unless specified in the $forceremoval param.
+     * Matrix Admin users are never removed.
+     *
+     * @param array $forceremoval The users to force removal from the room, even if they have a custom power level
      */
-    private function set_matrix_power_levels(): void {
+    private function set_matrix_power_levels(
+        array $forceremoval = [],
+    ): void {
         // Get the current power levels.
         $currentpowerlevels = $this->get_current_powerlevel_data();
         $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
 
         // Get all the current users who need to be in the room.
         $userlist = $this->processor->get_all_userids_for_instance();
+
         // Translate the user ids to matrix user ids.
         $userlist = array_combine(
             array_map(
@@ -589,13 +597,19 @@ class communication_feature implements
             fn($level) => $level !== matrix_constants::POWER_LEVEL_DEFAULT,
         );
 
-        // Keep current room admins without changing them.
-        $currentadmins = array_filter(
-            $currentuserpowerlevels,
-            fn($level) => $level >= matrix_constants::POWER_LEVEL_MAXIMUM,
-        );
-        foreach ($currentadmins as $userid => $level) {
+        // Keep current room admins, and users which don't use our MODERATOR power level without changing them.
+        $staticusers = $this->get_users_with_custom_power_level($currentuserpowerlevels);
+        foreach ($staticusers as $userid => $level) {
             $newuserpowerlevels[$userid] = $level;
+        }
+
+        if (!empty($forceremoval)) {
+            // Remove the users from the power levels if they are not admins.
+            foreach ($forceremoval as $userid) {
+                if ($newuserpowerlevels < matrix_constants::POWER_LEVEL_MAXIMUM) {
+                    unset($newuserpowerlevels[$userid]);
+                }
+            }
         }
 
         if (!$this->power_levels_changed($currentuserpowerlevels, $newuserpowerlevels)) {
@@ -609,6 +623,29 @@ class communication_feature implements
             roomid: $this->get_room_id(),
             users: $newuserpowerlevels,
         );
+    }
+
+    /**
+     * Filter the list of users provided to remove those with a moodle-related power level.
+     *
+     * @param array $users
+     * @return array
+     */
+    private function get_users_with_custom_power_level(array $users): array {
+        return array_filter(
+            $users,
+            function ($level): bool {
+                switch ($level) {
+                    case matrix_constants::POWER_LEVEL_DEFAULT:
+                    case matrix_constants::POWER_LEVEL_MOODLE_SITE_ADMIN:
+                    case matrix_constants::POWER_LEVEL_MOODLE_MODERATOR:
+                        return false;
+                    default:
+                        return true;
+                }
+            },
+        );
+
     }
 
     /**
@@ -703,7 +740,7 @@ class communication_feature implements
         $powerlevel = matrix_constants::POWER_LEVEL_DEFAULT;
 
         if (has_capability('communication/matrix:moderator', $context, $userid)) {
-            $powerlevel = matrix_constants::POWER_LEVEL_MODERATOR;
+            $powerlevel = matrix_constants::POWER_LEVEL_MOODLE_MODERATOR;
         }
 
         // If site admin, override all caps.

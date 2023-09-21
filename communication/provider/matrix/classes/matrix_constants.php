@@ -36,6 +36,11 @@ class matrix_constants {
     public const POWER_LEVEL_MODERATOR = 50;
 
     /**
+     * User moderator power level for matrix.
+     */
+    public const POWER_LEVEL_MOODLE_MODERATOR = 51;
+
+    /**
      * User power level for matrix associated to moodle site admins. It is a custom power level for site admins.
      */
     public const POWER_LEVEL_MOODLE_SITE_ADMIN = 90;
