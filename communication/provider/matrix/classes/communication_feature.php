@@ -276,18 +276,27 @@ class communication_feature implements
 
         $membersremoved = [];
 
+        $currentpowerlevels = $this->get_current_powerlevel_data();
+        $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
+
         foreach ($userids as $userid) {
             // Check user is member of room first.
             $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid);
 
-            // Check if user is the room admin and halt removal of this user.
-            $response = $this->matrixapi->get_room_info($this->get_room_id());
-            $matrixroomdata = self::get_body($response);
-            $roomadmin = $matrixroomdata->creator;
-            $isadmin = $matrixuserid === $roomadmin;
+            if (!$matrixuserid) {
+                // Unable to find a matrix userid for this user.
+                continue;
+            }
+
+            if (array_key_exists($matrixuserid, $currentuserpowerlevels)) {
+                if ($currentuserpowerlevels[$matrixuserid] >= matrix_constants::POWER_LEVEL_MAXIMUM) {
+                    // Skip removing the user if they are an admin.
+                    continue;
+                }
+            }
 
             if (
-                !$isadmin && $matrixuserid && $this->check_user_exists($matrixuserid) &&
+                $this->check_user_exists($matrixuserid) &&
                 $this->check_room_membership($matrixuserid)
             ) {
                 $this->matrixapi->remove_member_from_room(
@@ -554,39 +563,114 @@ class communication_feature implements
 
     /**
      * Set the matrix power level with the room.
-     *
-     * @param array $resetusers The list of users to override and reset their power level to 0
      */
-    private function set_matrix_power_levels(array $resetusers = []): void {
-        // Get all the current users for the room.
-        $existingusers = $this->processor->get_all_userids_for_instance();
+    private function set_matrix_power_levels(): void {
+        // Get the current power levels.
+        $currentpowerlevels = $this->get_current_powerlevel_data();
+        $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
 
-        $userpowerlevels = [];
-        foreach ($existingusers as $existinguser) {
-            $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($existinguser);
+        // Get all the current users who need to be in the room.
+        $userlist = $this->processor->get_all_userids_for_instance();
+        // Translate the user ids to matrix user ids.
+        $userlist = array_combine(
+            array_map(
+                fn ($userid) => matrix_user_manager::get_matrixid_from_moodle($userid),
+                $userlist,
+            ),
+            $userlist,
+        );
 
-            if (!$matrixuserid) {
-                continue;
-            }
+        // Determine the power levels, and filter out anyone with the default level.
+        $newuserpowerlevels = array_filter(
+            array_map(
+                fn($userid) => $this->get_user_allowed_power_level($userid),
+                $userlist,
+            ),
+            fn($level) => $level !== matrix_constants::POWER_LEVEL_DEFAULT,
+        );
 
-            if (!empty($resetusers) && in_array($existinguser, $resetusers, true)) {
-                $userpowerlevels[$matrixuserid] = matrix_constants::POWER_LEVEL_DEFAULT;
-            } else {
-                $existinguserpowerlevel = $this->get_user_allowed_power_level($existinguser);
-                // We don't need to include the default power level users in request, as matrix will make then default anyways.
-                if ($existinguserpowerlevel > matrix_constants::POWER_LEVEL_DEFAULT) {
-                    $userpowerlevels[$matrixuserid] = $existinguserpowerlevel;
-                }
-            }
+        // Keep current room admins without changing them.
+        $currentadmins = array_filter(
+            $currentuserpowerlevels,
+            fn($level) => $level >= matrix_constants::POWER_LEVEL_MAXIMUM,
+        );
+        foreach ($currentadmins as $userid => $level) {
+            $newuserpowerlevels[$userid] = $level;
         }
 
-        // Now add the token user permission to retain the permission in the room.
-        $response = $this->matrixapi->get_room_info($this->get_room_id());
-        $matrixroomdata = self::get_body($response);
-        $roomadmin = $matrixroomdata->creator;
-        $userpowerlevels[$roomadmin] = matrix_constants::POWER_LEVEL_MAXIMUM;
+        if (!$this->power_levels_changed($currentuserpowerlevels, $newuserpowerlevels)) {
+            // No changes to make.
+            return;
+        }
 
-        $this->matrixapi->update_room_power_levels($this->get_room_id(), $userpowerlevels);
+
+        // Update the power levels for the room.
+        $this->matrixapi->update_room_power_levels(
+            roomid: $this->get_room_id(),
+            users: $newuserpowerlevels,
+        );
+    }
+
+    /**
+     * Check whether power levels have changed compared with the proposed power levels.
+     *
+     * @param array $currentuserpowerlevels The current power levels
+     * @param array $newuserpowerlevels The new power levels proposed
+     * @return bool Whether there is any change to be made
+     */
+    private function power_levels_changed(
+        array $currentuserpowerlevels,
+        array $newuserpowerlevels,
+    ): bool {
+        if (count($newuserpowerlevels) !== count($currentuserpowerlevels)) {
+            // Different number of keys - there must be a difference then.
+            return true;
+        }
+
+        // Sort the power levels.
+        ksort($newuserpowerlevels, SORT_NUMERIC);
+
+        // Get the current power levels.
+        ksort($currentuserpowerlevels);
+
+        $diff = array_merge(
+            array_diff_assoc(
+                $newuserpowerlevels,
+                $currentuserpowerlevels,
+            ),
+            array_diff_assoc(
+                $currentuserpowerlevels,
+                $newuserpowerlevels,
+            ),
+        );
+
+        return count($diff) > 0;
+    }
+
+    /**
+     * Get the current power level for the room.
+     *
+     * @return stdClass
+     */
+    private function get_current_powerlevel_data(): \stdClass {
+        $roomid = $this->get_room_id();
+        $response = $this->matrixapi->get_room_power_levels(
+            roomid: $roomid,
+        );
+        if ($response->getStatusCode() !== 200) {
+            throw new \moodle_exception(
+                'Unable to get power levels for room',
+            );
+        }
+
+        $powerdata = $this->get_body($response);
+        $powerdata = array_filter(
+            $powerdata->rooms->join->{$roomid}->state->events,
+            fn($value) => $value->type === 'm.room.power_levels'
+        );
+        $powerdata = reset($powerdata);
+
+        return $powerdata->content;
     }
 
     /**
