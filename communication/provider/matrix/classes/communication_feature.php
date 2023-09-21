@@ -163,9 +163,9 @@ class communication_feature implements
                 $response = $this->matrixapi->create_user(
                     userid: $qualifiedmuid,
                     displayname: $userfullname,
-                    threepids: [(object)[
+                    threepids: [(object) [
                         'medium' => 'email',
-                        'address' => $user->email
+                        'address' => $user->email,
                     ]],
                     externalids: [],
                 );
@@ -269,7 +269,7 @@ class communication_feature implements
         // This API requiures the remove_members_from_room feature.
         $this->matrixapi->require_feature(remove_member_from_room_feature::class);
 
-        if($this->get_room_id() === null) {
+        if ($this->get_room_id() === null) {
             return;
         }
 
@@ -617,7 +617,7 @@ class communication_feature implements
      * @return int
      */
     public function get_user_allowed_power_level(int $userid): int {
-        $context = \context_course::instance($this->processor->get_instance_id());
+        $context = \core\context\course::instance($this->processor->get_instance_id());
         $powerlevel = matrix_constants::POWER_LEVEL_DEFAULT;
 
         if (has_capability('communication/matrix:moderator', $context, $userid)) {
