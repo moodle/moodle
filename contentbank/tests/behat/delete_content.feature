@@ -43,7 +43,7 @@ Feature: Delete H5P file from the content bank
     And I click on "Delete" "link" in the ".cb-toolbar-container" "css_element"
     And I click on "Delete" "button" in the "Delete content" "dialogue"
     And I wait until the page is ready
-    And I should see "The content has been deleted."
+    And I should see "Content deleted."
     And I should not see "content2delete.h5p"
 
   Scenario: Users without the required capability can only delete their own content
@@ -94,5 +94,5 @@ Feature: Delete H5P file from the content bank
     Then I should see "Are you sure you want to delete the content 'content2delete.h5p'"
     And I should see "The content will only be deleted from the content bank"
     And I click on "Delete" "button" in the "Delete content" "dialogue"
-    And I should see "The content has been deleted."
+    And I should see "Content deleted."
     And I should not see "content2delete.h5p"
