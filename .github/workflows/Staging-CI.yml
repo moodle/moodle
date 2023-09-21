@@ -5,8 +5,8 @@ on:
   pull_request:
     branches:
       - develop
-    types:
-      - closed
+    # types:
+    #   - closed
 
 jobs:
   deploy:

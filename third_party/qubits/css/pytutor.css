@@ -220,6 +220,7 @@ div.ExecutionVisualizer #curInstr {
 
 div.ExecutionVisualizer #pyStdout {
   border: 1px solid #999999;
+  height: 60px !important;
   font-size: 10pt;
   padding: 3px;
   font-family: Andale mono, monospace;
@@ -233,6 +234,7 @@ div.ExecutionVisualizer #pyStdout {
 div.ui-wrapper {
   width: 75% !important;
   margin: auto !important;
+  overflow: visible !important;
 }
 div.ExecutionVisualizer .vizFrame {
   margin-bottom: 20px;
