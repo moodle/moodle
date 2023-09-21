@@ -60,7 +60,7 @@ trait upload_content_v3 {
                 sendasjson: false,
                 query: $query,
                 params: [
-                    'mediaid' => $mediaid,
+                    ':mediaid' => $mediaid,
                 ],
             );
         } else {

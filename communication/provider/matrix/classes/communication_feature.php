@@ -242,8 +242,8 @@ class communication_feature implements
 
         if (!$this->check_room_membership($matrixuserid)) {
             $response = $this->matrixapi->invite_member_to_room(
-                $this->get_room_id(),
-                $matrixuserid,
+                roomid: $this->get_room_id(),
+                userid: $matrixuserid,
             );
 
             $body = self::get_body($response);
@@ -293,8 +293,8 @@ class communication_feature implements
                 $this->check_room_membership($matrixuserid)
             ) {
                 $this->matrixapi->remove_member_from_room(
-                    $this->get_room_id(),
-                    $matrixuserid,
+                    roomid: $this->get_room_id(),
+                    userid: $matrixuserid,
                 );
 
                 $membersremoved[] = $userid;
@@ -315,7 +315,9 @@ class communication_feature implements
         // This API requires the get_user_info feature.
         $this->matrixapi->require_feature(get_user_info_feature::class);
 
-        $response = $this->matrixapi->get_user_info($matrixuserid);
+        $response = $this->matrixapi->get_user_info(
+            userid: $matrixuserid,
+        );
         $body = self::get_body($response);
 
         return isset($body->name);
@@ -332,7 +334,9 @@ class communication_feature implements
         // This API requires the get_room_members feature.
         $this->matrixapi->require_feature(get_room_members_feature::class);
 
-        $response = $this->matrixapi->get_room_members($this->get_room_id());
+        $response = $this->matrixapi->get_room_members(
+            roomid: $this->get_room_id(),
+        );
         $body = self::get_body($response);
 
         // Check user id is in the returned room member ids.
@@ -396,12 +400,17 @@ class communication_feature implements
         ]);
 
         // Get room data.
-        $response = $this->matrixapi->get_room_info($this->get_room_id());
+        $response = $this->matrixapi->get_room_info(
+            roomid: $this->get_room_id(),
+        );
         $remoteroomdata = self::get_body($response);
 
         // Update the room name when it's updated from the form.
         if ($remoteroomdata->name !== $this->processor->get_room_name()) {
-            $this->matrixapi->update_room_name($this->get_room_id(), $this->processor->get_room_name());
+            $this->matrixapi->update_room_name(
+                roomid: $this->get_room_id(),
+                name: $this->processor->get_room_name(),
+            );
         }
 
         // Update the room topic if set.
@@ -451,12 +460,18 @@ class communication_feature implements
                 $contenturi = self::get_body($response)->content_uri;
 
                 // Now update the room avatar.
-                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+                $response = $this->matrixapi->update_room_avatar(
+                    roomid: $this->get_room_id(),
+                    avatarurl: $contenturi,
+                );
 
                 // And finally upload the content.
                 $this->matrixapi->upload_content($instanceimage);
             } else {
-                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), null);
+                $response = $this->matrixapi->update_room_avatar(
+                    roomid: $this->get_room_id(),
+                    avatarurl: null,
+                );
             }
         } else {
             // Prior to v1.7 the only way to upload content was to upload the content, which returns a mxc URI to use.
@@ -469,7 +484,10 @@ class communication_feature implements
             }
 
             // Now update the room avatar.
-            $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+            $response = $this->matrixapi->update_room_avatar(
+                roomid: $this->get_room_id(),
+                avatarurl: $contenturi,
+            );
         }
 
         // Indicate the avatar has been synced if it was successfully set with Matrix.
