@@ -1,6 +1,11 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.4 ===
+
+* The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
+  appending additional string to the generated value
+
 === 4.3 ===
 
 * New external methods for retrieving system report data:

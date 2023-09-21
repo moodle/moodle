@@ -37,6 +37,9 @@ class database_test extends advanced_testcase {
      */
     public function test_generate_alias(): void {
         $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', database::generate_alias());
+
+        // Specify a suffix.
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)_$/', database::generate_alias('_'));
     }
 
     /**
@@ -48,10 +51,20 @@ class database_test extends advanced_testcase {
         $this->assertCount(3, $aliases);
         [$aliasone, $aliastwo, $aliasthree] = $aliases;
 
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', $aliasone);
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', $aliastwo);
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', $aliasthree);
+
         // Ensure they are different.
         $this->assertNotEquals($aliasone, $aliastwo);
         $this->assertNotEquals($aliasone, $aliasthree);
         $this->assertNotEquals($aliastwo, $aliasthree);
+
+        // Specify a suffix.
+        [$aliasfour, $aliasfive] = database::generate_aliases(2, '_');
+        $this->assertNotEquals($aliasfour, $aliasfive);
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)_$/', $aliasfour);
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)_$/', $aliasfive);
     }
 
     /**
@@ -59,6 +72,9 @@ class database_test extends advanced_testcase {
      */
     public function test_generate_param_name(): void {
         $this->assertMatchesRegularExpression('/^rbparam(\d+)$/', database::generate_param_name());
+
+        // Specify a suffix.
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)_$/', database::generate_param_name('_'));
     }
 
     /**
@@ -70,10 +86,20 @@ class database_test extends advanced_testcase {
         $this->assertCount(3, $params);
         [$paramone, $paramtwo, $paramthree] = $params;
 
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)$/', $paramone);
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)$/', $paramtwo);
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)$/', $paramthree);
+
         // Ensure they are different.
         $this->assertNotEquals($paramone, $paramtwo);
         $this->assertNotEquals($paramone, $paramthree);
         $this->assertNotEquals($paramtwo, $paramthree);
+
+        // Specify a suffix.
+        [$paramfour, $paramfive] = database::generate_param_names(2, '_');
+        $this->assertNotEquals($paramfour, $paramfive);
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)_$/', $paramfour);
+        $this->assertMatchesRegularExpression('/^rbparam(\d+)_$/', $paramfive);
     }
 
     /**
