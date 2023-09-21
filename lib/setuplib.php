@@ -2202,7 +2202,7 @@ function require_phpunit_isolation(): void {
         return;
     }
 
-    if (defined('PHPUNIT_ISOLATED_TEST')) {
+    if (defined('PHPUNIT_ISOLATED_TEST') && PHPUNIT_ISOLATED_TEST) {
         // Already isolated.
         return;
     }
