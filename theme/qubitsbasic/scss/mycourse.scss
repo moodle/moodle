@@ -107,12 +107,6 @@
   z-index: 50;
   border-bottom: 0px;
   box-shadow: 0px 15px 10px -15px rgba(0, 0, 0, 0.2);
-  @include breakpoint(xs) {
-    height: 80px;
-  }
-  @include breakpoint(sm) {
-    height: 80px;
-  }
 }
 .pagetitle-left-alignment {
   margin-left: 280px;
@@ -212,8 +206,8 @@
 
   .card-body-overlay {
     background: linear-gradient(
-      lighten($colorbgcard, 30),
-      darken($colorbgcard, 20)
+      lighten($colorbgcard, 15),
+      darken($colorbgcard, 10)
     );
     color: darken($colorbgcard, 45);
     padding: 20px 20px 30px 10px;
@@ -301,13 +295,9 @@
   display: none;
   cursor: pointer;
   color: #116cbf;
-  margin-right: 1.5rem;
-  @include breakpoint(xs) {
-    margin-right: 0;
-  }
 }
 
-.flex-mobile .max-width {
+.max-width {
   @include breakpoint(xs) {
     max-width: 90%;
   }
@@ -324,7 +314,7 @@
     max-width: 29%;
   }
 }
-.flex-mobile .flex-grow {
+.flex-grow {
   @include breakpoint(md) {
     flex: 0 0 43%;
   }
@@ -368,12 +358,6 @@
       width: 65%;
       margin-left: 20px;
     }
-    @include breakpoint(xs) {
-      height: 80px;
-    }
-    @include breakpoint(sm) {
-      height: 80px;
-    }
   }
   .arrow-left {
     cursor: pointer;
@@ -388,7 +372,7 @@
     padding: 0 0 150px 0;
     overflow: auto;
     margin: 0;
-    margin-top: 20px;
+    margin-top: 10px;
     .nav-item .arrow {
       font-size: 13px;
     }
@@ -986,9 +970,6 @@ button.close:focus,
 .breadcrumb {
   align-items: center;
 }
-.breadcrumb-item {
-  padding-right: 10px;
-}
 .pagetitle-left-alignment nav .breadcrumb-item.active {
   color: #333333;
   font-size: 20px;
@@ -1172,9 +1153,12 @@ a:not([class]):focus,
   .pagetitle-left-alignment .breadcrumb:not(:empty) {
     flex-wrap: wrap;
     padding: 0;
-    margin-bottom: 0;
   }
   .pagetitle-left-alignment .breadcrumb:not(:empty) .breadcrumb-item {
     padding: 0;
   }
+}
+.new-tab {
+  position: relative;
+  top: -6px;
 }
