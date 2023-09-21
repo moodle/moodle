@@ -1008,6 +1008,12 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_grades_get_grade_tree' => [
+        'classname' => 'core_grades\external\get_grade_tree',
+        'description' => 'Get the grade tree structure for a course',
+        'type' => 'read',
+        'ajax' => true,
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',

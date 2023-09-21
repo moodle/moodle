@@ -15,27 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/edit_tree_sticky_footer
+    @template core/bulkactions/bulk_action_trigger
 
-    Edit tree sticky footer template.
+    Renders a trigger element for a given bulk action.
 
     Context variables required for this template:
-    * movingmodeenabled - string - Whether moving mode is enabled.
-    * courseid - int - The course id.
+    * none
 
     Example context (json):
     {
-        "movingmodeenabled": "false",
-        "courseid": 1
     }
 }}
-<div class="col-auto">
-    {{#movingmodeenabled}}
-        <a class="btn btn-secondary" href="index.php?id={{courseid}}">
-            {{#cleanstr}}cancel{{/cleanstr}}
-        </a>
-     {{/movingmodeenabled}}
-    {{^movingmodeenabled}}
-        <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
-    {{/movingmodeenabled}}
-</div>
+<button
+    type="button"
+    class="btn py-0 d-flex flex-column"
+    data-action="{{$action}}{{/action}}"
+    title="{{$title}}{{/title}}"
+>
+    <span class="w-100 pl-2">{{$icon}}{{/icon}}</span>
+    <span>{{$title}}{{/title}}</span>
+</button>

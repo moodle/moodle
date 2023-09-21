@@ -25987,6 +25987,13 @@ blockquote {
   width: 48px !important;
 }
 
+/* Bulk actions in sticky footer. */
+#sticky-footer [data-type=bulkactions] {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: center;
+}
+
 /* Choice list component. */
 .choicelist {
   min-width: calc(300px - 25px);
@@ -35597,6 +35604,45 @@ p.arrow_button {
   display: block;
 }
 
+.path-grade-edit-tree .collapse-list .unlist {
+  padding-left: 2rem;
+}
+.path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode]:focus > .collapse-list-item:first-child {
+  background-color: #e0f0f2;
+  border-color: #b8dce2;
+}
+.path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode][data-selected=true] > .collapse-list-item:first-child {
+  background-color: #e0f0f2;
+  border-color: #b8dce2;
+  color: #0f6cbf;
+}
+.path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode] .collapse-list-item-content[aria-hidden=true] {
+  display: none;
+}
+.path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode][aria-expanded=true] > .collapse-list-item .collapsed-icon {
+  display: none;
+}
+.path-grade-edit-tree .collapse-list .unlist [data-for=sectionnode][aria-expanded=false] > .collapse-list-item .expanded-icon {
+  display: none;
+}
+.path-grade-edit-tree .collapse-list .unlist .collapse-list-item {
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+.path-grade-edit-tree .collapse-list .unlist .collapse-list-item .collapse-list-item-name {
+  font-weight: bold;
+}
+.path-grade-edit-tree .collapse-list .unlist .collapse-list-item .collapse-list-link {
+  color: #1d2125;
+  padding: 0 0.2rem;
+  margin-right: 0.3rem;
+}
+.path-grade-edit-tree .collapse-list .unlist .collapse-list-item .collapse-list-link i {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
+  margin: 0;
+}
 .path-grade-edit-tree .gradetree-wrapper {
   padding: 10px 10px;
   background-color: #f8f9fa;
@@ -35642,6 +35688,9 @@ p.arrow_button {
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .small {
   font-size: 70%;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemselect {
+  margin-right: 0.7rem;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemicon {
   font-size: 18px;
@@ -35692,6 +35741,9 @@ p.arrow_button {
   display: flex;
   min-height: 30px;
   align-items: center;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div .form-check {
+  padding: 0;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category {
   height: 24px;

@@ -84,7 +84,7 @@ if ($action == 'moveselect') {
     }
 }
 
-$grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
+$gradeedittree = new grade_edit_tree($gtree, $movingeid, $gpr);
 
 switch ($action) {
     case 'duplicate':
@@ -100,7 +100,7 @@ switch ($action) {
 
     case 'delete':
         if ($eid && confirm_sesskey()) {
-            if (!$grade_edit_tree->element_deletable($element)) {
+            if (!$gradeedittree->element_deletable($element)) {
                 // no deleting of external activities - they would be recreated anyway!
                 // exception is activity without grading or misconfigured activities
                 break;
@@ -148,9 +148,9 @@ switch ($action) {
         break;
 }
 
-//if we go straight to the db to update an element we need to recreate the tree as
-// $grade_edit_tree has already been constructed.
-//Ideally we could do the updates through $grade_edit_tree to avoid recreating it
+// If we go straight to the db to update an element we need to recreate the tree as
+// $gradeedittree has already been constructed.
+// Ideally we could do the updates through $gradeedittree to avoid recreating it.
 $recreatetree = false;
 
 if ($data = data_submitted() and confirm_sesskey()) {
@@ -164,7 +164,7 @@ if ($data = data_submitted() and confirm_sesskey()) {
             }
         }
 
-        $grade_edit_tree->move_elements($elements, $returnurl);
+        $gradeedittree->move_elements($elements, $returnurl);
     }
 
     // Update weights (extra credits) on categories and items.
@@ -241,23 +241,16 @@ print_grade_page_head($courseid, 'settings', 'setup', false,
 // Print Table of categories and items
 echo $OUTPUT->box_start('gradetreebox generalbox');
 
-//did we update something in the db and thus invalidate $grade_edit_tree?
+// Did we update something in the db and thus invalidate $gradeedittree?
 if ($recreatetree) {
-    $grade_edit_tree = new grade_edit_tree($gtree, $movingeid, $gpr);
+    $gradeedittree = new grade_edit_tree($gtree, $movingeid, $gpr);
 }
 
-$bulkmoveoptions = ['' => get_string('choosedots')] + $grade_edit_tree->categories;
 $tpldata = (object) [
     'actionurl' => $returnurl,
     'sesskey' => sesskey(),
-    'showsave' => !$moving,
-    'showbulkmove' => !$moving && count($grade_edit_tree->categories) > 1,
-    'bulkmoveoptions' => array_map(function($option) use ($bulkmoveoptions) {
-        return [
-            'name' => $bulkmoveoptions[$option],
-            'value' => $option
-        ];
-    }, array_keys($bulkmoveoptions))
+    'movingmodeenabled' => $moving,
+    'courseid' => $courseid
 ];
 
 // Check to see if we have a normalisation message to send.
@@ -266,11 +259,11 @@ if ($weightsadjusted) {
     $tpldata->notification = $notification->export_for_template($OUTPUT);
 }
 
-$tpldata->table = html_writer::table($grade_edit_tree->table);
+$tpldata->table = html_writer::table($gradeedittree->table);
 
-if ($moving) {
-    $tpldata->cancelmovingbutton = $OUTPUT->single_button(
-        new moodle_url('index.php', ['id' => $course->id]), get_string('cancel'), 'get');
+// If not in moving mode and there is more than one grade category, then initialise the bulk action module.
+if (!$moving && count($gradeedittree->categories) > 1) {
+    $PAGE->requires->js_call_amd('core_grades/bulkactions/edit/tree/bulk_actions', 'init', [$courseid]);
 }
 
 $footercontent = $OUTPUT->render_from_template('core_grades/edit_tree_sticky_footer', $tpldata);

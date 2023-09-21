@@ -3180,6 +3180,15 @@ blockquote {
     }
 }
 
+/* Bulk actions in sticky footer. */
+#sticky-footer {
+    [data-type="bulkactions"] {
+        display: flex;
+        flex: 0 0 100%;
+        align-items: center;
+    }
+}
+
 /* Choice list component. */
 .choicelist {
     // Choicelist is designed to fit inside a small modal.

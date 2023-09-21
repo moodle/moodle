@@ -15,27 +15,21 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/edit_tree_sticky_footer
+    @template core_grades/bulkactions/edit/tree/bulk_move_trigger
 
-    Edit tree sticky footer template.
+    Renders the bulk move trigger element in gradebook setup including hidden inputs related to the action.
 
     Context variables required for this template:
-    * movingmodeenabled - string - Whether moving mode is enabled.
-    * courseid - int - The course id.
+    * none
 
     Example context (json):
     {
-        "movingmodeenabled": "false",
-        "courseid": 1
     }
 }}
-<div class="col-auto">
-    {{#movingmodeenabled}}
-        <a class="btn btn-secondary" href="index.php?id={{courseid}}">
-            {{#cleanstr}}cancel{{/cleanstr}}
-        </a>
-     {{/movingmodeenabled}}
-    {{^movingmodeenabled}}
-        <input class="advanced btn btn-primary" type="submit" value="{{#cleanstr}}savechanges{{/cleanstr}}">
-    {{/movingmodeenabled}}
-</div>
+{{< core/bulkactions/bulk_action_trigger }}
+    {{$action}}move{{/action}}
+    {{$title}}{{#str}} move, core {{/str}}{{/title}}
+    {{$icon}}{{#pix}} i/dragdrop, core {{/pix}}{{/icon}}
+{{/ core/bulkactions/bulk_action_trigger }}
+<input type="hidden" name="bulkmove" value="0" id="bulkmoveinput">
+<input type="hidden" name="moveafter" value="" id="menumoveafter">
