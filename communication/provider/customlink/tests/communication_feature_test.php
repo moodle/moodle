@@ -33,7 +33,6 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @coversDefaultClass \communication_customlink\communication_feature
  */
 class communication_feature_test extends \advanced_testcase {
-
     use communication_test_helper_trait;
 
     public function setUp(): void {

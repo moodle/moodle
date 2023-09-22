@@ -52,5 +52,4 @@ function xmldb_communication_matrix_upgrade($oldversion) {
     }
 
     return true;
-
 }

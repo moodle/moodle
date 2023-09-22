@@ -24,7 +24,6 @@ namespace communication_matrix;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_constants {
-
     /**
      * User default power level for matrix.
      */

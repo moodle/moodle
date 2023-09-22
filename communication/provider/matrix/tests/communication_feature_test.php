@@ -33,6 +33,7 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \communication_matrix\communication_feature
  * @coversDefaultClass \communication_matrix\communication_feature
  */
 class communication_feature_test extends \advanced_testcase {
@@ -67,6 +68,7 @@ class communication_feature_test extends \advanced_testcase {
             ],
         );
 
+        // phpcs:ignore moodle.Commenting.InlineComment.DocBlock
         /** @var communication_feature */
         $provider = $communication->get_room_provider();
         $this->assertInstanceOf(
@@ -125,6 +127,7 @@ class communication_feature_test extends \advanced_testcase {
             roomtopic: 'Our room topic',
         );
 
+        // phpcs:ignore moodle.Commenting.InlineComment.DocBlock
         /** @var communication_feature */
         $provider = $communication->get_room_provider();
         $this->assertInstanceOf(

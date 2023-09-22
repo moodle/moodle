@@ -27,10 +27,9 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_communication\api
+ * @covers \core_communication\api
  */
 class api_test extends \advanced_testcase {
-
     use communication_test_helper_trait;
 
     public function setUp(): void {
@@ -284,7 +283,7 @@ class api_test extends \advanced_testcase {
      * Test the enabled communication plugin list and default.
      */
     public function test_get_enabled_providers_and_default(): void {
-        list($communicationproviders, $defaulprovider) = \core_communication\api::get_enabled_providers_and_default();
+        [$communicationproviders, $defaulprovider] = \core_communication\api::get_enabled_providers_and_default();
         // Get the communication plugins.
         $plugins = \core_component::get_plugin_list('communication');
         // Check the number of plugins matches plus 1 as we have none in the selection.

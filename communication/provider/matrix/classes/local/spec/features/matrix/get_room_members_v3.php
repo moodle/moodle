@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait get_room_members_v3 {
-
     /**
      * Get a list of room members.
      *

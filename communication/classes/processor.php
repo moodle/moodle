@@ -29,7 +29,6 @@ use stored_file;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class processor {
-
     /** @var string The magic 'none' provider */
     public const PROVIDER_NONE = 'none';
 
@@ -324,7 +323,7 @@ class processor {
 
         $DB->delete_records_select(
             'communication_user',
-            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?' ,
+            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?',
             [$this->instancedata->id, 0]
         );
     }

@@ -26,7 +26,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_room {
-
     private const TABLE = 'matrix_room';
 
     /** @var \stdClass|null $record The matrix room record from db */

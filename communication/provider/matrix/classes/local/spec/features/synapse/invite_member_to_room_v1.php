@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait invite_member_to_room_v1 {
-
     /**
      * Join a user to a room.
      *

@@ -45,11 +45,10 @@ use GuzzleHttp\Psr7\Response;
  */
 class communication_feature implements
     \core_communication\communication_provider,
-    \core_communication\user_provider,
+    \core_communication\form_provider,
     \core_communication\room_chat_provider,
     \core_communication\room_user_provider,
-    \core_communication\form_provider {
-
+    \core_communication\user_provider {
     /** @var ?matrix_room $room The matrix room object to update room information */
     private ?matrix_room $room = null;
 
@@ -166,7 +165,7 @@ class communication_feature implements
                     threepids: [(object) [
                         'medium' => 'email',
                         'address' => $user->email,
-                    ]],
+                    ], ],
                     externalids: [],
                 );
                 $body = json_decode($response->getBody());
@@ -542,9 +541,12 @@ class communication_feature implements
 
     public static function set_form_definition(\MoodleQuickForm $mform): void {
         // Room description for the communication provider.
-        $mform->insertElementBefore($mform->createElement('text', 'matrixroomtopic',
+        $mform->insertElementBefore($mform->createElement(
+            'text',
+            'matrixroomtopic',
             get_string('matrixroomtopic', 'communication_matrix'),
-            'maxlength="255" size="20"'), 'addcommunicationoptionshere');
+            'maxlength="255" size="20"'
+        ), 'addcommunicationoptionshere');
         $mform->addHelpButton('matrixroomtopic', 'matrixroomtopic', 'communication_matrix');
         $mform->setType('matrixroomtopic', PARAM_TEXT);
     }
@@ -645,7 +647,6 @@ class communication_feature implements
                 }
             },
         );
-
     }
 
     /**

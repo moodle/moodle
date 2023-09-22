@@ -30,7 +30,6 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @coversDefaultClass \core_communication\processor
  */
 class processor_test extends \advanced_testcase {
-
     use communication_test_helper_trait;
 
     /**
@@ -61,8 +60,10 @@ class processor_test extends \advanced_testcase {
         );
 
         // Now test the record against the database.
-        $communicationrecord = $DB->get_record('communication',
-            ['instanceid' => $instanceid, 'component' => $component, 'instancetype' => $instancetype]);
+        $communicationrecord = $DB->get_record(
+            'communication',
+            ['instanceid' => $instanceid, 'component' => $component, 'instancetype' => $instancetype]
+        );
 
         // Test against the set data.
         $this->assertNotEmpty($communicationrecord);
@@ -114,7 +115,7 @@ class processor_test extends \advanced_testcase {
         $communicationrecord = $DB->get_record('communication', [
             'instanceid' => $instanceid,
             'component' => $component,
-            'instancetype' => $instancetype
+            'instancetype' => $instancetype,
         ]);
 
         // Test against the set data.
@@ -163,7 +164,7 @@ class processor_test extends \advanced_testcase {
         $communicationrecord = $DB->get_record('communication', [
             'instanceid' => $instanceid,
             'component' => $component,
-            'instancetype' => $instancetype
+            'instancetype' => $instancetype,
         ]);
 
         // Test against the set data.
@@ -173,7 +174,8 @@ class processor_test extends \advanced_testcase {
         $communicationprocessor = processor::load_by_instance(
             $component,
             $instancetype,
-            $instanceid);
+            $instanceid
+        );
         $this->assertNull($communicationprocessor);
     }
 

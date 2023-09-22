@@ -32,7 +32,6 @@ use GuzzleHttp\Psr7\Utils;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait upload_content_v3 {
-
     /**
      * Upload the content in the matrix/synapse server.
      *
