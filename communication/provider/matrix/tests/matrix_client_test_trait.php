@@ -47,7 +47,7 @@ trait matrix_client_test_trait {
         mocked_matrix_client::reset_client();
     }
 
-    public function tearDown():void {
+    public function tearDown(): void {
         parent::tearDown();
 
         // Reset the test client.

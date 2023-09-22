@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait update_room_topic_v3 {
-
     /**
      * Set the topic for a room.
      *
@@ -51,6 +50,5 @@ trait update_room_topic_v3 {
             endpoint: '_matrix/client/v3/rooms/:roomid/state/m.room.topic',
             params: $params,
         ));
-
     }
 }

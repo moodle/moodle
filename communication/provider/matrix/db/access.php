@@ -14,24 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_communication;
-
 /**
- * A base communication provider.
+ * Capability definitions for matrix communication.
  *
- * This interface should be used to declare support for the instantiation method for communication providers.
- *
- * Every communication provider must, as a minimum, implement this provider.
- *
- * @package    core_communication
- * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
+ * @package    communication_matrix
+ * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface communication_provider {
-    /**
-     * A base communication provider.
-     *
-     * @param processor $communication The communication object
-     */
-    public static function load_for_instance(processor $communication): self;
-}
+
+defined('MOODLE_INTERNAL') || die();
+
+$capabilities = [
+
+    // Matrix moderator capability which aligns with the matrix moderator role or power level 50.
+    'communication/matrix:moderator' => [
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => [
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+        ],
+    ],
+];

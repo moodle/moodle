@@ -24,7 +24,6 @@ namespace communication_matrix;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class matrix_user_manager {
-
     /**
      * Gets matrix user id from moodle.
      *
@@ -33,7 +32,7 @@ class matrix_user_manager {
      */
     public static function get_matrixid_from_moodle(
         int $userid,
-    ) : ?string {
+    ): ?string {
         self::load_requirements();
         $field = profile_user_record($userid);
         $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
@@ -141,7 +140,7 @@ class matrix_user_manager {
         // Check if matrixuserid exists in user_info_field table.
         $matrixuserid = $DB->count_records('user_info_field', [
             'shortname' => 'matrixuserid',
-            'categoryid' => $categoryid
+            'categoryid' => $categoryid,
         ]);
 
         if ($matrixuserid < 1) {
@@ -158,7 +157,7 @@ class matrix_user_manager {
                 'visible' => 0,
                 'locked' => 1,
                 'param1' => 30,
-                'param2' => 2048
+                'param2' => 2048,
             ];
 
             $profileclass->define_save($data);

@@ -27,7 +27,6 @@ use core_communication\processor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class add_members_to_room_task extends adhoc_task {
-
     public function execute() {
         // Initialize the custom data operation to be used for the action.
         $data = $this->get_custom_data();
@@ -55,7 +54,7 @@ class add_members_to_room_task extends adhoc_task {
         // Add ad-hoc task to update the provider room.
         $task = new self();
         $task->set_custom_data([
-            'id' => $communication->get_id()
+            'id' => $communication->get_id(),
         ]);
 
         // Queue the task for the next run.

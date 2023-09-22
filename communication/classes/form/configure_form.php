@@ -26,13 +26,12 @@ namespace core_communication\form;
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->libdir.'/formslib.php');
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Defines the configure communication form.
  */
 class configure_form extends \moodleform {
-
     /**
      * @var \core_communication\api $communication The communication api object.
      */

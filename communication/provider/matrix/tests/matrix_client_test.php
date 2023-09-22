@@ -301,7 +301,7 @@ class matrix_client_test extends \advanced_testcase {
      */
     public function require_features_provider(): array {
         // We'll just add to the standard testcases.
-        $testcases = array_map(static function(array $testcase): array {
+        $testcases = array_map(static function (array $testcase): array {
             $testcase[1] = [$testcase[1]];
             return $testcase;
         }, $this->implements_feature_provider());

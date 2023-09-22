@@ -266,7 +266,7 @@ class command_test extends \advanced_testcase {
             mock: $mock,
         );
 
-        $mock->append(function(Request $request) use ($expected): Response {
+        $mock->append(function (Request $request) use ($expected): Response {
             $this->assertSame(
                 $expected,
                 $request->getUri()->getQuery(),

@@ -52,7 +52,7 @@ if (!$communication) {
 }
 
 // Set variables according to the component callback and use them on the page.
-list($instance, $context, $heading, $returnurl) = component_callback(
+[$instance, $context, $heading, $returnurl] = component_callback(
     $component,
     'get_communication_instance_data',
     [$instanceid]
@@ -79,11 +79,8 @@ $form = new \core_communication\form\configure_form(
 
 
 if ($form->is_cancelled()) {
-
     redirect($returnurl);
-
 } else if ($data = $form->get_data()) {
-
     component_callback($component, 'update_communication_instance_data', [$data]);
     redirect($returnurl);
 }

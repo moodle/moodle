@@ -26,7 +26,6 @@ namespace communication_matrix;
  * @coversDefaultClass \communication_matrix\matrix_room
  */
 class matrix_room_test extends \advanced_testcase {
-
     /**
      * Test for load_by_processor_id with no record.
      *
@@ -84,7 +83,6 @@ class matrix_room_test extends \advanced_testcase {
         $this->assertEquals(54321, $reloadedroom->get_processor_id());
         $this->assertEquals('The topic of this room is thusly', $reloadedroom->get_topic());
         $this->assertEquals('This is a roomid', $reloadedroom->get_room_id());
-
     }
 
     /**

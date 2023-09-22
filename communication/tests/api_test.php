@@ -27,10 +27,9 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_communication\api
+ * @covers \core_communication\api
  */
 class api_test extends \advanced_testcase {
-
     use communication_test_helper_trait;
 
     public function setUp(): void {
@@ -251,9 +250,12 @@ class api_test extends \advanced_testcase {
     }
 
     /**
-     * Test the update_room_membership for adding adn removing members.
+     * Test the adding and removing of members from room.
+     *
+     * @covers ::add_members_to_room
+     * @covers ::remove_members_from_room
      */
-    public function test_update_room_membership(): void {
+    public function test_adding_and_removing_of_room_membership(): void {
         $course = $this->get_course();
         $userid = $this->get_user()->id;
 
@@ -281,11 +283,40 @@ class api_test extends \advanced_testcase {
      * Test the enabled communication plugin list and default.
      */
     public function test_get_enabled_providers_and_default(): void {
-        list($communicationproviders, $defaulprovider) = \core_communication\api::get_enabled_providers_and_default();
+        [$communicationproviders, $defaulprovider] = \core_communication\api::get_enabled_providers_and_default();
         // Get the communication plugins.
         $plugins = \core_component::get_plugin_list('communication');
         // Check the number of plugins matches plus 1 as we have none in the selection.
         $this->assertCount(count($plugins) + 1, $communicationproviders);
         $this->assertEquals(processor::PROVIDER_NONE, $defaulprovider);
+    }
+
+    /**
+     * Test the update of room membership with the change user role.
+     *
+     * @covers ::update_room_membership
+     */
+    public function test_update_room_membership_on_user_role_change(): void {
+        global $DB;
+
+        // Generate the data.
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->get_course();
+        $coursecontext = \context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\add_members_to_room_task');
+        $this->assertCount(1, $adhoctask);
+
+        $adhoctask = reset($adhoctask);
+        $this->assertInstanceOf('\\core_communication\\task\\add_members_to_room_task', $adhoctask);
+
+        // Test the tasks added as the role is a teacher.
+        $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\update_room_membership_task');
+        $this->assertCount(1, $adhoctask);
+
+        $adhoctask = reset($adhoctask);
+        $this->assertInstanceOf('\\core_communication\\task\\update_room_membership_task', $adhoctask);
     }
 }

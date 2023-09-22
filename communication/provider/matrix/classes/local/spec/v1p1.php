@@ -34,6 +34,8 @@ class v1p1 extends \communication_matrix\matrix_client {
     use features\matrix\update_room_name_v3;
     use features\matrix\update_room_topic_v3;
     use features\matrix\upload_content_v3;
+    use features\matrix\update_room_power_levels_v3;
+    use features\matrix\get_room_powerlevels_from_sync_v3;
 
     // We use the Synapse API here because it can invite users to a room without requiring them to accept the invite.
     use features\synapse\invite_member_to_room_v1;

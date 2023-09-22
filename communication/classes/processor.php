@@ -29,7 +29,6 @@ use stored_file;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class processor {
-
     /** @var string The magic 'none' provider */
     public const PROVIDER_NONE = 'none';
 
@@ -172,6 +171,21 @@ class processor {
     }
 
     /**
+     * Get all the user ids flagged as deleted.
+     *
+     * @return array
+     */
+    public function get_all_delete_flagged_userids(): array {
+        global $DB;
+        return $DB->get_fieldset_select(
+            'communication_user',
+            'userid',
+            'commid = ? AND deleted = ?',
+            [$this->instancedata->id, 1]
+        );
+    }
+
+    /**
      * Create communication user record for mapping and sync.
      *
      * @param array $userids The user ids
@@ -309,7 +323,7 @@ class processor {
 
         $DB->delete_records_select(
             'communication_user',
-            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?' ,
+            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?',
             [$this->instancedata->id, 0]
         );
     }
@@ -399,6 +413,15 @@ class processor {
 
     /**
      * Get communication instance id.
+     *
+     * @return int
+     */
+    public function get_instance_id(): int {
+        return $this->instancedata->instanceid;
+    }
+
+    /**
+     * Get communication instance component.
      *
      * @return string
      */

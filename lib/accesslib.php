@@ -1645,6 +1645,17 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     core_course_category::role_assignment_changed($roleid, $context);
 
+    // Update the room membership and power levels when the user role changes.
+    if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $coursecontext->instanceid,
+        );
+
+        $communication->update_room_membership([$userid]);
+    }
+
     $event = \core\event\role_assigned::create(array(
         'context' => $context,
         'objectid' => $ra->roleid,
@@ -1750,6 +1761,19 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             $event->add_record_snapshot('role_assignments', $ra);
             $event->trigger();
             core_course_category::role_assignment_changed($ra->roleid, $context);
+
+            // Update the room membership and power levels when the user role changes.
+            if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
+                $communication = \core_communication\api::load_by_instance(
+                    'core_course',
+                    'coursecommunication',
+                    $coursecontext->instanceid,
+                );
+
+                $communication->update_room_membership([$ra->userid]);
+            }
+
+
         }
     }
     unset($ras);

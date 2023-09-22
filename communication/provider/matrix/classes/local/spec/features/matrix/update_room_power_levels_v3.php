@@ -17,41 +17,60 @@
 namespace communication_matrix\local\spec\features\matrix;
 
 use communication_matrix\local\command;
+use communication_matrix\matrix_constants;
 use GuzzleHttp\Psr7\Response;
 
 /**
- * Matrix API feature to update a room avatar.
+ * Matrix API feature to update a room power levels.
  *
- * https://spec.matrix.org/v1.1/client-server-api/#put_matrixclientv3roomsroomidstateeventtypestatekey
+ * Matrix rooms have a concept of power levels, which are used to determine what actions a user can perform in a room.
+ *
+ * https://spec.matrix.org/v1.1/client-server-api/#mroompower_levels
  *
  * @package    communication_matrix
- * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
+ * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @codeCoverageIgnore
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
-trait update_room_avatar_v3 {
+trait update_room_power_levels_v3 {
     /**
      * Set the avatar for a room to the specified URL.
      *
      * @param string $roomid The roomid to set for
-     * @param null|string $avatarurl The mxc URL to use
+     * @param array $users The users to set power levels for
+     * @param int $ban The level required to ban a user
+     * @param int $invite The level required to invite a user
+     * @param int $kick The level required to kick a user
+     * @param array $notifications The level required to send notifications
+     * @param int $redact The level required to redact events
      * @return Response
      */
-    public function update_room_avatar(
+    public function update_room_power_levels(
         string $roomid,
-        ?string $avatarurl,
+        array $users,
+        int $ban = matrix_constants::POWER_LEVEL_MAXIMUM,
+        int $invite = matrix_constants::POWER_LEVEL_MODERATOR,
+        int $kick = matrix_constants::POWER_LEVEL_MODERATOR,
+        array $notifications = [
+            'room' => matrix_constants::POWER_LEVEL_MODERATOR,
+        ],
+        int $redact = matrix_constants::POWER_LEVEL_MODERATOR,
     ): Response {
         $params = [
             ':roomid' => $roomid,
-            'url' => $avatarurl,
+            'ban' => $ban,
+            'invite' => $invite,
+            'kick' => $kick,
+            'notifications' => $notifications,
+            'redact' => $redact,
+            'users' => $users,
         ];
 
         return $this->execute(new command(
             $this,
             method: 'PUT',
-            endpoint: '_matrix/client/v3/rooms/:roomid/state/m.room.avatar',
-            ignorehttperrors: true,
+            endpoint: '_matrix/client/v3/rooms/:roomid/state/m.room.power_levels',
             params: $params,
         ));
     }

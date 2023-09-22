@@ -20,16 +20,15 @@ use core\task\adhoc_task;
 use core_communication\processor;
 
 /**
- * Class create_and_configure_room_task to add a task to create a room and execute the task to action the creation.
- *
- * this task will be queued by the communication api and will use the communication handler api to action the creation.
+ * Class update_room_membership_task to add the task to update members for the room and execute the task to action the addition.
  *
  * @package    core_communication
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class create_and_configure_room_task extends adhoc_task {
+class update_room_membership_task extends adhoc_task {
     public function execute() {
+        // Initialize the custom data operation to be used for the action.
         $data = $this->get_custom_data();
 
         // Call the communication api to action the operation.
@@ -40,17 +39,7 @@ class create_and_configure_room_task extends adhoc_task {
             return;
         }
 
-        if (!$communication->is_instance_active()) {
-            mtrace("Skipping room creation because the instance is not active");
-            return;
-        }
-
-        // If the room is created successfully, add members to the room if supported by the provider.
-        if ($communication->get_room_provider()->create_chat_room() && $communication->supports_user_features()) {
-            add_members_to_room_task::queue(
-                $communication
-            );
-        }
+        $communication->get_room_user_provider()->update_room_membership($communication->get_instance_userids());
     }
 
     /**
@@ -59,7 +48,7 @@ class create_and_configure_room_task extends adhoc_task {
      * @param processor $communication The communication processor to perform the action on
      */
     public static function queue(
-        processor $communication,
+        processor $communication
     ): void {
 
         // Add ad-hoc task to update the provider room.

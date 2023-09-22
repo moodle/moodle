@@ -27,7 +27,6 @@ use core_communication\processor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class remove_members_from_room extends adhoc_task {
-
     public function execute() {
         // Initialize the custom data operation to be used for the action.
         $data = $this->get_custom_data();
@@ -40,7 +39,7 @@ class remove_members_from_room extends adhoc_task {
             return;
         }
 
-        $communication->get_room_user_provider()->remove_members_from_room($communication->get_instance_userids(true, true));
+        $communication->get_room_user_provider()->remove_members_from_room($communication->get_all_delete_flagged_userids());
 
         // Now remove any mapping for users who are not in the room.
         $communication->delete_instance_non_synced_user_mapping($communication->get_instance_userids(false, true));
@@ -58,7 +57,7 @@ class remove_members_from_room extends adhoc_task {
         // Add ad-hoc task to update the provider room.
         $task = new self();
         $task->set_custom_data([
-            'id' => $communication->get_id()
+            'id' => $communication->get_id(),
         ]);
 
         // Queue the task for the next run.
