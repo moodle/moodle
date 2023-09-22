@@ -1,0 +1,30 @@
+{
+	"title" : "1.4 Master Challenge 3",
+	"question": "You and your friend are engaged in a friendly competition to locate a treasure trove of coins and stars. Whoever gathers the highest count of both, wins. Starting on equal footing, both of you possess five coins and no stars. The following events take place as you proceed: 1. Each of you finds 10 coins and 2 stars in the neighborhood. 2. You find 15 coins and 2 stars and your friend finds 8 coins and 6 stars in the park. 3. You decide to trade some of your coins for the stars. You give 5 coins to your friend and get 2 stars in return.<br>Write a Java program to implement this treasure hunt using compound assignment operators.Also print the values of coins and stars each person collects after each hunt.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN21",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

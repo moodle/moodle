@@ -443,12 +443,12 @@ class authcode extends \auth_classlink\loginflow\base {
 
             if (empty($tokenrec->userid)) {
                 // ERROR.
-                echo 'ERROR1';die();
+                echo 'First ERROR1';die();
             }
             $user = $DB->get_record('user', ['id' => $tokenrec->userid]);
             if (empty($user)) {
                 // ERROR.
-                echo 'ERROR2';die();
+                echo 'First ERROR2';die();
             }
             $username = $user->username;
             $this->updatetoken($tokenrec->id, $authparams, $tokenparams);
@@ -468,7 +468,7 @@ class authcode extends \auth_classlink\loginflow\base {
             $user = $DB->get_record('user', ['username' => $user_uselogin]);          
             if (empty($user)) {
                 // ERROR.
-                echo 'ERROR2';die();
+                echo 'USER NOT FOUND IN MOODLE - ERROR2';die();
             }
 
             $username = $user->username;
@@ -501,12 +501,12 @@ class authcode extends \auth_classlink\loginflow\base {
 
                             if (empty($tokenrec->userid)) {
                                 // ERROR.
-                                echo 'ERROR1';die();
+                                echo 'ELSE New ERROR1';die();
                             }
                             $user = $DB->get_record('user', ['id' => $tokenrec->userid]);
                             if (empty($user)) {
                                 // ERROR.
-                                echo 'ERROR2';die();
+                                echo 'ELSE New ERROR2';die();
                             }
                             $username = $user->username;
                             $this->updatetoken($tokenrec->id, $authparams, $tokenparams);

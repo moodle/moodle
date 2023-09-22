@@ -179,10 +179,4 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
 });
 {{/js}}
 
-{{^issiteadmin}}
-{{#js}}
-require(["jquery"], function($){
-    $(".fa-lock").parents("li.course-section").hide();
-});
-{{/js}}
-{{/issiteadmin}}
+

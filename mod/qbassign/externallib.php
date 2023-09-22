@@ -32,6 +32,12 @@ require_once("$CFG->dirroot/user/externallib.php");
 require_once("$CFG->dirroot/mod/qbassign/lib.php");
 require_once("$CFG->dirroot/mod/qbassign/locallib.php");
 require_once("$CFG->dirroot/mod/quiz/lib.php");
+require_once("$CFG->dirroot/mod/qbassign/submission/file/locallib.php");
+require_once("$CFG->dirroot/mod/qbassign/qbassignmentplugin.php");
+require_once("$CFG->dirroot/files/externallib.php");
+require_once("$CFG->libdir/filelib.php");
+require_once("$CFG->libdir/completionlib.php");
+
 /**
  * qbassign functions
  * @copyright 2012 Paul Charsley
@@ -1816,10 +1822,10 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
     public static function save_submission($qbassignmentid, $plugindata) {
         global $CFG, $USER;
 
-       /*$params = self::validate_parameters(self::save_submission_parameters(),
+        $params = self::validate_parameters(self::save_submission_parameters(),
                                             array('qbassignmentid' => $qbassignmentid,
-                                                  'plugindata' => $plugindata)); */
-        $params['plugindata'] = $plugindata;
+                                                  'plugindata' => $plugindata)); 
+        
         list($qbassignment, $course, $cm, $context) = self::validate_qbassign($params['qbassignmentid']);
 
         $notices = array();
@@ -2996,122 +3002,177 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
          );
      }
  
-     public static function get_assignment_service($uniquefield)
-     {        
-         require_once('../../config.php');
-         global $DB,$CFG,$USER,$CONTEXT;
-        
-         //Get activity unique field details       
-         $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
- 
-         if($get_assignmentdetails->id!='')
-         { 
-             $assignid = $get_assignmentdetails->id;
-             $courseid = $get_assignmentdetails->course;
- 
-             //Get activity Module details
-             $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid,'course' => $courseid));
-             $moduleid = $get_coursefield->id;
- 
-             //Get assignment submission details
-             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id,'qbassignment'=>$get_assignmentdetails->id));
- 
-             $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id,'qbassignment'=>$get_assignmentdetails->id));
- 
-             //Get submission type details (file,onlinetex,codeblock)
-             $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
-             $sql .= " AND name = :name AND value = :value ";
-             $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
-             $getpluginconfig = $DB->get_records_sql($sql,
-             [
-                 'qbdetid' => $get_assignmentdetails->id,
-                 'subtype' => 'qbassignsubmission',
-                 'name' => 'enabled',
-                 'value' => '1',
-                 'type1' => 'file',
-                 'type2' => 'onlinetex',
-                 'type3' => 'codeblock'
-             ]
-         );
-             $countsql = count($getpluginconfig);
-             if($countsql>0)
-             { 
-                 foreach($getpluginconfig as $config)
-                 {
-                     if($config->plugin=='onlinetex')
-                     { 
-                        $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'wordlimit','plugin'=>'onlinetex'));
- 
-                        $submissintype = array(
-                         'type'=> $config->plugin,
-                         'wordlimit' => ($config->plugin=='onlinetex')?$get_qbdetails->value:''                    
-                         ); 
-                     }
-                     if($config->plugin=='file')
-                     {
-                         $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxfilesubmissions','plugin'=>'file'));
- 
-                         $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'maxsubmissionsizebytes','plugin'=>'file'));
- 
-                            $submissintype = array(
-                             'type'=> $config->plugin,
-                             'maxfileallowed' => ($config->plugin=='file')?$get_fbdetails->value:'',
-                             'maxfilesize' => ($config->plugin=='file')?$get_fmbdetails->value:''                    
-                             ); 
-                     }
-                 }
-             }
-             $context = context_course::instance($get_assignmentdetails->course);
-             $roles = get_user_roles($context, $USER->id, true);
-             $role = key($roles);
-             $rolename = $roles[$role]->shortname;
- 
-             
-             $userdetails = array(
-                 'userid' => $USER->id,
-                 'email' => $USER->email,
-                 'username' => $USER->username,
-                 'sesskey' => $USER->sesskey,
-                 'role' => $rolename
-             );
-             $returnarray = array(
-                 'course_id' => $get_assignmentdetails->course,            
-                 'assignmentid' => $get_assignmentdetails->id,
-                 'assignment_title' => $get_assignmentdetails->name,
-                 'assignment_activitydesc' => $get_assignmentdetails->intro,
-                 'duedate' => $get_assignmentdetails->duedate,
-                 'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
-                 'assign_uniquefield' => $uniquefield,
-                 'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
-                 'submission_id' => $get_assignmentsubmission_details->id,
-                 'submission_status' => ($get_assignmentsubmission_details->status=='new')?0:1,
-                 'studentsubmitted_content' => $getonline_content->onlinetex,
-                 'submissiontypes' => $submissintype
-             );
- 
-             $contextsystem = context_module::instance($moduleid);
-             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
-             if($checkenrol)
-             { 
-                 $assign_updated = [                        
-                         'message'=>'Assignment details',
-                         'userdetails' => $userdetails,
-                         'assignmentdetails' => $returnarray
-                         ]; 
-                 return $assign_updated;                      
-             }            
-             else
-             { 
-                 throw new moodle_exception('This user not enrolled', 'error');
-             }
-             
-         }
-         else
-         { 
-             throw new moodle_exception('Invalid assignment uniqueid', 'error');
-         }
-         
-     }
+    public static function get_assignment_service($uniquefield)
+    {
+        global $DB, $CFG, $USER, $CONTEXT;
+        //Get activity unique field details       
+        $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
+        if ($get_assignmentdetails->id != '') 
+        {
+            $get_assign_types = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype AND plugin = :plugin ";
+            $get_assign_types .= " AND name = :name AND value = :value ";
+            $assign_type_text = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'onlinetex',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_file = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'file',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_code = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'codeblock',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+
+            if (!empty($assign_type_text))
+            $get_assign_type = "text";
+            elseif (!empty($assign_type_file))
+            $get_assign_type = "file";
+            elseif (!empty($assign_type_code))
+            $get_assign_type = "codeblock";
+            $assignid = $get_assignmentdetails->id;
+            $courseid = $get_assignmentdetails->course;
+
+            //Get activity Module details
+            $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid, 'course' => $courseid));
+            $moduleid = $get_coursefield->id;
+
+            //Get assignment submission details
+            $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id, 'qbassignment' => $get_assignmentdetails->id));
+
+            if ($get_assign_type == "text") {
+            $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            } elseif ($get_assign_type == "codeblock") {
+            $getonline_content = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            }
+
+            //Get submission type details (file,onlinetex,codeblock)
+
+            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+            $sql .= " AND name = :name AND value = :value ";
+            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3)";
+            $getpluginconfig = $DB->get_records_sql(
+            $sql,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'name' => 'enabled',
+            'value' => '1',
+            'type1' => 'file',
+            'type2' => 'onlinetex',
+            'type3' => 'codeblock'
+            ]
+            );
+            $countsql = count($getpluginconfig);
+            if ($countsql > 0) {
+            foreach ($getpluginconfig as $config) {
+                if ($config->plugin == 'onlinetex') {
+                    $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'wordlimit', 'plugin' => 'onlinetex'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'wordlimit' => ($config->plugin == 'onlinetex') ? $get_qbdetails->value : ''
+                    );
+                }
+                if ($config->plugin == 'file') {
+                    $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxfilesubmissions', 'plugin' => 'file'));
+
+                    $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxsubmissionsizebytes', 'plugin' => 'file'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'maxfileallowed' => ($config->plugin == 'file') ? $get_fbdetails->value : '',
+                    'maxfilesize' => ($config->plugin == 'file') ? $get_fmbdetails->value : ''
+                    );
+
+                    $filesql = "SELECT * FROM {files} WHERE component = :component AND itemid = :itemid ";
+                    $filesql .= " AND filename!='.'";
+                    $get_filedetails = $DB->get_record_sql(
+                    $filesql,
+                    [
+                    'component' => 'qbassignsubmission_file',
+                    'itemid' => $get_assignmentsubmission_details->id
+                    ]
+                    );
+
+                    $fileurl =  $CFG->wwwroot . "/pluginfile.php/" . $get_filedetails->contextid . "/qbassignsubmission_file/submission_files/" . $get_assignmentsubmission_details->id . "/" . $get_filedetails->filename . "?forcedownload=1";
+                }
+                if ($config->plugin == 'codeblock') {
+                    $get_typedetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'type', 'plugin' => 'codeblock'));
+
+                    $get_langdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'lang', 'plugin' => 'codeblock'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'operation' => ($config->plugin == 'codeblock') ? $get_typedetails->value : '1',
+                    'language' => ($config->plugin == 'codeblock') ? $get_langdetails->value : 'python'
+                    );
+                }
+            }
+            }
+            $context = context_course::instance($get_assignmentdetails->course);
+            $roles = get_user_roles($context, $USER->id, true);
+            $role = key($roles);
+            $rolename = $roles[$role]->shortname;
+
+            $userdetails = array(
+            'userid' => $USER->id,
+            'email' => $USER->email,
+            'username' => $USER->username,
+            'sesskey' => $USER->sesskey,
+            'role' => $rolename
+            );
+            $returnarray = array(
+            'course_id' => $get_assignmentdetails->course,
+            'assignmentid' => $get_assignmentdetails->id,
+            'assignment_title' => $get_assignmentdetails->name,
+            'assignment_activitydesc' => $get_assignmentdetails->intro,
+            'duedate' => $get_assignmentdetails->duedate,
+            'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
+            'assign_uniquefield' => $uniquefield,
+            'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
+            'submission_id' => $get_assignmentsubmission_details->id,
+            'submission_status' => ($get_assignmentsubmission_details->status == 'new') ? 0 : 1,
+            'studentsubmitted_content' => $get_assign_type == "text"  ? $getonline_content->onlinetex : $getonline_content->codeblock,
+            'studentsubmitted_fileurl' => ($get_assignmentsubmission_details->status == 'new') ? '' : $fileurl,
+            'studentsubmitted_filename' => ($get_assignmentsubmission_details->status == 'new') ? '' : $get_filedetails->filename,
+            'submissiontypes' => $submissintype
+            );
+
+            $contextsystem = context_module::instance($moduleid);
+            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
+            if ($checkenrol) {
+                $assign_updated = [
+                'message' => 'Assignment details',
+                'userdetails' => $userdetails,
+                'assignmentdetails' => $returnarray
+                ];
+                return $assign_updated;
+            } else {
+                throw new moodle_exception('This user not enrolled', 'error');
+            }
+        } else {
+            throw new moodle_exception('Invalid assignment uniqueid', 'error');
+        }
+    }
  
      public static function get_assignment_service_returns()
      {
@@ -3120,31 +3181,37 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                          'message' => new external_value(PARAM_RAW, 'success'),
                          'userdetails' => new external_single_structure(
                                      array(
-                                     'userid' => new external_value(PARAM_RAW, 'USER id',VALUE_OPTIONAL),
-                                     'email' => new external_value(PARAM_RAW, 'User Email',VALUE_OPTIONAL),
-                                     'username' => new external_value(PARAM_RAW, 'Username',VALUE_OPTIONAL),
-                                     'sesskey' => new external_value(PARAM_RAW, 'Session Key',VALUE_OPTIONAL),
-                                     'role' => new external_value(PARAM_RAW, 'User Role',VALUE_OPTIONAL)
+                                        'userid' => new external_value(PARAM_INT, 'USER id',VALUE_OPTIONAL),
+                                        'email' => new external_value(PARAM_TEXT, 'User Email',VALUE_OPTIONAL),
+                                        'username' => new external_value(PARAM_TEXT, 'Username',VALUE_OPTIONAL),
+                                        'sesskey' => new external_value(PARAM_TEXT, 'Session Key',VALUE_OPTIONAL),
+                                        'role' => new external_value(PARAM_TEXT, 'User Role',VALUE_OPTIONAL)
                                      )
                                  ),
                                  'User Details', VALUE_OPTIONAL,
                          'assignmentdetails' => new external_single_structure(
                                      array(
-                                     'course_id' => new external_value(PARAM_RAW, 'course id',VALUE_OPTIONAL),
-                                     'assignmentid' => new external_value(PARAM_RAW, 'Assignment ID',VALUE_OPTIONAL),
-                                     'assignment_title' => new external_value(PARAM_RAW, 'Assignment Name',VALUE_OPTIONAL),
-                                     'assignment_activitydesc' => new external_value(PARAM_RAW, 'Assignment Question',VALUE_OPTIONAL),
-                                     'duedate' => new external_value(PARAM_RAW, 'Last date',VALUE_OPTIONAL),
-                                     'allowsubmissionsfromdate' => new external_value(PARAM_RAW, 'Start Submission date',VALUE_OPTIONAL),
-                                     'assign_uniquefield' => new external_value(PARAM_RAW, 'Unique field',VALUE_OPTIONAL),
-                                     'last_submitted_date' => new external_value(PARAM_RAW, 'Last Submitted date',VALUE_OPTIONAL),
-                                     'submission_id' => new external_value(PARAM_INT, 'Submission ID',VALUE_OPTIONAL),
-                                     'submission_status' => new external_value(PARAM_RAW, 'Submission Status (New,submitted)',VALUE_OPTIONAL),
-                                     'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
+                                        'course_id' => new external_value(PARAM_INT, 'course id',VALUE_OPTIONAL),
+                                        'assignmentid' => new external_value(PARAM_INT, 'Assignment ID',VALUE_OPTIONAL),
+                                        'assignment_title' => new external_value(PARAM_TEXT, 'Assignment Name',VALUE_OPTIONAL),
+                                        'assignment_activitydesc' => new external_value(PARAM_RAW, 'Assignment Question',VALUE_OPTIONAL),
+                                        'duedate' => new external_value(PARAM_INT, 'Last date',VALUE_OPTIONAL),
+                                        'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'Start Submission date',VALUE_OPTIONAL),
+                                        'assign_uniquefield' => new external_value(PARAM_TEXT, 'Unique field',VALUE_OPTIONAL),
+                                        'last_submitted_date' => new external_value(PARAM_INT, 'Last Submitted date',VALUE_OPTIONAL),
+                                        'submission_id' => new external_value(PARAM_INT, 'Submission ID',VALUE_OPTIONAL),
+                                        'submission_status' => new external_value(PARAM_TEXT, 'Submission Status (New,submitted)',VALUE_OPTIONAL),
+                                        'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
+                                        'studentsubmitted_fileurl' => new external_value(PARAM_RAW, 'Submission File Url',VALUE_OPTIONAL),
+                                        'studentsubmitted_filename' => new external_value(PARAM_RAW, 'Submission Filename',VALUE_OPTIONAL),
                                      'submissiontypes' => new external_single_structure(
                                          array(
-                                          'type' => new external_value(PARAM_RAW, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
-                                          'wordlimit' =>new external_value(PARAM_RAW, 'Text Limit',VALUE_OPTIONAL)
+                                          'type' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                          'maxfileallowed' => new external_value(PARAM_TEXT, 'File Allowed',VALUE_OPTIONAL),
+                                          'maxfilesize' => new external_value(PARAM_TEXT, 'File Size Limit',VALUE_OPTIONAL),
+                                          'wordlimit' =>new external_value(PARAM_INT, 'Text Limit',VALUE_OPTIONAL),
+                                          'operation' =>new external_value(PARAM_TEXT, 'codeblock type',VALUE_OPTIONAL),
+                                          'language' =>new external_value(PARAM_TEXT, 'Language',VALUE_OPTIONAL)
                                          )
                                      ),
                                      'Submission Type Details', VALUE_OPTIONAL
@@ -3152,10 +3219,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                  ),
                                  'Assignment Details', VALUE_OPTIONAL
                          )
-                 );
- 
-  
-        
+                 );        
      }
  
      /**
@@ -3647,7 +3711,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
  
              $contextsystem = context_module::instance($moduleid);
  
-             $enrolledcandidates = get_enrolled_users($contextsystem, 'mod/assign:submit');
+             $enrolledcandidates = get_enrolled_users($contextsystem, 'mod/qbassign:submit');
              $enrolstudents = array();
              foreach($enrolledcandidates as $enrol)
              {
@@ -3703,12 +3767,27 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      );
                      $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
                  }
+                 elseif($plugindata_type =='codeblock'){
+                    $add_textsubmission =  array(
+                        'qbassignment' => $qbassignmentid,
+                        'submission' => $insertid,
+                        'codeblock' => $plugindata_text,
+                        'onlineformat' => $plugindata_format
+                        );
+                        $sub_insertid = $DB->insert_record('qbassignsubmission_codeblock', $add_textsubmission);
+                 }
              }
              else
              { 
-                 $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id)); 
+                if($plugindata_type =='codeblock'){
+                 $check_submissiontxt = $DB->get_record('qbassignsubmission_codeblock', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id));
+                }
+                else{
+                    $check_submissiontxt = $DB->get_record('qbassignsubmission_onlinetex', array('qbassignment' => $qbassignmentid,'submission'=>$check_submission->id));
+                }
                  if($check_submissiontxt->id=='') // remove submission from students
                  { 
+                    if($plugindata_type =='onlinetext'){
                      $add_textsubmission =  array(
                      'qbassignment' => $qbassignmentid,
                      'submission' => $check_submission->id,
@@ -3716,6 +3795,16 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'onlineformat' => $plugindata_format
                      );
                      $sub_insertid = $DB->insert_record('qbassignsubmission_onlinetex', $add_textsubmission);
+                    }
+                    elseif($plugindata_type =='codeblock'){
+                        $add_textsubmission =  array(
+                            'qbassignment' => $qbassignmentid,
+                            'submission' => $check_submission->id,
+                            'codeblock' => $plugindata_text,
+                            'onlineformat' => $plugindata_format
+                            );
+                            $sub_insertid = $DB->insert_record('qbassignsubmission_codeblock', $add_textsubmission);
+                    }
  
                      $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
@@ -3726,7 +3815,12 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      $DB->set_field('qbassign_submission', 'timemodified', time(), array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $get_submission = $DB->get_record('qbassign_submission', array('qbassignment' => $qbassignmentid,'userid'=>$USER->id));
                     
+                     if($plugindata_type =='codeblock'){
+                        $DB->set_field('qbassignsubmission_codeblock', 'codeblock', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+                     }                     
+                     else{
                      $DB->set_field('qbassignsubmission_onlinetex', 'onlinetex', $plugindata_text, array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
+                     }
  
                      $DB->set_field('qbassign_submission', 'status', 'submitted', array('userid' => $USER->id,'qbassignment'=>$qbassignmentid));
                      $submissionID = $check_submission->id;
@@ -3817,14 +3911,14 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  $questonscount = count($exp_questions);
                  foreach($exp_questions as $eaches)
                  { 
-                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                    $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0,'createdby'=>2));
                      if(isset($getquestion->id))
                      { 
                      
                          $questionID = $getquestion->id;
                          $question_mark = $getquestion->defaultmark;
  
-                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID));
                          $questionbank_entry = $getquestion_versions->questionbankentryid;
                         
                          //INSERTION INTO SLOTS
@@ -3965,14 +4059,14 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  $exp_questions = explode(",",$questions);
                  $questonscount = count($exp_questions);
                  foreach($exp_questions as $eaches)
-                 { 
-                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0));
+                 {
+                     $getquestion = $DB->get_record('question', array('name'=>trim($eaches),'parent'=>0,'createdby'=>2));
                      if(isset($getquestion->id))
                      { 
                          $questionID = $getquestion->id;
                          $question_mark = $getquestion->defaultmark;
  
-                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID,'status'=>'ready'));
+                         $getquestion_versions = $DB->get_record('question_versions', array('questionid' => $questionID));
                          $questionbank_entry = $getquestion_versions->questionbankentryid;
                         
                          //INSERTION INTO SLOTS
@@ -4049,12 +4143,13 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              array(
              'submissionid' => new external_value(PARAM_INT, 'Submission Id',VALUE_REQUIRED),
              'assignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
-             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED)
+             'courseid' => new external_value(PARAM_INT, 'Course Id',VALUE_REQUIRED),
+             'submissiontype' => new external_value(PARAM_TEXT, 'Submission Type',VALUE_REQUIRED)
              )
          );
      }
  
-     public static function remove_submission($submissionid,$assignmentid,$courseid)
+     public static function remove_submission($submissionid,$assignmentid,$courseid,$submissiontype)
      {
          global $DB,$USER,$CONTEXT;
          //Get activity Module details
@@ -4063,7 +4158,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
          {
              $moduleid = $get_coursefield->id;
              $contextsystem = context_module::instance($moduleid);
-             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/assignment:submit');
+             $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
              if($checkenrol)
              {
                  $submissionid = $submissionid ? $submissionid : 0;
@@ -4071,7 +4166,19 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  if(isset($get_submission->id))
                  {
                      if ($submissionid) {
+                        if($submissiontype == 'text')
                          $DB->delete_records('qbassignsubmission_onlinetex', array('submission' => $submissionid));
+                        elseif($submissiontype == 'codeblock')
+                        $DB->delete_records('qbassignsubmission_codeblock', array('submission' => $submissionid));
+                        elseif ($submissiontype == 'file') 
+                        {
+                            $obj = new core_completion_external();
+                            $updatemanual = $obj::update_activity_completion_status_manually($moduleid,false);
+
+                                $DB->delete_records('files', array('itemid' => $submissionid,'component' => 'qbassignsubmission_file'));
+                                $DB->set_field('qbassignsubmission_file', 'numfiles', 0, array('qbassignment' => $assignmentid,'id'=>$submissionid));   
+                        }
+
                          $DB->set_field('qbassign_submission', 'status', 'new', array('userid' => $USER->id,'id'=>$submissionid));
                          $remove_updated = ['message'=>'sucess']; 
                          return $remove_updated;
@@ -4105,4 +4212,88 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  )
              );
      }
+
+    public static function studentfilesubmission_parameters()
+    {
+        return new external_function_parameters(
+            array(
+            'assignmentid' => new external_value(PARAM_INT, 'Assignment Id',VALUE_REQUIRED),
+            'fileareainfo' => new external_value(PARAM_RAW, 'My File',VALUE_REQUIRED), 
+            'filename' => new external_value(PARAM_TEXT, 'File Name',VALUE_REQUIRED),            
+            'courseid' => new external_value(PARAM_INT, 'Course ID',VALUE_REQUIRED)
+           )
+        );
+    }
+
+    public static function studentfilesubmission($assignmentid,$fileareainfo,$filename,$courseid)
+    { 
+        global $DB,$USER,$CONTEXT,$CFG;
+        //Get activity Module details
+        $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignmentid,'course' => $courseid));
+        $moduleid = $get_coursefield->id;
+        $contextsystem = context_module::instance($moduleid);
+        $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
+        if($checkenrol)
+        {
+            $token = $DB->get_record('external_tokens', array("id" =>2));
+            if(!empty($token))
+            {
+
+                $userid = $USER->id;
+                $DB->set_field('external_tokens', 'userid', $userid, array('id' => 2));
+
+                $get_context = $DB->get_record('context', array('contextlevel' => 30,'instanceid' => $userid));
+               
+                $obj = new core_files_external();
+                $filecontent = $fileareainfo;
+
+                $filecontent= $fileareainfo;
+                $filename = $filename;
+
+                $filedetails = $obj::upload($get_context->id,'user','draft',0,'/',$filename,$filecontent,'',$get_context->instanceid);
+                if(!empty($filedetails) and isset($filedetails['itemid']))
+                {
+                    $curl = curl_init();
+
+                        curl_setopt_array($curl, array(
+                        CURLOPT_URL => $CFG->wwwroot.'/webservice/rest/server.php?wstoken='.$token->token.'&moodlewsrestformat=json&wsfunction=mod_qbassign_save_submission&qbassignmentid='.$assignmentid.'&plugindata[files_filemanager]='.$filedetails['itemid'],
+                        CURLOPT_RETURNTRANSFER => true,
+                        CURLOPT_ENCODING => '',
+                        CURLOPT_MAXREDIRS => 10,
+                        CURLOPT_TIMEOUT => 0,
+                        CURLOPT_FOLLOWLOCATION => true,
+                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                        CURLOPT_CUSTOMREQUEST => 'POST',
+                        ));
+
+                        $response = curl_exec($curl);
+                        curl_close($curl);
+                        return array('code'=>200,'message'=>'Submission Success');
+                }
+                else{
+                    return array('code'=>404,'message'=>'File not created.');
+                }
+                    
+            }
+            else
+            {
+                return array('code'=>404,'message'=>'API service not enabled on the system.');
+            }
+        }
+        else
+        {
+            return array('code'=>404,'message'=>'This user not enrolled.');
+        }
+         
+    }
+
+    public static function studentfilesubmission_returns()
+    {
+        return new external_single_structure(
+                array(
+                    'message'=> new external_value(PARAM_TEXT, 'success message'),
+                    'code'=> new external_value(PARAM_TEXT, 'Status Code')
+                )
+            );
+    }
 }

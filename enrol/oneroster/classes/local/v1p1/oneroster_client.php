@@ -52,6 +52,7 @@ use enrol_oneroster\local\entities\user as user_entity;
 use moodle_url;
 use progress_trace;
 use stdClass;
+require_once($CFG->dirroot.'/group/lib.php');
 
 /**
  * One Roster v1p1 client.
@@ -85,6 +86,13 @@ trait oneroster_client {
 
     /** @var array List of tracking metrics */
     protected $metrics = [];
+
+    /** @var array List of Qubits mapped courses */
+    protected $qbs_mcourses = [];
+
+    /** @var array List of Qubits mapped groups */
+    protected $qbs_mgroups = [];
+
 
     /**
      * Get the Base URL for this One Roster API version.
@@ -172,6 +180,7 @@ trait oneroster_client {
         $this->fetch_current_enrolment_data();
 
         // Synchronise all courses, classes, and enrolments.
+        // Qubits start
         foreach ($schoolidstosync as $schoolidtosync) {
             $this->get_trace()->output("Fetching school with sourcedId '{$schoolidtosync}'", 2);
             $school = $this->get_container()->get_entity_factory()->fetch_org_by_id($schoolidtosync);
@@ -183,7 +192,8 @@ trait oneroster_client {
             }
         }
 
-        $this->get_trace()->output("Processing unenrolments", 3);
+
+       /* $this->get_trace()->output("Processing unenrolments", 3);
         foreach ($this->existingroleassignments as $instanceid => $ra) {
             $instance = $DB->get_record('enrol', ['id' => $instanceid]);
             if ($instance === null) {
@@ -208,7 +218,8 @@ trait oneroster_client {
                 $instance,
                 $userid
             );
-        }
+        } */
+        // Qubits end
 
         $this->get_trace()->output("Completed synchronisation of Rostering information");
         $this->get_trace()->output(sprintf("Entity\t\tCreate\tUpdate\tDelete"), 1);
@@ -305,19 +316,25 @@ EOF;
      */
     public function sync_school(school_entity $school, ?DateTime $onlysince = null): void {
         // Updating the category for this school.
-        $this->update_or_create_category($school);
+        // Qubits Courses Mapping with ClassLink
+        $schoolobj = $school->get_data();
+        $sourceid = $schoolobj->sourcedId;
+        $this->set_qbcourses($sourceid);
 
-        $this->get_trace()->output("Fetching term data", 3);
+        // $this->update_or_create_category($school); // Hide by Qubits
+
+        // Qubits Need to hide the School data
+        /* $this->get_trace()->output("Fetching term data", 3);
         foreach ($school->get_terms() as $term) {
             // Nullop to cache terms.
             continue;
-        }
+        } */
 
         $classfilter = new filter();
         if ($onlysince) {
             // Only fetch users last modified in the onlysince period.
             $classfilter->add_filter('dateLastModified',  $onlysince->format('o-m-d'), '>');
-        }
+        } 
 
         $this->get_trace()->output("Fetching class data", 3);
         $classes = $school->get_classes([], $classfilter);
@@ -331,12 +348,12 @@ EOF;
                 4
             );
 
-            $this->update_or_create_course($class);
+           $this->update_or_create_course($class);
 
             // Note: In an ideal world, enrollments would happen here.
             // However during development we discovered that some services do not work well enough to filter correctly
             // on the sourcedId of the Class entity.
-        }
+        } 
 
         $this->get_trace()->output("Fetching enrolments data", 3);
         foreach ($school->get_enrollments() as $enrollment) {
@@ -469,26 +486,71 @@ EOF;
         return $localcategory;
     }
 
-    /**
-     * Update or create a Moodle Course based on an entity representing a course.
-     *
-     * @param   course_representation $entity An entity representing a course category
-     * @return  stdClass
-     */
-    protected function update_or_create_course(course_representation $entity): stdClass {
+    protected function update_or_create_course(course_representation $entity): void {
         global $CFG, $DB;
 
         require_once("{$CFG->dirroot}/course/lib.php");
 
         // Fetch the course representation for this entity.
         $remotecourse = $entity->get_course_data();
+        $qbmcoursedata = $this->get_qbit_mdata($remotecourse->idnumber);
+        $qbmcourses = $qbmcoursedata["qubitscourses"];
+        foreach($qbmcourses as $k => $qbmcourse) {
+            $localcourse = $DB->get_record('course', [
+                'idnumber' => strtolower($qbmcourse),
+            ]);
+
+            $qubitsgroup = $qbmcoursedata["qubitsgroup"][$k];
+             // Course Group created or updated
+             $groupidnumber = $qubitsgroup;
+             $groupid = 0;
+             if (!$group = $DB->get_record('groups', array('idnumber'=>$groupidnumber))) {
+                 $groupdata = new stdClass;
+                 $groupdata->courseid = $localcourse->id;
+                 $groupdata->name = $groupidnumber;
+                 $groupdata->idnumber = $groupidnumber;
+                 $groupdata->description = "Group $groupidnumber";
+                 $groupdata->descriptionformat = 1;
+                 $groupid = groups_create_group($groupdata);
+             }else{
+                 $groupid = $group->id;
+             }
+
+             $this->ensure_course_enrolment_instance_exists($localcourse);
+        }
+        
+
+    }
+
+    /**
+     * Update or create a Moodle Course based on an entity representing a course.
+     *
+     * @param   course_representation $entity An entity representing a course category
+     * @return  stdClass
+     */
+    protected function update_or_create_course_old(course_representation $entity): stdClass {
+        global $CFG, $DB;
+
+        require_once("{$CFG->dirroot}/course/lib.php");
+
+        // Fetch the course representation for this entity.
+        $remotecourse = $entity->get_course_data();
+        $qbmcoursedata = $this->get_qbit_mdata($remotecourse->idnumber);
+        $qbmcourses = $qbmcoursedata["qubitscourses"];
+        foreach($qbmcourses as $qbmcourse) {
+            $localcourse = $DB->get_record('course', [
+                'shortname' => $qbmcourse,
+            ]);
+            $this->ensure_course_enrolment_instance_exists($localcourse);
+        }
 
         // Determine the remote parent category.
-        $category = $this->update_or_create_category($entity->get_course_category());
-        $remotecourse->category = $category->id;
-
+        //$category = $this->update_or_create_category($entity->get_course_category());
+        //$remotecourse->category = $category->id;
+        
+       
         // Find a matching local course record.
-        $localcourse = $DB->get_record('course', [
+        /*$localcourse = $DB->get_record('course', [
             'idnumber' => $remotecourse->idnumber,
         ]);
 
@@ -512,7 +574,7 @@ EOF;
 
         $this->ensure_course_enrolment_instance_exists($localcourse);
 
-        return $localcourse;
+        return $localcourse;*/
     }
 
     /**
@@ -585,7 +647,7 @@ EOF;
             $remoteuser->username,
             $remoteuser->idnumber
         ), 4);
-
+        $remoteuser->mnethostid = 1; // Qubits
         $localuserid = user_create_user($remoteuser);
         $this->add_metric('user', 'create');
 
@@ -737,13 +799,126 @@ EOF;
         }
     }
 
+    protected function update_or_create_enrolment(enrollment_representation $entity) {
+        global $DB;
+        
+        // Set the Groups by Qubits
+        $this->set_course_groups();
+
+        // Fetch the user details for this enrolment.
+        $userentity = $entity->get_user_entity();
+        if ($userentity === null) {
+            $this->get_trace()->output("Unable to fetch user entity for enrollment: " . $entity->get('sourcedId'), 4);
+            return;
+        }
+        $moodleuserid = $this->get_user_mapping_for_user($userentity);
+        if ($moodleuserid === null) {
+            $this->get_trace()->output("No user found for user " . $userentity->get('identifier'), 4);
+            return;
+        }
+
+        // Fetch the role mapping for this enrolment.
+        $roledata = $entity->get_role_data();
+        $moodleroleid = $this->get_role_mapping($roledata->role, (int) CONTEXT_COURSE);
+        if ($moodleroleid === null) {
+            $this->get_trace()->output("No user found for role '{$roledata->role}'", 4);
+            // This role has no mapping in Moodle.
+            return;
+        }
+
+        // Get the Enrolment instance for this course.
+        $scourse = $entity->get_course_representation();
+        $cdata = $scourse->get_course_data();
+        $mpcdata =  $this->get_qbit_mdata($cdata->idnumber);
+        $courses = $mpcdata["qubitscourses"];
+        foreach($courses as $k => $cshname){
+            $course =  $DB->get_record('course', ["shortname" => $cshname]);
+            //$instance = $this->get_course_enrolment_instance($course);
+            $instance = $this->instances[$course->idnumber];
+
+            // Fetch Group data
+            $grpname = $mpcdata["qubitsgroup"][$k];
+            $grpid = $this->qbs_mgroups[$grpname];
+
+            if ($instance === null) {
+                $this->get_trace()->output("No enrolment instance could be found or created for course '{$course->idnumber}'", 3);
+                return;
+            }
+
+            $enroldata = $entity->get_enrolment_data();
+			
+			/* if($moodleroleid == 3){
+				$uudata = $DB->get_record('user', ['id' => $moodleuserid]);
+				$uudata->auth = 'classlink';
+				$DB->update_record('user', $uudata);
+			} */
+
+            if ($existing = $DB->get_record('user_enrolments', ['userid' => $moodleuserid, 'enrolid' => $instance->id])) {
+                $enrolmentkeys = [
+                    'status',
+                    'timestart',
+                    'timeend',
+                ];
+
+                // Unset the current mapping to prevent the user from being unenrolled.
+                unset($this->existingroleassignments[$instance->id][$moodleuserid][$moodleroleid]);
+                if (empty($this->existingroleassignments[$instance->id][$moodleuserid])) {
+                    unset($this->existingroleassignments[$instance->id][$moodleuserid]);
+                }
+
+                foreach ($enrolmentkeys as $key) {
+                    $update = false;
+                    if ($existing->{$key} != $enroldata->{$key}) {
+                        $update = true;
+                    }
+                }
+
+                if ($update) {
+                    $this->get_trace()->output(
+                        "Updating existing enrolment for " .
+                        $userentity->get('identifier') .
+                        " in {$instance->courseid} from {$enroldata->timestart} to {$enroldata->timeend}",
+                        4);
+                    $this->get_plugin_instance()->update_user_enrol(
+                        $instance,
+                        $moodleuserid,
+                        $enroldata->status,
+                        $enroldata->timestart,
+                        $enroldata->timeend
+                    );
+                    $this->add_metric('enrollment', 'delete');
+                }
+            } else {
+                $this->get_trace()->output(sprintf(
+                    "Enroling user %s into %s from %d to %d",
+                    $userentity->get('identifier'),
+                    $instance->courseid,
+                    $enroldata->timestart,
+                    $enroldata->timeend
+                ), 4);
+                $this->get_plugin_instance()->enrol_user(
+                    $instance,
+                    $moodleuserid,
+                    $moodleroleid,
+                    $enroldata->timestart,
+                    $enroldata->timeend,
+                    $enroldata->status,
+                    true
+                );
+                $this->add_metric('enrollment', 'create');
+            }
+            groups_add_member($grpid, $moodleuserid);
+
+        }
+    }
+
     /**
      * Update or create a Moodle User Enrolment based on an entity representing that enrolment.
      *
      * @param   enrollment_representation $entity An entity representing a enrollment
      * @return  stdClass
      */
-    protected function update_or_create_enrolment(enrollment_representation $entity) {
+    protected function update_or_create_enrolment_old(enrollment_representation $entity) {
         global $DB;
 
         // Fetch the user details for this enrolment.
@@ -1009,4 +1184,42 @@ EOF;
     protected function get_metrics(): stdClass {
         return (object) $this->metrics;
     }
+
+    protected function set_qbcourses($sourceid): void{
+        global $CFG;
+        $fname = $CFG->dirroot.'/clslink/school'.$sourceid.'.json';
+        if(file_exists($fname)){
+            $qbjson = file_get_contents($fname);
+            $qbjson_data = json_decode($qbjson,true);
+            $this->qbs_mcourses = $qbjson_data["classes"];
+        }
+    }
+
+    protected function get_qbit_mdata($class_id): array {
+        //$this->get_trace()->output("Class ID  >>>> {$class_id}");
+        $ckey = array_search($class_id, array_column($this->qbs_mcourses, 'sourcedId'));
+        //$this->get_trace()->output("Key  >>>> {$ckey}");
+        $course = [];
+        if($ckey!==false){
+            $course = $this->qbs_mcourses[$ckey];
+        }
+        return $course;
+    }
+
+    protected function set_course_groups(){
+        global $DB;
+        $likeidnumber = $DB->sql_like('idnumber', ':idnum');
+        $groups = $DB->get_records_sql(
+            "SELECT id, idnumber FROM {groups} WHERE {$likeidnumber}",
+            [
+                'idnum' => 'dns%',
+            ]
+        );
+        
+        foreach($groups as $group){
+            $this->qbs_mgroups[$group->idnumber] = $group->id;
+        }
+        
+    }
+
 }
