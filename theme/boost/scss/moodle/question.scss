@@ -189,7 +189,6 @@ table.question-bank-table {
 
     .header {
         text-align: left;
-        min-width: min-content;
 
         &.sortable-list-current-position {
             background-color: lighten($primary, 40%);
@@ -205,6 +204,9 @@ table.question-bank-table {
 
         .dropdown-toggle::after {
             margin-left: 0;
+        }
+        &.checkbox .form-check {
+            padding-left: 0;
         }
     }
 }

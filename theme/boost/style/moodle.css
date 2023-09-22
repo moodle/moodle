@@ -32054,7 +32054,6 @@ table.question-bank-table label {
 }
 table.question-bank-table .header {
   text-align: left;
-  min-width: min-content;
 }
 table.question-bank-table .header.sortable-list-current-position {
   background-color: #a2cff8;
@@ -32068,6 +32067,9 @@ table.question-bank-table .header .header-text > div {
 }
 table.question-bank-table .header .dropdown-toggle::after {
   margin-left: 0;
+}
+table.question-bank-table .header.checkbox .form-check {
+  padding-left: 0;
 }
 
 #page-mod-quiz-edit div.questionbankwindow div.header {

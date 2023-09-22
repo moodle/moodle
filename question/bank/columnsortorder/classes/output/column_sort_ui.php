@@ -35,9 +35,14 @@ use templatable;
  */
 class column_sort_ui implements renderable, templatable {
     /**
-     * @var int The minimum custom width for a column.
+     * The minimum custom width for a column.
+     *
+     * This is based on the minimum possible width of the smallest core column (question type).
+     * When viewed, the width will be resized to the minimum width of the column header, if too small.
+     *
+     * @var int
      */
-    const MIN_COLUMN_WIDTH = 10;
+    const MIN_COLUMN_WIDTH = 30;
 
     public function export_for_template(\renderer_base $output): array {
         $columnmanager = new column_manager(true);

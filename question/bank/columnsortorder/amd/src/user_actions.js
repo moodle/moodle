@@ -48,6 +48,9 @@ let currentHeader;
 /** Current mouse x postion, to track mouse event on a table header */
 let currentX;
 
+/** Minimum size for the column currently being resized. */
+let currentMin;
+
 /**
  * Flag to temporarily prevent move and resize handles from being shown or hidden.
  *
@@ -130,6 +133,21 @@ const serialiseColumnSizes = (uiRoot) => {
 };
 
 /**
+ * Find the minimum width for a header, based on the width of its contents.
+ *
+ * This is to simulate `min-width: min-content;`, which doesn't work on Chrome because
+ * min-width is ignored width `table-layout: fixed;`.
+ *
+ * @param {Element} header The table header
+ * @return {Number} The minimum width in pixels
+ */
+const getMinWidth = (header) => {
+    const contents = Array.from(header.querySelector('.header-text').children);
+    const contentWidth = contents.reduce((width, contentElement) => width + contentElement.getBoundingClientRect().width, 0);
+    return Math.ceil(contentWidth);
+};
+
+/**
  * Render resize handles in each container.
  *
  * This takes a list of the resize actions rendered in each column header, and creates a corresponding drag handle for each.
@@ -141,6 +159,11 @@ const setUpResizeHandles = (uiRoot) => {
     const resizeActions = uiRoot.querySelectorAll(SELECTORS.resizeAction);
     resizeActions.forEach(resizeAction => {
         const headerContainer = resizeAction.closest(SELECTORS.headerContainer);
+        const header = resizeAction.closest(actions.SELECTORS.sortableColumn);
+        const minWidth = getMinWidth(header);
+        if (header.offsetWidth < minWidth) {
+            header.style.width = minWidth + 'px';
+        }
         const handleContainer = headerContainer.querySelector(SELECTORS.handleContainer);
         const context = {
             action: "resize",
@@ -170,6 +193,7 @@ const setUpResizeHandles = (uiRoot) => {
         currentX = e.pageX;
         // Find the header.
         currentHeader = e.target.closest(actions.SELECTORS.sortableColumn);
+        currentMin = getMinWidth(currentHeader);
         moveTracker = false;
         suspendShowHideHandles = true;
     });
@@ -187,7 +211,9 @@ const setUpResizeHandles = (uiRoot) => {
         const offset = e.pageX - currentX;
         currentX = e.pageX;
         const newWidth = currentHeader.offsetWidth + offset;
-        currentHeader.style.width = newWidth + 'px';
+        if (newWidth >= currentMin) {
+            currentHeader.style.width = newWidth + 'px';
+        }
         moveTracker = true;
     });
 
@@ -203,6 +229,7 @@ const setUpResizeHandles = (uiRoot) => {
             // If the mouse didn't move, display a modal to change the size using a form.
             showResizeModal(currentHeader, uiRoot);
         }
+        currentMin = null;
         currentHeader = null;
         currentResizeHandle = null;
         currentX = 0;
@@ -238,10 +265,11 @@ const setUpResizeActions = uiRoot => {
  */
 const showResizeModal = async(currentHeader, uiRoot) => {
     const initialWidth = currentHeader.offsetWidth;
+    const minWidth = getMinWidth(currentHeader);
 
     const modal = await ModalSaveCancel.create({
         title: getString('resizecolumn', 'qbank_columnsortorder', currentHeader.textContent),
-        body: Templates.render('qbank_columnsortorder/resize_modal', {}),
+        body: Templates.render('qbank_columnsortorder/resize_modal', {width: initialWidth, min: minWidth}),
         show: true,
     });
     const root = modal.getRoot();
@@ -254,11 +282,14 @@ const showResizeModal = async(currentHeader, uiRoot) => {
 
     const body = await modal.bodyPromise;
     const input = body.get(0).querySelector('input');
-    input.value = initialWidth;
 
     input.addEventListener('change', e => {
-        const newWidth = e.target.value;
-        currentHeader.style.width = `${newWidth}px`;
+        const valid = e.target.checkValidity();
+        e.target.closest('.has-validation').classList.add('was-validated');
+        if (valid) {
+            const newWidth = e.target.value;
+            currentHeader.style.width = `${newWidth}px`;
+        }
     });
 };
 

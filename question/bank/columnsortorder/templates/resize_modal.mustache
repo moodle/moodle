@@ -23,7 +23,11 @@
     {
     }
 }}
-<label>
-    {{#str}}columnwidth, qbank_columnsortorder{{/str}}
-    <input name="columnwidth" type="number" value="">
-</label>
+<form class="has-validation">
+    <label for="columnwidth">{{#str}}columnwidth, qbank_columnsortorder{{/str}}</label>
+    <input class="form-control" id="columnwidth" type="number" value="{{width}}" min="{{min}}">
+    <div class="invalid-feedback">
+        {{#str}}invalidwidth, qbank_columnsortorder, {{min}}{{/str}}
+    </div>
+</form>
+

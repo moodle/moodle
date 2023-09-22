@@ -97,6 +97,6 @@ class checkbox_column extends column_base {
     }
 
     public function get_default_width(): int {
-        return 25;
+        return 30;
     }
 }
