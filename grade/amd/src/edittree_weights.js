@@ -287,7 +287,7 @@ export const init = (decSep, oldCalculation) => {
             // This is only required if we are using natural weights.
             if (parseInt(categoryElement.dataset.aggregation) === grade.aggregation.sum) {
                 const weightElement = gradeItemRow.querySelector(selectors.weightOverrideInput);
-                weightElement.value = formatFloat(parseWeight(weightElement.value));
+                weightElement.value = formatFloat(Math.max(0, parseWeight(weightElement.value)));
                 recalculateNaturalWeights(categoryElement);
             }
         }
