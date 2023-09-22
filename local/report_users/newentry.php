@@ -107,7 +107,7 @@ if ($data = $mform->get_data()) {
     $trackid = $DB->insert_record('local_iomad_track', $newentry);
 
     // Create a certificate, if required.
-    xmldb_local_iomad_track_record_certificates($newentry->courseid, $newentry->userid, $trackid, false, true);
+    xmldb_local_iomad_track_record_certificates($newentry->courseid, $newentry->userid, $trackid, false, false);
 
     // Return success.
     redirect($returnurl,
