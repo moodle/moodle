@@ -217,7 +217,8 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         // Check if it isn't a Unix socket to set default port.
         $port = null;
         $opts = [];
-        if ($server[0] === '/') {
+        // Unix sockets can start with / or with unix://.
+        if ($server[0] === '/' || strpos($server, 'unix://') === 0) {
             $port = 0;
         } else {
             $port = 6379; // No Unix socket so set default port.
