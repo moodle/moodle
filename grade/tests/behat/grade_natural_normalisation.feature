@@ -34,7 +34,6 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
 
   @javascript
   Scenario: Setting all weights in a category to exactly one hundred in total.
-
     And the field "Weight of Test assignment five" matches value "44.444"
     And the field "Weight of Test assignment six" matches value "22.222"
     And the field "Weight of Test assignment seven" matches value "33.333"
@@ -45,57 +44,55 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment six" to "50"
     And I set the field "Weight of Test assignment seven" to "20"
     And I press "Save changes"
-
     Then I should not see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "30.0"
     And the field "Weight of Test assignment six" matches value "50.0"
     And the field "Weight of Test assignment seven" matches value "20.0"
 
   @javascript
-  Scenario: Setting all weights in a category to less than one hundred is normalised.
-
+  Scenario: Setting all weights in a category to less than one hundred is prevented.
     When I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Override weight of Test assignment seven" to "1"
     And I set the field "Weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment seven" to "2"
+    Then I should see "Weight total is less than 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total is less than 100%." in the "Test assignment six" "table_row"
+    And I should see "Weight total is less than 100%." in the "Test assignment seven" "table_row"
+    And I start watching to see if a new page loads
     And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "25.0"
-    And the field "Weight of Test assignment six" matches value "25.0"
-    And the field "Weight of Test assignment seven" matches value "50.0"
+    And a new page should not have loaded since I started watching
 
   @javascript
-  Scenario: Set one of the grade item weights to a figure over one hundred.
-
+  Scenario: Set one of the grade item weights to a figure over one hundred is prevented.
     When I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment five" to "120"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "100.0"
+    Then I should see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And the field "Weight of Test assignment five" matches value "120.0"
     And the field "Weight of Test assignment six" matches value "0.0"
     And the field "Weight of Test assignment seven" matches value "0.0"
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
 
   @javascript
-  Scenario: Setting several but not all grade item weights to over one hundred each.
-
+  Scenario: Setting several but not all grade item weights to over one hundred each is prevented.
     When I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "150"
     And I set the field "Weight of Test assignment six" to "150"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "50.000"
-    And the field "Weight of Test assignment six" matches value "50.000"
+    Then I should see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment six" "table_row"
+    And the field "Weight of Test assignment five" matches value "150.0"
+    And the field "Weight of Test assignment six" matches value "150.0"
     And the field "Weight of Test assignment seven" matches value "0.0"
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
 
   @javascript
   Scenario: Grade items weights are not normalised when all grade item weights are overridden (sum exactly 100). Extra credit is set respectful to number of items.
-
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And the field "Weight of Test assignment five" matches value "66.667"
@@ -106,7 +103,6 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Weight of Test assignment five" to "60"
     And I set the field "Weight of Test assignment six" to "40"
     And I press "Save changes"
-
     Then I should not see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "60.000"
     And the field "Weight of Test assignment six" matches value "40.000"
@@ -117,40 +113,42 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum over 100). Extra credit is set respectful to number of items.
-
+  Scenario: Setting grade items weights is prevented when all grade item weights are overridden (sum over 100). Extra credit is set respectful to number of items.
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "60"
     And I set the field "Weight of Test assignment six" to "50"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "54.545"
-    And the field "Weight of Test assignment six" matches value "45.455"
+    Then I should see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment six" "table_row"
+    And the field "Weight of Test assignment five" matches value "60.0"
+    And the field "Weight of Test assignment six" matches value "50.0"
     And the field "Weight of Test assignment seven" matches value "50.0"
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
     And I reset weights for grade category "Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set respectful to number of items.
-
+  Scenario: Setting grade items weights is prevented when all grade item weights are overridden (sum under 100). Extra credit is set respectful to number of items.
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "40"
     And I set the field "Weight of Test assignment six" to "30"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "57.143"
-    And the field "Weight of Test assignment six" matches value "42.857"
+    Then I should see "Weight total is less than 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total is less than 100%." in the "Test assignment six" "table_row"
+    And the field "Weight of Test assignment five" matches value "40.0"
+    And the field "Weight of Test assignment six" matches value "30.0"
     And the field "Weight of Test assignment seven" matches value "50.0"
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
     And I reset weights for grade category "Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
@@ -158,13 +156,11 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
 
   @javascript
   Scenario: Grade items weights are normalised when not all grade item weights are overridden. Extra credit is set respectful to number of items.
-
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment five" to "40"
     And I press "Save changes"
-
     Then I should see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "40.00"
     And the field "Weight of Test assignment six" matches value "60.000"
@@ -175,9 +171,7 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then
-  the grade item is set to normal.
-
+  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then the grade item is set to normal.
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment seven" to "1"
@@ -190,40 +184,37 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 0 |
     And I should see "Your weights have been adjusted to total 100."
-
     And the field "Weight of Test assignment five" matches value "0.0"
     And the field "Weight of Test assignment six" matches value "0.0"
     And the field "Weight of Test assignment seven" matches value "100.0"
 
   @javascript
-  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then
-  the grade category is reset.
-
+  Scenario: The extra credit grade item weight is overridden to a figure over one hundred and then the grade category is reset.
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment seven" to "1"
     And I set the field "Weight of Test assignment seven" to "105"
     And I press "Save changes"
-
     And I reset weights for grade category "Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: Two out of three grade items weights are overridden and one is not.
-  The overridden grade item weights total over one hundred.
-
+  Scenario: Two out of three grade items weights are overridden and one is not. The overridden grade item weights total over one hundred.
     Given I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Override weight of Test assignment seven" to "1"
     And I set the field "Weight of Test assignment six" to "55"
     And I set the field "Weight of Test assignment seven" to "65"
+    Then I should not see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment six" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment seven" "table_row"
+    And the field "Weight of Test assignment five" matches value "0.0"
+    And the field "Weight of Test assignment six" matches value "55.0"
+    And the field "Weight of Test assignment seven" matches value "65.0"
+    And I start watching to see if a new page loads
     And I press "Save changes"
-    And I should see "Your weights have been adjusted to total 100."
-
-    Then the field "Weight of Test assignment five" matches value "0.0"
-    And the field "Weight of Test assignment six" matches value "45.833"
-    And the field "Weight of Test assignment seven" matches value "54.167"
+    And a new page should not have loaded since I started watching
 
   @javascript
   Scenario: With one grade item set as extra credit, when I reset the weights for a category they return to the natural weights.
@@ -243,13 +234,15 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
   Scenario: Overriding a grade item with a negative value results in the value being changed to zero.
     When I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment five" to "-15"
+    Then the field "Weight of Test assignment five" matches value "0.0"
+    And the field "Weight of Test assignment six" matches value "40.0"
+    And the field "Weight of Test assignment seven" matches value "60.0"
     And I press "Save changes"
     Then the field "Weight of Test assignment five" matches value "0.0"
     And the field "Weight of Test assignment six" matches value "40.0"
     And the field "Weight of Test assignment seven" matches value "60.0"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment six" to "-25"
-    And I press "Save changes"
     And the field "Weight of Test assignment six" matches value "0.0"
     And the field "Weight of Test assignment seven" matches value "100.0"
     And I reset weights for grade category "Sub category 1"
@@ -257,7 +250,11 @@ Feature: We can use natural aggregation and weights will be normalised to a tota
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "-10"
     And I set the field "Weight of Test assignment six" to "120"
-    And I press "Save changes"
+    And I should see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment six" "table_row"
     And the field "Weight of Test assignment five" matches value "0.0"
-    And the field "Weight of Test assignment six" matches value "100.0"
+    And the field "Weight of Test assignment six" matches value "120.0"
     And the field "Weight of Test assignment seven" matches value "0.0"
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
