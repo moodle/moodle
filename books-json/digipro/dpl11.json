@@ -18,6 +18,13 @@
           "uid": "DPL11-TP0-000",
           "children": [
             {
+              "title": "Teacher Guide",
+              "uid": "DPL11-TP0-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=DigiPro_L11_Teacher's Guide",
+              "type": "page"
+            },
+            {
                   "title": "Sprint 1.1 Programming Languages",
                   "uid": "DPL11-TP0-CHDRN1",
                   "description": "",
@@ -50,6 +57,111 @@
                   "uid": "DPL11-TP0-CHDRN5",
                   "description": "",
                   "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.5",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 2.1 Classes and Objects",
+                  "uid": "DPL11-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit2&pdf=V2_DP L11 Sprint 2.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 2.2 Inheritance and Polymorphism",
+                  "uid": "DPL11-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit2&pdf=V2_DP L11 Sprint 2.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.1 Requirement Analysis and Design",
+                  "uid": "DPL11-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.1_",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.2 GitHub and Project Management",
+                  "uid": "DPL11-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.3 Git Workflows",
+                  "uid": "DPL11-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.3",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.4 Implementation",
+                  "uid": "DPL11-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.4",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.5 Testing, Deployment, and Maintenance",
+                  "uid": "DPL11-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.5",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 4.1 Introduction to Databases",
+                  "uid": "DPL11-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit4&pdf=V2_DP L11 Sprint 4.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 4.2 Structured Query Language",
+                  "uid": "DPL11-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit4&pdf=V2_DP L11 Sprint 4.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 5.1 Recursion",
+                  "uid": "DPL11-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit5&pdf=V2_DP L11 Sprint 5.1_",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 5.2 Applications of Recursion",
+                  "uid": "DPL11-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit5&pdf=V2_DP L11 Sprint 5.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 6.1 Data Exploration",
+                  "uid": "DPL11-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit6&pdf=V2_DP L11 Sprint 6.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 6.2 Interactive Graphs using Plotly",
+                  "uid": "DPL11-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit6&pdf=V2_DP L11 Sprint 6.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 7.1 Sunspot Cycle",
+                  "uid": "DPL11-TP0-CHDRN20",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit7&pdf=V2_DP L11 Sprint 7.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 7.2 Forecasting Sunspots",
+                  "uid": "DPL11-TP0-CHDRN21",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit7&pdf=V2_DP L11 Sprint 7.2",
                   "type": "page"
                 }
           ]
@@ -229,6 +341,31 @@
             {
               "uid": "DPL11-TP2-CHDRN5",
               "fname": "DPL11-TP2-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN6",
+              "fname": "DPL11-TP2-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN7",
+              "fname": "DPL11-TP2-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN8",
+              "fname": "DPL11-TP2-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN9",
+              "fname": "DPL11-TP2-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN10",
+              "fname": "DPL11-TP2-CHDRN10.json",
               "type": "assignment"
             },
             {
