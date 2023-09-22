@@ -1,0 +1,30 @@
+{
+	"title" : "1.3 Master Challenge 1",
+	"question": "Write a Java program to add two fractions and print the result. Initialize four integers, each of which represents a part (numerator and denominator) of two fractions.<br><br>For example:<br><img src='https://learn.qubitsedu.com/images/DPL12U1S03Image1a.png' width='50%' height='70%'><br>Note: Do not reduce these fractions. Be sure to test your code for positive and negative integers by changing the values of your initialized variables.<br>[Hint:If you have two fractions you add them:<img src='https://learn.qubitsedu.com/images/DPL12U1S03Image1b.png'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN15",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

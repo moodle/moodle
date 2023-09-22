@@ -197,6 +197,11 @@
               "uid": "DCL02-TP1-CHDRN4",
               "fname": "DCL02-TP1-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U01-CHDRN1",
+              "fname": "DCL02-U01-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -232,6 +237,11 @@
               "uid": "DCL02-TP2-CHDRN4",
               "fname": "DCL02-TP2-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U02-CHDRN1",
+              "fname": "DCL02-U02-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -274,6 +284,11 @@
               "uid": "DCL02-TP3-CHDRN5",
               "fname": "DCL02-TP3-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U03-CHDRN1",
+              "fname": "DCL02-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -323,6 +338,11 @@
               "uid": "DCL02-TP4-CHDRN6",
               "fname": "DCL02-TP4-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U04-CHDRN1",
+              "fname": "DCL02-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -365,6 +385,11 @@
               "uid": "DCL02-TP5-CHDRN5",
               "fname": "DCL02-TP5-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U05-CHDRN1",
+              "fname": "DCL02-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -414,6 +439,11 @@
               "uid": "DCL02-TP6-CHDRN6",
               "fname": "DCL02-TP6-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U06-CHDRN1",
+              "fname": "DCL02-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -461,302 +491,6 @@
           "teacheronly": "no"
         }
       ]
-    },
-    "chapters": [
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 1: Computer and Us",
-        "type": "topic",
-        "uid": "DCL02-TP1-000",
-        "children": [
-          {
-            "title": "Unit 1 Summary",
-            "uid": "DCL02-TP1-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U01_Intro",
-            "type": "page"
-          },
-          {
-            "title": "1.1 - Solving Problems",
-            "uid": "DCL02-TP1-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U01_S01",
-            "type": "page"
-          },
-          {
-            "title": "1.2 - Working With Information",
-            "uid": "DCL02-TP1-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U01_S02",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP1-CHDRN4",
-            "fname": "DCL02-TP1-CHDRN4.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 2: Internet and Safety",
-        "type": "topic",
-        "uid": "DCL02-TP2-000",
-        "children": [
-          {
-            "title": "Unit 2 Summary",
-            "uid": "DCL02-TP2-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U02_Intro",
-            "type": "page"
-          },
-          {
-            "title": "2.1 - Using Web Browsers",
-            "uid": "DCL02-TP2-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U02_S01",
-            "type": "page"
-          },
-          {
-            "title": "2.2 - Online Safety",
-            "uid": "DCL02-TP2-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U02_S02",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP2-CHDRN4",
-            "fname": "DCL02-TP2-CHDRN4.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 3: Lines, Shapes and Texts",
-        "type": "topic",
-        "uid": "DCL02-TP3-000",
-        "children": [
-          {
-            "title": "Unit 3 Summary",
-            "uid": "DCL02-TP3-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_Intro",
-            "type": "page"
-          },
-          {
-            "title": "3.1 - Lines",
-            "uid": "DCL02-TP3-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S01",
-            "type": "page"
-          },
-          {
-            "title": "3.2 - Shapes",
-            "uid": "DCL02-TP3-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S02",
-            "type": "page"
-          },
-          {
-            "title": "3.3 -  Text And Labels",
-            "uid": "DCL02-TP3-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP3-CHDRN5",
-            "fname": "DCL02-TP3-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 4: Painting and Stamps",
-        "type": "topic",
-        "uid": "DCL02-TP4-000",
-        "children": [
-          {
-            "title": "Unit 4 Summary",
-            "uid": "DCL02-TP4-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_Intro",
-            "type": "page"
-          },
-          {
-            "title": "4.1 - Flip It!",
-            "uid": "DCL02-TP4-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S01",
-            "type": "page"
-          },
-          {
-            "title": "4.2 - Magic Tool",
-            "uid": "DCL02-TP4-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S02",
-            "type": "page"
-          },
-          {
-            "title": "4.3 - Pattern Painting",
-            "uid": "DCL02-TP4-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S03",
-            "type": "page"
-          },
-          {
-            "title": "4.4 - Picture Decorations",
-            "uid": "DCL02-TP4-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP4-CHDRN6",
-            "fname": "DCL02-TP4-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 5: Shapes on Slides",
-        "type": "topic",
-        "uid": "DCL02-TP5-000",
-        "children": [
-          {
-            "title": "Unit 5 Summary",
-            "uid": "DCL02-TP5-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL02_U05_Intro",
-            "type": "page"
-          },
-          {
-            "title": "5.1 - Adding Shape",
-            "uid": "DCL02-TP5-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S01",
-            "type": "page"
-          },
-          {
-            "title": "5.2 - Themes And Color",
-            "uid": "DCL02-TP5-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S02",
-            "type": "page"
-          },
-          {
-            "title": "5.3 - Size Of Shapes",
-            "uid": "DCL02-TP5-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP5-CHDRN5",
-            "fname": "DCL02-TP5-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 6: My First Letter",
-        "type": "topic",
-        "uid": "DCL02-TP4-000",
-        "children": [
-          {
-            "title": "Unit 6 Summary",
-            "uid": "DCL02-TP6-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_Intro",
-            "type": "page"
-          },
-          {
-            "title": "6.1 - Introduction To Microsoft Word",
-            "uid": "DCL02-TP6-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S01",
-            "type": "page"
-          },
-          {
-            "title": "6.2 - Picture And Picture Frame",
-            "uid": "DCL02-TP6-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S02",
-            "type": "page"
-          },
-          {
-            "title": "6.3 - Formatting Text",
-            "uid": "DCL02-TP6-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S03",
-            "type": "page"
-          },
-          {
-            "title": "6.4 - Formatting Images",
-            "uid": "DCL02-TP6-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP6-CHDRN6",
-            "fname": "DCL02-TP6-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL02/DCL02-TP1-000.mdx",
-        "title": "Unit 7: Insights from Data",
-        "type": "topic",
-        "uid": "DCL02-TP7-000",
-        "children": [
-          {
-            "title": "Unit 7 Summary",
-            "uid": "DCL02-TP7-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_Intro",
-            "type": "page"
-          },
-          {
-            "title": "7.1 - Bar Graph",
-            "uid": "DCL02-TP7-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S01",
-            "type": "page"
-          },
-          {
-            "title": "7.2 - Pie Charts",
-            "uid": "DCL02-TP7-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S02",
-            "type": "page"
-          },
-          {
-            "title": "Exercise",
-            "uid": "DCL02-TP7-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL02-TP7-CHDRN5",
-            "fname": "DCL02-TP7-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      }
-    ]
+    }
   }
 ]

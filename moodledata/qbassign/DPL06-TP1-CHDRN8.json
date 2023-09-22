@@ -1,0 +1,30 @@
+{
+	"title" : "1.1 Master Challenge 3",
+	"question": "Environmental pollution is a pressing problem that affects all living creatures on our planet. Discuss the causes and agents of environmental pollution within your group. Come up with a game that showcases pollution-causing agents. The player would need to select and click on items that represent such agents. Make a list of sprites and the backdrops you would require before adding them. You can add non-polluting agent sprites to distract the players. The sprites that represent polluting agents must hide when clicked. Once the program is ready, play the game with your friends. Whoever clicks on the maximum number of polluting agent sprites in a single chance, wins.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL06-TP1-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

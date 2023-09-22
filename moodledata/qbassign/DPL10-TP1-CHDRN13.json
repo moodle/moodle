@@ -1,0 +1,30 @@
+{
+	"title" : "1.2 Master Challenge 3",
+	"question": "Construct a program that generates a random password adhering to the following <br> criteria: <br> 1. The password must comprise at least eight characters. <br> 2. The password must include at least one uppercase letter. <br> 3. The password must include at least one lowercase letter. <br> 4. The password must include at least one numeric digit. <br> 5. The password must incorporate at least one special character (e.g., !@#$%^&*).",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL10-TP1-CHDRN13",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

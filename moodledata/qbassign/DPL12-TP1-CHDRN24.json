@@ -1,0 +1,30 @@
+{
+	"title" : "1.5 Master Challenge 3",
+	"question": "Write a Java program that converts a certain amount from US Dollars (USD) to Euros (EUR) using an exchange rate of 0.85.Your program should perform the following steps:1. Ask the user to input the amount in US Dollars.2. Cast the input value to double.3. Calculate the equivalent amount in Euros.4. Cast the calculated Euros amount to an int.5.<br> Display the original USD amount and the equivalent amount in Euros.<br>Sample output:<img src='https://learn.qubitsedu.com/images/DPL12U1S05Image3.png' width='60%' height='50%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP1-CHDRN24",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

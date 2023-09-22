@@ -1,0 +1,550 @@
+[
+    {
+      "book": {
+        "name": "Computer Science and Programming",
+        "code": "DPL10",
+        "category": "DigiPro",
+        "categorycode": "DP",
+        "summary": ".",
+        "otherfields": {
+          "level": "10",
+          "cardcolour": "#215caa"
+        },
+        "chapters": [
+          {
+            "title" : "Teacher Resources",
+            "type": "topic",
+            "teacheronly": "yes",
+            "uid": "DPL10-TP0-000",
+            "children": [
+              {
+                    "title": "Teacher Guide",
+                    "uid": "DPL10-TP0-CHDRN1",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&pdf=DigiPro_L10_Teacher's Guide",
+                    "type": "page"
+                  },
+            {
+                    "title": "Sprint 1.1 Program Design",
+                    "uid": "DPL10-TP0-CHDRN2",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit1&pdf=V2_DP L10 Sprint 1.1",
+                    "type": "page"
+                  },
+            {
+                    "title": "Sprint 1.2 IO, Variables and Operators",
+                    "uid": "DPL10-TP0-CHDRN3",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit1&pdf=V2_DP L10 Sprint 1.2",
+                    "type": "page"
+                  },
+            {
+                    "title": "Sprint 1.3 Branching And Looping",
+                    "uid": "DPL10-TP0-CHDRN4",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit1&pdf=V2_DP L10 Sprint 1.3",
+                    "type": "page"
+                  },
+            {
+                    "title": "Sprint 1.4 Test Cases",
+                    "uid": "DPL10-TP0-CHDRN5",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit1&pdf=V2_DP L10 Sprint 1.4",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 1.5 Exceptional Handling",
+                    "uid": "DPL10-TP0-CHDRN6",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit1&pdf=V2_DP L10 Sprint 1.5",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 2.1 Classes And Objects",
+                    "uid": "DPL10-TP0-CHDRN7",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit2&pdf=V2_DP L10 Sprint 2.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 2.2 Higher Order Functions",
+                    "uid": "DPL10-TP0-CHDRN8",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit2&pdf=V2_DP L10 Sprint 2.2",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 2.3 Modules, Packages And Libraries",
+                    "uid": "DPL10-TP0-CHDRN9",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit2&pdf=V2_DP L10 Sprint 2.3",
+                    "type": "page"
+                  }
+            ]
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 1: Incremental Programming",
+            "type": "topic",
+            "uid": "DPL10-TP1-000",
+            "children": [
+              {
+                "title": "Unit 1 Summary",
+                "uid": "DPL10-TP1-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=01 DP-Level10-Unit1-Opener - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.1 -Program Design",
+                "uid": "DPL10-TP1-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=02 DPL10_U1_Sprint1.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.2 - IO,Variables,And Operators",
+                "uid": "DPL10-TP1-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=03 DPL10_U1_SPRINT1.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.3 -Branching And Looping",
+                "uid": "DPL10-TP1-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=04 DPL10_U1_SPRINT1.3 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.4 - Test Cases",
+                "uid": "DPL10-TP1-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=05 DPL10_U1_SPRINT1.4 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.5 - Exception Handling",
+                "uid": "DPL10-TP1-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=06 DPL10_U1_SPRINT1.5 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "1.6 - Exercise",
+                "uid": "DPL10-TP1-CHDRN7",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=07 DPL10_U1_EXERCISE - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN8",
+                "fname": "DPL10-TP1-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN9",
+                "fname": "DPL10-TP1-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN10",
+                "fname": "DPL10-TP1-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN11",
+                "fname": "DPL10-TP1-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN12",
+                "fname": "DPL10-TP1-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN13",
+                "fname": "DPL10-TP1-CHDRN13.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN14",
+                "fname": "DPL10-TP1-CHDRN14.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN15",
+                "fname": "DPL10-TP1-CHDRN15.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN16",
+                "fname": "DPL10-TP1-CHDRN16.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN17",
+                "fname": "DPL10-TP1-CHDRN17.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN18",
+                "fname": "DPL10-TP1-CHDRN18.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN19",
+                "fname": "DPL10-TP1-CHDRN19.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN20",
+                "fname": "DPL10-TP1-CHDRN20.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN21",
+                "fname": "DPL10-TP1-CHDRN21.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP1-CHDRN22",
+                "fname": "DPL10-TP1-CHDRN22.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U1-CHDRN1",
+                "fname": "DPL10-U1-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 2: Classes, Objects, and Functions",
+            "type": "topic",
+            "uid": "DPL10-TP2-000",
+            "children": [
+              {
+                "title": "Unit 2 Summary",
+                "uid": "DPL10-TP2-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=08 DP-L10 Unit 2 Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "2.1 - Classes And Objects",
+                "uid": "DPL10-TP2-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=09 DP-L10 Unit 2-Sprint2.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "2.2 - Higher Order Functions",
+                "uid": "DPL10-TP2-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=10 DP-L10 Unit 2-Sprint2.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "2.3 - Modules,Packages,And Libraries",
+                "uid": "DPL10-TP2-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=11 DP-L10 Unit 2-Sprint2.3 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "2.4 - Exercise",
+                "uid": "DPL10-TP2-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=12 DP-L10-Unit2-Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN6",
+                "fname": "DPL10-TP2-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U2-CHDRN1",
+                "fname": "DPL10-U2-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 3: Collaborative Development",
+            "type": "topic",
+            "uid": "DPL10-TP3-000",
+            "children": [
+              {
+                "title": "Unit 3 Summary",
+                "uid": "DPL10-TP3-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=13 DP_L10_Unit3_Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "3.1 - Planning And Collaboration",
+                "uid": "DPL10-TP3-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=14 DP_L10_Unit3_Sprint3.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "3.2 - Designing The Game Environment",
+                "uid": "DPL10-TP3-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=15 DP_L10_Unit3_Sprint3.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "3.3 - Adding Paddle To The Game",
+                "uid": "DPL10-TP3-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=16 DP_L10_Unit3_Sprint3.3 - Google Docs",
+                "type": "page"
+              }, 
+              {
+                "title": "3.4 - Game Completion",
+                "uid": "DPL10-TP3-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=17 DP_L10_Unit3_Sprint3.4 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "3.5 - Exercise",
+                "uid": "DPL10-TP3-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=18 DP_L10_U3_Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP3-CHDRN7",
+                "fname": "DPL10-TP3-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U3-CHDRN1",
+                "fname": "DPL10-U3-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 4: Data Structure",
+            "type": "topic",
+            "uid": "DPL10-TP4-000",
+            "children": [
+              {
+                "title": "Unit 4 Summary",
+                "uid": "DPL10-TP4-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=19 DP_L10_Unit4_Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "4.1 - Dictionaries And Sets",
+                "uid": "DPL10-TP4-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=20 DP_L10_U4_Sprint4.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "4.2 - Arrays",
+                "uid": "DPL10-TP4-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=21 DP_L10_U4_Sprint4.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "4.3 - Numpy Arrays",
+                "uid": "DPL10-TP4-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=22 DP_L10_U4_Sprint4.3 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "4.4 - Comparison Of Data Structures",
+                "uid": "DPL10-TP4-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=23 DP_L10_U4_Sprint4.4 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "4.5 - Exercise",
+                "uid": "DPL10-TP4-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=24 DP_L10_U4_Exercise V2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP4-CHDRN7",
+                "fname": "DPL10-TP4-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U4-CHDRN1",
+                "fname": "DPL10-U4-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 5: Algorithms",
+            "type": "topic",
+            "uid": "DPL10-TP4-000",
+            "children": [
+              {
+                "title": "Unit 5 Summary",
+                "uid": "DPL10-TP5-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=25 DP_L9_Unit5_Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "5.1 - Algorithm Design And Applications",
+                "uid": "DPL10-TP5-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=26 DPL10_Unit5_Sprint5.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "5.2 - Sorting Algorithms",
+                "uid": "DPL10-TP5-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=27 DPL10_Unit5_Sprint5.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "5.3 - Exercise",
+                "uid": "DPL10-TP5-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=28 DPL10_U5_EXERCISE - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP5-CHDRN5",
+                "fname": "DPL10-TP5-CHDRN5.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U5-CHDRN1",
+                "fname": "DPL10-U5-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 6: Data Science",
+            "type": "topic",
+            "uid": "DPL10-TP6-000",
+            "children": [
+              {
+                "title": "Unit 6 Summary",
+                "uid": "DPL10-TP6-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=29 DP_L10_Unit6_Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "6.1 - Cleaning And Combining Data",
+                "uid": "DPL10-TP6-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=30 DP-L10 Unit 6-Sprint6.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "6.2 - Visualizing Dataframes",
+                "uid": "DPL10-TP6-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=31 DP_L10_Unit6_Sprint6.2 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "6.3 - Summarizing And Pivoting Data",
+                "uid": "DPL10-TP6-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=32 DP-L10 Unit6-Sprint6.3 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "6.4 - Exercise",
+                "uid": "DPL10-TP6-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=33 DP-L10-Unit6-Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP6-CHDRN6",
+                "fname": "DPL10-TP6-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U6-CHDRN1",
+                "fname": "DPL10-U6-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL10/DPL10-TP1-000.mdx",
+            "title": "Unit 7: Time Series Forecasting",
+            "type": "topic",
+            "uid": "DPL10-TP7-000",
+            "children": [
+              {
+                "title": "Unit 7 Summary",
+                "uid": "DPL10-TP7-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=34 DP-L10 Unit 7 Opener Page - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "7.1 - Cleaning Up Data",
+                "uid": "DPL10-TP7-CHDRN2",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=35 DP-L10 Unit 7-Sprint7.1 - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "7.2 - Time Series Analysis Using Arima",
+                "uid": "DPL10-TP7-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=36 DP-L10 Unit 7-Sprint7.2 - Google Docs",
+                "type": "page"
+              },
+               {
+                "title": "7.3 - Exercise",
+                "uid": "DPL10-TP7-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level10&pdf=37 DP-L10-Unit7-Exercise.2gdoc - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL10-TP7-CHDRN5",
+                "fname": "DPL10-TP7-CHDRN5.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-U7-CHDRN1",
+                "fname": "DPL10-U7-CHDRN1.json",
+                "type": "quiz"
+              }
+            ],
+            "teacheronly": "no"
+          }
+        ]
+      }
+    }
+  ]
