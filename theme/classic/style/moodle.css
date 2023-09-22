@@ -35704,7 +35704,7 @@ p.arrow_button {
   font-size: 70%;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemselect {
-  margin-right: 0.7rem;
+  margin-right: 15px;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemicon {
   font-size: 18px;
@@ -35748,7 +35748,6 @@ p.arrow_button {
   border-right: 1px solid #dee2e6;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name {
-  padding-left: 10px;
   font-weight: bold;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div {
@@ -35758,6 +35757,9 @@ p.arrow_button {
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div .form-check {
   padding: 0;
+}
+.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div .form-check .itemselect {
+  margin-right: 5px;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr.category td.column-name div a.toggle-category {
   height: 24px;
