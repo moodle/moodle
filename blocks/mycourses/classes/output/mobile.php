@@ -53,26 +53,25 @@ class mobile {
         $data['pages'] = $pages;
 
         $renderer = $PAGE->get_renderer('block_mycourses');
-        $cutoffdate = time() - ($CFG->mycourses_archivecutoff * 24 * 60 * 60);
         $mycompletion = mycourses_get_my_completion();
 
         switch ($page) {
             case 'available':
-                $availableview = new available_view($mycompletion, $cutoffdate);
+                $availableview = new available_view($mycompletion);
                 $data['pagecontent'] = $availableview->export_for_template($renderer);
                 $data['nocourses'] = get_string('noavailable', 'block_mycourses');
                 $data['availablepage'] = true;
                 break;
 
             case 'completed':
-                $completedview = new completed_view($mycompletion, $cutoffdate);
+                $completedview = new completed_view($mycompletion);
                 $data['pagecontent'] = $completedview->export_for_template($renderer);
                 $data['nocourses'] = get_string('nocompleted', 'block_mycourses');
                 break;
 
             case 'inprogress':
             default:
-                $inprogressview = new inprogress_view($mycompletion, $cutoffdate);
+                $inprogressview = new inprogress_view($mycompletion);
                 $data['pagecontent'] = $inprogressview->export_for_template($renderer);
                 $data['nocourses'] = get_string('noinprogress', 'block_mycourses');
                 break;

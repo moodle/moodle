@@ -65,22 +65,19 @@ class main implements renderable, templatable {
     public function export_for_template(renderer_base $output) {
         global $CFG, $USER, $PAGE;
 
-        // Get the cut off date.
-        $cutoffdate = time() - ($CFG->mycourses_archivecutoff * 24 * 60 * 60);
-
         // Get the sorting params.
         $sort = optional_param('sort', 'coursefullname', PARAM_CLEAN);
         $dir = optional_param('dir', 'ASC', PARAM_CLEAN);
         $tab = optional_param('tab', 'inprogress#mycourses_inprogress_view', PARAM_CLEAN);
-        $view = optional_param('view', 'card', PARAM_CLEAN);
+        $view = optional_param('view', $CFG->mycourses_defaultview, PARAM_CLEAN);
 
         // Get the completion info.
-        $mycompletion = mycourses_get_my_completion($cutoffdate, $sort, $dir);
-        $myarchive = mycourses_get_my_archive($cutoffdate, $sort, $dir);
+        $mycompletion = mycourses_get_my_completion($sort, $dir);
+        $myarchive = mycourses_get_my_archive($sort, $dir);
 
-        $availableview = new available_view($mycompletion, $cutoffdate);
-        $inprogressview = new inprogress_view($mycompletion, $cutoffdate);
-        $completedview = new completed_view($myarchive, $cutoffdate);
+        $availableview = new available_view($mycompletion);
+        $inprogressview = new inprogress_view($mycompletion);
+        $completedview = new completed_view($myarchive);
 
         // Now, set the tab we are going to be viewing.
         $viewingavailable = false;

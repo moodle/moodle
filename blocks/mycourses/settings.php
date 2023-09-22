@@ -27,12 +27,17 @@ $settings->add(new admin_setting_heading('mycoursesheader',
                                          get_string('headerconfig', 'block_mycourses'),
                                          get_string('headerdesc', 'block_mycourses')));
 
-$settings->add(new admin_setting_configtext('mycourses_archivecutoff',
-                                                get_string('archivecutofflabel', 'block_mycourses'),
-                                                get_string('archivecutoffdesc', 'block_mycourses'),
-                                                100, PARAM_INT));
-
 $settings->add(new admin_setting_configcheckbox('mycourses_showsummary',
                                                 get_string('showsummarylabel', 'block_mycourses'),
                                                 get_string('showsummarydesc', 'block_mycourses'),
                                                 0));
+
+$options = ['card' => get_string('card', 'block_myoverview'),
+            'list' => get_string('list', 'block_myoverview')
+           ];
+
+$settings->add(new admin_setting_configselect('mycourses_defaultview',
+                                                get_string('defaultviewlabel', 'block_mycourses'),
+                                                '',
+                                                'card',
+                                                $options));

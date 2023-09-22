@@ -30,6 +30,7 @@ $string['aria:courseprogress'] = 'Course progress:';
 $string['availableheader'] = 'Available courses';
 $string['complete'] = 'complete';
 $string['completedheader'] = 'Completed courses';
+$string['defaultviewlabel'] = 'Default view for course listing';
 $string['downloadcert'] = 'Download course certificate';
 $string['finalscore'] = 'Final score - {$a}%';
 $string['headerconfig'] = 'Configuration for the my courses block';

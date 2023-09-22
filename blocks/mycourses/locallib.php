@@ -23,7 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $dir = 'ASC') {
+function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
     global $DB, $USER, $CFG;
 
     $companyid = iomad::get_my_companyid(context_system::instance(), false);
@@ -45,14 +45,6 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
     }
 
     $mycompletions = new stdclass();
-    $mycompleted = $DB->get_records_sql("SELECT DISTINCT cc.id, cc.userid, cc.courseid as courseid, cc.finalscore as finalgrade, cc.timecompleted, cc.timestarted, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade
-                                       FROM {local_iomad_track} cc
-                                       JOIN {course} c ON (c.id = cc.courseid)
-                                       JOIN {iomad_courses} ic ON (c.id = ic.courseid and cc.courseid = ic.courseid)
-                                       WHERE cc.userid = :userid
-                                       $companycoursesql
-                                       AND cc.timecompleted IS NOT NULL",
-                                       array('userid' => $USER->id));
     $myinprogress = $DB->get_records_sql("SELECT DISTINCT cc.id, cc.userid, cc.courseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible, ic.hasgrade, cc.timestarted, cc.modifiedtime
                                           FROM {local_iomad_track} cc
                                           JOIN {course} c ON (c.id = cc.courseid)
@@ -167,41 +159,10 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
         $myavailablecourses[$licensedcourse->coursefullname] = $licensedcourse;
     }
 
-    // Deal with completed course scores and links for certificates.
-    foreach ($mycompleted as $id => $completed) {
-        $mycompleted[$id]->coursefullname = format_string($completed->coursefullname);
-        $mycompleted[$id]->certificates = array();
-        $mycompleted[$id]->hasgrade = $completed->hasgrade;
-        if (empty($completed->hasgrade)) {
-            $mycompleted[$id]->finalgrade = "";
-        }
-        // Deal with the iomadcertificate info.
-        if ($hasiomadcertificate) {
-            if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
-                                                         array('course' => $completed->courseid))) {
-                $coursecontext = context_course::instance($completed->courseid);
-                // Get the certificate from the download files thing.
-                $certificates = array();
-                if ($traccertrecs = $DB->get_records('local_iomad_track_certs', array('trackid' => $id))) {
-                    foreach ($traccertrecs as $traccertrec) {
-                        $certout = new stdclass();
-                        // create the file download link.
-                        $certout->certificateurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
-                        $certout->certificatename = format_string($traccertrec->filename);
-                        $certificates[] = $certout;
-                    }
-                }
-                $mycompleted[$id]->certificates = $certificates;
-            }
-        }
-    }
-
     // Put them into alpahbetical order.
     $myavailablecourses = mycourses_sort($myavailablecourses, 'coursefullname', $dir);
     $myinprogress = mycourses_sort($myinprogress, $sort, $dir);
-    $mycompleted = mycourses_sort($mycompleted, $sort, $dir);
 
-    $mycompletions->mycompleted = $mycompleted;
     $mycompletions->myinprogress = $myinprogress;
     $mycompletions->mynotstartedenrolled = array();
     $mycompletions->mynotstartedlicense = $myavailablecourses;
@@ -210,7 +171,7 @@ function mycourses_get_my_completion($datefrom = 0, $sort = 'coursefullname', $d
 
 }
 
-function mycourses_get_my_archive($dateto = 0, $sort = 'coursefullname', $dir = 'ASC') {
+function mycourses_get_my_archive($sort = 'coursefullname', $dir = 'ASC') {
     global $DB, $USER, $CFG;
 
     // Check if there is a iomadcertificate module.
@@ -227,8 +188,8 @@ function mycourses_get_my_archive($dateto = 0, $sort = 'coursefullname', $dir = 
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
                                        AND c.visible = 1
-                                       AND cc.timecompleted <= :dateto",
-                                       array('userid' => $USER->id, 'dateto' => $dateto));
+                                       AND cc.timecompleted > 0",
+                                       array('userid' => $USER->id));
 
     // Deal with completed course scores and links for certificates.
     foreach ($myarchive as $id => $archive) {
