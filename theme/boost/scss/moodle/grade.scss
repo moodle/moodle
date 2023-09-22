@@ -428,7 +428,7 @@
                             }
 
                             .itemselect {
-                                margin-right: 0.7rem;
+                                margin-right: 15px;
                             }
 
                             .itemicon {
@@ -490,7 +490,6 @@
                             }
 
                             &.column-name {
-                                padding-left: 10px;
                                 font-weight: bold;
 
                                 div {
@@ -500,6 +499,10 @@
 
                                     .form-check {
                                         padding: 0;
+
+                                        .itemselect {
+                                            margin-right: 5px;
+                                        }
                                     }
 
                                     a {
