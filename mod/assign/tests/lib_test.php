@@ -520,6 +520,69 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
+    /**
+     * Test group submissions.
+     * @covers \assign::mod_assign_core_calendar_provide_event_action
+     */
+    public function test_assign_core_calendar_provide_event_action_duedate_for_group_assignment(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course();
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+        $student1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $student2 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $group = $this->getDataGenerator()->create_group([
+            'courseid' => $course->id,
+        ]);
+        groups_add_member($group->id, $student1->id);
+        groups_add_member($group->id, $student2->id);
+
+        $assign = $this->create_instance($course, [
+            'assignsubmission_onlinetext_enabled' => 1,
+            'requiresubmissionstatement' => 1,
+            'teamsubmission' => 1,
+            'completion' => 0,
+            'completionsubmit' => 1,
+        ]);
+
+        // Create a calendar event.
+        $this->setAdminUser();
+        $event = $this->create_action_event($course, $assign, ASSIGN_EVENT_TYPE_DUE);
+        $this->setUser();
+
+        $factory = new \core_calendar\action_factory();
+        $actionevent1 = mod_assign_core_calendar_provide_event_action($event, $factory, $student1->id);
+        $actionevent2 = mod_assign_core_calendar_provide_event_action($event, $factory, $student2->id);
+
+        // Confirm the events were decorated.
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent1);
+        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent1->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent1->get_url());
+        $this->assertEquals(1, $actionevent1->get_item_count());
+        $this->assertTrue($actionevent1->is_actionable());
+
+        $this->assertInstanceOf('\core_calendar\local\event\value_objects\action', $actionevent2);
+        $this->assertEquals(get_string('addsubmission', 'assign'), $actionevent2->get_name());
+        $this->assertInstanceOf('moodle_url', $actionevent2->get_url());
+        $this->assertEquals(1, $actionevent2->get_item_count());
+        $this->assertTrue($actionevent2->is_actionable());
+
+        // Submit as the student.
+        $this->add_submission($student1, $assign);
+        $this->submit_for_grading($student1, $assign, ['submissionstatement' => 'Hello, world!']);
+
+        // Create a new calendar event.
+        $this->setAdminUser();
+        $event = $this->create_action_event($course, $assign, ASSIGN_EVENT_TYPE_DUE);
+        $this->setUser();
+
+        // Confirm there were no events to action.
+        $actionevent1 = mod_assign_core_calendar_provide_event_action($event, $factory, $student1->id);
+        $this->assertNull($actionevent1);
+
+        $actionevent2 = mod_assign_core_calendar_provide_event_action($event, $factory, $student2->id);
+        $this->assertNull($actionevent2);
+    }
+
     public function test_assign_core_calendar_provide_event_action_gradingduedate_as_teacher() {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
