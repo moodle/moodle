@@ -28,7 +28,9 @@ namespace mod_quiz\question\bank;
 defined('MOODLE_INTERNAL') || die();
 
 use core\output\datafilter;
+use core_question\local\bank\column_base;
 use core_question\local\bank\condition;
+use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\filter\custom_category_condition;
 use qbank_managecategories\category_condition;
@@ -79,7 +81,7 @@ class custom_view extends \core_question\local\bank\view {
             }
         }
 
-        $this->init_required_columns();
+        $this->init_columns($this->wanted_columns(), $this->heading_column());
         parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
         [$this->quiz, ] = get_module_from_cmid($cm->id);
         $this->set_quiz_has_attempts(quiz_has_attempts($this->quiz->id));
@@ -87,55 +89,42 @@ class custom_view extends \core_question\local\bank\view {
     }
 
     /**
-     * Init required columns.
+     * Just use the base column manager in this view.
      *
      * @return void
      */
-    protected function init_required_columns(): void {
-        // Override core columns.
-        $this->corequestionbankcolumns = [
-            'add_action_column',
-            'checkbox_column',
-            'question_type_column',
-            'question_name_text_column',
-            'preview_action_column'
-        ];
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
     }
 
     /**
-     * Get class for each question bank columns.
+     * Don't display plugin controls.
      *
-     * @return array
+     * @param \core\context $context
+     * @param int $categoryid
+     * @return string
      */
-    protected function get_class_for_columns(): array {
+    protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        return '';
+    }
+
+    protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
-        if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
-            $this->corequestionbankcolumns[] = 'question_text_row';
-        }
-        foreach ($this->corequestionbankcolumns as $fullname) {
-            $shortname = $fullname;
-            if (class_exists('mod_quiz\\question\\bank\\' . $fullname)) {
-                $fullname = 'mod_quiz\\question\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else if (class_exists('core_question\\local\\bank\\' . $fullname)) {
-                $fullname = 'core_question\\local\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else {
-                $questionbankclasscolumns[$shortname] = '';
+        $customviewcolumns = [
+            'mod_quiz\question\bank\add_action_column' . column_base::ID_SEPARATOR  . 'add_action_column',
+            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
+            'mod_quiz\question\bank\question_name_text_column' . column_base::ID_SEPARATOR . 'question_name_text_column',
+            'mod_quiz\question\bank\preview_action_column'  . column_base::ID_SEPARATOR  . 'preview_action_column',
+        ];
+
+        foreach ($customviewcolumns as $columnid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+            if (class_exists($columnclass)) {
+                $questionbankclasscolumns[$columnid] = $columnclass::from_column_name($this, $columnname);
             }
         }
-        return $questionbankclasscolumns;
-    }
 
-    /**
-     * Get the list of qbank plugins with available objects for features.
-     *
-     * @return array
-     */
-    protected function get_question_bank_plugins(): array {
-        // The view is too crowded, exclude some columns.
-        $questionbankclasscolumns = parent::get_question_bank_plugins();
-        $questionbankclasscolumns = array_intersect_key($questionbankclasscolumns, array_flip($this->corequestionbankcolumns));
         return $questionbankclasscolumns;
     }
 

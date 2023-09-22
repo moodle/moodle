@@ -110,4 +110,7 @@ class comment_count_column extends column_base {
         return ['pr-3'];
     }
 
+    public function get_default_width(): int {
+        return 150;
+    }
 }

@@ -201,6 +201,9 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     // Category list page.
     $params['cpage'] = optional_param('cpage', null, PARAM_INT);
 
+    // Sort data.
+    $params['sortdata'] = optional_param_array('sortdata', [], PARAM_INT);
+
     $PAGE->set_pagelayout('admin');
 
     return question_build_edit_resources($edittab, $baseurl, $params);
@@ -247,7 +250,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     $cleanparams = [
-        'qsorts' => [],
+        'sortdata' => [],
         'filter' => null
     ];
     $paramtypes = [
@@ -258,7 +261,6 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         'category' => PARAM_SEQUENCE,
         'qperpage' => PARAM_INT,
         'cpage' => PARAM_INT,
-        'qbshowtext' => PARAM_INT,
     ];
 
     foreach ($paramtypes as $name => $type) {
@@ -276,6 +278,10 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $cleanparams['filter'] = $params['filter'];
     }
 
+    if (isset($params['sortdata'])) {
+        $cleanparams['sortdata'] = clean_param_array($params['sortdata'], PARAM_INT);
+    }
+
     $cmid = $cleanparams['cmid'];
     $courseid = $cleanparams['courseid'];
     $qpage = $cleanparams['qpage'] ?: -1;
@@ -283,7 +289,6 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     $category = $cleanparams['category'] ?: 0;
     $qperpage = $cleanparams['qperpage'];
     $cpage = $cleanparams['cpage'] ?: 1;
-    $qsorts = $cleanparams['qsorts'];
 
     if (is_null($cmid) && is_null($courseid)) {
         throw new \moodle_exception('Must provide a cmid or courseid');
@@ -293,14 +298,19 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         list($module, $cm) = get_module_from_cmid($cmid);
         $courseid = $cm->course;
         $thispageurl->params(compact('cmid'));
-        require_login($courseid, false, $cm);
         $thiscontext = context_module::instance($cmid);
     } else {
         $module = null;
         $cm = null;
         $thispageurl->params(compact('courseid'));
-        require_login($courseid, false);
         $thiscontext = context_course::instance($courseid);
+    }
+
+    if (defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
+        // For AJAX, we don't need to set up the course page for output.
+        require_login();
+    } else {
+        require_login($courseid, false, $cm);
     }
 
     if ($thiscontext){
@@ -328,19 +338,6 @@ function question_build_edit_resources($edittab, $baseurl, $params,
 
     if (strpos($baseurl, '/question/') === 0) {
         navigation_node::override_active_url($thispageurl);
-    }
-
-    // This need to occur after the override_active_url call above because
-    // these values change on the page request causing the URLs to mismatch
-    // when trying to work out the active node.
-    for ($i = 1; $i <= core_question\local\bank\view::MAX_SORTS; $i++) {
-        $param = 'qbs' . $i;
-        if (isset($params[$param])) {
-            $value = clean_param($params[$param], PARAM_TEXT);
-        } else {
-            break;
-        }
-        $thispageurl->param($param, $value);
     }
 
     if ($pagevars['qpage'] > -1) {
@@ -387,7 +384,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     $pagevars['tabname'] = $edittab;
 
     // Sort parameters.
-    $pagevars['sortdata'] = optional_param_array('sortdata', [], PARAM_INT);
+    $pagevars['sortdata'] = $cleanparams['sortdata'];
     foreach ($pagevars['sortdata'] as $sortname => $sortorder) {
         $thispageurl->param('sortdata[' . $sortname . ']', $sortorder);
     }

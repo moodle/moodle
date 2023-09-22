@@ -29,9 +29,16 @@ require_once($CFG->libdir.'/adminlib.php');
 admin_externalpage_setup('qbank_columnsortorder', '', ['section' => 'columnsortorder'],
     '/question/bank/columnsortorder/sortcolumns.php');
 
-$renderer = $PAGE->get_renderer('qbank_columnsortorder');
+$preview = optional_param('preview', false, PARAM_BOOL);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(new lang_string('qbankcolumnsortorder', 'qbank_columnsortorder'));
-echo $renderer->render_column_sort_ui();
+if ($preview) {
+    $columnmanager = new \qbank_columnsortorder\column_manager(true);
+    $preview = $columnmanager->get_questionbank()->get_preview();
+    echo $OUTPUT->render(new \qbank_columnsortorder\output\column_sort_preview($preview));
+
+} else {
+    echo $OUTPUT->render(new \qbank_columnsortorder\output\column_sort_ui());
+}
 echo $OUTPUT->footer();
