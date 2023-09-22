@@ -79,6 +79,111 @@
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit2&pdf=V2_DP L10 Sprint 2.3",
                     "type": "page"
+                  },
+                  {
+                    "title": "Sprint 3.1 Planning and Collaboration",
+                    "uid": "DPL10-TP0-CHDRN10",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit3&pdf=V2_DP L10 Sprint 3.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 3.2 Designing the Game Environment",
+                    "uid": "DPL10-TP0-CHDRN11",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit3&pdf=V2_DP L10 Sprint 3.2",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 3.3 Adding Paddle to the Game",
+                    "uid": "DPL10-TP0-CHDRN12",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit3&pdf=V2_DP L10 Sprint 3.3",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 3.4 Game Completion",
+                    "uid": "DPL10-TP0-CHDRN13",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit3&pdf=V2_DP L10 Sprint 3.4",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 4.1 Dictionaries and Sets",
+                    "uid": "DPL10-TP0-CHDRN14",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit4&pdf=V2_DP L10 Sprint 4.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 4.2 Array",
+                    "uid": "DPL10-TP0-CHDRN15",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit4&pdf=V2_DP L10 Sprint 4.2",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 4.3 NumPy Array",
+                    "uid": "DPL10-TP0-CHDRN16",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit4&pdf=V2_DP L10 Sprint 4.3",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 4.4 Comparison of Data Structures",
+                    "uid": "DPL10-TP0-CHDRN17",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit4&pdf=V2_DP L10 Sprint 4.4",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 5.1 Algorithm Design and Applications",
+                    "uid": "DPL10-TP0-CHDRN18",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit5&pdf=V2_DP L10 Sprint 5.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 5.2 Sorting Algorithms",
+                    "uid": "DPL10-TP0-CHDRN19",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit5&pdf=V2_DP L10 Sprint 5.2",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 6.1 Cleaning and Combining Data",
+                    "uid": "DPL10-TP0-CHDRN20",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit6&pdf=V2_DP L10 Sprint 6.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 6.2 Visualizing DataFrames",
+                    "uid": "DPL10-TP0-CHDRN21",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit6&pdf=V2_DP L10 Sprint 6.2",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 6.3 Summarizing and Pivoting Data",
+                    "uid": "DPL10-TP0-CHDRN22",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit6&pdf=V2_DP L10 Sprint 6.3",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 7.1 Cleaning up Data",
+                    "uid": "DPL10-TP0-CHDRN23",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit7&pdf=V2_DP L10 Sprint 7.1",
+                    "type": "page"
+                  },
+                  {
+                    "title": "Sprint 7.2 Time Series Analysis using ARIMA",
+                    "uid": "DPL10-TP0-CHDRN24",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level10&unit=Unit7&pdf=V2_DP L10 Sprint 7.2",
+                    "type": "page"
                   }
             ]
           },
@@ -264,6 +369,41 @@
               {
                 "uid": "DPL10-TP2-CHDRN6",
                 "fname": "DPL10-TP2-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN7",
+                "fname": "DPL10-TP2-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN8",
+                "fname": "DPL10-TP2-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN9",
+                "fname": "DPL10-TP2-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN10",
+                "fname": "DPL10-TP2-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN11",
+                "fname": "DPL10-TP2-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN12",
+                "fname": "DPL10-TP2-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL10-TP2-CHDRN13",
+                "fname": "DPL10-TP2-CHDRN13.json",
                 "type": "assignment"
               },
               {

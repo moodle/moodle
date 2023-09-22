@@ -289,6 +289,16 @@
               "uid": "DCL02-U03-CHDRN1",
               "fname": "DCL02-U03-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DCL02-TP3-CHDRN6",
+              "fname": "DCL02-TP3-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL02-TP3-CHDRN7",
+              "fname": "DCL02-TP3-CHDRN7.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"
@@ -486,6 +496,11 @@
               "uid": "DCL02-TP7-CHDRN5",
               "fname": "DCL02-TP7-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U07-CHDRN1",
+              "fname": "DCL02-U07-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

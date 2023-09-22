@@ -244,6 +244,31 @@
               "type": "assignment"
             },
             {
+              "uid": "DPL08-TP2-CHDRN5",
+              "fname": "DPL08-TP2-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP2-CHDRN6",
+              "fname": "DPL08-TP2-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP2-CHDRN7",
+              "fname": "DPL08-TP2-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP2-CHDRN8",
+              "fname": "DPL08-TP2-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP2-CHDRN9",
+              "fname": "DPL08-TP2-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
               "uid": "DPL08-U2-CHDRN1",
               "fname": "DPL08-U2-CHDRN1.json",
               "type": "quiz"
@@ -288,6 +313,51 @@
             {
               "uid": "DPL08-TP3-CHDRN5",
               "fname": "DPL08-TP3-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN6",
+              "fname": "DPL08-TP3-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN7",
+              "fname": "DPL08-TP3-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN8",
+              "fname": "DPL08-TP3-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN9",
+              "fname": "DPL08-TP3-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN10",
+              "fname": "DPL08-TP3-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN11",
+              "fname": "DPL08-TP3-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN12",
+              "fname": "DPL08-TP3-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN13",
+              "fname": "DPL08-TP3-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL08-TP3-CHDRN14",
+              "fname": "DPL08-TP3-CHDRN14.json",
               "type": "assignment"
             },
             {
