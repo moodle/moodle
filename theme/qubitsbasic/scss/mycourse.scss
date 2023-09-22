@@ -297,7 +297,7 @@
   color: #116cbf;
 }
 
-.max-width {
+.my-course-section .max-width {
   @include breakpoint(xs) {
     max-width: 90%;
   }
@@ -314,7 +314,7 @@
     max-width: 29%;
   }
 }
-.flex-grow {
+.my-course-section .flex-grow {
   @include breakpoint(md) {
     flex: 0 0 43%;
   }
@@ -322,7 +322,7 @@
     flex: 0 0 43%;
   }
   @include breakpoint(xlg) {
-    flex: 0 0 30%;
+    flex: 0 0 43%;
   }
 }
 .sidebar {
