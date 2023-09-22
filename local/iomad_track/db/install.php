@@ -133,8 +133,6 @@ function xmldb_local_iomad_track_record_certificates($courseid, $userid, $tracki
     // Get context
     $context = context_course::instance($courseid);
 
-mtrace ("generating certificate with onlyvisible = $onlyvisible</br>");
-die;
     // Get user
     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
