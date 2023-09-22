@@ -3099,5 +3099,10 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2022112805.03);
     }
 
+    if ($oldversion < 2022112805.11) {
+        upgrade_core_licenses();
+        upgrade_main_savepoint(true, 2022112805.11);
+    }
+
     return true;
 }

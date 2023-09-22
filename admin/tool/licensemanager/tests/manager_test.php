@@ -174,24 +174,24 @@ class manager_test extends advanced_testcase {
         $this->resetAfterTest();
 
         $licenseorder = array_keys(license_manager::get_licenses());
-        $initialposition = array_search('cc-nc', $licenseorder);
+        $initialposition = array_search('cc-nc-4.0', $licenseorder);
 
         $manager = new tool_licensemanager\manager();
 
         // We're testing a private method, so we need to setup reflector magic.
         $method = new ReflectionMethod('\tool_licensemanager\manager', 'change_license_order');
         $method->setAccessible(true); // Allow accessing of private method.
-        $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_UP, 'cc-nc');
+        $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_UP, 'cc-nc-4.0');
 
         $licenseorder = array_keys(license_manager::get_licenses());
-        $newposition = array_search('cc-nc', $licenseorder);
+        $newposition = array_search('cc-nc-4.0', $licenseorder);
 
         $this->assertLessThan($initialposition, $newposition);
 
         $initialposition = array_search('allrightsreserved', $licenseorder);
         $method->invoke($manager, \tool_licensemanager\manager::ACTION_MOVE_DOWN, 'allrightsreserved');
         $licenseorder = array_keys(license_manager::get_licenses());
-        $newposition = array_search('cc-nc', $licenseorder);
+        $newposition = array_search('cc-nc-4.0', $licenseorder);
 
         $this->assertGreaterThan($initialposition, $newposition);
     }
