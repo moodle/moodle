@@ -41,7 +41,7 @@ class column_action_resize extends column_action_base {
     public function get_action_menu_link(column_base $column): ?\action_menu_link {
         return new \action_menu_link_secondary(
             new \moodle_url('/question/edit.php'),
-            null,
+            new \pix_icon('i/twoway', ''),
             $this->resize,
             [
                 'title' => get_string('resizecolumn', 'qbank_columnsortorder', $column->get_title()),
