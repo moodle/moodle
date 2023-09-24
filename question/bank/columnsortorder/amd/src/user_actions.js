@@ -268,7 +268,7 @@ const showResizeModal = async(currentHeader, uiRoot) => {
     const minWidth = getMinWidth(currentHeader);
 
     const modal = await ModalSaveCancel.create({
-        title: getString('resizecolumn', 'qbank_columnsortorder', currentHeader.textContent),
+        title: getString('resizecolumn', 'qbank_columnsortorder', currentHeader.dataset.name),
         body: Templates.render('qbank_columnsortorder/resize_modal', {width: initialWidth, min: minWidth}),
         show: true,
     });
