@@ -233,7 +233,7 @@ class wikimedia {
                 }
                 $files_array[] = array(
                     'title'=>substr($title, 5),         //chop off 'File:'
-                    'thumbnail' => $OUTPUT->image_url(file_extension_icon(substr($title, 5), WIKIMEDIA_THUMB_SIZE))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_extension_icon(substr($title, 5)))->out(false),
                     'thumbnail_width' => WIKIMEDIA_THUMB_SIZE,
                     'thumbnail_height' => WIKIMEDIA_THUMB_SIZE,
                     'license' => 'cc-sa',
