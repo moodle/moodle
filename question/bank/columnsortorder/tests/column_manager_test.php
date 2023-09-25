@@ -58,10 +58,10 @@ class column_manager_test extends advanced_testcase {
     /**
      * Return an array of visible columns for the question bank.
      *
-     * @param view $questionbank
      * @return array
      */
-    protected static function get_columns(view $questionbank): array {
+    protected static function get_columns(): array {
+        $questionbank = self::get_question_bank();
         $columns = [];
         foreach ($questionbank->get_visiblecolumns() as $column) {
             $columns[] = $column->get_column_id();
@@ -75,28 +75,32 @@ class column_manager_test extends advanced_testcase {
      * @return array[]
      */
     public static function settings_provider(): array {
-        $questionbank = self::get_question_bank();
         return [
             'Test set_column_order' => [
                 'setting' => 'enabledcol',
                 'function' => 'set_column_order',
-                'data' => self::get_columns($questionbank),
+                'datamethod' => [__CLASS__, 'get_columns'],
                 'csv' => true,
             ],
             'Test set_hidden_columns' => [
                 'setting' => 'hiddencols',
                 'function' => 'set_hidden_columns',
-                'data' => self::get_columns($questionbank),
+                'datamethod' => [__CLASS__, 'get_columns'],
                 'csv' => true,
             ],
             'Test set_column_size' => [
                 'setting' => 'colsize',
                 'function' => 'set_column_size',
-                'data' => random_string(),
+                'datamethod' => 'random_string',
                 'csv' => false,
             ],
         ];
     }
+
+    protected function get_data_from_datamethod(array|string $datamethod): array|string {
+        return call_user_func($datamethod);
+    }
+
 
     /**
      * Test setting config settings
@@ -104,11 +108,17 @@ class column_manager_test extends advanced_testcase {
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param mixed $data The property of the test class to pass to the function.
+     * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_settings(string $setting, string $function, mixed $data, bool $csv): void {
+    public function test_settings(
+        string $setting,
+        string $function,
+        array|string $datamethod,
+        bool $csv,
+    ): void {
+        $data = $this->get_data_from_datamethod($datamethod);
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
@@ -125,11 +135,17 @@ class column_manager_test extends advanced_testcase {
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param mixed $data The property of the test class to pass to the function.
+     * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_reset_settings(string $setting, string $function, mixed $data, bool $csv): void {
+    public function test_reset_settings(
+        string $setting,
+        string $function,
+        array|string $datamethod,
+        bool $csv,
+    ): void {
+        $data = $this->get_data_from_datamethod($datamethod);
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $initial = $csv ? implode(',', $data) : $data;
@@ -145,12 +161,18 @@ class column_manager_test extends advanced_testcase {
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param mixed $data The data to pass to the function.
+     * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_settings_user(string $setting, string $function, mixed $data, bool $csv): void {
+    public function test_settings_user(
+        string $setting,
+        string $function,
+        array|string $datamethod,
+        bool $csv,
+    ): void {
         $this->resetAfterTest(true);
+        $data = $this->get_data_from_datamethod($datamethod);
         $this->assertFalse(get_config('qbank_columnsortorder', $setting));
         $this->assertEmpty(get_user_preferences('qbank_columnsortorder_' . $setting));
         column_manager::{$function}($data);
@@ -165,11 +187,17 @@ class column_manager_test extends advanced_testcase {
      * @dataProvider settings_provider
      * @param string $setting The name of the setting being saved
      * @param string $function The name of the function being called
-     * @param mixed $data The property of the test class to pass to the function.
+     * @param array|string $datamethod The property of the test class to pass to the function.
      * @param bool $csv True of the data is stored as a comma-separated list.
      * @return void
      */
-    public function test_reset_user_settings(string $setting, string $function, mixed $data, bool $csv): void {
+    public function test_reset_user_settings(
+        string $setting,
+        string $function,
+        array|string $datamethod,
+        bool $csv,
+    ): void {
+        $data = $this->get_data_from_datamethod($datamethod);
         $this->setAdminUser();
         $this->resetAfterTest(true);
         $initial = $csv ? implode(',', $data) : $data;
