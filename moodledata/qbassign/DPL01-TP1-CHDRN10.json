@@ -1,0 +1,30 @@
+{
+	"title" : "1.3 Master Challenge 2",
+	"question": "Open a new project in ScratchJr. Add the background as shown in the image given below. Place the cat at the left end of the road. What number should be entered in the move right block to make the cat reach the right end of the road?<br><img src='https://learn.qubitsedu.com/images/DPL01U1S03Image2.png' width='45%' height='75%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL01-TP1-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

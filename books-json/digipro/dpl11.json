@@ -1,0 +1,638 @@
+[
+  {
+    "book": {
+      "name": "Computer Science and Programming",
+      "code": "DPL11",
+      "category": "DigiPro",
+      "categorycode": "DP",
+      "summary": ".",
+      "otherfields": {
+        "level": "11",
+        "cardcolour": "#215caa"
+      },
+      "chapters": [
+        {
+          "title" : "Teacher Resources",
+          "type": "topic",
+          "teacheronly": "yes",
+          "uid": "DPL11-TP0-000",
+          "children": [
+            {
+              "title": "Teacher Guide",
+              "uid": "DPL11-TP0-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=DigiPro_L11_Teacher's Guide",
+              "type": "page"
+            },
+            {
+                  "title": "Sprint 1.1 Programming Languages",
+                  "uid": "DPL11-TP0-CHDRN1",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.1",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.2 Caesar’s Cipher",
+                  "uid": "DPL11-TP0-CHDRN2",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.2",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.3 Breaking the Cipher",
+                  "uid": "DPL11-TP0-CHDRN3",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.3",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.4 Testing the Code",
+                  "uid": "DPL11-TP0-CHDRN4",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.4",
+                  "type": "page"
+                },
+          {
+                  "title": "Sprint 1.5 Debugging Strategies",
+                  "uid": "DPL11-TP0-CHDRN5",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit1&pdf=V2_DP L11 Sprint 1.5",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 2.1 Classes and Objects",
+                  "uid": "DPL11-TP0-CHDRN7",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit2&pdf=V2_DP L11 Sprint 2.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 2.2 Inheritance and Polymorphism",
+                  "uid": "DPL11-TP0-CHDRN8",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit2&pdf=V2_DP L11 Sprint 2.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.1 Requirement Analysis and Design",
+                  "uid": "DPL11-TP0-CHDRN9",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.1_",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.2 GitHub and Project Management",
+                  "uid": "DPL11-TP0-CHDRN10",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.3 Git Workflows",
+                  "uid": "DPL11-TP0-CHDRN11",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.3",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.4 Implementation",
+                  "uid": "DPL11-TP0-CHDRN12",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.4",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 3.5 Testing, Deployment, and Maintenance",
+                  "uid": "DPL11-TP0-CHDRN13",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit3&pdf=V2_DP L11 Sprint 3.5",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 4.1 Introduction to Databases",
+                  "uid": "DPL11-TP0-CHDRN14",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit4&pdf=V2_DP L11 Sprint 4.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 4.2 Structured Query Language",
+                  "uid": "DPL11-TP0-CHDRN15",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit4&pdf=V2_DP L11 Sprint 4.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 5.1 Recursion",
+                  "uid": "DPL11-TP0-CHDRN16",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit5&pdf=V2_DP L11 Sprint 5.1_",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 5.2 Applications of Recursion",
+                  "uid": "DPL11-TP0-CHDRN17",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit5&pdf=V2_DP L11 Sprint 5.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 6.1 Data Exploration",
+                  "uid": "DPL11-TP0-CHDRN18",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit6&pdf=V2_DP L11 Sprint 6.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 6.2 Interactive Graphs using Plotly",
+                  "uid": "DPL11-TP0-CHDRN19",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit6&pdf=V2_DP L11 Sprint 6.2",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 7.1 Sunspot Cycle",
+                  "uid": "DPL11-TP0-CHDRN20",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit7&pdf=V2_DP L11 Sprint 7.1",
+                  "type": "page"
+                },   
+                {
+                  "title": "Sprint 7.2 Forecasting Sunspots",
+                  "uid": "DPL11-TP0-CHDRN21",
+                  "description": "",
+                  "route": "/pdf?course=DigiPro&Level=Level11&unit=Unit7&pdf=V2_DP L11 Sprint 7.2",
+                  "type": "page"
+                }
+          ]
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 1: Program Development with Python",
+          "type": "topic",
+          "uid": "DPL11-TP1-000",
+          "children": [
+            {
+              "title": "Unit 1 Summary",
+              "uid": "DPL11-TP1-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=01 DP_L11_Unit1_Opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.1 -Programming Languages",
+              "uid": "DPL11-TP1-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=02 DP_L11_Unit1_Sprint1.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.2 - Caesar Cipher",
+              "uid": "DPL11-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=03 DP_L11_Unit1_Sprint1.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.3 -Breaking The Cipher",
+              "uid": "DPL11-TP1-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=04 DP_L11_Unit1_Sprint1.3 - Google Drive",
+              "type": "page"
+            },
+            {
+              "title": "1.4 - Testing The Code",
+              "uid": "DPL11-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=05 DP_L11_Unit1_Sprint1.4 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "1.5 - Debugging Strategies",
+              "uid": "DPL11-TP1-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=06 DP_L11_Unit1_Sprint1.5 - Google Drive",
+              "type": "page"
+            },
+            {
+              "title": "1.6 - Exercise",
+              "uid": "DPL11-TP1-CHDRN7",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=07 DP_L11_Unit1_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN8",
+              "fname": "DPL11-TP1-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN9",
+              "fname": "DPL11-TP1-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN10",
+              "fname": "DPL11-TP1-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN11",
+              "fname": "DPL11-TP1-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN12",
+              "fname": "DPL11-TP1-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN13",
+              "fname": "DPL11-TP1-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN14",
+              "fname": "DPL11-TP1-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN15",
+              "fname": "DPL11-TP1-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN16",
+              "fname": "DPL11-TP1-CHDRN16.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN17",
+              "fname": "DPL11-TP1-CHDRN17.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN18",
+              "fname": "DPL11-TP1-CHDRN18.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN19",
+              "fname": "DPL11-TP1-CHDRN19.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN20",
+              "fname": "DPL11-TP1-CHDRN20.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN21",
+              "fname": "DPL11-TP1-CHDRN21.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP1-CHDRN22",
+              "fname": "DPL11-TP1-CHDRN22.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U01-CHDRN1",
+              "fname": "DPL11-U01-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 2: Object-Oriented Programming",
+          "type": "topic",
+          "uid": "DPL11-TP2-000",
+          "children": [
+            {
+              "title": "Unit 2 Summary",
+              "uid": "DPL11-TP2-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=08 DP_L11_Unit2_Opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "2.1 - Classes And Objects",
+              "uid": "DPL11-TP2-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=09 DP_L11_Unit2_Sprint2.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "2.2 - Inheritance And Polymorphism",
+              "uid": "DPL11-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=10 DP_L11_Unit2_Sprint2.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "2.3 - Exercise",
+              "uid": "DPL11-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=11 DP_L11_Unit2_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN5",
+              "fname": "DPL11-TP2-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN6",
+              "fname": "DPL11-TP2-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN7",
+              "fname": "DPL11-TP2-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN8",
+              "fname": "DPL11-TP2-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN9",
+              "fname": "DPL11-TP2-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-TP2-CHDRN10",
+              "fname": "DPL11-TP2-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U02-CHDRN1",
+              "fname": "DPL11-U02-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 3: Software Development Cycle",
+          "type": "topic",
+          "uid": "DPL11-TP3-000",
+          "children": [
+            {
+              "title": "Unit 3 Summary",
+              "uid": "DPL11-TP3-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=12 DPL11-Unit3-opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.1 - Requirement Analysis And Design",
+              "uid": "DPL11-TP3-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=13 DPL11-Unit3-Sprint3.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.2 - Github And Project Management",
+              "uid": "DPL11-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=14 DPL11-Unit3-Sprint3.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.3 - Git Workflows",
+              "uid": "DPL11-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=15 DPL11-Unit3-Sprint3.3 - Google Docs",
+              "type": "page"
+            }, 
+            {
+              "title": "3.4 - Implementation",
+              "uid": "DPL11-TP3-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=16 DPL11-Unit3-Sprint3.4 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.5 - Testing, Deployment, And Maintenance",
+              "uid": "DPL11-TP3-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=17 DPL11-Unit3-Sprint3.5 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "3.6 - Exercise",
+              "uid": "DPL11-TP3-CHDRN7",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=18 DPL11-Unit3-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP3-CHDRN8",
+              "fname": "DPL11-TP3-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U03-CHDRN1",
+              "fname": "DPL11-U03-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 4: Databases",
+          "type": "topic",
+          "uid": "DPL11-TP4-000",
+          "children": [
+            {
+              "title": "Unit 4 Summary",
+              "uid": "DPL11-TP4-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=19 DPL11_Unit4_Opener Page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.1 - Introduction To Databases",
+              "uid": "DPL11-TP4-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=20 DPL11_Unit4_Sprint4.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.2 - Structured Query Language",
+              "uid": "DPL11-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=21 DPL11_Unit4_Sprint4.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "4.3 - Exercise",
+              "uid": "DPL11-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=23 DP_L11_Unit4_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP4-CHDRN5",
+              "fname": "DPL11-TP4-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U04-CHDRN1",
+              "fname": "DPL11-U04-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 5: Algorithm",
+          "type": "topic",
+          "uid": "DPL11-TP4-000",
+          "children": [
+            {
+              "title": "Unit 5 Summary",
+              "uid": "DPL11-TP5-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=24 DP_L11_Unit5_Opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.1 - Recursion",
+              "uid": "DPL11-TP5-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=25 DPL11_Unit5_Sprint5.1 - NEW - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.2 - Applications Of Recursion",
+              "uid": "DPL11-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=26 DPL11_Unit5_Sprint5.2 - NEW - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "5.3 - Exercise",
+              "uid": "DPL11-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=27 DPL11_Unit5_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP5-CHDRN5",
+              "fname": "DPL11-TP5-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U05-CHDRN1",
+              "fname": "DPL11-U05-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 6: Data Science",
+          "type": "topic",
+          "uid": "DPL11-TP6-000",
+          "children": [
+            {
+              "title": "Unit 6 Summary",
+              "uid": "DPL11-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=28 DPL11_Unit6_opener page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "6.1 - Data Exploration",
+              "uid": "DPL11-TP6-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=29 DPL11-Unit6-Sprint6.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "6.2 - Interactive Graphs Using Ploty",
+              "uid": "DPL11-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=30 DPL11-Unit6-Sprint6.2 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "6.3 - Exercise",
+              "uid": "DPL11-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=31 DPL11_Unit6_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP6-CHDRN5",
+              "fname": "DPL11-TP6-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U06-CHDRN1",
+              "fname": "DPL11-U06-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL11/DPL11-TP1-000.mdx",
+          "title": "Unit 7: Time Series Forecasting",
+          "type": "topic",
+          "uid": "DPL11-TP7-000",
+          "children": [
+            {
+              "title": "Unit 7 Summary",
+              "uid": "DPL11-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=32 DP_L11_Unit7_Opener Page - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "7.1 - Sunspots Cycle",
+              "uid": "DPL11-TP7-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=33 DP-L11 Unit 7-Sprint7.1 - Google Docs",
+              "type": "page"
+            },
+            {
+              "title": "7.2 - Forecasting Sunspots",
+              "uid": "DPL11-TP7-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=34 DP-L11 Unit 7-Sprint7.2 - Google Docs",
+              "type": "page"
+            },
+             {
+              "title": "7.3 - Exercise",
+              "uid": "DPL11-TP7-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level11&pdf=38-DPL11_U7_EXERCISE - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL11-TP7-CHDRN5",
+              "fname": "DPL11-TP7-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL11-U07-CHDRN1",
+              "fname": "DPL11-U07-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        }
+      ]
+    }
+  }
+]

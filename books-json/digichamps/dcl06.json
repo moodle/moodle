@@ -190,6 +190,21 @@
               "uid": "DCL06-TP1-CHDRN5",
               "fname": "DCL06-TP1-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP1-CHDRN6",
+              "fname": "DCL06-TP1-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP1-CHDRN7",
+              "fname": "DCL06-TP1-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-U1-CHDRN1",
+              "fname": "DCL06-U1-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -204,7 +219,8 @@
               "title": "Unit 2 Summary",
               "uid": "DCL06-TP2-CHDRN1",
               "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_Intro"
+              "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_Intro",
+              "type": "page"
             },
             {
               "title": "2.1 - Create Your Own Website",
@@ -238,6 +254,71 @@
               "uid": "DCL06-TP2-CHDRN6",
               "fname": "DCL06-TP2-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN7",
+              "fname": "DCL06-TP2-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN8",
+              "fname": "DCL06-TP2-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN9",
+              "fname": "DCL06-TP2-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN10",
+              "fname": "DCL06-TP2-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN11",
+              "fname": "DCL06-TP2-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN12",
+              "fname": "DCL06-TP2-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN13",
+              "fname": "DCL06-TP2-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN14",
+              "fname": "DCL06-TP2-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN15",
+              "fname": "DCL06-TP2-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN16",
+              "fname": "DCL06-TP2-CHDRN16.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN17",
+              "fname": "DCL06-TP2-CHDRN17.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-TP2-CHDRN18",
+              "fname": "DCL06-TP2-CHDRN18.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL06-U2-CHDRN1",
+              "fname": "DCL06-U2-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -280,6 +361,11 @@
               "uid": "DCL06-TP3-CHDRN5",
               "fname": "DCL06-TP3-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL06-U3-CHDRN1",
+              "fname": "DCL06-U3-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -319,9 +405,21 @@
               "type": "page"
             },
             {
+              "title": "4.4 - Mail Merge",
               "uid": "DCL06-TP4-CHDRN5",
-              "fname": "DCL06-TP4-CHDRN5.json",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U04_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL06-TP4-CHDRN6",
+              "fname": "DCL06-TP4-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL06-U4-CHDRN1",
+              "fname": "DCL06-U4-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -361,232 +459,26 @@
               "type": "page"
             },
             {
+              "title": "5.4 - Logical Functions",
               "uid": "DCL06-TP5-CHDRN5",
-              "fname": "DCL06-TP5-CHDRN5.json",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U05_S04",
+              "type": "page"
+            },
+            {
+              "uid": "DCL06-TP5-CHDRN6",
+              "fname": "DCL06-TP5-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL06-U5-CHDRN1",
+              "fname": "DCL06-U5-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
         }
       ]
-    },
-    "chapters": [
-      {
-        "route": "book/DCL06/DCL06-TP1-000.mdx",
-        "title": "Unit 1: Computing Devices",
-        "type": "topic",
-        "uid": "DCL06-TP1-000",
-        "children": [
-          {
-            "title": "Unit 1 Summary",
-            "uid": "DCL06-TP1-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U01_Intro",
-            "type": "page"
-          },
-          {
-            "title": "1.1 - Technology And Networks",
-            "uid": "DCL06-TP1-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U01_S01",
-            "type": "page"
-          },
-          {
-            "title": "1.2 - File Management",
-            "uid": "DCL06-TP1-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U01_S02",
-            "type": "page"
-          },
-          {
-            "title": "1.3 - Web Apps And Email",
-            "uid": "DCL06-TP1-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U01_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL06-TP1-CHDRN5",
-            "fname": "DCL06-TP1-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL06/DCL06-TP1-000.mdx",
-        "title": "Unit 2: Personal Portfolio",
-        "type": "topic",
-        "uid": "DCL06-TP2-000",
-        "children": [
-          {
-            "title": "Unit 2 Summary",
-            "uid": "DCL06-TP2-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_Intro"
-          },
-          {
-            "title": "2.1 - Create Your Own Website",
-            "uid": "DCL06-TP2-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_S01",
-            "type": "page"
-          },
-          {
-            "title": "2.2 - More On Home Page",
-            "uid": "DCL06-TP2-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_S02 ",
-            "type": "page"
-          },
-          {
-            "title": "2.3 - Add A Webpage",
-            "uid": "DCL06-TP2-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_S03",
-            "type": "page"
-          },
-          {
-            "title": " 2.4 - Sections And Collapsible Groups",
-            "uid": "DCL06-TP2-CHDRN5",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U02_S04",
-            "type": "page"
-          },
-          {
-            "uid": "DCL06-TP2-CHDRN6",
-            "fname": "DCL06-TP2-CHDRN6.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL06/DCL06-TP1-000.mdx",
-        "title": "Unit 3: Tables And Animations In PowerPoint",
-        "type": "topic",
-        "uid": "DCL06-TP3-000",
-        "children": [
-          {
-            "title": "Unit 3 Summary",
-            "uid": "DCL06-TP3-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U03_Intro",
-            "type": "page"
-          },
-          {
-            "title": "3.1 - Tables On Slides",
-            "uid": "DCL06-TP3-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U03_S01",
-            "type": "page"
-          },
-          {
-            "title": "3.2 - Animation Basics",
-            "uid": "DCL06-TP3-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U03_S02",
-            "type": "page"
-          },
-          {
-            "title": "3.3 - Additional Animation Effects",
-            "uid": "DCL06-TP3-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U03_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL06-TP3-CHDRN5",
-            "fname": "DCL06-TP3-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL06/DCL06-TP1-000.mdx",
-        "title": "Unit 4: Tables and Mail Merge in Word",
-        "type": "topic",
-        "uid": "DCL06-TP4-000",
-        "children": [
-          {
-            "title": "Unit 4 Summary",
-            "uid": "DCL06-TP4-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U04_Intro",
-            "type": "page"
-          },
-          {
-            "title": " 4.1 - Add Tables And Data",
-            "uid": "DCL06-TP4-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U04_S01",
-            "type": "page"
-          },
-          {
-            "title": "4.2 - Multilevel List",
-            "uid": "DCL06-TP4-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U04_S02",
-            "type": "page"
-          },
-          {
-            "title": "4.3 - Text Styles, Labels, And Views",
-            "uid": "DCL06-TP4-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U04_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL06-TP4-CHDRN5",
-            "fname": "DCL06-TP4-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      },
-      {
-        "route": "book/DCL06/DCL06-TP1-000.mdx",
-        "title": "Unit 5: Data and Functions",
-        "type": "topic",
-        "uid": "DCL06-TP5-000",
-        "children": [
-          {
-            "title": "Unit 5 Summary",
-            "uid": "DCL06-TP5-CHDRN1",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U05_Intro",
-            "type": "page"
-          },
-          {
-            "title": "5.1 -Bit In Qubi",
-            "uid": "DCL06-TP5-CHDRN2",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U05_S01",
-            "type": "page"
-          },
-          {
-            "title": " 5.2 - Working With Data",
-            "uid": "DCL06-TP5-CHDRN3",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U05_S02",
-            "type": "page"
-          },
-          {
-            "title": "5.3 - Cleaning The Data",
-            "uid": "DCL06-TP5-CHDRN4",
-            "description": "",
-            "route": "/pdf?course=DigiChamps&Level=Level6&pdf=DCL06_U05_S03",
-            "type": "page"
-          },
-          {
-            "uid": "DCL06-TP5-CHDRN5",
-            "fname": "DCL06-TP5-CHDRN5.json",
-            "type": "assignment"
-          }
-        ],
-        "teacheronly": "no"
-      }
-    ]
+    }
   }
 ]

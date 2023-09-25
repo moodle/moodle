@@ -1,0 +1,30 @@
+{
+	"title" : "1.4 Master Challenge 1",
+	"question": "The following program calculates the area of a rectangle. Write test cases to validate its output and capture the results in a table.<br><img src='https://learn.qubitsedu.com/images/DPL10U1S04Image1.png' width='60%' height='45%'><br>In your test cases, consider different scenarios, such as when the length and width are positive numbers, zero, or negative. Remember also to consider potential edge cases.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL10-TP1-CHDRN17",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

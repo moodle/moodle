@@ -1,0 +1,30 @@
+{
+	"title" : "1.2 Master Challenge 2",
+	"question": "Do you or your friends play any musical instrument?<br> Collect data from your friends.Ask them if they know how to play any of the musical instruments listed below or if they would like to play any of them in future.Prepare a tally chart of their responses. Make a bar graph representing the results of the data you have collected<br> <img src='https://learn.qubitsedu.com/images/DPL04U1S02Image2Table.png' width='45%' height='80%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinetext", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL04-TP1-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}
