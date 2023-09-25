@@ -473,7 +473,7 @@ class mod_lti_mod_form extends moodleform_mod {
         $mform->setType('secureicon', PARAM_URL);
 
         // Add standard course module grading elements, and show them if the tool type + instance config permits it.
-        if (in_array($config['acceptgrades'], [LTI_SETTING_ALWAYS, LTI_SETTING_DELEGATE])) {
+        if (!empty($config['acceptgrades']) && in_array($config['acceptgrades'], [LTI_SETTING_ALWAYS, LTI_SETTING_DELEGATE])) {
             $elementnamesbeforegrading = $this->_form->_elementIndex;
             $this->standard_grading_coursemodule_elements();
             $elementnamesaftergrading = $this->_form->_elementIndex;
