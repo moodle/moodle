@@ -78,9 +78,11 @@
 .qicon-icon-back:before {
   content: "\e910";
   color: #b3b3b3;
-  
 }
-
+.qicon-external-link-sign:before {
+  content: "\e911";
+  color: #9e9ea2;
+}
 .success-tick {
   position: absolute;
   right: 0%;
@@ -96,7 +98,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: “Helvetica Neue”, “Segoe UI”, Roboto, Helvetica, Arial, Tahoma, Verdana, sans-serif;
+  font-family: “Helvetica Neue”, “Segoe UI”, Roboto, Helvetica, Arial, Tahoma,
+    Verdana, sans-serif;
 }
 .sidebar {
   position: fixed;
