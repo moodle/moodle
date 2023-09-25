@@ -217,6 +217,9 @@ class matrix_user_manager_test extends \advanced_testcase {
      * Test creation of matrix user profile fields.
      */
     public function test_create_matrix_user_profile_fields(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/user/profile/lib.php");
+
         $this->resetAfterTest();
 
         $matrixprofilefield = get_config('communication_matrix', 'matrixuserid_field');
