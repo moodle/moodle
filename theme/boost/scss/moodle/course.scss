@@ -1400,9 +1400,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         @include border-radius($activity-item-border-radius);
         .editavailability {
             a {
-                @include border-radius(0.5rem);
-                color: $body-color;
-                text-decoration: none;
+                @include border-radius();
                 font-weight: bold;
                 &:hover {
                     background-color: $gray-400;
