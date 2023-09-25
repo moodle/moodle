@@ -100,7 +100,7 @@ class course_sender extends resource_sender {
 
         $response = $this->moodlenetclient->create_resource_from_stored_file(
             $filedata,
-            $this->course->shortname,
+            $this->course->fullname,
             $resourcedescription,
         );
         $responsecode = $response->getStatusCode();
