@@ -80,6 +80,10 @@
     display: none;
   }
 }
+.qicon-external-link-sign:before {
+  content: "\e911";
+  color: #9e9ea2;
+}
 .popover-region .popover-region-toggle .qicon-notifications {
   color: #9e9ea2;
   font-size: 20px;
@@ -1161,4 +1165,6 @@ a:not([class]):focus,
 .new-tab {
   position: relative;
   top: -6px;
+  font-size: 7px;
+  left: 5px;
 }
