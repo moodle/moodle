@@ -656,6 +656,16 @@
     .show-drawer-left .gradeparent th.header {
         left: -1rem;
     }
+
+    &.hasstickyfooter {
+        .gradeparent {
+            tr.lastrow {
+                // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned when
+                // sticky footer is present.
+                bottom: calc(#{$stickyfooter-height} - 1px);
+            }
+        }
+    }
 }
 
 /**

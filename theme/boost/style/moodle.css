@@ -35868,6 +35868,9 @@ p.arrow_button {
 .path-grade-report-grader .show-drawer-left .gradeparent th.header {
   left: -1rem;
 }
+.path-grade-report-grader.hasstickyfooter .gradeparent tr.lastrow {
+  bottom: calc(max(96px, 0.9375rem * 3) - 1px);
+}
 
 /**
  * User report.
