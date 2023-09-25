@@ -1670,7 +1670,7 @@ class qbassign {
 
         $submissionpluginsenabled = array();
         $group = $mform->addGroup(array(), 'submissionplugins', get_string('submissiontypes', 'qbassign'), array(' '), false);
-        foreach ($this->submissionplugins as $plugin) { echo '1';
+        foreach ($this->submissionplugins as $plugin) { 
             $this->add_plugin_settings($plugin, $mform, $submissionpluginsenabled);
         }
         $group->setElements($submissionpluginsenabled);
@@ -1678,7 +1678,7 @@ class qbassign {
         $mform->addElement('header', 'feedbacktypes', get_string('feedbacktypes', 'qbassign'));
         $feedbackpluginsenabled = array();
         $group = $mform->addGroup(array(), 'feedbackplugins', get_string('feedbacktypes', 'qbassign'), array(' '), false);
-        foreach ($this->feedbackplugins as $plugin) { echo '2';
+        foreach ($this->feedbackplugins as $plugin) { 
             $this->add_plugin_settings($plugin, $mform, $feedbackpluginsenabled);
         }
         $group->setElements($feedbackpluginsenabled);

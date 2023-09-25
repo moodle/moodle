@@ -192,6 +192,46 @@
               "type": "assignment"
             },
             {
+              "uid": "DCL11-TP1-CHDRN7",
+              "fname": "DCL11-TP1-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN8",
+              "fname": "DCL11-TP1-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN9",
+              "fname": "DCL11-TP1-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN10",
+              "fname": "DCL11-TP1-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN11",
+              "fname": "DCL11-TP1-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN12",
+              "fname": "DCL11-TP1-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN13",
+              "fname": "DCL11-TP1-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP1-CHDRN14",
+              "fname": "DCL11-TP1-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
               "uid": "DCL11-U1-CHDRN1",
               "fname": "DCL11-U1-CHDRN1.json",
               "type": "quiz"
@@ -249,6 +289,56 @@
             {
               "uid": "DCL11-TP2-CHDRN7",
               "fname": "DCL11-TP2-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN8",
+              "fname": "DCL11-TP2-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN9",
+              "fname": "DCL11-TP2-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN10",
+              "fname": "DCL11-TP2-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN11",
+              "fname": "DCL11-TP2-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN12",
+              "fname": "DCL11-TP2-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN13",
+              "fname": "DCL11-TP2-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN14",
+              "fname": "DCL11-TP2-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN15",
+              "fname": "DCL11-TP2-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN16",
+              "fname": "DCL11-TP2-CHDRN16.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL11-TP2-CHDRN17",
+              "fname": "DCL11-TP2-CHDRN17.json",
               "type": "assignment"
             },
             {
