@@ -558,7 +558,7 @@ M.core_availability.List.prototype.renumber = function(parentNumber) {
     }
     var heading = M.util.get_string('setheading', 'availability', headingParams);
     this.node.one('> h3').set('innerHTML', heading);
-
+    this.node.one('> h3').getDOMNode().dataset.restrictionOrder = parentNumber ? parentNumber : 'root';
     // Do children.
     for (var i = 0; i < this.children.length; i++) {
         var child = this.children[i];
@@ -1006,6 +1006,7 @@ M.core_availability.Item.prototype.renumber = function(number) {
     headingParams.number = number + ':';
     var heading = M.util.get_string('itemheading', 'availability', headingParams);
     this.node.one('> h3').set('innerHTML', heading);
+    this.node.one('> h3').getDOMNode().dataset.restrictionOrder = number ? number : 'root';
 };
 
 /**
