@@ -85,12 +85,12 @@
             <input type="hidden" id="{{uniqid}}-logout" name="logout" value="true">
             <input type="submit" class="btn btn-secondary"
                    name="cancelmfa" id="cancelmfa_button"
-                   value="Cancel login" data-initial-value="Cancel login">
+                   value="{{#str}} cancellogin, tool_mfa {{/str}}">
         </form>
     </div>
     {{#supportlink}}
     <div class="tool-mfa-site-support mt-4">
-        Need help? {{{supportlink}}}
+        {{#str}} needhelp, tool_mfa {{/str}} {{{supportlink}}}
     </div>
     {{/supportlink}}
 </div>

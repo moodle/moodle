@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 $string['achievedweight'] = 'Achieved weight';
 $string['alltime'] = 'All time';
 $string['areyousure'] = 'Are you sure you want to revoke factor?';
+$string['cancellogin'] = 'Cancel login';
 $string['combination'] = 'Combination';
 $string['connector'] = 'AND';
 $string['created'] = 'Created';
