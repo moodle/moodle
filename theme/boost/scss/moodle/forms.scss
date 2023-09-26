@@ -509,6 +509,6 @@ textarea[data-auto-rows] {
 // For form elements aligned to the left with no padding (e.g. Completion conditions activity settings).
 .form-check {
     &.left-indented {
-        padding-left: 0px;
+        padding-left: 0;
     }
 }

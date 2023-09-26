@@ -26036,6 +26036,9 @@ blockquote {
     animation: none;
   }
 }
+body.behat-site .action-menu .dropdown-subpanel-content.show {
+  animation: none;
+}
 .action-menu .dropdown-subpanel .dropdown-item::after {
   border: 0;
   content: "\f054";
@@ -33421,7 +33424,7 @@ textarea[data-auto-rows] {
 }
 
 .form-check.left-indented {
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .pagelayout-login #region-main {

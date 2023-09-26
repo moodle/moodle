@@ -35,7 +35,6 @@ Feature: Edit activities in main menu block
       | activity | course               | section | name          |
       | forum    | Acceptance test site | 0       | Visible forum |
       | forum    | Acceptance test site | 0       | My forum name |
-    And I change window size to "large"
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
