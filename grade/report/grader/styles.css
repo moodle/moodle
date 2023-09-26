@@ -273,10 +273,5 @@
 @media only screen and (min-width: 768px) {
     .path-grade-report-grader .gradeparent table {
         padding-right: 6em;
-        border-top-width: 0;
-    }
-
-    .path-grade-report-grader .gradeparent table tr:first-of-type th {
-        border-top-width: 1px;
     }
 }
