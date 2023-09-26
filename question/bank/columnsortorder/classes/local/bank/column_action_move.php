@@ -41,7 +41,7 @@ class column_action_move extends column_action_base {
     public function get_action_menu_link(column_base $column): ?\action_menu_link {
         return new \action_menu_link_secondary(
             new \moodle_url('/question/edit.php'),
-            null,
+            new \pix_icon('i/dragdrop', ''),
             $this->move,
             [
                 'title' => get_string('movecolumn', 'qbank_columnsortorder', $column->get_title()),

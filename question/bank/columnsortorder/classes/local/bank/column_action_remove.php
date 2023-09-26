@@ -65,7 +65,7 @@ class column_action_remove extends column_action_base {
         }
         return new \action_menu_link_secondary(
             $actionurl,
-            null,
+            new \pix_icon('t/delete', ''),
             $this->remove,
             [
                 'class' => 'action-link',
