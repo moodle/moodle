@@ -108,6 +108,9 @@ class auth_email_external extends external_api {
         if (!empty($CFG->country)) {
             $result['country'] = $CFG->country;
         }
+        if (!empty($CFG->extendedusernamechars)) {
+            $result['extendedusernamechars'] = $CFG->extendedusernamechars;
+        }
 
         if ($fields = profile_get_signup_fields()) {
             $result['profilefields'] = array();
@@ -140,7 +143,7 @@ class auth_email_external extends external_api {
     public static function get_signup_settings_returns() {
 
         return new external_single_structure(
-            array(
+            [
                 'namefields' => new external_multiple_structure(
                      new external_value(PARAM_NOTAGS, 'The order of the name fields')
                 ),
@@ -149,9 +152,12 @@ class auth_email_external extends external_api {
                 'sitepolicyhandler' => new external_value(PARAM_PLUGIN, 'Site policy handler', VALUE_OPTIONAL),
                 'defaultcity' => new external_value(PARAM_NOTAGS, 'Default city', VALUE_OPTIONAL),
                 'country' => new external_value(PARAM_ALPHA, 'Default country', VALUE_OPTIONAL),
+                'extendedusernamechars' => new external_value(
+                    PARAM_BOOL, 'Extended characters in usernames or not', VALUE_OPTIONAL
+                ),
                 'profilefields' => new external_multiple_structure(
                     new external_single_structure(
-                        array(
+                        [
                             'id' => new external_value(PARAM_INT, 'Profile field id', VALUE_OPTIONAL),
                             'shortname' => new external_value(PARAM_ALPHANUMEXT, 'Profile field shortname', VALUE_OPTIONAL),
                             'name' => new external_value(PARAM_RAW, 'Profield field name', VALUE_OPTIONAL),
@@ -173,7 +179,7 @@ class auth_email_external extends external_api {
                             'param3' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
                             'param4' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
                             'param5' => new external_value(PARAM_RAW, 'Profield field settings', VALUE_OPTIONAL),
-                        )
+                        ]
                     ), 'Required profile fields', VALUE_OPTIONAL
                 ),
                 'recaptchapublickey' => new external_value(PARAM_RAW, 'Recaptcha public key', VALUE_OPTIONAL),
@@ -181,7 +187,7 @@ class auth_email_external extends external_api {
                 'recaptchachallengeimage' => new external_value(PARAM_URL, 'Recaptcha challenge noscript image', VALUE_OPTIONAL),
                 'recaptchachallengejs' => new external_value(PARAM_URL, 'Recaptcha challenge js url', VALUE_OPTIONAL),
                 'warnings'  => new external_warnings(),
-            )
+            ]
         );
     }
 
