@@ -52,7 +52,7 @@ class communication_feature_test extends \advanced_testcase {
      *
      * @covers ::create_chat_room
      */
-    public function test_create_chat_room() {
+    public function test_create_chat_room(): void {
         // Set up the test data first.
         $communication = \core_communication\api::load_by_instance(
             component: 'communication_matrix',
@@ -296,7 +296,7 @@ class communication_feature_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function avatar_provider(): array {
+    public static function avatar_provider(): array {
         return [
             'Empty to avatar' => [
                 null,
@@ -543,9 +543,9 @@ class communication_feature_test extends \advanced_testcase {
     /**
      * Test if the selected provider is configured.
      *
-     * @return void
+     * @covers ::is_configured
      */
-    public function test_is_configured() {
+    public function test_is_configured(): void {
         $course = $this->get_course();
         $communicationprocessor = processor::load_by_instance(
             component: 'core_course',
