@@ -97,6 +97,13 @@ class column_manager_test extends advanced_testcase {
         ];
     }
 
+    /**
+     * Retrieve data using the specified method.
+     * This function is used to retrieve data from various data methods defined within this class.
+     *
+     * @param array|string $datamethod This can be either a function name or an array containing the class and method name.
+     * @return array|string The retrieved data as an array or string, depending on the data method used.
+     */
     protected function get_data_from_datamethod(array|string $datamethod): array|string {
         return call_user_func($datamethod);
     }
