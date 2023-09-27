@@ -993,8 +993,6 @@ class company_user {
     public static function auto_allocate_license($userid, $companyid, $courseid) {
         global $DB;
 
-error_log("In auto_allocate_license");
-
         // Can we get a newer license?
         if ($latestlicenses = $DB->get_records_sql("SELECT cl.* FROM {companylicense} cl
                                                     JOIN {companylicense_courses} clc ON (cl.id = clc.licenseid)
@@ -1009,7 +1007,6 @@ error_log("In auto_allocate_license");
                                                           'companyid' => $companyid,
                                                           'date' => time()))) {
             $latestlicense = array_pop($latestlicenses);
-error_log("got a license id $latestlicense->id");
             $newlicense = (object) ['userid' => $userid,
                                     'isusing' => 0,
                                     'issuedate' => time(),
@@ -1020,7 +1017,6 @@ error_log("got a license id $latestlicense->id");
 
             return $newlicense;
         } else {
-error_log("we didn't get a license");
             return false;
         }
     }

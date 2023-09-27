@@ -133,7 +133,6 @@ if (!empty($CFG->local_email_templates_migrating)) {
 
 // check if ajax callback
 if ($ajaxtemplate) {
-error_log ("got $ajaxtemplate");
     $parts = explode('.', $ajaxtemplate);
     list($type, $id, $managertype, $senttemplatename) = $parts;
 
