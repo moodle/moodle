@@ -760,9 +760,7 @@ class auth_plugin_db extends auth_plugin_base {
             $rs->close();
 
         } else {
-            $fields_obj = $rs->FetchObj();
-            $columns = array_keys((array)$fields_obj);
-
+            $columns = array_keys($rs->fetchRow());
             echo $OUTPUT->notification(get_string('auth_dbcolumnlist', 'auth_db', implode(', ', $columns)), 'notifysuccess');
             $rs->close();
         }
