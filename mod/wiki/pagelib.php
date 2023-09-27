@@ -835,7 +835,7 @@ class page_wiki_editcomment extends page_wiki {
 
         if ($this->format == 'html') {
             $com->action = 'edit';
-            $com->entrycomment_editor['text'] = $com->content;
+            $com->entrycomment_editor['text'] = clean_text($com->content, $this->format);
             $com->commentoptions = array('trusttext' => true, 'maxfiles' => 0);
 
             $this->form->set_data($com);
