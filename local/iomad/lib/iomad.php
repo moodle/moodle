@@ -57,8 +57,9 @@ class iomad {
      */
     public static function get_my_companyid($context, $required=true) {
         global $SESSION, $USER;
+
         // are we logged in?
-        if (empty($USER->id) && empty($SESSION->currenteditingcompany)) {
+        if (during_initial_install() || (empty($USER->id) && empty($SESSION->currenteditingcompany))) {
             return -1;
         }
 
