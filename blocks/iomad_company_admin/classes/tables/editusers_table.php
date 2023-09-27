@@ -184,8 +184,8 @@ class editusers_table extends table_sql {
     public function col_lastaccess($row) {
         global $CFG;
 
-        if (!empty($row->currentlogin)) {
-            return date($CFG->iomad_date_format, $row->currentlogin);
+        if (!empty($row->lastaccess)) {
+            return date($CFG->iomad_date_format, $row->lastaccess);
         } else {
             return get_string('never');
         }

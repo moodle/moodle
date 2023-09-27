@@ -79,8 +79,8 @@ class users_table extends table_sql {
     public function col_currentlogin($row) {
         global $CFG;
 
-        if (!empty($row->lastlogin)) {
-            return date($CFG->iomad_date_format, $row->lastlogin);
+        if (!empty($row->lastaccess)) {
+            return date($CFG->iomad_date_format, $row->lastaccess);
         } else {
             return get_string('never');
         }
