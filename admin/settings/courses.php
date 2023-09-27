@@ -259,7 +259,7 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
         get_enabled_providers_and_default();
 
     $temp->add(new admin_setting_configselect('moodlecourse/coursecommunicationprovider',
-        new lang_string('seleccommunicationprovider', 'communication'),
+        new lang_string('selectcommunicationprovider', 'communication'),
         new lang_string('coursecommunication_desc', 'course'),
         $defaulprovider, $communicationproviders));
 

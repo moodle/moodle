@@ -94,7 +94,7 @@ class matrix_user_manager {
     public static function get_formatted_matrix_home_server(): string {
         $homeserver = get_config('communication_matrix', 'matrixhomeserverurl');
         if ($homeserver === false) {
-            throw new \moodle_exception('Unknown matrix home server url');
+            throw new \moodle_exception('Unknown matrix homeserver url');
         }
 
         $homeserver = parse_url($homeserver)['host'];
@@ -150,8 +150,6 @@ class matrix_user_manager {
                 'shortname' => 'matrixuserid',
                 'name' => get_string('matrixuserid', 'communication_matrix'),
                 'datatype' => 'text',
-                'description' => get_string('matrixuserid_desc', 'communication_matrix'),
-                'descriptionformat' => 1,
                 'categoryid' => $categoryid,
                 'forceunique' => 1,
                 'visible' => 0,

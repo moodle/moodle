@@ -31,10 +31,10 @@ Feature: Display communication room status banner
 #    Then I should see "Your Matrix room is ready!" in the "page-content" "region"
 #    # This is a one time message per user.
 #    When I reload the page
-#    Then I should not see "Your Matrix room is ready!" in the "page-content" "region"
+#    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
 #    # Not for students to see.
 #    When I am on the "Test course" "Course" page logged in as "student1"
-#    Then I should not see "Your Matrix room is ready!" in the "page-content" "region"
+#    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
 
   Scenario: Enabling or disabling the matrix plugin hides the banner accordingly
     Given I am on the "Test course" "Course" page logged in as "teacher1"

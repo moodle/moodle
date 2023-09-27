@@ -23,9 +23,9 @@ Feature: Communication custom link
     Given I am on the "Course 1" "Course" page logged in as "teacher1"
     And "Chat to course participants" "button" should not be visible
     When I navigate to "Communication" in current page administration
-    And the "Communication service" select box should contain "Custom link"
+    And the "Provider" select box should contain "Custom link"
     And I should not see "Custom link URL"
-    And I select "Custom link" from the "Communication service" singleselect
+    And I select "Custom link" from the "Provider" singleselect
     And I should see "Custom link URL"
     And I set the following fields to these values:
       | communicationroomname | Test URL                                                                                   |
@@ -57,7 +57,7 @@ Feature: Communication custom link
     Given I am on the "Course 1" "Course" page logged in as "teacher1"
     And "Chat to course participants" "button" should not be visible
     When I navigate to "Communication" in current page administration
-    And I select "Custom link" from the "Communication service" singleselect
+    And I select "Custom link" from the "Provider" singleselect
     And I set the following fields to these values:
       | communicationroomname | Test URL                                                                                   |
       | customlinkurl         | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
@@ -65,14 +65,14 @@ Feature: Communication custom link
     And "Chat to course participants" "button" should be visible
     And I run all adhoc tasks
     And I navigate to "Communication" in current page administration
-    And I select "None" from the "Communication service" singleselect
+    And I select "None" from the "Provider" singleselect
     And I press "Save changes"
     And "Chat to course participants" "button" should not be visible
     And I run all adhoc tasks
     And I am on the "Course 1" course page
     And "Chat to course participants" "button" should not be visible
     And I navigate to "Communication" in current page administration
-    And I select "Custom link" from the "Communication service" singleselect
+    And I select "Custom link" from the "Provider" singleselect
     And I set the following fields to these values:
       | communicationroomname | Test URL                                                                                   |
       | customlinkurl         | #wwwroot#/communication/provider/customlink/tests/behat/fixtures/custom_link_test_page.php |
