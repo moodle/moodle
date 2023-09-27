@@ -9,7 +9,7 @@ menu: "main"
 
 ## Moodle templates
 
-[Moodle templates](https://docs.moodle.org/dev/Templates) are use to write HTML and Javascript using mustache files.
+[Moodle templates](https://moodledev.io/docs/guides/templates) are use to write HTML and Javascript using mustache files.
 
 If you are creating your own pages in the UI Component library you can load core templates using this (shortcode) syntax:
 
@@ -51,4 +51,3 @@ This is the result of adding the core/notification template on this page:
     "extraclasses": "foo bar"
 }
 {{< /mustache >}}
-

@@ -17,8 +17,7 @@
 /**
  * This file contains the base classes that are extended to create portfolio export functionality.
  *
- * For places in moodle that want to
- * add export functionality to subclass from {@link http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page}
+ * For places in moodle that want to add export functionality to subclass.
  *
  * @package core_portfolio
  * @copyright 2008 Penny Leach <penny@catalyst.net.nz>, Martin Dougiamas
@@ -30,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Base class for callers
  *
- * @link See http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page
  * @see also portfolio_module_caller_base
  *
  * @package core_portfolio
@@ -490,7 +488,6 @@ abstract class portfolio_caller_base {
  * This just implements a few of the abstract functions
  * from portfolio_caller_base so that caller authors
  * don't need to.
- * {@link http://docs.moodle.org/dev/Adding_a_Portfolio_Button_to_a_page}
  * @see also portfolio_caller_base
  *
  * @package core_portfolio

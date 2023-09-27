@@ -414,7 +414,7 @@ function update_log_display_entry() {
 }
 
 /**
- * @deprecated use the text formatting in a standard way instead (http://docs.moodle.org/dev/Output_functions)
+ * @deprecated use the text formatting in a standard way instead (https://moodledev.io/docs/apis/subsystems/output#output-functions)
  *             this was abused mostly for embedding of attachments
  */
 function filter_text() {
