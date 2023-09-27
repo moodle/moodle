@@ -1,6 +1,11 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 4.4 ===
+* Theme selection is now performed using cards and modals.
+* The 'choosereadme' string for each theme is expected to be plain text. HTML content will not render when displayed in the modal.
+* Theme selector page has been moved to admin/themeselector.php (previously theme/index.php)
+
 === 4.3 ===
 * The core_renderer::htmllize_file_tree method has been deprecated. This was missed before Moodle 2.0.
 * CSS selectors using #categoryquestions have been changed to use .question-bank-table, see question/upgrade.txt
