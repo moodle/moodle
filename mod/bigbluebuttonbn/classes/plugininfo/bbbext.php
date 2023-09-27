@@ -146,4 +146,14 @@ class bbbext extends base {
     public function get_settings_section_name() {
         return $this->type . '_' . $this->name;
     }
+
+    /**
+     * Should there be a way to uninstall the plugin via the administration UI.
+     *
+     *
+     * @return bool
+     */
+    public function is_uninstall_allowed() {
+        return true;
+    }
 }
