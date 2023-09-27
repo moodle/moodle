@@ -253,7 +253,8 @@ Feature: Teachers can perform bulk actions on grade items and categories in the 
     And I press tab
     And the focused element is "Move" "button" in the "Move items" "dialogue"
     When I press the enter key
-    And I wait to be redirected
+    And I wait until the page is ready
+    And I wait "2" seconds
     And I press tab key in "region-main" "region"
     # Confirm that 'Grade item 1' and 'Grade item 2' have been moved to 'Category 3'
     And I click on grade item menu "Grade item 1" of type "gradeitem" on "setup" page

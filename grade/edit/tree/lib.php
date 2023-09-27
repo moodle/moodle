@@ -276,7 +276,7 @@ class grade_edit_tree {
             }
             $categoryrow->attributes['data-aggregation'] = $category->aggregation;
             $categoryrow->attributes['data-grademax'] = $category->grade_item->grademax;
-            $categoryrow->attributes['data-aggregationcoef'] = $category->grade_item->aggregationcoef;
+            $categoryrow->attributes['data-aggregationcoef'] = floatval($category->grade_item->aggregationcoef);
             $categoryrow->attributes['data-itemid'] = $category->grade_item->id;
             $categoryrow->attributes['data-hidden'] = 'false';
             foreach ($rowclasses as $class) {
@@ -350,7 +350,7 @@ class grade_edit_tree {
             } else {
                 $gradeitemrow->attributes['data-parent-category'] = $parent_eid;
                 $gradeitemrow->attributes['data-grademax'] = $object->grademax;
-                $gradeitemrow->attributes['data-aggregationcoef'] = $object->aggregationcoef;
+                $gradeitemrow->attributes['data-aggregationcoef'] = floatval($object->aggregationcoef);
             }
             foreach ($rowclasses as $class) {
                 $gradeitemrow->attributes['class'] .= ' ' . $class;
