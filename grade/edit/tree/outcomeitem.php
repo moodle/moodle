@@ -114,7 +114,8 @@ if (empty($parent_category)) {
 $mform->set_data($item);
 
 $simpleform = new add_outcome(null, ['itemid' => $grade_item->id, 'courseid' => $courseid, 'gpr' => $gpr]);
-if ($simpledata = $simpleform->get_data()) {
+// Data has been carried over from the dynamic form.
+if ($simpledata = $simpleform->get_submitted_data()) {
     $mform->set_data($simpledata);
 }
 
