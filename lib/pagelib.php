@@ -1405,7 +1405,7 @@ class moodle_page {
                 $sitenamedisplay = $CFG->sitenameintitle;
             }
             $site = get_site();
-            if (empty(trim($site->{$sitenamedisplay}))) {
+            if (empty(trim($site->{$sitenamedisplay} ?? ''))) {
                 // If for some reason the site name is not yet set, fall back to 'Moodle'.
                 $title .= self::TITLE_SEPARATOR . 'Moodle';
             } else {
