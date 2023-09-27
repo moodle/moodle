@@ -642,13 +642,15 @@ function profile_get_user_fields_with_data(int $userid): array {
     $params = array('userid' => $userid);
 
     // IOMAD - Filter the categories
-    $companyid = iomad::get_my_companyid(context_system::instance(), false);
-    $sql .= " WHERE (uif.categoryid IN (
-              SELECT profileid FROM {company} where id = :companyid)
-              OR uif.categoryid IN (
-              SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
-    $params['companyuserid'] = $userid;
-    $params['companyid'] = $companyid;
+    if (!during_initial_install()) {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $sql .= " WHERE (uif.categoryid IN (
+                  SELECT profileid FROM {company} where id = :companyid)
+                  OR uif.categoryid IN (
+                  SELECT id FROM {user_info_category} WHERE id NOT IN (SELECT profileid from {company}))) ";
+        $params['companyuserid'] = $userid;
+        $params['companyid'] = $companyid;
+    }
 
     $sql .= 'ORDER BY uic.sortorder ASC, uif.sortorder ASC ';
     $fields = $DB->get_records_sql($sql, $params);
