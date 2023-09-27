@@ -1,6 +1,9 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+* Add a new parameter to the debounce (core/utils) function to allow for cancellation.
+
 === 4.3 ===
 
 * Unnecessary parameters of admin_apply_default_settings() function were removed; upgrade script lists
