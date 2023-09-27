@@ -170,4 +170,8 @@ class communication_feature implements
             'addcommunicationoptionshere'
         ), 'addcommunicationoptionshere');
     }
+
+    public static function is_configured(): bool {
+        return true;
+    }
 }

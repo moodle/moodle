@@ -539,4 +539,24 @@ class communication_feature_test extends \advanced_testcase {
         $communication->reload();
         return $communication;
     }
+
+    /**
+     * Test if the selected provider is configured.
+     *
+     * @return void
+     */
+    public function test_is_configured() {
+        $course = $this->get_course();
+        $communicationprocessor = processor::load_by_instance(
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id
+        );
+        $this->assertTrue($communicationprocessor->get_room_provider()->is_configured());
+
+        // Unset communication_matrix settings.
+        unset_config('matrixhomeserverurl', 'communication_matrix');
+        unset_config('matrixaccesstoken', 'communication_matrix');
+        $this->assertFalse($communicationprocessor->get_room_provider()->is_configured());
+    }
 }
