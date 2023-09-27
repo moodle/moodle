@@ -23,9 +23,9 @@
  * install or upgrade operation. All plugins support this.
  *
  * For more information, take a look to the documentation available:
- *     - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
- *     - External API: {@link http://docs.moodle.org/dev/External_functions_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Webservices API: {@link https://moodledev.io/docs/apis/subsystems/external/writing-a-service}
+ *     - External API: {@link https://moodledev.io/docs/apis/subsystems/external/functions}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @package    core_webservice
  * @category   webservice

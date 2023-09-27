@@ -3,7 +3,5 @@ Repository API
 
 This directory contains all the interfaces and plugins for access to repositories.
 
-   Specs:  http://docs.moodle.org/dev/Repository_API
+   Specs:  https://moodledev.io/docs/apis/plugintypes/repository
    Track:  http://tracker.moodle.org/browse/MDL-13766
-
-
