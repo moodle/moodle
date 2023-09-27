@@ -21,7 +21,7 @@
  * Displays the list of found local plugins, their version (if found) and
  * a link to delete the local plugin.
  *
- * @see       http://docs.moodle.org/dev/Local_customisation
+ * @see       https://moodledev.io/docs/apis/plugintypes/local
  * @package   admin
  * @copyright 2010 David Mudrak <david.mudrak@gmail.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
