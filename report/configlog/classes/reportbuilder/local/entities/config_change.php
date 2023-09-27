@@ -172,6 +172,16 @@ class config_change extends base {
                 date::DATE_CURRENT,
             ]);
 
+        // Plugin filter.
+        $filters[] = (new filter(
+            text::class,
+            'plugin',
+            new lang_string('plugin', 'report_configlog'),
+            $this->get_entity_name(),
+            "COALESCE({$tablealias}.plugin, 'core')"
+        ))
+            ->add_joins($this->get_joins());
+
         // Setting filter.
         $filters[] = (new filter(
             text::class,
