@@ -371,7 +371,7 @@ abstract class base {
      * This method ensures that 3rd party course format plugins that still use 'numsections' continue to
      * work but at the same time we no longer expect formats to have 'numsections' property.
      *
-     * @return int
+     * @return int The last section number, or -1 if sections are entirely missing
      */
     public function get_last_section_number() {
         $course = $this->get_course();
@@ -380,6 +380,12 @@ abstract class base {
         }
         $modinfo = get_fast_modinfo($course);
         $sections = $modinfo->get_section_info_all();
+
+        // Sections seem to be missing entirely. Avoid subsequent errors and return early.
+        if (count($sections) === 0) {
+            return -1;
+        }
+
         return (int)max(array_keys($sections));
     }
 
