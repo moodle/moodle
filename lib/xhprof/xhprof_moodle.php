@@ -859,6 +859,9 @@ class moodle_xhprofrun implements iXHProfRuns {
     protected $totalmemory = 0;
     protected $timecreated = 0;
 
+    /** @var bool Decide if we want to reduce profiling data or no */
+    protected bool $reducedata = false;
+
     public function __construct() {
         $this->timecreated = time();
     }
@@ -888,7 +891,15 @@ class moodle_xhprofrun implements iXHProfRuns {
         if (@gzuncompress(base64_decode($rec->data)) === false) {
             return unserialize(base64_decode($rec->data));
         } else {
-            return unserialize(gzuncompress(base64_decode($rec->data)));
+            $info = unserialize(gzuncompress(base64_decode($rec->data)));
+            if (!$this->reducedata) {
+                // We want to return the full data.
+                return $info;
+            }
+
+            // We want to apply some transformations here, in order to reduce
+            // the information for some complex (too many levels) cases.
+            return $this->reduce_run_data($info);
         }
     }
 
@@ -963,10 +974,150 @@ class moodle_xhprofrun implements iXHProfRuns {
         $this->url = $url;
     }
 
-    // Private API starts here
+    /**
+     * Enable or disable reducing profiling data.
+     *
+     * @param bool $reducedata Decide if we want to reduce profiling data (true) or no (false).
+     */
+    public function set_reducedata(bool $reducedata): void {
+        $this->reducedata = $reducedata;
+    }
+
+    // Private API starts here.
 
     protected function sum_calls($sum, $data) {
         return $sum + $data['ct'];
+    }
+
+    /**
+     * Reduce the run data to a more manageable size.
+     *
+     * This removes from the run data all the entries that
+     * are matching a group of regular expressions.
+     *
+     * The main use is to remove all the calls between "__Mustache"
+     * functions, which don't provide any useful information and
+     * make the call-graph too complex to be handled.
+     *
+     * @param array $info The xhprof run data, original array.
+     * @return array The xhprof run data, reduced array.
+     */
+    protected function reduce_run_data(array $info): array {
+        // Define which (regular expressions) we want to remove. Already escaped if needed to, please.
+        $toremove = [
+            '__Mustache.*==>__Mustache.*', // All __Mustache to __Mustache calls.
+        ];
+        // Build the regular expression to be used.
+        $regexp = '/^(' . implode('|', $toremove) . ')$/';
+
+        // Given that the keys of the array have the format "parent==>child"
+        // we want to rebuild the array with the same structure but
+        // topologically sorted (parents always before children).
+        // Note that we do this exclusively to guarantee that the
+        // second pass (see below) works properly in all cases because,
+        // without it, we may need to perform N (while loop) second passes.
+        $sorted = $this->xhprof_topo_sort($info);
+
+        // To keep track of removed and remaining (child-parent) pairs.
+        $removed = [];
+        $remaining = [];
+
+        // First pass, we are going to remove all the elements which
+        // both parent and child are __Mustache function calls.
+        foreach ($sorted as $key => $value) {
+            if (!str_contains($key, '==>')) {
+                $parent = 'NULL';
+                $child = $key;
+            } else {
+                [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
+            }
+
+            if (preg_match($regexp, $key)) {
+                unset($sorted[$key]);
+                $removed[$child][$parent] = true;
+            } else {
+                $remaining[$child][$parent] = true;
+            }
+        }
+
+        // Second pass, we are going to remove all the elements which
+        // parent was removed by first pass and doesn't appear anymore
+        // as a child of anything (aka, they have become orphaned).
+        // Note, that thanks to the topological sorting, we can be sure
+        // one unique pass is enough. Without it, we may need to perform
+        // N (while loop) second passes.
+        foreach ($sorted as $key => $value) {
+            if (!str_contains($key, '==>')) {
+                $parent = 'NULL';
+                $child = $key;
+            } else {
+                [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
+            }
+
+            if (isset($removed[$parent]) && !isset($remaining[$parent])) {
+                unset($sorted[$key]);
+                $removed[$child][$parent] = true;
+                unset($remaining[$child][$parent]);
+                // If this was the last parent of this child, remove it completely from the remaining array.
+                if (empty($remaining[$child])) {
+                    unset($remaining[$child]);
+                }
+            }
+        }
+
+        // We are done, let's return the reduced array.
+        return $sorted;
+    }
+
+
+    /**
+     * Sort the xhprof run pseudo-topologically, so all parents are always before their children.
+     *
+     * Note that this is not a proper, complex, recursive topological sorting algorithm, returning
+     * nodes that later have to be converted back to xhprof "pairs" but, instead, does the specific
+     * work to get those parent==>child (2 levels only) "pairs" sorted (parents always before children).
+     *
+     * @param array $info The xhprof run data, original array.
+     *
+     * @return array The xhprof run data, sorted array.
+     */
+    protected function xhprof_topo_sort(array $info): array {
+        $sorted = [];
+        $visited = [];
+        $remaining = $info;
+        do {
+            $newremaining = [];
+            foreach ($remaining as $key => $value) {
+                // If we already have visited this element, we can skip it.
+                if (isset($visited[$key])) {
+                    continue;
+                }
+                if (!str_contains($key, '==>')) {
+                    // It's a root element, we can add it to the sorted array.
+                    $sorted[$key] = $info[$key];
+                    $visited[$key] = true;
+                } else {
+                    [$parent, $child] = explode('==>', $key); // TODO: Consider caching this in a property.
+                    if (isset($visited[$parent])) {
+                        // Parent already visited, we can add any children to the sorted array.
+                        $sorted[$key] = $info[$key];
+                        $visited[$child] = true;
+                    } else {
+                        // Cannot add this yet, we need to wait for the parent.
+                        $newremaining[$key] = $value;
+                    }
+                }
+            }
+            // Protection against infinite loops.
+            if (count($remaining) === count($newremaining)) {
+                $remaining = []; // So we exit the do...while loop.
+            } else {
+                $remaining = $newremaining; // There is still work to do.
+            }
+        } while (count($remaining) > 0);
+
+        // We are done, let's return the sorted array.
+        return $sorted;
     }
 }
 
