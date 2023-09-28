@@ -23,3 +23,6 @@ Removed:
 Added:
  * index.html - prevent directory browsing on misconfigured servers
  * readme_moodle.txt - this file ;-)
+
+Notes:
+ * 2023-09-28 Added #[AllowDynamicProperties] above the ADOFetchObj class.
