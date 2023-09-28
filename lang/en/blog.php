@@ -153,6 +153,7 @@ $string['privacy:metadata:post:lastmodified'] = 'The date when the blog entry wa
 $string['privacy:metadata:post:usermodified'] = 'The user who last modified the entry';
 $string['privacy:path:blogassociations'] = 'Associated blog posts';
 $string['privacy:unknown'] = 'Unknown';
+$string['published'] = 'Published';
 $string['publishto'] = 'Publish to';
 $string['publishto_help'] = 'There are 3 options:
 
@@ -162,6 +163,7 @@ $string['publishto_help'] = 'There are 3 options:
 $string['publishtocourse'] = 'Users sharing a course with you';
 $string['publishtocourseassoc'] = 'Members of the associated course';
 $string['publishtocourseassocparam'] = 'Members of {$a}';
+$string['publishtodraft'] = 'Draft';
 $string['publishtogroup'] = 'Users sharing a group with you';
 $string['publishtogroupassoc'] = 'Your group members in the associated course';
 $string['publishtogroupassocparam'] = 'Your group members in {$a}';

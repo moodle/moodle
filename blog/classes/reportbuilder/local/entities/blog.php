@@ -20,6 +20,7 @@ namespace core_blog\reportbuilder\local\entities;
 
 use blog_entry_attachment;
 use context_system;
+use core_collator;
 use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
@@ -165,21 +166,25 @@ class blog extends base {
         // Publish state.
         $columns[] = (new column(
             'publishstate',
-            new lang_string('publishto', 'core_blog'),
+            new lang_string('published', 'core_blog'),
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
-            ->add_fields("{$postalias}.publishstate")
+            ->add_field("{$postalias}.publishstate")
             ->set_is_sortable(true)
             ->add_callback(static function(?string $publishstate): string {
                 $states = [
-                    'draft' => new lang_string('publishtonoone', 'core_blog'),
+                    'draft' => new lang_string('publishtodraft', 'core_blog'),
                     'site' => new lang_string('publishtosite', 'core_blog'),
                     'public' => new lang_string('publishtoworld', 'core_blog'),
                 ];
 
-                return (string) ($states[$publishstate] ?? $publishstate ?? '');
+                if ($publishstate === null || !array_key_exists($publishstate, $states)) {
+                    return (string) $publishstate;
+                }
+
+                return (string) $states[$publishstate];
             });
 
         // Time created.
@@ -253,16 +258,21 @@ class blog extends base {
         $filters[] = (new filter(
             select::class,
             'publishstate',
-            new lang_string('publishto', 'core_blog'),
+            new lang_string('published', 'core_blog'),
             $this->get_entity_name(),
             "{$postalias}.publishstate"
         ))
             ->add_joins($this->get_joins())
-            ->set_options([
-                'draft' => new lang_string('publishtonoone', 'core_blog'),
-                'site' => new lang_string('publishtosite', 'core_blog'),
-                'public' => new lang_string('publishtoworld', 'core_blog'),
-            ]);
+            ->set_options_callback(static function(): array {
+                $states = [
+                    'draft' => new lang_string('publishtodraft', 'core_blog'),
+                    'site' => new lang_string('publishtosite', 'core_blog'),
+                    'public' => new lang_string('publishtoworld', 'core_blog'),
+                ];
+
+                core_collator::asort($states);
+                return $states;
+            });
 
         // Time created.
         $filters[] = (new filter(
