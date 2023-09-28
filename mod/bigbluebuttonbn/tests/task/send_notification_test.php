@@ -29,34 +29,13 @@ use advanced_testcase;
  */
 class send_notification_test extends advanced_testcase {
     /**
-     * Check if set instance ID works correctly
+     * Test that the debug message is correctly output.
      *
      */
-    public function test_set_instance_id(): void {
+    public function test_generate_message() {
         $this->resetAfterTest();
-        $stub = $this->getMockForAbstractClass(
-            send_notification::class,
-            [],
-            '',
-            true,
-            true,
-            true,
-            []
-        );
-
-        $generator = $this->getDataGenerator();
-        $course = $generator->create_course();
-        $instancedata = $generator->create_module('bigbluebuttonbn', [
-            'course' => $course->id,
-        ]);
-
-        $stub->set_instance_id($instancedata->id);
-
-        $rc = new \ReflectionClass(send_notification::class);
-        $rcm = $rc->getMethod('get_instance');
-        $rcm->setAccessible(true);
-        $instance = $rcm->invoke($stub);
-
-        $this->assertEquals($instancedata->id, $instance->get_instance_id());
+        $task = new send_notification();
+        $message = $task->generate_message();
+        $this->assertEquals("Attempted to run deprecated implementation of send_notification task.", $message);
     }
 }
