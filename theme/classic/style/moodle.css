@@ -29363,7 +29363,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #cfe2f2;
   border-color: #cfe2f2;
-  color: #0f6cbf;
+  color: #083863;
 }
 .activity-item .activity-completion button.btn-primary:hover,
 .activity-item .activity-completion a[role=button].btn-primary:hover {
@@ -29409,7 +29409,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #f5f6f8;
   border-color: #f5f6f8;
-  color: #ced4da;
+  color: #6b6e71;
 }
 .activity-item .activity-completion button.btn-secondary:hover,
 .activity-item .activity-completion a[role=button].btn-secondary:hover {
@@ -29455,7 +29455,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #d7e4d6;
   border-color: #d7e4d6;
-  color: #357a32;
+  color: #1c3f1a;
 }
 .activity-item .activity-completion button.btn-success:hover,
 .activity-item .activity-completion a[role=button].btn-success:hover {
@@ -29501,7 +29501,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #cce6ea;
   border-color: #cce6ea;
-  color: #008196;
+  color: #00434e;
 }
 .activity-item .activity-completion button.btn-info:hover,
 .activity-item .activity-completion a[role=button].btn-info:hover {
@@ -29547,7 +29547,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #fcefdc;
   border-color: #fcefdc;
-  color: #f0ad4e;
+  color: #7d5a29;
 }
 .activity-item .activity-completion button.btn-warning:hover,
 .activity-item .activity-completion a[role=button].btn-warning:hover {
@@ -29593,7 +29593,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #f4d6d2;
   border-color: #f4d6d2;
-  color: #ca3120;
+  color: #691911;
 }
 .activity-item .activity-completion button.btn-danger:hover,
 .activity-item .activity-completion a[role=button].btn-danger:hover {
@@ -29639,7 +29639,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #fefefe;
   border-color: #fefefe;
-  color: #f8f9fa;
+  color: #818182;
 }
 .activity-item .activity-completion button.btn-light:hover,
 .activity-item .activity-completion a[role=button].btn-light:hover {
@@ -29685,7 +29685,7 @@ span.editinstructions .alert-link {
   color: #1d2125;
   background-color: #d6d8d9;
   border-color: #d6d8d9;
-  color: #343a40;
+  color: #1b1e21;
 }
 .activity-item .activity-completion button.btn-dark:hover,
 .activity-item .activity-completion a[role=button].btn-dark:hover {
@@ -33419,7 +33419,7 @@ textarea[data-auto-rows] {
 }
 
 .form-check.left-indented {
-  padding-left: 0px;
+  padding-left: 0;
 }
 
 .pagelayout-login #region-main {
