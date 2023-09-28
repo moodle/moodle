@@ -35847,26 +35847,14 @@ p.arrow_button {
   border-top: 1px solid #dee2e6;
 }
 .path-grade-report-grader .gradeparent th.header {
+  left: 0;
   position: sticky;
-}
-@media (max-width: 767.98px) {
-  .path-grade-report-grader .gradeparent th.header {
-    left: 0;
-  }
-}
-@media (min-width: 768px) {
-  .path-grade-report-grader .gradeparent th.header {
-    left: -3rem;
-  }
 }
 .path-grade-report-grader .gradeparent th.header#studentheader {
   z-index: 1;
 }
 .path-grade-report-grader .gradeparent td.noborder {
   border-right: transparent;
-}
-.path-grade-report-grader .show-drawer-left .gradeparent th.header {
-  left: -1rem;
 }
 .path-grade-report-grader.hasstickyfooter .gradeparent tr.lastrow {
   bottom: calc(max(96px, 0.9375rem * 3) - 1px);

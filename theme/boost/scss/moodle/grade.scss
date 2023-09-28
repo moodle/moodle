@@ -635,12 +635,7 @@
         }
 
         th.header {
-            @include media-breakpoint-down(sm) {
-                left: 0;
-            }
-            @include media-breakpoint-up(md) {
-                left: -3rem;
-            }
+            left: 0;
             position: sticky;
 
             &#studentheader {
@@ -651,10 +646,6 @@
         td.noborder {
             border-right: transparent;
         }
-    }
-
-    .show-drawer-left .gradeparent th.header {
-        left: -1rem;
     }
 
     &.hasstickyfooter {
