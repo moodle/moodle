@@ -2169,6 +2169,7 @@ $string['statsuserreads'] = 'Views';
 $string['statsuserwrites'] = 'Posts';
 $string['statswrites'] = 'Posts';
 $string['status'] = 'Status';
+$string['statuschecks'] = 'Status checks';
 $string['statuscritical'] = 'Critical';
 $string['statusinfo'] = 'Info';
 $string['statusna'] = 'N/A';
