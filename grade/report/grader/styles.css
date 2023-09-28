@@ -270,3 +270,9 @@
     width: 275px;
     max-height: 300px;
 }
+
+@media only screen and (min-width: 768px) {
+    .path-grade-report-grader .gradeparent table {
+        padding-right: 6em;
+    }
+}
