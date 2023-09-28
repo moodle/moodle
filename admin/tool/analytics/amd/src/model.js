@@ -185,7 +185,7 @@ define([
                         component: 'tool_analytics'
                     }
                 ]);
-                var modalPromise = ModalCancel.create({
+                var modalPromise = ModalSaveCancel.create({
                     body: Templates.render('tool_analytics/export_options', {}),
                     removeOnClose: true,
                 });
