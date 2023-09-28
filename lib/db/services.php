@@ -306,6 +306,13 @@ $functions = array(
         'type' => 'write',
         'ajax' => true
     ],
+    'core_check_get_result_admintree' => [
+        'classname' => 'core\check\external\get_result_admintree',
+        'description' => 'Executes a check stored in the admin tree and returns the result',
+        'type' => 'read',
+        'ajax' => true,
+        'readonlysession' => true,
+    ],
     'core_cohort_add_cohort_members' => array(
         'classname' => 'core_cohort_external',
         'methodname' => 'add_cohort_members',
