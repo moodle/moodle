@@ -17,6 +17,7 @@
 namespace core\plugininfo;
 
 use admin_settingpage;
+use core_communication\processor;
 use core_plugin_manager;
 use moodle_url;
 
@@ -77,8 +78,7 @@ class communication extends base {
         // Filter to return only enabled plugins.
         $enabled = [];
         foreach ($plugins as $plugin) {
-            $disabled = get_config('communication_' . $plugin, 'disabled');
-            if (empty($disabled)) {
+            if (processor::is_provider_available('communication_' . $plugin)) {
                 $enabled[$plugin] = $plugin;
             }
         }
