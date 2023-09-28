@@ -36,3 +36,4 @@ Notes:
    5. https://github.com/ADOdb/ADOdb/commit/f52cf8a68cb6e0b702c8e7a6a8fa5da3e59ad13a
    6. https://github.com/ADOdb/ADOdb/commit/f7b91c2a45e2c89868894f73a65a096fbc4c1a0f
    Some of the commits added properties and removed some codes to avoid adding new properties.
+ * 2023-09-28 Added #[AllowDynamicProperties] above the ADOFetchObj class.
