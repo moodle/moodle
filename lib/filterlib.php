@@ -228,8 +228,10 @@ class filter_manager {
     public function filter_text($text, $context, array $options = array(),
             array $skipfilters = null) {
         $text = $this->apply_filter_chain($text, $this->get_text_filters($context), $options, $skipfilters);
-        // Remove <nolink> tags for XHTML compatibility.
-        $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
+        if (!isset($options['stage']) || $options['stage'] === 'post_clean') {
+            // Remove <nolink> tags for XHTML compatibility after the last filtering stage.
+            $text = str_replace(array('<nolink>', '</nolink>'), '', $text);
+        }
         return $text;
     }
 
