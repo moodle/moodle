@@ -766,7 +766,7 @@ class communication_feature implements
         if (
             !empty($matrixhomeserverurl) &&
             !empty($matrixaccesstoken) &&
-            (PHPUNIT_TEST || BEHAT_SITE_RUNNING || !empty($matrixelementurl))
+            (PHPUNIT_TEST || defined('BEHAT_SITE_RUNNING') || !empty($matrixelementurl))
         ) {
             return true;
         }
