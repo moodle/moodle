@@ -201,18 +201,27 @@ class condition extends \core_availability\condition {
             return $users;
         }
 
-        require_once($CFG->libdir . '/companylib.php');
         $course = $info->get_course();
 
         // List users for this course who match the condition.
         if ($this->companyid) {
-            $companyusers = companys_get_members($this->companyid, 'u.id', 'u.id ASC');
+            $DB->get_records_sql("
+                    SELECT DISTINCT cu.userid
+                      FROM {company_users} cu
+                      JOIN {user_enrolments} ue ON ue.userid = cu.userid
+                      JOIN {enrol} e ON ue.enrolid = e.id
+                     WHERE e.courseid = :courseid
+                     AND cu.companyid = :companyid",
+                    ['courseid' => $course->id,
+                     'companyid' => $this->companyid]);
         } else {
             $companyusers = $DB->get_records_sql("
-                    SELECT DISTINCT gm.userid
-                      FROM {companys} g
-                      JOIN {companys_members} gm ON gm.companyid = g.id
-                     WHERE g.courseid = ?", array($course->id));
+                    SELECT DISTINCT cu.userid
+                      FROM {company_users} cu
+                      JOIN {user_enrolments} ue ON ue.userid = cu.userid
+                      JOIN {enrol} e ON ue.enrolid = e.id
+                     WHERE e.courseid = :courseid",
+                    ['courseid' => $course->id]);
         }
 
         // List users who have access all companys.
