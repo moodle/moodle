@@ -1,11 +1,11 @@
 {
 	"title" : "1.1 Master Challenge 1",
-	"question": "The program below gives an indentation error while running. Fix it.<br> <img src='https://learn.qubitsedu.com/images/DPL10U1S01Image1.png' width='40%' height='80%'",
+	"question": "The program below gives an indentation error while running. Fix it.<br> <img src='https://learn.qubitsedu.com/images/DPL10U1S01Image1.png' width='40%' height='80%'>",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",

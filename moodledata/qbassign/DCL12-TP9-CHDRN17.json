@@ -1,0 +1,30 @@
+{
+  "title": "9.3 Master Challenge 1",
+  "question": "A video streaming platform's recommendation algorithm is a Machine Learning (ML) model that is designed to suggest videos to users based on their viewing history, search queries, and other factors. However, the algorithm has been criticized for perpetuating bias and misinformation as it has been found to recommend videos with extremist and conspiracy content and also the ones that promote hate speech and misinformation. <br>● How can bias be introduced and perpetuated over time, as illustrated by the case of this platform's recommendation algorithm? <br>● What steps can be taken to address this type of bias and ensure that recommending systems are fair and unbiased?",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN17",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

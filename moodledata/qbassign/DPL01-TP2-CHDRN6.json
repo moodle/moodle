@@ -1,0 +1,30 @@
+{
+	"title" : "2.1 Master Challenge 2",
+	"question": "Move the cat to the bottom left corner of the stage. Instruct the cat to move all around along the sides of the stage from here. The path of the cat is shown below<br>Name your project Around the Stage.<br><img src='https://learn.qubitsedu.com/images/DP_L01_U02_S01_Challenge2.jpg' width='30%' height='70%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL01-TP2-CHDRN6",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

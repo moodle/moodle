@@ -1,6 +1,6 @@
 {
-	"title" : "Challenge for 5.1 Search Algorithms",
-	"question": "Write a sample program",
+	"title" : "5.1 Master Challenge 1",
+	"question": "Look at the list of numbers below. How many comparisons would a linear search require in order to find the number 6 in the list? Explain in steps.<br><img src='https://learn.qubitsedu.com/images/DP_L09_U05_S01_Challenge1.jpg' width='75%' height='30%' />",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",

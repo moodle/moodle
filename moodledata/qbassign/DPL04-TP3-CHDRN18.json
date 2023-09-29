@@ -1,0 +1,30 @@
+{
+	"title" : "3.5 Master Challenge 2",
+	"question": "Let’s create another game with two enemy sprites appearing on the stage randomly. If any of them is touched, they should be hidden. Another painted sprite saying Better luck next time should pop up at this instant.<br><br>Make the game plan for this task as a PowerPoint presentation.<br><br>Be sure to include the details of the sprites and backdrops, the instructions on how to add them, and the game flow.<br><br>Write your game plan in the space given below.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL04-TP3-CHDRN18",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

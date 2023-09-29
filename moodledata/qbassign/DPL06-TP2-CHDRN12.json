@@ -1,0 +1,30 @@
+{
+	"title" : "2.4 Master Challenge 1",
+	"question": "Create a project in which you have a sprite with two costumes. When either the up or down arrow keys are pressed on the keyboard, one of the costumes should be shown. When either the right or left arrow keys are pressed on the keyboard, the other costume should be shown.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL06-TP2-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

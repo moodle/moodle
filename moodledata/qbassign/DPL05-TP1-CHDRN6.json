@@ -1,11 +1,11 @@
 {
 	"title" : "1.1 Master Challenge 2",
-	"question": "Create a projectshowing two friends meeting in school. Add suitable sprites and backdrops. Save the project as Friends at School",
+	"question": "Create a project showing two friends meeting in school. Add suitable sprites and backdrops. Save the project as Friends at School",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",

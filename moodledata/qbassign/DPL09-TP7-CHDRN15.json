@@ -1,0 +1,30 @@
+{
+	"title" : "7.3 Master Challenge 3",
+	"question": "Create a DataFrame of the population of France and Italy from the year 1960 to 2020. Generate a time series object for both datasets. Perform a forecast for the next 30 years using an ExponentialSmoothing model. Compare the forecasted population trends of both countries and draw meaningful inferences from them.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP7-CHDRN15",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

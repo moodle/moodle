@@ -305,4 +305,24 @@ $functions = array(
                 'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_delete_comment' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'delete_comment',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Delete Students Comment',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
+        'mod_qbassign_save_comment' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'save_comment',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Save Students Comment',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
 );

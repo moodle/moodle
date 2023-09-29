@@ -1,0 +1,30 @@
+{
+	"title" : "9.2 Master Challenge 3",
+	"question": "Create a Person class with a method called greet(). Create subclasses like Student and Teacher and override the greet() method. Create data members in the the Person details of the person, like id, name, and age. Create a public method displayDetails() in the person class that displays all the details. Access the method greet() and displayDetails() using the subclass objects. Make the displayDetails() methods private and explain what happens.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP9-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

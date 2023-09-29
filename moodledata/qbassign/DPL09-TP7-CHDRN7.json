@@ -1,6 +1,6 @@
 {
-	"title" : "Challenge for 7.1 Time Series Forecasting",
-	"question": "Write a sample program",
+	"title" : "7.1 Master Challenge 1",
+	"question": "The data for the average monthly temperature in a city for a year is given below:<br><img src='https://learn.qubitsedu.com/images/DP_L09_U07_S01_Challenge1_Image1.jpg' width='80%' height='25%'/><br>Calculate the forecast value considering the smoothing factor of 0.5. Compare and explain the accuracy of the smoothing factor.<br><img src='https://learn.qubitsedu.com/images/DP_L09_U07_S01_Challenge1_Image2.jpg' width='40%' height='80%' /><br><img src='https://learn.qubitsedu.com/images/DP_L09_U07_S01_Challenge1_Image3.jpg' width='40%' height='80%' />",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",

@@ -80,6 +80,10 @@
     display: none;
   }
 }
+.qicon-external-link-sign:before {
+  content: "\e911";
+  color: #9e9ea2;
+}
 .popover-region .popover-region-toggle .qicon-notifications {
   color: #9e9ea2;
   font-size: 20px;
@@ -297,7 +301,7 @@
   color: #116cbf;
 }
 
-.max-width {
+.my-course-section .max-width {
   @include breakpoint(xs) {
     max-width: 90%;
   }
@@ -314,7 +318,7 @@
     max-width: 29%;
   }
 }
-.flex-grow {
+.my-course-section .flex-grow {
   @include breakpoint(md) {
     flex: 0 0 43%;
   }
@@ -322,7 +326,7 @@
     flex: 0 0 43%;
   }
   @include breakpoint(xlg) {
-    flex: 0 0 30%;
+    flex: 0 0 43%;
   }
 }
 .sidebar {
@@ -1157,4 +1161,10 @@ a:not([class]):focus,
   .pagetitle-left-alignment .breadcrumb:not(:empty) .breadcrumb-item {
     padding: 0;
   }
+}
+.new-tab {
+  position: relative;
+  top: -6px;
+  font-size: 7px;
+  left: 5px;
 }

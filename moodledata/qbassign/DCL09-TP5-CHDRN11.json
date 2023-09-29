@@ -1,0 +1,30 @@
+{
+  "title": "5.2 Master Challenge 2",
+  "question": "Given below is a dataset of employee names and salaries from a certain firm. Create a new column called Bonus, that shows the bonus received by each employee, based on the following criteria: <br>● If the employee's salary is less than $50,000, the bonus is 5% of their salary. <br>● If the employee's salary is between $50,000 and $80,000 (inclusive), the bonus is 10% of their salary. <br>● If the employee's salary is greater than $80,000, the bonus is 15% of their salary.<br><img src='https://learn.qubitsedu.com/images/DC-L09-U05-S02-Challenge-2-table-1.jpg' width='40%' height='60%' />",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinefile",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL09-TP5-CHDRN11",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

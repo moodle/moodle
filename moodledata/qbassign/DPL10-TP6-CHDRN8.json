@@ -1,0 +1,30 @@
+{
+	"title" : "6.1 Master Challenge 3",
+	"question": "1. Create a DataFrame from the safe drinking water dataset containing the percentage of the population with limited access to drinking water in South American countries with a GDP greater than 5000 Million US Dollars.<br>2. Create another DataFrame containing the percentage of the population that has access to safely managed drinking water in Asian countries with a total population of less than 100000.<br>3. Merge the two DataFrames created above and display the resulting DataFrame after removing the missing values, if any.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP6-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

@@ -1,0 +1,30 @@
+{
+	"title" : "6.2 Master Challenge 2",
+	"question": "A company provides special incentives on a monthly basis to the sales employees on the basis of the products sold by them. A table is made in Excel as shown below and the ranks of the salesperson are determined on the basis of products sold by them.<br><img src='https://learn.qubitsedu.com/images/DC-L07-U06-S02-Challenge-2-Table.jpg' width='50%' height='80%' /><br><br>1. Prepare a similar table in Excel. Add 20 random names in the Salesperson field and the number of products sold in the Products sold fi eld.<br> 2. Use the Rank function to determine the rank.<br> 3. Apply conditional formatting for the top fi ve rankers.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL07-TP6-CHDRN9",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

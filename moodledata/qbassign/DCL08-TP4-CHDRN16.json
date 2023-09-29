@@ -1,0 +1,30 @@
+{
+  "title": "4.4 Master Challenge 2",
+  "question": "Create a web page on the topic Most inspiring leaders of our times. Insert three different links for three inspiring leaders of your choice. The first link should direct the web page to a relevant website of your choice. The second link should direct it to a relevant picture located in your system. The third link should direct it to another web page which you created. It should contain details of any one of the inspiring leaders of your choice.",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL08-TP4-CHDRN16",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+	"title" : "6.3 Master Challenge 1",
+	"question": "Consider the following array of numbers:<br>{260, 337, 181, 420, 373, 89, 15, 91, 22, 116}<br>Task 1: Write a program to traverse the array and print all the odd numbers contained within it.<br>Task 2: Write a program to traverse the array and print all the even numbers contained within it.<br><br>Note: You may use a built-in function to determine whether a number is odd or write your own logic.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP6-CHDRN13",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

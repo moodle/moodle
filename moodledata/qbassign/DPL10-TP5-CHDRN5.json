@@ -1,6 +1,6 @@
 {
-	"title" : "Challenge for 5.1 Algorithms",
-	"question": "Write a sample program",
+	"title" : "5.1 Master Challenge 1",
+	"question": "Consider the graph given below. The graph contains the source location A , the destination location J , and several other intermediate locations, such as B , C , D , E , F , G , H , and I . Find the minimal cost route to reach J from A using the brute force approach.<br><img src='https://learn.qubitsedu.com/images/DP_L10_U05_S01_Challenge1.png' width='25%' height='85%' />",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",

@@ -1,0 +1,30 @@
+{
+	"title" : "7.2 Master Challenge 1",
+	"question": "The production of rice by various countries, as calculated in the year 2022, is represented by means of a pie chart below. Study it and answer the questions that follow.<br><img src='https://learn.qubitsedu.com/images/DC_L02_U7_S02_Challenge%201.png' width='50%' height='70%' /><br>1. Which country is the highest producer of rice?<br>2. Which country is the lowest producer of rice?",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL02-TP7-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

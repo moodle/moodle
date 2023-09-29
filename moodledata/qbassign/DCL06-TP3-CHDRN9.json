@@ -1,0 +1,30 @@
+{
+	"title" : "3.2 Master Challenge 2",
+	"question": "Add a new slide to the presentation created in Challenge 1 and add shapes or icons to the slides as shown below.<br>1. Add animation to the shapes and icons.<br>2. Add a time delay in a sequence to make the images appear one after the other.<br>3. Add three more slides for the triangle, square, and rectangle shapes.<br>4. Add a transition on a slide and morph the transition to the other slides.<br><img src='https://learn.qubitsedu.com/images/DCL06_U03_S02_challenge-2.png' height='80%' width='40%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL06-TP3-CHDRN9",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

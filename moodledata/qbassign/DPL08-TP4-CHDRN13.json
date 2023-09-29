@@ -1,0 +1,30 @@
+{
+	"title" : "4.3 Master Challenge 3",
+	"question": "Write a program to convert the temperature from Fahrenheit to Celsius using a user-defi ned function. You have to ask the user to enter the temperature in Fahrenheit and convert it to Celsius. The conversion formula from Fahrenheit to <br>Celsius is:<br>C = (F-32)/1.8<br>Here F indicates the value of the temperature in Fahrenheit and C indicates the value of the temperature in Celsius.<br>Do the reverse using another function and let the user choose which value to convert",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL08-TP4-CHDRN13",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

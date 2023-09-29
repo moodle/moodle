@@ -1,0 +1,30 @@
+{
+  "title": "9.5 Master Challenge 2",
+  "question": "Zara is a creative blogger who writes different kinds of blogs on various topics such as daily life, environmental issues, budding entrepreneur trends, and related to the education system. With the help of her friend Jake, she got an opportunity to expand her scope of readers by digitizing her content on mobile applications too. Jake created software for different bloggers and readers to write and read content easily and effectively. As Jake’s software is using many bloggers’ content, what measures does he need to take to avoid plagiarism? What can Zara do to safeguard her intellectual property in order to sell her content on Jake’s software? ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN24",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

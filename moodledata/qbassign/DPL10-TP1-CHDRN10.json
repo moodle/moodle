@@ -1,11 +1,11 @@
 {
 	"title" : "1.1 Master Challenge 3",
-	"question": "Create empty functions and docstrings for a simple arithmetic calculator program.<br>The program should have the following features: ● Take the numbers and operators as user input.<br> ● Calculate the expressions. <br>● Display the expression and the correct answer. <br>● Display if there is any error in the input. <br>● Check with the user to continue or exit. <br>● Thank the user for using the program. ",
+	"question": "Create empty functions and docstrings for a simple arithmetic calculator program.<br>The program should have the following features:<br> ● Take the numbers and operators as user input.<br> ● Calculate the expressions. <br>● Display the expression and the correct answer. <br>● Display if there is any error in the input. <br>● Check with the user to continue or exit. <br>● Thank the user for using the program. ",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",

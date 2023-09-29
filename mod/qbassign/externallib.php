@@ -37,6 +37,7 @@ require_once("$CFG->dirroot/mod/qbassign/qbassignmentplugin.php");
 require_once("$CFG->dirroot/files/externallib.php");
 require_once("$CFG->libdir/filelib.php");
 require_once("$CFG->libdir/completionlib.php");
+require_once("$CFG->dirroot/comment/lib.php");
 
 /**
  * qbassign functions
@@ -3128,6 +3129,107 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                 }
             }
             }
+
+            //FEEDBACK Section start
+            $get_grade = $DB->get_record('qbassign_grades', array('qbassignment' => $get_assignmentdetails->id,'userid' => $USER->id));
+
+            $grade_mark = ($get_grade->grade > 0?$get_grade->grade:0);
+            $total_mark = $get_assignmentdetails->grade;
+
+            if($get_grade->grader>0)
+            {
+                $feedback_status = 1;
+                $userObj = $DB->get_record("user", array("id" => $get_grade->grader));
+                $userdetails = fullname($userObj);
+                $first = strtoupper(substr($userObj->firstname,0,1)); 
+                $last = strtoupper(substr($userObj->lastname,0,1));
+
+                $feedbacks = array(
+                'feedback_status' => $feedback_status,
+                'grade'=> number_format($grade_mark,2).'/'.number_format($total_mark,2),
+                'grade_on' => date("l d F Y, h:i A",$get_grade->timemodified),
+                'grade_by' => $first.$last . " ". $userdetails                  
+                ); 
+            }
+            else
+            {
+                $feedback_status = 0; 
+                $feedbacks = array(
+                'feedback_status' => $feedback_status,
+                'grade'=> '',
+                'grade_on' => '',
+                'grade_by' => ''                  
+                ); 
+            }
+            //FEEDBACK Section ends
+
+            //COMMENTS SECTION starts
+            $comments_query = "SELECT * FROM {comments} WHERE component = :component";
+            $comments_query .= " AND itemid = :itemid";
+            $comments_sql = $DB->get_records_sql($comments_query,
+            [
+                'component' => 'qbassignsubmission_comments',
+                'itemid' => $get_assignmentsubmission_details->id
+            ]
+            );
+            $comment_total = count($comments_sql);   
+            if($comment_total > 0)
+            { 
+                $formatoptions = array('overflowdiv' => true, 'blanktarget' => true);
+                $itemid = $get_assignmentsubmission_details->id;
+                $userfieldsapi = \core_user\fields::for_userpic();
+                $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+                $sortdirection = 'ASC';
+                $sortdirection = ($sortdirection === 'ASC') ? 'ASC' : 'DESC';
+                $params = array();
+                $page = 0;
+
+                $perpage = (!empty($CFG->commentsperpage))?$CFG->commentsperpage:15;
+                $start = $page * $perpage;
+                list($componentwhere, $component) = self::get_component_select_sql('c');
+                if ($component) {
+                 $params['component'] = $component;
+                } 
+                $sql = "SELECT $ufields, c.id AS cid, c.content AS ccontent, c.format AS cformat, c.timecreated AS ctimecreated
+                FROM {comments} c
+                JOIN {user} u ON u.id = c.userid
+                WHERE c.contextid = :contextid AND
+                c.commentarea = :commentarea AND
+                c.itemid = :itemid AND
+                $componentwhere
+                ORDER BY c.timecreated $sortdirection, c.id $sortdirection";
+                $params['contextid'] = $contextid;
+                $params['commentarea'] = 'submission_comments';
+                $params['itemid'] = $itemid; 
+                $rs = $DB->get_recordset_sql($sql, $params, $start, $perpage);
+                foreach ($rs as $u) {
+                    $first = strtoupper(substr($u->firstname,0,1)); 
+                    $last = strtoupper(substr($u->lastname,0,1));
+                    $c = new stdClass();
+                    $c->id          = $u->cid;
+                    $c->content     = $u->ccontent;
+                    $c->timecreated = $u->ctimecreated;
+                    $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$courseid));
+                    $c->profileurl = $url->out(false); // URL should not be escaped just yet.
+                    $c->fullname = fullname($u);
+                    $c->shortname = $first.$last;
+                    $c->time = userdate($c->timecreated, $c->strftimeformat);
+                    $c->content = format_text($c->content, $c->format, $formatoptions);
+                    $c->userid = $u->id;
+                    if($USER->id == $u->id)
+                        $c->delete = true;
+                    else
+                       $c->delete = false; 
+                    $comments[] = $c;
+                }
+            }
+            else
+            {
+               $comments[] = ''; 
+            }
+
+            //COMMENTS SECTION ends 
+
             $context = context_course::instance($get_assignmentdetails->course);
             $roles = get_user_roles($context, $USER->id, true);
             $role = key($roles);
@@ -3154,7 +3256,10 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
             'studentsubmitted_content' => $get_assign_type == "text"  ? $getonline_content->onlinetex : $getonline_content->codeblock,
             'studentsubmitted_fileurl' => ($get_assignmentsubmission_details->status == 'new') ? '' : $fileurl,
             'studentsubmitted_filename' => ($get_assignmentsubmission_details->status == 'new') ? '' : $get_filedetails->filename,
-            'submissiontypes' => $submissintype
+            'submissiontypes' => $submissintype,
+            'feedback' => $feedbacks,
+            'comments' => ($comment_total>0)?$comments:array(),
+            'comment_total' => $comment_total
             );
 
             $contextsystem = context_module::instance($moduleid);
@@ -3204,7 +3309,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                         'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
                                         'studentsubmitted_fileurl' => new external_value(PARAM_RAW, 'Submission File Url',VALUE_OPTIONAL),
                                         'studentsubmitted_filename' => new external_value(PARAM_RAW, 'Submission Filename',VALUE_OPTIONAL),
-                                     'submissiontypes' => new external_single_structure(
+                                        'submissiontypes' => new external_single_structure(
                                          array(
                                           'type' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
                                           'maxfileallowed' => new external_value(PARAM_TEXT, 'File Allowed',VALUE_OPTIONAL),
@@ -3213,14 +3318,57 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                                           'operation' =>new external_value(PARAM_TEXT, 'codeblock type',VALUE_OPTIONAL),
                                           'language' =>new external_value(PARAM_TEXT, 'Language',VALUE_OPTIONAL)
                                          )
-                                     ),
-                                     'Submission Type Details', VALUE_OPTIONAL
-                                     )
+                                        ),
+                                     'Submission Type Details', VALUE_OPTIONAL,
+                                     'feedback' => new external_single_structure(
+                                        array(
+                                         'feedback_status' => new external_value(PARAM_INT, 'Feedback Status ',VALUE_OPTIONAL),
+                                         'grade' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                         'grade_on' =>new external_value(PARAM_TEXT, 'Text Limit',VALUE_OPTIONAL),
+                                         'grade_by' =>new external_value(PARAM_TEXT, 'Text Limit',VALUE_OPTIONAL)
+                                        )
+                                    ),
+                                    'Feedback Details', VALUE_OPTIONAL,
+                                    'comments' => new external_multiple_structure(
+                                    self::get_comment_structure(), 'List of comments'
+                                    ),
+                                    'comment_total' => new external_value(PARAM_INT, 'Comment Total',VALUE_OPTIONAL)
+                                    )
                                  ),
                                  'Assignment Details', VALUE_OPTIONAL
                          )
                  );        
      }
+
+     public static function get_component_select_sql($alias = '') {
+        $component = 'qbassignsubmission_comments';
+        if ($alias) {
+            $alias = $alias.'.';
+        }
+        if (empty($component)) {
+            $componentwhere = "{$alias}component IS NULL";
+            $component = null;
+        } else {
+            $componentwhere = "({$alias}component IS NULL OR {$alias}component = :component)";
+        }
+        return array($componentwhere, $component);
+    }
+
+    protected static function get_comment_structure() {
+        return new external_single_structure(
+            array(
+                'id'             => new external_value(PARAM_INT,  'Comment ID',VALUE_OPTIONAL),
+                'content'        => new external_value(PARAM_RAW,  'The content text formatted',VALUE_OPTIONAL),
+                'timecreated'    => new external_value(PARAM_INT,  'Time created (timestamp)',VALUE_OPTIONAL),
+                'profileurl'     => new external_value(PARAM_URL,  'URL profile',VALUE_OPTIONAL),
+                'fullname'       => new external_value(PARAM_NOTAGS, 'fullname',VALUE_OPTIONAL),
+                'shortname'       => new external_value(PARAM_NOTAGS, 'shortname',VALUE_OPTIONAL),
+                'time'           => new external_value(PARAM_NOTAGS, 'Time in human format',VALUE_OPTIONAL),
+                'userid'         => new external_value(PARAM_INT,  'User ID',VALUE_OPTIONAL),
+                'delete'         => new external_value(PARAM_BOOL, 'Permission to delete=true/false', VALUE_OPTIONAL)
+            ), 'comment'
+        );
+    }
  
      /**
       * Create Assignment module details.
@@ -4296,4 +4444,108 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                 )
             );
     }
+
+    /**
+     * Save the Assignment Comments details.
+     *
+     * @param int $uniquefield qbassign unique field
+     * @return array of warnings and status result
+     * @since Moodle 3.2
+     */
+
+     public static function save_comment_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'submissionid' => new external_value(PARAM_INT, 'submission ID'),
+             'content' => new external_value(PARAM_RAW, 'content'),
+             'courseid' => new external_value(PARAM_INT, 'Course ID'),
+             'assignmentid' => new external_value(PARAM_INT, 'Assignment ID')
+          )
+         );
+     }
+ 
+     public static function save_comment($submissionid,$content,$courseid,$assignmentid)
+     {
+         global $DB,$USER;
+ 
+         //Get activity Module details
+         $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignmentid,'course' => $courseid));
+         $moduleid = $get_coursefield->id;
+ 
+         $get_context = $DB->get_record('context', array('instanceid' => $moduleid,'contextlevel' => 70));
+         $contextid = $get_context->id;
+ 
+         $insertcmt =  array(
+             'contextid' => $contextid,
+             'component' => 'qbassignsubmission_comments',
+             'commentarea' => 'submission_comments',
+             'itemid' => $submissionid,
+             'content' => $content,
+             'format' => 0,
+             'userid' => $USER->id,
+             'timecreated' => time(),
+         );
+         $cmnts = $DB->insert_record('comments', $insertcmt);
+         if($cmnts)
+             return array('message'=>'Comments saved Successfully');
+         else
+             return array('message'=>'Error in saving Comments');
+         
+     }
+ 
+     public static function save_comment_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'message'=> new external_value(PARAM_TEXT, 'success message')
+                 )
+             );
+ 
+     }
+ 
+ 
+ 
+     /**
+      * Delete the Assignment Comments details.
+      *
+      * @param int $uniquefield qbassign unique field
+      * @return array of warnings and status result
+      * @since Moodle 3.2
+      */
+ 
+     public static function delete_comment_parameters()
+     {
+         return new external_function_parameters(
+             array(
+             'commentid' => new external_value(PARAM_INT, 'Unique ID')
+          )
+         );
+     }
+ 
+     public static function delete_comment($commentid)
+     {
+         global $DB,$USER;
+         $get_comments = $DB->get_record('comments', array('id' => $commentid,'userid' => $USER->id));
+         if($get_comments->id!='')
+         {
+             $DB->delete_records('comments', array('id' => $commentid,'userid' => $USER->id));
+             $remove_updated = ['message'=>'sucess']; 
+             return $remove_updated;
+         }
+         else
+         {
+             throw new moodle_exception('Invalid Comments ID', 'error');
+         }
+     }
+ 
+     public static function delete_comment_returns()
+     {
+         return new external_single_structure(
+                 array(
+                     'message'=> new external_value(PARAM_TEXT, 'success message')
+                 )
+             );
+ 
+     }
 }

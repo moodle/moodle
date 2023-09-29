@@ -1,0 +1,30 @@
+{
+	"title" : "4.2 Master Challenge 2",
+	"question": "Create a sp in wheel animation in which the spin wheel rotates under two conditions:<br>1. 10 times continuously when it is tapped.<br>2. 6 times continuously when the green flag is tapped.<br><img src='https://learn.qubitsedu.com/images/DP_L02_U04_S02_Challenge1.jpg' width='50%' height='70%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL02-TP4-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

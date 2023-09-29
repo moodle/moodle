@@ -1,0 +1,30 @@
+{
+	"title" : "6.2 Master Challenge 2",
+	"question": "Ruby planned a surprise party for her daughter’s 5th birthday in November. She started saving in January. The following graph shows Ruby’s savings from January to October.<br><img src='https://learn.qubitsedu.com/images/DC_L04_U06_S02_Challenge2.jpg' width='30%' height='90%' /><br><br>1. Make a table in Excel using the data shown in the graph.<br>2. Find the net savings of Ruby. <br>3. If she needs $900 for the party, how much does she need to save per month?<br>4. Find the difference between her net savings and the amount needed for the party",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL04-TP6-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

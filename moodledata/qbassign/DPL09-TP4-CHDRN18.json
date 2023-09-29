@@ -1,0 +1,30 @@
+{
+	"title" : "4.4 Master Challenge 3",
+	"question": "Write a program to add the following details into a file named students.csv in the format given below:<br>1, David, New York,1500<br>2, Amanda, California,2400<br>3, Mary, Ohio,1000<br>4, Sara, Texas,700<br><br>Create a header row for the CSV file students.csv . The column names can be as shown below:<br><img src='https://learn.qubitsedu.com/images/DP_L09_U04_S04_Challenge3.JPG' width='70%' height='30%' /><br><br>Write an additional code to get a city name as the input and display the corresponding student name and pending amount for the given city.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP4-CHDRN18",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

@@ -1,0 +1,30 @@
+{
+	"title" : "6.3 Master Challenge 2",
+	"question": "The daily attendance record of students in the month of September is given here.<br><img src='https://learn.qubitsedu.com/images/DC_L05_U06_S03_Challenge2_Image1.jpg' width='60%' height='90%' /><br>Summary of this record is added as shown below.<br><img src='https://learn.qubitsedu.com/images/DC_L05_U06_S03_Challenge2_Image2.jpg' width='30%' height='90%' /><br>Open this file.<a href='go.qubitscs.com/PHGi' target='_blank'>go.qubitscs.com/PHGi</a><br>Copy the data to a new sheet using the Move or Copy option and rename the sheet as Attendance - October.<br>1. Freeze the panes as in the worksheet Attendance - September .<br>2. Change the date and day with respect to the month of October. Also modify the data.<br>3. Edit the formulas according to the new data.<br>4. In the summary report, sort the data according to the student's name.<br>5. Edit the formulas",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL05-TP6-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

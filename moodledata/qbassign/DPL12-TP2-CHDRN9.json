@@ -1,0 +1,30 @@
+{
+	"title" : "2.1 Master Challenge 1",
+	"question": "Write a program that helps the users manage their fitness goals.<br>1. Ask for two integers: the first is the goal value and the second is the actual value. Thegoal could be anything, such as walking 10,000 steps a day, eating five differentvegetables a day, spending 30 minutes on exercise, practicing a favorite activity for 20 minutes, and so on. The actual value refers to the real or achieved outcome of the goal.<br>2. Create three boolean variables, as described below, to help the users determine whether they met their goal.<br>a. The first boolean should be true if the users exceed their goal.<br> b. The second boolean should be true if the users are not able to reach the goal.<br>c. The third boolean should be true if the users meet the goal exactly.<br>3. Print the results (that is, the value of the booleans).<br>Here is an example:<br><img src='https://learn.qubitsedu.com/images/DPL12U02S01Image1.png' width='50%' height='70%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN9",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

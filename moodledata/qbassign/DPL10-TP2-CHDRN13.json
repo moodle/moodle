@@ -1,0 +1,30 @@
+{
+	"title" : "2.3 Master Challenge 2",
+	"question": "Create a Python package named SimpleMath that encapsulates four basic arithmetic functions: addition, subtraction, multiplication, and division.<br>●  Create a Directory and __init__.py: Make a SimpleMath directory, and inside it, create an empty __init__.py file.<br>●  Create arithmetic.py: Inside the directory, create an arithmetic.py file with the following functions:<br>○  a. add(x, y): Returns the sum of x and y.<br>○  b. subtract(x, y): Returns the difference between x and y.<br>○  c. multiply(x, y): Returns the product of x and y.<br>○  d. divide(x, y): Returns the quotient of x and y, with error handling for division by zero.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP2-CHDRN13",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}
