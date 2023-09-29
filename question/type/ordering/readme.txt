@@ -23,8 +23,8 @@ To INSTALL or UPDATE this plugin
     1. get the files for this plugin from any one of the following locations:
 
         (a) GIT: https://github.com/gbateson/moodle-qtype_ordering.git
-        (b) zip: the Moodle.org -> Plugins repository (search for Reader)
-        (c) zip: http://bateson.kanazawa-gu.ac.jp/zip/plugins_qtype_ordering.zip
+        (b) zip: the Moodle.org -> Plugins repository (search for Ordering)
+        (c) zip: https://bateson.kochi-tech.ac.jp/zip/plugins_qtype_ordering.zip
 
        If you are installing from a zip file, unzip the zip file, to create a folder
        called "ordering" and upload or move this folder into the "question/type" folder

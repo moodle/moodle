@@ -2,6 +2,9 @@
 Change log for qtype_ordering
 ========================================
 
+2023-09-29 (10)
+ - small fix to download URLs in readme.txt
+
 2023-05-31 (08)
  -  * Fix Behat failure following button change in Moodle master branch 
 
