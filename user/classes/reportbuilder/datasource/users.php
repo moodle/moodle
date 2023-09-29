@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_user\reportbuilder\datasource;
 
 use lang_string;
+use core_cohort\reportbuilder\local\entities\cohort;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\boolean_select;
@@ -50,16 +51,15 @@ class users extends datasource {
         global $CFG;
 
         $userentity = new user();
-        $usertablealias = $userentity->get_table_alias('user');
+        $useralias = $userentity->get_table_alias('user');
 
-        $this->set_main_table('user', $usertablealias);
+        $this->set_main_table('user', $useralias);
+        $this->add_entity($userentity);
 
         $userparamguest = database::generate_param_name();
-        $this->add_base_condition_sql("{$usertablealias}.id != :{$userparamguest} AND {$usertablealias}.deleted = 0", [
+        $this->add_base_condition_sql("{$useralias}.id != :{$userparamguest} AND {$useralias}.deleted = 0", [
             $userparamguest => $CFG->siteguest,
         ]);
-
-        $this->add_entity($userentity);
 
         // Join the tag entity.
         $tagentity = (new tag())
@@ -68,13 +68,20 @@ class users extends datasource {
         $this->add_entity($tagentity
             ->add_joins($userentity->get_tag_joins()));
 
+        // Join the cohort entity.
+        $cohortentity = new cohort();
+        $cohortalias = $cohortentity->get_table_alias('cohort');
+        $cohortmemberalias = database::generate_alias();
+        $this->add_entity($cohortentity->add_joins([
+            "LEFT JOIN {cohort_members} {$cohortmemberalias} ON {$cohortmemberalias}.userid = {$useralias}.id",
+            "LEFT JOIN {cohort} {$cohortalias} ON {$cohortalias}.id = {$cohortmemberalias}.cohortid",
+        ]));
+
         // Add all columns/filters/conditions from entities to be available in custom reports.
         $this->add_all_from_entity($userentity->get_entity_name());
-
-        // Add specific tag entity elements.
-        $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
-        $this->add_filter($tagentity->get_filter('name'));
-        $this->add_condition($tagentity->get_condition('name'));
+        $this->add_all_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink'], ['name'], ['name']);
+        $this->add_all_from_entity($cohortentity->get_entity_name(), ['name', 'idnumber', 'description', 'customfield*'],
+            ['name', 'idnumber', 'customfield*'], ['name', 'idnumber', 'customfield*']);
     }
 
     /**
@@ -123,7 +130,7 @@ class users extends datasource {
     /**
      * Return the default sorting that will be added to the report once it is created
      *
-     * @return array|int[]
+     * @return int[]
      */
     public function get_default_column_sorting(): array {
         return [
