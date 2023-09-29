@@ -86,6 +86,6 @@ $string['welcomep20'] = 'Vous voyez cette page, car vous avez installé Moodle c
 $string['welcomep30'] = 'Cette version de <b>{$a->installername}</b> comprend des logiciels qui créent un environnement dans lequel <b>Moodle</b> va fonctionner, à savoir :';
 $string['welcomep40'] = 'Ce paquet contient également <b>Moodle {$a->moodlerelease} ({$a->moodleversion})</b>.';
 $string['welcomep50'] = 'L\'utilisation de tous les logiciels de ce paquetage est soumis à l\'acceptation de leurs licences respectives. Le paquetage complet <strong>{$a->installername}</strong> est un <a href="https://www.opensource.org/docs/definition_plain.html">logiciel libre</a>. Il est distribué sous licence <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'Les pages suivantes vous aideront pas à pas à configurer et mettre en place <strong>Moodle</strong> sur votre ordinateur. Il vous sera possible d\'accepter les réglages par défaut ou, facultativement, de les adapter à vos propres besoins.';
+$string['welcomep60'] = 'Les pages suivantes vous aideront pas à pas à configurer et installer <strong>Moodle</strong> sur votre ordinateur. Il vous sera possible d\'accepter les réglages par défaut ou, facultativement, de les adapter à vos propres besoins.';
 $string['welcomep70'] = 'Cliquer sur le bouton « Suivant » ci-dessous pour continuer l\'installation de <b>Moodle</b>.';
 $string['wwwroot'] = 'Adresse web';
