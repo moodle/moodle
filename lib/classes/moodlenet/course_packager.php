@@ -40,20 +40,25 @@ class course_packager extends resource_packager {
      * @param int $userid The ID of the user performing the packaging
      */
     public function __construct(
-        protected stdClass $course,
-        protected int $userid,
+        stdClass $course,
+        int $userid,
     ) {
-        parent::__construct($course, $userid);
+        parent::__construct($course, $userid, $course->shortname);
+    }
 
-        $this->controller = new backup_controller(
+    /**
+     * Get the backup controller for the course.
+     *
+     * @return backup_controller the backup controller for the course.
+     */
+    protected function get_backup_controller(): backup_controller {
+        return new backup_controller(
             backup::TYPE_1COURSE,
-            $course->id,
+            $this->course->id,
             backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO,
             backup::MODE_GENERAL,
-            $userid
+            $this->userid,
         );
-
-        $this->resourcefilename = $this->course->shortname;
     }
 }
