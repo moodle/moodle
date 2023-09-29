@@ -60,14 +60,14 @@ class edit_override_form extends moodleform {
      * Constructor.
      *
      * @param moodle_url $submiturl the form action URL.
-     * @param cm_info|stdClass $cm course module object.
+     * @param cm_info $cm course module object.
      * @param stdClass $quiz the quiz settings object.
      * @param context_module $context the quiz context.
      * @param bool $groupmode editing group override (true) or user override (false).
      * @param stdClass|null $override the override being edited, if it already exists.
      */
     public function __construct(moodle_url $submiturl,
-            cm_info|stdClass $cm, stdClass $quiz, context_module $context,
+            cm_info $cm, stdClass $quiz, context_module $context,
             bool $groupmode, ?stdClass $override) {
 
         $this->cm = $cm;
