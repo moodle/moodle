@@ -1,0 +1,30 @@
+{
+  "title": "9.4 Master Challenge 3",
+  "question": "Kickstarter - a crowdfunding platform for creative projects. Kickstarter enables artists, designers, and entrepreneurs to raise funds from the public to bring their ideas to life. The platform has been used to fund a range of creative projects, including films, games, and art installations. 1. What is Kickstarter, and how does it work? What types of creative projects are typically funded through the platform? 2. How does Kickstarter benefit artists, designers, and entrepreneurs who might otherwise struggle to secure funding for their projects? Provide an example of a successful Kickstarter campaign and how it impacted the creator. 3. What are some of the risks and challenges associated with crowdfunding through Kickstarter, such as meeting fundraising goals, managing production and distribution, and maintaining transparency and accountability to backers?",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN22",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

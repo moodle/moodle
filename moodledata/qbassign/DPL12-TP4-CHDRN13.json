@@ -1,0 +1,30 @@
+{
+	"title" : "4.3 Master Challenge 1",
+	"question": "There is an incomplete code written below. This code is a number game that takes a number as an input and does operations on it, such as doubling the number and squaring the number. You need to complete the NumberGame class and Game class codings with reference to the comments given in between the code.<br><img src='https://learn.qubitsedu.com/images/DP_L12_U04_S03_Challenge1_image1.JPG'><br><img src='https://learn.qubitsedu.com/images/DP_L12_U04_S03_Challenge1_image2.JPG'><br>Your output should look like this,<br><img src='https://learn.qubitsedu.com/images/DP_L12_U04_S03_Challenge1_image3.JPG' height='50%' width='40%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP4-CHDRN13",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

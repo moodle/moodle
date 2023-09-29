@@ -1,0 +1,30 @@
+{
+	"title" : "4.2 Master Challenge 1",
+	"question": "Changing costumes to show two different movements of the same sprite gives you a feeling that it is moving. This is called animation. For example, take a look at the following costumes of the cat sprite. The cat seems to be moving if the costumes are played one after the other in quick succession.<br><img src='https://learn.qubitsedu.com/images/DP_L03_U04_S02_Challenge1_1.jpg' width='30%' height='50%' /><img src='https://learn.qubitsedu.com/images/DP_L03_U04_S02_Challenge1_2.jpg' width='30%' height='50%' /><br>Go to File and click New. Choose a bear sprite from the sprite library. Use a simple script to animate the bear into walking. Find different costumes for it from the library, draw or upload them.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL03-TP4-CHDRN7",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

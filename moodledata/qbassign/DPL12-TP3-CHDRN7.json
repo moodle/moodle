@@ -1,0 +1,30 @@
+{
+	"title" : "3.1 Master Challenge 2",
+	"question": "Write a program that counts the number of divisions required to reach 1 by continuously dividing a given number by 2 until the value becomes 1. This challenge aims to determine how many times you can divide a number by 2 to get down to 1.<br>1. Prompt the user to enter a positive integer.<br>2. Using a loop, repeatedly divide the entered number by 2 until it becomes 1. Print the results of each division.<br>3. Count the number of divisions performed and store it in a variable.<br>4. After reaching a value of 1, display the total number of divisions needed to reach 1.<br>Note: The integer division truncates any decimal part.<br>Sample output:<br><img src='https://learn.qubitsedu.com/images/DP_L12_U03_S01Challenge2.JPG' width='60%' height='90%'/>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP3-CHDRN7",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

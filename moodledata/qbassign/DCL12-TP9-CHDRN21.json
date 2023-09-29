@@ -1,0 +1,30 @@
+{
+  "title": "9.4 Master Challenge 2",
+  "question": "iNaturalist is a citizen science platform that enables users to record and share observations of wildlife. The platform uses image recognition and machine learning to identify species and provide users with information about the organisms they observe.1. What is iNaturalist and how does it work? What types of observations and data can users contribute to the platform? 2. How can iNaturalist and other citizen science platforms be used to promote community engagement and public awareness of environmental issues? Provide an example of a successful outreach or education initiative that has used iNaturalist data. 3. What are some of the challenges or limitations of using citizen science platforms like iNaturalist to collect scientific data, and how can these be addressed?",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN21",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

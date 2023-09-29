@@ -1,0 +1,30 @@
+{
+	"title" : "3.2 Master Challenge 2",
+	"question": "Write a Python program to get the names of the students as input and store them in a tuple. Write a code to display the tuple in descending order. <br><img src='https://learn.qubitsedu.com/images/DP_L09_U03_S02_Challenge2_Image1.jpg' width='70%'/><br>Output: <br><img src='https://learn.qubitsedu.com/images/DP_L09_U03_S02_Challenge2_Image2.jpg' width='70%'/>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP3-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

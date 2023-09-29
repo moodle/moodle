@@ -1,11 +1,11 @@
 {
 	"title" : "1.1 Master Challenge 1",
 	"question": "How will the cat move if the following blocks are connected in the programming area and tapped?<br> <img src='https://learn.qubitsedu.com/images/DPL01U1S01Image1.png'> <br>a. The cat will move to the left first and then to the right.<br> b. The cat will not move at all. <br>c. The cat will move to the right first and then to the left",
-	"dueda1.1 Master Challenge 1te": "",
+	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",

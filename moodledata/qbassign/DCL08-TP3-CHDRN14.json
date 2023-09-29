@@ -1,0 +1,30 @@
+{
+	"title" : "3.3 Master Challenge 3",
+	"question": "◼ Create a web page named Music is Life.<br>◼ Choose the title Music for the web page.<br>◼ Set the background color of the web page to pink.<br>◼ Enter the text on the web page in a paragraph format, describing the importance of music.<br>◼ Choose font size 6, font face Times New Roman, and font color red for the text Music.<br>◼ Choose font size 4, font face Cooper Black, and font color blue for sub-headings.<br>◼ Choose font size 3, font face Arial and font color green for the text written under the various sub-headings.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL08-TP3-CHDRN14",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

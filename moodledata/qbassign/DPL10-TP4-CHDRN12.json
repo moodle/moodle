@@ -1,0 +1,30 @@
+{
+	"title" : "4.2 Master Challenge 3",
+	"question": "Rick, a gym trainer, keeps track of the daily calories consumed by a person in a week. He records the calorie details in a one-dimensional array. The given values are in kilocalories.<br><br><img src='https://learn.qubitsedu.com/images/DP_L10_U04_S02_Challenge3.JPG' width='70%' height='30%' /><br><br>Write a Python program to perform the following operations on the given array:<br>● Insert a new value into the array.<br>● Modify the wrong entry in the position calories[3].<br>● Pop the last value from the array.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP4-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

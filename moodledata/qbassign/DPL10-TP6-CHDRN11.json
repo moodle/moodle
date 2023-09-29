@@ -1,0 +1,30 @@
+{
+	"title" : "6.2 Master Challenge 3",
+	"question": "Using the safe drinking water dataset carry out the following actions:<br>1. Ask the user to select any one option from below:<br>(i) Create a stacked bar graph.<br>(ii) Create a stacked horizontal bar graph.<br>2. Consider the details of all the countries other than Asian countries.<br>3. To it, assign the title Drinking Water Analysis of Non-Asian Countries.<br>4. The parameters that are to be compared can be obtained as input from the user.<br>5. Display the bar graph.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP6-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

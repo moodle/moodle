@@ -1,0 +1,30 @@
+{
+  "title": "5.2 Master Challenge 3",
+  "question": "Consider the problem of guessing a number between 0 and 100 . The problem is to ask the user to guess the value assumed by the computer within the given range. If the user makes a correct guess, it displays Correct . Otherwise, it displays Incorrect and gives a hint to the user that the assumed value is lesser or greater than the guessed value accordingly. Write the pseudocode and JavaScript code to solve the above problem using the binary search approach. <br>● Initialize low and high with the minimum and maximum index of the list.<br> ● Initialize the assumedVal as a value randomly allocated using random(low, high) .<br> ● Repeat until assumedVal is guessed by the user.<br> ● Obtain the guessed value guessVal from the user. <br>● Check if the guessVal == assumeVal . If so, display Guess is Correct . <br>● Otherwise, Check if guessVal < assumeVal . If so, low ← guessVal + 1 .<br> ● Display the Guess is Incorrect and an appropriate hint. ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP5-CHDRN12",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

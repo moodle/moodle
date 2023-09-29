@@ -1,0 +1,30 @@
+{
+	"title" : "2.5 Master Challenge 2",
+	"question": "Write a Java program for a character in an online adventure game that helps it decide whether to open a certain door or not. Use logical operators and short-circuit evaluation.<br>The program should perform the following tasks:<br>1. Prompt the user: 'Do you have the key? (true/false)'<br>2. Accept the user's response as a boolean value. Note that the user can only enter true or false.<br>3. Prompt the user: 'Are you strong enough? (true/false)'<br>4. Accept the user's response as a boolean value. Note that the user can only enter true or false.<br>5. Declare a boolean variable named isOpenDoor and set it to false.<br>6. Use short-circuit evaluation to check if the character has both the key and enough strength to open the door. If both the conditions are met, set isOpenDoor to true.<br>7. Display the character's decision based on whether the door is open or not.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN22",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

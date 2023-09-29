@@ -1,11 +1,11 @@
 {
 	"title" : "1.4 Master Challenge 3",
-	"question": "The function below is intended to return the list of prime numbers up to a given number n. A prime number is a number that has only two distinct positive divisors: 1 and itself. However, it is not working as intended. Perform automated testing to debug and fix the code.<br><img src='https://learn.qubitsedu.com/images/DPL11U1S04Image2Table.png' width='40%' height='60%'>",
+	"question": "The function below is intended to return the list of prime numbers up to a given number n. A prime number is a number that has only two distinct positive divisors: 1 and itself. However, it is not working as intended. Perform automated testing to debug and fix the code.<br><img src='https://learn.qubitsedu.com/images/DPL11U1S04Image3.png' width='40%' height='60%'>",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",

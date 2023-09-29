@@ -1,6 +1,6 @@
 {
-	"title" : "Challenge for 4.1 Loops and User-Defined Functions",
-	"question": "Write a sample program",
+	"title" : "4.1 Master Challenge 2",
+	"question": "Write a program to find the next 100 leap years. A leap year is exactly divisible by four except for the century years (years ending with 00). The century year is a leap year only if it is perfectly divisible by 400.",
 	"duedate": "",
 	"submissionfrom": "",
 	"grade_duedate": "",

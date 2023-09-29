@@ -1,0 +1,30 @@
+{
+	"title" : "6.1 Master Challenge 2",
+	"question": "Write a program that deals with the details of three cities, including their populations and literacy rates.<br><br>Create three types of arrays:<br>● A String type array to store the names of the cities.<br>● An int type array to store the population of each city. <br>● A double type array to store the literacy rate of each city.<br>● Make sure to keep the array elements in the same order so that the corresponding cities,populations, and literacy rates are aligned. (These are known as parallel arrays.)<br>● Print the arrays along with their length.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP6-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

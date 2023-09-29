@@ -1,0 +1,30 @@
+{
+	"title" : "2.3 Master Challenge 3",
+	"question": "Ms. Shanon has organized a get-together for her friends at a restaurant. She wants to add a tip to the bill amount based on the number of guests. Write a program to help her decide the tip amount.<br>The condition is that if the number of guests is greater than or equal to 8, then the tip would amount to 25% of the total bill. Otherwise, 15% of the total bill will be added as the tip.<br>1. Prompt the user to input the number of guests at the party.<br>2. Ask the user to input the bill amount.<br>3. Using the if-else statements, apply the condition.<br>4. Calculate the total bill amount after adding the tip. (Use compound assignment operators here.)<br>5. Print the total bill amount, including the tip.<br>Here is an example:<br><img src='https://learn.qubitsedu.com/images/DPL12U02S03Image3.png' width='50%' height='70%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN17",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}
