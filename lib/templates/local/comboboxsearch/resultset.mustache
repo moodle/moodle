@@ -41,7 +41,7 @@
     }
 }}
 <div class="d-flex flex-column mh-100 h-100">
-    <ul id="{{$listid}}list{{/listid}}-result-listbox" class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria-comboboxsearchitems, core {{/cleanstr}}">
+    <ul id="{{$listid}}list{{/listid}}-result-listbox" class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}" role="listbox" data-region="search-result-items-container" aria-label="{{#cleanstr}} aria-comboboxsearchitems, core {{/cleanstr}}">
         {{#hasresults}}
             {{$results}}
                 {{#results}}

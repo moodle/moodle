@@ -98,11 +98,6 @@ export default class GradeItemSearch extends search_combobox {
 
         this.updateNodes();
         this.registerInputEvents();
-
-        // Add a small BS listener so that we can set the focus correctly on open.
-        this.$component.on('shown.bs.dropdown', () => {
-            this.searchInput.focus({preventScroll: true});
-        });
     }
 
     /**

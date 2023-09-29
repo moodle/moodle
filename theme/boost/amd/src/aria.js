@@ -23,6 +23,7 @@
 
 import $ from 'jquery';
 import Pending from 'core/pending';
+import * as FocusLockManager from 'core/local/aria/focuslock';
 
 /**
  * Drop downs from bootstrap don't support keyboard accessibility by default.
@@ -198,7 +199,22 @@ const dropdownFix = () => {
         }
     });
 
+    $('.dropdown').on('shown.bs.dropdown', e => {
+        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+        if (dialog) {
+            // Use setTimeout to make sure the dialog is positioned correctly to prevent random scrolling.
+            setTimeout(() => {
+                FocusLockManager.trapFocus(dialog);
+            });
+        }
+    });
+
     $('.dropdown').on('hidden.bs.dropdown', e => {
+        const dialog = e.target.querySelector(`#${e.relatedTarget.getAttribute('aria-controls')}[role="dialog"]`);
+        if (dialog) {
+            FocusLockManager.untrapFocus();
+        }
+
         // We need to focus on the menu trigger.
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
         const focused = document.activeElement != document.body ? document.activeElement : null;

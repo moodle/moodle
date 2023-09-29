@@ -50,12 +50,12 @@
     <input type="hidden" name="search" id="collapse-input-{{uniqid}}"/>
 
     <form class="columnsdropdownform flex-column h-100">
-        <ul id="collapse-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true">
+        <ul id="collapse-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true">
             {{>gradereport_grader/collapse/collapseresults}}
         </ul>
         <div class="d-flex mt-2">
             <div class="d-flex align-items-center form-check">
-                <label id="check-all" for="check-all-input" class="selected-option-info text-truncate form-check-label d-block" tabindex="-1">
+                <label id="check-all" for="check-all-input" class="selected-option-info text-truncate form-check-label d-block">
                     <input disabled id="check-all-input" class="form-check-input" type="checkbox" data-action="selectall" aria-label="{{#str}}selectall, core{{/str}}">
                     {{#str}}selectall, core{{/str}}
                 </label>
