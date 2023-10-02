@@ -92,8 +92,9 @@ class question_history_view extends view {
         }
     }
 
-    protected function create_new_question_form($category, $canadd): void {
+    public function allow_add_questions(): bool {
         // As we dont want to create questions in this page.
+        return false;
     }
 
     /**

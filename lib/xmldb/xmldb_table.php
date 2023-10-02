@@ -37,14 +37,17 @@ class xmldb_table extends xmldb_object {
     /** @var xmldb_index[] indexes */
     protected $indexes;
 
+    /** @var int max length of table name prefixes */
+    const PREFIX_MAX_LENGTH = 10;
+
     /**
      * Note:
-     *  - Oracle has 30 chars limit for all names,
-     *    2 chars are reserved for prefix.
+     *  - PostgreSQL has a limit of 63 ascii chars (bytes) for table names. Others have greater limits.
+     *    Up to PREFIX_MAX_LENGTH ascii chars (bytes) are reserved for table prefixes.
      *
-     * @var maximum length of field names
+     * @var int max length of table names (without prefix).
      */
-    const NAME_MAX_LENGTH = 28;
+    const NAME_MAX_LENGTH = 63 - self::PREFIX_MAX_LENGTH;
 
     /**
      * Creates one new xmldb_table

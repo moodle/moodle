@@ -150,4 +150,44 @@ class utilities_test extends \advanced_testcase {
         assign_capability('moodle/moodlenet:sharecourse', CAP_PROHIBIT, $editingteacherrole->id, $this->coursecontext);
         $this->assertFalse(utilities::can_user_share($this->coursecontext, $teacher2->id, 'course'));
     }
+
+    /**
+     * Test does_user_have_capability_in_any_course method.
+     *
+     * @covers ::does_user_have_capability_in_any_course
+     * @return void
+     */
+    public function test_does_user_have_capability_in_any_course() {
+        global $DB;
+
+        // Prepare data.
+        $teacher1 = $this->generator->create_user();
+        $student1 = $this->generator->create_user();
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher'], 'id', MUST_EXIST);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student'], 'id', MUST_EXIST);
+
+        // Enrol users,
+        $this->generator->enrol_user($teacher1->id, $this->course->id, $teacherrole->id);
+        $this->generator->enrol_user($student1->id, $this->course->id, $studentrole->id);
+
+        // Assign a valid capability to the teacher.
+        assign_capability('moodle/moodlenet:shareactivity', CAP_ALLOW, $teacherrole->id, $this->coursecontext);
+
+        // Check the method's results are as expected (this is cached).
+        $this->assertSame('yes', utilities::does_user_have_capability_in_any_course($teacher1->id));
+        $this->assertSame('no', utilities::does_user_have_capability_in_any_course($student1->id));
+
+        // Compare to cache.
+        $teachercachedvalue = \cache::make('core', 'moodlenet_usercanshare')->get($teacher1->id);
+        $this->assertSame('yes', $teachercachedvalue);
+        $studentcachedvalue = \cache::make('core', 'moodlenet_usercanshare')->get($student1->id);
+        $this->assertSame('no', $studentcachedvalue);
+
+        // Change the teacher's role and check the moodlenet_usercanshare cache is invalidated for everyone.
+        $this->generator->role_assign($studentrole->id, $teacher1->id, $this->coursecontext->id);
+        $teachercachedvalue = \cache::make('core', 'moodlenet_usercanshare')->get($teacher1->id);
+        $this->assertFalse($teachercachedvalue);
+        $studentcachedvalue = \cache::make('core', 'moodlenet_usercanshare')->get($student1->id);
+        $this->assertFalse($studentcachedvalue);
+    }
 }

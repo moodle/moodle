@@ -36,6 +36,8 @@ list($options, $unrecognized) = cli_get_params(
         'showsql' => false,
         'showdebugging' => false,
         'force' => false,
+        'disable' => false,
+        'enable' => false,
     ], [
         'h' => 'help',
         'f' => 'force',
@@ -47,11 +49,15 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-if ($options['help'] or (!$options['list'] and !$options['execute'])) {
+$commands = ['list', 'execute', 'disable', 'enable'];
+$hascommand = count(array_filter($commands, fn($command) => $options[$command])) > 0;
+if ($options['help'] || !$hascommand) {
     $help =
     "Scheduled cron tasks.
 
     Options:
+    --disable=\\some\\task  Disable scheduled task
+    --enable=\\some\\task  Enable scheduled task
     --execute=\\some\\task  Execute scheduled task manually
     --list                List all scheduled tasks
     --showsql             Show sql queries before they are executed
@@ -119,14 +125,40 @@ if ($options['list']) {
     exit(0);
 }
 
-if ($execute = $options['execute']) {
-    if (!$task = \core\task\manager::get_scheduled_task($execute)) {
-        mtrace("Task '$execute' not found");
+if (moodle_needs_upgrading()) {
+    mtrace("Moodle upgrade pending, cannot manage tasks.");
+    exit(1);
+}
+
+if ($disable = $options['disable']) {
+    if (!$task = \core\task\manager::get_scheduled_task($disable)) {
+        mtrace("Task '$disable' not found");
         exit(1);
     }
 
-    if (moodle_needs_upgrading()) {
-        mtrace("Moodle upgrade pending, cannot execute tasks.");
+    try {
+        $task->disable();
+        mtrace("Disabled '$disable'");
+    } catch (Exception $e) {
+        mtrace("$e->getMessage()");
+        exit(1);
+    }
+} else if ($enable = $options['enable']) {
+    if (!$task = \core\task\manager::get_scheduled_task($enable)) {
+        mtrace("Task '$enable' not found");
+        exit(1);
+    }
+
+    try {
+        $task->enable();
+        mtrace("Enabled '$enable'");
+    } catch (Exception $e) {
+        mtrace("$e->getMessage()");
+        exit(1);
+    }
+} else if ($execute = $options['execute']) {
+    if (!$task = \core\task\manager::get_scheduled_task($execute)) {
+        mtrace("Task '$execute' not found");
         exit(1);
     }
 

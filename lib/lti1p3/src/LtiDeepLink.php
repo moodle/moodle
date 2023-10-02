@@ -27,7 +27,7 @@ class LtiDeepLink
             'iat' => time(),
             'nonce' => LtiOidcLogin::secureRandomString('nonce-'),
             LtiConstants::DEPLOYMENT_ID => $this->deployment_id,
-            LtiConstants::MESSAGE_TYPE => 'LtiDeepLinkingResponse',
+            LtiConstants::MESSAGE_TYPE => LtiConstants::MESSAGE_TYPE_DEEPLINK_RESPONSE,
             LtiConstants::VERSION => LtiConstants::V1_3,
             LtiConstants::DL_CONTENT_ITEMS => array_map(function ($resource) {
                 return $resource->toArray();
@@ -43,19 +43,27 @@ class LtiDeepLink
         return JWT::encode($message_jwt, $this->registration->getToolPrivateKey(), 'RS256', $this->registration->getKid());
     }
 
+    /**
+     * This method builds an auto-submitting HTML form to post the deep linking response message
+     * back to platform, as per LTI-DL 2.0 specification. The resulting HTML is then written to standard output,
+     * so calling this method will automatically send an HTTP response to conclude the content selection flow.
+     *
+     * @param  LtiDeepLinkResource[]  $resources The list of selected resources to be sent to the platform
+     *
+     * @todo Consider wrapping the content inside a well-formed HTML document,
+     * and returning it instead of directly writing to standard output
+     */
     public function outputResponseForm($resources)
     {
         $jwt = $this->getResponseJwt($resources);
-        /*
-         * @todo Fix this
-         */ ?>
-        <form id="auto_submit" action="<?php echo $this->deep_link_settings['deep_link_return_url']; ?>" method="POST">
-            <input type="hidden" name="JWT" value="<?php echo $jwt; ?>" />
-            <input type="submit" name="Go" />
-        </form>
-        <script>
-            document.getElementById('auto_submit').submit();
-        </script>
-        <?php
+        $formActionUrl = $this->deep_link_settings['deep_link_return_url'];
+
+        echo <<<HTML
+<form id="auto_submit" action="{$formActionUrl}" method="POST">
+    <input type="hidden" name="JWT" value="{$jwt}" />
+    <input type="submit" name="Go" />
+</form>
+<script>document.getElementById('auto_submit').submit();</script>
+HTML;
     }
 }

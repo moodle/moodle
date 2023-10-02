@@ -334,6 +334,69 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEmpty($cache->get($course->id));
     }
 
+    /**
+     * The cacherev is updated when we rebuild course cache, but there are scenarios where an
+     * existing course object with old cacherev might be reused within the same request after
+     * clearing the cache. In that case, we need to check that the new data is loaded and it
+     * does not reuse the old cached data with old cacherev.
+     *
+     * @covers ::rebuild_course_cache()
+     */
+    public function test_cache_clear_wrong_cacherev(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $originalcourse = $this->getDataGenerator()->create_course();
+        $course = $DB->get_record('course', ['id' => $originalcourse->id]);
+        $page = $this->getDataGenerator()->create_module('page',
+                ['course' => $course->id, 'name' => 'frog']);
+        $oldmodinfo = get_fast_modinfo($course);
+        $this->assertEquals('frog', $oldmodinfo->get_cm($page->cmid)->name);
+
+        // Change page name and rebuild cache.
+        $DB->set_field('page', 'name', 'Frog', ['id' => $page->id]);
+        rebuild_course_cache($course->id, true);
+
+        // Get modinfo using original course object which has old cacherev.
+        $newmodinfo = get_fast_modinfo($course);
+        $this->assertEquals('Frog', $newmodinfo->get_cm($page->cmid)->name);
+    }
+
+    /**
+     * When cacherev is updated for a course, it is supposed to update in the $COURSE and $SITE
+     * globals automatically. Check this is working.
+     *
+     * @covers ::rebuild_course_cache()
+     */
+    public function test_cacherev_update_in_globals(): void {
+        global $DB, $COURSE, $SITE;
+
+        $this->resetAfterTest();
+
+        // Create a course and get modinfo.
+        $originalcourse = $this->getDataGenerator()->create_course();
+        $oldmodinfo = get_fast_modinfo($originalcourse->id);
+
+        // Store (two clones of) the course in COURSE and SITE globals.
+        $COURSE = get_course($originalcourse->id);
+        $SITE = get_course($originalcourse->id);
+
+        // Note original cacherev.
+        $originalcacherev = $oldmodinfo->get_course()->cacherev;
+        $this->assertEquals($COURSE->cacherev, $originalcacherev);
+        $this->assertEquals($SITE->cacherev, $originalcacherev);
+
+        // Clear the cache and check cacherev updated.
+        rebuild_course_cache($originalcourse->id, true);
+
+        $newcourse = $DB->get_record('course', ['id' => $originalcourse->id]);
+        $this->assertGreaterThan($originalcacherev, $newcourse->cacherev);
+
+        // Check that the in-memory $COURSE and $SITE have updated.
+        $this->assertEquals($newcourse->cacherev, $COURSE->cacherev);
+        $this->assertEquals($newcourse->cacherev, $SITE->cacherev);
+    }
+
     public function test_course_modinfo_properties() {
         global $USER, $DB;
 

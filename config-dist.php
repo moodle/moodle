@@ -577,18 +577,6 @@ $CFG->admin = 'admin';
 //
 //      $CFG->preventscheduledtaskchanges = true;
 //
-// As of version 2.4 Moodle serves icons as SVG images if the users browser appears
-// to support SVG.
-// For those wanting to control the serving of SVG images the following setting can
-// be defined in your config.php.
-// If it is not defined then the default (browser detection) will occur.
-//
-// To ensure they are always used when available:
-//      $CFG->svgicons = true;
-//
-// To ensure they are never used even when available:
-//      $CFG->svgicons = false;
-//
 // Some administration options allow setting the path to executable files. This can
 // potentially cause a security risk. Set this option to true to disable editing
 // those config settings via the web. They will need to be set explicitly in the
@@ -1225,6 +1213,40 @@ $CFG->admin = 'admin';
 //  To disable HTTP only cookies set the following:
 //
 //      $CFG->cookiehttponly = false;
+//
+// 21. SECRET PASSWORD PEPPER
+//=========================================================================
+// A pepper is a component of the salt, but stored separately.
+// By splitting them it means that if the db is compromised the partial hashes are useless.
+// Unlike a salt, the pepper is not unique and is shared for all users, and MUST be kept secret.
+//
+// A pepper needs to have at least 112 bits of entropy,
+// so the pepper itself cannot be easily brute forced if you have a known password + hash combo.
+//
+// Once a pepper is set, existing passwords will be updated on next user login.
+// Once set there is no going back without resetting all user passwords.
+// To set peppers for your site, the following setting must be set in config.php:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z'
+//      ];
+//
+// The 'passwordpeppers' array must be numerically indexed with a positive number.
+// New peppers can be added by adding a new element to the array with a higher numerical index.
+// Upon next login a users password will be rehashed with the new pepper:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$'
+//      ];
+//
+// Peppers can be progressively removed by setting the latest pepper to an empty string:
+//
+//      $CFG->passwordpeppers = [
+//          1 => '#GV]NLie|x$H9[$rW%94bXZvJHa%z',
+//          2 => '#GV]NLie|x$H9[$rW%94bXZvJHa%$',
+//          3 => ''
+//      ];
 //
 //=========================================================================
 // ALL DONE!  To continue installation, visit your main page with a browser

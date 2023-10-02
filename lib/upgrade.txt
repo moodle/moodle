@@ -48,6 +48,11 @@ information provided here is intended especially for developers.
 * Introduce a new public function \core_external\util::generate_token_name()
 * Legacy (and custom) Behat --skip-passed option has been removed completely. Please, use the standard
   --rerun option that provides exactly the same (execution of failed scenarios only).
+* Allowed database identifier lengths have been raised:
+  - From 28 characters to 53 for table names (xmldb_table::NAME_MAX_LENGTH).
+  - From 30 characters to 63 for column names (xmldb_field::NAME_MAX_LENGTH).
+  - Maximum length for table prefixes has been set to 10 characters (xmldb_table::PREFIX_MAX_LENGTH). And it's enforced
+    by environmental checks.
 * New scheduled tasks show_started_courses_task and hide_ended_courses_task that updates the course visibility when the current
   day matches course start date/end date. They are disabled by default. Once they are enabled, only courses with start/end dates
   near the past 24 hours will be checked. The visibility of these courses will only changed when their start/end dates are higher
@@ -59,7 +64,7 @@ information provided here is intended especially for developers.
   the page displays a heading for the activity (usually a h2 heading containing the activity name).
 * New method moodleform::filter_shown_headers() is created to show some expanded headers only and hide the rest.
 * count_words() and count_letters() have a new optional parameter called $format to format the text before doing the counting.
-* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writter.
+* New core_renderer::sr_text method to generate screen reader only inline texts without using html_writer.
 * New events \core\event\qbank_plugin_enabled and \core\event\qbank_plugin_disabled are triggered when a qbank plugin is enabled or
   disabled respectively, with the plugin's frankenstyle name. Any plugins that need to perform an action in response to a qbank
   plugin being enabled or disabled should observe these events.
@@ -158,6 +163,30 @@ being forced open in all behat tests.
   but a subset can be specified instead.
 * core/form-autocomplete now supports disabled options in the source select list. These will be displayed in the autocomplete
   options with the aria-disabled attribute, and will not be selectable.
+* The method grade_item::set_locked() now returns true if the grade item needs to be updated. The method schedules the locking of
+  the grade item once the recalculations are completed. (This was fixed in 4.3, 4.2.2)
+* Added a new constant called MAX_PASSWORD_CHARACTERS in moodlelib.php to hold a length of accepted password.
+* Added a new method called exceeds_password_length in moodlelib.php to validate the password length.
+* The core/modal_factory has been deprecated. From Moodle 4.3 onwards pleáse instantiate new modals using the ModalType.create method instead.
+  Please note that this method does not support the `trigger` option.
+* \moodle_page::set_title() has been updated to append the site name depending on the value of $CFG->sitenameintitle and whether
+  the site's fullname/shortname has been set. So there's no need to manually add the site name whenever calling $PAGE->set_title().
+  If it's necessary to override this, pass `false` to its new optional parameter `$appendsitename`.
+* New page title separator constant `moodle_page:TITLE_SEPARATOR` has been created to help standardise the separators used in page
+  titles.
+* New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
+  when writing feature files to check that the page title contains the expected string.
+  e.g. `And the page title should contain "Some title"`
+* Ensure that all system icons now come with an accompanying SVG file. Any missing SVG files have been addressed, and to maintain
+  this consistency, a PHPUnit test has been implemented to validate the inclusion of SVG files for any new icons.
+* The $CFG->svgicons setting has been removed because all modern browsers now handle SVG files correctly.
+* The method `\core_renderer->supportemail()` has an updated signature. It now allows a second optional parameter.
+  Set it to true if you want to embed the generated link in other inline content.
+* The users_search_sql function parameter $searchanywhere has been change to $searchtype for different type of search. $searchtype is a int parameter and has three constant value:
+  USER_SEARCH_STARTS_WITH: 0, USER_SEARCH_CONTAINS: 1, USER_SEARCH_EXACT_MATCH: 2
+  See MDL-78312 for further information.
+* Function course_modinfo::clear_instance_cache now has an extra optional parameter $newcacherev, although this is really
+  intended only for use by rebuild_course_cache.
 
 === 4.2 ===
 

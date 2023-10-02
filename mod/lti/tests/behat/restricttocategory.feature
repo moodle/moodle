@@ -87,3 +87,28 @@ Feature: Make an LTI only available to specific course categories
     Then the following fields match these values:
       | catb  | 1 |
       | catcb | 0 |
+
+  @javascript
+  Scenario: Category restriction only shown for a site tool
+    Given the following "mod_lti > tool types" exist:
+      | name            | baseurl                                   | coursevisible | state |
+      | Teaching Tool 1 | /mod/lti/tests/fixtures/tool_provider.php | 2             | 1     |
+    And the following "mod_lti > course tools" exist:
+      | name          | description         | baseurl                  | course |
+      | Course Tool 1 | Example description | https://example.com/tool | C1     |
+    And I log in as "admin"
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "LTI External tools" in current page administration
+    When I click on "Add tool" "link"
+    And I should not see "Restrict to category"
+    And I press "Cancel"
+    And I open the action menu in "Course Tool 1" "table_row"
+    And I choose "Edit" in the open action menu
+    And I should not see "Restrict to category"
+    And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
+    And I follow "Manage preconfigured tools"
+    And I follow "Add preconfigured tool"
+    And I should see "Restrict to category"
+    And I press "Cancel"
+    And I click on "Update" "link" in the "Teaching Tool 1" "table_row"
+    Then I should see "Restrict to category"

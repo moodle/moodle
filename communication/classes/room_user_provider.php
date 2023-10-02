@@ -32,6 +32,13 @@ interface room_user_provider {
     public function add_members_to_room(array $userids): void;
 
     /**
+     * Update room membership for the communication room.
+     *
+     * @param array $userids The user ids to be updated
+     */
+    public function update_room_membership(array $userids): void;
+
+    /**
      * Remove members from room.
      *
      * @param array $userids The user ids to be removed

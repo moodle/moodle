@@ -75,10 +75,20 @@ class course_external_tools_list extends system_report {
         $paramprefix = database::generate_param_name();
         $coursevisibleparam = database::generate_param_name();
         $categoryparam = database::generate_param_name();
+        $toolstateparam = database::generate_param_name();
         [$insql, $params] = $DB->get_in_or_equal([get_site()->id, $this->course->id], SQL_PARAMS_NAMED, "{$paramprefix}_");
-        $wheresql = "{$entitymainalias}.course {$insql} AND {$entitymainalias}.coursevisible NOT IN (:{$coursevisibleparam}) ".
-        "AND ({$cattablealias}.id IS NULL OR {$cattablealias}.categoryid = :{$categoryparam})";
-        $params = array_merge($params, [$coursevisibleparam => LTI_COURSEVISIBLE_NO, $categoryparam => $this->course->category]);
+        $wheresql = "{$entitymainalias}.course {$insql} ".
+            "AND {$entitymainalias}.coursevisible NOT IN (:{$coursevisibleparam}) ".
+            "AND ({$cattablealias}.id IS NULL OR {$cattablealias}.categoryid = :{$categoryparam}) ".
+            "AND {$entitymainalias}.state = :{$toolstateparam}";
+        $params = array_merge(
+            $params,
+            [
+                $coursevisibleparam => LTI_COURSEVISIBLE_NO,
+                $categoryparam => $this->course->category,
+                $toolstateparam => LTI_TOOL_STATE_CONFIGURED
+            ]
+        );
         $this->add_base_condition_sql($wheresql, $params);
 
         $this->set_downloadable(false, get_string('pluginname', 'mod_lti'));
@@ -128,6 +138,54 @@ class course_external_tools_list extends system_report {
             ->set_is_sortable(true)
             ->add_field("{$entitymainalias}.id")
             ->add_callback(fn() => $this->perrowtoolusage);
+
+        // Enable toggle column.
+        $this->add_column((new column(
+            'showinactivitychooser',
+            new \lang_string('showinactivitychooser', 'mod_lti'),
+            $tooltypesentity->get_entity_name()
+        ))
+            // Site tools can be overridden on course level.
+            ->add_join("LEFT JOIN {lti_coursevisible} lc ON lc.typeid = {$entitymainalias}.id AND lc.courseid = " . $this->course->id)
+            ->set_type(column::TYPE_INTEGER)
+            ->add_fields("{$entitymainalias}.id, {$entitymainalias}.coursevisible, lc.coursevisible as coursevisibleoverridden")
+            ->set_is_sortable(false)
+            ->set_callback(function(int $id, \stdClass $row): string {
+                global $PAGE;
+                $coursevisible = $row->coursevisible;
+                $courseid = $this->course->id;
+                if (!empty($row->coursevisibleoverridden)) {
+                    $coursevisible = $row->coursevisibleoverridden;
+                }
+
+                if ($coursevisible == LTI_COURSEVISIBLE_ACTIVITYCHOOSER) {
+                    $coursevisible = true;
+                } else {
+                    $coursevisible = false;
+                }
+
+                $renderer = $PAGE->get_renderer('core_reportbuilder');
+                $attributes = [
+                    ['name' => 'id', 'value' => $row->id],
+                    ['name' => 'courseid', 'value' => $courseid],
+                    ['name' => 'action', 'value' => 'showinactivitychooser-toggle'],
+                    ['name' => 'state', 'value' => $coursevisible],
+                ];
+                $label = $coursevisible ? get_string('dontshowinactivitychooser', 'mod_lti')
+                    : get_string('showinactivitychooser', 'mod_lti');
+
+                $disabled = !has_capability('mod/lti:addcoursetool', \context_course::instance($courseid));
+
+                return $renderer->render_from_template('core/toggle', [
+                    'id' => 'showinactivitychooser-toggle-' . $row->id,
+                    'checked' => $coursevisible,
+                    'disabled' => $disabled,
+                    'dataattributes' => $attributes,
+                    'label' => $label,
+                    'labelclasses' => 'sr-only'
+                ]);
+            })
+        );
 
         // Attempt to create a dummy actions column, working around the limitations of the official actions feature.
         $this->add_column(new column(

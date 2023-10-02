@@ -136,11 +136,6 @@ class oci_native_moodle_database extends moodle_database {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
         }
-        if (!$this->external and strlen($prefix) > 2) {
-            //Max prefix length for Oracle is 2cc
-            $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
-            throw new dml_exception('prefixtoolong', $a);
-        }
 
         $driverstatus = $this->driver_installed();
 
@@ -366,6 +361,10 @@ class oci_native_moodle_database extends moodle_database {
      * @return array ($sql, $params) updated query and parameters
      */
     protected function tweak_param_names($sql, array $params) {
+        global $CFG;
+
+        require_once($CFG->libdir . '/ddllib.php');
+
         if (empty($params)) {
             return array($sql, $params);
         }
@@ -373,8 +372,8 @@ class oci_native_moodle_database extends moodle_database {
         $newparams = array();
         $searcharr = array(); // search => replace pairs
         foreach ($params as $name => $value) {
-            // Keep the name within the 30 chars limit always (prefixing/replacing)
-            if (strlen($name) <= 28) {
+            // Keep the name within the  xmldb_field::NAME_MAX_LENGTH chars limit always (prefixing/replacing).
+            if (strlen($name) <= (xmldb_field::NAME_MAX_LENGTH - 2)) {
                 $newname = 'o_' . $name;
             } else {
                 $newname = 'o_' . substr($name, 2);

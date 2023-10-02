@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Tiny Premium';
-$string['apikey'] = 'API Key';
-$string['apikey_desc'] = 'Your Tiny Premium API Key requires a paid subscription. You can obtain your key by accessing your Tiny Cloud account page.';
-$string['privacy:metadata'] = 'The Tiny Premium plugin for TinyMCE does not store any personal data.';
+$string['pluginname'] = 'Tiny premium';
+$string['apikey'] = 'API key';
+$string['apikey_desc'] = 'Your Tiny premium API key requires a paid subscription. You can find your key on your Tiny Cloud account page.';
+$string['privacy:metadata'] = 'The Tiny premium plugin for TinyMCE does not store any personal data.';

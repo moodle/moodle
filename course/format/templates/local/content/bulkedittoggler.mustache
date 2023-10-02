@@ -26,7 +26,9 @@
 <button
     id="bulk-enable-{{uniqid}}"
     class="bulkEnable btn text-primary text-nowrap"
-    data-for="enableBulk"
+    data-for="enableBulk" data-coursename="{{coursename}}"
+    {{#sectiontitle}} data-sectiontitle="{{.}}" {{/sectiontitle}}
+    {{#sectionname}} data-sectionname="{{.}}" {{/sectionname}}
 >
     {{#str}} bulkedit, core_courseformat {{/str}} {{#pix}} i/edit, core {{/pix}}
 </button>

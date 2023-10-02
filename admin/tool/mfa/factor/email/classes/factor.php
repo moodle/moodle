@@ -30,15 +30,17 @@ use tool_mfa\local\factor\object_factor_base;
  */
 class factor extends object_factor_base {
 
+    /** @var string Factor icon */
+    protected $icon = 'fa-envelope';
+
     /**
      * E-Mail Factor implementation.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      */
     public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
-
-        $mform->addElement('text', 'verificationcode', get_string('verificationcode', 'factor_email'));
+        $mform->addElement(new \tool_mfa\local\form\verification_field());
         $mform->setType('verificationcode', PARAM_ALPHANUM);
         return $mform;
     }
@@ -289,5 +291,48 @@ class factor extends object_factor_base {
             \tool_mfa\plugininfo\factor::STATE_NEUTRAL,
             \tool_mfa\plugininfo\factor::STATE_UNKNOWN,
         ];
+    }
+
+    /**
+     * Obscure an email address by replacing all but the first and last character of the local part with a dot.
+     * So the users full email isn't displayed during login.
+     *
+     * @param string $email The email address to obfuscate.
+     * @return string
+     * @throws \coding_exception
+     */
+    protected function obfuscate_email(string $email): string {
+        // Split the email address at the '@' symbol.
+        $parts = explode('@', $email);
+
+        if (count($parts) != 2) {
+            throw new \coding_exception('Invalid email format');
+        }
+
+        $local = $parts[0];
+        $domain = $parts[1];
+
+        // Obfuscate all but the first and last character of the local part.
+        $length = strlen($local);
+        $middledot = "\u{00B7}";
+        if ($length > 2) {
+            $local = $local[0] . str_repeat($middledot, $length - 2) . $local[$length - 1];
+        }
+
+        // Put the email address back together and return it.
+        return $local . '@' . $domain;
+    }
+
+    /**
+     * Get the login description associated with this factor.
+     * Override for factors that have a user input.
+     *
+     * @return string The login option.
+     */
+    public function get_login_desc(): string {
+        global $USER;
+        $email = $this->obfuscate_email($USER->email);
+
+        return get_string('logindesc', 'factor_' . $this->name, $email);
     }
 }

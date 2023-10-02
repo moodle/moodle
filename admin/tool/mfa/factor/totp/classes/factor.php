@@ -62,6 +62,10 @@ class factor extends object_factor_base {
     /** @var string */
     const TOTP_INVALID = 'invalid';
 
+    /** @var string Factor icon */
+    protected $icon = 'fa-mobile-screen';
+
+
     /**
      * Generates TOTP URI for given secret key.
      * Uses site name, hostname and user name to make GA account look like:
@@ -243,7 +247,6 @@ class factor extends object_factor_base {
         $mform->disable_form_change_checker();
         $mform->addElement(new \tool_mfa\local\form\verification_field());
         $mform->setType('verificationcode', PARAM_ALPHANUM);
-        $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
 
         return $mform;
     }

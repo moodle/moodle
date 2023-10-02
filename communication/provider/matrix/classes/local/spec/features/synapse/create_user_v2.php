@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait create_user_v2 {
-
     /**
      * Create a new user.
      *
@@ -63,5 +62,4 @@ trait create_user_v2 {
             params: $params,
         ));
     }
-
 }

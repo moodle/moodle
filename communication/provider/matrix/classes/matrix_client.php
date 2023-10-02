@@ -36,7 +36,6 @@ use GuzzleHttp\Psr7\Response;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class matrix_client {
-
     /** @var string $serverurl The URL of the home server */
     /** @var string $accesstoken The access token of the matrix server */
 

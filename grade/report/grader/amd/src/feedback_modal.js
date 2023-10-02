@@ -20,7 +20,7 @@
  * @copyright   2023 Kevin Percy <kevin.percy@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import ModalFactory from 'core/modal_factory';
+import Modal from 'core/modal';
 import Notification from 'core/notification';
 import ajax from 'core/ajax';
 import Templates from 'core/templates';
@@ -46,7 +46,7 @@ const getModal = async(courseid, userid, itemid) => {
         return Promise.reject(e);
     }
 
-    return ModalFactory.create({
+    return Modal.create({
         removeOnClose: true,
         large: true,
         verticallyCentered: true,

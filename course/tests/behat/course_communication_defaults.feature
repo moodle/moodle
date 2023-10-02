@@ -2,8 +2,7 @@
 Feature: Course communication
   In order to create a new communication room in for course
   As an admin
-  I should have matrix plugin enabled by default
-  I should not have any plugins enabled by default for existing courses
+  I should not have any plugins enabled by default for new and existing courses
 
   Background:
     Given the following "courses" exist:
@@ -21,7 +20,7 @@ Feature: Course communication
       | Course short name | C2      |
     And I press "Save and display"
     When I navigate to "Communication" in current page administration
-    Then the field "Communication service" matches value "Matrix"
+    Then the field "Communication service" matches value "None"
 
   Scenario: I should have communication disabled by default for existing courses
     Given I am on "Course 1" course homepage

@@ -412,8 +412,8 @@ class mod_lesson_mod_form extends moodleform_mod {
         $completionendreachedel = 'completionendreached' . $suffix;
         $mform->addElement(
             'checkbox', $completionendreachedel,
-            get_string('completionendreached', 'lesson'),
-            get_string('completionendreached_desc', 'lesson')
+            '',
+            get_string('completionendreached', 'lesson')
         );
         // Enable this completion rule by default.
         $mform->setDefault($completionendreachedel, 1);
@@ -424,14 +424,14 @@ class mod_lesson_mod_form extends moodleform_mod {
             'checkbox',
             $completiontimespentenabledel,
             '',
-            get_string('completiontimespent', 'lesson')
+            get_string('completiontimespentgroup', 'lesson')
         );
         $completiontimespentel = 'completiontimespent' . $suffix;
         $group[] =& $mform->createElement('duration', $completiontimespentel, '', ['optional' => false]);
         $completiontimespentgroupel = 'completiontimespentgroup' . $suffix;
-        $mform->addGroup($group, $completiontimespentgroupel, get_string('completiontimespentgroup', 'lesson'), ' ', false);
-        $mform->disabledIf($completiontimespentel . '[number]', $completiontimespentenabledel, 'notchecked');
-        $mform->disabledIf($completiontimespentel . '[timeunit]', $completiontimespentenabledel, 'notchecked');
+        $mform->addGroup($group, $completiontimespentgroupel, '', ' ', false);
+        $mform->hideIf($completiontimespentel . '[number]', $completiontimespentenabledel, 'notchecked');
+        $mform->hideIf($completiontimespentel . '[timeunit]', $completiontimespentenabledel, 'notchecked');
 
         return [$completionendreachedel, $completiontimespentgroupel];
     }

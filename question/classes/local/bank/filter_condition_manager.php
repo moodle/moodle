@@ -37,16 +37,23 @@ class filter_condition_manager {
      * @return array the param and extra param
      */
     public static function extract_parameters_from_fragment_args(array $args): array {
-        global $DB;
-        // Decode query string.
-        $filtercondition = json_decode($args['filtercondition'], true);
-        $categories = $DB->get_records('question_categories', ['id' => clean_param($filtercondition['cat'], PARAM_INT)]);
-        $categories = \qbank_managecategories\helper::question_add_context_in_key($categories);
-        $category = array_pop($categories);
-        $filtercondition['cat'] = $category->id;
-        $extraparams = json_decode($args['extraparams'], true);
+        $params = [];
+        if (array_key_exists('filter', $args)) {
+            $params['filter'] = json_decode($args['filter'], true);
+        }
+        if (array_key_exists('cmid', $args)) {
+            $params['cmid'] = $args['cmid'];
+        }
+        if (array_key_exists('courseid', $args)) {
+            $params['courseid'] = $args['courseid'];
+        }
+        $params['jointype'] = $args['jointype'] ?? condition::JOINTYPE_DEFAULT;
+        $params['qpage'] = $args['qpage'] ?? 0;
+        $params['qperpage'] = $args['qperpage'] ?? 100;
+        $params['sortdata'] = json_decode($args['sortdata'] ?? '', true);
+        $extraparams = json_decode($args['extraparams'] ?? '', true);
 
-        return [$filtercondition, $extraparams];
+        return [$params, $extraparams];
     }
 
     /**

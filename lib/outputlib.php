@@ -2093,8 +2093,7 @@ class theme_config {
      *
      * @param string $image name of image, may contain relative path
      * @param string $component
-     * @param bool $svg|null Should SVG images also be looked for? If null, resorts to $CFG->svgicons if that is set; falls back to
-     * auto-detection of browser support otherwise
+     * @param bool $svg|null Should SVG images also be looked for? If null, falls back to auto-detection of browser support
      * @return string full file path
      */
     public function resolve_image_location($image, $component, $svg = false) {
@@ -2251,16 +2250,10 @@ class theme_config {
      * @return bool
      */
     public function use_svg_icons() {
-        global $CFG;
         if ($this->usesvg === null) {
-
-            if (!isset($CFG->svgicons)) {
-                $this->usesvg = core_useragent::supports_svg();
-            } else {
-                // Force them on/off depending upon the setting.
-                $this->usesvg = (bool)$CFG->svgicons;
-            }
+            $this->usesvg = core_useragent::supports_svg();
         }
+
         return $this->usesvg;
     }
 

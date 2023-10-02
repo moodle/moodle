@@ -16,6 +16,7 @@
 
 namespace core_courseformat\output\local\content;
 
+use core\moodlenet\utilities;
 use core\output\named_templatable;
 use core_courseformat\base as course_format;
 use core_courseformat\output\local\courseformat_named_templatable;
@@ -127,6 +128,18 @@ class bulkedittools implements named_templatable, renderable {
                 'action' => 'cmDelete',
                 'name' => get_string('delete'),
                 'title' => get_string('cmsdelete', 'core_courseformat'),
+                'bulk' => 'cm',
+            ];
+        }
+
+        $usercanshare = utilities::can_user_share($context, $user->id, 'course');
+        if ($usercanshare) {
+            $controls['sharetomoodlenet'] = [
+                'id' => 'cmShareToMoodleNet',
+                'icon' => 'i/share',
+                'action' => 'cmShareToMoodleNet',
+                'name' => get_string('moodlenet:sharetomoodlenet'),
+                'title' => get_string('moodlenet:sharetomoodlenet'),
                 'bulk' => 'cm',
             ];
         }

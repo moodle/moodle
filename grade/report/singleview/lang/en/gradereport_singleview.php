@@ -77,7 +77,7 @@ $string['userselect'] = 'Select activity';
 
 $string['ariareporttype'] = 'Select a report type to view';
 $string['viewby'] = 'View by';
-$string['viewsingleuser'] = 'Select a user above to view all their grades';
+$string['viewsingleuser'] = 'Search for a user to view all their grades';
 $string['viewsinglegradeitem'] = 'Select a grade item above';
 $string['selectagrade'] = 'Select a grade item';
 $string['selectgradeitemlink'] = 'Select a grade item';

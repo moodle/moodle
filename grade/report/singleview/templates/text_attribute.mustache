@@ -24,7 +24,6 @@
         "name": "Awesome-report",
         "label": "Text label",
         "value": "Text information",
-        "tabindex": "1",
         "disabled": "true"
     }
 }}
@@ -33,6 +32,6 @@
 {{/readonly}}
 {{^readonly}}
     {{#label}}<label for="{{name}}" class="accesshide">{{label}}</label>{{/label}}
-    <input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#tabindex}}tabindex="{{.}}"{{/tabindex}} {{#disabled}}disabled{{/disabled}}>
+    <input id="{{name}}" name="{{name}}" type="text" value="{{value}}" class="form-control" {{#disabled}}disabled{{/disabled}}>
     <input type="hidden" name="old{{name}}" value="{{value}}">
 {{/readonly}}

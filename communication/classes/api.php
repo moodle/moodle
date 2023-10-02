@@ -21,6 +21,7 @@ use core_communication\task\create_and_configure_room_task;
 use core_communication\task\delete_room_task;
 use core_communication\task\remove_members_from_room;
 use core_communication\task\update_room_task;
+use core_communication\task\update_room_membership_task;
 use stdClass;
 
 /**
@@ -39,7 +40,6 @@ use stdClass;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class api {
-
     /**
      * @var null|processor $communication The communication settings object
      */
@@ -166,7 +166,7 @@ class api {
         $selection[processor::PROVIDER_NONE] = get_string('nocommunicationselected', 'communication');
         $communicationplugins = \core\plugininfo\communication::get_enabled_plugins();
         foreach ($communicationplugins as $pluginname => $notusing) {
-            $selection['communication_' . $pluginname] = get_string('pluginname', 'communication_'. $pluginname);
+            $selection['communication_' . $pluginname] = get_string('pluginname', 'communication_' . $pluginname);
         }
         return $selection;
     }
@@ -199,8 +199,7 @@ class api {
     ): void {
         global $PAGE;
 
-        list($communicationproviders, $defaulprovider) = self::
-            get_enabled_providers_and_default($selectdefaultcommunication);
+        [$communicationproviders, $defaulprovider] = self::get_enabled_providers_and_default($selectdefaultcommunication);
 
         $PAGE->requires->js_call_amd('core_communication/providerchooser', 'init');
 
@@ -216,10 +215,12 @@ class api {
         $mform->setDefault('selectedcommunication', $defaulprovider);
 
         $mform->registerNoSubmitButton('updatecommunicationprovider');
-        $mform->addElement('submit',
+        $mform->addElement(
+            'submit',
             'updatecommunicationprovider',
             'update communication',
-            ['data-communicationchooser-field' => 'updateButton', 'class' => 'd-none',]);
+            ['data-communicationchooser-field' => 'updateButton', 'class' => 'd-none']
+        );
 
         // Just a placeholder for the communication options.
         $mform->addElement('hidden', 'addcommunicationoptionshere');
@@ -229,27 +230,26 @@ class api {
     /**
      * Set the form definitions for the plugins.
      *
-     * @param \MoodleQuickForm $mform
-     * @return void
+     * @param \MoodleQuickForm $mform The moodle form
+     * @param string $provider The provider name
      */
-    public function form_definition_for_provider(\MoodleQuickForm $mform): void {
-        $provider = $mform->getElementValue('selectedcommunication');
-
-        if ($provider[0] !== processor::PROVIDER_NONE) {
+    public function form_definition_for_provider(\MoodleQuickForm $mform, string $provider = processor::PROVIDER_NONE): void {
+        if ($provider !== processor::PROVIDER_NONE) {
             // Room name for the communication provider.
             $mform->insertElementBefore(
                 $mform->createElement(
                     'text',
                     'communicationroomname',
-                    get_string('communicationroomname', 'communication'), 'maxlength="100" size="20"'),
+                    get_string('communicationroomname', 'communication'),
+                    'maxlength="100" size="20"'
+                ),
                 'addcommunicationoptionshere'
             );
             $mform->addHelpButton('communicationroomname', 'communicationroomname', 'communication');
             $mform->setType('communicationroomname', PARAM_TEXT);
 
-            processor::set_proider_form_definition($provider[0], $mform);
+            processor::set_provider_specific_form_definition($provider, $mform);
         }
-
     }
 
     /**
@@ -451,6 +451,9 @@ class api {
                 );
             }
 
+            // Reload so the currently selected provider is used.
+            $this->reload();
+
             // Update provider record from form data.
             if ($instance !== null) {
                 $this->communication->get_form_provider()->save_form_data($instance);
@@ -514,8 +517,8 @@ class api {
             return;
         }
 
-        // No userids? don't bother doing anything.
-        if (empty($userids)) {
+        // No user IDs or this provider does not manage users? No action required.
+        if (empty($userids) || !$this->communication->supports_user_features()) {
             return;
         }
 
@@ -523,6 +526,34 @@ class api {
 
         if ($queue) {
             add_members_to_room_task::queue(
+                $this->communication
+            );
+        }
+    }
+
+    /**
+     * Create a communication ad-hoc task for updating members operation and update the user mapping.
+     *
+     * This method will add a task to the queue to update the room users.
+     *
+     * @param array $userids The user ids to add to the room
+     * @param bool $queue Whether to queue the task or not
+     */
+    public function update_room_membership(array $userids, bool $queue = true): void {
+        // No communication object? something not done right.
+        if (!$this->communication) {
+            return;
+        }
+
+        // No userids? don't bother doing anything.
+        if (empty($userids)) {
+            return;
+        }
+
+        $this->communication->reset_users_sync_flag($userids);
+
+        if ($queue) {
+            update_room_membership_task::queue(
                 $this->communication
             );
         }
@@ -542,12 +573,14 @@ class api {
             return;
         }
 
-        if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
+        $provider = $this->communication->get_provider();
+
+        if ($provider === processor::PROVIDER_NONE) {
             return;
         }
 
-        // No user ids? don't bother doing anything.
-        if (empty($userids)) {
+        // No user IDs or this provider does not manage users? No action required.
+        if (empty($userids) || !$this->communication->supports_user_features()) {
             return;
         }
 
@@ -579,7 +612,6 @@ class api {
 
         switch ($roomstatus) {
             case 'pending':
-
                 \core\notification::add($message, \core\notification::INFO);
                 break;
 

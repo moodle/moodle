@@ -20,22 +20,16 @@ Feature: Content-Item support
 
   @javascript
   Scenario: Tool that supports Deep Linking should be able to configure a tool via the Select content button
-    When I log in as "teacher1"
+    Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Teaching Tool 1" to section "1"
-    Then the "Select content" "button" should be enabled
-
-  @javascript
-  Scenario: Editing a tool's settings that was configured from a preconfigured tool that supports Deep Linking.
-    When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Teaching Tool 1" to section "1"
+    When I add a "Teaching Tool 1" to section "1"
+    Then "Select content" "button" should be visible
     And the "Select content" "button" should be enabled
-    And I set the field "Activity name" to "Test tool activity 1"
-    And I expand all fieldsets
-    And I set the field "Launch container" to "Embed"
-    And I press "Save and return to course"
-    And I open "Test tool activity 1" actions menu
-    And I choose "Edit settings" in the open action menu
-    Then the field "Preconfigured tool" matches value "Teaching Tool 1"
+
+  Scenario: Editing the settings for an instance of a tool configured with Deep Linking support
+    Given the following "mod_lti > tool instances" exist:
+    | name                 | tool            | course |
+    | Test tool activity 1 | Teaching Tool 1 | C1     |
+    When I am on the "Test tool activity 1" "lti activity editing" page logged in as teacher1
+    Then I should see "Select content"
     And the "Select content" "button" should be enabled

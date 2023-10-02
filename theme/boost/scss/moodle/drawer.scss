@@ -47,7 +47,8 @@ $drawer-bg: darken($body-bg, 5%) !default;
     [data-region="drawer"] {
         padding: $drawer-padding-x $drawer-padding-y;
     }
-    .jsenabled .btn-footer-popover {
+    .jsenabled .btn-footer-popover,
+    .jsenabled .btn-footer-communication {
         @include transition(0.2s);
     }
 }
@@ -223,7 +224,8 @@ $right-drawer-width: 320px;
 @include media-breakpoint-up(lg) {
     .drawer {
         // Make sure that in large screens the drawer goes under the drop down menus.
-        z-index: $zindex-dropdown - 1;
+        z-index: inherit;
+
         // Workaround to display the skip link elements from the blocks drawer infront of the navbar.
         // As the skip link is in a fixed position and z-index for this element is ignored
         // then it is hidden behind the top navbar.

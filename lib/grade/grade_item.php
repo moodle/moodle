@@ -649,12 +649,16 @@ class grade_item extends grade_object {
      */
     public function set_locked($lockedstate, $cascade=false, $refresh=true) {
         if ($lockedstate) {
-        /// setting lock
-            if ($this->needsupdate) {
-                return false; // can not lock grade without first having final grade
+            // Setting lock.
+            if (empty($this->id)) {
+                return false;
+            } else if ($this->needsupdate) {
+                // Can not lock grade without first having final grade,
+                // so we schedule it to be locked as soon as regrading is finished.
+                $this->locktime = time() - 1;
+            } else {
+                $this->locked = time();
             }
-
-            $this->locked = time();
             $this->update();
 
             if ($cascade) {

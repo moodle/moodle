@@ -3,6 +3,7 @@ information provided here is intended especially for theme designer.
 
 === 4.3 ===
 * The core_renderer::htmllize_file_tree method has been deprecated. This was missed before Moodle 2.0.
+* CSS selectors using #categoryquestions have been changed to use .question-bank-table, see question/upgrade.txt
 
 === 4.2 ===
 * The moodle-core-popuphelp YUI modal has been removed. It has not been actively used in Moodle since 3.3. It should be replaced with appropriate ESM/AMD JavaScript.

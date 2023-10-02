@@ -397,6 +397,11 @@ define ('PASSWORD_UPPER', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 define ('PASSWORD_DIGITS', '0123456789');
 define ('PASSWORD_NONALPHANUM', '.,;:!?_-+/*@#&$');
 
+/**
+ * Required password pepper entropy.
+ */
+define ('PEPPER_ENTROPY', 112);
+
 // Feature constants.
 // Used for plugin_supports() to report features that are, or are not, supported by a module.
 
@@ -577,6 +582,11 @@ define('CONTACT_SUPPORT_AUTHENTICATED', 1);
  * Contact site support form/link available to anyone visiting the site.
  */
 define('CONTACT_SUPPORT_ANYONE', 2);
+
+/**
+ * Maximum number of characters for password.
+ */
+define('MAX_PASSWORD_CHARACTERS', 128);
 
 // PARAMETER HANDLING.
 
@@ -4663,6 +4673,68 @@ function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool 
 }
 
 /**
+ * Calculate the Shannon entropy of a string.
+ *
+ * @param string $pepper The pepper to calculate the entropy of.
+ * @return float The Shannon entropy of the string.
+ */
+function calculate_entropy(#[\SensitiveParameter] string $pepper): float {
+    // Initialize entropy.
+    $h = 0;
+
+    // Calculate the length of the string.
+    $size = strlen($pepper);
+
+    // For each unique character in the string.
+    foreach (count_chars($pepper, 1) as $v) {
+        // Calculate the probability of the character.
+        $p = $v / $size;
+
+        // Add the character's contribution to the total entropy.
+        // This uses the formula for the entropy of a discrete random variable.
+        $h -= $p * log($p) / log(2);
+    }
+
+    // Instead of returning the average entropy per symbol (Shannon entropy),
+    // we multiply by the length of the string to get total entropy.
+    return $h * $size;
+}
+
+/**
+ * Get the available password peppers.
+ * The latest pepper is checked for minimum entropy as part of this function.
+ * We only calculate the entropy of the most recent pepper,
+ * because passwords are always updated to the latest pepper,
+ * and in the past we may have enforced a lower minimum entropy.
+ * Also, we allow the latest pepper to be empty, to allow admins to migrate off peppers.
+ *
+ * @return array The password peppers.
+ * @throws coding_exception If the entropy of the password pepper is less than the recommended minimum.
+ */
+function get_password_peppers(): array {
+    global $CFG;
+
+    // Get all available peppers.
+    if (isset($CFG->passwordpeppers) && is_array($CFG->passwordpeppers)) {
+        // Sort the array in descending order of keys (numerical).
+        $peppers = $CFG->passwordpeppers;
+        krsort($peppers, SORT_NUMERIC);
+    } else {
+        $peppers = [];  // Set an empty array if no peppers are found.
+    }
+
+    // Check if the entropy of the most recent pepper is less than the minimum.
+    // Also, we allow the most recent pepper to be empty, to allow admins to migrate off peppers.
+    $lastpepper = reset($peppers);
+    if (!empty($peppers) && $lastpepper !== '' && calculate_entropy($lastpepper) < PEPPER_ENTROPY) {
+        throw new coding_exception(
+                'password pepper below minimum',
+                'The entropy of the password pepper is less than the recommended minimum.');
+    }
+    return $peppers;
+}
+
+/**
  * Compare password against hash stored in user object to determine if it is valid.
  *
  * If necessary it also updates the stored hash to the current format.
@@ -4673,26 +4745,44 @@ function password_is_legacy_hash(#[\SensitiveParameter] string $password): bool 
  */
 function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] string $password): bool {
 
+    if (exceeds_password_length($password)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS characters.
+        return false;
+    }
+
     if ($user->password === AUTH_PASSWORD_NOT_CACHED) {
         // Internal password is not used at all, it can not validate.
         return false;
     }
 
-    // First check if the password is valid, that is the password matches the stored hash.
-    $validated = password_verify($password, $user->password);
+    $peppers = get_password_peppers(); // Get the array of available peppers.
+    $islegacy = password_is_legacy_hash($user->password); // Check if the password is a legacy bcrypt hash.
 
-    // If the password is valid, next check if the hash is legacy (bcrypt).
-    // If it is, we update the hash to the new algorithm.
-    if ($validated && password_is_legacy_hash($user->password)) {
+    // If the password is a legacy hash, no peppers were used, so verify and update directly.
+    if ($islegacy && password_verify($password, $user->password)) {
         update_internal_user_password($user, $password);
         return true;
-    } else if ($validated) {
-        // If the password is valid, but the hash is not legacy, we can just return true.
-        return true;
-    } else {
-        // If the password is not valid, we return false.
-        return false;
     }
+
+    // If the password is not a legacy hash, iterate through the peppers.
+    $latestpepper = reset($peppers);
+    // Add an empty pepper to the beginning of the array. To make it easier to check if the password matches without any pepper.
+    $peppers = [-1 => ''] + $peppers;
+    foreach ($peppers as $pepper) {
+        $pepperedpassword = $password . $pepper;
+
+        // If the peppered password is correct, update (if necessary) and return true.
+        if (password_verify($pepperedpassword, $user->password)) {
+            // If the pepper used is not the latest one, update the password.
+            if ($pepper !== $latestpepper) {
+                update_internal_user_password($user, $password);
+            }
+            return true;
+        }
+    }
+
+    // If no peppered password was correct, the password is wrong.
+    return false;
 }
 
 /**
@@ -4702,11 +4792,17 @@ function validate_internal_user_password(stdClass $user, #[\SensitiveParameter] 
  * @param bool $fasthash If true, use a low number of rounds when generating the hash
  *                       This is faster to generate but makes the hash less secure.
  *                       It is used when lots of hashes need to be generated quickly.
+ * @param int $pepperlength Lenght of the peppers
  * @return string The hashed password.
  *
  * @throws moodle_exception If a problem occurs while generating the hash.
  */
-function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false): string {
+function hash_internal_user_password(#[\SensitiveParameter] string $password, $fasthash = false, $pepperlength = 0): string {
+    if (exceeds_password_length($password, $pepperlength)) {
+        // Password cannot be more than MAX_PASSWORD_CHARACTERS.
+        throw new \moodle_exception(get_string("passwordexceeded", 'error', MAX_PASSWORD_CHARACTERS));
+    }
+
     // Set the cost factor to 5000 for fast hashing, otherwise use default cost.
     $rounds = $fasthash ? 5000 : 10000;
 
@@ -4741,6 +4837,8 @@ function hash_internal_user_password(#[\SensitiveParameter] string $password, $f
  * 2. The existing hash is using an out-of-date algorithm (or the legacy
  *    md5 algorithm).
  *
+ * The password is peppered with the latest pepper before hashing,
+ * if peppers are available.
  * Updating the password will modify the $user object and the database
  * record to use the current hashing algorithm.
  * It will remove Web Services user tokens too.
@@ -4759,6 +4857,12 @@ function update_internal_user_password(
         bool $fasthash = false
 ): bool {
     global $CFG, $DB;
+
+    // Add the latest password pepper to the password before further processing.
+    $peppers = get_password_peppers();
+    if (!empty($peppers)) {
+        $password = $password . reset($peppers);
+    }
 
     // Figure out what the hashed password should be.
     if (!isset($user->auth)) {
@@ -5340,10 +5444,11 @@ function remove_course_contents($courseid, $showfeedback = true, array $options 
     $fs->delete_area_files($coursecontext->id, 'backup');
 
     // Cleanup course record - remove links to deleted stuff.
+    // Do not wipe cacherev, as this course might be reused and we need to ensure that it keeps
+    // increasing.
     $oldcourse = new stdClass();
     $oldcourse->id               = $course->id;
     $oldcourse->summary          = '';
-    $oldcourse->cacherev         = 0;
     $oldcourse->legacyfiles      = 0;
     if (!empty($options['keep_groups_and_groupings'])) {
         $oldcourse->defaultgroupingid = 0;
@@ -10923,4 +11028,15 @@ function site_is_public() {
     }
 
     return $ispublic;
+}
+
+/**
+ * Validates user's password length.
+ *
+ * @param string $password
+ * @param int $pepperlength The length of the used peppers
+ * @return bool
+ */
+function exceeds_password_length(string $password, int $pepperlength = 0): bool {
+    return (strlen($password) > (MAX_PASSWORD_CHARACTERS + $pepperlength));
 }

@@ -30,7 +30,6 @@ require_once(__DIR__ . '/communication_test_helper_trait.php');
  * @coversDefaultClass \core_communication\processor
  */
 class processor_test extends \advanced_testcase {
-
     use communication_test_helper_trait;
 
     /**
@@ -61,8 +60,10 @@ class processor_test extends \advanced_testcase {
         );
 
         // Now test the record against the database.
-        $communicationrecord = $DB->get_record('communication',
-            ['instanceid' => $instanceid, 'component' => $component, 'instancetype' => $instancetype]);
+        $communicationrecord = $DB->get_record(
+            'communication',
+            ['instanceid' => $instanceid, 'component' => $component, 'instancetype' => $instancetype]
+        );
 
         // Test against the set data.
         $this->assertNotEmpty($communicationrecord);
@@ -114,7 +115,7 @@ class processor_test extends \advanced_testcase {
         $communicationrecord = $DB->get_record('communication', [
             'instanceid' => $instanceid,
             'component' => $component,
-            'instancetype' => $instancetype
+            'instancetype' => $instancetype,
         ]);
 
         // Test against the set data.
@@ -163,7 +164,7 @@ class processor_test extends \advanced_testcase {
         $communicationrecord = $DB->get_record('communication', [
             'instanceid' => $instanceid,
             'component' => $component,
-            'instancetype' => $instancetype
+            'instancetype' => $instancetype,
         ]);
 
         // Test against the set data.
@@ -173,7 +174,8 @@ class processor_test extends \advanced_testcase {
         $communicationprocessor = processor::load_by_instance(
             $component,
             $instancetype,
-            $instanceid);
+            $instanceid
+        );
         $this->assertNull($communicationprocessor);
     }
 
@@ -427,5 +429,45 @@ class processor_test extends \advanced_testcase {
         // Now test is disabling the plugin returns false.
         set_config('disabled', 1, $communicationprovider);
         $this->assertFalse(processor::is_provider_enabled($communicationprovider));
+    }
+
+    /**
+     * Test delete flagged user id's return correct users.
+     *
+     * @covers ::get_all_delete_flagged_userids
+     */
+    public function test_get_all_delete_flagged_userids(): void {
+        $this->resetAfterTest();
+
+        $course = $this->get_course('Sampleroom', 'none');
+        $user1 = $this->getDataGenerator()->create_user()->id;
+        $user2 = $this->getDataGenerator()->create_user()->id;
+
+        // Sample data.
+        $communicationroomname = 'Sampleroom';
+        $selectedcommunication = 'communication_matrix';
+        $component = 'core_course';
+        $instancetype = 'coursecommunication';
+
+        // Load the communication api.
+        $communication = \core_communication\api::load_by_instance(
+            'core_course',
+            'coursecommunication',
+            $course->id
+        );
+        $communication->create_and_configure_room($selectedcommunication, $communicationroomname);
+        $communication->add_members_to_room([$user1, $user2]);
+
+        // Now remove user1 from the room.
+        $communication->remove_members_from_room([$user1]);
+
+        // Test against the object.
+        $communicationprocessor = processor::load_by_instance(
+            $component,
+            $instancetype,
+            $course->id
+        );
+
+        $this->assertEquals([$user1], $communicationprocessor->get_all_delete_flagged_userids());
     }
 }

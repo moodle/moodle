@@ -69,6 +69,9 @@ class login_form extends \moodleform {
         $mform = $this->_form;
         $factor = $this->_customdata['factor'];
         $mform = $factor->login_form_definition($mform);
+        // Add a hidden field with the factor name so it is always available.
+        $factorname = $mform->addElement('hidden', 'factor', $factor->name);
+        $factorname->setType(PARAM_ALPHAEXT);
         $this->globalmanager->definition($mform);
     }
 
@@ -86,7 +89,6 @@ class login_form extends \moodleform {
 
         $buttonarray = [];
         $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('loginsubmit', 'factor_' . $factor->name));
-        $buttonarray[] = &$mform->createElement('cancel', '', get_string('loginskip', 'factor_' . $factor->name));
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
         $mform->closeHeaderBefore('buttonar');
     }
@@ -109,5 +111,46 @@ class login_form extends \moodleform {
         \tool_mfa\manager::sleep_timer();
 
         return $errors;
+    }
+
+    /**
+     * Returns error corresponding to validated element.
+     *
+     * @param string $elementname Name of form element to check.
+     * @return string|null Error message corresponding to the validated element.
+     */
+    public function get_element_error(string $elementname): ?string {
+        return $this->_form->getElementError($elementname);
+    }
+
+    /**
+     * Set an error message for a form element.
+     *
+     * @param string $elementname Name of form element to set error for.
+     * @param string $error Error message, if empty then removes the current error message.
+     * @return void
+     */
+    public function set_element_error(string $elementname, string $error): void {
+        $this->_form->setElementError($elementname, $error);
+    }
+
+    /**
+     * Freeze a form element.
+     *
+     * @param string $elementname Name of form element to freeze.
+     * @return void
+     */
+    public function freeze(string $elementname): void {
+        $this->_form->freeze($elementname);
+    }
+
+    /**
+     * Returns true if the form element exists.
+     *
+     * @param string $elementname Name of form element to check.
+     * @return bool
+     */
+    public function element_exists(string $elementname): bool {
+        return $this->_form->elementExists($elementname);
     }
 }

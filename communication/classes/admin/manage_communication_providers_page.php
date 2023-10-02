@@ -32,11 +32,14 @@ use moodle_url;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manage_communication_providers_page extends admin_setting {
-
     public function __construct() {
         $this->nosave = true;
-        parent::__construct('managecommunications',
-            new \lang_string('managecommunicationproviders', 'core_communication'), '', '');
+        parent::__construct(
+            'managecommunications',
+            new \lang_string('managecommunicationproviders', 'core_communication'),
+            '',
+            ''
+        );
     }
 
     public function get_setting(): bool {
@@ -71,20 +74,26 @@ class manage_communication_providers_page extends admin_setting {
         foreach ($plugins as $plugin) {
             $class = '';
             $actionurl = new moodle_url('/admin/communication.php', ['sesskey' => sesskey(), 'name' => $plugin->name]);
-            if ($pluginmanager->get_plugin_info('communication_' . $plugin->name)->get_status() ===
-                core_plugin_manager::PLUGIN_STATUS_MISSING) {
+            if (
+                $pluginmanager->get_plugin_info('communication_' . $plugin->name)->get_status() ===
+                core_plugin_manager::PLUGIN_STATUS_MISSING
+            ) {
                 $strtypename = $plugin->displayname . ' (' . get_string('missingfromdisk') . ')';
             } else {
                 $strtypename = $plugin->displayname;
             }
 
             if ($plugin->is_enabled()) {
-                $hideshow = html_writer::link($actionurl->out(false, ['action' => 'disable']),
-                    $OUTPUT->pix_icon('t/hide', get_string('disable'), 'moodle', ['class' => 'iconsmall']));
+                $hideshow = html_writer::link(
+                    $actionurl->out(false, ['action' => 'disable']),
+                    $OUTPUT->pix_icon('t/hide', get_string('disable'), 'moodle', ['class' => 'iconsmall'])
+                );
             } else {
                 $class = 'dimmed_text';
-                $hideshow = html_writer::link($actionurl->out(false, ['action' => 'enable']),
-                    $OUTPUT->pix_icon('t/show', get_string('enable'), 'moodle', ['class' => 'iconsmall']));
+                $hideshow = html_writer::link(
+                    $actionurl->out(false, ['action' => 'enable']),
+                    $OUTPUT->pix_icon('t/show', get_string('enable'), 'moodle', ['class' => 'iconsmall'])
+                );
             }
 
             $settings = '';
@@ -93,8 +102,12 @@ class manage_communication_providers_page extends admin_setting {
             }
 
             $uninstall = '';
-            if ($uninstallurl = core_plugin_manager::instance()->get_uninstall_url(
-                'communication_' . $plugin->name, 'manage')) {
+            if (
+                $uninstallurl = core_plugin_manager::instance()->get_uninstall_url(
+                    'communication_' . $plugin->name,
+                    'manage'
+                )
+            ) {
                 $uninstall = html_writer::link($uninstallurl, get_string('uninstallplugin', 'core_admin'));
             }
 
@@ -114,8 +127,10 @@ class manage_communication_providers_page extends admin_setting {
         }
         $types = core_plugin_manager::instance()->get_plugins_of_type('communication');
         foreach ($types as $type) {
-            if (strpos($type->component, $query) !== false ||
-                strpos(core_text::strtolower($type->displayname), $query) !== false) {
+            if (
+                strpos($type->component, $query) !== false ||
+                strpos(core_text::strtolower($type->displayname), $query) !== false
+            ) {
                 return true;
             }
         }

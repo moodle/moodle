@@ -27,10 +27,11 @@ import * as Str from 'core/str';
 import DynamicTableSelectors from 'core_table/local/dynamic/selectors';
 import Fragment from 'core/fragment';
 import ModalEvents from 'core/modal_events';
-import ModalFactory from 'core/modal_factory';
 import Notification from 'core/notification';
 import Templates from 'core/templates';
 import {add as notifyUser} from 'core/toast';
+import SaveCancelModal from 'core/modal_save_cancel';
+import CancelModal from 'core/modal_cancel';
 
 const Selectors = {
     editEnrolment: '[data-action="editenrolment"]',
@@ -111,10 +112,9 @@ const showEditDialogue = (link, getBody) => {
     const container = getStatusContainer(link);
     const userEnrolmentId = getUserEnrolmentIdFromLink(link);
 
-    ModalFactory.create({
+    SaveCancelModal.create({
         large: true,
         title: Str.get_string('edituserenrolment', 'enrol', container.dataset.fullname),
-        type: ModalFactory.types.SAVE_CANCEL,
         body: getBody(userEnrolmentId)
     })
     .then(modal => {
@@ -150,9 +150,7 @@ const showUnenrolConfirmation = link => {
     const container = getStatusContainer(link);
     const userEnrolmentId = getUserEnrolmentIdFromLink(link);
 
-    ModalFactory.create({
-        type: ModalFactory.types.SAVE_CANCEL,
-    })
+    SaveCancelModal.create()
     .then(modal => {
         // Handle confirm event.
         modal.getRoot().on(ModalEvents.save, e => {
@@ -228,9 +226,8 @@ const showStatusDetails = link => {
         context.editenrollink = editEnrolLink.outerHTML;
     }
 
-    ModalFactory.create({
+    CancelModal.create({
         large: true,
-        type: ModalFactory.types.CANCEL,
         title: Str.get_string('enroldetails', 'enrol'),
         body: Templates.render('core_user/status_details', context),
     })

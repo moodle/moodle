@@ -45,6 +45,9 @@ abstract class resource_sender {
      */
     protected stdClass $course;
 
+    /** @var resource_packager Resource packager. */
+    protected resource_packager $packager;
+
     /**
      * Class constructor.
      *
@@ -91,5 +94,10 @@ abstract class resource_sender {
      *
      * @return stored_file
      */
-    abstract protected function prepare_share_contents(): stored_file;
+    protected function prepare_share_contents(): stored_file {
+        return match ($this->shareformat) {
+            self::SHARE_FORMAT_BACKUP => $this->packager->get_package(),
+            default => throw new \coding_exception("Unknown share format: {$this->shareformat}'"),
+        };
+    }
 }

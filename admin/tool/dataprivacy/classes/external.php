@@ -708,7 +708,7 @@ class external extends external_api {
             $fields .= ',' . implode(',', $extrafields);
         }
 
-        list($sql, $params) = users_search_sql($query, '', false, $extrafields, $excludedusers);
+        list($sql, $params) = users_search_sql($query, '', USER_SEARCH_STARTS_WITH, $extrafields, $excludedusers);
         $users = $DB->get_records_select('user', $sql, $params, $sort, $fields, 0, 30);
         $useroptions = [];
         foreach ($users as $user) {

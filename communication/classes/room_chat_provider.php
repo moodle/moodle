@@ -26,7 +26,6 @@ namespace core_communication;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface room_chat_provider {
-
     /**
      * Create a provider room when a instance is created.
      */

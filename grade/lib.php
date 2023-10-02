@@ -770,8 +770,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             break;
         }
         foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
+            if (is_a($plugin, grade_plugin_info::class)) {
+                if ($plugin_type === $active_type && $active_plugin == $plugin->id) {
                     $plugin_info['strings']['active_plugin_str'] = $plugin->string;
                 }
             }
@@ -880,7 +880,7 @@ class grade_plugin_info {
  * @param string|null $headerhelpidentifier The help string identifier if required.
  * @param string|null $headerhelpcomponent The component for the help string.
  * @param stdClass|null $user The user object for use with the user context header.
- * @param actionbar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
+ * @param action_bar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
  *                                  to true. If $actionbar is not explicitly defined, the general action bar
  *                                  (\core_grades\output\general_action_bar) will be used by default.
  * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
@@ -909,15 +909,28 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
 
     $plugin_info = grade_get_plugin_info($courseid, $active_type, $active_plugin);
 
-    // Determine the string of the active plugin
+    // Determine the string of the active plugin.
     $stractive_type = $plugin_info['strings'][$active_type];
+    $stractiveplugin = ($active_plugin) ? $plugin_info['strings']['active_plugin_str'] : $heading;
 
     if ($active_type == 'report') {
         $PAGE->set_pagelayout('report');
     } else {
         $PAGE->set_pagelayout('admin');
     }
-    $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
+    $coursecontext = context_course::instance($courseid);
+    // Title will be constituted by information starting from the unique identifying information for the page.
+    if (in_array($active_type, ['report', 'settings'])) {
+        $uniquetitle = $stractiveplugin;
+    } else {
+        $uniquetitle = $stractive_type . ': ' . $stractiveplugin;
+    }
+    $titlecomponents = [
+        $uniquetitle,
+        get_string('grades'),
+        $coursecontext->get_context_name(false),
+    ];
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titlecomponents));
     $PAGE->set_heading($PAGE->course->fullname);
     $PAGE->set_secondary_active_tab('grades');
 
@@ -974,8 +987,7 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         echo $output;
     }
 
-    $returnval .= print_natural_aggregation_upgrade_notice($courseid, context_course::instance($courseid), $PAGE->url,
-        $return);
+    $returnval .= print_natural_aggregation_upgrade_notice($courseid, $coursecontext, $PAGE->url, $return);
 
     if ($return) {
         return $returnval;
@@ -2379,7 +2391,26 @@ class grade_structure {
                 ['id' => $this->courseid, 'sesskey' => sesskey(), 'eid' => $element['eid']]);
             $url = $gpr->add_url_params($url);
 
-            if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
+            if ($element['type'] == 'category') {
+                // Grade categories themselves cannot be locked. We lock/unlock their grade items.
+                $children = $element['object']->get_children(true);
+                $alllocked = true;
+                foreach ($children as $child) {
+                    if (!$child['object']->is_locked()) {
+                        $alllocked = false;
+                        break;
+                    }
+                }
+                if ($alllocked && has_capability('moodle/grade:unlock', $this->context)) {
+                    $title = get_string('unlock', 'grades');
+                    $url->param('action', 'unlock');
+                } else if (!$alllocked && has_capability('moodle/grade:lock', $this->context)) {
+                    $title = get_string('lock', 'grades');
+                    $url->param('action', 'lock');
+                } else {
+                    return null;
+                }
+            } else if (($element['type'] == 'grade') && ($element['object']->grade_item->is_locked())) {
                 // Don't allow an unlocking action for a grade whose grade item is locked: just print a state icon.
                 $strparamobj = new stdClass();
                 $strparamobj->itemname = $element['object']->grade_item->get_name(true, true);
@@ -2501,7 +2532,6 @@ class grade_structure {
 
         $context = [
             'hidden' => $element['object']->is_hidden(),
-            'locked' => $element['object']->is_locked(),
         ];
 
         if ($element['object'] instanceof grade_grade) {
@@ -2511,18 +2541,32 @@ class grade_structure {
             $context['feedback'] = !empty($grade->feedback) && $grade->load_grade_item()->gradetype != GRADE_TYPE_TEXT;
         }
 
-        // Early return if there aren't any statuses that we need to show.
-        if (!in_array(true, $context)) {
-            return null;
-        }
-
         $context['classes'] = 'grade_icons data-collapse_gradeicons';
 
-        if (isset($element['type']) && ($element['type'] == 'category')) {
+        if ($element['object'] instanceof grade_category) {
             $context['classes'] = 'category_grade_icons';
+
+            $children = $element['object']->get_children(true);
+            $alllocked = true;
+            foreach ($children as $child) {
+                if (!$child['object']->is_locked()) {
+                    $alllocked = false;
+                    break;
+                }
+            }
+            if ($alllocked) {
+                $context['locked'] = true;
+            }
+        } else {
+            $context['locked'] = $element['object']->is_locked();
         }
 
-        return $OUTPUT->render_from_template('core_grades/status_icons', $context);
+        // Don't even attempt rendering if there is no status to show.
+        if (in_array(true, $context)) {
+            return $OUTPUT->render_from_template('core_grades/status_icons', $context);
+        } else {
+            return null;
+        }
     }
 
     /**

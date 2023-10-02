@@ -30,6 +30,5 @@ class v1p7 extends v1p6 {
     // Note: A new Content Upload API was introduced.
     // See details in the spec:
     // https://github.com/matrix-org/matrix-spec-proposals/pull/2246.
-
     use features\matrix\media_create_v1;
 }

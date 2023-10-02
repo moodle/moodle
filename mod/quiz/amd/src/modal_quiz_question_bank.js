@@ -22,7 +22,7 @@
  */
 
 import $ from 'jquery';
-import Modal from 'core/modal';
+import Modal from './add_question_modal';
 import * as Fragment from 'core/fragment';
 import * as FormChangeChecker from 'core_form/changechecker';
 import * as ModalEvents from 'core/modal_events';
@@ -39,57 +39,29 @@ export default class ModalQuizQuestionBank extends Modal {
     static TYPE = 'mod_quiz-quiz-question-bank';
 
     /**
-     * Constructor for the Modal.
+     * Create the question bank modal.
      *
-     * @param {object} root The root jQuery element for the modal
+     * @param {Number} contextId Current context id.
      */
-    constructor(root) {
-        super(root);
+    static init(contextId) {
+        const selector = '.menu [data-action="questionbank"]';
+        document.addEventListener('click', (e) => {
+            const trigger = e.target.closest(selector);
+            if (!trigger) {
+                return;
+            }
+            e.preventDefault();
 
-        this.contextId = null;
-        this.addOnPageId = null;
-    }
-
-    /**
-     * Save the Moodle context id that the question bank is being
-     * rendered in.
-     *
-     * @method setContextId
-     * @param {int} id
-     */
-    setContextId(id) {
-        this.contextId = id;
-    }
-
-    /**
-     * Retrieve the saved Moodle context id.
-     *
-     * @method getContextId
-     * @return {int}
-     */
-    getContextId() {
-        return this.contextId;
-    }
-
-    /**
-     * Set the id of the page that the question should be added to
-     * when the user clicks the add to quiz link.
-     *
-     * @method setAddOnPageId
-     * @param {int} id
-     */
-    setAddOnPageId(id) {
-        this.addOnPageId = id;
-    }
-
-    /**
-     * Returns the saved page id for the question to be added it.
-     *
-     * @method getAddOnPageId
-     * @return {int}
-     */
-    getAddOnPageId() {
-        return this.addOnPageId;
+            ModalQuizQuestionBank.create({
+                contextId,
+                title: trigger.dataset.header,
+                addOnPage: trigger.dataset.addonpage,
+                templateContext: {
+                    hidden: true,
+                },
+                large: true,
+            });
+        });
     }
 
     /**

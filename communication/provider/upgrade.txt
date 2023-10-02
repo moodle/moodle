@@ -1,2 +1,2 @@
-=== 4.2 ===
-* Added new communication plugin type
+This file describes API changes in /communication/provider/*
+Information provided here is intended especially for developers.

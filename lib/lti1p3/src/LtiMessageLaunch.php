@@ -6,7 +6,6 @@ use Exception;
 use Firebase\JWT\ExpiredException;
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\TransferException;
 use Packback\Lti1p3\Interfaces\ICache;
 use Packback\Lti1p3\Interfaces\ICookie;
@@ -21,9 +20,9 @@ class LtiMessageLaunch
     public const TYPE_DEEPLINK = 'LtiDeepLinkingRequest';
     public const TYPE_SUBMISSIONREVIEW = 'LtiSubmissionReviewRequest';
     public const TYPE_RESOURCELINK = 'LtiResourceLinkRequest';
-
     public const ERR_FETCH_PUBLIC_KEY = 'Failed to fetch public key.';
     public const ERR_NO_PUBLIC_KEY = 'Unable to find public key.';
+    public const ERR_NO_MATCHING_PUBLIC_KEY = 'Unable to find a public key which matches your JWT.';
     public const ERR_STATE_NOT_FOUND = 'Please make sure you have cookies enabled in this browser and that you are not in private or incognito mode';
     public const ERR_MISSING_ID_TOKEN = 'Missing id_token.';
     public const ERR_INVALID_ID_TOKEN = 'Invalid id_token, JWT must contain 3 parts';
@@ -36,7 +35,6 @@ class LtiMessageLaunch
      * error message is built.
      */
     public const ERR_MISSING_REGISTRATION = 'LTI 1.3 Registration not found for Issuer :issuerUrl and Client ID :clientId. Please make sure the LMS has provided the right information, and that the LMS has been registered correctly in the tool.';
-
     public const ERR_CLIENT_NOT_REGISTERED = 'Client id not registered for this issuer.';
     public const ERR_NO_KID = 'No KID specified in the JWT Header.';
     public const ERR_INVALID_SIGNATURE = 'Invalid signature on id_token';
@@ -47,7 +45,6 @@ class LtiMessageLaunch
     public const ERR_INVALID_MESSAGE = 'Message validation failed.';
     public const ERR_INVALID_ALG = 'Invalid alg was specified in the JWT header.';
     public const ERR_MISMATCHED_ALG_KEY = 'The alg specified in the JWT header is incompatible with the JWK key type.';
-
     private $db;
     private $cache;
     private $cookie;
@@ -70,10 +67,10 @@ class LtiMessageLaunch
     /**
      * Constructor.
      *
-     * @param IDatabase            $database         Instance of the database interface used for looking up registrations and deployments
-     * @param ICache               $cache            Instance of the Cache interface used to loading and storing launches
-     * @param ICookie              $cookie           Instance of the Cookie interface used to set and read cookies
-     * @param ILtiServiceConnector $serviceConnector Instance of the LtiServiceConnector used to by LTI services to make API requests
+     * @param  IDatabase  $database         Instance of the database interface used for looking up registrations and deployments
+     * @param  ICache  $cache            Instance of the Cache interface used to loading and storing launches
+     * @param  ICookie  $cookie           Instance of the Cookie interface used to set and read cookies
+     * @param  ILtiServiceConnector  $serviceConnector Instance of the LtiServiceConnector used to by LTI services to make API requests
      */
     public function __construct(
         IDatabase $database,
@@ -105,13 +102,12 @@ class LtiMessageLaunch
     /**
      * Load an LtiMessageLaunch from a Cache using a launch id.
      *
-     * @param string    $launch_id The launch id of the LtiMessageLaunch object that is being pulled from the cache
-     * @param IDatabase $database  Instance of the database interface used for looking up registrations and deployments
-     * @param ICache    $cache     Instance of the Cache interface used to loading and storing launches. If non is provided launch data will be store in $_SESSION.
+     * @param  string  $launch_id The launch id of the LtiMessageLaunch object that is being pulled from the cache
+     * @param  IDatabase  $database  Instance of the database interface used for looking up registrations and deployments
+     * @param  ICache  $cache     Instance of the Cache interface used to loading and storing launches. If non is provided launch data will be store in $_SESSION.
+     * @return LtiMessageLaunch A populated and validated LtiMessageLaunch
      *
      * @throws LtiException Will throw an LtiException if validation fails or launch cannot be found
-     *
-     * @return LtiMessageLaunch A populated and validated LtiMessageLaunch
      */
     public static function fromCache(
         $launch_id,
@@ -129,11 +125,10 @@ class LtiMessageLaunch
     /**
      * Validates all aspects of an incoming LTI message launch and caches the launch if successful.
      *
-     * @param array|string $request An array of post request parameters. If not set will default to $_POST.
+     * @param  array|string  $request An array of post request parameters. If not set will default to $_POST.
+     * @return LtiMessageLaunch Will return $this if validation is successful
      *
      * @throws LtiException Will throw an LtiException if validation fails
-     *
-     * @return LtiMessageLaunch Will return $this if validation is successful
      */
     public function validate(array $request = null)
     {
@@ -288,7 +283,7 @@ class LtiMessageLaunch
         return $this->launch_id;
     }
 
-    public static function getMissingRegistrationErrorMsg(string $issuerUrl, ?string $clientId = null): string
+    public static function getMissingRegistrationErrorMsg(string $issuerUrl, string $clientId = null): string
     {
         // Guard against client ID being null
         if (!isset($clientId)) {
@@ -342,7 +337,7 @@ class LtiMessageLaunch
         }
 
         // Could not find public key with a matching kid and alg.
-        throw new LtiException(static::ERR_NO_PUBLIC_KEY);
+        throw new LtiException(static::ERR_NO_MATCHING_PUBLIC_KEY);
     }
 
     /**
@@ -456,7 +451,8 @@ class LtiMessageLaunch
 
         // Validate JWT signature
         try {
-            JWT::decode($this->request['id_token'], $public_key, ['RS256']);
+            $headers = new \stdClass();
+            JWT::decode($this->request['id_token'], $public_key, $headers);
         } catch (ExpiredException $e) {
             // Error validating signature.
             throw new LtiException(static::ERR_INVALID_SIGNATURE);

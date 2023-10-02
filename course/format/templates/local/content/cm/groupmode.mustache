@@ -31,7 +31,7 @@
         {{< core/local/dropdown/status}}
             {{$ buttonclasses }}
                 {{#autohide}} v-parent-focus {{/autohide}}
-                groupmode-information btn pt-1 icon-no-margin
+                groupmode-information btn btn-icon icon-no-margin
             {{/ buttonclasses }}
             {{$ buttoncontent }}
                 {{{groupicon}}}
@@ -44,7 +44,7 @@
     <div
     data-region="groupmode-information"
     data-activityname="{{activityname}}"
-    class="groupmode-information d-flex align-items-center"
+    class="groupmode-information d-flex align-items-center justify-content-center icon-no-margin"
 >
     {{#groupicon}}{{{groupicon}}}{{/groupicon}}
     {{#groupalt}}

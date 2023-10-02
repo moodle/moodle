@@ -116,8 +116,9 @@ class mod_lti_generator extends testing_module_generator {
      * Create a tool type.
      *
      * @param array $data
+     * @return int ID of created tool
      */
-    public function create_tool_types(array $data) {
+    public function create_tool_types(array $data): int {
         if (!isset($data['baseurl'])) {
             throw new coding_exception('Must specify baseurl when creating a LTI tool type.');
         }
@@ -127,20 +128,21 @@ class mod_lti_generator extends testing_module_generator {
         $data['lti_acceptgrades'] = $data['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
         $data['lti_sendname'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $data['lti_sendemailaddr'] = $data['lti_sendname'] ?? LTI_SETTING_ALWAYS;
+        $data['lti_launchcontainer'] = $data['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($data);
 
-        lti_add_type(type: (object) $type, config: (object) $config);
+        return lti_add_type(type: $type, config: $config);
     }
 
     /**
      * Create a course tool type.
      *
      * @param array $type the type info.
-     * @return void
+     * @return int ID of created tool.
      * @throws coding_exception if any required fields are missing.
      */
-    public function create_course_tool_types(array $type): void {
+    public function create_course_tool_types(array $type): int {
         global $SITE;
 
         if (!isset($type['baseurl'])) {
@@ -151,13 +153,15 @@ class mod_lti_generator extends testing_module_generator {
         }
 
         $type['baseurl'] = (new moodle_url($type['baseurl']))->out(false); // Permits relative URLs in behat features.
-        $type['coursevisible'] = LTI_COURSEVISIBLE_ACTIVITYCHOOSER; // The default for course tools.
+        $type['coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
         $type['state'] = LTI_TOOL_STATE_CONFIGURED; // The default for course tools.
 
         // Sensible defaults permitting the tool type to be used in a launch.
         $type['lti_acceptgrades'] = $type['lti_acceptgrades'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendname'] = $type['lti_sendname'] ?? LTI_SETTING_ALWAYS;
         $type['lti_sendemailaddr'] = $type['lti_sendemailaddr'] ?? LTI_SETTING_ALWAYS;
+        $type['lti_coursevisible'] = $type['coursevisible'] ?? LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $type['lti_launchcontainer'] = $type['lti_launchcontainer'] ?? LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
 
         // Required for cartridge processing support.
         $type['lti_toolurl'] = $type['baseurl'];
@@ -171,6 +175,6 @@ class mod_lti_generator extends testing_module_generator {
         ['type' => $type, 'config' => $config] = $this->get_type_and_config_from_data($type);
 
         lti_load_type_if_cartridge($config);
-        lti_add_type(type: $type, config: $config);
+        return lti_add_type(type: $type, config: $config);
     }
 }

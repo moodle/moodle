@@ -41,6 +41,9 @@ abstract class object_factor_base implements object_factor {
      */
     protected $secretmanager;
 
+    /** @var string Factor icon */
+    protected $icon = 'fa-lock';
+
     /**
      * Class constructor
      *
@@ -276,8 +279,9 @@ abstract class object_factor_base implements object_factor {
      * Marks factor record as revoked.
      * If factorid is not provided, revoke all instances of factor.
      *
-     * @param int $factorid
+     * @param int|null $factorid
      * @return bool
+     * @throws \coding_exception
      * @throws \dml_exception
      */
     public function revoke_user_factor(?int $factorid = null): bool {
@@ -309,7 +313,8 @@ abstract class object_factor_base implements object_factor {
     /**
      * When validation code is correct - update lastverified field for given factor.
      * If factor id is not provided, update all factor entries for user.
-     * @param int $factorid
+     *
+     * @param int|null $factorid
      * @return bool|\dml_exception
      * @throws \dml_exception
      */
@@ -404,7 +409,7 @@ abstract class object_factor_base implements object_factor {
      * Implementation for factors that require input.
      * Should be overridden in child classes with no input.
      *
-     * @param mixed $state the state constant to set
+     * @param string $state the state constant to set.
      * @return bool
      */
     public function set_state(string $state): bool {
@@ -551,9 +556,6 @@ abstract class object_factor_base implements object_factor {
         $lockthreshold = get_config('tool_mfa', 'lockout');
         if ($this->lockcounter >= $lockthreshold) {
             $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
-
-            // Lastly output a notification showing the user the factor is locked.
-            \core\notification::error(get_string('factorlocked', 'tool_mfa', $this->get_display_name()));
         }
     }
 
@@ -620,5 +622,24 @@ abstract class object_factor_base implements object_factor {
      */
     public function global_submit(object $data): void {
         return;
+    }
+
+    /**
+     * Get the icon associated with this factor.
+     *
+     * @return string the icon name.
+     */
+    public function get_icon(): string {
+        return $this->icon;
+    }
+
+    /**
+     * Get the login description associated with this factor.
+     * Override for factors that have a user input.
+     *
+     * @return string The login option.
+     */
+    public function get_login_desc(): string {
+        return get_string('logindesc', 'factor_'.$this->name);
     }
 }

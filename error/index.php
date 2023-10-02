@@ -29,6 +29,12 @@
 
 require('../config.php'); // phpcs:ignore
 
+// Until we have a more robust routing api in place this is a very simple
+// and clean way to handle arbitrary urls without a php extension.
+if ($ME === '/.well-known/change-password') {
+    redirect(new moodle_url('/login/change_password.php'));
+}
+
 $context = context_system::instance();
 $title = get_string('pagenotexisttitle', 'error');
 $PAGE->set_url('/error/index.php');

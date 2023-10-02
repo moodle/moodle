@@ -35,5 +35,6 @@ $string['matrixelementurl'] = 'Element web URL';
 $string['matrixelementurl_desc'] = 'The URL to Element Web instance.';
 $string['matrixroomtopic'] = 'Room topic';
 $string['matrixroomtopic_help'] = 'A short description of what this room is for.';
+$string['matrix:moderator'] = 'Matrix moderator';
 $string['pluginname'] = 'Matrix';
 $string['privacy:metadata'] = 'Matrix communication plugin does not store any personal data.';

@@ -54,6 +54,7 @@ class activity_sender extends resource_sender {
     ) {
         parent::__construct($cmid, $userid, $moodlenetclient, $oauthclient, $shareformat);
         [$this->course, $this->cminfo] = get_course_and_cm_from_cmid($cmid);
+        $this->packager = new activity_packager($this->cminfo, $this->userid);
     }
 
     /**
@@ -135,21 +136,6 @@ class activity_sender extends resource_sender {
             'responsecode' => $responsecode,
             'drafturl' => $resourceurl,
         ];
-    }
-
-    /**
-     * Prepare the data for sharing, in the format specified.
-     *
-     * @return stored_file
-     */
-    protected function prepare_share_contents(): stored_file {
-        switch ($this->shareformat) {
-            case self::SHARE_FORMAT_BACKUP:
-                // If sharing the activity as a backup, prepare the packaged backup.
-                return (new activity_packager($this->cminfo, $this->userid))->get_package();
-            default:
-                throw new \coding_exception("Unknown share format: {$this->shareformat}'");
-        }
     }
 
     /**

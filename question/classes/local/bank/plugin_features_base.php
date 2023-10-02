@@ -27,6 +27,11 @@
 
 namespace core_question\local\bank;
 
+use core\context;
+use qbank_columnsortorder\local\qbank\column_action_move;
+use qbank_columnsortorder\local\qbank\column_action_remove;
+use qbank_columnsortorder\local\qbank\column_action_resize;
+
 /**
  * Class plugin_features_base is the base class for qbank plugins.
  *
@@ -72,6 +77,31 @@ class plugin_features_base {
      * @return bulk_action_base[]
      */
     public function get_bulk_actions() {
+        return [];
+    }
+
+    /**
+     * This method will return a column manager object, if this plugin provides one.
+     *
+     * @return ?column_manager_base
+     */
+    public function get_column_manager(): ?column_manager_base {
+        return null;
+    }
+
+    /**
+     * This method will return an array of renderable objects, for adding additional controls to the question bank screen.
+     *
+     * The array returned can include a numeric index for each object, to indicate the position in which it should be displayed
+     * relative to other controls. If two plugins return controls with the same position, they will be displayed after one another,
+     * based on the alphabetical order of the plugin component names.
+     *
+     * @param view $qbank The question bank view.
+     * @param context $context The current context, for permission checks.
+     * @param int $categoryid The current question category ID.
+     * @return \renderable[]
+     */
+    public function get_question_bank_controls(view $qbank, context $context, int $categoryid): array {
         return [];
     }
 

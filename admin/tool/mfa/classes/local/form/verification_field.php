@@ -51,7 +51,8 @@ class verification_field extends \MoodleQuickForm_text {
         $attributes['autocomplete'] = 'one-time-code';
         $attributes['inputmode'] = 'numeric';
         $attributes['pattern'] = '[0-9]*';
-        $attributes['class'] = 'tool-mfa-verification-code';
+        $attributes['class'] = 'tool-mfa-verification-code font-weight-bold';
+        $attributes['maxlength'] = 6;
 
         // If we aren't on the auth page, this might be part of a larger form such as for setup.
         // We shouldn't autofocus here, as it probably isn't the only element, or main target.
@@ -62,11 +63,7 @@ class verification_field extends \MoodleQuickForm_text {
         // If we are on the auth page, load JS for element.
         $this->appendjs = false;
         if ($auth) {
-            if ($PAGE->pagelayout === 'secure') {
-                $this->appendjs = true;
-            } else {
-                $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
-            }
+            $PAGE->requires->js_call_amd('tool_mfa/autosubmit_verification_code', 'init', []);
         }
 
         // Force element name to match JS.

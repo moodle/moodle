@@ -500,6 +500,26 @@ abstract class advanced_testcase extends base_testcase {
     }
 
     /**
+     * Override hook callbacks.
+     *
+     * @param string $hookname
+     * @param callable $callback
+     * @return void
+     */
+    public function redirectHook(string $hookname, callable $callback): void {
+        \core\hook\manager::get_instance()->phpunit_redirect_hook($hookname, $callback);
+    }
+
+    /**
+     * Remove all hook overrides.
+     *
+     * @return void
+     */
+    public function stopHookRedirections(): void {
+        \core\hook\manager::get_instance()->phpunit_stop_redirections();
+    }
+
+    /**
      * Reset all database tables, restore global state and clear caches and optionally purge dataroot dir.
      *
      * @param bool $detectchanges

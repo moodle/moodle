@@ -53,13 +53,13 @@
     {{#addsections}}
     <a
         href="{{{url}}}"
-        class="add-sections"
+        class="add-sections btn btn-link px-0"
         data-add-sections="{{title}}"
         data-new-sections="{{newsection}}"
         data-action="addSection"
         {{#insertafter}} data-id="{{id}}" {{/insertafter}}
     >
-        {{title}}
+        {{#pix}}t/switch_plus, moodle{{/pix}}{{title}}
     </a>
     {{/addsections}}
 </div>

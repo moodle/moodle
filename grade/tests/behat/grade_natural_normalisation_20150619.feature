@@ -57,43 +57,47 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum over 100). Extra credit is set to zero (before the fix 20150619).
+  Scenario: Setting grade items weights is prevented when all grade item weights are overridden (sum over 100). Extra credit is set to zero (before the fix 20150619).
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "60"
     And I set the field "Weight of Test assignment six" to "50"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "54.545"
-    And the field "Weight of Test assignment six" matches value "45.455"
+    Then I should see "Weight total exceeds 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total exceeds 100%." in the "Test assignment six" "table_row"
+    And the field "Weight of Test assignment five" matches value "60.0"
+    And the field "Weight of Test assignment six" matches value "50.0"
     And the field "Weight of Test assignment seven" matches value "0.0"
-    # The weight of "seven" should be 15/30=50% (15 is the maxgrade for "seven" and 30 are max grades for this category (max grade of "five" plus max grade of "six")
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
     And I reset weights for grade category "Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
+    # The weight of "seven" should be 15/30=50% (15 is the maxgrade for "seven" and 30 are max grades for this category (max grade of "five" plus max grade of "six")
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
-  Scenario: Grade items weights are normalised when all grade item weights are overridden (sum under 100). Extra credit is set to zero (before the fix 20150619).
+  Scenario: Setting grade items weights is prevented when all grade item weights are overridden (sum under 100). Extra credit is set to zero (before the fix 20150619).
     When I set the following settings for grade item "Test assignment seven" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Override weight of Test assignment six" to "1"
     And I set the field "Weight of Test assignment five" to "40"
     And I set the field "Weight of Test assignment six" to "30"
-    And I press "Save changes"
-
-    Then I should see "Your weights have been adjusted to total 100."
-    And the field "Weight of Test assignment five" matches value "57.143"
-    And the field "Weight of Test assignment six" matches value "42.857"
+    Then I should see "Weight total is less than 100%." in the "Test assignment five" "table_row"
+    And I should see "Weight total is less than 100%." in the "Test assignment six" "table_row"
+    And the field "Weight of Test assignment five" matches value "40.0"
+    And the field "Weight of Test assignment six" matches value "30.0"
     And the field "Weight of Test assignment seven" matches value "0.0"
-    # The weight of "seven" should be 15/30=50% (15 is the maxgrade for "seven" and 30 are max grades for this category (max grade of "five" plus max grade of "six")
+    And I start watching to see if a new page loads
+    And I press "Save changes"
+    And a new page should not have loaded since I started watching
     And I reset weights for grade category "Sub category 1"
     And the field "Weight of Test assignment five" matches value "66.667"
     And the field "Weight of Test assignment six" matches value "33.333"
+    # The weight of "seven" should be 15/30=50% (15 is the maxgrade for "seven" and 30 are max grades for this category (max grade of "five" plus max grade of "six")
     And the field "Weight of Test assignment seven" matches value "50.0"
 
   @javascript
@@ -103,7 +107,6 @@ Feature: Gradebook calculations for natural weights normalisation before the fix
     And I set the field "Override weight of Test assignment five" to "1"
     And I set the field "Weight of Test assignment five" to "40"
     And I press "Save changes"
-
     Then I should see "Your weights have been adjusted to total 100."
     And the field "Weight of Test assignment five" matches value "40.00"
     And the field "Weight of Test assignment six" matches value "60.000"

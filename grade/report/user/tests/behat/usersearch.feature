@@ -46,7 +46,7 @@ Feature: Within the User report, a teacher can search for users.
       | -1-                |
       | Teacher 1          |
     When I set the field "Search users" to "Turtle"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I confirm "Turtle Manatee" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget does not exist
     And I click on "Turtle Manatee" "list_item"
@@ -63,7 +63,7 @@ Feature: Within the User report, a teacher can search for users.
       | User Test          |
       | Dummy User         |
     And I set the field "Search users" to "Turt"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I click on "Clear search input" "button" in the ".user-search" "css_element"
     And "View all results (5)" "option_role" should not be visible
 
@@ -98,7 +98,7 @@ Feature: Within the User report, a teacher can search for users.
 
     # Case: Multiple users found and select only one result.
     Then I set the field "Search users" to "User"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I confirm "Dummy User" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
@@ -124,7 +124,7 @@ Feature: Within the User report, a teacher can search for users.
     # Business case cont. When pressing enter with multiple partial matches, behave like when you select the "View all results for (Bob)"
     # Case: Multiple users found and select all partial matches.
     And I set the field "Search users" to "User"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I click on "View all results (5)" "option_role"
     And I wait until the page is ready
     And the following should exist in the "user-grades" table:
@@ -164,10 +164,10 @@ Feature: Within the User report, a teacher can search for users.
 
   Scenario: A teacher can search for values besides the users' name
     Given I set the field "Search users" to "student5@example.com"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And "Turtle Manatee" "list_item" should exist
     And I set the field "Search users" to "@example.com"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     # Note: All learners match this email & showing emails is current default.
     And I confirm "Dummy User" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget exists
@@ -177,7 +177,7 @@ Feature: Within the User report, a teacher can search for users.
 
     # Search on the country field.
     When I set the field "Search users" to "JP"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I wait until "Turtle Manatee" "list_item" does not exist
     And I confirm "Dummy User" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
@@ -189,7 +189,7 @@ Feature: Within the User report, a teacher can search for users.
 
     # Search on the institution field.
     And I set the field "Search users" to "ABCD"
-    And I wait until "Dummy User" "list_item" exists
+    And "Dummy User" "list_item" should exist
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
     And I confirm "Student 1" in "user" search within the gradebook widget exists
@@ -213,7 +213,7 @@ Feature: Within the User report, a teacher can search for users.
 
     # Search on the institution field then press enter to show the record set.
     And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "list_item" exists
+    And "Turtle Manatee" "list_item" should exist
     And I confirm "Dummy User" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
@@ -239,7 +239,7 @@ Feature: Within the User report, a teacher can search for users.
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     # Move onto general keyboard navigation testing.
-    When I wait until "Turtle Manatee" "option_role" exists
+    When "Turtle Manatee" "option_role" should exist
     And I press the down key
     And the focused element is "Student 1" "option_role"
     And I press the end key
@@ -258,13 +258,13 @@ Feature: Within the User report, a teacher can search for users.
 
     And I navigate to "View > User report" in the course gradebook
     And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option_role" exists
+    And "Turtle Manatee" "option_role" should exist
     And I press the down key
     And the focused element is "Student 1" "option_role"
 
     # Lets check the tabbing order.
     And I set the field "Search users" to "ABC"
-    And I wait until "View all results (5)" "option_role" exists
+    And "View all results (5)" "option_role" should exist
     And I press the tab key
     And the focused element is "Clear search input" "button" in the ".user-search" "css_element"
     And I press the tab key
@@ -289,7 +289,7 @@ Feature: Within the User report, a teacher can search for users.
     # Sometimes with behat we get unattached nodes causing spurious failures.
     And I wait "1" seconds
     And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "option_role" exists
+    And "Turtle Manatee" "option_role" should exist
     And I press the tab key
     And the focused element is "Clear search input" "button" in the ".user-search" "css_element"
     And I press the enter key

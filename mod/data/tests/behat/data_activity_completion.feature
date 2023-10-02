@@ -27,12 +27,13 @@ Feature: View activity completion in the database activity
     Given I am on the "Music history" "data activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Aggregate type           | Average of ratings                                |
-      | scale[modgrade_type]     | Point                                             |
-      | scale[modgrade_point]    | 100                                               |
-      | Completion tracking      | Show activity as complete when conditions are met |
-      | Require view             | 1                                                 |
-      | Require grade            | 1                                                 |
+      | Aggregate type           | Average of ratings |
+      | scale[modgrade_type]     | Point              |
+      | scale[modgrade_point]    | 100                |
+      | Add requirements         | 1                  |
+      | View the activity        | 1                  |
+      | Receive a grade          | 1                  |
+      | Any grade                | 1                  |
     And I press "Save and display"
     And I add a "Short text" field to "Music history" database and I fill the form with:
       | Field name | Instrument types |
@@ -91,7 +92,7 @@ Feature: View activity completion in the database activity
   Scenario: Use manual completion
     Given I am on the "Music history" "data activity editing" page logged in as teacher1
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled

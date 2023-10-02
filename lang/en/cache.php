@@ -73,6 +73,7 @@ $string['cachedef_langmenu'] = 'List of available languages';
 $string['cachedef_license'] = 'List of licences';
 $string['cachedef_message_time_last_message_between_users'] = 'Time created for most recent message in a conversation';
 $string['cachedef_modelfirstanalyses'] = 'First analysis by model and analysable';
+$string['cachedef_moodlenet_usercanshare'] = 'Users can share resources to MoodleNet';
 $string['cachedef_locking'] = 'Locking';
 $string['cachedef_message_processors_enabled'] = "Message processors enabled status";
 $string['cachedef_contextwithinsights'] = 'Context with insights';

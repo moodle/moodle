@@ -67,7 +67,7 @@ if ($delete && confirm_sesskey()) {
 $blogs = $DB->get_records('blog_external', array('userid' => $USER->id));
 
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
+$PAGE->set_title("$strblogs: $strexternalblogs");
 $PAGE->set_pagelayout('standard');
 
 echo $OUTPUT->header();

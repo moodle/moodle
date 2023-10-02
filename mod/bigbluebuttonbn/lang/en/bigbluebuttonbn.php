@@ -93,11 +93,10 @@ $string['privacy:metadata:bigbluebutton:fullname'] = 'The full name of the user 
 $string['privacy:metadata:bigbluebuttonbn_recordings'] = 'Stores metadata about recordings.';
 $string['privacy:metadata:bigbluebuttonbn_recordings:userid'] = 'The user ID of the user who last changed a recording.';
 
-$string['completionattendance'] = 'Student must attend the session for:';
+$string['completionattendance'] = 'Require attendance (minutes)';
 $string['completionattendance_desc'] = 'Enter and remain in the room for at least {$a} minute(s).';
 $string['completionattendance_event_desc'] = 'Student has entered the room and remained in the session for at least {$a} minute(s)';
-$string['completionattendancegroup'] = 'Require attendance';
-$string['completionattendancegroup_help'] = 'Attending the meeting for (n) minutes is required for completion.';
+$string['completionattendancegroup'] = 'Require attendance (minutes)';
 
 $string['completionengagementchats'] = 'Chats';
 $string['completionengagementchats_desc'] = 'Participate in {$a} chat(s).';
@@ -117,14 +116,11 @@ $string['completionengagementemojis_event_desc'] = 'Changed their emoji {$a} tim
 
 $string['completionengagement_desc'] = 'Engage in activities during the meeting.';
 $string['completionengagementgroup'] = 'Require participation';
-$string['completionengagementgroup_help'] = 'Active participation during the session is required for completion.';
 
 $string['completionupdatestate'] = 'Completion update state';
 $string['completionvalidatestate'] = 'Validate completion';
 $string['completionvalidatestatetriggered'] = 'Validate completion has been triggered.';
 
-$string['completionview'] = 'Require view';
-$string['completionview_desc'] = 'Student must view the room to complete it.';
 $string['completionview_event_desc'] = 'Has viewed the room.';
 $string['sendnotification'] = 'Send notification';
 
@@ -655,6 +651,7 @@ $string['cachedef_currentfetch'] = 'Data to list any recording fetched recently.
 $string['cachedef_serverinfo'] = 'Remote server information';
 $string['cachedef_recordings'] = 'Recording metadata';
 $string['cachedef_validatedurls'] = 'Cache of validated URL checks';
+$string['cachedef_subplugins'] = 'Cache used by subplugin routines to accelerate when needed the plugin discovery process.';
 $string['taskname:check_pending_recordings'] = 'Fetch pending recordings';
 $string['taskname:check_dismissed_recordings'] = 'Check for recordings that haven\'t been found yet';
 $string['userlimitreached'] = 'The number of users allowed in a session has been reached.';
@@ -664,3 +661,9 @@ $string['recordingurlnotfound'] = 'The recording URL is invalid.';
 
 $string['subplugintype_bbbext'] = 'BigBlueButton activity extension';
 $string['subplugintype_bbbext_plural'] = 'BigBlueButton activity extensions';
+
+// Deprecated since Moodle 4.3.
+$string['completionview'] = 'Require view';
+$string['completionview_desc'] = 'View the room';
+$string['completionattendancegroup_help'] = 'Attending the meeting for (n) minutes is required for completion.';
+$string['completionengagementgroup_help'] = 'Active participation during the session is required for completion.';

@@ -4,7 +4,7 @@ Last release package can be found in https://github.com/PHPOffice/PhpSpreadsheet
 
 NOTICE:
  * Before running composer command, make sure you have the composer version updated.
- * Composer version 2.5.1 2022-12-22 15:33:54
+ * Composer version 2.5.5 2023-03-21 11:50:05
 
 STEPS:
  * Create a temporary folder outside your moodle installation

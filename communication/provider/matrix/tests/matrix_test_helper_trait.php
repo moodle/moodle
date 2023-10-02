@@ -26,7 +26,6 @@ use GuzzleHttp\Psr7\Response;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 trait matrix_test_helper_trait {
-
     /**
      * @var string $accesstoken The token for matrix connection
      */
@@ -46,7 +45,7 @@ trait matrix_test_helper_trait {
         $this->matrixhomeserverurl = TEST_COMMUNICATION_MATRIX_MOCK_SERVER;
         set_config('matrixhomeserverurl', $this->matrixhomeserverurl, 'communication_matrix');
         $request = $this->request();
-        $response = $request->post($this->matrixhomeserverurl. '/backoffice/create-admin');
+        $response = $request->post($this->matrixhomeserverurl . '/backoffice/create-admin');
         $admindata = json_decode($response->getBody());
         $json = [
             'identifier' => [
@@ -57,7 +56,7 @@ trait matrix_test_helper_trait {
             'password' => $admindata->password,
         ];
         $request = $this->request($json);
-        $response = $request->post($this->matrixhomeserverurl. '/_matrix/client/r0/login');
+        $response = $request->post($this->matrixhomeserverurl . '/_matrix/client/r0/login');
         $response = json_decode($response->getBody());
         if (empty($response->access_token)) {
             $this->markTestSkipped(
@@ -161,10 +160,15 @@ trait matrix_test_helper_trait {
         array $rooms = [],
     ): Response {
         $client = new \core\http_client();
-        return $client->put($this->get_backoffice_uri('create'), ['json' => [
-            'users' => $users,
-            'rooms' => $rooms,
-        ]]);
+        return $client->put(
+            $this->get_backoffice_uri('create'),
+            [
+                'json' => [
+                    'users' => $users,
+                    'rooms' => $rooms,
+                ],
+            ],
+        );
     }
 
     /**
@@ -225,7 +229,7 @@ trait matrix_test_helper_trait {
     public function reset_mock(): void {
         if (defined('TEST_COMMUNICATION_MATRIX_MOCK_SERVER')) {
             $request = $this->request();
-            $response = $request->post(TEST_COMMUNICATION_MATRIX_MOCK_SERVER. '/backoffice/reset');
+            $response = $request->post(TEST_COMMUNICATION_MATRIX_MOCK_SERVER . '/backoffice/reset');
             $response = json_decode($response->getBody());
             if (empty($response->reset)) {
                 $this->markTestSkipped(

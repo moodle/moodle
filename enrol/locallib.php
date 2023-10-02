@@ -274,7 +274,7 @@ class course_enrolment_manager {
         // Search condition.
         // TODO Does not support custom user profile fields (MDL-70456).
         $extrafields = fields::get_identity_fields($this->get_context(), false);
-        list($sql, $params) = users_search_sql($this->searchfilter, 'u', true, $extrafields);
+        list($sql, $params) = users_search_sql($this->searchfilter, 'u', USER_SEARCH_CONTAINS, $extrafields);
 
         // Role condition.
         if ($this->rolefilter) {

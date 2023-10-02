@@ -118,7 +118,7 @@ class choicelist_test extends advanced_testcase {
         $this->assertEquals('Choose an option', $export['description']);
         $this->assertEquals(true, $export['hasoptions']);
         $this->assertCount(2, $export['options']);
-        $definition1['iconexport'] = $definition1['icon']->export_for_template($renderer);
+        $definition1['iconexport'] = $definition1['icon']->export_for_pix($renderer);
         $this->validate_option($export['options'][0], 'option1', 'Option 1', $definition1);
         $this->validate_option($export['options'][1], 'option2', 'Option 2', $definition2);
     }

@@ -243,7 +243,7 @@ class core_user {
         }
 
         // Start building the WHERE clause based on name.
-        list ($where, $whereparams) = users_search_sql($query, 'u', false);
+        list ($where, $whereparams) = users_search_sql($query, 'u');
 
         // We allow users to search with extra identity fields (as well as name) but only if they
         // have the permission to display those identity fields.
@@ -1021,10 +1021,10 @@ class core_user {
             'default' => false,
             'permissioncallback' => [static::class, 'is_current_user'],
         ];
-        $preferences['userselector_searchanywhere'] = [
-            'type' => PARAM_BOOL,
+        $preferences['userselector_searchtype'] = [
+            'type' => PARAM_INT,
             'null' => NULL_NOT_ALLOWED,
-            'default' => false,
+            'default' => USER_SEARCH_STARTS_WITH,
             'permissioncallback' => [static::class, 'is_current_user'],
         ];
         $preferences['question_bank_advanced_search'] = [

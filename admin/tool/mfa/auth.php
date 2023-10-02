@@ -27,18 +27,20 @@ require_once($CFG->dirroot . '/admin/tool/mfa/lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
 use tool_mfa\local\form\login_form;
+use tool_mfa\manager;
+use tool_mfa\plugininfo\factor;
 
 require_login(null, false);
 
 $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/auth.php');
-$PAGE->set_pagelayout('secure');
+$PAGE->set_pagelayout('login');
 $PAGE->blocks->show_only_fake_blocks();
 $pagetitle = $SITE->shortname.': '.get_string('mfa', 'tool_mfa');
 $PAGE->set_title($pagetitle);
 
-// The only page action allowed here is a logout if it was requested.
+// Logout if it was requested.
 $logout = optional_param('logout', false, PARAM_BOOL);
 if ($logout) {
     if (!empty($SESSION->wantsurl)) {
@@ -49,62 +51,67 @@ if ($logout) {
         $wantsurl = new \moodle_url($CFG->wwwroot);
     }
 
-    \tool_mfa\manager::mfa_logout();
+    manager::mfa_logout();
     redirect($wantsurl);
 }
 
 $currenturl = new moodle_url('/admin/tool/mfa/auth.php');
 
 // Perform state check.
-\tool_mfa\manager::resolve_mfa_status();
+manager::resolve_mfa_status();
 
 // We have a valid landing here, before doing any actions, clear any redir loop progress.
-\tool_mfa\manager::clear_redirect_counter();
+manager::clear_redirect_counter();
 
-$factor = \tool_mfa\plugininfo\factor::get_next_user_factor();
+// If a specific factor was requested, use it.
+$pickedname = optional_param('factorname', false, PARAM_ALPHA);
+$pickedfactor = factor::get_factor($pickedname);
+$formfactor = optional_param('factor', false, PARAM_ALPHA);
+
+if ($pickedfactor && $pickedfactor->has_input() && $pickedfactor->get_state() == factor::STATE_UNKNOWN) {
+    $factor = $pickedfactor;
+} else if ($formfactor) {
+    // Check if a factor was supplied by the form, such as for a form submission.
+    $factor = factor::get_factor($formfactor);
+} else {
+    // Else, get the next factor that requires input.
+    $factor = factor::get_next_user_login_factor();
+}
+
 // If ok, perform form actions for input factor.
-$form = new login_form($currenturl, ['factor' => $factor]);
+$form = new login_form($currenturl, ['factor' => $factor], 'post', '', ['class' => 'ignoredirty']);
 if ($form->is_submitted()) {
     if (!$form->is_validated() && !$form->is_cancelled()) {
         // Increment the fail counter for the factor,
         // And let the factor handle locking logic.
         $factor->increment_lock_counter();
-        \tool_mfa\manager::resolve_mfa_status(false);
+        manager::resolve_mfa_status(false);
     } else {
         // Set state from user actions.
         if ($form->is_cancelled()) {
             $factor->process_cancel_action();
             // Move to next factor.
-            \tool_mfa\manager::resolve_mfa_status(true);
+            manager::resolve_mfa_status(true);
         } else {
             if ($data = $form->get_data()) {
                 // Validation has passed, so before processing, lets action the global form submissions as well.
                 $form->globalmanager->submit($data);
 
                 // Did user submit something that causes a fail state?
-                if ($factor->get_state() == \tool_mfa\plugininfo\factor::STATE_FAIL) {
-                    \tool_mfa\manager::resolve_mfa_status(true);
+                if ($factor->get_state() == factor::STATE_FAIL) {
+                    manager::resolve_mfa_status(true);
                 }
 
-                $factor->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
+                $factor->set_state(factor::STATE_PASS);
                 // Move to next factor.
-                \tool_mfa\manager::resolve_mfa_status(true);
+                manager::resolve_mfa_status(true);
             }
         }
     }
 }
+
 $renderer = $PAGE->get_renderer('tool_mfa');
 echo $OUTPUT->header();
-
-\tool_mfa\manager::display_debug_notification();
-
-echo $OUTPUT->heading(get_string('pluginname', 'factor_'.$factor->name));
-// Check if a notification is required for factor lockouts.
-$remattempts = $factor->get_remaining_attempts();
-if ($remattempts < get_config('tool_mfa', 'lockout')) {
-    echo $OUTPUT->notification(get_string('lockoutnotification', 'tool_mfa', $remattempts), 'notifyerror');
-}
-$form->display();
-
-echo $renderer->guide_link();
+manager::display_debug_notification();
+echo $renderer->verification_form($factor, $form);
 echo $OUTPUT->footer();

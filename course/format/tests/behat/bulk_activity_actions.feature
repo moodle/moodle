@@ -26,7 +26,7 @@ Feature: Bulk course activity actions.
       | allowstealth | 1 |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     And I should see "0 selected" in the "sticky-footer" "region"
 
   Scenario: Bulk hiding activities
@@ -52,7 +52,7 @@ Feature: Bulk course activity actions.
       | assign   | Activity sample 5 | Test assignment description | C1     | sample5  | 1       | 0       |
       | assign   | Activity sample 6 | Test assignment description | C1     | sample6  | 2       | 0       |
     And I reload the page
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     And I should not see "Hidden from students" in the "Activity sample 4" "activity"
     And I should see "Hidden from students" in the "Activity sample 5" "activity"
     And I should see "Hidden from students" in the "Activity sample 6" "activity"
@@ -76,7 +76,7 @@ Feature: Bulk course activity actions.
     When the following config values are set as admin:
       | allowstealth | 0 |
     And I reload the page
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     Then I click on "Select activity Activity sample 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
     And I click on "Activity availability" "button" in the "sticky-footer" "region"

@@ -184,41 +184,195 @@ $dialog = new core\output\local\dropdown\status('Open dialog button', $choice);
 echo $OUTPUT->render($dialog);
 {{< / php >}}
 
-## Capturing events with Javascript
+#### Sync button text with selected status
 
-Unfortunately, the current implementation does not yet include an ADM module for rendering or controlling dropdowns. However, you can create ad-hoc modules by adding id and data attributes to the relevant elements.
+The status dropdown can be configured to sync the button text with the selected status.
 
-Here is an example of how to include id and data attributes on the main component:
+To do so, you need to set the `buttonsync` $definition attribute to `true`.
 
 {{< php >}}
-$dialog = new core\output\local\dropdown\dialog(
-    'Open dialog',
-    'Dialog content',
+$choice = new core\output\choicelist();
+$choice->add_option('option1', get_string('option1', YOURPLUGIN));
+$choice->add_option('option2', get_string('option2', YOURPLUGIN));
+$choice->set_selected_value('option2');
+
+// Add some attribute to select through a query selector.
+$dialog = new core\output\local\dropdown\status(
+    get_string('buttontext', YOURPLUGIN),
+    $choice,
     [
-        extras' => ['id' => 'mydropdown', 'data-foo' => 'bar']
+        'extras' => ['id' => 'mydropdown'],
+        'buttonsync' => true,
+        // With 'updatestatus' it will change the status when the user clicks an option
+        // See "Dropdown status in update mode" section for more information.
+        'updatestatus' => true,
     ]
 );
 echo $OUTPUT->render($dialog);
 {{< / php >}}
 
-Below is an example of how to include additional attributes to the options provided to the user:
+## Javascript
+
+### Controlling dropdowns
+
+Both `core/local/dropdown/status` and `core/local/dropdown/status` AMD modules provide functions to:
+
+- Open and close the dropdown.
+- Change the button content.
+- Get the main dropdown HTML element.
+
+Both modules are object-oriented. To get the dropdown instance, the process is as follows:
+
+1. Add id or data attributes to the main component to select it using a query selector.
+2. Import `getDropdownDialog` from `core/local/dropdown/dialog`, or `getDropdownStatus` from `core/local/dropdown/status`, depending on whether you use a dialogue or a status dropdown.
+3. Call `getDropdownDialog` or `getDropdownStatus` with the query selector to get the instance
+
+Both classes provide the following methods:
+
+- `setVisible(Boolean)` to open or close the dropdown.
+- `isVisible()` to know if it is open or closed.
+- `setButtonContent(String)` to replace the button content.
+- `getElement()`to get the main HTMLElement to add eventListeners.
+
+The following example uses the module to open the dropdown when an extra button is preset:
+
+```js
+import {getDropdownDialog} from 'core/local/dropdown/';
+
+const dialog = getDropdownDialog('[MYDROPDOWNSELECTOR]');
+document.querySelector('[data-for="openDropdown"]').addEventListener('click', (event) => {
+    event.stopPropagation();
+    dialog.setVisible(true);
+});
+```
+
+### Specific dropdown status methods
+
+The `core/local/dropdown/status` provides extra controls for the status selector, such as:
+
+- `getSelectedValue()` and `setSelectedValue(String)` to control the currently selected status.
+- `isButtonSyncEnabled()` and `setButtonSyncEnabled(Boolean)` to synchronise the button text with the selected status.
+- `isUpdateStatusEnabled()` and `setUpdateStatusEnabled(Boolean)` to control the auto-update status mode.
+
+## Using dropdown status from the frontend
+
+The dropdown status can operate in two different ways.
+
+### Dropdown status in display only
+
+The display-only is the default behaviour for any dropdown. In display-only mode, the component will show all the status values to the user, but it won't handle and click the event nor change the current status.
+
+If a plugin wants to change the status value when the user clicks, it should  code a custom module to:
+
+1. Capture `click` event listeners to the choice items.
+2. Send the new status to the backend (using an ad-hoc webservice).
+3. If the webservice execution is ok, update the component value using the `setSelectedValue` instance method.
+
+The following example shows how to render a display-only dropdown status in the backend:
 
 {{< php >}}
 $choice = new core\output\choicelist('Dialog content');
 
-$choice->add_option('option1', 'Option 1', [
-    extras' => ['id' => 'myoption1', 'data-foo' => 'bar1']
+// Add some data attributes to the choices.
+$choice->add_option(
+    'option1',
+    get_string('option1', YOURPLUGIN), [
+    extras' => ['data-action' => 'updateActionName']
 ]);
-$choice->add_option('option2', 'Option 2', [
-    extras' => ['id' => 'myoption2', 'data-foo' => 'bar2']
+$choice->add_option(
+    'option2',
+    get_string('option2', YOURPLUGIN), [
+    extras' => ['data-action' => 'updateActionName']
 ]);
-
 $choice->set_selected_value('option2');
 
-$dialog = new core\output\local\dropdown\status('Open dialog button', $choice);
+// Add some attribute to select through a query selector.
+$dialog = new core\output\local\dropdown\status(
+    get_string('buttontext', YOURPLUGIN),
+    $choice,
+    ['extras' => ['id' => 'mydropdown']]
+);
 echo $OUTPUT->render($dialog);
 {{< / php >}}
 
+Having this PHP code, the AMD controller could be something like:
+
+```js
+import {getDropdownStatus} from 'core/local/dropdown/status';
+import {sendValueToTheBackend} from 'YOURPLUGIN/example';
+
+const status = getDropdownStatus('#mydropdown');
+status.getElement().addEventListener('click', (event) => {
+    const option = event.target.closest("[data-action='updateActionName']");
+    if (!option) {
+        return;
+    }
+    try {
+        if(sendValueToTheBackend(option.dataset.value)) {
+             status.setSelectedValue(option.dataset.value);
+        }
+    } catch (error) {
+        // Do some error handling here.
+    }
+});
+```
+
+### Dropdown status in update mode
+
+The component will act more like an HTML radio button in update mode. It will store the current status value and will trigger `change` events when the value changes.
+
+In this case, the plugin controller has to:
+
+1. Capture the component element `change` event. Remember that, as in radio events, the `change` event won't bubble, so it cannot be delegated to a parent element.
+2. Send the new status to the backend (using an ad-hoc webservice).
+3. If the webservice execution fails, do a value rollback using the `setSelectedValue` instance method.
+
+The following example shows how to render an update mode dropdown status in the backend:
+
+{{< php >}}
+$choice = new core\output\choicelist('Dialog content');
+
+$choice->add_option('option1', get_string('option1', YOURPLUGIN));
+$choice->add_option('option2', get_string('option2', YOURPLUGIN));
+$choice->set_selected_value('option2');
+
+// Add some attribute to select through a query selector.
+$dialog = new core\output\local\dropdown\status(
+    get_string('buttontext', YOURPLUGIN),
+    $choice,
+    [
+        'extras' => ['id' => 'mydropdown'],
+        'updatestatus' => true,
+    ]
+);
+echo $OUTPUT->render($dialog);
+{{< / php >}}
+
+Having this PHP code, the AMD controller could be something like:
+
+```js
+import {getDropdownStatus} from 'core/local/dropdown/status';
+import {sendValueToTheBackend} from 'YOURPLUGIN/example';
+
+const status = getDropdownStatus('#mydropdown');
+let currentValue = status.getSelectedValue();
+
+status.getElement().addEventListener('change', (event) => {
+    if (currentValue == status.getSelectedValue()) {
+        return;
+    }
+    try {
+        sendValueToTheBackend(status.getSelectedValue());
+        currentValue = status.getSelectedValue();
+    } catch (error) {
+        status.setSelectedValue(currentValue);
+    }
+});
+```
+
+**Note**: the `event.target` is also the main element. You can also get the current value from `event.target.dataset.value` if you prefer.
+
 ## Examples
 
+<!-- markdownlint-disable-next-line MD033 -->
 <iframe src="../../../../examples/dropdowns.php" style="overflow:hidden;height:400px;width:100%;border:0" title="Moodle dynamic tabs"></iframe>

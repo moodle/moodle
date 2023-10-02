@@ -30,6 +30,7 @@ require_login();
 $instanceid = required_param('instanceid', PARAM_INT);
 $instancetype = required_param('instancetype', PARAM_TEXT);
 $component = required_param('component', PARAM_COMPONENT);
+$selectedcommunication = optional_param('selectedcommunication', null, PARAM_PLUGIN);
 
 $instanceinfo = [
     'instanceid' => $instanceid,
@@ -51,7 +52,7 @@ if (!$communication) {
 }
 
 // Set variables according to the component callback and use them on the page.
-list($instance, $context, $heading, $returnurl) = component_callback(
+[$instance, $context, $heading, $returnurl] = component_callback(
     $component,
     'get_communication_instance_data',
     [$instanceid]
@@ -66,15 +67,20 @@ $PAGE->add_body_class('limitedwidth');
 
 // Append the instance data before passing to form object.
 $instanceinfo['instance'] = $instance;
+
 // Get our form definitions.
-$form = new \core_communication\form\configure_form(null, $instanceinfo);
+$form = new \core_communication\form\configure_form(
+    course: $instanceinfo['instance'],
+    instanceid: $instanceinfo['instanceid'],
+    instancetype: $instanceinfo['instancetype'],
+    component: $instanceinfo['component'],
+    selectedcommunication: $selectedcommunication
+);
+
 
 if ($form->is_cancelled()) {
-
     redirect($returnurl);
-
 } else if ($data = $form->get_data()) {
-
     component_callback($component, 'update_communication_instance_data', [$data]);
     redirect($returnurl);
 }

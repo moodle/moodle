@@ -179,7 +179,7 @@ class dialog implements named_templatable, renderable {
      * @param string $value the value
      */
     public function add_button_id(string $value) {
-        $this->extras['id'] = $value;
+        $this->extras['buttonid'] = $value;
     }
 
     /**
@@ -198,6 +198,11 @@ class dialog implements named_templatable, renderable {
      */
     public function export_for_template(\renderer_base $output): array {
         $extras = [];
+        // Id is required to add JS controls to the dropdown.
+        $dropdownid = $this->extras['id'] ?? \html_writer::random_id('dropdownDialog_');
+        if (isset($this->extras['id'])) {
+            unset($this->extras['id']);
+        }
         foreach ($this->extras as $attribute => $value) {
             $extras[] = [
                 'attribute' => $attribute,
@@ -206,7 +211,8 @@ class dialog implements named_templatable, renderable {
         }
         $data = [
             // Id is required for the correct HTML labelling.
-            'buttonid' => \html_writer::random_id('dropwdownbutton_'),
+            'dropdownid' => $dropdownid,
+            'buttonid' => $this->extras['buttonid'] ?? \html_writer::random_id('dropwdownbutton_'),
             'buttoncontent' => (string) $this->buttoncontent,
             'dialogcontent' => (string) $this->dialogcontent,
             'classes' => $this->classes,

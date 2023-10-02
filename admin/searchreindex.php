@@ -44,7 +44,7 @@ $PAGE->set_secondary_active_tab('modules');
 
 // Start page output.
 $heading = get_string('gradualreindex', 'search', '');
-$PAGE->set_title($PAGE->title . ': ' . $heading);
+$PAGE->set_title($areaname . ' - ' . get_string('gradualreindex', 'search', ''));
 $PAGE->navbar->add($heading);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($heading);

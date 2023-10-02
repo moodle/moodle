@@ -83,6 +83,12 @@ function tool_mobile_create_app_download_url() {
         $downloadurl->param('androidappid', $mobilesettings->androidappid);
     }
 
+    // For privacy reasons, add siteurl param only if the site is registered.
+    // This is to implement Google Play Referrer (so the site url is automatically populated in the app after installation).
+    if (\core\hub\registration::is_registered()) {
+        $downloadurl->param('siteurl', $CFG->wwwroot);
+    }
+
     return $downloadurl;
 }
 

@@ -262,13 +262,13 @@ function resourcelib_embed_general($fullurl, $title, $clicktoopen, $mimetype) {
         $fullurl = $fullurl->out();
     }
 
-    $param = '<param name="src" value="'.$fullurl.'" />';
+    $title = s($title);
 
     // Always use iframe embedding because object tag does not work much,
     // this is ok in HTML5.
     $code = <<<EOT
 <div class="resourcecontent resourcegeneral">
-  <iframe id="resourceobject" src="$fullurl">
+  <iframe id="resourceobject" src="$fullurl" title="$title">
     $clicktoopen
   </iframe>
 </div>

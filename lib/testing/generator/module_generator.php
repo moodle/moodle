@@ -247,6 +247,10 @@ abstract class testing_module_generator extends component_generator_base {
         // Fill the name and intro with default values (if missing).
         if (empty($record->name)) {
             $record->name = get_string('pluginname', $this->get_modulename()).' '.$this->instancecount;
+            // Module label can be created without name specified. It will get its name from the intro's text.
+            if ($this->get_modulename() === 'label') {
+                $record->name = '';
+            }
         }
         if (empty($record->introeditor) && empty($record->intro)) {
             $record->intro = 'Test '.$this->get_modulename().' ' . $this->instancecount;

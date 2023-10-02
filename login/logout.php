@@ -45,7 +45,7 @@ if (!isloggedin()) {
     redirect($redirect);
 
 } else if (!confirm_sesskey($sesskey)) {
-    $PAGE->set_title($SITE->fullname);
+    $PAGE->set_title(get_string('logout'));
     $PAGE->set_heading($SITE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->confirm(get_string('logoutconfirm'), new moodle_url($PAGE->url, array('sesskey'=>sesskey())), $CFG->wwwroot.'/');

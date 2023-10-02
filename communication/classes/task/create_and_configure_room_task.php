@@ -29,7 +29,6 @@ use core_communication\processor;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class create_and_configure_room_task extends adhoc_task {
-
     public function execute() {
         $data = $this->get_custom_data();
 
@@ -46,13 +45,12 @@ class create_and_configure_room_task extends adhoc_task {
             return;
         }
 
-        // If the room is created successfully, add members to the room.
-        if ($communication->get_room_provider()->create_chat_room()) {
+        // If the room is created successfully, add members to the room if supported by the provider.
+        if ($communication->get_room_provider()->create_chat_room() && $communication->supports_user_features()) {
             add_members_to_room_task::queue(
                 $communication
             );
         }
-
     }
 
     /**
@@ -67,7 +65,7 @@ class create_and_configure_room_task extends adhoc_task {
         // Add ad-hoc task to update the provider room.
         $task = new self();
         $task->set_custom_data([
-            'id' => $communication->get_id()
+            'id' => $communication->get_id(),
         ]);
 
         // Queue the task for the next run.

@@ -138,7 +138,7 @@ navigation_node::override_active_url(new moodle_url('/blog/external_blogs.php'))
 $PAGE->navbar->add(get_string('addnewexternalblog', 'blog'));
 
 $PAGE->set_heading(fullname($USER));
-$PAGE->set_title("$SITE->shortname: $strblogs: $strexternalblogs");
+$PAGE->set_title("$strblogs: $strexternalblogs");
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strformheading, 2);

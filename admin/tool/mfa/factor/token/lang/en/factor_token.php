@@ -26,10 +26,10 @@
 $string['event:token_created'] = 'MFA token created.';
 $string['form:trust'] = 'Trust this device for {$a}.';
 $string['pluginname'] = 'Trust this device';
-$string['privacy:metadata'] = 'The token factor plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The Trust this device factor plugin does not store any personal data.';
 $string['settings:expireovernight'] = 'Expire trust overnight';
-$string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing mid-day interruptions for users. Instead they will be asked to MFA authenticate at the start of a day after expiry.';
+$string['settings:expireovernight_help'] = 'This forces tokens to expire overnight, preventing midday interruptions for users. Instead they will be asked to multi-factor authenticate at the start of a day after expiry.';
 $string['settings:expiry'] = 'Trust duration';
-$string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new MFA authentication.';
+$string['settings:expiry_help'] = 'The duration a device is trusted before requiring a new multi-factor authentication.';
 $string['summarycondition'] = 'the user has previously trusted this device';
-$string['tokenstoredindevice'] = 'The user with id {$a->userid} had an MFA token stored on their device. <br> Information: {$a->string}.';
+$string['tokenstoredindevice'] = 'The user with ID {$a->userid} has a multi-factor authentication token stored on their device. <br> Information: {$a->string}.';

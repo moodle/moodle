@@ -262,7 +262,7 @@ $author-image-margin-sm: 8px;
 /** Gently highlight the selected post by changing it's background to blue and then fading it out. */
 @keyframes background-highlight {
     from {
-        background-color: rgba(0, 123, 255, 0.5);
+        background-color: $modules-highlight-bg;
     }
     to {
         background-color: inherit;
@@ -300,14 +300,14 @@ $author-image-margin-sm: 8px;
     }
 
     .badge-light {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-badge-bg;
+        color: $modules-badge-color;
     }
 
     /** Style the ratings like a badge. */
     .rating-aggregate-container {
-        background-color: #f6f6f6;
-        color: #5b5b5b;
+        background-color: $modules-rating-aggregate-bg;
+        color: $modules-rating-aggregate-color;
         padding: .25em .5em;
         line-height: 1;
         margin-right: .5rem;
@@ -343,7 +343,7 @@ $author-image-margin-sm: 8px;
     /** Fix muted text contrast ratios for accessibility. */
     .text-muted,
     .dimmed_text {
-        color: #707070 !important; /* stylelint-disable-line declaration-no-important */
+        color: $modules-forum-muted-color !important; /* stylelint-disable-line declaration-no-important */
     }
 
     .author-header {
@@ -369,7 +369,7 @@ $author-image-margin-sm: 8px;
     .forum-post-container {
         .replies-container {
             .forum-post-container {
-                border-top: 1px solid #dee2e6;
+                border-top: 1px solid $modules-forum-post-border-color;
                 padding-top: 1.5rem;
 
                 .replies-container .forum-post-container {

@@ -26,7 +26,6 @@ namespace core_communication;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface form_provider {
-
     /**
      * Set the form data to the instance if any data is available.
      *

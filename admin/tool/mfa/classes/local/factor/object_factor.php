@@ -153,7 +153,7 @@ interface object_factor {
      * Marks factor record as revoked.
      * If factorid is not provided, revoke all instances of factor.
      *
-     * @param int $factorid
+     * @param int|null $factorid
      * @return bool
      */
     public function revoke_user_factor(?int $factorid = null): bool;
@@ -162,7 +162,7 @@ interface object_factor {
      * When validation code is correct - update lastverified field for given factor.
      * If factor id is not provided, update all factor entries for user.
      *
-     * @param int $factorid
+     * @param int|null $factorid
      * @return bool|\dml_exception
      */
     public function update_lastverified(?int $factorid = null): bool|\dml_exception;

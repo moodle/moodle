@@ -22,7 +22,7 @@ Feature: View activity completion in the SCORM activity
       | name                     | Music history                                                 |
       | completion               | 2                                                             |
       | completionstatusallscos  | 0                                                             |
-      # Show activity as complete when conditions are met
+      # Add requirements
       | packagefilepath          | mod/scorm/tests/packages/RuntimeMinimumCalls_SCORM12-mini.zip |
       | completionstatusrequired | 6                                                             |
       | completionscorerequired  | 3                                                             |
@@ -112,7 +112,7 @@ Feature: View activity completion in the SCORM activity
     Given I am on the "Music history" "scorm activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And I set the field "Completion tracking" to "Students can manually mark the activity as completed"
+    And I set the field "Students must manually mark the activity as done" to "1"
     And I press "Save and display"
     # Teacher view.
     And the manual completion button for "Music history" should be disabled

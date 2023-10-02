@@ -9,11 +9,9 @@ use Packback\Lti1p3\Interfaces\IDatabase;
 class LtiOidcLogin
 {
     public const COOKIE_PREFIX = 'lti1p3_';
-
     public const ERROR_MSG_LAUNCH_URL = 'No launch URL configured';
     public const ERROR_MSG_ISSUER = 'Could not find issuer';
     public const ERROR_MSG_LOGIN_HINT = 'Could not find login hint';
-
     private $db;
     private $cache;
     private $cookie;
@@ -21,9 +19,9 @@ class LtiOidcLogin
     /**
      * Constructor.
      *
-     * @param IDatabase $database Instance of the Database interface used for looking up registrations and deployments
-     * @param ICache    $cache    instance of the Cache interface used to loading and storing launches
-     * @param ICookie   $cookie   instance of the Cookie interface used to set and read cookies
+     * @param  IDatabase  $database Instance of the Database interface used for looking up registrations and deployments
+     * @param  ICache  $cache    instance of the Cache interface used to loading and storing launches
+     * @param  ICookie  $cookie   instance of the Cookie interface used to set and read cookies
      */
     public function __construct(IDatabase $database, ICache $cache = null, ICookie $cookie = null)
     {
@@ -43,9 +41,8 @@ class LtiOidcLogin
     /**
      * Calculate the redirect location to return to based on an OIDC third party initiated login request.
      *
-     * @param string       $launch_url URL to redirect back to after the OIDC login. This URL must match exactly a URL white listed in the platform.
-     * @param array|string $request    An array of request parameters. If not set will default to $_REQUEST.
-     *
+     * @param  string  $launch_url URL to redirect back to after the OIDC login. This URL must match exactly a URL white listed in the platform.
+     * @param  array|string  $request    An array of request parameters. If not set will default to $_REQUEST.
      * @return Redirect returns a redirect object containing the fully formed OIDC login URL
      */
     public function doOidcLoginRedirect($launch_url, array $request = null)

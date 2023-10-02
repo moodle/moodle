@@ -95,59 +95,15 @@
         <div class="pb-2 border-bottom">{{{dialogcontent}}}</div>
         {{/dialogcontent}}
         {{#choices}}
-        <div class="d-flex flex-column" role="listbox">
-            {{#options}}
-            <div
-                class="d-flex flex-row align-items-start p-2 position-relative rounded {{!
-                    }} {{#disabled}} dimmed_text {{/disabled}} {{!
-                    }} {{#selected}} bg-light selected {{/selected}}"
-                data-optionnumber="{{optionnumber}}"
-                data-selected="{{selected}}"
-            >
-                {{#icon}}
-                <div class="option-icon">
-                    {{>core/pix_icon}}
-                </div>
-                {{/icon}}
-                <div class="otion-select-indicator">
-                    {{#selected}}
-                        {{#pix}} i/checkedcircle, core, {{#str}} selected, form {{/str}} {{/pix}}
-                    {{/selected}}
-                    {{^selected}}
-                        {{#pix}} i/uncheckedcircle{{/pix}}
-                    {{/selected}}
-                </div>
-                <div class="option-name">
-                    <a
-                        class="stretched-link {{!
-                            }} {{#disabled}} disabled {{/disabled}} {{!
-                            }} {{#selected}} selected disabled {{/selected}}"
-                        role="option"
-                        {{#selected}} aria-selected="true" {{/selected}}
-                        {{#description}} aria-describedby="{{optionuniqid}}" {{/description}}
-                        data-value="{{value}}"
-                        {{#hasurl}} href="{{{url}}}" {{/hasurl}}
-                        {{! If there is no url, supose JS will handle it somehow. }}
-                        {{^hasurl}} href="#" {{/hasurl}}
-                        {{#disabled}} tabindex="-1" {{/disabled}}
-                        {{#disabled}} aria-disabled="true" {{/disabled}}
-                        {{$extras}}
-                            {{#extras}}
-                                {{attribute}}="{{value}}"
-                            {{/extras}}
-                        {{/extras}}
-                    >
-                        {{name}}
-                    </a>
-                    {{#description}}
-                    <div id="{{optionuniqid}}" class="small text-muted">
-                        {{{description}}}
-                    </div>
-                    {{/description}}
-                </div>
-            </div>
-            {{/options}}
-        </div>
+            {{> core/local/choicelist }}
         {{/choices}}
     {{/ dialogcontent }}
 {{/ core/local/dropdown/dialog }}
+{{#js}}
+    require(['core/local/dropdown/status'], function(Module) {
+        Module.init('#' + '{{$ dropdownid }}{{!
+            }}{{#dropdownid}}{{dropdownid}}{{/dropdownid}}{{!
+            }}{{^dropdownid}}dropdownDialog_{{uniqid}}{{/dropdownid}}{{!
+        }}{{/ dropdownid }}');
+    });
+{{/js}}

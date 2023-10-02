@@ -45,11 +45,11 @@ defined('MOODLE_INTERNAL') || die();
  */
 abstract class icon_system {
     /**
-     * @var Default icon system.
+     * @var string Default icon system.
      */
     const STANDARD = '\\core\\output\\icon_system_standard';
     /**
-     * @var Default icon system.
+     * @var string Default icon system.
      */
     const FONTAWESOME = '\\core\\output\\icon_system_fontawesome';
 

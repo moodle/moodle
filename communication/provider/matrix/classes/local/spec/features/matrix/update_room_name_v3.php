@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait update_room_name_v3 {
-
     /**
      * Set the name for a room.
      *

@@ -111,13 +111,16 @@ class action_bar extends \core_grades\output\action_bar {
             );
             $data['searchdropdown'] = $searchdropdown->export_for_template($output);
 
+            // The collapsed column dialog is aligned to the edge of the screen, we need to place it such that it also aligns.
+            $collapsemenudirection = right_to_left() ? 'dropdown-menu-left' : 'dropdown-menu-right';
+
             $collapse = new comboboxsearch(
                 true,
                 get_string('collapsedcolumns', 'gradereport_grader', 0),
                 null,
                 'collapse-columns',
                 'collapsecolumn',
-                'collapsecolumndropdown p-3 flex-column',
+                'collapsecolumndropdown p-3 flex-column ' . $collapsemenudirection,
                 null,
                 true,
             );

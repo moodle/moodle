@@ -31,7 +31,7 @@ define(
         'core/url',
         'core/yui',
         'core/modal_copy_to_clipboard',
-        'core/modal_factory',
+        'core/modal_save_cancel',
         'core/modal_events',
         'core/key_codes',
         'core/log',
@@ -48,7 +48,7 @@ define(
         url,
         Y,
         ModalCopyToClipboard,
-        ModalFactory,
+        ModalSaveCancel,
         ModalEvents,
         KeyCodes,
         log,
@@ -1015,43 +1015,53 @@ define(
                 }
 
                 // Add a handler for "Add sections" link to ask for a number of sections to add.
-                str.get_string('numberweeks').done(function(strNumberSections) {
-                    var trigger = $(SELECTOR.ADDSECTIONS),
-                        modalTitle = trigger.attr('data-add-sections'),
-                        newSections = trigger.attr('data-new-sections');
+                const trigger = $(SELECTOR.ADDSECTIONS);
+                const modalTitle = trigger.attr('data-add-sections');
+                const newSections = trigger.attr('data-new-sections');
+                str.get_string('numberweeks')
+                .then(function(strNumberSections) {
                     var modalBody = $('<div><label for="add_section_numsections"></label> ' +
                         '<input id="add_section_numsections" type="number" min="1" max="' + newSections + '" value="1"></div>');
                     modalBody.find('label').html(strNumberSections);
-                    ModalFactory.create({
-                        title: modalTitle,
-                        type: ModalFactory.types.SAVE_CANCEL,
-                        body: modalBody.html()
-                    }, trigger)
-                    .done(function(modal) {
-                        var numSections = $(modal.getBody()).find('#add_section_numsections'),
-                        addSections = function() {
-                            // Check if value of the "Number of sections" is a valid positive integer and redirect
-                            // to adding a section script.
-                            if ('' + parseInt(numSections.val()) === numSections.val() && parseInt(numSections.val()) >= 1) {
-                                document.location = trigger.attr('href') + '&numsections=' + parseInt(numSections.val());
+
+                    return modalBody.html();
+                })
+                .then((body) => ModalSaveCancel.create({
+                    body,
+                    title: modalTitle,
+                }))
+                .then(function(modal) {
+                    var numSections = $(modal.getBody()).find('#add_section_numsections'),
+                    addSections = function() {
+                        // Check if value of the "Number of sections" is a valid positive integer and redirect
+                        // to adding a section script.
+                        if ('' + parseInt(numSections.val()) === numSections.val() && parseInt(numSections.val()) >= 1) {
+                            document.location = trigger.attr('href') + '&numsections=' + parseInt(numSections.val());
+                        }
+                    };
+                    modal.setSaveButtonText(modalTitle);
+                    modal.getRoot().on(ModalEvents.shown, function() {
+                        // When modal is shown focus and select the input and add a listener to keypress of "Enter".
+                        numSections.focus().select().on('keydown', function(e) {
+                            if (e.keyCode === KeyCodes.enter) {
+                                addSections();
                             }
-                        };
-                        modal.setSaveButtonText(modalTitle);
-                        modal.getRoot().on(ModalEvents.shown, function() {
-                            // When modal is shown focus and select the input and add a listener to keypress of "Enter".
-                            numSections.focus().select().on('keydown', function(e) {
-                                if (e.keyCode === KeyCodes.enter) {
-                                    addSections();
-                                }
-                            });
-                        });
-                        modal.getRoot().on(ModalEvents.save, function(e) {
-                            // When modal "Add" button is pressed.
-                            e.preventDefault();
-                            addSections();
                         });
                     });
-                });
+                    modal.getRoot().on(ModalEvents.save, function(e) {
+                        // When modal "Add" button is pressed.
+                        e.preventDefault();
+                        addSections();
+                    });
+
+                    trigger.on('click', (e) => {
+                        e.preventDefault();
+                        modal.show();
+                    });
+
+                    return modal;
+                })
+                .catch(notification.exception);
             },
 
             /**

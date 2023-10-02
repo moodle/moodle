@@ -1423,6 +1423,8 @@ function params_to_string(object $params) {
  * @return stdClass Form config for the item
  */
 function content_item_to_form(object $tool, object $typeconfig, object $item) : stdClass {
+    global $OUTPUT;
+
     $config = new stdClass();
     $config->name = '';
     if (isset($item->title)) {
@@ -1519,6 +1521,11 @@ function content_item_to_form(object $tool, object $typeconfig, object $item) : 
     if (isset($item->custom)) {
         $config->instructorcustomparameters = params_to_string($item->custom);
     }
+
+    // Set the status, allowing the form to validate, and pass an indicator to the relevant form field.
+    $config->selectcontentstatus = true;
+    $config->selectcontentindicator = $OUTPUT->pix_icon('i/valid', get_string('yes')) . get_string('contentselected', 'mod_lti');
+
     return $config;
 }
 

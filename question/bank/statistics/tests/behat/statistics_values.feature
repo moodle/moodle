@@ -210,10 +210,8 @@ Feature: Show statistics in question bank
     And I run the scheduled task "\quiz_statistics\task\recalculate"
     # Confirm the "Needs checking?" column matches the expected values based on students' answers
     When I am on the "Quiz 3" "mod_quiz > question bank" page logged in as "admin"
-    Then the following should exist in the "categoryquestions" table:
-      | Question | Needs checking? |
-      | MCA      | Likely          |
-      | MCB      | Very likely     |
-      | MCC      | Unlikely        |
-      | MCD      | Likely          |
-      | MCE      | Very likely     |
+    Then "Likely" "text" should exist in the "MCA" "table_row"
+    And "Very likely" "text" should exist in the "MCB" "table_row"
+    And "Unlikely" "text" should exist in the "MCC" "table_row"
+    And "Likely" "text" should exist in the "MCD" "table_row"
+    And "Very likely" "text" should exist in the "MCE" "table_row"

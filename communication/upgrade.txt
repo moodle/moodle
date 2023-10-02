@@ -1,0 +1,2 @@
+This file describes API changes in /communication/*
+Information provided here is intended especially for developers.

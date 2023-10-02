@@ -66,25 +66,26 @@ Feature: Set a quiz to be marked complete when the student passes
     When  I am on the "ohgrades" "quiz activity editing" page logged in as "teacher1"
     And I expand all fieldsets
     And I set the field "Grade to pass" to "<gradepass>"
-    And I set the field "completionusegrade" to "1"
-    And I set the field "completionpassgrade" to "<completionpassgrade>"
+    And I set the field "Add requirements" to "1"
+    And I set the field "Receive a grade" to "1"
+    And I set the field "<completionpassgrade>" to "1"
     And I press "Save and display"
     Then I should see "<seen>"
     And I should not see "<notseen>"
 
     Examples:
       | gradepass | completionpassgrade | decsep | seen                  | notseen          | outcome        |
-      |           | 0                   | .      | method: Highest       | Save and display | ok             |
-      |           | 1                   | .      | does not have a valid | method: Highest  | completion-err |
-      | 0         | 0                   | .      | method: Highest       | Save and display | ok             |
-      | 0         | 1                   | .      | does not have a valid | method: Highest  | completion-err |
-      | aaa       | 0                   | .      | must enter a number   | method: Highest  | number-err     |
-      | aaa       | 1                   | .      | must enter a number   | method: Highest  | number-err     |
-      | 200       | 0                   | .      | can not be greater    | method: Highest  | grade-big-err  |
-      | 200       | 1                   | .      | can not be greater    | method: Highest  | grade-big-err  |
-      | 5.55      | 0                   | .      | 5.55 out of 100       | Save and display | ok             |
-      | 5.55      | 1                   | .      | 5.55 out of 100       | Save and display | ok             |
-      | 5#55      | 0                   | .      | must enter a number   | method: Highest  | number-err     |
-      | 5#55      | 1                   | .      | must enter a number   | method: Highest  | number-err     |
-      | 5#55      | 0                   | #      | 5#55 out of 100       | Save and display | ok             |
-      | 5#55      | 1                   | #      | 5#55 out of 100       | Save and display | ok             |
+      |           | Any grade           | .      | method: Highest       | Save and display | ok             |
+      |           | Passing grade       | .      | does not have a valid | method: Highest  | completion-err |
+      | 0         | Any grade           | .      | method: Highest       | Save and display | ok             |
+      | 0         | Passing grade       | .      | does not have a valid | method: Highest  | completion-err |
+      | aaa       | Any grade           | .      | must enter a number   | method: Highest  | number-err     |
+      | aaa       | Passing grade       | .      | must enter a number   | method: Highest  | number-err     |
+      | 200       | Any grade           | .      | can not be greater    | method: Highest  | grade-big-err  |
+      | 200       | Passing grade       | .      | can not be greater    | method: Highest  | grade-big-err  |
+      | 5.55      | Any grade           | .      | 5.55 out of 100       | Save and display | ok             |
+      | 5.55      | Passing grade       | .      | 5.55 out of 100       | Save and display | ok             |
+      | 5#55      | Any grade           | .      | must enter a number   | method: Highest  | number-err     |
+      | 5#55      | Passing grade       | .      | must enter a number   | method: Highest  | number-err     |
+      | 5#55      | Any grade           | #      | 5#55 out of 100       | Save and display | ok             |
+      | 5#55      | Passing grade       | #      | 5#55 out of 100       | Save and display | ok             |

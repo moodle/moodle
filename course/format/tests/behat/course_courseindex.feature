@@ -346,15 +346,29 @@ Feature: Course index depending on role
       | label    | Activity sample 4   | Test label  | C1     | sample4  | 2       |
     # Check resources without URL, as labels, are displayed in the CI and the link goes to the main page when it is clicked.
     When I am on the "sample1" "Activity" page logged in as "student1"
-    Then I should see "Test label" in the "#courseindex" "css_element"
-    And I click on "Test label" "link" in the "#courseindex" "css_element"
+    Then I should see "Activity sample 4" in the "#courseindex" "css_element"
+    And I click on "Activity sample 4" "link" in the "#courseindex" "css_element"
     And I should see "Test label" in the "region-main" "region"
     And I should see "Activity sample 2" in the "region-main" "region"
     # Check resources without URL, as labels, are displayed for teachers too, and the link is working even when edit mode is on.
     And I am on the "sample1" "Activity" page logged in as "teacher1"
-    And I should see "Test label" in the "#courseindex" "css_element"
+    And I should see "Activity sample 4" in the "#courseindex" "css_element"
     And I turn editing mode on
-    And I should see "Test label" in the "#courseindex" "css_element"
-    And I click on "Test label" "link" in the "#courseindex" "css_element"
+    And I should see "Activity sample 4" in the "#courseindex" "css_element"
+    And I click on "Activity sample 4" "link" in the "#courseindex" "css_element"
     And I should see "Test label" in the "region-main" "region"
     And I should see "Activity sample 2" in the "region-main" "region"
+
+  @javascript
+  Scenario: Course index behaviour for labels with name or without name
+    # Add two labels to the course (one with name and one without name).
+    Given the following "activities" exist:
+      | activity | name                | intro         | course | idnumber | section |
+      | label    | Activity sample 5   | Test label 1  | C1     | sample4  | 2       |
+      | label    |                     | Test label 2  | C1     | sample5  | 2       |
+    When I am on the "Course 1" course page logged in as teacher1
+    And I should see "Topic 2" in the "courseindex-content" "region"
+    # Label name should be displayed if it is set.
+    And I should see "Activity sample 5" in the "courseindex-content" "region"
+    # Label intro text should be displayed if label name is not set.
+    And I should see "Test label 2" in the "courseindex-content" "region"

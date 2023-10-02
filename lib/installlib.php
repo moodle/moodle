@@ -344,7 +344,7 @@ function install_print_header($config, $stagename, $heading, $stagetext, $stagec
           <link rel="shortcut icon" href="theme/clean/pix/favicon.ico" />';
 
     echo '<link rel="stylesheet" type="text/css" href="'.$CFG->wwwroot.'/install/css.php" />
-          <title>'.get_string('installation','install').' - Moodle '.$CFG->target_release.'</title>
+          <title>'.get_string('installation', 'install') . moodle_page::TITLE_SEPARATOR . 'Moodle '.$CFG->target_release.'</title>
           <meta name="robots" content="noindex">
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           <meta http-equiv="pragma" content="no-cache" />

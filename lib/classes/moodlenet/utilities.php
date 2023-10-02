@@ -82,4 +82,42 @@ class utilities {
 
         return $supporturl;
     }
+
+    /**
+     * Check the user has a valid capability in any course they are enrolled in.
+     *
+     * @param int $userid The user id to query
+     * @return string Returns 'yes' if capability found, 'no' if not
+     */
+    public static function does_user_have_capability_in_any_course(int $userid): string {
+        // We are checking this way because we are not always in the course context and need
+        // a way to retrieve the user's courses to see if any of them have the correct capability.
+        $capabilities = [
+            'moodle/moodlenet:sharecourse',
+            'moodle/moodlenet:shareactivity'
+        ];
+        // We are using 'no' instead of false to avoid confusing a cache key
+        // that was not found (returns false) with a user who does not have the capablity.
+        $isallowed = 'no';
+        $cache = \cache::make('core', 'moodlenet_usercanshare');
+        $cachedvalue = $cache->get($userid);
+
+        if ($cachedvalue === false) {
+            foreach ($capabilities as $capability) {
+                // Find at least one course that contains a capability match.
+                $course = get_user_capability_course($capability, $userid, true, '', 'id', 1);
+
+                if (!empty($course)) {
+                    // Set the cache to 'yes' and break out of the loop.
+                    $isallowed = 'yes';
+                    break;
+                }
+            }
+            $cache->set($userid, $isallowed);
+        } else {
+            $isallowed = $cachedvalue;
+        }
+
+        return $isallowed;
+    }
 }

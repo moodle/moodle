@@ -29,7 +29,7 @@
         background-color: $white;
     }
     tbody tr:nth-of-type(#{$table-striped-order}) .sticky-column {
-        background-color: #f7f7f7;
+        background-color: $table-accent-bg;
     }
     &.table-sm {
         th,
@@ -47,7 +47,7 @@
                 }
             }
             td.sticky-column {
-                background-color: #ececec;
+                background-color: $table-hover-bg;
             }
         }
     }

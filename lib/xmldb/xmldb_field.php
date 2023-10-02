@@ -75,11 +75,11 @@ class xmldb_field extends xmldb_object {
 
     /**
      * Note:
-     *  - Oracle has 30 chars limit for all names
+     *  - PostgreSQL has a limit of 63 ascii chars (bytes) for table names. Others have greater limits.
      *
-     * @var maximumn length of field names
+     * @var int max length of field names.
      */
-    const NAME_MAX_LENGTH = 30;
+    const NAME_MAX_LENGTH = 63;
 
     /**
      * Creates one new xmldb_field

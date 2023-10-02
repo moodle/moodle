@@ -1,3 +1,10 @@
+This file describes API changes in /mod/feedback/*
+Information provided here is intended especially for developers.
+
+=== 4.3 ===
+
+* The `$extradetails` parameter of the `\mod_feedback\output\summary` class constructor has been removed
+
 === 4.2 ===
 * The external methods get_items() and get_page_items() now only return the items when the user can access the feedback; if the
 user can't see them, a warning message will be returned, with the reasons.

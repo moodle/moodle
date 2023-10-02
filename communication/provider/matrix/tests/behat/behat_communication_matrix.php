@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// phpcs:disable PSR1.Classes.ClassDeclaration.MissingNamespace
+
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use communication_matrix\matrix_test_helper_trait;
 use Moodle\BehatExtension\Exception\SkippedException;
@@ -31,7 +33,6 @@ require_once(__DIR__ . '/../../../../tests/communication_test_helper_trait.php')
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_communication_matrix extends \behat_base {
-
     use \core_communication\communication_test_helper_trait;
     use matrix_test_helper_trait;
 

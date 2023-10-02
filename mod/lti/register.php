@@ -67,7 +67,7 @@ admin_externalpage_setup('ltitoolproxies');
 
 
 $PAGE->set_heading(get_string('toolproxyregistration', 'lti'));
-$PAGE->set_title("{$SITE->shortname}: " . get_string('toolproxyregistration', 'lti'));
+$PAGE->set_title(get_string('toolproxyregistration', 'lti'));
 
 // Print the page header.
 echo $OUTPUT->header();

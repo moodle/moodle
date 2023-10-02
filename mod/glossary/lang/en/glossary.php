@@ -89,9 +89,8 @@ $string['comments'] = 'Comments';
 $string['commentson'] = 'Comments on';
 $string['commentupdated'] = 'The comment has been updated.';
 $string['completiondetail:entries'] = 'Make entries: {$a}';
-$string['completionentries'] = 'Student must create entries:';
+$string['completionentries'] = 'Add entries';
 $string['completionentriesdesc'] = 'Student must create at least {$a} entry/entries';
-$string['completionentriesgroup'] = 'Require entries';
 $string['concept'] = 'Concept';
 $string['concepts'] = 'Concepts';
 $string['configenablerssfeeds'] = 'This switch will enable the possibility of RSS feeds for all glossaries.  You will still need to turn feeds on manually in the settings for each glossary.';
@@ -342,3 +341,6 @@ $string['youarenottheauthor'] = 'You are not the author of this comment, so you 
 
 // Deprecated since 4.0.
 $string['waitingapproval'] = 'Waiting approval';
+
+// Deprecated since 4.3.
+$string['completionentriesgroup'] = 'Require entries';

@@ -166,7 +166,13 @@ class meeting {
         $presentation = $this->instance->get_presentation_for_bigbluebutton_upload(); // The URL must contain nonce.
         $presentationname = $presentation['name'] ?? null;
         $presentationurl = $presentation['url'] ?? null;
-        $response = bigbluebutton_proxy::create_meeting($data, $metadata, $presentationname, $presentationurl);
+        $response = bigbluebutton_proxy::create_meeting(
+            $data,
+            $metadata,
+            $presentationname,
+            $presentationurl,
+            $this->instance->get_instance_id()
+        );
         // New recording management: Insert a recordingID that corresponds to the meeting created.
         if ($this->instance->is_recorded()) {
             $recording = new recording(0, (object) [
@@ -184,7 +190,11 @@ class meeting {
      * Send an end meeting message to BBB server
      */
     public function end_meeting() {
-        bigbluebutton_proxy::end_meeting($this->instance->get_meeting_id(), $this->instance->get_moderator_password());
+        bigbluebutton_proxy::end_meeting(
+            $this->instance->get_meeting_id(),
+            $this->instance->get_moderator_password(),
+            $this->instance->get_instance_id()
+        );
     }
 
     /**
@@ -240,7 +250,7 @@ class meeting {
         $meetinginfo->statusrunning = false;
         $meetinginfo->createtime = null;
 
-        $info = self::retrieve_cached_meeting_info($this->instance->get_meeting_id(), $updatecache);
+        $info = self::retrieve_cached_meeting_info($this->instance, $updatecache);
         if (!empty($info)) {
             $meetinginfo->statusrunning = $info['running'] === 'true';
             $meetinginfo->createtime = $info['createTime'] ?? null;
@@ -322,12 +332,13 @@ class meeting {
     /**
      * Gets a meeting info object cached or fetched from the live session.
      *
-     * @param string $meetingid
+     * @param instance $instance
      * @param bool $updatecache
      *
      * @return array
      */
-    protected static function retrieve_cached_meeting_info($meetingid, $updatecache = false) {
+    protected static function retrieve_cached_meeting_info(instance $instance, $updatecache = false) {
+        $meetingid = $instance->get_meeting_id();
         $cachettl = (int) config::get('waitformoderator_cache_ttl');
         $cache = cache::make_from_params(cache_store::MODE_APPLICATION, 'mod_bigbluebuttonbn', 'meetings_cache');
         $result = $cache->get($meetingid);

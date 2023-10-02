@@ -24,7 +24,6 @@ namespace core_communication;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface user_provider {
-
     /**
      * Create members.
      *

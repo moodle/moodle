@@ -43,6 +43,9 @@ class factor extends object_factor_base {
     /** @var string User verification setting */
     private $userverification;
 
+    /** @var string Factor icon */
+    protected $icon = 'fa-hand-pointer';
+
     /**
      * Create webauthn server.
      *
@@ -154,10 +157,11 @@ class factor extends object_factor_base {
     public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
         global $PAGE, $USER, $SESSION;
 
-        $mform->addElement('html', get_string('loginexplanation', 'factor_webauthn'));
-
         $mform->addElement('hidden', 'response_input', '', ['id' => 'id_response_input']);
         $mform->setType('response_input', PARAM_RAW);
+
+        // Required to attach verification errors, so they can be displayed to the user.
+        $mform->addElement('static', 'verificationcode', '', '');
 
         $ids = [];
 
@@ -248,7 +252,7 @@ class factor extends object_factor_base {
         $mform->addRule('webauthn_name', get_string('required'), 'required', null, 'client');
 
         $registerbtn = \html_writer::tag('btn', get_string('register', 'factor_webauthn'), [
-            'class' => 'btn btn-secondary',
+            'class' => 'btn btn-primary',
             'type' => 'button',
             'id' => 'factor_webauthn-register'
         ]);

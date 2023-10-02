@@ -60,7 +60,7 @@ Feature: View activity completion information for file resources
     And I press "Save and display"
     And I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
-      | Completion tracking | Students can manually mark the activity as completed |
+      | Students must manually mark the activity as done | 1 |
     And I click on "Save and return to course" "button"
     # Teacher view.
     And "Myfile" should have the "Mark as done" completion condition
@@ -86,8 +86,8 @@ Feature: View activity completion information for file resources
     And I press "Save and display"
     And I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity   | 1                                                 |
     And I press "Save and display"
     # Teacher view.
     And I am on the "Myfile" "resource activity" page

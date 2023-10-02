@@ -616,19 +616,6 @@ class mod_quiz_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = $this->_form;
         $suffix = $this->get_suffix();
-        $items = [];
-
-        $completionattemptsexhaustedel = 'completionattemptsexhausted' . $suffix;
-        $mform->addElement(
-            'advcheckbox',
-            $completionattemptsexhaustedel,
-            null,
-            get_string('completionattemptsexhausted', 'quiz'),
-            ['group' => 'cattempts']
-        );
-        $completionpassgradeel = 'completionpassgrade' . $suffix;
-        $mform->disabledIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
-        $items[] = $completionattemptsexhaustedel;
 
         $group = [];
         $completionminattemptsenabledel = 'completionminattemptsenabled' . $suffix;
@@ -642,11 +629,34 @@ class mod_quiz_mod_form extends moodleform_mod {
         $group[] = $mform->createElement('text', $completionminattemptsel, '', ['size' => 3]);
         $mform->setType($completionminattemptsel, PARAM_INT);
         $completionminattemptsgroupel = 'completionminattemptsgroup' . $suffix;
-        $mform->addGroup($group, $completionminattemptsgroupel, get_string('completionminattemptsgroup', 'quiz'), ' ', false);
-        $mform->disabledIf($completionminattemptsel, $completionminattemptsenabledel, 'notchecked');
-        $items[] = $completionminattemptsgroupel;
+        $mform->addGroup($group, $completionminattemptsgroupel, '', ' ', false);
+        $mform->hideIf($completionminattemptsel, $completionminattemptsenabledel, 'notchecked');
 
-        return $items;
+        return [$completionminattemptsgroupel];
+    }
+
+    /**
+     * Add completion grading elements to the form and return the list of element ids.
+     *
+     * @return array Array of string IDs of added items, empty array if none
+     */
+    public function add_completiongrade_rules(): array {
+        $mform = $this->_form;
+        $suffix = $this->get_suffix();
+
+        $completionattemptsexhaustedel = 'completionattemptsexhausted' . $suffix;
+        $mform->addElement(
+            'advcheckbox',
+            $completionattemptsexhaustedel,
+            null,
+            get_string('completionattemptsexhausted', 'quiz'),
+            ['group' => 'cattempts', 'parentclass' => 'ml-4']
+        );
+        $completionpassgradeel = 'completionpassgrade' . $suffix;
+        $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
+        $mform->hideIf($completionattemptsexhaustedel, $completionpassgradeel, 'notchecked');
+
+        return [$completionattemptsexhaustedel];
     }
 
     /**

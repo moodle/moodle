@@ -85,8 +85,8 @@ Feature: View activity completion in the assignment activity
     Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Completion tracking | Show activity as complete when conditions are met |
-      | Require view        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity   | 1                                                 |
       | completionusegrade  | 1                                                 |
       | completionsubmit    | 1                                                 |
     And I press "Save and display"
@@ -100,8 +100,8 @@ Feature: View activity completion in the assignment activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | assignsubmission_onlinetext_enabled | 1                                                 |
-      | Completion tracking                 | Show activity as complete when conditions are met |
-      | Require view                        | 1                                                 |
+      | Add requirements         | 1                  |
+      | View the activity                   | 1                                                 |
       | completionusegrade                  | 1                                                 |
       | completionsubmit                    | 1                                                 |
     And I press "Save and display"

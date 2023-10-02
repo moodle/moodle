@@ -143,7 +143,7 @@ if ($action === 'delete') {
                             'sesskey' => sesskey(),
                             'courseid' => $courseid);
         $optionsno = array('userid' => $entry->userid, 'courseid' => $courseid);
-        $PAGE->set_title("$SITE->shortname: $strblogs");
+        $PAGE->set_title($strblogs);
         $PAGE->set_heading($SITE->fullname);
         echo $OUTPUT->header();
 
@@ -164,11 +164,11 @@ if ($action === 'delete') {
     }
 } else if ($action == 'add') {
     $editmodetitle = $strblogs . ': ' . get_string('addnewentry', 'blog');
-    $PAGE->set_title("$SITE->shortname: $editmodetitle");
+    $PAGE->set_title($editmodetitle);
     $PAGE->set_heading(fullname($USER));
 } else if ($action == 'edit') {
     $editmodetitle = $strblogs . ': ' . get_string('editentry', 'blog');
-    $PAGE->set_title("$SITE->shortname: $editmodetitle");
+    $PAGE->set_title($editmodetitle);
     $PAGE->set_heading(fullname($USER));
 }
 

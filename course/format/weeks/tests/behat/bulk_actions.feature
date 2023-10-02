@@ -26,7 +26,7 @@ Feature: Weeks format bulk activity actions.
       | teacher1 | C1     | editingteacher |
     And I am on the "C1" "Course" page logged in as "teacher1"
     And I turn editing mode on
-    And I click on "Bulk edit" "button"
+    And I click on "Bulk actions" "button"
     And I should see "0 selected" in the "sticky-footer" "region"
 
   Scenario: Bulk hide weeks

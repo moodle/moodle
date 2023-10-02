@@ -1620,6 +1620,8 @@ function quiz_get_js_module() {
             ['functiondisabledbysecuremode', 'quiz'],
             ['startattempt', 'quiz'],
             ['timesup', 'quiz'],
+            ['show', 'moodle'],
+            ['hide', 'moodle'],
         ],
     ];
 }

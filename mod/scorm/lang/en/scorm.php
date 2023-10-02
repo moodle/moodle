@@ -89,10 +89,9 @@ $string['completiondetail:completionscore'] = 'Receive a score of {$a} or more';
 $string['completiondetail:allscos'] = 'Do all parts of this activity';
 $string['completionscorerequired'] = 'Require minimum score';
 $string['completionscorerequireddesc'] = 'Minimum score of {$a} is required for completion';
-$string['completionscorerequired_help'] = 'Enabling this setting will require a user to have at least the minimum score entered to be marked complete in this SCORM activity, as well as any other Activity Completion requirements.';
 $string['completionstatus_passed'] = 'Passed';
 $string['completionstatus_completed'] = 'Completed';
-$string['completionstatusallscos'] = 'Require all scos to return completion status';
+$string['completionstatusallscos'] = 'All SCOs must return completion status';
 $string['completionstatusallscos_help'] = 'Some SCORM packages contain multiple components or "scos" - when this is enabled all scos within the package must return the relevant lesson_status for this activity to be flagged complete.';
 $string['completionstatusrequired'] = 'Require status';
 $string['completionstatusrequireddesc'] = 'Student must achieve at least one of the following statuses: {$a}';
@@ -460,3 +459,6 @@ $string['youmustselectastatus'] = 'You must select a status to require';
 $string['info'] = 'Info';
 $string['displayactivityname'] = 'Display activity name';
 $string['displayactivityname_help'] = 'Whether or not to display the activity name above the SCORM player.';
+
+// Deprecated since Moodle 4.3.
+$string['completionscorerequired_help'] = 'Enabling this setting will require a user to have at least the minimum score entered to be marked complete in this SCORM activity, as well as any other Activity Completion requirements.';

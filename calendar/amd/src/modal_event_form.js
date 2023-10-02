@@ -58,6 +58,11 @@ export default class ModalEventForm extends Modal {
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
     }
 
+    configure(modalConfig) {
+        modalConfig.large = true;
+        super.configure(modalConfig);
+    }
+
     /**
      * Set the context id to the given value.
      *

@@ -21,31 +21,21 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
-        'jquery',
-        'core/str',
-        'core/notification',
-        'core_calendar/selectors',
-        'core_calendar/events',
-        'core_calendar/view_manager',
-        'core_calendar/repository',
-        'core/modal_factory',
-        'core_calendar/modal_event_form',
-        'core/modal_events',
-        'core_calendar/crud'
-    ],
-    function(
-        $,
-        Str,
-        Notification,
-        CalendarSelectors,
-        CalendarEvents,
-        CalendarViewManager,
-        CalendarRepository,
-        ModalFactory,
-        ModalEventForm,
-        ModalEvents,
-        CalendarCrud
-    ) {
+    'jquery',
+    'core/notification',
+    'core_calendar/selectors',
+    'core_calendar/events',
+    'core_calendar/view_manager',
+    'core_calendar/crud'
+],
+function(
+    $,
+    Notification,
+    CalendarSelectors,
+    CalendarEvents,
+    CalendarViewManager,
+    CalendarCrud
+) {
 
         var registerEventListeners = function(root, type) {
             var body = $('body');
