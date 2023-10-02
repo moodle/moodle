@@ -372,7 +372,7 @@ class observer {
 
         // Debug
         if (!PHPUNIT_TEST) {
-            mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
+            //mtrace('Iomad completion recorded for userid ' . $userid . ' in courseid ' . $courseid);
         }
 
         self::record_certificates($courseid, $userid, $trackid);
