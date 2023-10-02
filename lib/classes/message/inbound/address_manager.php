@@ -456,12 +456,27 @@ class address_manager {
      * @return string The encoded binary data
      */
     protected function pack_int($int) {
+        // If PHP environment is running on a 64-bit.
         if (PHP_INT_SIZE === 8) {
-            $l = intdiv($int, pow(2, 32)); // 32-bit integer quotient.
-            $r = $int % pow(2, 32); // 32-bit integer remaining.
+            // Will be used to ensures that the result remains as a 32-bit unsigned integer and
+            // doesn't extend beyond 32 bits.
+            $notation = 0xffffffff;
 
+            if ($int < 0) {
+                // If the given integer is negative, set it to -1.
+                $l = -1;
+            } else {
+                // Otherwise, calculate the upper 32 bits of the 64-bit integer.
+                $l = ($int >> 32) & $notation;
+            }
+
+            // Calculate the lower 32 bits of the 64-bit integer.
+            $r = $int & $notation;
+
+            // Pack the values of $l (upper 32 bits) and $r (lower 32 bits) into a binary string format.
             return pack('NN', $l, $r);
         } else {
+            // Pack the values into a binary string format.
             return pack('NN', 0, $int);
         }
     }
