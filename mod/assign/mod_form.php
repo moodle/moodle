@@ -56,6 +56,9 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addRule('name', null, 'required', null, 'client');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
+        //Standard lti
+        $this->standard_lti_elements();
+
         $this->standard_intro_elements(get_string('description', 'assign'));
 
         // Activity.

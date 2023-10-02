@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,22 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
+ * LTI web service endpoints
  *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
- *
- * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    mod_lti
+ * @category   log
+ * @copyright  Copyright (c) 2011 Moodlerooms Inc. (http://www.moodlerooms.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Chris Scribner
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2023082800.00;
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
-$release  = '4.3beta (Build: 20230923)'; // Human-friendly version name
-$branch   = '403';                     // This version's branch.
-$maturity = MATURITY_BETA;             // This version's maturity level.
+$logs = array(
+    array('module' => 'lti', 'action' => 'view', 'mtable' => 'lti', 'field' => 'name'),
+    array('module' => 'lti', 'action' => 'launch', 'mtable' => 'lti', 'field' => 'name'),
+    array('module' => 'lti', 'action' => 'view all', 'mtable' => 'lti', 'field' => 'name')
+);

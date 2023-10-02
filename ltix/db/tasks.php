@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -16,22 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * MOODLE VERSION INFORMATION
+ * This file defines tasks performed by the plugin.
  *
- * This file defines the current version of the core Moodle code being used.
- * This is compared against the values stored in the database to determine
- * whether upgrades should be performed (see lib/db/*.php)
- *
- * @package    core
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @package    mod_lti
+ * @copyright  2019 Stephen Vickers
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$version  = 2023082800.00;
-                                        //         RR    = release increments - 00 in DEV branches.
-                                        //           .XX = incremental changes.
-$release  = '4.3beta (Build: 20230923)'; // Human-friendly version name
-$branch   = '403';                     // This version's branch.
-$maturity = MATURITY_BETA;             // This version's maturity level.
+// List of tasks.
+$tasks = array(
+    array(
+        'classname' => 'mod_lti\task\clean_access_tokens',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => 'R',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    )
+);
