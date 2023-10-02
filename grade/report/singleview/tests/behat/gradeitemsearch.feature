@@ -47,17 +47,14 @@ Feature: Given we have opted to search for a grade item, Lets find and search th
     And I click on "Search items" "field"
     And I wait until "Test assignment one" "option_role" exists
     And I press the down key
-    And the focused element is "Test assignment one" "option_role"
-    And I press the end key
-    And the focused element is "Course total" "option_role"
-    And I press the home key
-    And the focused element is "Test assignment one" "option_role"
-    And I press the up key
-    And the focused element is "Course total" "option_role"
-    And I press the down key
-    And the focused element is "Test assignment one" "option_role"
-    And I press the escape key
     And the focused element is "Search items" "field"
+    And ".active" "css_element" should exist in the "Test assignment one" "option_role"
+    And I press the up key
+    And the focused element is "Search items" "field"
+    And ".active" "css_element" should exist in the "Course total" "option_role"
+    And I press the down key
+    And the focused element is "Search items" "field"
+    And ".active" "css_element" should exist in the "Test assignment one" "option_role"
     Then I set the field "Search items" to "Goodmeme"
     And I wait until "Test assignment one" "option_role" does not exist
     And I press the down key

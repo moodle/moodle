@@ -168,40 +168,19 @@ export default class GroupSearch extends search_combobox {
      * @param {MouseEvent} e The triggering event that we are working with.
      */
     async clickHandler(e) {
-        if (e.target.closest(this.selectors.dropdown)) {
-            // Forcibly prevent BS events so that we can control the open and close.
-            // Really needed because by default input elements cant trigger a dropdown.
-            e.stopImmediatePropagation();
-        }
-        this.clearSearchButton.addEventListener('click', async() => {
+        if (e.target.closest(this.selectors.clearSearch)) {
+            e.stopPropagation();
+            // Clear the entered search query in the search bar.
             this.searchInput.value = '';
             this.setSearchTerms(this.searchInput.value);
+            this.searchInput.focus();
+            this.clearSearchButton.classList.add('d-none');
+            // Display results.
             await this.filterrenderpipe();
-        });
+        }
         // Prevent normal key presses activating this.
         if (e.target.closest('.dropdown-item') && e.button === 0) {
             window.location = e.target.closest('.dropdown-item').href;
-        }
-    }
-
-    /**
-     * The handler for when a user presses a key within the component.
-     *
-     * @param {KeyboardEvent} e The triggering event that we are working with.
-     */
-    keyHandler(e) {
-        super.keyHandler(e);
-        // Switch the key presses to handle keyboard nav.
-        switch (e.key) {
-            case 'Escape':
-                if (document.activeElement.getAttribute('role') === 'option') {
-                    e.stopPropagation();
-                    this.searchInput.focus({preventScroll: true});
-                } else if (e.target.closest(this.selectors.input)) {
-                    const trigger = this.component.querySelector(this.selectors.trigger);
-                    trigger.focus({preventScroll: true});
-                }
-                break;
         }
     }
 

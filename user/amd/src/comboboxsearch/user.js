@@ -36,13 +36,18 @@ export default class UserSearch extends search_combobox {
 
     constructor() {
         super();
-        // Register a small click event onto the document since we need to check if they are clicking off the component.
-        document.addEventListener('click', (e) => {
-            // Since we are handling dropdowns manually, ensure we can close it when clicking off.
-            if (!e.target.closest(this.selectors.component) && this.searchDropdown.classList.contains('show')) {
-                this.toggleDropdown();
-            }
+        // Register a couple of events onto the document since we need to check if they are moving off the component.
+        ['click', 'focus'].forEach(eventType => {
+            // Since we are handling dropdowns manually, ensure we can close it when moving off.
+            document.addEventListener(eventType, e => {
+                if (this.searchDropdown.classList.contains('show') && !this.combobox.contains(e.target)) {
+                    this.toggleDropdown();
+                }
+            }, true);
         });
+
+        // Register keyboard events.
+        this.component.addEventListener('keydown', this.keyHandler.bind(this));
 
         // Define our standard lookups.
         this.selectors = {...this.selectors,
@@ -191,11 +196,6 @@ export default class UserSearch extends search_combobox {
      */
     clickHandler(e) {
         super.clickHandler(e).catch(Notification.exception);
-        if (e.target.closest(this.selectors.component)) {
-            // Forcibly prevent BS events so that we can control the open and close.
-            // Really needed because by default input elements cant trigger a dropdown.
-            e.stopImmediatePropagation();
-        }
         if (e.target === this.getHTMLElements().currentViewAll && e.button === 0) {
             window.location = this.selectAllResultsLink();
         }
@@ -210,47 +210,19 @@ export default class UserSearch extends search_combobox {
      * @param {KeyboardEvent} e The triggering event that we are working with.
      */
     keyHandler(e) {
-        // We don't call the super here because we want to let aria.js handle the key presses mostly.
-
-        if (e.target === this.getHTMLElements().currentViewAll && (e.key === 'Enter' || e.key === 'Space')) {
-            window.location = this.selectAllResultsLink();
-        }
-
         // Switch the key presses to handle keyboard nav.
         switch (e.key) {
             case 'Enter':
             case ' ':
-                e.stopPropagation();
-                if (document.activeElement === this.getHTMLElements().searchInput) {
-                    if (e.key === 'Enter' && this.selectAllResultsLink() !== null) {
-                        window.location = this.selectAllResultsLink();
-                    }
-                }
-                if (document.activeElement === this.getHTMLElements().clearSearchButton) {
-                    this.closeSearch(true);
-                    break;
-                }
                 if (e.target.closest(this.selectors.resetPageButton)) {
+                    e.stopPropagation();
                     window.location = e.target.closest(this.selectors.resetPageButton).href;
-                    break;
-                }
-                if (e.target.closest('.dropdown-item')) {
-                    e.preventDefault();
-                    window.location = e.target.closest('.dropdown-item').href;
                     break;
                 }
                 break;
             case 'Escape':
                 this.toggleDropdown();
                 this.searchInput.focus({preventScroll: true});
-                break;
-            case 'Tab':
-                // If the current focus is on clear search, then check if viewall exists then around tab to it.
-                if (e.target.closest(this.selectors.clearSearch)) {
-                    if (this.currentViewAll && !e.shiftKey) {
-                        this.closeSearch();
-                    }
-                }
                 break;
         }
     }
@@ -265,6 +237,7 @@ export default class UserSearch extends search_combobox {
             this.searchDropdown.classList.add('show');
             $(this.searchDropdown).show();
             this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'true');
+            this.searchInput.focus({preventScroll: true});
         } else {
             this.searchDropdown.classList.remove('show');
             $(this.searchDropdown).hide();

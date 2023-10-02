@@ -103,7 +103,7 @@ class action_bar extends \core_grades\output\action_bar {
                 true,
                 $searchinput,
                 null,
-                'user-search dropdown d-flex',
+                'user-search d-flex',
                 null,
                 'usersearchdropdown overflow-auto',
                 null,

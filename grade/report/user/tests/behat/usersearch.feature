@@ -187,6 +187,7 @@ Feature: Within the User report, a teacher can search for users.
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
     And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I press the up key
     And I press the enter key
     And I wait until the page is ready
     And "Student 1" "heading" should exist

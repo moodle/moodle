@@ -25928,21 +25928,21 @@ blockquote {
 }
 
 /* Combobox search dropdowns */
-.usersearchdropdown,
-.gradesearchdropdown,
-.groupsearchdropdown {
-  max-width: 350px;
+.usersearchdropdown.dropdown-menu,
+.gradesearchdropdown.dropdown-menu,
+.groupsearchdropdown.dropdown-menu {
+  width: 350px;
 }
-.usersearchdropdown .searchresultitemscontainer,
-.gradesearchdropdown .searchresultitemscontainer,
-.groupsearchdropdown .searchresultitemscontainer {
+.usersearchdropdown.dropdown-menu .searchresultitemscontainer,
+.gradesearchdropdown.dropdown-menu .searchresultitemscontainer,
+.groupsearchdropdown.dropdown-menu .searchresultitemscontainer {
   max-height: 170px;
   overflow: auto;
   /* stylelint-disable declaration-no-important */
 }
-.usersearchdropdown .searchresultitemscontainer img,
-.gradesearchdropdown .searchresultitemscontainer img,
-.groupsearchdropdown .searchresultitemscontainer img {
+.usersearchdropdown.dropdown-menu .searchresultitemscontainer img,
+.gradesearchdropdown.dropdown-menu .searchresultitemscontainer img,
+.groupsearchdropdown.dropdown-menu .searchresultitemscontainer img {
   height: 48px !important;
   width: 48px !important;
 }

@@ -185,16 +185,14 @@ Feature: Within the grader report, test that we can collapse columns
     # Move onto general keyboard navigation testing.
     Then the focused element is "Search collapsed columns" "field"
     And I press the down key
-    And the focused element is "Email address" "option_role"
-    And I press the end key
-    And the focused element is "Country" "option_role"
-    And I press the home key
-    And the focused element is "Email address" "option_role"
+    And the focused element is "Search collapsed columns" "field"
+    And ".active" "css_element" should exist in the "Email address" "option_role"
     And I press the up key
-    And the focused element is "Country" "option_role"
+    And the focused element is "Search collapsed columns" "field"
+    And ".active" "css_element" should exist in the "Country" "option_role"
     And I press the down key
-    And the focused element is "Email address" "option_role"
-    And I press the end key
+    And the focused element is "Search collapsed columns" "field"
+    And ".active" "css_element" should exist in the "Email address" "option_role"
     And I press the tab key
     And the focused element is "Select all" "checkbox"
     And I press the escape key

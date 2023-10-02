@@ -271,6 +271,7 @@ Feature: Within the grader report, test that we can search for users
     # Ensure we can interact with the input & clear search options with the keyboard.
     # Space & Enter have the same handling for triggering the two functionalities.
     And I set the field "Search users" to "User"
+    And I press the up key
     And I press the enter key
     And I wait to be redirected
     And the following should exist in the "user-grades" table:

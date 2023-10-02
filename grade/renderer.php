@@ -95,7 +95,7 @@ class core_grades_renderer extends plugin_renderer_base {
             $sbody,
             'group-search',
             'groupsearchwidget',
-            'groupsearchdropdown overflow-auto w-100',
+            'groupsearchdropdown overflow-auto',
         );
         return $this->render_from_template($groupdropdown->get_template(), $groupdropdown->export_for_template($this));
     }

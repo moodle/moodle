@@ -57,7 +57,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             true,
             $this->render_from_template('core_user/comboboxsearch/user_selector', $data),
             null,
-            'user-search dropdown d-flex',
+            'user-search d-flex',
             null,
             'usersearchdropdown overflow-auto',
             null,
@@ -99,7 +99,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             $sbody,
             'grade-search h-100',
             'gradesearchwidget h-100',
-            'gradesearchdropdown overflow-auto w-100',
+            'gradesearchdropdown overflow-auto',
         );
         return $this->render_from_template($dropdown->get_template(), $dropdown->export_for_template($this));
     }

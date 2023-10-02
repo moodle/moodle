@@ -105,7 +105,7 @@ class gradereport_user_renderer extends plugin_renderer_base {
             true,
             $this->render_from_template('core_user/comboboxsearch/user_selector', $data),
             null,
-            'user-search dropdown d-flex',
+            'user-search d-flex',
             null,
             'usersearchdropdown overflow-auto',
             null,
