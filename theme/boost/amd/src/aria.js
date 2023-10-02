@@ -79,13 +79,10 @@ const dropdownFix = () => {
         const menu = e.target.parentElement.querySelector('[role="menu"]');
         let menuItems = false;
         let foundMenuItem = false;
-        let textInput = false;
 
         if (menu) {
             menuItems = menu.querySelectorAll('[role="menuitem"]');
-            textInput = e.target.parentElement.querySelector('[data-action="search"]');
         }
-
         if (menuItems && menuItems.length > 0) {
             // Up key opens the menu at the end.
             if (trigger === 'ArrowUp') {
@@ -102,10 +99,7 @@ const dropdownFix = () => {
             }
         }
 
-        if (textInput) {
-            shiftFocus(textInput);
-        }
-        if (foundMenuItem && textInput === null) {
+        if (foundMenuItem) {
             shiftFocus(foundMenuItem);
         }
     };
