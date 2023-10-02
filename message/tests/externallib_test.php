@@ -1438,13 +1438,14 @@ class externallib_test extends externallib_advanced_testcase {
         $eventdata->smallmessage      = $eventdata->subject;
         message_send($eventdata);
 
+        // This event contains HTML in the subject field that will be removed by the WS (otherwise it will generate an exception).
         $eventdata = new \core\message\message();
         $eventdata->courseid         = $course->id;
         $eventdata->name             = 'submission';
         $eventdata->component        = 'mod_feedback';
         $eventdata->userfrom         = $user1;
         $eventdata->userto           = $user2;
-        $eventdata->subject          = 'Feedback submitted';
+        $eventdata->subject          = 'Feedback submitted <span>with html</span>';
         $eventdata->fullmessage      = 'Feedback submitted from an user';
         $eventdata->fullmessageformat = FORMAT_PLAIN;
         $eventdata->fullmessagehtml  = '<strong>Feedback submitted</strong>';
