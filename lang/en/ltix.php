@@ -272,15 +272,6 @@ real estate to the tool, and others provide a more integrated feel with the Mood
         It is possible that browsers will prevent the new window from opening.';
 $string['launchoptions'] = 'Launch options';
 $string['lti'] = 'LTI';
-$string['lti:addcoursetool'] = 'Add course-specific tool configurations';
-$string['lti:addmanualinstance'] = 'Add a manually-configured tool';
-$string['lti:addinstance'] = 'Add a new external tool';
-$string['lti:addpreconfiguredinstance'] = 'Add a preconfigured tool';
-$string['lti:grade'] = 'View grades returned by the external tool';
-$string['lti:manage'] = 'Be an Instructor when the tool is launched';
-$string['lti:admin'] = 'Be an administrator when the tool is launched';
-$string['lti:requesttooladd'] = 'Request a tool is configured site-wide';
-$string['lti:view'] = 'Launch external tool activities';
 $string['ltisettings'] = 'LTI settings';
 $string['lti_administration'] = 'Edit preconfigured tool';
 $string['lti_errormsg'] = 'The tool returned the following error message: "{$a}"';

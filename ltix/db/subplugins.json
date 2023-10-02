@@ -1,6 +1,0 @@
-{
-    "plugintypes": {
-        "ltisource": "mod\/lti\/source",
-        "ltiservice": "mod\/lti\/service"
-    }
-}

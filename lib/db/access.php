@@ -2742,6 +2742,16 @@ $capabilities = array(
         ]
     ],
 
+    // The ability to create or edit tool configurations for particular courses.
+    'moodle/ltix:addcoursetool' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSE,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
+    ),
+
     // Add an External tool activity to a course.
     'moodle/ltix:addinstance' => array(
         'riskbitmask' => RISK_XSS,
@@ -2775,5 +2785,17 @@ $capabilities = array(
             'manager' => CAP_ALLOW
         ),
         'clonepermissionsfrom' => 'moodle/ltix:addinstance',
+    ),
+
+    // Whether the user can see the link to the external tool and follow it.
+    'moodle/ltix:view' => array(
+        'captype' => 'read',
+        'contextlevel' => CONTEXT_MODULE,
+        'archetypes' => array(
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        )
     ),
 );
