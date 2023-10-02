@@ -39,7 +39,6 @@ Feature: We can change what we are viewing on the grader report
   @javascript
   Scenario: View and minimise the grader report containing hidden activities
     When I am on "Course 1" course homepage with editing mode on
-    And I change window size to "large"
     And I open "Test assignment name 2" actions menu
     And I choose "Availability > Hide on course page" in the open action menu
     And I am on "Course 1" course homepage with editing mode off

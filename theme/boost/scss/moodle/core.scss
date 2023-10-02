@@ -45,6 +45,10 @@ $font-size-xs: ($font-size-base * .75) !default;
     @media (prefers-reduced-motion: reduce) {
         animation: none;
     }
+
+    body.behat-site & {
+        animation: none;
+    }
 }
 
 .context-header-settings-menu .dropdown-toggle > .icon,

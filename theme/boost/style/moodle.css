@@ -26036,6 +26036,9 @@ blockquote {
     animation: none;
   }
 }
+body.behat-site .action-menu .dropdown-subpanel-content.show {
+  animation: none;
+}
 .action-menu .dropdown-subpanel .dropdown-item::after {
   border: 0;
   content: "\f054";
