@@ -241,7 +241,9 @@ class core_shutdown_manager {
         }
 
         // Close the current streaming element if any.
-        echo $OUTPUT->close_element_for_append();
+        if ($OUTPUT->has_started()) {
+            echo $OUTPUT->close_element_for_append();
+        }
 
         // Print any closing buffered tags.
         if (!empty($CFG->closingtags)) {
