@@ -3406,6 +3406,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
      { 
          global $DB,$CFG;
          $check_uniquefield = $DB->get_record('qbassign', array('uid' => $uid));
+         $maxfilesubmissions = ($maxfilesubmissions!='')?$maxfilesubmissions:5;
          if($check_uniquefield->id!='')
          {  
              //Update assignment details if unique field already present
