@@ -3023,7 +3023,7 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
     var $_openHiddenFieldsetTemplate = "\n\t<fieldset class=\"hidden\"><div>";
 
     /** @var string Template used when opening a fieldset */
-    var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id}>";
+    var $_openFieldsetTemplate = "\n\t<fieldset class=\"{classes}\" {id} {style}>";
 
     /** @var string Template used when closing a fieldset */
     var $_closeFieldsetTemplate = "\n\t\t</div></fieldset>";
@@ -3366,8 +3366,13 @@ class MoodleQuickForm_Renderer extends HTML_QuickForm_Renderer_Tableless{
             $fieldsetclasses[] = 'containsadvancedelements';
         }
 
+        $teacherRestrictionSections = array('id_availability','id_feedbacktypes','id_submissionsettings','id_groupsubmissionsettings','id_notifications','id_modstandardgrade','id_modstandardelshdr','id_activitycompletionheader','id_tagshdr','id_competenciessection','id_timing','id_layouthdr','id_interactionhdr','id_reviewoptionshdr','id_display','id_seb','id_security','id_overallfeedbackhdr','id_appearancehdr');
+
+        $hidesection = !is_siteadmin() && in_array($header->getAttribute('id'),$teacherRestrictionSections) ? 'style="display:none !important;"' : '';
+
         $openFieldsetTemplate = str_replace('{id}', $id, $this->_openFieldsetTemplate);
         $openFieldsetTemplate = str_replace('{classes}', join(' ', $fieldsetclasses), $openFieldsetTemplate);
+        $openFieldsetTemplate = str_replace('{style}', $hidesection, $openFieldsetTemplate);
 
         $this->_html .= $openFieldsetTemplate . $headerhtml;
         $this->_fieldsetsOpen++;

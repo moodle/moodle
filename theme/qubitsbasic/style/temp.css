@@ -49,7 +49,7 @@
   border-left: 4px solid #cacaca !important;
 }
 #section-0 {
-  display: none !important;
+ /* display: none !important; */
 }
 .activity-item {
   border-radius: 0px !important;
