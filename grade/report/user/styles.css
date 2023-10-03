@@ -67,6 +67,8 @@
 .grade-report-user .user-grade .baggt,
 .grade-report-user .user-grade .baggb {
     font-weight: bold;
+    background-color: #f8f9fa;
+    border: none;
 }
 
 .path-grade-report-user .user-report-container,
@@ -99,23 +101,30 @@
     border-bottom: 1px solid #dee2e6;
 }
 
-.path-grade-report-user .user-grade td.category,
-.grade-report-user .user-grade td.category {
+.path-grade-report-user .user-grade th.column-itemname:not(.header,.category,.baggt,.baggb),
+.grade-report-user .user-grade th.column-itemname:not(.header,.category,.baggt,.baggb) {
+    background-color: white;
+    font-weight: normal;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.path-grade-report-user .user-grade th.category,
+.grade-report-user .user-grade th.category {
     background-color: white;
     border: 1px solid #dee2e6;
     padding-left: 10px;
     font-weight: bold;
 }
 
-.path-grade-report-user .user-grade td.category a[aria-expanded="true"] .expanded,
-.path-grade-report-user .user-grade td.category a[aria-expanded="false"] .collapsed,
-.grade-report-user .user-grade td.category a[aria-expanded="true"] .expanded,
-.grade-report-user .user-grade td.category a[aria-expanded="false"] .collapsed {
+.path-grade-report-user .user-grade th.category a[aria-expanded="true"] .expanded,
+.path-grade-report-user .user-grade th.category a[aria-expanded="false"] .collapsed,
+.grade-report-user .user-grade th.category a[aria-expanded="true"] .expanded,
+.grade-report-user .user-grade th.category a[aria-expanded="false"] .collapsed {
     display: none;
 }
 
-.path-grade-report-user .user-grade td.category a.toggle-category,
-.grade-report-user .user-grade td.category a.toggle-category {
+.path-grade-report-user .user-grade th.category a.toggle-category,
+.grade-report-user .user-grade th.category a.toggle-category {
     height: 24px;
     width: 24px;
     font-size: 12px;
@@ -123,8 +132,8 @@
     margin-right: 3px;
 }
 
-.path-grade-report-user .user-grade td.category a.toggle-category i,
-.grade-report-user .user-grade td.category a.toggle-category i {
+.path-grade-report-user .user-grade th.category a.toggle-category i,
+.grade-report-user .user-grade th.category a.toggle-category i {
     font-size: 12px;
     width: 12px;
     height: 12px;
@@ -173,14 +182,14 @@
 }
 
 @media print {
-    .path-grade-report-user .user-grade td.category,
-    .grade-report-user .user-grade td.category {
+    .path-grade-report-user .user-grade th.category,
+    .grade-report-user .user-grade th.category {
         border-left: none;
         border-right: none;
     }
 
-    .path-grade-report-user .user-grade td.category a.toggle-category,
-    .grade-report-user .user-grade td.category a.toggle-category
+    .path-grade-report-user .user-grade th.category a.toggle-category,
+    .grade-report-user .user-grade th.category a.toggle-category
     .path-grade-report-user #page-footer {
         display: none;
     }
