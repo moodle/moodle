@@ -38,3 +38,29 @@ Feature: The questions in the question bank can be filtered by combine various c
     And I should not see "question 2 name" in the "categoryquestions" "table"
     And I should not see "question 3 name" in the "categoryquestions" "table"
     And I should not see "question 4 name" in the "categoryquestions" "table"
+
+  @javascript
+  Scenario: Filters persist when the page is reloaded
+    Given the following "questions" exist:
+      | questioncategory | qtype     | name                 | user     | questiontext | status |
+      | Test questions 1 | essay     | hidden question name | teacher1 | Hidden text  | hidden |
+    And the following "core_question > Tags" exist:
+      | question             | tag |
+      | hidden question name | foo |
+    And I apply question bank filter "Category" with value "Test questions 1"
+    And I apply question bank filter "Tag" with value "foo"
+    And I apply question bank filter "Show hidden questions" with value "Yes"
+    And I should see "question 1 name" in the "categoryquestions" "table"
+    And I should see "hidden question name" in the "categoryquestions" "table"
+    And I should not see "question 2 name" in the "categoryquestions" "table"
+    And I should not see "question 3 name" in the "categoryquestions" "table"
+    And I should not see "question 4 name" in the "categoryquestions" "table"
+    When I reload the page
+    Then I should see "Test questions 1 (2)" in the "Filter 1" "fieldset"
+    And the field "Show hidden questions" matches value "Yes"
+    And I should see "foo" in the "Filter 3" "fieldset"
+    And I should see "question 1 name" in the "categoryquestions" "table"
+    And I should see "hidden question name" in the "categoryquestions" "table"
+    And I should not see "question 2 name" in the "categoryquestions" "table"
+    And I should not see "question 3 name" in the "categoryquestions" "table"
+    And I should not see "question 4 name" in the "categoryquestions" "table"
