@@ -604,12 +604,6 @@ class add_category extends dynamic_form {
         $local = $this->get_gradecategory();
         $gradecategory = $local['gradecategory'];
 
-        // GRADE ITEM.
-        // Grade item data saved with prefix "grade_item_".
-        $data->grade_item_gradepass = $local['categoryitem']->grade_item_gradepass;
-        $data->grade_item_grademax = $local['categoryitem']->grade_item_grademax;
-        $data->grade_item_grademin = $local['categoryitem']->grade_item_grademin;
-
         grade_edit_tree::update_gradecategory($gradecategory, $data);
 
         return [
