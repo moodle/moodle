@@ -347,7 +347,7 @@ class discussion_list extends db_table_vault {
             $favouritesort .= ", {$favalias}.itemtype DESC";
         }
 
-        return "{$alias}.pinned DESC $favouritesort , {$keyfield} {$direction}";
+        return "{$alias}.pinned DESC $favouritesort , {$keyfield} {$direction}, {$alias}.id {$direction}";
     }
 
     /**
