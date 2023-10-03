@@ -20,6 +20,7 @@ use advanced_testcase;
 use context;
 use context_module;
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
+use quiz_statistics\tests\statistics_helper;
 use core_question_generator;
 use Generator;
 use mod_quiz\quiz_settings;
@@ -249,8 +250,7 @@ class statistics_bulk_loader_test extends advanced_testcase {
 
         // Calculate the statistics.
         $this->expectOutputRegex('~.*Calculations completed.*~');
-        $statisticstask = new \quiz_statistics\task\recalculate();
-        $statisticstask->execute();
+        statistics_helper::run_pending_recalculation_tasks();
 
         return [$quiz1, $quiz2, $questions];
     }
