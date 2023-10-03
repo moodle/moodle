@@ -3437,7 +3437,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              'add' => 0,
              'update' => $check_coursemodulefield->id,
              'completion' => 1,
-             'completionsubmit' => 1
+             'completionsubmit' => 1,
              );
              $returnid = qbassign_update_instance($formdata,null);
  
@@ -3677,7 +3677,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  'blindmarking' => 0,
                  'markingworkflow' =>0,
                  'completion' => 1,
-                 'completionsubmit' => 1,
+                 'completionsubmit' => 1
              );
              $returnid = qbassign_add_instance($formdata,null);
  
