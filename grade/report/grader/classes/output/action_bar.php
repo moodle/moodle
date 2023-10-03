@@ -40,7 +40,7 @@ class action_bar extends \core_grades\output\action_bar {
     public function __construct(\context_course $context) {
         parent::__construct($context);
 
-        $this->usersearch = optional_param('searchvalue', '', PARAM_NOTAGS);
+        $this->usersearch = optional_param('gpr_search', '', PARAM_NOTAGS);
     }
 
     /**
