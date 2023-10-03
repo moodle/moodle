@@ -2141,6 +2141,8 @@ class core_message_external extends external_api {
                     $message->usertofullname = $usertofullname;
                 }
 
+                // Clean subject of html.
+                $message->subject = clean_param($message->subject, PARAM_TEXT);
                 $message->text = message_format_message_text($message);
                 $messages[$mid] = (array) $message;
             }
