@@ -3515,7 +3515,7 @@ privatefiles,moodle|/user/files.php';
 
         // Regardless of database regex support we check the hash length which should be enough.
         // But extra regex or like matching makes sure.
-        $sql = "SELECT id FROM {user} WHERE LENGTH(password) = 32 AND $condition";
+        $sql = "SELECT id FROM {user} WHERE " . $DB->sql_length('password') . " = 32 AND $condition";
         $userids = $DB->get_fieldset_sql($sql, $params);
 
         // Update the password for each user with a new SHA-512 hash.
