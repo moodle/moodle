@@ -1,0 +1,30 @@
+{
+	"title" : "4.2 Master Challenge 1",
+	"question": "Create a Hello class and design it to greet the user in a variety of world languages such as English, Spanish, French, Russian, Indian, and so on.<br><br>For this task, complete the following:<br>1. Use the Scanner class to ask the user for their name.<br>2. Create a Hello object by passing the name to the constructor.<br>3. Call at least 3 methods from the Hello class to print the greeting in 3 different languages.<br>4. Remember to call the methods of the Hello class in the HelloMain class.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP4-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

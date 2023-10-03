@@ -42,6 +42,11 @@
               "uid": "DJL01-TP1-CHDRN4",
               "fname": "DJL01-TP1-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U01-CHDRN1",
+              "fname": "DJL01-U01-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -77,6 +82,11 @@
               "uid": "DJL01-TP2-CHDRN4",
               "fname": "DJL01-TP2-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U02-CHDRN1",
+              "fname": "DJL01-U02-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -112,6 +122,11 @@
               "uid": "DJL01-TP3-CHDRN4",
               "fname": "DJL01-TP3-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U03-CHDRN1",
+              "fname": "DJL01-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -154,6 +169,11 @@
               "uid": "DJL01-TP4-CHDRN5",
               "fname": "DJL01-TP4-CHDRN5.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U04-CHDRN1",
+              "fname": "DJL01-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -203,6 +223,11 @@
               "uid": "DJL01-TP5-CHDRN6",
               "fname": "DJL01-TP5-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U05-CHDRN1",
+              "fname": "DJL01-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -238,6 +263,11 @@
               "uid": "DJL01-TP6-CHDRN4",
               "fname": "DJL01-TP6-CHDRN4.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DJL01-U06-CHDRN1",
+              "fname": "DJL01-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

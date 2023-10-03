@@ -1,0 +1,30 @@
+{
+	"title" : "5.3 Master Challenge 2",
+	"question": "Create a Certificate of Appreciation for Eric who topped the Math Wizard Competition held in school, using the Certifi cate template. (Note : The orientation of the certifi cate should be Landscape.). A sample is given here<br><img src='https://learn.qubitsedu.com/images/DC_L04_U05_S03_Challenge2.jpg' width='25%' height='90%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL04-TP5-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

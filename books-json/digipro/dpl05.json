@@ -501,6 +501,36 @@
               "uid": "DPL05-U04-CHDRN1",
               "fname": "DPL05-U04-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN7",
+              "fname": "DPL05-TP4-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN8",
+              "fname": "DPL05-TP4-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN9",
+              "fname": "DPL05-TP4-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN10",
+              "fname": "DPL05-TP4-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN11",
+              "fname": "DPL05-TP4-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP4-CHDRN12",
+              "fname": "DPL05-TP4-CHDRN12.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"
@@ -555,6 +585,41 @@
               "uid": "DPL05-U05-CHDRN1",
               "fname": "DPL05-U05-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN7",
+              "fname": "DPL05-TP5-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN8",
+              "fname": "DPL05-TP5-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN9",
+              "fname": "DPL05-TP5-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN10",
+              "fname": "DPL05-TP5-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN11",
+              "fname": "DPL05-TP5-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN12",
+              "fname": "DPL05-TP5-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL05-TP5-CHDRN13",
+              "fname": "DPL05-TP5-CHDRN13.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"

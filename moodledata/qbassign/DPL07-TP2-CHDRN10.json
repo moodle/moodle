@@ -1,0 +1,30 @@
+{
+	"title" : "2.2 Master Challenge 2",
+	"question": "What would be the type of the number which is obtained by dividing two integers? Will it always be an integer?<br>Write a program that divides the number 5 by number 3 and displays the data type of the result. Provide the algorithm and the flowchart for your approach.<br><img src='https://learn.qubitsedu.com/images/DP_L07_U02_S02_Challenge2.png' width='30%' height='90%'",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL07-TP2-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

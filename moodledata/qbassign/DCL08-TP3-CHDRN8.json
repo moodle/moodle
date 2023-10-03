@@ -1,0 +1,30 @@
+{
+	"title" : "3.1 Master Challenge 3",
+	"question": "Create an HTML web page that says “Hello Kitty!”.<br><br>Apply a simple heading “Hello, Kitty!” with the help of heading tag 'h1'. Put the 'h1' tag inside the HTML document’s 'body' tag.<br><br>The output should look like this:<br><img src='https://learn.qubitsedu.com/images/DCL08_U03_S01_challenge-3.png' height='20%' width='20%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL08-TP3-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

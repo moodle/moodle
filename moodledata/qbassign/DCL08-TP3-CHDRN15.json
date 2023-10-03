@@ -1,0 +1,30 @@
+{
+	"title" : "3.4 Master Challenge 1",
+	"question": "Create an HTML web page for the menu card at Uncle Peter’s restaurant.<br>◼ Add a CSS rule to style the text Today’s Specials so that it is italic and the font color is gray.<br>◼ Add a CSS rule to style the text garlic potato so that it has the background color gray.<br>◼ Add a CSS rule to style the text Caesar salad so that it has the font color red.<br>◼ Add a CSS rule to style the text mushrooms so that it has the font color green.<br><img src='https://learn.qubitsedu.com/images/DCL08_U03_S04_challenge-1.png' height='65%' width='50%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL08-TP3-CHDRN15",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

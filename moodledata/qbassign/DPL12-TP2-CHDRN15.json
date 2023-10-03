@@ -1,0 +1,30 @@
+{
+	"title" : "2.3 Master Challenge 1",
+	"question": "A school has organized a talent show for various events like singing, dancing, sketching and so on. Each participant is to be rated on a scale of 1 to 5. On the basis of these ratings,performance reviews are allotted to the participants.<br>If a participant is rated 3 or more, the performance review states:<br>Excellent! You did a great job.<br>Otherwise, the review states:<br>Good! Your participation is appreciated.<br>Create a program for performance review allocation as per the following guidelines:<br>1. Prompt the user to input the rating of a participant.<br>2. Test the ratings to get the performance remark using an if-else statement.<br>3. Print the statements accordingly.<br>Here is an example:<br><img src='https://learn.qubitsedu.com/images/DPL12U02S02Image2.png' width='50%' height='70%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN15",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

@@ -1,0 +1,30 @@
+{
+  "title": "4.3 Master Challenge 2",
+  "question": "Create a JavaScript program where two random numbers are obtained from a user and they are compared using the if-else conditional to provide an output stating which one of them is larger. Use the Console in your web browser to test your code and then submit it. <br>For example, if the user inputs 45 and 86, your JavaScript code should compare these two numbers using the if-else conditional and print that 86 is larger than 45 on the Console.",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL09-TP4-CHDRN13",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

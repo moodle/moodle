@@ -1,0 +1,30 @@
+{
+	"title" : "4.1 Master Challenge 2",
+	"question": "You have a CSV file containing information about the list of attendees at a conference and their nationalities. You can access the CSV file from the link given here. Note that the CSV file has a lot of duplicate entries.<br><a href='go.qubitscs.com/PVzR' target='_blank'>go.qubitscs.com/PVzR</a><br>Write a Python program using sets to perform the following tasks:<br>● Create a unique list of attendees and print them.<br>● Create a list of countries from which the attendees were present.<br>● Get the total count of attendees and the total number of countries that attended.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP4-CHDRN8",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

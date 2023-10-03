@@ -1,0 +1,30 @@
+{
+	"title" : "4.1 Master Challenge 3",
+	"question": "Robert is tasked with writing a Python function that can multiply integers.<br><img src='https://learn.qubitsedu.com/images/DP_L09_U04_S01_Challenge3_image1.JPG' width='70%' height='30%' /> <br>He writes the initial code as given below:<br>He runs the following tests:<br><img src='https://learn.qubitsedu.com/images/DP_L09_U04_S01_Challenge3_image2.JPG' width='70%' height='70%' /><br>The first two tests work without any problem, but the third test generates an error. It states that the function can take only two positional arguments.<br><br>Help Robert code a more efficient multiplication function that can take arbitrary arguments.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP4-CHDRN9",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

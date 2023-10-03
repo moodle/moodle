@@ -1,0 +1,30 @@
+{
+	"title" : "3.3 Master Challenge 1",
+	"question": "A food chain consists of producers and consumers. Consumers are again classiﬁed as primary, secondary, and tertiary consumers based on their feeding patterns. Create a game where a carnivorous animal or predator is the main sprite. The stage should have multiple sprites of animals that the main sprite can prey upon. The user should be able to move the predator sprite along with the mouse pointer. The prey sprites should vanish from the stage once the predator sprite touches them. Within 15 seconds, the user should make the predator sprite prey upon as many animals as possible in order to win. Save the game as a Food Chain.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL06-TP3-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

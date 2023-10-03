@@ -22,13 +22,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['activityattachments'] = 'qbassignment activity attachments';
+$string['activityattachments'] = 'assignment activity attachments';
 $string['activitydate:submissionsdue'] = 'Due:';
 $string['activitydate:submissionsopen'] = 'Opens:';
 $string['activitydate:submissionsopened'] = 'Opened:';
 $string['activityeditor'] = 'Activity instructions';
-$string['activityeditor_help'] = 'The actions you would like the student to complete for this qbassignment. This is only shown on the submission page where a student edits and submits their qbassignment.';
-$string['activityoverview'] = 'You have qbassignments that need attention';
+$string['activityeditor_help'] = 'The actions you would like the student to complete for this assignment. This is only shown on the submission page where a student edits and submits their assignment.';
+$string['activityoverview'] = 'You have assignments that need attention';
 $string['addattempt'] = 'Allow another attempt';
 $string['addnewattempt'] = 'Add a new attempt';
 $string['addnewattempt_help'] = 'This will create a new blank submission for you to work on.';
@@ -40,21 +40,21 @@ $string['addsubmission'] = 'Add submission';
 $string['addsubmission_help'] = 'You have not made a submission yet.';
 $string['allocatedmarker'] = 'Allocated Marker';
 $string['allocatedmarker_help'] = 'Marker allocated to this submission.';
-$string['allowsubmissions'] = 'Allow the user to continue making submissions to this qbassignment.';
+$string['allowsubmissions'] = 'Allow the user to continue making submissions to this assignment.';
 $string['allowsubmissionsshort'] = 'Allow submission changes';
 $string['allowsubmissionsfromdate'] = 'Allow submissions from';
 $string['allowsubmissionsfromdate_help'] = 'If enabled, students will not be able to submit before this date. If disabled, students will be able to start submitting right away.';
 $string['alwaysshowdescription'] = 'Always show description';
-$string['alwaysshowdescription_help'] = 'If disabled, the qbassignment description above will only become visible to students on the "Allow submissions from" date.';
+$string['alwaysshowdescription_help'] = 'If disabled, the assignment description above will only become visible to students on the "Allow submissions from" date.';
 $string['applytoteam'] = 'Apply grades and feedback to entire group';
-$string['qbassign:addinstance'] = 'Add a new qbassignment';
+$string['qbassign:addinstance'] = 'Add a new assignment';
 $string['qbassign:exportownsubmission'] = 'Export own submission';
 $string['qbassign:editothersubmission'] = 'Edit another student\'s submission';
-$string['qbassign:grade'] = 'Grade qbassignment';
+$string['qbassign:grade'] = 'Grade assignment';
 $string['qbassign:grantextension'] = 'Grant extension';
 $string['qbassign:manageallocations'] = 'Manage markers allocated to submissions';
 $string['qbassign:managegrades'] = 'Review and release grades';
-$string['qbassign:manageoverrides'] = 'Manage qbassignment overrides';
+$string['qbassign:manageoverrides'] = 'Manage assignment overrides';
 $string['qbassign:receivegradernotifications'] = 'Receive grader submission notifications';
 $string['qbassign:releasegrades'] = 'Release grades';
 $string['qbassign:revealidentities'] = 'Reveal student identities';
@@ -62,26 +62,26 @@ $string['qbassign:reviewgrades'] = 'Review grades';
 $string['qbassign:viewblinddetails'] = 'View student identities when anonymous submissions are enabled';
 $string['qbassign:viewgrades'] = 'View grades';
 $string['qbassign:showhiddengrader'] = 'See the identity of a hidden grader';
-$string['qbassign:submit'] = 'Submit qbassignment';
-$string['qbassign:view'] = 'View qbassignment';
+$string['qbassign:submit'] = 'Submit assignment';
+$string['qbassign:view'] = 'View assignment';
 $string['qbassign:viewownsubmissionsummary'] = 'View own submission summary';
 $string['qbassignfeedback'] = 'Feedback plugin';
 $string['qbassignfeedbackpluginname'] = 'Feedback plugin';
-$string['qbassignmentisdue'] = 'qbassignment is due';
+$string['qbassignmentisdue'] = 'assignment is due';
 $string['qbassignmentmail'] = '{$a->grader} has posted some feedback on your
-qbassignment submission for \'{$a->qbassignment}\'
+assignment submission for \'{$a->qbassignment}\'
 
-You can see it appended to your qbassignment submission:
+You can see it appended to your assignment submission:
 
     {$a->url}';
 $string['qbassignmentmailhtml'] = '<p>{$a->grader} has posted some feedback on your
-qbassignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
-<p>You can see it appended to your <a href="{$a->url}">qbassignment submission</a>.</p>';
+assignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
+<p>You can see it appended to your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['qbassignmentmailsmall'] = '{$a->grader} has posted some feedback on your
-qbassignment submission for \'{$a->qbassignment}\' You can see it appended to your submission';
-$string['qbassignmentname'] = 'qbassignment name';
-$string['qbassignmentplugins'] = 'qbassignment plugins';
-$string['qbassignmentsperpage'] = 'qbassignments per page';
+assignment submission for \'{$a->qbassignment}\' You can see it appended to your submission';
+$string['qbassignmentname'] = 'assignment name';
+$string['qbassignmentplugins'] = 'assignment plugins';
+$string['qbassignmentsperpage'] = 'assignments per page';
 $string['qbassignsubmission'] = 'Submission plugin';
 $string['qbassignsubmissionpluginname'] = 'Submission plugin';
 $string['qbassigntimeleft'] = 'Time left';
@@ -90,17 +90,17 @@ $string['attempthistory'] = 'Previous attempts';
 $string['attemptnumber'] = 'Attempt number';
 $string['attemptsettings'] = 'Attempt settings';
 $string['attemptreopenmethod'] = 'Additional attempts';
-$string['attemptreopenmethod_help'] = 'This setting determines whether a student can make additional attempts at the qbassignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
+$string['attemptreopenmethod_help'] = 'This setting determines whether a student can make additional attempts at the assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
 
 * Never - Only one attempt is possible.
 * Manually - Additional attempts may be allowed by a teacher.
-* Automatically until pass - Additional attempts are allowed automatically until the student achieves the grade to pass set in the gradebook for this qbassignment.';
+* Automatically until pass - Additional attempts are allowed automatically until the student achieves the grade to pass set in the gradebook for this assignment.';
 $string['attemptreopenmethod_manual'] = 'Manually';
 $string['attemptreopenmethod_none'] = 'Never';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
 $string['availability'] = 'Availability';
 $string['back'] = 'Back';
-$string['backtoqbassignment'] = 'Back to qbassignment';
+$string['backtoqbassignment'] = 'Back to assignment';
 $string['batchoperationsdescription'] = 'With selected...';
 $string['batchoperationconfirmlock'] = 'Lock all selected submissions?';
 $string['batchoperationconfirmgrantextension'] = 'Grant an extension to all selected submissions?';
@@ -116,10 +116,10 @@ $string['batchoperationunlock'] = 'unlock submissions';
 $string['batchoperationreverttodraft'] = 'revert submissions to draft';
 $string['batchsetallocatedmarker'] = 'Set allocated marker for {$a} selected user(s).';
 $string['batchsetmarkingworkflowstateforusers'] = 'Set marking workflow state for {$a} selected user(s).';
-$string['beginqbassignment'] = 'Begin qbassignment';
+$string['beginqbassignment'] = 'Begin assignment';
 $string['blindmarking'] = 'Anonymous submissions';
 $string['blindmarkingenabledwarning'] = 'Anonymous submissions are enabled for this activity. Grades will not be added to the gradebook until student identities are revealed via the grading action menu.';
-$string['blindmarking_help'] = 'Anonymous submissions hide the identity of students from markers. Anonymous submission settings will be locked once a submission or grade has been made in relation to this qbassignment.';
+$string['blindmarking_help'] = 'Anonymous submissions hide the identity of students from markers. Anonymous submission settings will be locked once a submission or grade has been made in relation to this assignment.';
 $string['cachedef_overrides'] = 'User and group override information';
 $string['calendardue'] = '{$a} is due';
 $string['calendargradingdue'] = '{$a} is due to be graded';
@@ -135,29 +135,29 @@ $string['collapsereviewpanel'] = 'Collapse review panel';
 $string['comment'] = 'Comment';
 $string['completiondetail:submit'] = 'Make a submission';
 $string['completionsubmit'] = 'Student must make a submission';
-$string['conversionexception'] = 'Could not convert qbassignment. Exception was: {$a}.';
+$string['conversionexception'] = 'Could not convert assignment. Exception was: {$a}.';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
 $string['confirmsubmission'] = 'Are you sure you want to submit your work for grading? You will not be able to make any more changes.';
 $string['confirmsubmissionheading'] = 'Confirm submission';
 $string['confirmbatchgradingoperation'] = 'Are you sure you want to {$a->operation} for {$a->count} students?';
-$string['couldnotconvertgrade'] = 'Could not convert qbassignment grade for user {$a}.';
-$string['couldnotconvertsubmission'] = 'Could not convert qbassignment submission for user {$a}.';
+$string['couldnotconvertgrade'] = 'Could not convert assignment grade for user {$a}.';
+$string['couldnotconvertsubmission'] = 'Could not convert assignment submission for user {$a}.';
 $string['couldnotcreatecoursemodule'] = 'Could not create course module.';
-$string['couldnotcreatenewqbassignmentinstance'] = 'Could not create new qbassignment instance.';
-$string['couldnotfindqbassignmenttoupgrade'] = 'Could not find old qbassignment instance to upgrade.';
-$string['crontask'] = 'Background processing for qbassignment module';
-$string['currentqbassigngrade'] = 'Current grade in qbassignment';
+$string['couldnotcreatenewqbassignmentinstance'] = 'Could not create new assignment instance.';
+$string['couldnotfindqbassignmenttoupgrade'] = 'Could not find old assignment instance to upgrade.';
+$string['crontask'] = 'Background processing for assignment module';
+$string['currentqbassigngrade'] = 'Current grade in assignment';
 $string['currentgrade'] = 'Current grade in gradebook';
 $string['currentattempt'] = 'This is attempt {$a}.';
 $string['currentattemptof'] = 'This is attempt {$a->attemptnumber} ( {$a->maxattempts} attempts allowed ).';
 $string['cutoffdate'] = 'Cut-off date';
 $string['cutoffdatecolon'] = 'Cut-off date: {$a}';
-$string['cutoffdate_help'] = 'If set, the qbassignment will not accept submissions after this date without an extension.';
+$string['cutoffdate_help'] = 'If set, the assignment will not accept submissions after this date without an extension.';
 $string['cutoffdatevalidation'] = 'Cut-off date cannot be earlier than the due date.';
 $string['cutoffdatefromdatevalidation'] = 'Cut-off date cannot be earlier than the allow submissions from date.';
 $string['defaultlayout'] = 'Restore default layout';
-$string['defaultsettings'] = 'Default qbassignment settings';
-$string['defaultsettings_help'] = 'These settings define the defaults for all new qbassignments.';
+$string['defaultsettings'] = 'Default assignment settings';
+$string['defaultsettings_help'] = 'These settings define the defaults for all new assignments.';
 $string['defaultteam'] = 'Default group';
 $string['deleteallsubmissions'] = 'Delete all submissions';
 $string['description'] = 'Description';
@@ -165,16 +165,16 @@ $string['disabled'] = 'Disabled';
 $string['downloadall'] = 'Download all submissions';
 $string['download all submissions'] = 'Download all submissions in a zip file.';
 $string['downloadasfolders'] = 'Download submissions in folders';
-$string['downloadasfolders_help'] = 'qbassignment submissions may be downloaded in folders. Each submission is then put in a separate folder, with the folder structure kept for any subfolders, and files are not renamed.';
+$string['downloadasfolders_help'] = 'assignment submissions may be downloaded in folders. Each submission is then put in a separate folder, with the folder structure kept for any subfolders, and files are not renamed.';
 $string['downloadselectedsubmissions'] = 'Download selected submissions';
 $string['duedate'] = 'Due date';
 $string['duedatecolon'] = 'Due date: {$a}';
-$string['duedate_help'] = 'This is when the qbassignment is due. Submissions will still be allowed after this date, but any qbassignments submitted after this date will be marked as late. Set an qbassignment cut-off date to prevent submissions after a certain date.';
+$string['duedate_help'] = 'This is when the assignment is due. Submissions will still be allowed after this date, but any assignments submitted after this date will be marked as late. Set an assignment cut-off date to prevent submissions after a certain date.';
 $string['duplicateoverride'] = 'Duplicate override';
 $string['submissionempty'] = 'Nothing was submitted';
 $string['submissionmodified'] = 'You have existing submission data. Please leave this page and try again.';
 $string['submissionmodifiedgroup'] = 'The submission has been modified by somebody else. Please leave this page and try again.';
-$string['duedatereached'] = 'The due date for this qbassignment has now passed';
+$string['duedatereached'] = 'The due date for this assignment has now passed';
 $string['duedatevalidation'] = 'Due date cannot be earlier than the allow submissions from date.';
 $string['editattemptfeedback'] = 'Edit the grade and feedback for attempt number {$a}.';
 $string['editonline'] = 'Edit online';
@@ -186,8 +186,8 @@ $string['editsubmission_help'] = 'You can still make changes to your submission.
 $string['editingstatus'] = 'Editing status';
 $string['editaction'] = 'Actions...';
 $string['enabled'] = 'Enabled';
-$string['enabletimelimit'] = 'Enable timed qbassignments';
-$string['enabletimelimit_help'] = 'If enabled, you can set a time limit on qbassignment settings page.';
+$string['enabletimelimit'] = 'Enable timed assignments';
+$string['enabletimelimit_help'] = 'If enabled, you can set a time limit on assignment settings page.';
 $string['eventallsubmissionsdownloaded'] = 'All the submissions are being downloaded.';
 $string['eventassessablesubmitted'] = 'A submission has been submitted.';
 $string['eventbatchsetmarkerallocationviewed'] = 'Batch set marker allocation viewed';
@@ -199,9 +199,9 @@ $string['eventgradingformviewed'] = 'Grading form viewed';
 $string['eventgradingtableviewed'] = 'Grading table viewed';
 $string['eventidentitiesrevealed'] = 'The identities have been revealed.';
 $string['eventmarkerupdated'] = 'The allocated marker has been updated.';
-$string['eventoverridecreated'] = 'qbassignment override created';
-$string['eventoverridedeleted'] = 'qbassignment override deleted';
-$string['eventoverrideupdated'] = 'qbassignment override updated';
+$string['eventoverridecreated'] = 'assignment override created';
+$string['eventoverridedeleted'] = 'assignment override deleted';
+$string['eventoverrideupdated'] = 'assignment override updated';
 $string['eventremovesubmissionformviewed'] = 'Remove submission confirmation viewed.';
 $string['eventrevealidentitiesconfirmationpageviewed'] = 'Reveal identities confirmation page viewed.';
 $string['eventstatementaccepted'] = 'The user has accepted the statement of the submission.';
@@ -222,52 +222,52 @@ $string['expandreviewpanel'] = 'Expand review panel';
 $string['extensionduedate'] = 'Extension due date';
 $string['extensionnotafterduedate'] = 'Extension date must be after the due date';
 $string['extensionnotafterfromdate'] = 'Extension date must be after the allow submissions from date';
-$string['fixrescalednullgrades'] = 'This qbassignment contains some erroneous grades. You can <a href="{$a->link}">automatically fix these grades</a>. This may affect course totals.';
+$string['fixrescalednullgrades'] = 'This assignment contains some erroneous grades. You can <a href="{$a->link}">automatically fix these grades</a>. This may affect course totals.';
 $string['fixrescalednullgradesconfirm'] = 'Are you sure you want to fix erroneous grades? All affected grades will be removed. This may affect course totals.';
 $string['fixrescalednullgradesdone'] = 'Grades fixed.';
 $string['gradecanbechanged'] = 'Grade can be changed';
 $string['gradeitem:submissions'] = 'Submissions';
-$string['gradersubmissionupdatedtext'] = '{$a->username} has updated their qbassignment submission
+$string['gradersubmissionupdatedtext'] = '{$a->username} has updated their assignment submission
 for \'{$a->qbassignment}\' at {$a->timeupdated}
 
 It is available here:
 
     {$a->url}';
-$string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their qbassignment submission
+$string['gradersubmissionupdatedhtml'] = '{$a->username} has updated their assignment submission
 for <i>\'{$a->qbassignment}\'  at {$a->timeupdated}</i><br /><br />
 It is <a href="{$a->url}">available on the web site</a>.';
-$string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for qbassignment {$a->qbassignment}.';
+$string['gradersubmissionupdatedsmall'] = '{$a->username} has updated their submission for assignment {$a->qbassignment}.';
 $string['gradeuser'] = 'Grade {$a}';
 $string['grantextension'] = 'Grant extension';
 $string['grantextensionforusers'] = 'Grant extension for {$a} students';
 $string['groupsubmissionsettings'] = 'Group submission settings';
 $string['errornosubmissions'] = 'There are no submissions to download';
-$string['errorquickgradingvsadvancedgrading'] = 'The grades were not saved because this qbassignment is currently using advanced grading';
+$string['errorquickgradingvsadvancedgrading'] = 'The grades were not saved because this assignment is currently using advanced grading';
 $string['errorrecordmodified'] = 'The grades were not saved because someone has modified one or more records more recently than when you loaded the page.';
 $string['feedback'] = 'Feedback';
 $string['feedbackavailabletext'] = '{$a->username} has posted some feedback on your
-qbassignment submission for \'{$a->qbassignment}\'
+assignment submission for \'{$a->qbassignment}\'
 
-You can see it appended to your qbassignment submission:
+You can see it appended to your assignment submission:
 
     {$a->url}';
 $string['feedbackavailablehtml'] = '{$a->username} has posted some feedback on your
-qbassignment submission for \'<i>{$a->qbassignment}</i>\'<br /><br />
-You can see it appended to your <a href="{$a->url}">qbassignment submission</a>.';
-$string['feedbackavailablesmall'] = '{$a->username} has given feedback for qbassignment {$a->qbassignment}';
+assignment submission for \'<i>{$a->qbassignment}</i>\'<br /><br />
+You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
+$string['feedbackavailablesmall'] = '{$a->username} has given feedback for assignment {$a->qbassignment}';
 $string['feedbackavailableanontext'] = 'You have new feedback on your
-qbassignment submission for \'{$a->qbassignment}\'
+assignment submission for \'{$a->qbassignment}\'
 
-You can see it appended to your qbassignment submission:
+You can see it appended to your assignment submission:
 
     {$a->url}';
 $string['feedbackavailableanonhtml'] = 'You have new feedback on your
-qbassignment submission for \'<i>{$a->qbassignment}</i>\'<br /><br />
-You can see it appended to your <a href="{$a->url}">qbassignment submission</a>.';
-$string['feedbackavailableanonsmall'] = 'New feedback for qbassignment {$a->qbassignment}'; 
+assignment submission for \'<i>{$a->qbassignment}</i>\'<br /><br />
+You can see it appended to your <a href="{$a->url}">assignment submission</a>.';
+$string['feedbackavailableanonsmall'] = 'New feedback for assignment {$a->qbassignment}'; 
 $string['feedbackplugins'] = 'Feedback plugins';
 $string['feedbackpluginforgradebook'] = 'Feedback plugin that will push comments to the gradebook';
-$string['feedbackpluginforgradebook_help'] = 'Only one qbassignment feedback plugin can push feedback into the gradebook.';
+$string['feedbackpluginforgradebook_help'] = 'Only one assignment feedback plugin can push feedback into the gradebook.';
 $string['feedbackplugin'] = 'Feedback plugin';
 $string['feedbacksettings'] = 'Feedback settings';
 $string['feedbacktypes'] = 'Feedback types';
@@ -307,25 +307,25 @@ $string['groupoverrides'] = 'Group overrides';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['groupsnone'] = 'No groups you can access.';
 $string['hidegrader'] = 'Hide grader identity from students';
-$string['hidegrader_help'] = 'If enabled, the identity of any user who grades an qbassignment submission is not shown, so students can\'t see who marked their work.
+$string['hidegrader_help'] = 'If enabled, the identity of any user who grades an assignment submission is not shown, so students can\'t see who marked their work.
 
 Note that this setting has no effect on the comments box on the grading page.';
 $string['hideshow'] = 'Hide/Show';
 $string['hiddenuser'] = 'Participant ';
-$string['inactiveoverridehelp'] = '* This override is inactive because the user\'s access to the activity is restricted. This can be due to group or role qbassignments, other access restrictions, or the activity being hidden.';
-$string['indicator:cognitivedepth'] = 'qbassignment cognitive';
-$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in an qbassignment activity.';
-$string['indicator:cognitivedepthdef'] = 'qbassignment cognitive';
-$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the qbassignment activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
+$string['inactiveoverridehelp'] = '* This override is inactive because the user\'s access to the activity is restricted. This can be due to group or role assignments, other access restrictions, or the activity being hidden.';
+$string['indicator:cognitivedepth'] = 'assignment cognitive';
+$string['indicator:cognitivedepth_help'] = 'This indicator is based on the cognitive depth reached by the student in an assignment activity.';
+$string['indicator:cognitivedepthdef'] = 'assignment cognitive';
+$string['indicator:cognitivedepthdef_help'] = 'The participant has reached this percentage of the cognitive engagement offered by the assignment activities during this analysis interval (Levels = No view, View, Submit, View feedback, Comment on feedback, Resubmit after viewing feedback)';
 $string['indicator:cognitivedepthdef_link'] = 'Learning_analytics_indicators#Cognitive_depth';
-$string['indicator:socialbreadth'] = 'qbassignment social';
-$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in an qbassignment activity.';
-$string['indicator:socialbreadthdef'] = 'qbassignment social';
-$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the qbassignment activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
+$string['indicator:socialbreadth'] = 'assignment social';
+$string['indicator:socialbreadth_help'] = 'This indicator is based on the social breadth reached by the student in an assignment activity.';
+$string['indicator:socialbreadthdef'] = 'assignment social';
+$string['indicator:socialbreadthdef_help'] = 'The participant has reached this percentage of the social engagement offered by the assignment activities during this analysis interval (Levels = No participation, Participant alone, Participant with others)';
 $string['indicator:socialbreadthdef_link'] = 'Learning_analytics_indicators#Social_breadth';
 $string['instructionfiles'] = 'Instruction files';
 $string['introattachments'] = 'Additional files';
-$string['introattachments_help'] = 'Additional files for use in the qbassignment, such as answer templates, may be added.';
+$string['introattachments_help'] = 'Additional files for use in the assignment, such as answer templates, may be added.';
 $string['invalidgradeforscale'] = 'The grade supplied was not valid for the current scale';
 $string['invalidfloatforgrade'] = 'The grade provided could not be understood: {$a}';
 $string['invalidoverrideid'] = 'Invalid override id';
@@ -336,8 +336,8 @@ $string['latesubmissionsaccepted'] = 'Allowed until {$a}';
 $string['loading'] = 'Loading...';
 $string['locksubmissionforstudent'] = 'Prevent any more submissions for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['locksubmissions'] = 'Lock submissions';
-$string['manageqbassignfeedbackplugins'] = 'Manage qbassignment feedback plugins';
-$string['manageqbassignsubmissionplugins'] = 'Manage qbassignment submission plugins';
+$string['manageqbassignfeedbackplugins'] = 'Manage assignment feedback plugins';
+$string['manageqbassignsubmissionplugins'] = 'Manage assignment submission plugins';
 $string['marker'] = 'Marker';
 $string['markerfilter'] = 'Marker filter';
 $string['markerfilternomarker'] = 'No marker';
@@ -364,23 +364,23 @@ $string['maxattempts'] = 'Maximum attempts';
 $string['maxattempts_help'] = 'The maximum number of submission attempts that can be made by a student. After this number has been reached, the submission can no longer be reopened.';
 $string['maxgrade'] = 'Maximum grade';
 $string['maxgrade'] = 'Maximum Grade';
-$string['maxperpage'] = 'Maximum qbassignments per page';
-$string['maxperpage_help'] = 'The maximum number of qbassignments a grader can show in the qbassignment grading page. This setting is useful in preventing timeouts for courses with a large number of participants.';
-$string['messageprovider:qbassign_notification'] = 'qbassignment notifications';
-$string['modulename'] = 'QBAssignment';
-$string['modulename_help'] = 'The qbassignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
+$string['maxperpage'] = 'Maximum assignments per page';
+$string['maxperpage_help'] = 'The maximum number of assignments a grader can show in the assignment grading page. This setting is useful in preventing timeouts for courses with a large number of participants.';
+$string['messageprovider:qbassign_notification'] = 'assignment notifications';
+$string['modulename'] = 'assignment';
+$string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
 
-Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the qbassignment may require students to type text directly into the text editor. An qbassignment can also be used to remind students of \'real-world\' qbassignments they need to complete offline, such as art work, and thus not require any digital content. Students can submit work individually or as a member of a group.
+Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content. Students can submit work individually or as a member of a group.
 
-When reviewing qbassignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. qbassignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
+When reviewing assignments, teachers can leave feedback comments and upload files, such as marked-up student submissions, documents with comments or spoken audio feedback. assignments can be graded using a numerical or custom scale or an advanced grading method such as a rubric. Final grades are recorded in the gradebook.';
 $string['modulename_link'] = 'mod/qbassignment/view';
 $string['modulenameplural'] = 'qbassignments';
 $string['moreusers'] = '{$a} more...';
 $string['multipleteams'] = 'Member of more than one group';
-$string['multipleteams_desc'] = 'The qbassignment requires submission in groups. You are a member of more than one group. To be able to submit you must be a member of only one group. Please contact your teacher to change your group membership.';
+$string['multipleteams_desc'] = 'The assignment requires submission in groups. You are a member of more than one group. To be able to submit you must be a member of only one group. Please contact your teacher to change your group membership.';
 $string['multipleteamsgrader'] = 'Member of more than one group, so unable to make submissions.';
 $string['nextuser'] = "Next user";
-$string['newsubmissions'] = 'qbassignments submitted';
+$string['newsubmissions'] = 'assignments submitted';
 $string['noattempt'] = 'No attempt';
 $string['noclose'] = 'No close date';
 $string['nofilters'] = 'No filters';
@@ -388,16 +388,16 @@ $string['nofiles'] = 'No files. ';
 $string['nograde'] = 'No grade. ';
 $string['nomoresubmissionsaccepted'] = 'Only allowed for participants who have been granted an extension';
 $string['none'] = 'None';
-$string['noonlinesubmissions'] = 'This qbassignment does not require you to submit anything online';
+$string['noonlinesubmissions'] = 'This assignment does not require you to submit anything online';
 $string['noopen'] = 'No open date';
-$string['nooverridedata'] = 'You must override at least one of the qbassignment settings.';
+$string['nooverridedata'] = 'You must override at least one of the assignment settings.';
 $string['nogroupoverrides'] = 'There are currently no group overrides.';
 $string['nouseroverrides'] = 'There are currently no user overrides.';
 $string['nosavebutnext'] = 'Next';
-$string['nosubmission'] = 'Nothing has been submitted for this qbassignment';
+$string['nosubmission'] = 'Nothing has been submitted for this assignment';
 $string['nosubmissionyet'] = 'No submissions have been made yet';
 $string['noteam'] = 'Not a member of any group';
-$string['noteam_desc'] = 'This qbassignment requires submission in groups. You are not a member of any group, so you cannot create a submission. Please contact your teacher to be added to a group.';
+$string['noteam_desc'] = 'This assignment requires submission in groups. You are not a member of any group, so you cannot create a submission. Please contact your teacher to be added to a group.';
 $string['noteamgrader'] = 'Not a member of any group, so unable to make submissions.';
 $string['notgraded'] = 'Not graded';
 $string['notgradedyet'] = 'Not graded yet';
@@ -412,9 +412,9 @@ $string['numberofsubmissionsneedgradinglabel'] = 'Needs grading: {$a}';
 $string['numberofteams'] = 'Groups';
 $string['offline'] = 'No online submissions required';
 $string['open'] = 'Open';
-$string['opensubmissionexists'] = 'Open qbassignment submission already exists.';
+$string['opensubmissionexists'] = 'Open assignment submission already exists.';
 $string['outof'] = '{$a->current} out of {$a->total}';
-$string['overdue'] = 'qbassignment is overdue by: {$a}';
+$string['overdue'] = 'assignment is overdue by: {$a}';
 $string['override'] = 'Override';
 $string['overridedeletegroupsure'] = 'Are you sure you want to delete the override for group {$a}?';
 $string['overridedeleteusersure'] = 'Are you sure you want to delete the override for user {$a}?';
@@ -424,15 +424,15 @@ $string['overrides'] = 'Overrides';
 $string['overrideuser'] = 'Override user';
 $string['overrideusereventname'] = '{$a->qbassign} - Override';
 $string['outlinegrade'] = 'Grade: {$a}';
-$string['page-mod-qbassign-x'] = 'Any qbassignment module page';
-$string['page-mod-qbassign-view'] = 'qbassignment module main and submission page';
+$string['page-mod-qbassign-x'] = 'Any assignment module page';
+$string['page-mod-qbassign-view'] = 'assignment module main and submission page';
 $string['paramtimeremaining'] = '{$a} remaining';
 $string['participant'] = 'Participant';
-$string['pluginadministration'] = 'qbassignment administration';
+$string['pluginadministration'] = 'assignment administration';
 $string['pluginname'] = 'qbassignment';
 $string['preventsubmissionnotingroup'] = 'Require group to make submission';
 $string['preventsubmissionnotingroup_help'] = 'If enabled, users who are not members of a group will be unable to make submissions.';
-$string['preventsubmissions'] = 'Prevent the user from making any more submissions to this qbassignment.';
+$string['preventsubmissions'] = 'Prevent the user from making any more submissions to this assignment.';
 $string['preventsubmissionsshort'] = 'Prevent submission changes';
 $string['previous'] = 'Previous';
 $string['previoususer'] = 'Previous user';
@@ -440,21 +440,21 @@ $string['privacy:attemptpath'] = 'attempt {$a}';
 $string['privacy:blindmarkingidentifier'] = 'The identifier used for anonymous submissions';
 $string['privacy:gradepath'] = 'grade';
 $string['privacy:metadata:qbassigndownloadasfolders'] = 'A user preference for whether multiple file submissions should be downloaded into folders';
-$string['privacy:metadata:qbassignfeedbackpluginsummary'] = 'Feedback data for the qbassignment.';
+$string['privacy:metadata:qbassignfeedbackpluginsummary'] = 'Feedback data for the assignment.';
 $string['privacy:metadata:qbassignfilter'] = 'Filter options such as \'Submitted\', \'Not submitted\', \'Requires grading\', and \'Granted extension\'';
-$string['privacy:metadata:qbassigngrades'] = 'Stores user grades for the qbassignment';
+$string['privacy:metadata:qbassigngrades'] = 'Stores user grades for the assignment';
 $string['privacy:metadata:qbassignmarkerfilter'] = 'Filter the qbassign summary by the qbassigned marker.';
-$string['privacy:metadata:qbassignmentid'] = 'qbassignment ID';
+$string['privacy:metadata:qbassignmentid'] = 'assignment ID';
 $string['privacy:metadata:qbassignmessageexplanation'] = 'Messages are sent to students through the messaging system.';
-$string['privacy:metadata:qbassignoverrides'] = 'Stores override information for the qbassignment';
-$string['privacy:metadata:qbassignperpage'] = 'Number of qbassignments shown per page.';
+$string['privacy:metadata:qbassignoverrides'] = 'Stores override information for the assignment';
+$string['privacy:metadata:qbassignperpage'] = 'Number of assignments shown per page.';
 $string['privacy:metadata:qbassignquickgrading'] = 'A preference as to whether quick grading is used or not.';
 $string['privacy:metadata:qbassignsubmissiondetail'] = 'Stores user submission information';
-$string['privacy:metadata:qbassignsubmissionpluginsummary'] = 'Submission data for the qbassignment.';
+$string['privacy:metadata:qbassignsubmissionpluginsummary'] = 'Submission data for the assignment.';
 $string['privacy:metadata:qbassignuserflags'] = 'Stores user meta data such as extension dates';
 $string['privacy:metadata:qbassignusermapping'] = 'The mapping for anonymous submissions';
 $string['privacy:metadata:qbassignworkflowfilter'] = 'Filter by the different workflow stages.';
-$string['privacy:metadata:grade'] = 'The numerical grade for this qbassignment submission. Can be determined by scales/advancedgradingforms etc but will always be converted back to a floating point number.';
+$string['privacy:metadata:grade'] = 'The numerical grade for this assignment submission. Can be determined by scales/advancedgradingforms etc but will always be converted back to a floating point number.';
 $string['privacy:metadata:grader'] = 'The user ID of the person grading.';
 $string['privacy:metadata:groupid'] = 'Group ID that the user is a member of.';
 $string['privacy:metadata:latest'] = 'Greatly simplifies queries wanting to know information about only the latest attempt.';
@@ -472,9 +472,9 @@ $string['removeallgroupoverrides'] = 'Delete all group overrides';
 $string['removealluseroverrides'] = 'Delete all user overrides';
 $string['reopenuntilpassincompatiblewithblindmarking'] = 'Reopen until pass option is incompatible with anonymous submissions, because the grades are not released to the gradebook until the student identities are revealed.';
 $string['requiresubmissionstatement'] = 'Require that students accept the submission statement';
-$string['requiresubmissionstatement_help'] = 'Require that students accept the submission statement for all submissions to this qbassignment.';
+$string['requiresubmissionstatement_help'] = 'Require that students accept the submission statement for all submissions to this assignment.';
 $string['requireallteammemberssubmit'] = 'Require all group members submit';
-$string['requireallteammemberssubmit_help'] = 'If enabled, all members of the student group must click the submit button for this qbassignment before the group submission will be considered as submitted. If disabled, the group submission will be considered as submitted as soon as any member of the student group clicks the submit button.';
+$string['requireallteammemberssubmit_help'] = 'If enabled, all members of the student group must click the submit button for this assignment before the group submission will be considered as submitted. If disabled, the group submission will be considered as submitted as soon as any member of the student group clicks the submit button.';
 $string['recordid'] = 'Identifier';
 $string['removesubmission'] = 'Remove submission';
 $string['removesubmissionforstudent'] = 'Remove submission for student: (id={$a->id}, fullname={$a->fullname}).';
@@ -483,8 +483,8 @@ $string['removesubmissionconfirmforstudent'] = 'Are you sure you want to remove 
 $string['removesubmissionconfirmforstudentwithtimelimit'] = 'Are you sure you want to remove the submission for {$a}? Please note that this will not reset the student\'s time limit. You can give more time by adding a time limit user override.';
 $string['removesubmissionconfirmwithtimelimit'] = 'Are you sure you want to remove your submission? Please note that this will not reset your time limit.';
 $string['revealidentities'] = 'Reveal student identities';
-$string['revealidentitiesconfirm'] = 'Are you sure you want to reveal student identities for this qbassignment? This operation cannot be undone. Once the student identities have been revealed, the marks will be released to the gradebook.';
-$string['reverttodefaults'] = 'Revert to qbassignment defaults';
+$string['revealidentitiesconfirm'] = 'Are you sure you want to reveal student identities for this assignment? This operation cannot be undone. Once the student identities have been revealed, the marks will be released to the gradebook.';
+$string['reverttodefaults'] = 'Revert to assignment defaults';
 $string['reverttodraftforgroup'] = 'Revert submission to draft for group {$a}.';
 $string['reverttodraftforstudent'] = 'Revert submission to draft for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['reverttodraft'] = 'Revert the submission to draft status';
@@ -499,77 +499,77 @@ $string['savenext'] = 'Save and show next';
 $string['savingchanges'] = 'Saving changes...';
 $string['saveoverrideandstay'] = 'Save and enter another override';
 $string['scale'] = 'Scale';
-$string['search:activity'] = 'qbassignment - activity information';
+$string['search:activity'] = 'assignment - activity information';
 $string['sendstudentnotificationsdefault'] = 'Default for \'Notify student\'';
 $string['sendstudentnotificationsdefault_help'] = 'When grading each student, should \'Notify student\' be ticked by default?';
 $string['sendstudentnotifications'] = 'Notify student';
-$string['sendstudentnotifications_help'] = 'Tick this box to send a notification about the updated grade or feedback. If the qbassignment uses a marking workflow, or the grades are hidden in the grader report, then the notification will not be sent until the grade is released.';
+$string['sendstudentnotifications_help'] = 'Tick this box to send a notification about the updated grade or feedback. If the assignment uses a marking workflow, or the grades are hidden in the grader report, then the notification will not be sent until the grade is released.';
 $string['sendnotifications'] = 'Notify graders about submissions';
-$string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an qbassignment, early, on time and late. Message methods are configurable.';
+$string['sendnotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment, early, on time and late. Message methods are configurable.';
 $string['selectlink'] = 'Select...';
 $string['selectuser'] = 'Select {$a}';
 $string['sendlatenotifications'] = 'Notify graders about late submissions';
-$string['sendlatenotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an qbassignment late. Message methods are configurable.';
+$string['sendlatenotifications_help'] = 'If enabled, graders (usually teachers) receive a message whenever a student submits an assignment late. Message methods are configurable.';
 $string['sendsubmissionreceipts'] = 'Send submission receipt to students';
-$string['sendsubmissionreceipts_help'] = 'This switch enables submission receipts for students. Students will receive a notification every time they successfully submit an qbassignment.';
+$string['sendsubmissionreceipts_help'] = 'This switch enables submission receipts for students. Students will receive a notification every time they successfully submit an assignment.';
 $string['setmarkingallocation'] = 'Set allocated marker';
 $string['setmarkingworkflowstate'] = 'Set marking workflow state';
 $string['selectedusers'] = 'Selected users';
 $string['setmarkingworkflowstateforlog'] = 'Set marking workflow state : (id={$a->id}, fullname={$a->fullname}, state={$a->state}). ';
 $string['setmarkerallocationforlog'] = 'Set marking allocation : (id={$a->id}, fullname={$a->fullname}, marker={$a->marker}). ';
-$string['settings'] = 'qbassignment settings';
+$string['settings'] = 'assignment settings';
 $string['showrecentsubmissions'] = 'Show recent submissions';
 $string['status'] = 'Status';
 $string['studentnotificationworkflowstateerror'] = 'Marking workflow state must be \'Released\' to notify students.';
 $string['submissionattachments'] = 'Only show files during submission';
-$string['submissionattachments_help'] = 'Tick the box to only show files on the submission page. Otherwise, files will be shown on both the qbassignment and submission pages.';
-$string['confirmstart'] = 'You have {$a} to complete this qbassignment. When you begin, the timer will start to count down and can\'t be paused.';
+$string['submissionattachments_help'] = 'Tick the box to only show files on the submission page. Otherwise, files will be shown on both the assignment and submission pages.';
+$string['confirmstart'] = 'You have {$a} to complete this assignment. When you begin, the timer will start to count down and can\'t be paused.';
 $string['submissioncopiedtext'] = 'You have made a copy of your previous
-qbassignment submission for \'{$a->qbassignment}\'
+assignment submission for \'{$a->qbassignment}\'
 
-You can see the status of your qbassignment submission:
+You can see the status of your assignment submission:
 
     {$a->url}';
 $string['submissioncopiedhtml'] = '<p>You have made a copy of your previous
-qbassignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
-<p>You can see the status of your <a href="{$a->url}">qbassignment submission</a>.</p>';
-$string['submissioncopiedsmall'] = 'You have copied your previous qbassignment submission for {$a->qbassignment}';
+assignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
+<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
+$string['submissioncopiedsmall'] = 'You have copied your previous assignment submission for {$a->qbassignment}';
 $string['submissiondrafts'] = 'Require students to click the submit button';
 $string['submissiondrafts_help'] = 'If enabled, students will have to click a submit button to declare their submission as final. This allows students to keep a draft version of the submission on the system. If this setting is changed from "No" to "Yes" after students have already submitted, those submissions will be regarded as final.';
 $string['submissioneditable'] = 'Student can edit this submission';
 $string['submissionlog'] = 'Student: {$a->fullname}, Status: {$a->status}';
 $string['submissionnotcopiedinvalidstatus'] = 'The submission was not copied because it has been edited since it was reopened.';
 $string['submissionnoteditable'] = 'Student cannot edit this submission';
-$string['submissionnotopen'] = 'This qbassignment is not open for submissions';
-$string['submissionnotready'] = 'This qbassignment is not ready to submit:';
+$string['submissionnotopen'] = 'This assignment is not open for submissions';
+$string['submissionnotready'] = 'This assignment is not ready to submit:';
 $string['privacy:submissionpath'] = 'submission';
 $string['submissionplugins'] = 'Submission plugins';
 $string['submissionreceipts'] = 'Send submission receipts';
-$string['submissionreceiptothertext'] = 'Your qbassignment submission for
+$string['submissionreceiptothertext'] = 'Your assignment submission for
 \'{$a->qbassignment}\' has been submitted.
 
-You can see the status of your qbassignment submission:
+You can see the status of your assignment submission:
 
     {$a->url}';
-$string['submissionreceiptotherhtml'] = 'Your qbassignment submission for
+$string['submissionreceiptotherhtml'] = 'Your assignment submission for
 \'<i>{$a->qbassignment}</i>\' has been submitted.<br /><br />
-You can see the status of your <a href="{$a->url}">qbassignment submission</a>.';
-$string['submissionreceiptothersmall'] = 'Your qbassignment submission for {$a->qbassignment} has been submitted.';
+You can see the status of your <a href="{$a->url}">assignment submission</a>.';
+$string['submissionreceiptothersmall'] = 'Your assignment submission for {$a->qbassignment} has been submitted.';
 $string['submissionreceipttext'] = 'You have submitted an
-qbassignment submission for \'{$a->qbassignment}\'
+assignment submission for \'{$a->qbassignment}\'
 
-You can see the status of your qbassignment submission:
+You can see the status of your assignment submission:
 
     {$a->url}';
-$string['submissionreceipthtml'] = '<p>You have submitted an qbassignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
-<p>You can see the status of your <a href="{$a->url}">qbassignment submission</a>.</p>';
-$string['submissionreceiptsmall'] = 'You have submitted your qbassignment submission for {$a->qbassignment}';
-$string['submissionslocked'] = 'This qbassignment is not accepting submissions';
+$string['submissionreceipthtml'] = '<p>You have submitted an assignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
+<p>You can see the status of your <a href="{$a->url}">assignment submission</a>.</p>';
+$string['submissionreceiptsmall'] = 'You have submitted your assignment submission for {$a->qbassignment}';
+$string['submissionslocked'] = 'This assignment is not accepting submissions';
 $string['submissionslockedshort'] = 'Submission changes not allowed';
 $string['submissionsclosed'] = 'Submissions closed';
 $string['submissionsettings'] = 'Submission settings';
 $string['submissionstatement'] = 'Submission statement';
-$string['submissionstatement_help'] = 'qbassignment submission confirmation statement';
+$string['submissionstatement_help'] = 'assignment submission confirmation statement';
 $string['submissionstatementdefault'] = 'This submission is my own work, except where I have acknowledged the use of the works of other people.';
 $string['submissionstatement_help'] = 'Statement that each student must accept in order to submit their work.';
 $string['submissionstatementteamsubmission'] = 'Group submission statement';
@@ -593,12 +593,12 @@ $string['submissiontypes'] = 'Submission types';
 $string['submission'] = 'Submission';
 $string['submitaction'] = 'Submit';
 $string['submitforgrading'] = 'Submit for grading';
-$string['submitqbassignment_help'] = 'Once this qbassignment is submitted you will not be able to make any more changes.';
-$string['submitqbassignment'] = 'Submit qbassignment';
-$string['submittedearly'] = 'qbassignment was submitted {$a} early';
-$string['submittedlate'] = 'qbassignment was submitted {$a} late';
-$string['submittedovertime'] = 'qbassignment was submitted {$a} over the time limit';
-$string['submittedundertime'] = 'qbassignment was submitted {$a} under the time limit';
+$string['submitqbassignment_help'] = 'Once this assignment is submitted you will not be able to make any more changes.';
+$string['submitqbassignment'] = 'Submit assignment';
+$string['submittedearly'] = 'assignment was submitted {$a} early';
+$string['submittedlate'] = 'assignment was submitted {$a} late';
+$string['submittedovertime'] = 'assignment was submitted {$a} over the time limit';
+$string['submittedundertime'] = 'assignment was submitted {$a} under the time limit';
 $string['submittedlateshort'] = '{$a} late';
 $string['submitted'] = 'Submitted';
 $string['subpagetitle'] = '{$a->contextname} - {$a->subpage}';
@@ -610,11 +610,11 @@ $string['teamname'] = 'Team: {$a}';
 $string['teamsubmission'] = 'Students submit in groups';
 $string['teamsubmission_help'] = 'If enabled, students will be divided into groups based on the default set of groups or a custom grouping. A group submission will be shared among group members and all members of the group will see each others\' changes to the submission.';
 $string['teamsubmissiongroupingid'] = 'Grouping for student groups';
-$string['teamsubmissiongroupingid_help'] = 'This is the grouping that the qbassignment will use to find groups for student groups. If not set, the default set of groups will be used.';
-$string['textinstructions'] = 'qbassignment instructions';
+$string['teamsubmissiongroupingid_help'] = 'This is the grouping that the assignment will use to find groups for student groups. If not set, the default set of groups will be used.';
+$string['textinstructions'] = 'assignment instructions';
 $string['timelimit'] = 'Time limit';
-$string['timelimit_help'] = 'If enabled, the time limit is stated on the qbassignment page and a countdown timer is displayed during the qbassignment.';
-$string['timelimitnotenabled'] = 'Time limit is not enabled for qbassignment.';
+$string['timelimit_help'] = 'If enabled, the time limit is stated on the assignment page and a countdown timer is displayed during the assignment.';
+$string['timelimitnotenabled'] = 'Time limit is not enabled for assignment.';
 $string['timelimitpassed'] = 'The time limit has expired';
 $string['timemodified'] = 'Last modified';
 $string['timeremaining'] = 'Time remaining';
@@ -633,12 +633,12 @@ $string['updategrade'] = 'Update grade';
 $string['updatetable'] = 'Save and update table';
 $string['upgradenotimplemented'] = 'Upgrade not implemented in plugin ({$a->type} {$a->subtype})';
 $string['userextensiondate'] = 'Extension granted until: {$a}';
-$string['userqbassignmentdefaults'] = 'User qbassignment defaults';
+$string['userqbassignmentdefaults'] = 'User assignment defaults';
 $string['useridlistnotcached'] = 'The grade changes were NOT saved, as it was not possible to determine which submission they were for.';
 $string['useroverrides'] = 'User overrides';
 $string['useroverridesdeleted'] = 'User overrides deleted';
 $string['usersubmissioncannotberemoved'] = 'The submission of {$a} cannot be removed.';
-$string['usersnone'] = 'No students have access to this qbassignment.';
+$string['usersnone'] = 'No students have access to this assignment.';
 $string['userswhoneedtosubmit'] = 'Users who need to submit: {$a}';
 $string['usergrade'] = 'User grade';
 $string['validmarkingworkflowstates'] = 'Valid marking workflow states';
@@ -651,7 +651,7 @@ $string['viewfullgradingpage'] = 'Open the full grading page to provide feedback
 $string['viewgradebook'] = 'View gradebook';
 $string['viewgradingformforstudent'] = 'View grading page for student: (id={$a->id}, fullname={$a->fullname}).';
 $string['viewgrading'] = 'View all submissions';
-$string['viewownsubmissionform'] = 'View own submit qbassignment page.';
+$string['viewownsubmissionform'] = 'View own submit assignment page.';
 $string['viewownsubmissionstatus'] = 'View own submission status page.';
 $string['viewsubmissionforuser'] = 'View submission for user: {$a}';
 $string['viewsubmission'] = 'View submission';
@@ -663,7 +663,7 @@ $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
 
 // Deprecated since Moodle 3.11.
-$string['allowsubmissionsfromdatesummary'] = 'This qbassignment will accept submissions from <strong>{$a}</strong>';
-$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The qbassignment details and submission form will be available from <strong>{$a}</strong>';
+$string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
+$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
 $string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
 $string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';

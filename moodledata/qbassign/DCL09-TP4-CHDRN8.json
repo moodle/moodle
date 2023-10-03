@@ -1,0 +1,30 @@
+{
+  "title": "4.1 Master Challenge 3",
+  "question": "Create a program for the following using JavaScript: a) Rick’s robotics school is at a distance of 6 km and 250 m from his home. He travels 2 km and 60 m on foot and the rest on his bicycle. Create a program to calculate the distance he covers on his bicycle. b) Sana completes 15 laps around the triangular field of her school, with sides measuring 22 m, 35 m, and 40 m. Create a program to calculate the entire distance she travels. (Hint: Use variables to store the given values and use the necessary arithmetic operator to solve the problem.)",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL09-TP4-CHDRN8",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

@@ -367,6 +367,51 @@
               "uid": "DCL01-U04-CHDRN1",
               "fname": "DCL01-U04-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN7",
+              "fname": "DCL01-TP4-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN8",
+              "fname": "DCL01-TP4-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN9",
+              "fname": "DCL01-TP4-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN10",
+              "fname": "DCL01-TP4-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN11",
+              "fname": "DCL01-TP4-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN12",
+              "fname": "DCL01-TP4-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN13",
+              "fname": "DCL01-TP4-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN14",
+              "fname": "DCL01-TP4-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN15",
+              "fname": "DCL01-TP4-CHDRN15.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"
@@ -407,6 +452,31 @@
               "uid": "DCL01-U05-CHDRN1",
               "fname": "DCL01-U05-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DCL01-TP5-CHDRN5",
+              "fname": "DCL01-TP5-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP5-CHDRN6",
+              "fname": "DCL01-TP5-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP5-CHDRN7",
+              "fname": "DCL01-TP5-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP5-CHDRN8",
+              "fname": "DCL01-TP5-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP5-CHDRN9",
+              "fname": "DCL01-TP5-CHDRN9.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"
@@ -447,6 +517,31 @@
               "uid": "DCL01-U06-CHDRN1",
               "fname": "DCL01-U06-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DCL01-TP6-CHDRN5",
+              "fname": "DCL01-TP6-CHDRN5.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP6-CHDRN6",
+              "fname": "DCL01-TP6-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP6-CHDRN7",
+              "fname": "DCL01-TP6-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP6-CHDRN8",
+              "fname": "DCL01-TP6-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DCL01-TP6-CHDRN9",
+              "fname": "DCL01-TP6-CHDRN9.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"

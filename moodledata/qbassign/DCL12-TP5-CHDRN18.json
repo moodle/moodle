@@ -1,0 +1,30 @@
+{
+  "title": "5.4 Master Challenge 3",
+  "question": "Let's consider two lists: X and Y . For instance, let X = ['abb', 'aa', 'aaa'] and Y = ['bba', 'aaa', 'aa'] . In these lists, if we rearrange the elements of X as X[1], X[0], X[2] to form a new string, we obtain 'aaabbaaa' . Doing a similar operation on Y with the order Y[1], Y[0], Y[2], we also achieve the same string 'aaabbaaa' . Thus, we can say that both restructured strings are equal and their lengths are also the same. This demonstrates that there can exist a certain ordering of elements xi1 … xik in list X and yi1 … yik in list Y that makes the resulting strings equal. Now, let's take another example where X = ['ab', 'bab', 'bbaaa'] and Y = ['a', 'ba', 'bab'] . In this case, if we rearrange the elements of X as X[1], X[0], X[2] , we get 'bababbbaaa' , but for Y arranged as Y[1], Y[0], Y[2] , the outcome is 'baabab' . Therefore, the reordered strings are not equal, and their lengths also differ. Given this situation, can we decide, for any given lists X and Y , whether we can find an ordering of their elements to generate equal strings with equal lengths? Please explain your reasoning. ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP5-CHDRN18",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

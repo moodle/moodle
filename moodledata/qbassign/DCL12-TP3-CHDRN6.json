@@ -1,0 +1,30 @@
+{
+  "title": "3.1 Master Challenge 3",
+  "question": "Ms. Nora has a list of digital sound frequencies in Hertz, as shown below: <br><img src='https://learn.qubitsedu.com/images/DC-L12-U03-S01-Challenge-3.png' width='80%' height='20%' /><br>Write a pseudocode and JavaScript program to store the frequency values in an array or list and check if all the frequencies are within the human audible range ( 20hz to 20000hz ).<br> Display the frequencies not audible to humans. ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP3-CHDRN6",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

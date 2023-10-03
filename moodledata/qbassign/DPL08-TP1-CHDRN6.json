@@ -4,7 +4,7 @@
 	"submissionfrom": "",
 	"grade_duedate": "",
 	"grade":100,	
-	"submission_type": "onlinetext", 
+	"submission_type": "codeblock", 
 	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
 	"activity_instruction":"Sum of 2 numbers",	
 	"submissionstatus": "yes",
