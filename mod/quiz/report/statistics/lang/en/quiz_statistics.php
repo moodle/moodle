@@ -64,8 +64,7 @@ $string['firstattemptscount'] = 'Number of complete graded first attempts';
 $string['frequency'] = 'Frequency';
 $string['getstatslockprogress'] = 'Waiting for task in progress. Please wait or try again later.';
 $string['getstatslocktimeout'] = 'Statistics calculation lock timeout';
-$string['getstatslocktimeoutdesc'] = 'How many seconds to wait for a lock when attempting to perform a statistics calculation ' .
-    'for a quiz. This setting primarily exists for testing, do not modify it unless you know what you are doing.';
+$string['getstatslocktimeoutdesc'] = 'How many seconds to wait for a lock when attempting to perform a statistics calculation for a quiz. This setting primarily exists for testing, do not modify it unless you know what you are doing.';
 $string['highestattempts'] = 'highest graded attempt';
 $string['highestattemptsavg'] = 'Average grade of highest graded attempts';
 $string['intended_weight'] = 'Intended weight';
