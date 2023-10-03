@@ -910,7 +910,16 @@ class upgradelib_test extends advanced_testcase {
 
         upgrade_core_licenses();
 
-        $expectedshortnames = ['allrightsreserved', 'cc', 'cc-nc', 'cc-nc-nd', 'cc-nc-sa', 'cc-nd', 'cc-sa', 'public'];
+        $expectedshortnames = [
+            'allrightsreserved',
+            'cc-4.0',
+            'cc-nc-4.0',
+            'cc-nc-nd-4.0',
+            'cc-nc-sa-4.0',
+            'cc-nd-4.0',
+            'cc-sa-4.0',
+            'public',
+        ];
         $licenses = $DB->get_records('license');
 
         foreach ($licenses as $license) {
