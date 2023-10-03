@@ -117,7 +117,7 @@ class add_random_questions extends external_api {
             $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
             $qcobject = new \qbank_managecategories\question_category_object(
                 null,
-                null,
+                new \moodle_url('/'),
                 $contexts->having_one_edit_tab_cap('categories'),
                 $defaultcategoryobj->id,
                 $defaultcategory,
