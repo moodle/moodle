@@ -2490,5 +2490,5 @@ function mod_quiz_calculate_question_stats(context $context): ?all_calculated_fo
     require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
     $cm = get_coursemodule_from_id('quiz', $context->instanceid);
     $report = new quiz_statistics_report();
-    return $report->calculate_questions_stats_for_question_bank($cm->instance, false);
+    return $report->calculate_questions_stats_for_question_bank($cm->instance, false, false);
 }

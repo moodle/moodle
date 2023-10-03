@@ -157,6 +157,10 @@ class quiz_statistics_report extends quiz_default_report {
             $progress = $this->get_progress_trace_instance();
             list($quizstats, $questionstats) =
                 $this->get_all_stats_and_analysis($quiz, $whichattempts, $whichtries, $groupstudentsjoins, $questions, $progress);
+            if (is_null($quizstats)) {
+                echo $OUTPUT->notification(get_string('nostats', 'quiz_statistics'), 'error');
+                return true;
+            }
         } else {
             // Or create empty stats containers.
             $quizstats = new \quiz_statistics\calculated($whichattempts);
@@ -630,13 +634,15 @@ class quiz_statistics_report extends quiz_default_report {
      * @param \core\progress\base|null   $progress
      * @param bool $calculateifrequired  if true (the default) the stats will be calculated if not already stored.
      *                                   If false, [null, null] will be returned if the stats are not already available.
+     * @param bool $performanalysis      if true (the default) and there are calculated stats, analysis will be performed
+     *                                   for each question.
      * @return array with 2 elements:    - $quizstats The statistics for overall attempt scores.
      *                                   - $questionstats \core_question\statistics\questions\all_calculated_for_qubaid_condition
      *                                   Both may be null, if $calculateifrequired is false.
      */
     public function get_all_stats_and_analysis(
             $quiz, $whichattempts, $whichtries, \core\dml\sql_join $groupstudentsjoins,
-            $questions, $progress = null, bool $calculateifrequired = true) {
+            $questions, $progress = null, bool $calculateifrequired = true, bool $performanalysis = true) {
 
         if ($progress === null) {
             $progress = new \core\progress\none();
@@ -648,38 +654,82 @@ class quiz_statistics_report extends quiz_default_report {
 
         $quizcalc = new \quiz_statistics\calculator($progress);
 
-        $progress->start_progress('', 3);
-        if ($quizcalc->get_last_calculated_time($qubaids) === false) {
+        $progress->start_progress('', 4);
+
+        // Get a lock on this set of qubaids before performing calculations. This prevents the same calculation running
+        // concurrently and causing database deadlocks. We use a long timeout here as a big quiz with lots of attempts may
+        // take a long time to process.
+        $lockfactory = \core\lock\lock_config::get_lock_factory('quiz_statistics_get_stats');
+        $lock = $lockfactory->get_lock($qubaids->get_hash_code(), 0);
+        if (!$lock) {
             if (!$calculateifrequired) {
-                $progress->progress(3);
+                // We're not going to do the calculation in this request anyway, so just give up here.
+                $progress->progress(4);
                 $progress->end_progress();
                 return [null, null];
             }
-
-            // Recalculate now.
-            $questionstats = $qcalc->calculate($qubaids);
-            $progress->progress(1);
-
-            $quizstats = $quizcalc->calculate($quiz->id, $whichattempts, $groupstudentsjoins, count($questions),
-                                              $qcalc->get_sum_of_mark_variance());
-            $progress->progress(2);
-        } else {
-            $quizstats = $quizcalc->get_cached($qubaids);
-            $progress->progress(1);
-            $questionstats = $qcalc->get_cached($qubaids);
-            $progress->progress(2);
+            $locktimeout = get_config('quiz_statistics', 'getstatslocktimeout');
+            $lock = \core\lock\lock_utils::wait_for_lock_with_progress(
+                $lockfactory,
+                $qubaids->get_hash_code(),
+                $progress,
+                $locktimeout,
+                get_string('getstatslockprogress', 'quiz_statistics'),
+            );
+            if (!$lock) {
+                // Lock attempt timed out.
+                $progress->progress(4);
+                $progress->end_progress();
+                debugging('Could not get lock on ' .
+                        $qubaids->get_hash_code() . ' (Quiz ID ' . $quiz->id . ') after ' .
+                        $locktimeout . ' seconds');
+                return [null, null];
+            }
         }
 
-        if ($quizstats->s()) {
-            $subquestions = $questionstats->get_sub_questions();
-            $this->analyse_responses_for_all_questions_and_subquestions($questions,
-                                                                        $subquestions,
-                                                                        $qubaids,
-                                                                        $whichtries,
-                                                                        $progress);
+        try {
+            if ($quizcalc->get_last_calculated_time($qubaids) === false) {
+                if (!$calculateifrequired) {
+                    $progress->progress(4);
+                    $progress->end_progress();
+                    $lock->release();
+                    return [null, null];
+                }
+
+                // Recalculate now.
+                $questionstats = $qcalc->calculate($qubaids);
+                $progress->progress(2);
+
+                $quizstats = $quizcalc->calculate(
+                    $quiz->id,
+                    $whichattempts,
+                    $groupstudentsjoins,
+                    count($questions),
+                    $qcalc->get_sum_of_mark_variance()
+                );
+                $progress->progress(3);
+            } else {
+                $quizstats = $quizcalc->get_cached($qubaids);
+                $progress->progress(2);
+                $questionstats = $qcalc->get_cached($qubaids);
+                $progress->progress(3);
+            }
+
+            if ($quizstats->s() && $performanalysis) {
+                $subquestions = $questionstats->get_sub_questions();
+                $this->analyse_responses_for_all_questions_and_subquestions(
+                    $questions,
+                    $subquestions,
+                    $qubaids,
+                    $whichtries,
+                    $progress
+                );
+            }
+            $progress->progress(4);
+            $progress->end_progress();
+        } finally {
+            $lock->release();
         }
-        $progress->progress(3);
-        $progress->end_progress();
 
         return array($quizstats, $questionstats);
     }
@@ -937,11 +987,14 @@ class quiz_statistics_report extends quiz_default_report {
      * @param int $quizid question usage
      * @param bool $calculateifrequired if true (the default) the stats will be calculated if not already stored.
      *     If false, null will be returned if the stats are not already available.
+     * @param bool $performanalysis if true (the default) and there are calculated stats, analysis will be performed
+     *     for each question.
      * @return ?all_calculated_for_qubaid_condition question stats
      */
     public function calculate_questions_stats_for_question_bank(
             int $quizid,
-            bool $calculateifrequired = true
+            bool $calculateifrequired = true,
+            bool $performanalysis = true
         ): ?all_calculated_for_qubaid_condition {
         global $DB;
         $quiz = $DB->get_record('quiz', ['id' => $quizid], '*', MUST_EXIST);
@@ -949,7 +1002,7 @@ class quiz_statistics_report extends quiz_default_report {
 
         [, $questionstats] = $this->get_all_stats_and_analysis($quiz,
             $quiz->grademethod, question_attempt::ALL_TRIES, new \core\dml\sql_join(),
-            $questions, null, $calculateifrequired);
+            $questions, null, $calculateifrequired, $performanalysis);
 
         return $questionstats;
     }
