@@ -139,10 +139,9 @@ Feature: Navigate action menu subpanels
     And I should not see "Status B" in the "regularscenario" "region"
     And I should see "Status C" in the "regularscenario" "region"
     And I should see "Status D" in the "regularscenario" "region"
+    And the focused element is "Status C" "link" in the "regularscenario" "region"
     # Loop the subpanel links wand the menu item with up and down.
     Then I press the down key
-    And the focused element is "Status C" "link" in the "regularscenario" "region"
-    And I press the down key
     And the focused element is "Status D" "link" in the "regularscenario" "region"
     And I press the down key
     And the focused element is "Another subpanel" "menuitem" in the "regularscenario" "region"
@@ -164,9 +163,9 @@ Feature: Navigate action menu subpanels
     # Enter the panel and select the second link.
     And I press the enter key
     And I press the down key
-    And the focused element is "Status A" "link" in the "regularscenario" "region"
+    And the focused element is "Status B" "link" in the "regularscenario" "region"
     And I press the enter key
-    And I should see "Foo param value: Aardvark" in the "paramcheck" "region"
+    And I should see "Foo param value: Beetle" in the "paramcheck" "region"
 
   Scenario: action menu subpanels can display optional icons in the menu item
     Given I click on "Actions menu" "button" in the "regularscenario" "region"
@@ -196,10 +195,9 @@ Feature: Navigate action menu subpanels
     And I should not see "Status B" in the "drawersimulation" "region"
     And I should see "Status C" in the "drawersimulation" "region"
     And I should see "Status D" in the "drawersimulation" "region"
+    And the focused element is "Status C" "link" in the "drawersimulation" "region"
     # Loop the subpanel links wand the menu item with up and down.
     Then I press the down key
-    And the focused element is "Status C" "link" in the "drawersimulation" "region"
-    And I press the down key
     And the focused element is "Status D" "link" in the "drawersimulation" "region"
     And I press the down key
     And the focused element is "Another subpanel" "menuitem" in the "drawersimulation" "region"
@@ -222,6 +220,30 @@ Feature: Navigate action menu subpanels
     # Enter the panel and select the second link.
     And I press the enter key
     And I press the down key
-    And the focused element is "Status A" "link" in the "drawersimulation" "region"
+    And the focused element is "Status B" "link" in the "drawersimulation" "region"
     And I press the enter key
-    And I should see "Foo param value: Aardvark" in the "paramcheck" "region"
+    And I should see "Foo param value: Beetle" in the "paramcheck" "region"
+
+  Scenario: User can browse the menu using the WCAG recommended compount keyboard navigation
+    Given I click on "Actions menu" "button" in the "regularscenario" "region"
+    And I press the down key
+    And I press the down key
+    And I press the down key
+    And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
+    When I press the tab key
+    And the focused element is "Status A" "link" in the "regularscenario" "region"
+    And I should see "Status A" in the "regularscenario" "region"
+    And I should see "Status B" in the "regularscenario" "region"
+    And I press the down key
+    Then I press the shift tab key
+    And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
+    And I should not see "Status A" in the "regularscenario" "region"
+    And I should not see "Status B" in the "regularscenario" "region"
+    And I press the enter key
+    And the focused element is "Status A" "link" in the "regularscenario" "region"
+    And I should see "Status A" in the "regularscenario" "region"
+    And I should see "Status B" in the "regularscenario" "region"
+    And I press the escape key
+    And the focused element is "Subpanel example" "menuitem" in the "regularscenario" "region"
+    And I should not see "Status A" in the "regularscenario" "region"
+    And I should not see "Status B" in the "regularscenario" "region"
