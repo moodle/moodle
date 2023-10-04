@@ -28,7 +28,9 @@ import {
     exception as displayException,
     fetchNotifications,
 } from 'core/notification';
-
+import Pending from 'core/pending';
+import {get_string as getString} from 'core/str';
+import {add as addToast} from 'core/toast';
 import {eventTypes, notifyCurrentSessionEnded} from './events';
 
 /**
@@ -40,8 +42,16 @@ import {eventTypes, notifyCurrentSessionEnded} from './events';
 export const init = (bigbluebuttonbnid, pollInterval) => {
     const completionElement = document.querySelector('a[href*=completion_validate]');
     if (completionElement) {
-        completionElement.addEventListener("click", () => {
-            repository.completionValidate(bigbluebuttonbnid).catch(displayException);
+        completionElement.addEventListener("click", event => {
+            event.preventDefault();
+
+            const pendingPromise = new Pending('mod_bigbluebuttonbn/completion:validate');
+
+            repository.completionValidate(bigbluebuttonbnid)
+                .then(() => getString('completionvalidatestatetriggered', 'mod_bigbluebuttonbn'))
+                .then(str => addToast(str))
+                .then(() => pendingPromise.resolve())
+                .catch(displayException);
         });
     }
 
