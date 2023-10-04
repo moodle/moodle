@@ -16,12 +16,12 @@
 
 namespace core_communication;
 
+use communication_matrix\matrix_test_helper_trait;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__ . '/../provider/matrix/tests/matrix_test_helper_trait.php');
 require_once(__DIR__ . '/communication_test_helper_trait.php');
-
-use \communication_matrix\matrix_test_helper_trait;
 
 /**
  * Class api_test to test the communication public api and its associated methods.
@@ -33,7 +33,6 @@ use \communication_matrix\matrix_test_helper_trait;
  * @covers \core_communication\api
  */
 class api_test extends \advanced_testcase {
-
     use matrix_test_helper_trait;
     use communication_test_helper_trait;
 
