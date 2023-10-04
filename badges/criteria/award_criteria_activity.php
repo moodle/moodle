@@ -188,8 +188,6 @@ class award_criteria_activity extends award_criteria {
      * @return bool Whether criteria is complete
      */
     public function review($userid, $filtered = false) {
-        $completionstates = array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL);
-
         if ($this->course->startdate > time()) {
             return false;
         }
@@ -207,6 +205,15 @@ class award_criteria_activity extends award_criteria {
             if (isset($param['bydate'])) {
                 $date = $data->timemodified;
                 $check_date = ($date <= $param['bydate']);
+            }
+
+            // Successfull completion states depend on the completion settings.
+            if (isset($data->passgrade)) {
+                // Passing grade is required. Don't issue a badge when state is COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS];
+            } else {
+                // Any grade is required. Issue a badge even when state is COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL];
             }
 
             if ($this->method == BADGE_CRITERIA_AGGREGATION_ALL) {
