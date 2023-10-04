@@ -29,4 +29,4 @@ $plugin->version  = 2023100900;
 $plugin->requires = 2023100400;  // Requires this Moodle version.
 $plugin->component= 'filter_glossary';
 
-$plugin->dependencies = array('mod_glossary' => 2023100400);
+$plugin->dependencies = ['mod_glossary' => 2023100400];

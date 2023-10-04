@@ -29,10 +29,10 @@ $plugin->component = 'qtype_multianswer';
 $plugin->version   = 2023100900;
 
 $plugin->requires  = 2023100400;
-$plugin->dependencies = array(
+$plugin->dependencies = [
     'qtype_multichoice' => 2023100400,
     'qtype_numerical'   => 2023100400,
     'qtype_shortanswer' => 2023100400,
-);
+];
 
 $plugin->maturity  = MATURITY_STABLE;

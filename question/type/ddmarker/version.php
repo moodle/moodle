@@ -30,7 +30,7 @@ $plugin->requires  = 2023100400;
 $plugin->component = 'qtype_ddmarker';
 $plugin->maturity  = MATURITY_STABLE;
 
-$plugin->dependencies = array(
+$plugin->dependencies = [
     'qtype_gapselect'     => 2023100400,
     'qtype_ddimageortext' => 2023100400,
-);
+];

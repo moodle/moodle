@@ -30,6 +30,6 @@ $plugin->requires  = 2023100400;
 $plugin->component = 'qtype_ddwtos';
 $plugin->maturity  = MATURITY_STABLE;
 
-$plugin->dependencies = array(
+$plugin->dependencies = [
     'qtype_gapselect' => 2023100400,
-);
+];

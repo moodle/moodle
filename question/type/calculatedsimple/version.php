@@ -29,9 +29,9 @@ $plugin->component = 'qtype_calculatedsimple';
 $plugin->version   = 2023100900;
 
 $plugin->requires  = 2023100400;
-$plugin->dependencies = array(
+$plugin->dependencies = [
     'qtype_numerical'  => 2023100400,
     'qtype_calculated' => 2023100400,
-);
+];
 
 $plugin->maturity  = MATURITY_STABLE;
