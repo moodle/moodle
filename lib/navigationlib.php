@@ -4650,7 +4650,6 @@ class settings_navigation extends navigation_node {
                 $action = new action_link(new moodle_url(''), '', null, [
                     'data-action' => 'sendtomoodlenet',
                     'data-type' => 'course',
-                    'data-sharetype' => 'resource',
                 ]);
                 // Share course to MoodleNet link.
                 $coursenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
@@ -4942,7 +4941,6 @@ class settings_navigation extends navigation_node {
                 $action = new action_link(new moodle_url(''), '', null, [
                     'data-action' => 'sendtomoodlenet',
                     'data-type' => 'activity',
-                    'data-sharetype' => 'resource',
                 ]);
                 $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
                     $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);
