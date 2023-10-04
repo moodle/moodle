@@ -3563,7 +3563,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              if($submission_type == 'codeblock') 
              {
                  //CODE BLOCK
-                 $submission_codestatus = ($submissioncodestatus=='yes')?1:0;
+                 $submission_codestatus = ($submissionstatus=='yes')?1:0;
                  $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
                  if(isset($getactive_online))
                  {
@@ -3767,7 +3767,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              if($submission_type == 'codeblock') 
              {
                  //CODE BLOCK
-                 $submission_codestatus = ($submissioncodestatus=='yes')?1:0;
+                 $submission_codestatus = ($submissionstatus=='yes')?1:0;
                  $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
                  if(isset($getactive_online))
                  {
