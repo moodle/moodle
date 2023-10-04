@@ -164,9 +164,10 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         if (!empty($currentrecord) && isset($user->suspended) && $currentrecord->suspended !== $user->suspended) {
             foreach ($usercourses as $usercourse) {
                 $communication = \core_communication\api::load_by_instance(
-                    'core_course',
-                    'coursecommunication',
-                    $usercourse->id
+                    context: \core\context\course::instance($usercourse->id),
+                    component: 'core_course',
+                    instancetype: 'coursecommunication',
+                    instanceid: $usercourse->id
                 );
                 // If the record updated the suspended for a user.
                 if ($user->suspended === 0) {

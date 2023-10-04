@@ -98,12 +98,14 @@ class communication_feature_test extends \advanced_testcase {
     protected function get_test_communication_processor(): processor {
         $course = $this->getDataGenerator()->create_course();
         $instanceid = $course->id;
+        $context = \core\context\system::instance();
         $component = 'core_course';
         $instancetype = 'coursecommunication';
         $selectedcommunication = 'communication_customlink';
         $communicationroomname = 'communicationroom';
 
         $communicationprocessor = processor::create_instance(
+            $context,
             $selectedcommunication,
             $instanceid,
             $component,

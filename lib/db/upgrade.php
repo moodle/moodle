@@ -3601,5 +3601,63 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023091300.03);
     }
 
+    if ($oldversion < 2023100400.01) {
+        // Define field id to be added to communication.
+        $table = new xmldb_table('communication');
+
+        // Add the field and allow it to be nullable.
+        // We need to backfill data before setting it to NOT NULL.
+        $field = new xmldb_field(
+            name: 'contextid',
+            type: XMLDB_TYPE_INTEGER,
+            precision: '10',
+            notnull: null,
+            previous: 'id',
+        );
+
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Fill the existing data.
+        $sql = <<<EOF
+            UPDATE {communication}
+               SET contextid = c.id
+              FROM {communication} comm
+        INNER JOIN {context} c ON c.instanceid = comm.instanceid AND c.contextlevel = :contextcourse
+             WHERE comm.contextid IS NULL
+               AND comm.instancetype = :instancetype
+        EOF;
+        $DB->execute($sql, [
+            'contextcourse' => CONTEXT_COURSE,
+            'instancetype' => 'coursecommunication',
+        ]);
+
+        $systemcontext = \core\context\system::instance();
+        $DB->set_field_select(
+            table: 'communication',
+            newfield: 'contextid',
+            newvalue: $systemcontext->id,
+            select: 'contextid IS NULL',
+        );
+
+        // Now make it NOTNULL.
+        $field = new xmldb_field(
+            name: 'contextid',
+            type: XMLDB_TYPE_INTEGER,
+            precision: '10',
+            notnull:  XMLDB_NOTNULL,
+        );
+        $dbman->change_field_notnull($table, $field);
+
+        // Add the contextid constraint.
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023100400.01);
+    }
+
     return true;
 }

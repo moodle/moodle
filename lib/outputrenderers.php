@@ -4363,7 +4363,12 @@ EOD;
         global $COURSE;
         $url = '';
         if ($COURSE->id !== SITEID) {
-            $comm = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $COURSE->id);
+            $comm = \core_communication\api::load_by_instance(
+                context: \core\context\course::instance($COURSE->id),
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $COURSE->id,
+            );
             $url = $comm->get_communication_room_url();
         }
 

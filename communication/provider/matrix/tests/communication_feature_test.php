@@ -16,6 +16,7 @@
 
 namespace communication_matrix;
 
+use core\context;
 use core_communication\api;
 use core_communication\communication_test_helper_trait;
 use core_communication\processor;
@@ -55,6 +56,7 @@ class communication_feature_test extends \advanced_testcase {
     public function test_create_chat_room(): void {
         // Set up the test data first.
         $communication = \core_communication\api::load_by_instance(
+            context: \core\context\system::instance(),
             component: 'communication_matrix',
             instancetype: 'example',
             instanceid: 1,
@@ -441,6 +443,7 @@ class communication_feature_test extends \advanced_testcase {
         $provider->update_room_membership([$user->id]);
 
         $processor = \core_communication\processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id,
@@ -478,6 +481,7 @@ class communication_feature_test extends \advanced_testcase {
         role_assign($studentrole->id, $user2->id, $coursecontext->id);
 
         $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id
@@ -514,9 +518,11 @@ class communication_feature_test extends \advanced_testcase {
         ?string $roomtopic = null,
         ?\stored_file $roomavatar = null,
         array $members = [],
+        ?context $context = null,
     ): \core_communication\api {
         // Create a new room.
         $communication = \core_communication\api::load_by_instance(
+            context: $context ?? \core\context\system::instance(),
             component: $component,
             instancetype: $itemtype,
             instanceid: $itemid,
@@ -548,6 +554,7 @@ class communication_feature_test extends \advanced_testcase {
     public function test_is_configured(): void {
         $course = $this->get_course();
         $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id
