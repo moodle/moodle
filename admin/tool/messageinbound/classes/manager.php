@@ -829,7 +829,7 @@ class manager {
 
         // An auto-reply may itself include the Bulk Precedence.
         $precedence = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('Precedence');
-        $isbulk = $isbulk || strtolower($precedence) == 'bulk';
+        $isbulk = $isbulk || strtolower($precedence ?? '') == 'bulk';
 
         // If the X-Autoreply header is set, and not 'no', then this is an automatic reply.
         $autoreply = $messagedata->getHeaderText(0, \Horde_Imap_Client_Data_Fetch::HEADER_PARSE)->getValue('X-Autoreply');
