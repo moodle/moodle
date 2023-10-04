@@ -1294,6 +1294,7 @@ class quiz_attempt {
             $displayoptions->manualcomment = question_display_options::HIDDEN;
             $displayoptions->history = question_display_options::HIDDEN;
             $displayoptions->readonly = true;
+            $displayoptions->versioninfo = question_display_options::HIDDEN;
 
             return html_writer::div($placeholderqa->render($displayoptions,
                     $this->get_question_number($this->get_original_slot($slot))),
