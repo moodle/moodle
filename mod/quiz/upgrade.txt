@@ -8,7 +8,9 @@ This files describes API changes in the quiz code.
   In the distant past it was always a stdClass, then at one point there was an undocumented change making
   it sometimes a stdClass and sometimes a cm_info. Now it is consistently a cm_info. Type hints have been
   updated to reflect this.
-
+* The parameter filtercondition in the web service mod_quiz_add_random_questions is now optional. This parameter is
+  only used when adding random questions from an existing category. It is not required when adding random questions from
+  a new category since it is not used in this case.
 
 === 4.2 ===
 

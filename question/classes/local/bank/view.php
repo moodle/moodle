@@ -1167,8 +1167,10 @@ class view {
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo \html_writer::input_hidden_params($this->baseurl);
 
+        $filtercondition = json_encode($this->get_pagevars());
+        // Embeded filterconditon into the div.
         echo \html_writer::start_tag('div',
-            ['class' => 'categoryquestionscontainer']);
+            ['class' => 'categoryquestionscontainer', 'data-filtercondition' => $filtercondition]);
         if ($totalquestions > 0) {
             // Bulk load any required statistics.
             $this->load_required_statistics($questions);
@@ -1365,11 +1367,8 @@ class view {
         echo $OUTPUT->render($pagingbar);
 
         // Table of questions.
-        // Embeded filterconditon into the div.
-        $filtercondition = json_encode($this->get_pagevars());
-
         echo \html_writer::start_tag('div',
-            ['class' => 'question_table', 'id' => 'question_table', 'data-filtercondition' => $filtercondition]);
+            ['class' => 'question_table', 'id' => 'question_table']);
         $this->print_table($questions);
         echo \html_writer::end_tag('div');
         echo $OUTPUT->render($pagingbar);

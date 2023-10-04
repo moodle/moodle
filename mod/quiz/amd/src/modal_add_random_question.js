@@ -283,12 +283,12 @@ export default class ModalAddRandomQuestion extends Modal {
                 }
                 e.preventDefault();
 
-                const randomcount = document.querySelector(SELECTORS.SELECT_NUMBER_TO_ADD).value;
-                const filtercondition = document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition;
-
                 // Add Random questions if the add random button was clicked.
                 const addRandomButton = e.target.closest(SELECTORS.ADD_RANDOM_BUTTON);
                 if (addRandomButton) {
+                    const randomcount = document.querySelector(SELECTORS.SELECT_NUMBER_TO_ADD).value;
+                    const filtercondition = document.querySelector(SELECTORS.FILTER_CONDITION_ELEMENT).dataset?.filtercondition;
+
                     this.addQuestions(cmid, addonpage, randomcount, filtercondition, '', '');
                     return;
                 }
@@ -298,8 +298,8 @@ export default class ModalAddRandomQuestion extends Modal {
                     this.addQuestions(
                         cmid,
                         addonpage,
-                        randomcount,
-                        filtercondition,
+                        1,
+                        '',
                         document.querySelector(SELECTORS.NEW_CATEGORY_ELEMENT).value,
                         document.querySelector(SELECTORS.PARENT_CATEGORY_ELEMENT).value
                     );
