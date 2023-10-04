@@ -30089,10 +30089,15 @@ body.drawer-ease {
 
 .drawer {
   background-color: #f8f9fa;
-  z-index: 1030;
+  z-index: 1015;
   position: fixed;
   height: 100vh;
   top: 0;
+}
+@media (max-width: 991.98px) {
+  .drawer {
+    z-index: 1035;
+  }
 }
 .drawer.not-initialized {
   display: none;
@@ -30145,9 +30150,6 @@ body.drawer-ease {
 }
 
 @media (min-width: 992px) {
-  .drawer {
-    z-index: inherit;
-  }
   .drawer#theme_boost-drawers-blocks:focus-within {
     z-index: 1031;
   }
@@ -30175,14 +30177,23 @@ body.drawer-ease {
   .drawer-md {
     display: block;
     background-color: #f8f9fa;
-    z-index: 1030;
+    z-index: 1015;
     position: fixed;
     height: 100vh;
     top: 0;
   }
+}
+@media (max-width: 991.98px) and (max-width: 991.98px) {
+  .drawer-md {
+    z-index: 1035;
+  }
+}
+@media (max-width: 991.98px) {
   .drawer-md.not-initialized {
     display: none;
   }
+}
+@media (max-width: 991.98px) {
   .drawer-md.drawer-right {
     transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
@@ -30246,14 +30257,23 @@ body.drawer-ease {
   .drawer-sm {
     display: block;
     background-color: #f8f9fa;
-    z-index: 1030;
+    z-index: 1015;
     position: fixed;
     height: 100vh;
     top: 0;
   }
+}
+@media (max-width: 767.98px) and (max-width: 991.98px) {
+  .drawer-sm {
+    z-index: 1035;
+  }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.not-initialized {
     display: none;
   }
+}
+@media (max-width: 767.98px) {
   .drawer-sm.drawer-right {
     transition: right 0.2s ease, top 0.2s ease, bottom 0.2s ease, visibility 0.2s ease, transform 0.5s ease;
     width: 315px;
