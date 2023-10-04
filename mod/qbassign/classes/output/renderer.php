@@ -1356,7 +1356,7 @@ class renderer extends \plugin_renderer_base {
      * @return string
      */
     protected function htmllize_tree(\qbassign_files $tree, $dir) {
-        global $CFG;
+        global $CFG,$DB;
         $yuiconfig = array();
         $yuiconfig['type'] = 'html';
 
@@ -1378,6 +1378,9 @@ class renderer extends \plugin_renderer_base {
 
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
+            $itemid = $file->get_itemid();
+
+            $get_submited = $DB->get_record('qbassignsubmission_file', array('submission' => $itemid));
             if ($CFG->enableplagiarism) {
                 require_once($CFG->libdir.'/plagiarismlib.php');
                 $plagiarismlinks = plagiarism_get_links(array('userid'=>$file->get_userid(),
@@ -1391,6 +1394,7 @@ class renderer extends \plugin_renderer_base {
                                              $filename,
                                              'moodle',
                                              array('class'=>'icon'));
+            $expln = ($get_submited->explanation!='')?$get_submited->explanation:'-';
             $result .= '<li yuiConfig=\'' . json_encode($yuiconfig) . '\'>' .
                 '<div>' .
                     '<div class="fileuploadsubmission">' . $image . ' ' .
@@ -1398,6 +1402,7 @@ class renderer extends \plugin_renderer_base {
                     $plagiarismlinks . ' ' .
                     $file->portfoliobutton . ' ' .
                     '</div>' .
+                    '<div>Additional Comments :<br/>'.$expln.'</div>'.
                     '<div class="fileuploadsubmissiontime">' . $file->timemodified . '</div>' .
                 '</div>' .
             '</li>';
