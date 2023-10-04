@@ -737,10 +737,9 @@ class communication_feature implements
      * @return int
      */
     public function get_user_allowed_power_level(int $userid): int {
-        $context = \core\context\course::instance($this->processor->get_instance_id());
         $powerlevel = matrix_constants::POWER_LEVEL_DEFAULT;
 
-        if (has_capability('communication/matrix:moderator', $context, $userid)) {
+        if (has_capability('communication/matrix:moderator', $this->processor->get_context(), $userid)) {
             $powerlevel = matrix_constants::POWER_LEVEL_MOODLE_MODERATOR;
         }
 
