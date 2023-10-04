@@ -52,6 +52,7 @@ $communication = \core_communication\api::load_by_instance(
     component: $component,
     instancetype: $instancetype,
     instanceid: $instanceid,
+    provider: $selectedcommunication,
 );
 
 // No communication, no way this form can be used.

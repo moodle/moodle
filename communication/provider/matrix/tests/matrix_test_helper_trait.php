@@ -253,7 +253,7 @@ trait matrix_test_helper_trait {
      * @return api
      */
     protected function create_matrix_room(
-        ?string $component = 'communication_matrix',
+        ?string $component = 'core_course',
         ?string $itemtype = 'example',
         ?int $itemid = 1,
         ?string $roomname = null,
@@ -269,10 +269,10 @@ trait matrix_test_helper_trait {
             component: $component,
             instancetype: $itemtype,
             instanceid: $itemid,
+            provider: 'communication_matrix',
         );
 
         $communication->create_and_configure_room(
-            selectedcommunication: 'communication_matrix',
             communicationroomname: $roomname ?? 'Room name',
             avatar: $roomavatar,
             instance: (object) [

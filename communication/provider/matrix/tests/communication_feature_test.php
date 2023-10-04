@@ -60,10 +60,10 @@ class communication_feature_test extends \advanced_testcase {
             component: 'communication_matrix',
             instancetype: 'example',
             instanceid: 1,
+            provider: 'communication_matrix',
         );
 
         $communication->create_and_configure_room(
-            selectedcommunication: 'communication_matrix',
             communicationroomname: 'Room name',
             instance: (object) [
                 'matrixroomtopic' => 'A fun topic',
@@ -526,10 +526,10 @@ class communication_feature_test extends \advanced_testcase {
             component: $component,
             instancetype: $itemtype,
             instanceid: $itemid,
+            provider: 'communication_matrix',
         );
 
         $communication->create_and_configure_room(
-            selectedcommunication: 'communication_matrix',
             communicationroomname: $roomname ?? 'Room name',
             avatar: $roomavatar,
             instance: (object) [
