@@ -177,4 +177,15 @@ class question_history_view extends view {
         return true;
     }
 
+    /**
+     * Override wanted_filters so that we apply the filters provided by the URL, but don't display the filter UI.
+     *
+     * @return void
+     */
+    public function wanted_filters(): void {
+        $this->display_question_bank_header();
+        // Add search conditions.
+        $this->add_standard_search_conditions();
+    }
+
 }

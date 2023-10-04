@@ -32,14 +32,18 @@ class helper {
      * @param int $entryid id of the question entry
      * @param string $returnrul url of the page to return to
      * @param int $courseid id of the course
+     * @param ?string $filter filter param to pass to the History view
      * @return \moodle_url
      */
-    public static function question_history_url(int $entryid, string $returnrul, int $courseid): \moodle_url {
+    public static function question_history_url(int $entryid, string $returnrul, int $courseid, ?string $filter): \moodle_url {
         $params = [
             'entryid' => $entryid,
             'returnurl' => $returnrul,
             'courseid' => $courseid
         ];
+        if (!is_null($filter)) {
+            $params['filter'] = $filter;
+        }
 
         return new \moodle_url('/question/bank/history/history.php', $params);
     }
