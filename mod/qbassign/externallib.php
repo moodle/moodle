@@ -3398,11 +3398,13 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
              'maxfilesubmissions' => new external_value(PARAM_TEXT, 'max file submissions',VALUE_OPTIONAL),
              'filetypeslist' => new external_value(PARAM_TEXT, 'file Type',VALUE_OPTIONAL),
              'maxfilesubmissions_size' => new external_value(PARAM_TEXT, 'max file submissions Size',VALUE_OPTIONAL),
+             'language_type' => new external_value(PARAM_TEXT, 'Language Type',VALUE_OPTIONAL), 
+             'codeblockmode' => new external_value(PARAM_TEXT, 'Mode',VALUE_OPTIONAL),
              )
          );
      }
  
-    public static function create_assignment_service($courseid,$siteid,$chapterid,$title,$duedate,$submissionfrom,$grade_duedate,$grade,$question,$submission_type,$submissionstatus,$online_text_limit,$uid,$maxfilesubmissions,$filetypeslist,$maxfilesubmissions_size)
+    public static function create_assignment_service($courseid,$siteid,$chapterid,$title,$duedate,$submissionfrom,$grade_duedate,$grade,$question,$submission_type,$submissionstatus,$online_text_limit,$uid,$maxfilesubmissions,$filetypeslist,$maxfilesubmissions_size,$language_type,$codeblockmode)
      { 
          global $DB,$CFG;
          $check_uniquefield = $DB->get_record('qbassign', array('uid' => $uid));
@@ -3565,12 +3567,49 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  //CODE BLOCK
                  $submission_codestatus = ($submissionstatus=='yes')?1:0;
                  $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
+
+                 $getactive_onlinetype = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'type','qbassignment'=>$check_uniquefield->id));
+
+                 $getactive_onlinelang = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'lang','qbassignment'=>$check_uniquefield->id));
+
                  if(isset($getactive_online))
                  {
                     $updateactivityonline = new stdClass();
                     $updateactivityonline->id = $getactive_online->id;
                     $updateactivityonline->value = $submission_codestatus;           
                     $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                    if(isset($getactive_onlinetype))
+                    {
+                        $updateactivityonline = new stdClass();
+                        $updateactivityonline->id = $getactive_onlinetype->id;
+                        $updateactivityonline->value = ($codeblockmode=='manual')?1:2;            
+                        $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+
+                        $updateactivityonline = new stdClass();
+                        $updateactivityonline->id = $getactive_onlinelang->id;
+                        $updateactivityonline->value = $language_type;          
+                        $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                    }
+                    else
+                    {
+                        $updateactivityonline =  array(
+                            'qbassignment' => $check_uniquefield->id,
+                            'plugin' => 'codeblock',
+                            'subtype' => 'qbassignsubmission',
+                            'name' => 'type',
+                            'value' => ($codeblockmode=='manual')?1:2
+                            );
+                        $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+    
+                        $updateactivityonline =  array(
+                            'qbassignment' => $check_uniquefield->id,
+                            'plugin' => 'codeblock',
+                            'subtype' => 'qbassignsubmission',
+                            'name' => 'lang',
+                            'value' => $language_type
+                            );
+                        $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+                    }
                  }
                  else
                  {
@@ -3582,6 +3621,24 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'value' => $submission_codestatus
                      );
                      $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updatesactivityonline);
+
+                     $updateactivityonline =  array(
+                        'qbassignment' => $check_uniquefield->id,
+                        'plugin' => 'codeblock',
+                        'subtype' => 'qbassignsubmission',
+                        'name' => 'type',
+                        'value' => ($codeblockmode=='manual')?1:2
+                        );
+                    $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+
+                    $updateactivityonline =  array(
+                        'qbassignment' => $check_uniquefield->id,
+                        'plugin' => 'codeblock',
+                        'subtype' => 'qbassignsubmission',
+                        'name' => 'lang',
+                        'value' => $language_type
+                        );
+                    $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }           
              } 
              
@@ -3769,12 +3826,50 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                  //CODE BLOCK
                  $submission_codestatus = ($submissionstatus=='yes')?1:0;
                  $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$returnid));
+
+                 $getactive_onlinetype = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'type','qbassignment'=>$returnid));
+
+                 $getactive_onlinelang = $DB->get_record('qbassign_plugin_config', array('plugin' => 'codeblock','subtype' => 'qbassignsubmission','name'=>'lang','qbassignment'=>$returnid));
+
                  if(isset($getactive_online))
                  {
                     $updateactivityonline = new stdClass();
                     $updateactivityonline->id = $getactive_online->id;
                     $updateactivityonline->value = $submission_codestatus;           
                     $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+
+                    if(isset($getactive_onlinetype))
+                    {
+                        $updateactivityonline = new stdClass();
+                        $updateactivityonline->id = $getactive_onlinetype->id;
+                        $updateactivityonline->value = ($codeblockmode=='manual')?1:2;            
+                        $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+
+                        $updateactivityonline = new stdClass();
+                        $updateactivityonline->id = $getactive_onlinelang->id;
+                        $updateactivityonline->value = $language_type;          
+                        $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                    }
+                    else
+                    {
+                        $updateactivityonline =  array(
+                            'qbassignment' => $returnid->id,
+                            'plugin' => 'codeblock',
+                            'subtype' => 'qbassignsubmission',
+                            'name' => 'type',
+                            'value' => ($codeblockmode=='manual')?1:2
+                            );
+                        $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+    
+                        $updateactivityonline =  array(
+                            'qbassignment' => $returnid->id,
+                            'plugin' => 'codeblock',
+                            'subtype' => 'qbassignsubmission',
+                            'name' => 'lang',
+                            'value' => $language_type
+                            );
+                        $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+                    }
                  }
                  else
                  {
@@ -3785,6 +3880,24 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                      'name' => 'enabled',
                      'value' => $submission_codestatus
                      );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+
+                     $updateactivityonline =  array(
+                        'qbassignment' => $returnid,
+                        'plugin' => 'codeblock',
+                        'subtype' => 'qbassignsubmission',
+                        'name' => 'type',
+                        'value' => ($codeblockmode=='manual')?1:2
+                        );
+                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+
+                     $updateactivityonline =  array(
+                        'qbassignment' => $returnid,
+                        'plugin' => 'codeblock',
+                        'subtype' => 'qbassignsubmission',
+                        'name' => 'lang',
+                        'value' => $language_type
+                        );
                      $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }           
              }
