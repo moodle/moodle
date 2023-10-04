@@ -45,17 +45,16 @@
 <div class="p-2" data-region="settings-filters">
     {{#filters}}
         {{#hasavailablefilters}}
-            <div>
+            <div class="reportbuilder-filters-select">
                 <label for="addfilterselect" class="sr-only">{{#str}}selectafilter, core_reportbuilder{{/str}}</label>
                 <select id="addfilterselect" name="addfilterselect" data-action="report-add-filter" class="w-100 custom-select">
-                    <option value="0">{{#str}}selectafilter, core_reportbuilder{{/str}}&hellip;</option>
+                    <option value="0"></option>
                     {{#availablefilters}}
                         {{#optiongroup}}
-                            <optgroup label="{{text}}">
-                                {{#values}}
-                                    <option value="{{value}}">{{visiblename}}</option>
-                                {{/values}}
-                            </optgroup>
+                            <option disabled class="suggestions-heading">{{text}}</option>
+                            {{#values}}
+                                <option value="{{value}}">{{visiblename}}</option>
+                            {{/values}}
                         {{/optiongroup}}
                     {{/availablefilters}}
                 </select>
