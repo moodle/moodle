@@ -21,6 +21,7 @@
  * @copyright  2019 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define('NO_OUTPUT_BUFFERING', true);
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/adminlib.php');
