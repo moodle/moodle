@@ -83,6 +83,8 @@ export default class GroupSearch extends search_combobox {
             searchterm: this.getSearchTerm(),
         });
         replaceNodeContents(this.selectors.placeholder, html, js);
+        // Remove aria-activedescendant when the available options change.
+        this.searchInput.removeAttribute('aria-activedescendant');
     }
 
     /**

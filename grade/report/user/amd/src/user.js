@@ -47,6 +47,8 @@ export default class User extends UserSearch {
             selectall: this.selectAllResultsLink(),
         });
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        // Remove aria-activedescendant when the available options change.
+        this.searchInput.removeAttribute('aria-activedescendant');
     }
 
     /**

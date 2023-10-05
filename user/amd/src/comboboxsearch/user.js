@@ -107,6 +107,8 @@ export default class UserSearch extends search_combobox {
             selectall: this.selectAllResultsLink(),
         });
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        // Remove aria-activedescendant when the available options change.
+        this.searchInput.removeAttribute('aria-activedescendant');
     }
 
     /**
@@ -241,7 +243,13 @@ export default class UserSearch extends search_combobox {
         } else {
             this.searchDropdown.classList.remove('show');
             $(this.searchDropdown).hide();
+
+            // As we are manually handling the dropdown, we need to do some housekeeping manually.
             this.getHTMLElements().searchInput.setAttribute('aria-expanded', 'false');
+            this.searchInput.removeAttribute('aria-activedescendant');
+            this.searchDropdown.querySelectorAll('.active[role="option"]').forEach(option => {
+                option.classList.remove('active');
+            });
         }
     }
 
