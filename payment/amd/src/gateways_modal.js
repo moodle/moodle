@@ -144,8 +144,16 @@ const updateCostRegion = async(root, defaultCost = '') => {
     const gatewayElement = root.querySelector(Selectors.values.gateway);
     const surcharge = parseInt((gatewayElement || {dataset: {surcharge: 0}}).dataset.surcharge);
     const cost = (gatewayElement || {dataset: {cost: defaultCost}}).dataset.cost;
+    const valueStr = surcharge ? await getString('feeincludesurcharge', 'core_payment', {fee: cost, surcharge: surcharge}) : cost;
 
-    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: cost, surcharge});
+    const surchargeStr = await getString('labelvalue', 'core',
+        {
+            label: await getString('cost', 'core'),
+            value: valueStr
+        }
+    );
+
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {surchargestr: surchargeStr});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
 
