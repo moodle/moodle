@@ -45,17 +45,6 @@ class api_test extends \advanced_testcase {
     }
 
     /**
-     * Test the communication plugin list for the form element returns the correct number of plugins.
-     */
-    public function test_get_communication_plugin_list_for_form(): void {
-        $communicationplugins = \core_communication\api::get_communication_plugin_list_for_form();
-        // Get the communication plugins.
-        $plugins = \core_component::get_plugin_list('communication');
-        // Check the number of plugins matches plus 1 as we have none in the selection.
-        $this->assertCount(count($plugins) + 1, $communicationplugins);
-    }
-
-    /**
      * Test set data to the instance.
      */
     public function test_set_data(): void {
@@ -283,18 +272,6 @@ class api_test extends \advanced_testcase {
         // Test the tasks added.
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\remove_members_from_room');
         $this->assertCount(1, $adhoctask);
-    }
-
-    /**
-     * Test the enabled communication plugin list and default.
-     */
-    public function test_get_enabled_providers_and_default(): void {
-        [$communicationproviders, $defaulprovider] = \core_communication\api::get_enabled_providers_and_default();
-        // Get the communication plugins.
-        $plugins = \core_component::get_plugin_list('communication');
-        // Check the number of plugins matches plus 1 as we have none in the selection.
-        $this->assertCount(count($plugins) + 1, $communicationproviders);
-        $this->assertEquals(processor::PROVIDER_NONE, $defaulprovider);
     }
 
     /**

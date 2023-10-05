@@ -166,7 +166,10 @@ class api {
         $selection[processor::PROVIDER_NONE] = get_string('nocommunicationselected', 'communication');
         $communicationplugins = \core\plugininfo\communication::get_enabled_plugins();
         foreach ($communicationplugins as $pluginname => $notusing) {
-            $selection['communication_' . $pluginname] = get_string('pluginname', 'communication_' . $pluginname);
+            $provider = 'communication_' . $pluginname;
+            if (processor::is_provider_available($provider)) {
+                $selection[$provider] = get_string('pluginname', 'communication_' . $pluginname);
+            }
         }
         return $selection;
     }
