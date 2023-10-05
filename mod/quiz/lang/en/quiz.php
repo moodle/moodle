@@ -189,7 +189,7 @@ $string['completionminattempts'] = 'Minimum attempts';
 $string['completionminattemptsdesc'] = 'Minimum number of attempts required: {$a}';
 $string['completionminattemptserror'] = 'Minimum number of attempts must be lower or equal to attempts allowed.';
 $string['completionpassorattemptsexhausteddesc'] = 'Student must achieve a passing grade, or exhaust all available attempts to complete this activity';
-$string['completionattemptsexhausted'] = 'Passing grade and all available attempts completed';
+$string['completionattemptsexhausted'] = 'Passing grade or all available attempts completed';
 $string['completionattemptsexhausted_help'] = 'Mark quiz complete when the student has exhausted the maximum number of attempts.';
 $string['configadaptive'] = 'If you choose Yes for this option then the student will be allowed multiple responses to a question even within the same attempt at the quiz.';
 $string['configattemptsallowed'] = 'Restriction on the number of attempts students are allowed at the quiz.';
@@ -1089,4 +1089,3 @@ $string['basicideasofquiz'] = 'The basic ideas of quiz-making';
 
 // Deprecated since Moodle 4.3.
 $string['completionminattemptsgroup'] = 'Require attempts';
-
