@@ -78,20 +78,22 @@ const show = async(rootNode, {
         const gateway = (rootElement.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
         if (gateway) {
-            const message = processPayment(
+            processPayment(
                 gateway,
                 rootNode.dataset.component,
                 rootNode.dataset.paymentarea,
                 rootNode.dataset.itemid,
                 rootNode.dataset.description
-            );
+            ).then((message) => {
+                modal.hide();
+                Notification.addNotification({
+                    message,
+                    type: 'success',
+                });
+                location.href = rootNode.dataset.successurl;
 
-            modal.hide();
-            Notification.addNotification({
-                message,
-                type: 'success',
-            });
-            location.href = rootNode.dataset.successurl;
+                return;
+            }).catch(message => Notification.alert('', message));
         } else {
             // We cannot use await in the following line.
             // The reason is that we are preventing the default action of the save event being triggered,
