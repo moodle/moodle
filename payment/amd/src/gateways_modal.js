@@ -55,9 +55,13 @@ const registerEventListeners = () => {
 const show = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
+
+    // Load upfront, so we don't try to inject the internal content into a possibly-not-yet-resolved promise.
+    const body = await Templates.render('core_payment/gateways_modal', {});
+
     const modal = await ModalGateways.create({
         title: getString('selectpaymenttype', 'core_payment'),
-        body: Templates.render('core_payment/gateways_modal', {}),
+        body: body,
         show: true,
         removeOnClose: true,
     });
@@ -110,7 +114,8 @@ const show = async(rootNode, {
         gateways
     };
 
-    await modal.setBody(await Templates.render('core_payment/gateways', context));
+    const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
+    Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
     selectSingleGateway(rootElement);
     await updateCostRegion(rootElement, rootNode.dataset.cost);
 };
