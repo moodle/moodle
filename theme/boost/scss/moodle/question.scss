@@ -333,7 +333,8 @@ body.path-question-type {
     }
 }
 
-.path-mod-quiz input[size] {
+.que input[size],
+.que textarea[cols] {
     width: auto;
     max-width: 100%;
 }
