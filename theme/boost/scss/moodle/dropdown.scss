@@ -36,6 +36,10 @@
     }
 }
 
+.dropdown-menu {
+    width: fit-content;
+}
+
 // Add dropdown menu items styles for each theme color (mantainning default hover colour for contrast).
 @each $color, $value in $theme-colors {
     .dropdown-item.text-#{$color} {
