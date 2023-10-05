@@ -646,17 +646,19 @@ function groups_has_membership($cm, $userid=null) {
  * @param int $groupid The groupid to get the users for
  * @param int $fields The fields to return
  * @param int $sort optional sorting of returned users
- * @return array|bool Returns an array of the users for the specified
- * group or false if no users or an error returned.
+ * @return array Returns an array of the users for the specified group
  */
 function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
-    global $DB, $USER;
+    global $DB;
 
     if (empty($groupid)) {
         return [];
     }
 
     $courseid = $DB->get_field('groups', 'courseid', ['id' => $groupid]);
+    if ($courseid === false) {
+        return [];
+    }
 
     $select = "SELECT $fields";
     $from = "FROM {user} u
