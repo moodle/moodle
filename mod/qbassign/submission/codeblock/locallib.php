@@ -113,7 +113,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         else
         $mform->setDefault('qbassignsubmission_codeblock_type_group[qbassignsubmission_codeblock_type]', $savedtype);
 
-        $mform->addElement('select', 'qbassignsubmission_codeblock_language', 'Language', array('python'=>'Python', 'sql'=>'SQL', 'javascript'=>'Javascript'));
+        $mform->addElement('select', 'qbassignsubmission_codeblock_language', 'Language', array('python'=>'Python', 'sql'=>'SQL', 'javascript'=>'Javascript','htmlcss'=>'HTML & CSS','sscratch'=>'Scratch'));
 
         $mform->hideIf('qbassignsubmission_codeblock_language',
                        'qbassignsubmission_codeblock_enabled',
