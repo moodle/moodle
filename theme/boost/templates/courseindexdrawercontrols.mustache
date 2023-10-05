@@ -24,7 +24,7 @@
     }
 }}
 <div id="courseindexdrawercontrols" class="dropdown">
-    <button class="btn btn-icon rounded-circle"
+    <button class="btn btn-icon rounded-circle mx-2"
             type="button"
             data-toggle="dropdown"
             aria-haspopup="true"
@@ -38,14 +38,15 @@
            href="#"
            data-action="expandallcourseindexsections"
         >
-            <i class="icon fa fa-angles-down" aria-hidden="true"></i>
+            {{#pix}} t/angles-down, core {{/pix}}
             {{#str}}expandall{{/str}}
         </a>
         <a class="dropdown-item"
            href="#"
            data-action="collapseallcourseindexsections"
         >
-            <i class="icon fa fa-angles-right" aria-hidden="true"></i>
+            <span class="dir-rtl-hide">{{#pix}} t/angles-right, core {{/pix}}</span>
+            <span class="dir-ltr-hide">{{#pix}} t/angles-left, core {{/pix}}</span>
             {{#str}}collapseall{{/str}}
         </a>
     </div>
