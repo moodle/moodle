@@ -78,7 +78,8 @@ class communication extends base {
         // Filter to return only enabled plugins.
         $enabled = [];
         foreach ($plugins as $plugin) {
-            if (processor::is_provider_available('communication_' . $plugin)) {
+            $disabled = get_config('communication_' . $plugin, 'disabled');
+            if (empty($disabled)) {
                 $enabled[$plugin] = $plugin;
             }
         }
