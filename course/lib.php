@@ -2246,7 +2246,7 @@ function create_course($data, $editoroptions = NULL) {
     // Trigger a course created event.
     $event = \core\event\course_created::create(array(
         'objectid' => $course->id,
-        'context' => context_course::instance($course->id),
+        'context' => $context,
         'other' => array('shortname' => $course->shortname,
             'fullname' => $course->fullname)
     ));
@@ -2273,7 +2273,7 @@ function create_course($data, $editoroptions = NULL) {
 
     // Update course tags.
     if (isset($data->tags)) {
-        core_tag_tag::set_item_tags('core', 'course', $course->id, context_course::instance($course->id), $data->tags);
+        core_tag_tag::set_item_tags('core', 'course', $course->id, $context, $data->tags);
     }
     // Set up communication.
     if (core_communication\api::is_available()) {
@@ -2288,9 +2288,10 @@ function create_course($data, $editoroptions = NULL) {
 
             // Communication api call.
             $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $course->id,
+                context: $context,
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $course->id,
             );
             $communication->create_and_configure_room(
                 $provider,
@@ -2431,7 +2432,12 @@ function update_course($data, $editoroptions = NULL) {
 
     // Attempt to get the communication provider if it wasn't provided in the data.
     if (empty($provider) && core_communication\api::is_available()) {
-        $provider = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $data->id)->get_provider();
+        $provider = \core_communication\api::load_by_instance(
+            context: $context,
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $data->id,
+        )->get_provider();
     }
 
     // Communication api call.
@@ -2456,9 +2462,10 @@ function update_course($data, $editoroptions = NULL) {
         }
 
         $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $data->id
+            context: $context,
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $data->id,
         );
 
         $addafterupdate = false;

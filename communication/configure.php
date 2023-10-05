@@ -27,12 +27,15 @@ require_once('lib.php');
 
 require_login();
 
+$contextid = required_param('contextid', PARAM_INT);
 $instanceid = required_param('instanceid', PARAM_INT);
 $instancetype = required_param('instancetype', PARAM_TEXT);
 $component = required_param('component', PARAM_COMPONENT);
 $selectedcommunication = optional_param('selectedcommunication', null, PARAM_PLUGIN);
 
+$context = \core\context::instance_by_id($contextid);
 $instanceinfo = [
+    'contextid' => $context->id,
     'instanceid' => $instanceid,
     'instancetype' => $instancetype,
     'component' => $component,
@@ -44,7 +47,12 @@ if (!core_communication\api::is_available()) {
 }
 
 // Attempt to load the communication instance with the provided params.
-$communication = \core_communication\api::load_by_instance($component, $instancetype, $instanceid);
+$communication = \core_communication\api::load_by_instance(
+    context: $context,
+    component: $component,
+    instancetype: $instancetype,
+    instanceid: $instanceid,
+);
 
 // No communication, no way this form can be used.
 if (!$communication) {
@@ -66,15 +74,16 @@ $PAGE->set_heading($heading);
 $PAGE->add_body_class('limitedwidth');
 
 // Append the instance data before passing to form object.
-$instanceinfo['instance'] = $instance;
+$instanceinfo['instancedata'] = $instance;
 
 // Get our form definitions.
 $form = new \core_communication\form\configure_form(
-    course: $instanceinfo['instance'],
+    context: $context,
     instanceid: $instanceinfo['instanceid'],
     instancetype: $instanceinfo['instancetype'],
     component: $instanceinfo['component'],
-    selectedcommunication: $selectedcommunication
+    selectedcommunication: $selectedcommunication,
+    instancedata: $instanceinfo['instancedata'],
 );
 
 

@@ -1648,6 +1648,7 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     // Update the room membership and power levels when the user role changes.
     if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
         $communication = \core_communication\api::load_by_instance(
+            $coursecontext,
             'core_course',
             'coursecommunication',
             $coursecontext->instanceid,
@@ -1765,6 +1766,7 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             // Update the room membership and power levels when the user role changes.
             if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
                 $communication = \core_communication\api::load_by_instance(
+                    $coursecontext,
                     'core_course',
                     'coursecommunication',
                     $coursecontext->instanceid,

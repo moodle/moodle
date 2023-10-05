@@ -16,6 +16,7 @@
 
 namespace core_communication;
 
+use core\context;
 use stdClass;
 use stored_file;
 
@@ -68,6 +69,7 @@ class processor {
     /**
      * Create communication instance.
      *
+     * @param context $context The context of the item for the instance
      * @param string $provider The communication provider
      * @param int $instanceid The instance id
      * @param string $component The component name
@@ -76,6 +78,7 @@ class processor {
      * @return processor|null
      */
     public static function create_instance(
+        context $context,
         string $provider,
         int $instanceid,
         string $component,
@@ -88,6 +91,7 @@ class processor {
             return null;
         }
         $record = (object) [
+            'contextid' => $context->id,
             'provider' => $provider,
             'instanceid' => $instanceid,
             'component' => $component,
@@ -357,12 +361,14 @@ class processor {
     /**
      * Load communication instance by instance id.
      *
+     * @param context $context The context of the item for the instance
      * @param string $component The component name
      * @param string $instancetype The instance type
      * @param int $instanceid The instance id
      * @return processor|null
      */
     public static function load_by_instance(
+        context $context,
         string $component,
         string $instancetype,
         int $instanceid
@@ -371,6 +377,7 @@ class processor {
         global $DB;
 
         $record = $DB->get_record('communication', [
+            'contextid' => $context->id,
             'instanceid' => $instanceid,
             'component' => $component,
             'instancetype' => $instancetype,
@@ -409,6 +416,33 @@ class processor {
      */
     public function get_id(): int {
         return $this->instancedata->id;
+    }
+
+    /**
+     * Get the context of the communication instance.
+     *
+     * @return context
+     */
+    public function get_context(): context {
+        return context::instance_by_id($this->get_context_id());
+    }
+
+    /**
+     * Get the context id of the communication instance.
+     *
+     * @return int
+     */
+    public function get_context_id(): int {
+        return $this->instancedata->contextid;
+    }
+
+    /**
+     * Get communication instance type.
+     *
+     * @return string
+     */
+    public function get_instance_type(): string {
+        return $this->instancedata->instancetype;
     }
 
     /**

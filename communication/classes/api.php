@@ -16,6 +16,7 @@
 
 namespace core_communication;
 
+use core\context;
 use core_communication\task\add_members_to_room_task;
 use core_communication\task\create_and_configure_room_task;
 use core_communication\task\delete_room_task;
@@ -51,37 +52,47 @@ class api {
      * This class is the entrypoint for all kinda usages.
      * It will be used by the other api to manage the communication providers.
      *
+     * @param context $context The context of the item for the instance
      * @param string $component The component of the item for the instance
      * @param string $instancetype The type of the item for the instance
      * @param int $instanceid The id of the instance
      *
      */
     private function __construct(
+        private context $context,
         private string $component,
         private string $instancetype,
-        private int $instanceid
+        private int $instanceid,
     ) {
         $this->communication = processor::load_by_instance(
-            $this->component,
-            $this->instancetype,
-            $this->instanceid,
+            context: $context,
+            component: $component,
+            instancetype: $instancetype,
+            instanceid: $instanceid,
         );
     }
 
     /**
      * Get the communication processor object.
      *
+     * @param context $context The context of the item for the instance
      * @param string $component The component of the item for the instance
      * @param string $instancetype The type of the item for the instance
      * @param int $instanceid The id of the instance
      * @return api
      */
     public static function load_by_instance(
+        context $context,
         string $component,
         string $instancetype,
-        int $instanceid
+        int $instanceid,
     ): self {
-        return new self($component, $instancetype, $instanceid);
+        return new self(
+            context: $context,
+            component: $component,
+            instancetype: $instancetype,
+            instanceid: $instanceid,
+        );
     }
 
     /**
@@ -89,9 +100,10 @@ class api {
      */
     public function reload(): void {
         $this->communication = processor::load_by_instance(
-            $this->component,
-            $this->instancetype,
-            $this->instanceid,
+            context: $this->context,
+            component: $this->component,
+            instancetype: $this->instancetype,
+            instanceid: $this->instanceid,
         );
     }
 
@@ -398,11 +410,12 @@ class api {
         if ($selectedcommunication !== processor::PROVIDER_NONE && $selectedcommunication !== '') {
             // Create communication record.
             $this->communication = processor::create_instance(
-                $selectedcommunication,
-                $this->instanceid,
-                $this->component,
-                $this->instancetype,
-                $communicationroomname,
+                context: $this->context,
+                provider: $selectedcommunication,
+                instanceid: $this->instanceid,
+                component: $this->component,
+                instancetype: $this->instancetype,
+                roomname: $communicationroomname,
             );
 
             // Update provider record from form data.

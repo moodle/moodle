@@ -2162,9 +2162,10 @@ abstract class enrol_plugin {
         // Add users to a communication room.
         if (core_communication\api::is_available()) {
             $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $courseid
+                context: $context,
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $courseid,
             );
             $communication->add_members_to_room([$userid]);
         }
@@ -2231,10 +2232,12 @@ abstract class enrol_plugin {
         // Add/remove users to/from communication room.
         if (core_communication\api::is_available()) {
             $course = enrol_get_course_by_user_enrolment_id($ue->id);
+            $context = \core\context\course::instance($course->id);
             $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $course->id
+                context: $context,
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $course->id,
             );
             if (($statusmodified && ((int) $ue->status === 1)) ||
                     ($timeendmodified && $ue->timeend !== 0 && (time() > $ue->timeend))) {
@@ -2350,9 +2353,10 @@ abstract class enrol_plugin {
         // Remove users from a communication room.
         if (core_communication\api::is_available()) {
             $communication = \core_communication\api::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $courseid
+                context: $context,
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $courseid,
             );
             $communication->remove_members_from_room([$userid]);
         }

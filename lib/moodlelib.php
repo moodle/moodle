@@ -4108,9 +4108,10 @@ function delete_user(stdClass $user) {
     if (core_communication\api::is_available()) {
         foreach (enrol_get_users_courses($user->id) as $course) {
             $communication = \core_communication\processor::load_by_instance(
-                'core_course',
-                'coursecommunication',
-                $course->id
+                context: \core\context\course::instance($course->id),
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $course->id,
             );
             $communication->get_room_user_provider()->remove_members_from_room([$user->id]);
             $communication->delete_instance_user_mapping([$user->id]);
@@ -5148,15 +5149,16 @@ function delete_course($courseorid, $showfeedback = true) {
     // Make the course completely empty.
     remove_course_contents($courseid, $showfeedback);
 
-    // Delete the course and related context instance.
-    context_helper::delete_instance(CONTEXT_COURSE, $courseid);
-
     // Communication provider delete associated information.
     $communication = \core_communication\api::load_by_instance(
+        $context,
         'core_course',
         'coursecommunication',
         $course->id
     );
+
+    // Delete the course and related context instance.
+    context_helper::delete_instance(CONTEXT_COURSE, $courseid);
 
     // Update communication room membership of enrolled users.
     require_once($CFG->libdir . '/enrollib.php');
