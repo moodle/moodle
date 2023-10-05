@@ -40,24 +40,30 @@ class activity_packager extends resource_packager {
      * @param int $userid The ID of the user performing the packaging.
      */
     public function __construct(
-        protected cm_info $cminfo,
-        protected int $userid,
+        cm_info $cminfo,
+        int $userid,
     ) {
         // Check backup/restore support.
         if (!plugin_supports('mod', $cminfo->modname , FEATURE_BACKUP_MOODLE2)) {
             throw new \coding_exception("Cannot backup module $cminfo->modname. This module doesn't support the backup feature.");
         }
 
-        parent::__construct($cminfo, $userid);
+        parent::__construct($cminfo, $userid, $cminfo->modname);
+    }
 
-        $this->controller = new backup_controller(
+    /**
+     * Get the backup controller for the activity.
+     *
+     * @return backup_controller the backup controller for the activity.
+     */
+    protected function get_backup_controller(): backup_controller {
+        return new backup_controller(
             backup::TYPE_1ACTIVITY,
-            $cminfo->id,
+            $this->cminfo->id,
             backup::FORMAT_MOODLE,
             backup::INTERACTIVE_NO,
             backup::MODE_GENERAL,
-            $userid
+            $this->userid
         );
-        $this->resourcefilename = $this->cminfo->modname;
     }
 }
