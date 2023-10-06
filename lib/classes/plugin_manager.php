@@ -2035,6 +2035,8 @@ class core_plugin_manager {
                 'objectives'
             ),
 
+            'source' => [],
+            
             'tiny' => [
                 'accessibilitychecker',
                 'autosave',
