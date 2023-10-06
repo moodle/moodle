@@ -107,9 +107,10 @@ class api_test extends \advanced_testcase {
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id,
+            provider: $selectedcommunication,
         );
 
-        $communication->create_and_configure_room($selectedcommunication, $communicationroomname, $avatar);
+        $communication->create_and_configure_room($communicationroomname, $avatar);
 
         // Reload the communication processor.
         $communicationprocessor = processor::load_by_instance(
@@ -142,8 +143,9 @@ class api_test extends \advanced_testcase {
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id,
+            provider: $selectedcommunication,
         );
-        $communication->create_and_configure_room($selectedcommunication, $communicationroomname);
+        $communication->create_and_configure_room($communicationroomname);
 
         // Test the tasks added.
         $adhoctask = \core\task\manager::get_adhoc_tasks('\\core_communication\\task\\create_and_configure_room_task');
@@ -202,7 +204,7 @@ class api_test extends \advanced_testcase {
             instancetype: 'coursecommunication',
             instanceid: $course->id,
         );
-        $communication->update_room($selectedcommunication, $communicationroomname);
+        $communication->update_room(processor::PROVIDER_ACTIVE, $communicationroomname);
 
         // Test the communication record exists.
         $communicationprocessor = processor::load_by_instance(
@@ -214,6 +216,22 @@ class api_test extends \advanced_testcase {
 
         $this->assertEquals($communicationroomname, $communicationprocessor->get_room_name());
         $this->assertEquals($selectedcommunication, $communicationprocessor->get_provider());
+        $this->assertTrue($communicationprocessor->is_instance_active());
+
+        $communication->update_room(processor::PROVIDER_INACTIVE, $communicationroomname);
+
+        // Test updating active state.
+        $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+            provider: $selectedcommunication,
+        );
+
+        $this->assertEquals($communicationroomname, $communicationprocessor->get_room_name());
+        $this->assertEquals($selectedcommunication, $communicationprocessor->get_provider());
+        $this->assertFalse($communicationprocessor->is_instance_active());
     }
 
     /**

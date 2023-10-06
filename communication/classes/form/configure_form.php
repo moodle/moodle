@@ -88,6 +88,7 @@ class configure_form extends \moodleform {
             component: $component,
             instancetype: $instancetype,
             instanceid: $instanceid,
+            provider: $this->_customdata['selectedcommunication'],
         );
         $this->communication->form_definition($mform);
         $this->communication->set_data($instancedata);
