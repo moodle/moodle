@@ -1645,18 +1645,15 @@ const Tour = class {
                 if (targetNode.parents('[data-region="fixed-drawer"]').length || !stepConfig.zIndex) {
                     let targetClone = targetNode.clone();
                     background.append(targetClone.first());
-                }
-
-                if (stepConfig.zIndex) {
+                    $('body').append(fader);
+                    $('body').append(background);
+                } else {
                     if (stepConfig.attachPoint === 'append') {
                         stepConfig.attachTo.append(background);
                     } else {
                         fader.insertAfter(stepConfig.attachTo);
                         background.insertAfter(stepConfig.attachTo);
                     }
-                } else {
-                    $('body').append(fader);
-                    $('body').append(background);
                 }
 
                 // Add the backdrop data to the actual target.
