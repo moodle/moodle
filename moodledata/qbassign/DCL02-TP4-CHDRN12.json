@@ -16,9 +16,9 @@
 	"grade_type":"scale",
 	"grading_method": "direct",
 	"uid": "DCL02-TP4-CHDRN12",
-	"maxfilesubmissions":"",	
+	"maxfilesubmissions":"5",	
 	"filetypeslist":"",	
-	"maxfilesubmissions_size":"",	
+	"maxfilesubmissions_size":"2097152",	
 	"testcases" : [
 	  {
 		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"

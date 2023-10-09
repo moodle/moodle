@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51 (57462) - http://www.bohemiancoding.com/sketch -->
+    <title>connected</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="connected" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group">
+            <circle id="Oval" fill="#0FBD8C" cx="10" cy="10" r="10"></circle>
+            <path d="M8.4575,14.9846429 C8.09178571,14.9846429 7.72607143,14.8446429 7.4475,14.5660714 L4.70464286,11.8232143 C4.14607143,11.2646429 4.14607143,10.3617857 4.70464286,9.80321429 C5.26321429,9.24464286 6.16607143,9.24464286 6.72464286,9.80321429 L8.4575,11.5360714 L13.8617857,6.13321429 C14.4189286,5.57464286 15.3232143,5.57464286 15.8817857,6.13321429 C16.4389286,6.69035714 16.4389286,7.59464286 15.8817857,8.15321429 L9.4675,14.5660714 C9.18892857,14.8446429 8.82321429,14.9846429 8.4575,14.9846429" id="Fill-1" fill="#FFFFFF"></path>
+        </g>
+    </g>
+</svg>

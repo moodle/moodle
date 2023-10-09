@@ -1,0 +1,30 @@
+{
+	"title" : "4.1 Master Challenge 1",
+	"question": "The sales of a company for two consecutive years is mentioned in the following table.<br>1. Prepare a presentation and add a title slide.<br>2. Add another slide and insert a column chart based on the data in the table given above.<br><img src='https://learn.qubitsedu.com/images/DC_L05_U04_S01_Challenge1.jpg' width='60%' height='90%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL05-TP4-CHDRN13",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

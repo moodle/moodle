@@ -189,6 +189,7 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
 {{/js}}
 
 {{#is_showreact}}
+{{^is_scratch}}
 <link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/Chapter.css" />
 <link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/highlight.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -320,4 +321,19 @@ require(["jquery", "jqueryui"], function($, jqui){
 
 });
 {{/js}}
+{{/is_scratch}}
+{{#is_scratch}}
+<script>
+M.assn = {
+    "uid" : "{{muid}}"
+}
+</script>
+<script type="text/javascript" src="{{scratch_aurl}}/lib.min.js"></script>
+<script type="text/javascript" src="{{scratch_aurl}}/chunks/gui.js"></script>
+{{#js}}
+require(['jquery'], function($) {
+   $('.index_app_2mqDO').appendTo('#topofscroll');
+});
+{{/js}}
+{{/is_scratch}}
 {{/is_showreact}}

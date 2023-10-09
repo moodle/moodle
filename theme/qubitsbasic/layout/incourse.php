@@ -87,6 +87,7 @@ $headercontent = $header->export_for_template($renderer);
 $path_params = parse_url($PAGE->url, PHP_URL_PATH);
 $is_showreact = false;
 $muid = '';
+$is_scratch = false;
 if($path_params == "/mod/qbassign/view.php"){
     global $DB;
     $course_user_roles = enrol_get_course_users_roles($COURSE->id);
@@ -97,13 +98,24 @@ if($path_params == "/mod/qbassign/view.php"){
         if($cur_role_obj->roleid == $student_id && $cur_role_obj->userid == $USER->id && !is_siteadmin()){
             $is_showreact = true;
             $qbinstnce = $DB->get_record_sql("
-            SELECT qa.uid as uid
+            SELECT qa.uid as uid, qa.id
             FROM {course_modules} cm
             JOIN {qbassign} qa ON cm.instance = qa.id
             WHERE cm.id = :moduleid ", [
                 'moduleid' => $module_id
             ]);
             $muid = ($qbinstnce->uid) ? $qbinstnce->uid : '';
+            $qb_config_data = $DB->get_records("qbassign_plugin_config", [
+                'plugin' => 'codeblock',
+                'qbassignment' => $qbinstnce->id
+            ]);
+            $aqb_config = array();
+            foreach($qb_config_data as $single_qb_config_data){
+                $aqb_config[$single_qb_config_data->name] = $single_qb_config_data->value;
+            }
+            if($aqb_config["enabled"]=="1" && $aqb_config["lang"]=="scratch"){
+                $is_scratch = true;
+            }
         }
     }
 }
@@ -130,7 +142,9 @@ $templatecontext = [
     'addblockbutton' => $addblockbutton,
     'iscourseandmoddtlpage' => true,
     'is_showreact' => $is_showreact,
-    'muid' => $muid
+    'muid' => $muid,
+    'is_scratch' => $is_scratch,
+    'scratch_aurl' => $CFG->wwwroot.'/third_party/scratch/assn'
 ];
 
 echo $OUTPUT->render_from_template('theme_qubitsbasic/incourse', $templatecontext);
