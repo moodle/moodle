@@ -16,6 +16,8 @@
 
 namespace tool_mfa\local;
 
+use tool_mfa\local\factor\object_factor_base;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->libdir.'/ddllib.php');
@@ -200,14 +202,13 @@ class admin_setting_managemfa extends \admin_setting {
         $table->colclasses = ['leftalign', 'centeralign'];
         $table->data  = [];
 
+        $factorstringconnector = get_string('connector', 'tool_mfa');
         foreach ($combinations as $combination) {
-            $string = '';
-            foreach ($combination['combination'] as $factor) {
-                $string .= ' ' . get_string('connector', 'tool_mfa') . ' ' . $factor->get_summary_condition()
-                . ' <sup>' . $factor->get_weight() . '</sup>';
-            }
+            $factorstrings = array_map(static function(object_factor_base $factor): string {
+                return $factor->get_summary_condition() . ' <sup>' . $factor->get_weight() . '</sup>';
+            }, $combination['combination']);
 
-            $string = substr($string, 4);
+            $string = implode(" {$factorstringconnector} ", $factorstrings);
             $table->data[] = new \html_table_row([$string, $combination['totalweight']]);
         }
 

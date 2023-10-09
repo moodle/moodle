@@ -55,9 +55,13 @@ const registerEventListeners = () => {
 const show = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
+
+    // Load upfront, so we don't try to inject the internal content into a possibly-not-yet-resolved promise.
+    const body = await Templates.render('core_payment/gateways_modal', {});
+
     const modal = await ModalGateways.create({
         title: getString('selectpaymenttype', 'core_payment'),
-        body: Templates.render('core_payment/gateways_modal', {}),
+        body: body,
         show: true,
         removeOnClose: true,
     });
@@ -74,20 +78,22 @@ const show = async(rootNode, {
         const gateway = (rootElement.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
         if (gateway) {
-            const message = processPayment(
+            processPayment(
                 gateway,
                 rootNode.dataset.component,
                 rootNode.dataset.paymentarea,
                 rootNode.dataset.itemid,
                 rootNode.dataset.description
-            );
+            ).then((message) => {
+                modal.hide();
+                Notification.addNotification({
+                    message,
+                    type: 'success',
+                });
+                location.href = rootNode.dataset.successurl;
 
-            modal.hide();
-            Notification.addNotification({
-                message,
-                type: 'success',
-            });
-            location.href = rootNode.dataset.successurl;
+                return;
+            }).catch(message => Notification.alert('', message));
         } else {
             // We cannot use await in the following line.
             // The reason is that we are preventing the default action of the save event being triggered,
@@ -110,7 +116,8 @@ const show = async(rootNode, {
         gateways
     };
 
-    await modal.setBody(await Templates.render('core_payment/gateways', context));
+    const {html, js} = await Templates.renderForPromise('core_payment/gateways', context);
+    Templates.replaceNodeContents(rootElement.querySelector(Selectors.regions.gatewaysContainer), html, js);
     selectSingleGateway(rootElement);
     await updateCostRegion(rootElement, rootNode.dataset.cost);
 };
@@ -139,8 +146,16 @@ const updateCostRegion = async(root, defaultCost = '') => {
     const gatewayElement = root.querySelector(Selectors.values.gateway);
     const surcharge = parseInt((gatewayElement || {dataset: {surcharge: 0}}).dataset.surcharge);
     const cost = (gatewayElement || {dataset: {cost: defaultCost}}).dataset.cost;
+    const valueStr = surcharge ? await getString('feeincludesurcharge', 'core_payment', {fee: cost, surcharge: surcharge}) : cost;
 
-    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: cost, surcharge});
+    const surchargeStr = await getString('labelvalue', 'core',
+        {
+            label: await getString('cost', 'core'),
+            value: valueStr
+        }
+    );
+
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {surchargestr: surchargeStr});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
 

@@ -29,10 +29,10 @@ use core_privacy\local\request\userlist;
  * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\provider,
-    \core_privacy\local\request\subsystem\provider,
-    \core_privacy\local\request\core_userlist_provider {
-
+class provider implements
+    \core_privacy\local\request\core_userlist_provider,
+    \core_privacy\local\metadata\provider,
+    \core_privacy\local\request\subsystem\provider {
     public static function get_metadata(collection $collection): collection {
 
         $collection->add_database_table('communication_user', [

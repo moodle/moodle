@@ -16,7 +16,6 @@
 
 namespace core\moodlenet;
 
-use backup;
 use backup_activity_task;
 use backup_controller;
 use stdClass;
@@ -29,10 +28,12 @@ use stored_file;
  * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_partial_packager extends resource_packager {
+class course_partial_packager extends course_packager {
 
-    /** @var array $partialsharingtasks List of partial sharing tasks. */
-    private array $partialsharingtasks = [];
+    /**
+     * @var int[] $cmids List of course module ids of selected activities.
+     */
+    protected array $cmids;
 
     /**
      * Constructor for course partial packager.
@@ -42,39 +43,32 @@ class course_partial_packager extends resource_packager {
      * @param int $userid The ID of the user performing the packaging
      */
     public function __construct(
-        protected stdClass $course,
-        protected array $cmids,
-        protected int $userid,
+        stdClass $course,
+        array $cmids,
+        int $userid,
     ) {
+        $this->cmids = $cmids;
         parent::__construct($course, $userid);
-
-        $this->controller = new backup_controller(
-            backup::TYPE_1COURSE,
-            $course->id,
-            backup::FORMAT_MOODLE,
-            backup::INTERACTIVE_NO,
-            backup::MODE_GENERAL,
-            $userid
-        );
-
-        $this->resourcefilename = $this->course->shortname;
     }
 
     /**
      * Package the resource identified by resource id into a new stored_file.
      *
+     * @param backup_controller $controller The backup controller.
      * @return stored_file
      */
-    protected function package(): stored_file {
-        $this->remove_unselected_activities();
-        return parent::package();
+    protected function package(backup_controller $controller): stored_file {
+        $this->remove_unselected_activities($controller);
+        return parent::package($controller);
     }
 
     /**
      * Remove unselected activities in the course backup.
+     *
+     * @param backup_controller $controller The backup controller.
      */
-    protected function remove_unselected_activities(): void {
-        foreach ($this->partialsharingtasks as $task) {
+    protected function remove_unselected_activities(backup_controller $controller): void {
+        foreach ($this->get_all_activity_tasks($controller) as $task) {
             foreach ($task->get_settings() as $setting) {
                 if (in_array($task->get_moduleid(), $this->cmids) &&
                     str_contains($setting->get_name(), '_included') !== false) {
@@ -87,21 +81,19 @@ class course_partial_packager extends resource_packager {
     }
 
     /**
-     * Get all backup settings available for override.
+     * Get all the activity tasks in the controller.
      *
-     * @return array the associative array of taskclass => settings instances.
+     * @param backup_controller $controller The backup controller.
+     * @return backup_activity_task[] Array of activity tasks.
      */
-    protected function get_all_task_settings(): array {
-        $tasksettings = [];
-        foreach ($this->controller->get_plan()->get_tasks() as $task) {
-            $taskclass = get_class($task);
-            $tasksettings[$taskclass] = $task->get_settings();
-            if ($task instanceof backup_activity_task) {
-                // Store partial sharing tasks.
-                $this->partialsharingtasks[] = $task;
+    protected function get_all_activity_tasks(backup_controller $controller): array {
+        $tasks = [];
+        foreach ($controller->get_plan()->get_tasks() as $task) {
+            if (! $task instanceof backup_activity_task) { // Only for activity tasks.
+                continue;
             }
+            $tasks[] = $task;
         }
-        return $tasksettings;
+        return $tasks;
     }
-
 }

@@ -62,6 +62,9 @@ $string['firstattempts'] = 'first attempts';
 $string['firstattemptsavg'] = 'Average grade of first attempts';
 $string['firstattemptscount'] = 'Number of complete graded first attempts';
 $string['frequency'] = 'Frequency';
+$string['getstatslockprogress'] = 'Waiting for task in progress. Please wait or try again later.';
+$string['getstatslocktimeout'] = 'Statistics calculation lock timeout';
+$string['getstatslocktimeoutdesc'] = 'How many seconds to wait for a lock when attempting to perform a statistics calculation for a quiz. This setting primarily exists for testing, do not modify it unless you know what you are doing.';
 $string['highestattempts'] = 'highest graded attempt';
 $string['highestattemptsavg'] = 'Average grade of highest graded attempts';
 $string['intended_weight'] = 'Intended weight';
@@ -83,6 +86,7 @@ Our equation for effective question weight cannot be calculated in this case. Th
 If you edit a quiz and give these question(s) with negative covariance a max grade of zero then the effective question weight of these questions will be zero and the real effective question weight of other questions will be as calculated now.';
 $string['nogradedattempts'] = 'No attempts have been made at this quiz, or all attempts have questions that need manual grading.';
 $string['nostudentsingroup'] = 'There are no students in this group yet';
+$string['nostats'] = 'Could not complete the statistics calculation. There may be a long-running calculation in progress. Please try again later.';
 $string['optiongrade'] = 'Partial credit';
 $string['partofquestion'] = 'Part of question';
 $string['pluginname'] = 'Statistics';

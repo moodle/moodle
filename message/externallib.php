@@ -234,7 +234,6 @@ class core_message_external extends external_api {
             } else {
                 // WARNINGS: for backward compatibility we return this errormessage.
                 //          We should have thrown exceptions as these errors prevent results to be returned.
-                // See http://docs.moodle.org/dev/Errors_handling_in_web_services#When_to_send_a_warning_on_the_server_side .
                 $resultmsg['msgid'] = -1;
                 if (!isset($errormessage)) { // Nobody has set a message error or thrown an exception, let's set it.
                     $errormessage = get_string('messageundeliveredbynotificationsettings', 'error');
@@ -2142,6 +2141,8 @@ class core_message_external extends external_api {
                     $message->usertofullname = $usertofullname;
                 }
 
+                // Clean subject of html.
+                $message->subject = clean_param($message->subject, PARAM_TEXT);
                 $message->text = message_format_message_text($message);
                 $messages[$mid] = (array) $message;
             }
@@ -2852,7 +2853,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user', VALUE_REQUIRED),
-                'name' => new external_value(PARAM_TEXT, 'The name of the message processor'),
+                'name' => new external_value(PARAM_SAFEDIR, 'The name of the message processor'),
                 'formvalues' => new external_multiple_structure(
                     new external_single_structure(
                         array(
@@ -2928,7 +2929,7 @@ class core_message_external extends external_api {
         return new external_function_parameters(
             array(
                 'userid' => new external_value(PARAM_INT, 'id of the user, 0 for current user'),
-                'name' => new external_value(PARAM_TEXT, 'The name of the message processor', VALUE_REQUIRED),
+                'name' => new external_value(PARAM_SAFEDIR, 'The name of the message processor', VALUE_REQUIRED),
             )
         );
     }

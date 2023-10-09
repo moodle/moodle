@@ -103,3 +103,4 @@ completionview_desc,mod_bigbluebuttonbn
 activitygradenotrequired,core_completion
 completionpassgrade_help,core_completion
 completionusegrade_help,core_completion
+moodlenet:sharetyperesource,core

@@ -65,12 +65,15 @@ Feature: MoodleNet outbound share selected activities in a course
     Given I am on the "C1" "course" page logged in as teacher1
     And I turn editing mode on
     And I click on "Bulk actions" "button"
+    When I click on "Share to MoodleNet" "button" in the "sticky-footer" "region"
+    Then "Share to MoodleNet" "dialogue" should not exist
     And I click on "Select activity Test Assignment 1" "checkbox"
     And I click on "Select activity Test Assignment 2" "checkbox"
-    When I click on "Share to MoodleNet" "button" in the "sticky-footer" "region"
-    Then I should see "Test course 1" in the "Share to MoodleNet" "dialogue"
-    And I should see "The selected activities are being shared with MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
-    And I should see "2 activities will be included in the course" in the "Share to MoodleNet" "dialogue"
+    And I click on "Share to MoodleNet" "button" in the "sticky-footer" "region"
+    And "Share to MoodleNet" "dialogue" should exist
+    And I should see "Test course 1" in the "Share to MoodleNet" "dialogue"
+    And I should see "The selected activities are being shared with MoodleNet as a resource." in the "Share to MoodleNet" "dialogue"
+    And I should see "2 activities will be included in the course." in the "Share to MoodleNet" "dialogue"
     And I click on "Share" "button" in the "Share to MoodleNet" "dialogue"
     And I switch to "moodlenet_auth" window
     And I press "Allow" and switch to main window
@@ -85,8 +88,8 @@ Feature: MoodleNet outbound share selected activities in a course
     And I click on "Select activity Test Assignment 1" "checkbox"
     When I click on "Share to MoodleNet" "button" in the "sticky-footer" "region"
     Then I should see "Test Assignment 1" in the "Share to MoodleNet" "dialogue"
-    And I should see "This activity is being shared with MoodleNet as a resource" in the "Share to MoodleNet" "dialogue"
-    And I should not see "1 activities will be included in the course" in the "Share to MoodleNet" "dialogue"
+    And I should see "This activity is being shared with MoodleNet as a resource." in the "Share to MoodleNet" "dialogue"
+    And I should not see "1 activities will be included in the course." in the "Share to MoodleNet" "dialogue"
     And I click on "Share" "button" in the "Share to MoodleNet" "dialogue"
     And I switch to "moodlenet_auth" window
     And I press "Allow" and switch to main window

@@ -16,6 +16,8 @@
 
 namespace core\moodlenet;
 
+use backup_activity_task;
+
 /**
  * Unit tests for {@see \core\moodlenet\course_partial_packager}.
  *
@@ -29,9 +31,11 @@ class course_partial_packager_test extends \advanced_testcase {
     /**
      * Test fetching task settings.
      *
-     * @covers ::get_all_task_settings
+     * @covers ::remove_unselected_activities
+     * @covers ::get_all_activity_tasks
+     * @covers ::get_backup_controller
      */
-    public function test_get_all_task_settings(): void {
+    public function test_remove_unselected_activities(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -46,18 +50,22 @@ class course_partial_packager_test extends \advanced_testcase {
 
         // Fetch all backup task settings.
         $rc = new \ReflectionClass(course_partial_packager::class);
+        $rcmgetbackup = $rc->getMethod('get_backup_controller');
+        $rcmgetbackup->setAccessible(true);
+        $controller = $rcmgetbackup->invoke($packager);
 
-        $rcmgetall = $rc->getMethod('get_package');
-        $rcmgetall->setAccessible(true);
-        $rcmgetall->invoke($packager);
+        $rcmremove = $rc->getMethod('remove_unselected_activities');
+        $rcmremove->setAccessible(true);
+        $rcmremove->invoke($packager, $controller);
 
-        // Fetch the partial sharing tasks property.
-        $rcp = $rc->getProperty('partialsharingtasks');
-        $rcp->setAccessible(true);
-        $tasks = $rcp->getValue($packager);
+        // Fetch all backup task settings for asserting them.
         $finalsetting = [];
-        foreach ($tasks as $task) {
-            foreach ($task->get_settings() as $setting) {
+        foreach ($controller->get_plan()->get_tasks() as $task) {
+            if (! $task instanceof backup_activity_task) { // Only for activity tasks.
+                continue;
+            }
+            $tasksettings = $task->get_settings();
+            foreach ($tasksettings as $setting) {
                 if (in_array($task->get_moduleid(), [$page1->cmid, $page2->cmid]) &&
                     strpos($setting->get_name(), '_included') !== false) {
                     $finalsetting[$task->get_moduleid()] = [
@@ -79,5 +87,8 @@ class course_partial_packager_test extends \advanced_testcase {
         // Check the value of the task of Page 2. 0 mean disabled, the backup will not include the Page 2 activity.
         $this->assertEquals('page_' . $page2->cmid . '_included', $finalsetting[$page2->cmid]['name']);
         $this->assertEquals(0, $finalsetting[$page2->cmid]['value']);
+
+        // We have finished with the backup controller, so destroy it.
+        $controller->destroy();
     }
 }

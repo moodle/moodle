@@ -16,6 +16,7 @@
 
 namespace core_communication;
 
+use core\context;
 use stdClass;
 use stored_file;
 
@@ -29,7 +30,6 @@ use stored_file;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class processor {
-
     /** @var string The magic 'none' provider */
     public const PROVIDER_NONE = 'none';
 
@@ -69,6 +69,7 @@ class processor {
     /**
      * Create communication instance.
      *
+     * @param context $context The context of the item for the instance
      * @param string $provider The communication provider
      * @param int $instanceid The instance id
      * @param string $component The component name
@@ -77,6 +78,7 @@ class processor {
      * @return processor|null
      */
     public static function create_instance(
+        context $context,
         string $provider,
         int $instanceid,
         string $component,
@@ -89,6 +91,7 @@ class processor {
             return null;
         }
         $record = (object) [
+            'contextid' => $context->id,
             'provider' => $provider,
             'instanceid' => $instanceid,
             'component' => $component,
@@ -106,22 +109,17 @@ class processor {
     /**
      * Update the communication instance with any changes.
      *
-     * @param null|string $provider The communication provider
+     * @param null|int $active Active state of the instance (processor::PROVIDER_ACTIVE or processor::PROVIDER_INACTIVE)
      * @param null|string $roomname The room name
      */
     public function update_instance(
-        ?string $provider = null,
+        ?string $active = null,
         ?string $roomname = null,
     ): void {
         global $DB;
 
-        if ($provider !== null) {
-            if ($provider === self::PROVIDER_NONE) {
-                $this->instancedata->active = self::PROVIDER_INACTIVE;
-            } else {
-                $this->instancedata->provider = $provider;
-                $this->instancedata->active = self::PROVIDER_ACTIVE;
-            }
+        if ($active !== null && in_array($active, [self::PROVIDER_ACTIVE, self::PROVIDER_INACTIVE])) {
+            $this->instancedata->active = $active;
         }
 
         if ($roomname !== null) {
@@ -168,6 +166,21 @@ class processor {
             'userid',
             'commid = ?',
             [$this->instancedata->id]
+        );
+    }
+
+    /**
+     * Get all the user ids flagged as deleted.
+     *
+     * @return array
+     */
+    public function get_all_delete_flagged_userids(): array {
+        global $DB;
+        return $DB->get_fieldset_select(
+            'communication_user',
+            'userid',
+            'commid = ? AND deleted = ?',
+            [$this->instancedata->id, 1]
         );
     }
 
@@ -309,7 +322,7 @@ class processor {
 
         $DB->delete_records_select(
             'communication_user',
-            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?' ,
+            'commid = ? AND userid IN (' . implode(',', $userids) . ') AND synced = ?',
             [$this->instancedata->id, 0]
         );
     }
@@ -333,7 +346,7 @@ class processor {
     public static function load_by_id(int $id): ?self {
         global $DB;
         $record = $DB->get_record('communication', ['id' => $id]);
-        if ($record && self::is_provider_enabled($record->provider)) {
+        if ($record && self::is_provider_available($record->provider)) {
             return new self($record);
         }
 
@@ -343,26 +356,40 @@ class processor {
     /**
      * Load communication instance by instance id.
      *
+     * @param context $context The context of the item for the instance
      * @param string $component The component name
      * @param string $instancetype The instance type
      * @param int $instanceid The instance id
+     * @param string|null $provider The provider type - if null will load for this context's active provider.
      * @return processor|null
      */
     public static function load_by_instance(
+        context $context,
         string $component,
         string $instancetype,
-        int $instanceid
+        int $instanceid,
+        ?string $provider = null,
     ): ?self {
 
         global $DB;
 
-        $record = $DB->get_record('communication', [
+        $params = [
+            'contextid' => $context->id,
             'instanceid' => $instanceid,
             'component' => $component,
             'instancetype' => $instancetype,
-        ]);
+        ];
 
-        if ($record && self::is_provider_enabled($record->provider)) {
+        if ($provider === null) {
+            // Fetch the active provider in this context.
+            $params['active'] = 1;
+        } else {
+            // Fetch a specific provider in this context (which may be inactive).
+            $params['provider'] = $provider;
+        }
+
+        $record = $DB->get_record('communication', $params);
+        if ($record && self::is_provider_available($record->provider)) {
             return new self($record);
         }
 
@@ -398,7 +425,43 @@ class processor {
     }
 
     /**
+     * Get the context of the communication instance.
+     *
+     * @return context
+     */
+    public function get_context(): context {
+        return context::instance_by_id($this->get_context_id());
+    }
+
+    /**
+     * Get the context id of the communication instance.
+     *
+     * @return int
+     */
+    public function get_context_id(): int {
+        return $this->instancedata->contextid;
+    }
+
+    /**
+     * Get communication instance type.
+     *
+     * @return string
+     */
+    public function get_instance_type(): string {
+        return $this->instancedata->instancetype;
+    }
+
+    /**
      * Get communication instance id.
+     *
+     * @return int
+     */
+    public function get_instance_id(): int {
+        return $this->instancedata->instanceid;
+    }
+
+    /**
+     * Get communication instance component.
      *
      * @return string
      */
@@ -407,15 +470,12 @@ class processor {
     }
 
     /**
-     * Get communication provider.
+     * Get communication provider type.
      *
      * @return string|null
      */
     public function get_provider(): ?string {
-        if ((int)$this->instancedata->active === self::PROVIDER_ACTIVE) {
-            return $this->instancedata->provider;
-        }
-        return self::PROVIDER_NONE;
+        return $this->instancedata->provider;
     }
 
     /**
@@ -462,12 +522,12 @@ class processor {
     }
 
     /**
-     * Get communication provider for form feature.
+     * Set provider specific form definition.
      *
      * @param string $provider The provider name
      * @param \MoodleQuickForm $mform The moodle form
      */
-    public static function set_proider_form_definition(string $provider, \MoodleQuickForm $mform): void {
+    public static function set_provider_specific_form_definition(string $provider, \MoodleQuickForm $mform): void {
         $providerclass = "{$provider}\\communication_feature";
         $providerclass::set_form_definition($mform);
     }
@@ -648,12 +708,16 @@ class processor {
     }
 
     /**
-     * Is communication provider enabled/disabled.
+     * Is the communication provider enabled and configured, or disabled.
      *
      * @param string $provider provider component name
      * @return bool
      */
-    public static function is_provider_enabled(string $provider): bool {
-        return \core\plugininfo\communication::is_plugin_enabled($provider);
+    public static function is_provider_available(string $provider): bool {
+        if (\core\plugininfo\communication::is_plugin_enabled($provider)) {
+            $providerclass = "{$provider}\\communication_feature";
+            return $providerclass::is_configured();
+        }
+        return false;
     }
 }

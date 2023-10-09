@@ -45,12 +45,11 @@ use GuzzleHttp\Psr7\Response;
  */
 class communication_feature implements
     \core_communication\communication_provider,
-    \core_communication\user_provider,
+    \core_communication\form_provider,
     \core_communication\room_chat_provider,
     \core_communication\room_user_provider,
-    \core_communication\form_provider {
-
-    /** @var matrix_room $room The matrix room object to update room information */
+    \core_communication\user_provider {
+    /** @var ?matrix_room $room The matrix room object to update room information */
     private ?matrix_room $room = null;
 
     /** @var string|null The URI of the home server */
@@ -93,7 +92,7 @@ class communication_feature implements
         $this->homeserverurl = get_config('communication_matrix', 'matrixhomeserverurl');
         $this->webclienturl = get_config('communication_matrix', 'matrixelementurl');
 
-        if ($this->homeserverurl) {
+        if ($processor::is_provider_available('communication_matrix')) {
             // Generate the API instance.
             $this->matrixapi = matrix_client::instance(
                 serverurl: $this->homeserverurl,
@@ -127,10 +126,7 @@ class communication_feature implements
      * @return null|matrix_room
      */
     public function get_room_configuration(): ?matrix_room {
-        if ($this->room === null) {
-            $this->room = matrix_room::load_by_processor_id($this->processor->get_id());
-        }
-
+        $this->room = matrix_room::load_by_processor_id($this->processor->get_id());
         return $this->room;
     }
 
@@ -166,10 +162,10 @@ class communication_feature implements
                 $response = $this->matrixapi->create_user(
                     userid: $qualifiedmuid,
                     displayname: $userfullname,
-                    threepids: [(object)[
+                    threepids: [(object) [
                         'medium' => 'email',
-                        'address' => $user->email
-                    ]],
+                        'address' => $user->email,
+                    ], ],
                     externalids: [],
                 );
                 $body = json_decode($response->getBody());
@@ -184,8 +180,17 @@ class communication_feature implements
             }
         }
 
+        // Set the power level of the users.
+        if (!empty($addedmembers) && $this->is_power_levels_update_required($addedmembers)) {
+            $this->set_matrix_power_levels();
+        }
+
         // Mark then users as synced for the added members.
         $this->processor->mark_users_as_synced($addedmembers);
+    }
+
+    public function update_room_membership(array $userids): void {
+        $this->set_matrix_power_levels();
     }
 
     /**
@@ -209,6 +214,11 @@ class communication_feature implements
             }
         }
 
+        // Set the power level of the users.
+        if (!empty($addedmembers) && $this->is_power_levels_update_required($addedmembers)) {
+            $this->set_matrix_power_levels();
+        }
+
         // Mark then users as synced for the added members.
         $this->processor->mark_users_as_synced($addedmembers);
 
@@ -229,8 +239,8 @@ class communication_feature implements
 
         if (!$this->check_room_membership($matrixuserid)) {
             $response = $this->matrixapi->invite_member_to_room(
-                $this->get_room_id(),
-                $matrixuserid,
+                roomid: $this->get_room_id(),
+                userid: $matrixuserid,
             );
 
             $body = self::get_body($response);
@@ -256,25 +266,41 @@ class communication_feature implements
         // This API requiures the remove_members_from_room feature.
         $this->matrixapi->require_feature(remove_member_from_room_feature::class);
 
+        if ($this->get_room_id() === null) {
+            return;
+        }
+
+        // Remove the power level for the user first.
+        $this->set_matrix_power_levels($userids);
+
         $membersremoved = [];
+
+        $currentpowerlevels = $this->get_current_powerlevel_data();
+        $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
 
         foreach ($userids as $userid) {
             // Check user is member of room first.
             $matrixuserid = matrix_user_manager::get_matrixid_from_moodle($userid);
 
-            // Check if user is the room admin and halt removal of this user.
-            $response = $this->matrixapi->get_room_info($this->get_room_id());
-            $matrixroomdata = self::get_body($response);
-            $roomadmin = $matrixroomdata->creator;
-            $isadmin = $matrixuserid === $roomadmin;
+            if (!$matrixuserid) {
+                // Unable to find a matrix userid for this user.
+                continue;
+            }
+
+            if (array_key_exists($matrixuserid, $currentuserpowerlevels)) {
+                if ($currentuserpowerlevels[$matrixuserid] >= matrix_constants::POWER_LEVEL_MAXIMUM) {
+                    // Skip removing the user if they are an admin.
+                    continue;
+                }
+            }
 
             if (
-                !$isadmin && $matrixuserid && $this->check_user_exists($matrixuserid) &&
+                $this->check_user_exists($matrixuserid) &&
                 $this->check_room_membership($matrixuserid)
             ) {
                 $this->matrixapi->remove_member_from_room(
-                    $this->get_room_id(),
-                    $matrixuserid,
+                    roomid: $this->get_room_id(),
+                    userid: $matrixuserid,
                 );
 
                 $membersremoved[] = $userid;
@@ -295,7 +321,9 @@ class communication_feature implements
         // This API requires the get_user_info feature.
         $this->matrixapi->require_feature(get_user_info_feature::class);
 
-        $response = $this->matrixapi->get_user_info($matrixuserid);
+        $response = $this->matrixapi->get_user_info(
+            userid: $matrixuserid,
+        );
         $body = self::get_body($response);
 
         return isset($body->name);
@@ -312,7 +340,9 @@ class communication_feature implements
         // This API requires the get_room_members feature.
         $this->matrixapi->require_feature(get_room_members_feature::class);
 
-        $response = $this->matrixapi->get_room_members($this->get_room_id());
+        $response = $this->matrixapi->get_room_members(
+            roomid: $this->get_room_id(),
+        );
         $body = self::get_body($response);
 
         // Check user id is in the returned room member ids.
@@ -376,12 +406,17 @@ class communication_feature implements
         ]);
 
         // Get room data.
-        $response = $this->matrixapi->get_room_info($this->get_room_id());
+        $response = $this->matrixapi->get_room_info(
+            roomid: $this->get_room_id(),
+        );
         $remoteroomdata = self::get_body($response);
 
         // Update the room name when it's updated from the form.
         if ($remoteroomdata->name !== $this->processor->get_room_name()) {
-            $this->matrixapi->update_room_name($this->get_room_id(), $this->processor->get_room_name());
+            $this->matrixapi->update_room_name(
+                roomid: $this->get_room_id(),
+                name: $this->processor->get_room_name(),
+            );
         }
 
         // Update the room topic if set.
@@ -431,12 +466,18 @@ class communication_feature implements
                 $contenturi = self::get_body($response)->content_uri;
 
                 // Now update the room avatar.
-                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+                $response = $this->matrixapi->update_room_avatar(
+                    roomid: $this->get_room_id(),
+                    avatarurl: $contenturi,
+                );
 
                 // And finally upload the content.
                 $this->matrixapi->upload_content($instanceimage);
             } else {
-                $response = $this->matrixapi->update_room_avatar($this->get_room_id(), null);
+                $response = $this->matrixapi->update_room_avatar(
+                    roomid: $this->get_room_id(),
+                    avatarurl: null,
+                );
             }
         } else {
             // Prior to v1.7 the only way to upload content was to upload the content, which returns a mxc URI to use.
@@ -449,7 +490,10 @@ class communication_feature implements
             }
 
             // Now update the room avatar.
-            $response = $this->matrixapi->update_room_avatar($this->get_room_id(), $contenturi);
+            $response = $this->matrixapi->update_room_avatar(
+                roomid: $this->get_room_id(),
+                avatarurl: $contenturi,
+            );
         }
 
         // Indicate the avatar has been synced if it was successfully set with Matrix.
@@ -497,9 +541,12 @@ class communication_feature implements
 
     public static function set_form_definition(\MoodleQuickForm $mform): void {
         // Room description for the communication provider.
-        $mform->insertElementBefore($mform->createElement('text', 'matrixroomtopic',
+        $mform->insertElementBefore($mform->createElement(
+            'text',
+            'matrixroomtopic',
             get_string('matrixroomtopic', 'communication_matrix'),
-            'maxlength="255" size="20"'), 'addcommunicationoptionshere');
+            'maxlength="255" size="20"'
+        ), 'addcommunicationoptionshere');
         $mform->addHelpButton('matrixroomtopic', 'matrixroomtopic', 'communication_matrix');
         $mform->setType('matrixroomtopic', PARAM_TEXT);
     }
@@ -514,5 +561,214 @@ class communication_feature implements
         $body = $response->getBody();
 
         return json_decode($body, false, 512, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * Set the matrix power level with the room.
+     *
+     * Users with a non-moodle power level are not typically removed unless specified in the $forceremoval param.
+     * Matrix Admin users are never removed.
+     *
+     * @param array $forceremoval The users to force removal from the room, even if they have a custom power level
+     */
+    private function set_matrix_power_levels(
+        array $forceremoval = [],
+    ): void {
+        // Get the current power levels.
+        $currentpowerlevels = $this->get_current_powerlevel_data();
+        $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
+
+        // Get all the current users who need to be in the room.
+        $userlist = $this->processor->get_all_userids_for_instance();
+
+        // Translate the user ids to matrix user ids.
+        $userlist = array_combine(
+            array_map(
+                fn ($userid) => matrix_user_manager::get_matrixid_from_moodle($userid),
+                $userlist,
+            ),
+            $userlist,
+        );
+
+        // Determine the power levels, and filter out anyone with the default level.
+        $newuserpowerlevels = array_filter(
+            array_map(
+                fn($userid) => $this->get_user_allowed_power_level($userid),
+                $userlist,
+            ),
+            fn($level) => $level !== matrix_constants::POWER_LEVEL_DEFAULT,
+        );
+
+        // Keep current room admins, and users which don't use our MODERATOR power level without changing them.
+        $staticusers = $this->get_users_with_custom_power_level($currentuserpowerlevels);
+        foreach ($staticusers as $userid => $level) {
+            $newuserpowerlevels[$userid] = $level;
+        }
+
+        if (!empty($forceremoval)) {
+            // Remove the users from the power levels if they are not admins.
+            foreach ($forceremoval as $userid) {
+                if ($newuserpowerlevels < matrix_constants::POWER_LEVEL_MAXIMUM) {
+                    unset($newuserpowerlevels[$userid]);
+                }
+            }
+        }
+
+        if (!$this->power_levels_changed($currentuserpowerlevels, $newuserpowerlevels)) {
+            // No changes to make.
+            return;
+        }
+
+
+        // Update the power levels for the room.
+        $this->matrixapi->update_room_power_levels(
+            roomid: $this->get_room_id(),
+            users: $newuserpowerlevels,
+        );
+    }
+
+    /**
+     * Filter the list of users provided to remove those with a moodle-related power level.
+     *
+     * @param array $users
+     * @return array
+     */
+    private function get_users_with_custom_power_level(array $users): array {
+        return array_filter(
+            $users,
+            function ($level): bool {
+                switch ($level) {
+                    case matrix_constants::POWER_LEVEL_DEFAULT:
+                    case matrix_constants::POWER_LEVEL_MOODLE_SITE_ADMIN:
+                    case matrix_constants::POWER_LEVEL_MOODLE_MODERATOR:
+                        return false;
+                    default:
+                        return true;
+                }
+            },
+        );
+    }
+
+    /**
+     * Check whether power levels have changed compared with the proposed power levels.
+     *
+     * @param array $currentuserpowerlevels The current power levels
+     * @param array $newuserpowerlevels The new power levels proposed
+     * @return bool Whether there is any change to be made
+     */
+    private function power_levels_changed(
+        array $currentuserpowerlevels,
+        array $newuserpowerlevels,
+    ): bool {
+        if (count($newuserpowerlevels) !== count($currentuserpowerlevels)) {
+            // Different number of keys - there must be a difference then.
+            return true;
+        }
+
+        // Sort the power levels.
+        ksort($newuserpowerlevels, SORT_NUMERIC);
+
+        // Get the current power levels.
+        ksort($currentuserpowerlevels);
+
+        $diff = array_merge(
+            array_diff_assoc(
+                $newuserpowerlevels,
+                $currentuserpowerlevels,
+            ),
+            array_diff_assoc(
+                $currentuserpowerlevels,
+                $newuserpowerlevels,
+            ),
+        );
+
+        return count($diff) > 0;
+    }
+
+    /**
+     * Get the current power level for the room.
+     *
+     * @return stdClass
+     */
+    private function get_current_powerlevel_data(): \stdClass {
+        $roomid = $this->get_room_id();
+        $response = $this->matrixapi->get_room_power_levels(
+            roomid: $roomid,
+        );
+        if ($response->getStatusCode() !== 200) {
+            throw new \moodle_exception(
+                'Unable to get power levels for room',
+            );
+        }
+
+        $powerdata = $this->get_body($response);
+        $powerdata = array_filter(
+            $powerdata->rooms->join->{$roomid}->state->events,
+            fn($value) => $value->type === 'm.room.power_levels'
+        );
+        $powerdata = reset($powerdata);
+
+        return $powerdata->content;
+    }
+
+    /**
+     * Determine if a power level update is required.
+     * Matrix will always set a user to the default power level of 0 when a power level update is made.
+     * That is, unless we specify another level. As long as one person's level is greater than the default,
+     * we will need to set the power levels of all users greater than the default.
+     *
+     * @param array $userids The users to evaluate
+     * @return boolean Returns true if an update is required
+     */
+    private function is_power_levels_update_required(array $userids): bool {
+        // Is the user's power level greater than the default?
+        foreach ($userids as $userid) {
+            if ($this->get_user_allowed_power_level($userid) > matrix_constants::POWER_LEVEL_DEFAULT) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get the allowed power level for the user id according to perms/site admin or default.
+     *
+     * @param int $userid
+     * @return int
+     */
+    public function get_user_allowed_power_level(int $userid): int {
+        $powerlevel = matrix_constants::POWER_LEVEL_DEFAULT;
+
+        if (has_capability('communication/matrix:moderator', $this->processor->get_context(), $userid)) {
+            $powerlevel = matrix_constants::POWER_LEVEL_MOODLE_MODERATOR;
+        }
+
+        // If site admin, override all caps.
+        if (is_siteadmin($userid)) {
+            $powerlevel = matrix_constants::POWER_LEVEL_MOODLE_SITE_ADMIN;
+        }
+
+        return $powerlevel;
+    }
+
+    /*
+     * Check if matrix settings are configured
+     *
+     * @return boolean
+     */
+    public static function is_configured(): bool {
+        // Matrix communication settings.
+        $matrixhomeserverurl = get_config('communication_matrix', 'matrixhomeserverurl');
+        $matrixaccesstoken = get_config('communication_matrix', 'matrixaccesstoken');
+        $matrixelementurl = get_config('communication_matrix', 'matrixelementurl');
+
+        if (
+            !empty($matrixhomeserverurl) &&
+            !empty($matrixaccesstoken) &&
+            (PHPUNIT_TEST || defined('BEHAT_SITE_RUNNING') || !empty($matrixelementurl))
+        ) {
+            return true;
+        }
+        return false;
     }
 }

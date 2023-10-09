@@ -22,6 +22,7 @@
  */
 
 import $ from 'jquery';
+import {SELECTORS as stickyFooterSelectors, eventTypes as stickyFooterEvents} from 'core/sticky-footer';
 
 const SELECTORS = {
     GRADEPARENT: '.gradeparent',
@@ -43,14 +44,14 @@ export const init = () => {
         // The closest heading element has sticky positioning which affects the stacking context in this case.
         e.target.closest(SELECTORS.TABLEHEADER).classList.toggle('actions-menu-active');
     });
-    // Register an observer that will bump up the z-index value of the average overall row when it's pinned to prevent
-    // the row being cut-off by the user column cells or other components within the report table that have higher
-    // z-index values.
-    const observer = new IntersectionObserver(
-        ([e]) => e.target.closest('tr').classList.toggle('pinned', e.intersectionRatio < 1),
-        {threshold: [1]}
-    );
-    observer.observe(document.querySelector(SELECTORS.AVERAGEROWHEADER));
+
+    defineAverageRowIntersectionObserver(true);
+    // Add an event listener to the sticky footer toggled event to re-define the average row intersection observer
+    // accordingly. This is needed as on narrow screens when scrolling vertically the sticky footer is enabled and
+    // disabled dynamically.
+    document.addEventListener(stickyFooterEvents.stickyFooterStateChanged, (e) => {
+        defineAverageRowIntersectionObserver(e.detail.enabled);
+    });
 
     if (!document.querySelector(SELECTORS.BEHAT)) {
         const grader = document.querySelector(SELECTORS.GRADEPARENT);
@@ -70,4 +71,25 @@ export const init = () => {
             }
         });
     }
+};
+
+/**
+ * Define the intersection observer that will make sure that the average overall row is properly pinned.
+ *
+ * @param {boolean} stickyFooterEnabled Whether the page shows a sticky footer or not.
+ */
+const defineAverageRowIntersectionObserver = (stickyFooterEnabled) => {
+    const stickyFooterHeight = stickyFooterEnabled ? document.querySelector(stickyFooterSelectors.STICKYFOOTER).offsetHeight : null;
+    // Register an observer that will bump up the z-index value of the average overall row when it's pinned to prevent
+    // the row being cut-off by the user column cells or other components within the report table that have higher
+    // z-index values. If the page has a sticky footer, we need to make sure that the bottom root margin of the observer
+    // subtracts the height of the sticky footer to prevent the row being cut-off by the footer.
+    const intersectionObserver = new IntersectionObserver(
+        ([e]) => e.target.closest('tr').classList.toggle('pinned', e.intersectionRatio < 1),
+        {
+            rootMargin: stickyFooterHeight ? `0px 0px -${stickyFooterHeight}px 0px` : "0px",
+            threshold: [1]
+        }
+    );
+    intersectionObserver.observe(document.querySelector(SELECTORS.AVERAGEROWHEADER));
 };

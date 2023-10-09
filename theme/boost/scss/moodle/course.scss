@@ -1286,7 +1286,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         &.btn-#{$color} {
             $bg-color: theme-color-level($color, $alert-bg-level);
             @include button-variant($bg-color, $bg-color, $value);
-            color: $value;
+            color: theme-color-level($color, $alert-color-level);
             &:hover {
                 color: color-yiq($value);
             }
@@ -1400,9 +1400,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         @include border-radius($activity-item-border-radius);
         .editavailability {
             a {
-                @include border-radius(0.5rem);
-                color: $body-color;
-                text-decoration: none;
+                @include border-radius();
                 font-weight: bold;
                 &:hover {
                     background-color: $gray-400;

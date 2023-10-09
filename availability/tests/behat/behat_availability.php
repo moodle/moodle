@@ -24,7 +24,7 @@ require_once(__DIR__ . '/../../../lib/behat/behat_base.php');
  * @copyright  2023 Amaia Anabitarte <amaia@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class behat_availability extends \behat_base {
+class behat_availability extends behat_base {
 
     /**
      * Return the list of partial named selectors.
@@ -33,18 +33,34 @@ class behat_availability extends \behat_base {
      */
     public static function get_partial_named_selectors(): array {
         return [
-            new \behat_component_named_selector(
-                'Activity availability', [<<<XPATH
-.//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')][descendant::*[contains(normalize-space(.), %locator%)]]
-//div[@data-region='availabilityinfo']
-XPATH
+            new behat_component_named_selector(
+                'Activity availability', [
+                    ".//li[contains(concat(' ', normalize-space(@class), ' '), ' activity ')]"
+                    . "[descendant::*[contains(normalize-space(.), %locator%)]]//div[@data-region='availabilityinfo']",
                 ]
             ),
-            new \behat_component_named_selector(
-                'Section availability', [<<<XPATH
-.//li[@id = %locator%]//div[@data-region='availabilityinfo']
-XPATH
-                ]
+            new behat_component_named_selector(
+                'Section availability', [".//li[@id = %locator%]//div[@data-region='availabilityinfo']"],
+            ),
+            new behat_component_named_selector(
+                'Set Of Restrictions', ["//div[h3[@data-restriction-order=%locator% and contains(text(), 'Set of')]]"],
+            ),
+        ];
+    }
+
+    /**
+     * Return the list of exact named selectors
+     *
+     * @return array
+     */
+    public static function get_exact_named_selectors(): array {
+        return [
+            new behat_component_named_selector(
+                'Availability Button Area',
+                [
+                    "//h3[@data-restriction-order=%locator%]/following-sibling::div[contains(@class,'availability-inner')]/"
+                    . "div[contains(@class,'availability-button')]",
+                ],
             ),
         ];
     }

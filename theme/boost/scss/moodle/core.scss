@@ -45,6 +45,10 @@ $font-size-xs: ($font-size-base * .75) !default;
     @media (prefers-reduced-motion: reduce) {
         animation: none;
     }
+
+    body.behat-site & {
+        animation: none;
+    }
 }
 
 .context-header-settings-menu .dropdown-toggle > .icon,
@@ -255,6 +259,10 @@ button.close,
 
 .highlight {
     color: map-get($theme-colors, 'info');
+}
+
+.bg-primary-light {
+    background-color: $primary-light-background;
 }
 
 .fitem.advanced .text-info {
@@ -3176,20 +3184,22 @@ blockquote {
     }
 }
 
-/* Choice list component. */
-.choicelist {
-    min-width: $modal-sm;
-}
-
-[data-region="fixed-drawer"] {
-    .choicelist {
-        min-width: calc(#{$modal-sm} - 25px);
+/* Bulk actions in sticky footer. */
+#sticky-footer {
+    [data-type="bulkactions"] {
+        display: flex;
+        flex: 0 0 100%;
+        align-items: center;
     }
 }
 
-@include media-breakpoint-down(xs) {
-    // Modal small are larger than xs breakpoint.
-    .choicelist {
-        min-width: calc(#{$modal-sm} - 25px);
+/* Choice list component. */
+.choicelist {
+    // Choicelist is designed to fit inside a small modal.
+    min-width: calc(#{$modal-sm} - 25px);
+
+    // Align the font based icons.
+    i.icon {
+        vertical-align: middle;
     }
 }

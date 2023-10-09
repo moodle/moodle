@@ -40,7 +40,7 @@ if (!\auth_oauth2\api::is_enabled()) {
 
 $confirmed = $auth->user_confirm($username, $usersecret);
 
-if ($confirmed == AUTH_CONFIRM_ALREADY) {
+if ($confirmed == AUTH_CONFIRM_ALREADY && !isloggedin()) {
     $user = get_complete_user_data('username', $username);
     $PAGE->navbar->add(get_string("alreadyconfirmed"));
     $PAGE->set_title(get_string("alreadyconfirmed"));
@@ -61,11 +61,7 @@ if ($confirmed == AUTH_CONFIRM_ALREADY) {
         throw new \moodle_exception('cannotfinduser', '', '', s($username));
     }
 
-    if (!$user->suspended) {
-        complete_user_login($user);
-
-        \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
-
+    if ($user->id == $USER->id) {
         // Check where to go, $redirect has a higher preference.
         if (empty($redirect) and !empty($SESSION->wantsurl) ) {
             $redirect = $SESSION->wantsurl;
@@ -82,14 +78,20 @@ if ($confirmed == AUTH_CONFIRM_ALREADY) {
     $PAGE->set_heading($COURSE->fullname);
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox centerpara boxwidthnormal boxaligncenter');
-    echo "<h3>".get_string("thanks").", ". fullname($USER) . "</h3>\n";
+    echo "<h3>".get_string("thanks").", ". fullname($user) . "</h3>\n";
     echo "<p>".get_string("confirmed")."</p>\n";
-    echo $OUTPUT->single_button("$CFG->wwwroot/course/", get_string('courses'));
+    if (!isloggedin() || isguestuser()) {
+        echo $OUTPUT->single_button(get_login_url(), get_string('login'));
+    } else {
+        echo $OUTPUT->single_button("$CFG->wwwroot/login/logout.php", get_string('logout'));
+    }
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
     exit;
 } else {
-    \core\notification::error(get_string('confirmationinvalid', 'auth_oauth2'));
+    if (!isloggedin()) {
+        \core\notification::error(get_string('confirmationinvalid', 'auth_oauth2'));
+    }
 }
 
 redirect("$CFG->wwwroot/");

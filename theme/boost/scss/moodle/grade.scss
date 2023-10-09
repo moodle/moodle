@@ -299,6 +299,74 @@
 
 // Set up grades layout.
 .path-grade-edit-tree {
+    .collapse-list {
+
+        .unlist {
+            padding-left: 2rem;
+
+            [data-for="sectionnode"] {
+                &:focus {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                    }
+                }
+
+                &[data-selected="true"] {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                        color: $blue;
+                    }
+                }
+
+                .collapse-list-item-content {
+                    &[aria-hidden="true"] {
+                        display: none;
+                    }
+                }
+
+                &[aria-expanded="true"] {
+                    > .collapse-list-item {
+                        .collapsed-icon {
+                            display: none;
+                        }
+                    }
+                }
+
+                &[aria-expanded="false"] {
+                    > .collapse-list-item {
+                        .expanded-icon {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .collapse-list-item {
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+
+                .collapse-list-item-name {
+                    font-weight: bold;
+                }
+
+                .collapse-list-link {
+                    color: $gray-900;
+                    padding: 0 0.2rem;
+                    margin-right: 0.3rem;
+
+                    i {
+                        font-size: 12px;
+                        width: 12px;
+                        height: 12px;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+
     .gradetree-wrapper {
         padding: 10px 10px;
         background-color: $gray-100;
@@ -357,6 +425,10 @@
                         &.column-name {
                             .small {
                                 font-size: 70%;
+                            }
+
+                            .itemselect {
+                                margin-right: 15px;
                             }
 
                             .itemicon {
@@ -418,13 +490,20 @@
                             }
 
                             &.column-name {
-                                padding-left: 10px;
                                 font-weight: bold;
 
                                 div {
                                     display: flex;
                                     min-height: 30px;
                                     align-items: center;
+
+                                    .form-check {
+                                        padding: 0;
+
+                                        .itemselect {
+                                            margin-right: 5px;
+                                        }
+                                    }
 
                                     a {
                                         &.toggle-category {
@@ -556,12 +635,7 @@
         }
 
         th.header {
-            @include media-breakpoint-down(sm) {
-                left: 0;
-            }
-            @include media-breakpoint-up(md) {
-                left: -3rem;
-            }
+            left: 0;
             position: sticky;
 
             &#studentheader {
@@ -574,8 +648,14 @@
         }
     }
 
-    .show-drawer-left .gradeparent th.header {
-        left: -1rem;
+    &.hasstickyfooter {
+        .gradeparent {
+            tr.lastrow {
+                // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned when
+                // sticky footer is present.
+                bottom: calc(#{$stickyfooter-height} - 1px);
+            }
+        }
     }
 }
 

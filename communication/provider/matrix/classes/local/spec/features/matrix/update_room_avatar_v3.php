@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait update_room_avatar_v3 {
-
     /**
      * Set the avatar for a room to the specified URL.
      *
@@ -56,5 +55,4 @@ trait update_room_avatar_v3 {
             params: $params,
         ));
     }
-
 }

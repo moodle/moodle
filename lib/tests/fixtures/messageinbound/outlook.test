@@ -102,7 +102,7 @@ On 4 May 2015 11:01 am, "Rajesh Taneja" <rajesh.taneja@example.com> wrote:
 > Thanks for offering to help with QA testing. I've added you to the tester=
 s
 > group in the tracker, so you can now pass or fail QA tests. Hopefully the
-> process is fully explained in http://docs.moodle.org/dev/QA_testing but
+> process is fully explained in https://moodledev.io/general/development/process/testing/qa but
 > if there's anything you're not sure about, please post in the testing and
 > QA forum.
 >
@@ -202,8 +202,8 @@ ckground-color:transparent;font-weight:normal;font-style:italic;font-varian=
 t:normal;text-decoration:none;vertical-align:baseline;white-space:pre-wrap"=
 >Thanks for offering to help with QA testing. I&#39;ve added you to the tes=
 ters group in the tracker, so you can now pass or fail QA tests. Hopefully =
-the process is fully explained in <a href=3D"http://docs.moodle.org/dev/QA_=
-testing" target=3D"_blank">http://docs.moodle.org/dev/QA_testing</a> but if=
+the process is fully explained in <a href=3D"https://moodledev.io/general/d=
+evelopment/process/testing/qa" target=3D"_blank">https://moodledev.io/general/development/process/testing/qa</a> but if=
  there&#39;s anything you&#39;re not sure about, please post in the testing=
  and QA forum.</span></p><br><br><p dir=3D"ltr" style=3D"line-height:1.44;m=
 argin-top:0pt;margin-bottom:0pt"><span style=3D"font-size:16px;font-family:=

@@ -33,7 +33,8 @@ Feature: Access the communication configuration page
 
   @javascript
   Scenario: The communication form fields toggle dynamically when valid provider is set
-    Given I am on the "Test course" "Course" page logged in as "teacher1"
+    Given a Matrix mock server is configured
+    And I am on the "Test course" "Course" page logged in as "teacher1"
     When I navigate to "Communication" in current page administration
     And I set the following fields to these values:
       | selectedcommunication | communication_matrix |

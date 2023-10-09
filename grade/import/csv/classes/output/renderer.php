@@ -67,8 +67,10 @@ class gradeimport_csv_renderer extends plugin_renderer_base {
         $html = $this->output->heading(get_string('importpreview', 'grades'));
 
         $table = new html_table();
-        $table->head = $header;
-        $table->data = $data;
+        $table->head = array_map('s', $header);
+        $table->data = array_map(static function($row) {
+            return array_map('s', $row);
+        }, $data);
         $html .= html_writer::table($table);
 
         return $html;

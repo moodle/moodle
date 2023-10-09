@@ -60,13 +60,13 @@ defined('MOODLE_INTERNAL') || die();
  *     // Explanation of the update step, linking to issue in the Tracker if necessary
  *     upgrade_set_timeout(XX); // Optional for big tasks
  *     // Code to execute goes here, usually the XMLDB Editor will
- *     // help you here. See {@link http://docs.moodle.org/dev/XMLDB_editor}.
+ *     // help you here. See {@link https://moodledev.io/general/development/tools/xmldb}.
  *     upgrade_main_savepoint(true, XXXXXXXXXX.XX);
  * }
  *
  * All plugins within Moodle (modules, blocks, reports...) support the existence of
  * their own upgrade.php file, using the "Frankenstyle" component name as
- * defined at {@link http://docs.moodle.org/dev/Frankenstyle}, for example:
+ * defined at {@link https://moodledev.io/general/development/policies/codingstyle/frankenstyle}, for example:
  *     - {@link xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
  *     - {@link xmldb_auth_manual_upgrade($oldversion)}.
  *     - {@link xmldb_workshopform_accumulative_upgrade($oldversion)}.
@@ -78,8 +78,8 @@ defined('MOODLE_INTERNAL') || die();
  * about what can be used within it.
  *
  * For more information, take a look to the documentation available:
- *     - Data definition API: {@link http://docs.moodle.org/dev/Data_definition_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Data definition API: {@link https://moodledev.io/docs/apis/core/dml/ddl}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @param int $oldversion
  * @return bool always true
@@ -3515,7 +3515,7 @@ privatefiles,moodle|/user/files.php';
 
         // Regardless of database regex support we check the hash length which should be enough.
         // But extra regex or like matching makes sure.
-        $sql = "SELECT id FROM {user} WHERE LENGTH(password) = 32 AND $condition";
+        $sql = "SELECT id FROM {user} WHERE " . $DB->sql_length('password') . " = 32 AND $condition";
         $userids = $DB->get_fieldset_sql($sql, $params);
 
         // Update the password for each user with a new SHA-512 hash.
@@ -3599,6 +3599,84 @@ privatefiles,moodle|/user/files.php';
         $DB->delete_records('user_preferences', ['name' => 'userselector_searchanywhere']);
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023091300.03);
+    }
+
+    if ($oldversion < 2023100400.01) {
+        // Delete datakey with datavalue -1.
+        $DB->delete_records('messageinbound_datakeys', ['datavalue' => '-1']);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023100400.01);
+    }
+
+    if ($oldversion < 2023100400.03) {
+        // Define field id to be added to communication.
+        $table = new xmldb_table('communication');
+
+        // Add the field and allow it to be nullable.
+        // We need to backfill data before setting it to NOT NULL.
+        $field = new xmldb_field(
+            name: 'contextid',
+            type: XMLDB_TYPE_INTEGER,
+            precision: '10',
+            notnull: null,
+            previous: 'id',
+        );
+
+        // Conditionally launch add field id.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Fill the existing data.
+        $sql = <<<EOF
+                    SELECT comm.id, c.id AS contextid
+                      FROM {communication} comm
+                INNER JOIN {context} c ON c.instanceid = comm.instanceid AND c.contextlevel = :contextcourse
+                     WHERE comm.contextid IS NULL
+                       AND comm.instancetype = :instancetype
+        EOF;
+        $rs = $DB->get_recordset_sql(
+            sql: $sql,
+            params: [
+                'contextcourse' => CONTEXT_COURSE,
+                'instancetype' => 'coursecommunication',
+            ],
+        );
+        foreach ($rs as $comm) {
+            $DB->set_field(
+                table: 'communication',
+                newfield: 'contextid',
+                newvalue: $comm->contextid,
+                conditions: [
+                    'id' => $comm->id,
+                ],
+            );
+        }
+        $rs->close();
+
+        $systemcontext = \core\context\system::instance();
+        $DB->set_field_select(
+            table: 'communication',
+            newfield: 'contextid',
+            newvalue: $systemcontext->id,
+            select: 'contextid IS NULL',
+        );
+
+        // Now make it NOTNULL.
+        $field = new xmldb_field(
+            name: 'contextid',
+            type: XMLDB_TYPE_INTEGER,
+            precision: '10',
+            notnull:  XMLDB_NOTNULL,
+        );
+        $dbman->change_field_notnull($table, $field);
+
+        // Add the contextid constraint.
+        $key = new xmldb_key('contextid', XMLDB_KEY_FOREIGN, ['contextid'], 'context', ['id']);
+        $dbman->add_key($table, $key);
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023100400.03);
     }
 
     return true;

@@ -172,7 +172,7 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
         }));
     };
 
-    const requestAction = (element) => {
+    const requestAction = async(element) => {
         const getDataFromAction = (element, dataType) => {
             const dataElement = element.closest(`[data-${dataType}]`);
             if (dataElement) {
@@ -206,15 +206,19 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
         payload.additionaloptions = JSON.stringify(payload.additionaloptions);
         if (element.dataset.requireConfirmation === "1") {
             // Create the confirmation dialogue.
-            return saveCancelPromise(
-                getString('confirm'),
-                recordingConfirmationMessage(payload),
-                getString('ok', 'moodle'),
-            )
-            .then(() => repository.updateRecording(payload));
-        } else {
-            return repository.updateRecording(payload);
+            try {
+                await saveCancelPromise(
+                    getString('confirm'),
+                    recordingConfirmationMessage(payload),
+                    getString('ok', 'moodle'),
+                );
+            } catch {
+                // User cancelled the dialogue.
+                return;
+            }
         }
+
+        return repository.updateRecording(payload);
     };
 
     const recordingConfirmationMessage = async(data) => {

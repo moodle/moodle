@@ -16,8 +16,10 @@
 
 namespace communication_matrix;
 
+use core\context;
 use core_communication\api;
 use core_communication\communication_test_helper_trait;
+use core_communication\processor;
 use stored_file;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,6 +34,7 @@ require_once(__DIR__ . '/../../../tests/communication_test_helper_trait.php');
  * @category   test
  * @copyright  2023 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \communication_matrix\communication_feature
  * @coversDefaultClass \communication_matrix\communication_feature
  */
 class communication_feature_test extends \advanced_testcase {
@@ -50,22 +53,24 @@ class communication_feature_test extends \advanced_testcase {
      *
      * @covers ::create_chat_room
      */
-    public function test_create_chat_room() {
+    public function test_create_chat_room(): void {
         // Set up the test data first.
         $communication = \core_communication\api::load_by_instance(
+            context: \core\context\system::instance(),
             component: 'communication_matrix',
             instancetype: 'example',
             instanceid: 1,
+            provider: 'communication_matrix',
         );
 
         $communication->create_and_configure_room(
-            selectedcommunication: 'communication_matrix',
             communicationroomname: 'Room name',
             instance: (object) [
                 'matrixroomtopic' => 'A fun topic',
             ],
         );
 
+        // phpcs:ignore moodle.Commenting.InlineComment.DocBlock
         /** @var communication_feature */
         $provider = $communication->get_room_provider();
         $this->assertInstanceOf(
@@ -124,6 +129,7 @@ class communication_feature_test extends \advanced_testcase {
             roomtopic: 'Our room topic',
         );
 
+        // phpcs:ignore moodle.Commenting.InlineComment.DocBlock
         /** @var communication_feature */
         $provider = $communication->get_room_provider();
         $this->assertInstanceOf(
@@ -191,7 +197,6 @@ class communication_feature_test extends \advanced_testcase {
             'Our updated room name',
             $communication->get_room_name(),
         );
-
     }
 
     /**
@@ -293,7 +298,7 @@ class communication_feature_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function avatar_provider(): array {
+    public static function avatar_provider(): array {
         return [
             'Empty to avatar' => [
                 null,
@@ -360,8 +365,11 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::add_members_to_room
      * @covers ::add_registered_matrix_user_to_room
      * @covers ::check_room_membership
+     * @covers ::set_matrix_power_levels
      */
     public function test_add_and_remove_members_from_room(): void {
+        $this->markTestSkipped('Skipping while we update the Mock Server with the new route');
+
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
@@ -397,6 +405,100 @@ class communication_feature_test extends \advanced_testcase {
     }
 
     /**
+     * Test update of room membership.
+     *
+     * @covers ::update_room_membership
+     * @covers ::set_matrix_power_levels
+     * @covers ::is_power_levels_update_required
+     * @covers ::get_user_allowed_power_level
+     */
+    public function test_update_room_membership(): void {
+        $this->markTestSkipped('Skipping while we update the Mock Server with the new route');
+
+        $this->resetAfterTest();
+
+        global $DB;
+
+        // Create a new room.
+        $course = $this->get_course('Sampleroom', 'none');
+        $user = $this->get_user();
+
+        $communication = $this->create_room(
+            component: 'core_course',
+            itemtype: 'coursecommunication',
+            itemid: $course->id
+        );
+        $provider = $communication->get_room_user_provider();
+
+        // Add the members to the room.
+        $provider->add_members_to_room([$user->id]);
+
+        // Assign teacher role to the user.
+        $coursecontext = \context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+        role_assign($teacherrole->id, $user->id, $coursecontext->id);
+
+        // Test the tasks added as the role is a teacher.
+        $provider->update_room_membership([$user->id]);
+
+        $processor = \core_communication\processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+        );
+        $synceduser = $processor->get_instance_userids(
+            synced: true,
+        );
+        $synceduser = reset($synceduser);
+
+        // Test if the communication user record is synced.
+        $this->assertEquals($user->id, $synceduser);
+    }
+
+    /**
+     * Test the user power level allocation according to context.
+     *
+     * @covers ::get_user_allowed_power_level
+     */
+    public function test_get_user_allowed_power_level(): void {
+        $this->resetAfterTest();
+        global $DB;
+
+        // Create users.
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+
+        $course = $this->get_course();
+        $coursecontext = \context_course::instance($course->id);
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $studentrole = $DB->get_record('role', ['shortname' => 'student']);
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        // Assign roles.
+        role_assign($teacherrole->id, $user1->id, $coursecontext->id);
+        role_assign($studentrole->id, $user2->id, $coursecontext->id);
+
+        $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id
+        );
+
+        // Test if the power level is set according to the context.
+        $this->assertEquals(
+            matrix_constants::POWER_LEVEL_MOODLE_MODERATOR,
+            $communicationprocessor->get_room_provider()->get_user_allowed_power_level($user1->id)
+        );
+        $this->assertEquals(
+            matrix_constants::POWER_LEVEL_DEFAULT,
+            $communicationprocessor->get_room_provider()->get_user_allowed_power_level($user2->id)
+        );
+    }
+
+    /**
      * Helper to create a room.
      *
      * @param null|string $component
@@ -416,16 +518,18 @@ class communication_feature_test extends \advanced_testcase {
         ?string $roomtopic = null,
         ?\stored_file $roomavatar = null,
         array $members = [],
+        ?context $context = null,
     ): \core_communication\api {
         // Create a new room.
         $communication = \core_communication\api::load_by_instance(
+            context: $context ?? \core\context\system::instance(),
             component: $component,
             instancetype: $itemtype,
             instanceid: $itemid,
+            provider: 'communication_matrix',
         );
 
         $communication->create_and_configure_room(
-            selectedcommunication: 'communication_matrix',
             communicationroomname: $roomname ?? 'Room name',
             avatar: $roomavatar,
             instance: (object) [
@@ -440,5 +544,26 @@ class communication_feature_test extends \advanced_testcase {
 
         $communication->reload();
         return $communication;
+    }
+
+    /**
+     * Test if the selected provider is configured.
+     *
+     * @covers ::is_configured
+     */
+    public function test_is_configured(): void {
+        $course = $this->get_course();
+        $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id
+        );
+        $this->assertTrue($communicationprocessor->get_room_provider()->is_configured());
+
+        // Unset communication_matrix settings.
+        unset_config('matrixhomeserverurl', 'communication_matrix');
+        unset_config('matrixaccesstoken', 'communication_matrix');
+        $this->assertFalse($communicationprocessor->get_room_provider()->is_configured());
     }
 }

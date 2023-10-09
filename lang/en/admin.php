@@ -24,8 +24,8 @@
 
 $string['accessdenied'] = 'Access denied';
 $string['accounts'] = 'Accounts';
-$string['accountunlocked'] = 'Your account has been unlocked successfully. You may now login below.';
-$string['accountlocked'] = 'Your account has been locked. An unlock link has been sent to the email address associated with your account.';
+$string['accountunlocked'] = 'Your account is unlocked. You can log in.';
+$string['accountlocked'] = 'Your account is locked. An unlock link has been sent via email.';
 $string['addcategory'] = 'Add a category';
 $string['additionalhtml'] = 'Additional HTML';
 $string['additionalhtml_heading'] = 'Additional HTML to be added to every page.';
@@ -585,8 +585,8 @@ $string['enableanalytics'] = 'Analytics';
 $string['enableblogs'] = 'Enable blogs';
 $string['enablecalendarexport'] = 'Enable calendar export';
 $string['enablecomments'] = 'Enable comments';
-$string['enablecommunicationsubsystem'] = 'Enable communication subsystem';
-$string['enablecommunicationsubsystem_desc'] = 'This setting enables the new communication subsystem. This new subsystem allow teachers and students to more easily communicate while using Moodle for teaching and learning';
+$string['enablecommunicationsubsystem'] = 'Enable communication providers';
+$string['enablecommunicationsubsystem_desc'] = 'Allow integration with communication providers such as Matrix so teachers and students can communicate more easily. You can manage these integrations in <a href="settings.php?section=managecommunicationproviders">Plugins</a>.';
 $string['enablecourserelativedates'] = 'Enable course relative dates';
 $string['enablecourserelativedates_desc'] = 'Allow courses to be set up to display dates relative to the user\'s start date in the course.';
 $string['enablecourserequests'] = 'Enable course requests';
@@ -637,7 +637,7 @@ $string['environmentmariadbwrongdbtype'] = 'Wrong $CFG->dbtype. You need to chan
 $string['errordeletingconfig'] = 'An error occurred while deleting the configuration records for plugin \'{$a}\'.';
 $string['errorsetting'] = 'Could not save setting:';
 $string['errorwithsettings'] = 'Some settings were not changed due to an error.';
-$string['eventshandlersinuse'] = 'The following plugins in your system are using Events 1 API deprecated handlers: \'{$a}\'. Please, update them to use Events 2 API. See https://docs.moodle.org/dev/Event_2#Event_dispatching_and_observers.';
+$string['eventshandlersinuse'] = 'The following plugins in your system are using Events 1 API deprecated handlers: \'{$a}\'. Please, update them to use Events 2 API. See https://docs.moodle.org/dev/Events_API#Event_dispatching_and_observers.';
 $string['everyonewhocan'] = 'Everyone who can \'{$a}\'';
 $string['exceptions'] = 'exceptions';
 $string['execpathnotallowed'] = 'Setting executable and local paths disabled in config.php';

@@ -631,6 +631,12 @@ class core_renderer extends renderer_base {
     /** @var custom_menu_item language The language menu if created */
     protected $language = null;
 
+    /** @var string The current selector for an element being streamed into */
+    protected $currentselector = '';
+
+    /** @var string The current element tag which is being streamed into */
+    protected $currentelement = '';
+
     /**
      * Constructor
      *
@@ -1520,7 +1526,7 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment
      */
     public function footer() {
-        global $CFG, $DB;
+        global $CFG, $DB, $PERF;
 
         $output = '';
 
@@ -1550,6 +1556,7 @@ class core_renderer extends renderer_base {
                 if (NO_OUTPUT_BUFFERING) {
                     // If the output buffer was off then we render a placeholder and stream the
                     // performance debugging into it at the very end in the shutdown handler.
+                    $PERF->perfdebugdeferred = true;
                     $performanceinfo .= html_writer::tag('div',
                         get_string('perfdebugdeferred', 'admin'),
                         [
@@ -1579,6 +1586,20 @@ class core_renderer extends renderer_base {
         $footer = str_replace($this->unique_end_html_token, $this->page->requires->get_end_code(), $footer);
 
         $this->page->set_state(moodle_page::STATE_DONE);
+
+        // Here we remove the closing body and html tags and store them to be added back
+        // in the shutdown handler so we can have valid html with streaming script tags
+        // which are rendered after the visible footer.
+        $tags = '';
+        preg_match('#\<\/body>#i', $footer, $matches);
+        $tags .= $matches[0];
+        $footer = str_replace($matches[0], '', $footer);
+
+        preg_match('#\<\/html>#i', $footer, $matches);
+        $tags .= $matches[0];
+        $footer = str_replace($matches[0], '', $footer);
+
+        $CFG->closingtags = $tags;
 
         return $output . $footer;
     }
@@ -4430,7 +4451,12 @@ EOD;
         global $COURSE;
         $url = '';
         if ($COURSE->id !== SITEID) {
-            $comm = \core_communication\api::load_by_instance('core_course', 'coursecommunication', $COURSE->id);
+            $comm = \core_communication\api::load_by_instance(
+                context: \core\context\course::instance($COURSE->id),
+                component: 'core_course',
+                instancetype: 'coursecommunication',
+                instanceid: $COURSE->id,
+            );
             $url = $comm->get_communication_room_url();
         }
 
@@ -5293,11 +5319,9 @@ EOD;
      *
      * @param string $selector where new content should be appended
      * @param string $element which contains the streamed content
+     * @return string html to be written
      */
     public function select_element_for_append(string $selector = '#region-main [role=main]', string $element = 'div') {
-
-        static $currentselector = '';
-        static $currentelement = '';
 
         if (!CLI_SCRIPT && !NO_OUTPUT_BUFFERING) {
             throw new coding_exception('select_element_for_append used in a non-CLI script without setting NO_OUTPUT_BUFFERING.',
@@ -5305,24 +5329,36 @@ EOD;
         }
 
         // We are already streaming into this element so don't change anything.
-        if ($currentselector === $selector && $currentelement === $element) {
+        if ($this->currentselector === $selector && $this->currentelement === $element) {
             return;
         }
 
-        $html = '';
+        // If we have a streaming element close it before starting a new one.
+        $html = $this->close_element_for_append();
 
-        // We have a streaming element so close it before starting a new one.
-        if ($currentselector !== '') {
-            $html .= html_writer::end_tag($currentelement);
-        }
-
-        $currentselector = $selector;
-        $currentelement = $element;
+        $this->currentselector = $selector;
+        $this->currentelement = $element;
 
         // Create an unclosed element for the streamed content to append into.
         $id = uniqid();
         $html .= html_writer::start_tag($element, ['id' => $id]);
         $html .= html_writer::tag('script', "document.querySelector('$selector').append(document.getElementById('$id'))");
+        $html .= "\n";
+        return $html;
+    }
+
+    /**
+     * This closes any opened stream elements
+     *
+     * @return string html to be written
+     */
+    public function close_element_for_append() {
+        $html = '';
+        if ($this->currentselector !== '') {
+            $html .= html_writer::end_tag($this->currentelement);
+            $html .= "\n";
+            $this->currentelement = '';
+        }
         return $html;
     }
 
@@ -5339,6 +5375,7 @@ EOD;
      * @param string $selector where new content should be replaced
      * @param string $html A chunk of well formed html
      * @param bool $outer Wether it replaces the innerHTML or the outerHTML
+     * @return string html to be written
      */
     public function select_element_for_replace(string $selector, string $html, bool $outer = false) {
 
@@ -5351,6 +5388,7 @@ EOD;
         $html = addslashes_js($html);
         $property = $outer ? 'outerHTML' : 'innerHTML';
         $output = html_writer::tag('script', "document.querySelector('$selector').$property = '$html';");
+        $output .= "\n";
         return $output;
     }
 }

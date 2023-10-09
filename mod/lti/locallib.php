@@ -1508,16 +1508,10 @@ function content_item_to_form(object $tool, object $typeconfig, object $item) : 
     }
     $config->instructorchoicesendname = LTI_SETTING_NEVER;
     $config->instructorchoicesendemailaddr = LTI_SETTING_NEVER;
+
+    // Since 4.3, the launch container is dictated by the value set in tool configuration and isn't controllable by content items.
     $config->launchcontainer = LTI_LAUNCH_CONTAINER_DEFAULT;
-    if (isset($item->placementAdvice->presentationDocumentTarget)) {
-        if ($item->placementAdvice->presentationDocumentTarget === 'window') {
-            $config->launchcontainer = LTI_LAUNCH_CONTAINER_WINDOW;
-        } else if ($item->placementAdvice->presentationDocumentTarget === 'frame') {
-            $config->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED_NO_BLOCKS;
-        } else if ($item->placementAdvice->presentationDocumentTarget === 'iframe') {
-            $config->launchcontainer = LTI_LAUNCH_CONTAINER_EMBED;
-        }
-    }
+
     if (isset($item->custom)) {
         $config->instructorcustomparameters = params_to_string($item->custom);
     }

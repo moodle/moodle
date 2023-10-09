@@ -47,7 +47,7 @@ class matrix_client_test extends \advanced_testcase {
      * Data provider for valid calls to ::instance.
      * @return array
      */
-    public function instance_provider(): array {
+    public static function instance_provider(): array {
         $testcases = [
             'Standard versions' => [
                 null,
@@ -56,7 +56,7 @@ class matrix_client_test extends \advanced_testcase {
         ];
 
         // Remove a couple of versions.
-        $versions = $this->get_current_versions();
+        $versions = self::get_current_versions();
         array_pop($versions);
         array_pop($versions);
 
@@ -251,7 +251,7 @@ class matrix_client_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function implements_feature_provider(): array {
+    public static function implements_feature_provider(): array {
         return [
             'Basic supported feature' => [
                 'v1.7',
@@ -299,12 +299,12 @@ class matrix_client_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function require_features_provider(): array {
+    public static function require_features_provider(): array {
         // We'll just add to the standard testcases.
-        $testcases = array_map(static function(array $testcase): array {
+        $testcases = array_map(static function (array $testcase): array {
             $testcase[1] = [$testcase[1]];
             return $testcase;
-        }, $this->implements_feature_provider());
+        }, self::implements_feature_provider());
 
         $testcases['Require many supported features'] = [
             'v1.6',
@@ -361,7 +361,7 @@ class matrix_client_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_version_provider(): array {
+    public static function get_version_provider(): array {
         return [
             ['v1.1', '1.1'],
             ['v1.7', '1.7'],
@@ -415,7 +415,7 @@ class matrix_client_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function meets_version_provider(): array {
+    public static function meets_version_provider(): array {
         return [
             'Same version' => ['v1.1', '1.1', true],
             'Same version latest' => ['v1.7', '1.7', true],

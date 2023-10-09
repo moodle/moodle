@@ -92,8 +92,9 @@ class question_history_view extends view {
         }
     }
 
-    protected function create_new_question_form($category, $canadd): void {
+    public function allow_add_questions(): bool {
         // As we dont want to create questions in this page.
+        return false;
     }
 
     /**
@@ -174,6 +175,17 @@ class question_history_view extends view {
 
     public function is_listing_specific_versions(): bool {
         return true;
+    }
+
+    /**
+     * Override wanted_filters so that we apply the filters provided by the URL, but don't display the filter UI.
+     *
+     * @return void
+     */
+    public function wanted_filters(): void {
+        $this->display_question_bank_header();
+        // Add search conditions.
+        $this->add_standard_search_conditions();
     }
 
 }

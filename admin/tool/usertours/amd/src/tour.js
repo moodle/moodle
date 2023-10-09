@@ -1642,21 +1642,18 @@ const Tour = class {
                 });
                 fader.attr('data-flexitour', 'step-background-fader');
 
-                if (targetNode.parents('[data-region="fixed-drawer"]').length || !stepConfig.zIndex) {
+                if (!stepConfig.zIndex) {
                     let targetClone = targetNode.clone();
                     background.append(targetClone.first());
-                }
-
-                if (stepConfig.zIndex) {
+                    $('body').append(fader);
+                    $('body').append(background);
+                } else {
                     if (stepConfig.attachPoint === 'append') {
                         stepConfig.attachTo.append(background);
                     } else {
                         fader.insertAfter(stepConfig.attachTo);
                         background.insertAfter(stepConfig.attachTo);
                     }
-                } else {
-                    $('body').append(fader);
-                    $('body').append(background);
                 }
 
                 // Add the backdrop data to the actual target.
@@ -1686,6 +1683,9 @@ const Tour = class {
      */
     calculateZIndex(elem) {
         elem = $(elem);
+        if (this.requireDefaultTourZindex(elem)) {
+            return 0;
+        }
         while (elem.length && elem[0] !== document) {
             // Ignore z-index if position is set to a value where z-index is ignored by the browser
             // This makes behavior of this function consistent across browsers
@@ -1705,6 +1705,23 @@ const Tour = class {
         }
 
         return 0;
+    }
+
+    /**
+     * Check if the element require the default tour z-index.
+     *
+     * Some page elements have fixed z-index. However, their weight is not enough to cover
+     * other page elements like the top navbar or a sticky footer so they use the default
+     * tour z-index instead.
+     *
+     * @param {jQuery} elem the page element to highlight
+     * @return {Boolean} true if the element requires the default tour z-index instead of the calculated one
+     */
+    requireDefaultTourZindex(elem) {
+        if (elem.parents('[data-region="fixed-drawer"]').length !== 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

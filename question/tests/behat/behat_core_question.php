@@ -174,12 +174,24 @@ class behat_core_question extends behat_question_base {
      * @param string $questionname the question name.
      */
     public function i_action_the_question($action, $questionname) {
-        $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
-            $action,
-            get_string('edit', 'core'),
-            $questionname,
-            'table_row',
-        ]);
+        if ($this->running_javascript()) {
+            // This method isn't allowed unless Javascript is running.
+            $this->execute('behat_action_menu::i_open_the_action_menu_in', [
+                $questionname,
+                'table_row',
+            ]);
+            $this->execute('behat_action_menu::i_choose_in_the_open_action_menu', [
+                $action
+            ]);
+        } else {
+            // This method doesn't open the menu correctly when Javascript is running.
+            $this->execute('behat_action_menu::i_choose_in_the_named_menu_in_container', [
+                $action,
+                get_string('edit', 'core'),
+                $questionname,
+                'table_row',
+            ]);
+        }
     }
 
     /**

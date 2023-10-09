@@ -17,6 +17,7 @@
 namespace core_completion\form;
 
 use core_grades\component_gradeitems;
+use cm_info;
 
 /**
  * Completion trait helper, with methods to add completion elements and validate them.
@@ -78,21 +79,6 @@ trait form_trait {
      */
     public function get_suffix(): string {
         return $this->suffix;
-    }
-
-    /**
-     * Get the cm (course module) associated to this class.
-     * This method must be overriden by the class using this trait if it doesn't include a _cm property.
-     *
-     * @return \stdClass|null
-     * @throws \coding_exception If the class does not have a _cm property.
-     */
-    protected function get_cm(): ?\stdClass {
-        if (property_exists($this, '_cm')) {
-            return $this->_cm;
-        }
-
-        throw new \coding_exception('This class does not have a _cm property. Please, add it or override the get_cm() method.');
     }
 
     /**
@@ -427,8 +413,10 @@ trait form_trait {
 
     /**
      * It should be called from the definition_after_data() to setup the completion settings in the form.
+     *
+     * @param cm_info|null $cm The course module associated to this form.
      */
-    protected function definition_after_data_completion(): void {
+    protected function definition_after_data_completion(?cm_info $cm = null): void {
         global $COURSE, $SITE;
         $mform = $this->get_form();
 
@@ -439,7 +427,6 @@ trait form_trait {
             $suffix = $this->get_suffix();
 
             // If anybody has completed the activity, these options will be 'locked'.
-            $cm = $this->get_cm();
             // We use $SITE course for site default activity completion, so we don't need any unlock button.
             $completedcount = (empty($cm) || $COURSE->id == $SITE->id) ? 0 : $completion->count_user_data($cm);
             $freeze = false;

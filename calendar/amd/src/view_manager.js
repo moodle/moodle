@@ -93,7 +93,7 @@ export const foldDayEvents = () => {
                 moreEventsLink.attr('data-event-folded', 'false');
                 link.text(str);
                 return str;
-            }).fail();
+            }).catch(Notification.exception);
         } else {
             moreEventsLink.hide();
         }

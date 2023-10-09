@@ -38,8 +38,22 @@ Feature: Use the qbank plugin manager page for question history
     And I should see "Created by"
     And I should see "First question"
     And the "History" action should not exist for the "First question" question in the question bank
-    And I click on "#qbank-history-close" "css_element"
-    And the "History" action should exist for the "First question" question in the question bank
+
+  @javascript
+  Scenario: Viewing history for a question in a non-default category
+    Given the following "question categories" exist:
+      | contextlevel | reference | name             |
+      | Course       | C1        | Test questions 2 |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name            | questiontext               |
+      | Test questions 2 | truefalse | Second question | Answer the second question |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions 2"
+    And I choose "History" action for "Second question" in the question bank
+    Then I should see "Question history"
+    And "Filter 1" "fieldset" should not exist
+    And I should see "Second question"
+    And "Second question" "table_row" should exist
 
   @javascript
   Scenario: Delete question from the history using Edit question menu

@@ -1279,18 +1279,16 @@ EOF;
         $this->assertTrue(in_array("User-Agent: $moodlebot", $curl->header));
 
         // Finally, test it via exttests, to ensure the agent is sent properly.
-        // Matching.
         $testurl = $this->getExternalTestFileUrl('/test_agent.php');
         $extcurl = new \curl();
+
+        // Matching (assert we don't receive an error, and get back the content "OK").
         $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'AnotherUserAgent/1.2'));
-        $response = $extcurl->getResponse();
-        $this->assertSame('200 OK', reset($response));
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('OK', $contents);
-        // Not matching.
+
+        // Not matching (assert we don't receive an error, and get back empty content - not "OK").
         $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'NonMatchingUserAgent/1.2'));
-        $response = $extcurl->getResponse();
-        $this->assertSame('200 OK', reset($response));
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('', $contents);
     }

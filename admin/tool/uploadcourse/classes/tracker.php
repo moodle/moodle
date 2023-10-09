@@ -173,13 +173,16 @@ class tool_uploadcourse_tracker {
             } else {
                 $outcome = $OUTPUT->pix_icon('i/invalid', '');
             }
+
             echo html_writer::start_tag('tr', array('class' => 'r' . $this->rownb % 2));
             echo html_writer::tag('td', $line, array('class' => 'c' . $ci++));
             echo html_writer::tag('td', $outcome, array('class' => 'c' . $ci++));
             echo html_writer::tag('td', isset($data['id']) ? $data['id'] : '', array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['shortname']) ? $data['shortname'] : '', array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['fullname']) ? $data['fullname'] : '', array('class' => 'c' . $ci++));
-            echo html_writer::tag('td', isset($data['idnumber']) ? $data['idnumber'] : '', array('class' => 'c' . $ci++));
+
+            // Ensure our data is suitable for HTML output.
+            echo html_writer::tag('td', isset($data['shortname']) ? s($data['shortname']) : '', array('class' => 'c' . $ci++));
+            echo html_writer::tag('td', isset($data['fullname']) ? s($data['fullname']) : '', array('class' => 'c' . $ci++));
+            echo html_writer::tag('td', isset($data['idnumber']) ? s($data['idnumber']) : '', array('class' => 'c' . $ci++));
             echo html_writer::tag('td', $status, array('class' => 'c' . $ci++));
             echo html_writer::end_tag('tr');
         }

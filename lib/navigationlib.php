@@ -1662,8 +1662,7 @@ class global_navigation extends navigation_node {
             $this->search_for_active_node();
         }
 
-        // If the user is not logged in modify the navigation structure as detailed
-        // in {@link http://docs.moodle.org/dev/Navigation_2.0_structure}
+        // If the user is not logged in modify the navigation structure.
         if (!isloggedin()) {
             $activities = clone($this->rootnodes['site']->children);
             $this->rootnodes['site']->remove();
@@ -3057,8 +3056,12 @@ class global_navigation extends navigation_node {
 
         // Add link for configuring communication.
         if ($navoptions->communication) {
-            $url = new moodle_url('/communication/configure.php', ['instanceid' => $course->id,
-                'instancetype' => 'coursecommunication', 'component' => 'core_course']);
+            $url = new moodle_url('/communication/configure.php', [
+                'contextid' => \core\context\course::instance($course->id)->id,
+                'instanceid' => $course->id,
+                'instancetype' => 'coursecommunication',
+                'component' => 'core_course',
+            ]);
             $coursenode->add(get_string('communication', 'communication'), $url,
                 navigation_node::TYPE_SETTING, null, 'communication');
         }
@@ -4731,7 +4734,6 @@ class settings_navigation extends navigation_node {
                 $action = new action_link(new moodle_url(''), '', null, [
                     'data-action' => 'sendtomoodlenet',
                     'data-type' => 'course',
-                    'data-sharetype' => 'resource',
                 ]);
                 // Share course to MoodleNet link.
                 $coursenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
@@ -5023,7 +5025,6 @@ class settings_navigation extends navigation_node {
                 $action = new action_link(new moodle_url(''), '', null, [
                     'data-action' => 'sendtomoodlenet',
                     'data-type' => 'activity',
-                    'data-sharetype' => 'resource',
                 ]);
                 $modulenode->add(get_string('moodlenet:sharetomoodlenet', 'moodle'),
                     $action, self::TYPE_SETTING, null, 'exportmoodlenet')->set_force_into_more_menu(true);

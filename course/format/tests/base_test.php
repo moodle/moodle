@@ -14,14 +14,13 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Course related unit tests
  *
  * @package    core_course
  * @copyright  2014 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @coversDefaultClass \core_courseformat\base
  */
 class base_test extends advanced_testcase {
 
@@ -366,6 +365,32 @@ class base_test extends advanced_testcase {
             (object)['pref1' => true],
             $preferences[2]
         );
+    }
+
+    /**
+     * Test that retrieving last section number for a course
+     *
+     * @covers ::get_last_section_number
+     */
+    public function test_get_last_section_number(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Course with two additional sections.
+        $courseone = $this->getDataGenerator()->create_course(['numsections' => 2]);
+        $this->assertEquals(2, course_get_format($courseone)->get_last_section_number());
+
+        // Course without additional sections, section zero is the "default" section that always exists.
+        $coursetwo = $this->getDataGenerator()->create_course(['numsections' => 0]);
+        $this->assertEquals(0, course_get_format($coursetwo)->get_last_section_number());
+
+        // Course without additional sections, manually remove section zero, as "course_delete_section" prevents that. This
+        // simulates course data integrity issues that previously triggered errors.
+        $coursethree = $this->getDataGenerator()->create_course(['numsections' => 0]);
+        $DB->delete_records('course_sections', ['course' => $coursethree->id, 'section' => 0]);
+
+        $this->assertEquals(-1, course_get_format($coursethree)->get_last_section_number());
     }
 
     /**

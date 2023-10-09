@@ -100,7 +100,7 @@ class quiz_attempt {
      *
      * @param stdClass $attempt the row of the quiz_attempts table.
      * @param stdClass $quiz the quiz object for this attempt and user.
-     * @param stdClass|cm_info $cm the course_module object for this quiz.
+     * @param cm_info $cm the course_module object for this quiz.
      * @param stdClass $course the row from the course table for the course we belong to.
      * @param bool $loadquestions (optional) if true, the default, load all the details
      *      of the state of each question. Else just set up the basic details of the attempt.
@@ -349,7 +349,7 @@ class quiz_attempt {
     /**
      * Get the course_module for this quiz.
      *
-     * @return stdClass|cm_info the course_module object.
+     * @return cm_info the course_module object.
      */
     public function get_cm() {
         return $this->quizobj->get_cm();
@@ -1294,6 +1294,7 @@ class quiz_attempt {
             $displayoptions->manualcomment = question_display_options::HIDDEN;
             $displayoptions->history = question_display_options::HIDDEN;
             $displayoptions->readonly = true;
+            $displayoptions->versioninfo = question_display_options::HIDDEN;
 
             return html_writer::div($placeholderqa->render($displayoptions,
                     $this->get_question_number($this->get_original_slot($slot))),

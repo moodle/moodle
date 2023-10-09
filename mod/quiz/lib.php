@@ -2549,15 +2549,22 @@ function mod_quiz_output_fragment_question_data(array $args): string {
     $thispageurl = new \moodle_url('/mod/quiz/edit.php', ['cmid' => $cmid]);
     $thiscontext = \context_module::instance($cmid);
     $contexts = new \core_question\local\bank\question_edit_contexts($thiscontext);
+    $defaultcategory = question_make_default_categories($contexts->all());
+    $params['cat'] = implode(',', [$defaultcategory->id, $defaultcategory->contextid]);
+
     $course = get_course($params['courseid']);
     [, $cm] = get_module_from_cmid($cmid);
+    $params['tabname'] = 'questions';
 
     // Custom question bank View.
     $viewclass = clean_param($args['view'], PARAM_NOTAGS);
     $questionbank = new $viewclass($contexts, $thispageurl, $course, $cm, $params, $extraparams);
 
     // Question table.
-    return $questionbank->display_questions_table();
+    $questionbank->add_standard_search_conditions();
+    ob_start();
+    $questionbank->display_question_list();
+    return ob_get_clean();
 }
 
 /**
@@ -2597,5 +2604,5 @@ function mod_quiz_calculate_question_stats(context $context): ?all_calculated_fo
     require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
     $cm = get_coursemodule_from_id('quiz', $context->instanceid);
     $report = new quiz_statistics_report();
-    return $report->calculate_questions_stats_for_question_bank($cm->instance, false);
+    return $report->calculate_questions_stats_for_question_bank($cm->instance, false, false);
 }

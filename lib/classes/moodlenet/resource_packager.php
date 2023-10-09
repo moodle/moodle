@@ -17,10 +17,10 @@
 namespace core\moodlenet;
 
 use backup_controller;
-use cm_info;
-use stdClass;
 use backup_root_task;
+use cm_info;
 use core\context\user;
+use stdClass;
 use stored_file;
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
  * @copyright 2023 Safat Shahin <safat.shahin@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class resource_packager {
+abstract class resource_packager {
 
     /**
      * @var string $resourcefilename The filename for the resource.
@@ -42,9 +42,19 @@ class resource_packager {
     protected string $resourcefilename = 'resource';
 
     /**
-     * @var backup_controller $controller The controller object.
+     * @var stdClass $course The course which the resource belongs to.
      */
-    protected backup_controller $controller;
+    protected stdClass $course;
+
+    /**
+     * @var cm_info $cminfo The course module which the resource belongs to.
+     */
+    protected cm_info $cminfo;
+
+    /**
+     * @var int $userid The ID of the user performing the packaging.
+     */
+    protected int $userid;
 
     /**
      * Constructor for the base packager.
@@ -53,17 +63,27 @@ class resource_packager {
      * @param int $userid The user id
      */
     public function __construct(
-        protected stdClass|cm_info $resource,
-        protected int $userid,
+        stdClass|cm_info $resource,
+        int $userid,
+        string $resourcefilename,
     ) {
+        if ($resource instanceof cm_info) {
+            $this->cminfo = $resource;
+            $this->course = $resource->get_course();
+        } else {
+            $this->course = $resource;
+        }
+
+        $this->userid = $userid;
+        $this->resourcefilename = $resourcefilename;
     }
 
     /**
-     * Destructor
+     * Get the backup controller for the course.
+     *
+     * @return backup_controller The backup controller instance that will be used to package the resource.
      */
-    public function __destruct() {
-        $this->controller->destroy();
-    }
+    abstract protected function get_backup_controller(): backup_controller;
 
     /**
      * Prepare the backup file using appropriate setting overrides and return relevant information.
@@ -71,7 +91,8 @@ class resource_packager {
      * @return stored_file
      */
     public function get_package(): stored_file {
-        $alltasksettings = $this->get_all_task_settings();
+        $controller = $this->get_backup_controller();
+        $alltasksettings = $this->get_all_task_settings($controller);
 
         // Override relevant settings to remove user data when packaging to share to MoodleNet.
         $this->override_task_setting($alltasksettings, 'setting_root_users', 0);
@@ -84,7 +105,11 @@ class resource_packager {
         $this->override_task_setting($alltasksettings, 'setting_root_grade_histories', 0);
         $this->override_task_setting($alltasksettings, 'setting_root_groups', 0);
 
-        return $this->package();
+        $storedfile = $this->package($controller);
+
+        $controller->destroy(); // We are done with the controller, destroy it.
+
+        return $storedfile;
     }
 
     /**
@@ -92,9 +117,9 @@ class resource_packager {
      *
      * @return array the associative array of taskclass => settings instances.
      */
-    protected function get_all_task_settings(): array {
+    protected function get_all_task_settings(backup_controller $controller): array {
         $tasksettings = [];
-        foreach ($this->controller->get_plan()->get_tasks() as $task) {
+        foreach ($controller->get_plan()->get_tasks() as $task) {
             $taskclass = get_class($task);
             $tasksettings[$taskclass] = $task->get_settings();
         }
@@ -125,12 +150,13 @@ class resource_packager {
     /**
      * Package the resource identified by resource id into a new stored_file.
      *
+     * @param backup_controller $controller The backup controller.
      * @return stored_file
      */
-    protected function package(): stored_file {
+    protected function package(backup_controller $controller): stored_file {
         // Execute the backup and fetch the result.
-        $this->controller->execute_plan();
-        $result = $this->controller->get_results();
+        $controller->execute_plan();
+        $result = $controller->get_results();
 
         if (!isset($result['backup_destination'])) {
             throw new \moodle_exception('Failed to package resource.');

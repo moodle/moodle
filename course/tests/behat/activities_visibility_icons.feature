@@ -99,7 +99,6 @@ Feature: Toggle activities visibility from the course page
   Scenario: Activities can be made available but not visible on a course page
     Given the following config values are set as admin:
       | allowstealth | 1 |
-    And I change window size to "large"
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I open "Test assignment name" actions menu

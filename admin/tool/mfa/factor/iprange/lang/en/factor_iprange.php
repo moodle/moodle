@@ -23,11 +23,11 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['allowedipsempty'] = 'Nobody will pass this factor! You can add your own IP address (<i>{$a->ip}</i>)';
+$string['allowedipsempty'] = 'Nobody will currently pass this factor! You can add your own IP address (<i>{$a->ip}</i>)';
 $string['allowedipshasmyip'] = 'Your IP (<i>{$a->ip}</i>) is in the list and you will pass this factor.';
 $string['allowedipshasntmyip'] = 'Your IP (<i>{$a->ip}</i>) is not in the list and you will not pass this factor.';
-$string['pluginname'] = 'IP Range Factor';
-$string['privacy:metadata'] = 'The IP Range Factor plugin does not store any personal data';
+$string['pluginname'] = 'IP range';
+$string['privacy:metadata'] = 'The IP range factor plugin does not store any personal data.';
 $string['settings:safeips'] = 'Safe IP ranges';
-$string['settings:safeips_help'] = 'Enter a list of IP addresses or subnets to be counted as a pass in factor. If empty noone will pass this factor. {$a->info} {$a->syntax}';
+$string['settings:safeips_help'] = 'Enter a list of IP addresses or subnets to be counted as a pass in factor. If empty nobody will pass this factor. {$a->info} {$a->syntax}';
 $string['summarycondition'] = 'is on a secured network';

@@ -170,7 +170,7 @@ function(
                 modal.show();
                 return;
             })
-            .fail(Notification.exception);
+            .catch(Notification.exception);
 
             e.preventDefault();
         });
@@ -192,7 +192,7 @@ function(
 
                 e.stopImmediatePropagation();
                 return;
-            }).fail(Notification.exception);
+            }).catch(Notification.exception);
         });
 
 

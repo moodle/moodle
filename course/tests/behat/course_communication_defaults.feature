@@ -20,9 +20,9 @@ Feature: Course communication
       | Course short name | C2      |
     And I press "Save and display"
     When I navigate to "Communication" in current page administration
-    Then the field "Communication service" matches value "None"
+    Then the field "Provider" matches value "None"
 
   Scenario: I should have communication disabled by default for existing courses
     Given I am on "Course 1" course homepage
     When I navigate to "Communication" in current page administration
-    Then the field "Communication service" matches value "None"
+    Then the field "Provider" matches value "None"

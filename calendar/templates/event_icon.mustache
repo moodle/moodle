@@ -34,7 +34,17 @@
     }
 }}
 {{#modulename}}
-    {{#pix}} monologo, {{modulename}} {{/pix}}
+    {{#icon}}
+        {{#iconurl}}
+           <img alt="{{alttext}}" title="{{alttext}}" src="{{{ iconurl }}}" class="icon {{iconclass}}">
+        {{/iconurl}}
+        {{^iconurl}}
+            {{#pix}} monologo, {{modulename}} {{/pix}}
+        {{/iconurl}}
+    {{/icon}}
+    {{^icon}}
+       {{#pix}} monologo, {{modulename}} {{/pix}}
+    {{/icon}}
 {{/modulename}}
 {{^modulename}}
     {{#icon}}{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}{{/icon}}

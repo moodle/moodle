@@ -1303,7 +1303,7 @@ class moodle_page {
      * in the standard theme.
      *
      * For an idea of the common page layouts see
-     * {@link http://docs.moodle.org/dev/Themes_2.0#The_different_layouts_as_of_August_17th.2C_2010}
+     * {@link https://docs.moodle.org/dev/Themes_overview#Layouts}
      * But please keep in mind that it may be (and normally is) out of date.
      * The only place to find an accurate up-to-date list of the page layouts
      * available for your version of Moodle is {@link theme/base/config.php}
@@ -1405,7 +1405,7 @@ class moodle_page {
                 $sitenamedisplay = $CFG->sitenameintitle;
             }
             $site = get_site();
-            if (empty(trim($site->{$sitenamedisplay}))) {
+            if (empty(trim($site->{$sitenamedisplay} ?? ''))) {
                 // If for some reason the site name is not yet set, fall back to 'Moodle'.
                 $title .= self::TITLE_SEPARATOR . 'Moodle';
             } else {

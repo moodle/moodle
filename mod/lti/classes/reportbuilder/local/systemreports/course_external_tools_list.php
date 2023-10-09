@@ -75,10 +75,20 @@ class course_external_tools_list extends system_report {
         $paramprefix = database::generate_param_name();
         $coursevisibleparam = database::generate_param_name();
         $categoryparam = database::generate_param_name();
+        $toolstateparam = database::generate_param_name();
         [$insql, $params] = $DB->get_in_or_equal([get_site()->id, $this->course->id], SQL_PARAMS_NAMED, "{$paramprefix}_");
-        $wheresql = "{$entitymainalias}.course {$insql} AND {$entitymainalias}.coursevisible NOT IN (:{$coursevisibleparam}) ".
-        "AND ({$cattablealias}.id IS NULL OR {$cattablealias}.categoryid = :{$categoryparam})";
-        $params = array_merge($params, [$coursevisibleparam => LTI_COURSEVISIBLE_NO, $categoryparam => $this->course->category]);
+        $wheresql = "{$entitymainalias}.course {$insql} ".
+            "AND {$entitymainalias}.coursevisible NOT IN (:{$coursevisibleparam}) ".
+            "AND ({$cattablealias}.id IS NULL OR {$cattablealias}.categoryid = :{$categoryparam}) ".
+            "AND {$entitymainalias}.state = :{$toolstateparam}";
+        $params = array_merge(
+            $params,
+            [
+                $coursevisibleparam => LTI_COURSEVISIBLE_NO,
+                $categoryparam => $this->course->category,
+                $toolstateparam => LTI_TOOL_STATE_CONFIGURED
+            ]
+        );
         $this->add_base_condition_sql($wheresql, $params);
 
         $this->set_downloadable(false, get_string('pluginname', 'mod_lti'));

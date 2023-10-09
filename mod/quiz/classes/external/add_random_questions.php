@@ -51,7 +51,13 @@ class add_random_questions extends external_api {
                 'cmid' => new external_value(PARAM_INT, 'The cmid of the quiz'),
                 'addonpage' => new external_value(PARAM_INT, 'The page where random questions will be added to'),
                 'randomcount' => new external_value(PARAM_INT, 'Number of random questions'),
-                'filtercondition' => new external_value(PARAM_TEXT, 'Filter condition'),
+                'filtercondition' => new external_value(
+                    PARAM_TEXT,
+                    '(Optional) The filter condition used when adding random questions from an existing category.
+                    Not required if adding random questions from a new category.',
+                    VALUE_DEFAULT,
+                    '',
+                ),
                 'newcategory' => new external_value(
                     PARAM_TEXT,
                     '(Optional) The name of a new question category to create and use for the random questions.',
@@ -83,7 +89,7 @@ class add_random_questions extends external_api {
         int $cmid,
         int $addonpage,
         int $randomcount,
-        string $filtercondition,
+        string $filtercondition = '',
         string $newcategory = '',
         string $parentcategory = '',
     ): array {
@@ -108,7 +114,8 @@ class add_random_questions extends external_api {
         self::validate_context($thiscontext);
         require_capability('mod/quiz:manage', $thiscontext);
 
-        $filtercondition = json_decode($filtercondition, true);
+        // If filtercondition is not empty, decode it. Otherwise, set it to empty array.
+        $filtercondition = !empty($filtercondition) ? json_decode($filtercondition, true) : [];
 
         // Create new category.
         if (!empty($newcategory)) {
@@ -117,7 +124,7 @@ class add_random_questions extends external_api {
             $defaultcategory = $defaultcategoryobj->id . ',' . $defaultcategoryobj->contextid;
             $qcobject = new \qbank_managecategories\question_category_object(
                 null,
-                null,
+                new \moodle_url('/'),
                 $contexts->having_one_edit_tab_cap('categories'),
                 $defaultcategoryobj->id,
                 $defaultcategory,
@@ -131,7 +138,15 @@ class add_random_questions extends external_api {
                     'filteroptions' => ['includesubcategories' => false],
                 ]
             ];
-            $filtercondition['filter'] = $filter;
+            // Generate default filter condition for the random question to be added in the new category.
+            $filtercondition = [
+                'qpage' => 0,
+                'cat' => "{$categoryid},{$thiscontext->id}",
+                'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
+                'tabname' => 'questions',
+                'sortdata' => [],
+                'filter' => $filter,
+            ];
         }
 
         // Add random question to the quiz.

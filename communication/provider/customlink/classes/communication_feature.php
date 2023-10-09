@@ -27,9 +27,8 @@ use core_communication\processor;
  */
 class communication_feature implements
     \core_communication\communication_provider,
-    \core_communication\room_chat_provider,
-    \core_communication\form_provider {
-
+    \core_communication\form_provider,
+    \core_communication\room_chat_provider {
     /** @var string The database table storing custom link specific data */
     protected const CUSTOMLINK_TABLE = 'communication_customlink';
 
@@ -132,7 +131,6 @@ class communication_feature implements
             // Create the record if it does not exist.
             $newrecord->commid = $commid;
             $DB->insert_record(self::CUSTOMLINK_TABLE, $newrecord);
-
         } else if ($newrecord->url !== $existingrecord->url) {
             // Update record if the URL has changed.
             $newrecord->id = $existingrecord->id;
@@ -154,15 +152,26 @@ class communication_feature implements
 
     public static function set_form_definition(\MoodleQuickForm $mform): void {
         // Custom link description for the communication provider.
-        $mform->insertElementBefore($mform->createElement('text', 'customlinkurl',
+        $mform->insertElementBefore($mform->createElement(
+            'text',
+            'customlinkurl',
             get_string('customlinkurl', 'communication_customlink'),
-            'maxlength="255" size="40"'), 'addcommunicationoptionshere');
+            'maxlength="255" size="40"'
+        ), 'addcommunicationoptionshere');
         $mform->addHelpButton('customlinkurl', 'customlinkurl', 'communication_customlink');
         $mform->setType('customlinkurl', PARAM_URL);
         $mform->addRule('customlinkurl', get_string('required'), 'required', null, 'client');
         $mform->addRule('customlinkurl', get_string('maximumchars', '', 255), 'maxlength', 255);
-        $mform->insertElementBefore($mform->createElement('static', 'customlinkurlinfo', '',
+        $mform->insertElementBefore($mform->createElement(
+            'static',
+            'customlinkurlinfo',
+            '',
             get_string('customlinkurlinfo', 'communication_customlink'),
-            'addcommunicationoptionshere'), 'addcommunicationoptionshere');
+            'addcommunicationoptionshere'
+        ), 'addcommunicationoptionshere');
+    }
+
+    public static function is_configured(): bool {
+        return true;
     }
 }

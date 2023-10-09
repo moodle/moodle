@@ -4,7 +4,10 @@ information provided here is intended especially for developers.
 === 4.3 ===
 * The `navigation` property has been removed from `\core_calendar\external\day_exporter` as it is not being used by any of the
   calendar templates.
-* calendar_top_controls() has been deprecated and should no longer be used.
+* The following functions have been deprecated and should no longer be used:
+  - calendar_top_controls()
+  - calendar_get_link_previous()
+  - calendar_get_link_next()
 
 === 4.1 ===
 * New method `calendar_format_event_location` which will format the location property of an event, converting any
@@ -35,7 +38,7 @@ information provided here is intended especially for developers.
 === 3.9 ===
 * Plugins can now create their own calendar events, both standard and action ones. To do it they need to specify
   $event->component when creating an event. Component events can not be edited or deleted manually.
-  See https://docs.moodle.org/dev/Calendar_API#Component_events
+  See https://moodledev.io/docs/apis/core/calendar#component-events
 * The following functions have been deprecated because they were no longer used:
   - calendar_add_event_metadata()
   - core_calendar_renderer::event()

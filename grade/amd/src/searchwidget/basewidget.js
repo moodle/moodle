@@ -45,7 +45,7 @@ export const init = async(
     unsearchableContent = null,
     afterSelect = null,
 ) => {
-    Log.debug('This pattern is no longer used, refer to core/search_combobox() instead.');
+    Log.debug('The core_grades/searchwidget/basewidget component is deprecated. Please refer to core/search_combobox() instead.');
     bodyPromise.then(async(bodyContent) => {
         // Render the body content.
         widgetContentContainer.innerHTML = bodyContent;

@@ -45,7 +45,7 @@ use stdClass;
 class quiz_settings {
     /** @var stdClass the course settings from the database. */
     protected $course;
-    /** @var stdClass the course_module settings from the database. */
+    /** @var cm_info the course_module settings from the database. */
     protected $cm;
     /** @var stdClass the quiz settings from the database. */
     protected $quiz;
@@ -89,12 +89,12 @@ class quiz_settings {
      * Helper used by the other factory methods.
      *
      * @param stdClass $quiz
-     * @param cm_info|stdClass $cm
+     * @param cm_info $cm
      * @param stdClass $course
      * @param int|null $userid the the userid (optional). If passed, relevant overrides are applied.
      * @return quiz_settings the new quiz settings object.
      */
-    protected static function create_helper(stdClass $quiz, cm_info|stdClass $cm, stdClass $course, ?int $userid): self {
+    protected static function create_helper(stdClass $quiz, cm_info $cm, stdClass $course, ?int $userid): self {
         // Update quiz with override information.
         if ($userid) {
             $quiz = quiz_update_effective_access($quiz, $userid);
@@ -112,8 +112,7 @@ class quiz_settings {
      */
     public static function create(int $quizid, int $userid = null): self {
         $quiz = access_manager::load_quiz_and_settings($quizid);
-        $course = get_course($quiz->course);
-        $cm = get_coursemodule_from_instance('quiz', $quiz->id, $course->id, false, MUST_EXIST);
+        [$course, $cm] = get_course_and_cm_from_instance($quiz, 'quiz');
 
         return self::create_helper($quiz, $cm, $course, $userid);
     }
@@ -266,7 +265,7 @@ class quiz_settings {
     /**
      * Get the course-module object for this quiz.
      *
-     * @return stdClass the course_module object.
+     * @return cm_info the course_module object.
      */
     public function get_cm() {
         return $this->cm;

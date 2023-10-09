@@ -24,8 +24,9 @@
     * sesskey - string - The session key.
     * notification - object - Context data for the notification.
     * table - string - HTML content of the grade items table.
+    * movingmodeenabled - string - Whether moving mode is enabled.
+    * courseid - int - The course id.
     * stickyfooter - string - HTML content of the sticky footer.
-    * cancelmovingbutton - HTML content of the cancel move button.
 
     Example context (json):
     {
@@ -33,8 +34,9 @@
         "sesskey": "fakesesskey",
         "notification": "",
         "table": "<table class='generaltable simple setup-grades' id='grade_edit_tree_table'><thead> <tr><th>Name</th><th>Weights</th><th>Max grade</th><th>Actions</th> </tr></thead><tbody></tbody></table>",
-        "stickyfooter": "<div id='gradetreesubmit'></div>",
-        "cancelmovingbutton": "<div class='singlebutton'></div>"
+        "movingmodeenabled": "false",
+        "courseid": 1,
+        "stickyfooter": "<div id='gradetreesubmit'></div>"
     }
 }}
 {{#notification}}
@@ -48,5 +50,4 @@
             {{{stickyfooter}}}
         </div>
     </form>
-    {{{cancelmovingbutton}}}
 </div>

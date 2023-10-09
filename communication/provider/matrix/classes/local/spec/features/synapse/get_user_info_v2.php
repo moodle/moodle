@@ -31,7 +31,6 @@ use GuzzleHttp\Psr7\Response;
  * This code does not warrant being tested. Testing offers no discernible benefit given its usage is tested.
  */
 trait get_user_info_v2 {
-
     /**
      * Get user info.
      *
@@ -49,5 +48,4 @@ trait get_user_info_v2 {
             ],
         ));
     }
-
 }

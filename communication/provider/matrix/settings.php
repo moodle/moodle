@@ -28,20 +28,14 @@ if ($hassiteconfig) {
     // Home server URL.
     $name = new lang_string('matrixhomeserverurl', 'communication_matrix');
     $desc = new lang_string('matrixhomeserverurl_desc', 'communication_matrix');
-    $settings->add(new admin_setting_requiredtext('communication_matrix/matrixhomeserverurl', $name, $desc, ''));
+    $settings->add(new admin_setting_configtext('communication_matrix/matrixhomeserverurl', $name, $desc, ''));
 
     // Access token.
     $name = new lang_string('matrixaccesstoken', 'communication_matrix');
     $desc = new lang_string('matrixaccesstoken_desc', 'communication_matrix');
-    $settings->add(new admin_setting_requiredpasswordunmask('communication_matrix/matrixaccesstoken', $name, $desc, ''));
-
-    // Refresh token.
-    $name = new lang_string('matrixrefreshtoken', 'communication_matrix');
-    $desc = new lang_string('matrixrefreshtoken_desc', 'communication_matrix');
-    $settings->add(new admin_setting_requiredpasswordunmask('communication_matrix/matrixrefreshtoken', $name, $desc, ''));
+    $settings->add(new admin_setting_configpasswordunmask('communication_matrix/matrixaccesstoken', $name, $desc, ''));
 
     // Element web URL.
     $name = new lang_string('matrixelementurl', 'communication_matrix');
-    $desc = new lang_string('matrixelementurl_desc', 'communication_matrix');
-    $settings->add(new admin_setting_requiredtext('communication_matrix/matrixelementurl', $name, $desc, ''));
+    $settings->add(new admin_setting_configtext('communication_matrix/matrixelementurl', $name, '', ''));
 }

@@ -4,8 +4,8 @@ PHPUnit testing support in Moodle
 
 Documentation
 -------------
-* [Moodle PHPUnit integration](http://docs.moodle.org/dev/PHPUnit)
-* [Moodle Writing PHPUnit tests](https://docs.moodle.org/dev/Writing_PHPUnit_tests)
+* [Moodle PHPUnit integration](https://moodledev.io/general/development/tools/phpunit)
+* [Moodle Writing PHPUnit tests](https://moodledev.io/general/development/tools/phpunit#writing-new-tests)
 * [PHPUnit online documentation](http://www.phpunit.de/manual/current/en/)
 * [Composer dependency manager](http://getcomposer.org/)
 

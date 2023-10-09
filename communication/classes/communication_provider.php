@@ -28,11 +28,18 @@ namespace core_communication;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 interface communication_provider {
-
     /**
      * A base communication provider.
      *
      * @param processor $communication The communication object
      */
     public static function load_for_instance(processor $communication): self;
+
+    /**
+     * Check if the provider is configured or not.
+     *
+     * This method is intended to check if the plugin have got any settings and if all the settings are set properly.
+     * This checking helps to reduce errors in future when a communication instance is added for the provider and not configured.
+     */
+    public static function is_configured(): bool;
 }

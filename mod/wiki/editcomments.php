@@ -64,6 +64,9 @@ if ($action == 'edit') {
     if (!$comment = $DB->get_record('comments', array('id' => $commentid))) {
         throw new \moodle_exception('invalidcomment');
     }
+    if ($USER->id != $comment->userid) {
+        throw new \moodle_exception('cannotviewpage', 'wiki');
+    }
 }
 
 $editcomments->set_page($page);

@@ -271,6 +271,12 @@ class grade_edit_tree {
             $categoryrow->id = 'grade-item-' . $eid;
             $categoryrow->attributes['class'] = $courseclass . ' category ';
             $categoryrow->attributes['data-category'] = $eid;
+            if (!empty($parent_eid)) {
+                $categoryrow->attributes['data-parent-category'] = $parent_eid;
+            }
+            $categoryrow->attributes['data-aggregation'] = $category->aggregation;
+            $categoryrow->attributes['data-grademax'] = $category->grade_item->grademax;
+            $categoryrow->attributes['data-aggregationcoef'] = floatval($category->grade_item->aggregationcoef);
             $categoryrow->attributes['data-itemid'] = $category->grade_item->id;
             $categoryrow->attributes['data-hidden'] = 'false';
             foreach ($rowclasses as $class) {
@@ -341,6 +347,10 @@ class grade_edit_tree {
             // collapsed and the aggregated max grade is not visible.
             if (!empty($categoryitemclass)) {
                 $gradeitemrow->attributes['data-aggregationforcategory'] = $parent_eid;
+            } else {
+                $gradeitemrow->attributes['data-parent-category'] = $parent_eid;
+                $gradeitemrow->attributes['data-grademax'] = $object->grademax;
+                $gradeitemrow->attributes['data-aggregationcoef'] = floatval($object->aggregationcoef);
             }
             foreach ($rowclasses as $class) {
                 $gradeitemrow->attributes['class'] .= ' ' . $class;
@@ -831,12 +841,12 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
                 'id' => 'select_category_' . $category->id,
                 'name' => $togglegroup,
                 'value' => 1,
-                'classes' => 'itemselect ignoredirty mr-2',
+                'classes' => 'itemselect ignoredirty',
                 'label' => $masterlabel,
                 // Consistent label to prevent the select column from resizing.
                 'selectall' => $masterlabel,
                 'deselectall' => $masterlabel,
-                'labelclasses' => 'accesshide m-0',
+                'labelclasses' => 'accesshide',
             ]);
 
             $mastercheckbox = $OUTPUT->render($mastercheckbox);
@@ -885,7 +895,7 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
                 'name' => $checkboxid,
                 'label' => $label,
                 'labelclasses' => 'accesshide',
-                'classes' => 'itemselect ignoredirty mr-2',
+                'classes' => 'itemselect ignoredirty',
             ]);
             $checkbox = $OUTPUT->render($checkbox);
         }

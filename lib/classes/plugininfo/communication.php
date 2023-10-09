@@ -17,6 +17,7 @@
 namespace core\plugininfo;
 
 use admin_settingpage;
+use core_communication\processor;
 use core_plugin_manager;
 use moodle_url;
 

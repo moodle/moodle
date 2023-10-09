@@ -75,7 +75,16 @@
                     {{/isactionevent}}
                 {{/canedit}}
             </div>
-            {{#icon}}<div class="d-inline-block mt-1 align-top">{{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}</div>{{/icon}}
+            {{#icon}}
+                <div class="d-inline-block mt-1 align-top">
+                    {{#iconurl}}
+                        <img alt="{{alttext}}" title="{{alttext}}" src="{{{iconurl}}}" class="icon {{iconclass}}">
+                    {{/iconurl}}
+                    {{^iconurl}}
+                        {{#pix}} {{key}}, {{component}}, {{alttext}} {{/pix}}
+                    {{/iconurl}}
+                </div>
+            {{/icon}}
             <div class="d-inline-block">
                 <h3 class="name d-inline-block">{{{name}}}</h3>
             </div>

@@ -34,12 +34,34 @@ namespace core_question\local\bank;
 abstract class column_base extends view_component {
 
     /**
+     * @var string A separator for joining column attributes together into a unique ID string.
+     */
+    const ID_SEPARATOR = '-';
+
+    /**
      * @var view $qbank the question bank view we are helping to render.
      */
     protected $qbank;
 
     /** @var bool determine whether the column is td or th. */
     protected $isheading = false;
+
+    /** @var bool determine whether the column is visible */
+    public $isvisible = true;
+
+    /**
+     * Return an instance of this column, based on the column name.
+     *
+     * In the case of the base class, we don't actually use the column name since the class represents one specific column.
+     * However, sub-classes may use the column name as an additional constructor to the parameter.
+     *
+     * @param view $view Question bank view
+     * @param string $columnname The column name for this instance, as returned by {@see get_column_name()}
+     * @return column_base An instance of this class.
+     */
+    public static function from_column_name(view $view, string $columnname): column_base {
+        return new static($view);
+    }
 
     /**
      * Set the column as heading
@@ -78,8 +100,11 @@ abstract class column_base extends view_component {
 
     /**
      * Output the column header cell.
+     *
+     * @param column_action_base[] $columnactions A list of column actions to include in the header.
+     * @param string $width A CSS width property value.
      */
-    public function display_header(): void {
+    public function display_header(array $columnactions = [], string $width = ''): void {
         global $PAGE;
         $renderer = $PAGE->get_renderer('core_question', 'bank');
 
@@ -113,6 +138,17 @@ abstract class column_base extends view_component {
         $help = $this->help_icon();
         if ($help) {
             $data['help'] = $help->export_for_template($renderer);
+        }
+
+        $data['colname'] = $this->get_column_name();
+        $data['columnid'] = $this->get_column_id();
+        $data['name'] = $title;
+        $data['class'] = $name;
+        $data['width'] = $width;
+        if (!empty($columnactions)) {
+            $actions = array_map(fn($columnaction) => $columnaction->get_action_menu_link($this), $columnactions);
+            $actionmenu = new \action_menu($actions);
+            $data['actionmenu'] = $actionmenu->export_for_template($renderer);
         }
 
         echo $renderer->render_column_header($data);
@@ -216,7 +252,10 @@ abstract class column_base extends view_component {
      */
     protected function display_start($question, $rowclasses): void {
         $tag = 'td';
-        $attr = ['class' => $this->get_classes()];
+        $attr = [
+            'class' => $this->get_classes(),
+            'data-columnid' => $this->get_column_id(),
+        ];
         if ($this->isheading) {
             $tag = 'th';
             $attr['scope'] = 'row';
@@ -255,12 +294,39 @@ abstract class column_base extends view_component {
     }
 
     /**
+     * Return a unique ID for this column object.
+     *
+     * This is constructed using the class name and get_column_name(), which must be unique.
+     *
+     * The combination of these attributes allows the object to be reconstructed, by splitting the ID into its constituent
+     * parts then calling {@see from_column_name()}, like this:
+     * [$class, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+     * $column = $class::from_column_name($qbank, $columnname);
+     * Including 2 as the $limit parameter for explode() is a good idea for safely, in case a plugin defines a column with the
+     * ID_SEPARATOR in the column name.
+     *
+     * @return string The column ID.
+     */
+    final public function get_column_id(): string {
+        return implode(self::ID_SEPARATOR, [static::class, $this->get_column_name()]);
+    }
+
+    /**
      * Any extra class names you would like applied to every cell in this column.
      *
      * @return array
      */
     public function get_extra_classes(): array {
         return [];
+    }
+
+    /**
+     * Return the default column width in pixels.
+     *
+     * @return int
+     */
+    public function get_default_width(): int {
+        return 120;
     }
 
     /**
@@ -395,4 +461,16 @@ abstract class column_base extends view_component {
         }
     }
 
+    /**
+     * Output the column with an example value.
+     *
+     * By default, this will call $this->display() using whatever dummy data is passed in. Columns can override this
+     * to provide example output without requiring valid data.
+     *
+     * @param \stdClass $question the row from the $question table, augmented with extra information.
+     * @param string $rowclasses CSS class names that should be applied to this row of output.
+     */
+    public function display_preview(\stdClass $question, string $rowclasses): void {
+        $this->display($question, $rowclasses);
+    }
 }

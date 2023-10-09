@@ -47,7 +47,7 @@ trait matrix_client_test_trait {
         mocked_matrix_client::reset_client();
     }
 
-    public function tearDown():void {
+    public function tearDown(): void {
         parent::tearDown();
 
         // Reset the test client.
@@ -102,8 +102,8 @@ trait matrix_client_test_trait {
         array $unstablefeatures = null,
     ): Response {
         $data = (object) [
-            "versions" => array_values($this->get_current_versions()),
-            "unstable_features" => $this->get_current_unstable_features(),
+            "versions" => array_values(self::get_current_versions()),
+            "unstable_features" => self::get_current_unstable_features(),
         ];
 
         if ($versions) {
@@ -122,7 +122,7 @@ trait matrix_client_test_trait {
      *
      * @return array
      */
-    protected function get_current_versions(): array {
+    protected static function get_current_versions(): array {
         return [
             v1p1::class => "v1.1",
             v1p2::class => "v1.2",
@@ -138,7 +138,7 @@ trait matrix_client_test_trait {
      * A helper to get the current unstable features returned by synapse.
      * @return array
      */
-    protected function get_current_unstable_features(): array {
+    protected static function get_current_unstable_features(): array {
         return [
             "org.matrix.label_based_filtering" => true,
             "org.matrix.e2e_cross_signing" => true,

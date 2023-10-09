@@ -34,7 +34,7 @@ use core_plugin_manager;
 use core_question\local\bank\condition;
 use core_question\local\statistics\statistics_bulk_loader;
 use core_question\output\question_bank_filter_ui;
-use qbank_columnsortorder\column_manager;
+use core_question\local\bank\column_manager_base;
 use qbank_deletequestion\hidden_condition;
 use qbank_editquestion\editquestion_helper;
 use qbank_managecategories\category_condition;
@@ -193,7 +193,7 @@ class view {
     protected $pagevars = [];
 
     /**
-     * @var array $plugins all the qbank plugin objects.
+     * @var plugin_features_base[] $plugins Plugin feature objects for all enabled qbank plugins.
      */
     protected $plugins = [];
 
@@ -211,6 +211,11 @@ class view {
      * @var array $extraparams extra parameters for the extended apis.
      */
     public $extraparams = [];
+
+    /**
+     * @var column_manager_base $columnmanager The column manager, can be overridden by plugins.
+     */
+    protected $columnmanager;
 
     /**
      * Constructor for view.
@@ -266,8 +271,9 @@ class view {
 
         $this->lastchangedid = clean_param($pageurl->param('lastchanged'), PARAM_INT);
 
+        $this->init_plugins();
+        $this->init_column_manager();
         // Possibly the heading part can be removed.
-        $this->plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
         $this->set_pagevars($params);
         $this->init_columns($this->wanted_columns(), $this->heading_column());
         $this->init_question_actions();
@@ -276,17 +282,45 @@ class view {
     }
 
     /**
-     * Initialize bulk actions.
+     * Get an array of plugin features objects for all enabled qbank plugins.
+     *
+     * @return void
      */
-    protected function init_bulk_actions(): void {
+    protected function init_plugins(): void {
         $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
-        foreach ($plugins as $componentname => $plugin) {
+        foreach ($plugins as $componentname => $pluginclass) {
             if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
                 continue;
             }
+            $this->plugins[$componentname] = new $pluginclass();
+        }
+        // Sort plugin list by component name.
+        ksort($this->plugins);
+    }
 
-            $pluginentrypoint = new $plugin();
-            $bulkactions = $pluginentrypoint->get_bulk_actions();
+    /**
+     * Allow qbank plugins to override the column manager.
+     *
+     * If multiple qbank plugins define a column manager, this will pick the first one sorted alphabetically.
+     *
+     * @return void
+     */
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
+        foreach ($this->plugins as $plugin) {
+            if ($columnmanager = $plugin->get_column_manager()) {
+                $this->columnmanager = $columnmanager;
+                break;
+            }
+        }
+    }
+
+    /**
+     * Initialize bulk actions.
+     */
+    protected function init_bulk_actions(): void {
+        foreach ($this->plugins as $componentname => $plugin) {
+            $bulkactions = $plugin->get_bulk_actions();
             if (!is_array($bulkactions)) {
                 debugging("The method {$componentname}::get_bulk_actions() must return an " .
                     "array of bulk actions instead of a single bulk action. " .
@@ -302,7 +336,6 @@ class view {
                     'capabilities' => $bulkactionobject->get_bulk_action_capabilities()
                 ];
             }
-
         }
     }
 
@@ -336,14 +369,9 @@ class view {
      * @return void
      */
     protected function init_question_actions(): void {
-        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
         $this->questionactions = [];
-        foreach ($plugins as $component => $plugin) {
-            if (!qbank::is_plugin_enabled($component)) {
-                continue;
-            }
-            $pluginentrypointobject = new $plugin();
-            $menuactions = $pluginentrypointobject->get_question_actions($this);
+        foreach ($this->plugins as $plugin) {
+            $menuactions = $plugin->get_question_actions($this);
             foreach ($menuactions as $menuaction) {
                 $this->questionactions[$menuaction::class] = $menuaction;
             }
@@ -355,72 +383,37 @@ class view {
      *
      * @return array
      */
-    protected function get_class_for_columns(): array {
-        $this->corequestionbankcolumns = [
-            'checkbox_column',
-            'question_type_column',
-            'question_name_idnumber_tags_column',
-            'edit_menu_column',
-            'export_xml_action_column',
-            'question_status_column',
-            'version_number_column',
-            'creator_name_column',
-            'comment_count_column',
+    protected function get_question_bank_plugins(): array {
+        $questionbankclasscolumns = [];
+        $newpluginclasscolumns = [];
+        $corequestionbankcolumns = [
+            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'core_question\local\bank\edit_menu_column' . column_base::ID_SEPARATOR . 'edit_menu_column',
         ];
 
-        if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
-            $this->corequestionbankcolumns[] = 'question_text_row';
-        }
-
-        $questionbankclasscolumns = [];
-        foreach ($this->corequestionbankcolumns as $fullname) {
-            $shortname = $fullname;
-            if (class_exists('core_question\\local\\bank\\' . $fullname)) {
-                $fullname = 'core_question\\local\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else {
-                $questionbankclasscolumns[$shortname] = '';
+        foreach ($corequestionbankcolumns as $columnid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+            if (class_exists($columnclass)) {
+                $questionbankclasscolumns[$columnid] = $columnclass::from_column_name($this, $columnname);
             }
         }
-        return $questionbankclasscolumns;
-    }
 
-    /**
-     * Get the list of qbank plugins with available objects for features.
-     *
-     * @return array
-     */
-    protected function get_question_bank_plugins(): array {
-        $newpluginclasscolumns = [];
-        $questionbankclasscolumns = $this->get_class_for_columns();
-
-        $plugins = $this->plugins;
-        foreach ($plugins as $componentname => $plugin) {
-            $pluginentrypointobject = new $plugin();
-            $plugincolumnobjects = $pluginentrypointobject->get_question_columns($this);
-            // Don't need the plugins without column objects.
-            if (empty($plugincolumnobjects)) {
-                unset($plugins[$componentname]);
-                continue;
-            }
+        foreach ($this->plugins as $plugin) {
+            $plugincolumnobjects = $plugin->get_question_columns($this);
             foreach ($plugincolumnobjects as $columnobject) {
-                $columnname = $columnobject->get_column_name();
-                foreach ($this->corequestionbankcolumns as $key => $corequestionbankcolumn) {
-                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-                        unset($questionbankclasscolumns[$columnname]);
-                        continue;
-                    }
+                $columnid = $columnobject->get_column_id();
+                foreach ($corequestionbankcolumns as $corequestionbankcolumn) {
                     // Check if it has custom preference selector to view/hide.
                     if ($columnobject->has_preference()) {
                         if (!$columnobject->get_preference()) {
                             continue;
                         }
                     }
-                    if ($corequestionbankcolumn === $columnname) {
-                        $questionbankclasscolumns[$columnname] = $columnobject;
+                    if ($corequestionbankcolumn === $columnid) {
+                        $questionbankclasscolumns[$columnid] = $columnobject;
                     } else {
                         // Any community plugin for column/action.
-                        $newpluginclasscolumns[$columnname] = $columnobject;
+                        $newpluginclasscolumns[$columnid] = $columnobject;
                     }
                 }
             }
@@ -431,15 +424,12 @@ class view {
             $questionbankclasscolumns[$key] = $newpluginclasscolumn;
         }
 
-        // Check if qbank_columnsortorder is enabled.
-        if (array_key_exists('columnsortorder', core_plugin_manager::instance()->get_enabled_plugins('qbank'))) {
-            $columnorder = new column_manager();
-            $questionbankclasscolumns = $columnorder->get_sorted_columns($questionbankclasscolumns);
-        }
+        $questionbankclasscolumns = $this->columnmanager->get_sorted_columns($questionbankclasscolumns);
+        $questionbankclasscolumns = $this->columnmanager->set_columns_visibility($questionbankclasscolumns);
 
         // Mitigate the error in case of any regression.
         foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
-            if (!is_object($questionbankclasscolumn)) {
+            if (!is_object($questionbankclasscolumn) || !$questionbankclasscolumn->isvisible) {
                 unset($questionbankclasscolumns[$shortname]);
             }
         }
@@ -456,7 +446,7 @@ class view {
         $this->requiredcolumns = [];
         $questionbankcolumns = $this->get_question_bank_plugins();
         foreach ($questionbankcolumns as $classobject) {
-            if (empty($classobject)) {
+            if (empty($classobject) || !($classobject instanceof \core_question\local\bank\column_base)) {
                 continue;
             }
             $this->requiredcolumns[$classobject->get_column_name()] = $classobject;
@@ -500,7 +490,10 @@ class view {
             if ($column->is_extra_row()) {
                 $this->extrarows[$column->get_column_name()] = $column;
             } else {
-                $this->visiblecolumns[$column->get_column_name()] = $column;
+                // Only add columns which are visible.
+                if ($column->isvisible) {
+                    $this->visiblecolumns[$column->get_column_name()] = $column;
+                }
             }
         }
 
@@ -905,7 +898,14 @@ class view {
      * Shows the question bank interface.
      */
     public function display(): void {
-        echo \html_writer::start_div('questionbankwindow boxwidthwide boxaligncenter');
+        $editcontexts = $this->contexts->having_one_edit_tab_cap('questions');
+
+        echo \html_writer::start_div('questionbankwindow boxwidthwide boxaligncenter', [
+            'data-component' => 'core_question',
+            'data-callback' => 'display_question_bank',
+            'data-contextid' => $editcontexts[array_key_last($editcontexts)]->id,
+        ]);
+
         // Show the filters and search options.
         $this->wanted_filters();
         // Continues with list of questions.
@@ -1087,22 +1087,50 @@ class view {
     }
 
     /**
-     * Create a new question form.
+     * Does the current view allow adding new questions?
      *
-     * @param false|mixed|\stdClass $category
-     * @param bool $canadd
+     * @return bool True if the view supports adding new questions.
      */
-    protected function create_new_question_form($category, $canadd): void {
-        if (\core\plugininfo\qbank::is_plugin_enabled('qbank_editquestion')) {
-            echo editquestion_helper::create_new_question_button($category->id,
-                $this->questionactions['qbank_editquestion\edit_action']->editquestionurl->params(), $canadd);
+    public function allow_add_questions(): bool {
+        return true;
+    }
+
+    /**
+     * Output the question bank controls for each plugin.
+     *
+     * Controls will be output in the order defined by the array keys returned from
+     * {@see plugin_features_base::get_question_bank_controls}. If more than one plugin defines a control in the same position,
+     * they will placed after one another based on the alphabetical order of the plugins.
+     *
+     * @param \core\context $context The current context, for permissions checks.
+     * @param int $categoryid The current question category.
+     */
+    protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        global $OUTPUT;
+        $orderedcontrols = [];
+        foreach ($this->plugins as $plugin) {
+            $plugincontrols = $plugin->get_question_bank_controls($this, $context, $categoryid);
+            foreach ($plugincontrols as $position => $plugincontrol) {
+                if (!array_key_exists($position, $orderedcontrols)) {
+                    $orderedcontrols[$position] = [];
+                }
+                $orderedcontrols[$position][] = $plugincontrol;
+            }
         }
+        ksort($orderedcontrols);
+        $output = '';
+        foreach ($orderedcontrols as $controls) {
+            foreach ($controls as $control) {
+                $output .= $OUTPUT->render($control);
+            }
+        }
+        return $OUTPUT->render_from_template('core_question/question_bank_controls', ['controls' => $output]);
     }
 
     /**
      * Prints the table of questions in a category with interactions
      */
-    protected function display_question_list(): void {
+    public function display_question_list(): void {
         // This function can be moderately slow with large question counts and may time out.
         // We probably do not want to raise it to unlimited, so randomly picking 5 minutes.
         // Note: We do not call this in the loop because quiz ob_ captures this function (see raise() PHP doc).
@@ -1111,10 +1139,16 @@ class view {
         [$categoryid, $contextid] = category_condition::validate_category_param($this->pagevars['cat']);
         $catcontext = \context::instance_by_id($contextid);
 
-        $canadd = has_capability('moodle/question:add', $catcontext);
-
-        $category = category_condition::get_category_record($categoryid, $contextid);
-        $this->create_new_question_form($category, $canadd);
+        echo \html_writer::start_tag(
+            'div',
+            [
+                'id' => 'questionscontainer',
+                'data-component' => $this->component,
+                'data-callback' => $this->callback,
+                'data-contextid' => $this->get_most_specific_context()->id,
+            ]
+        );
+        echo $this->get_plugin_controls($catcontext, $categoryid);
 
         $this->build_query();
         $questionsrs = $this->load_page_questions();
@@ -1133,8 +1167,10 @@ class view {
         echo \html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         echo \html_writer::input_hidden_params($this->baseurl);
 
+        $filtercondition = json_encode($this->get_pagevars());
+        // Embeded filterconditon into the div.
         echo \html_writer::start_tag('div',
-            ['class' => 'categoryquestionscontainer', 'id' => 'questionscontainer']);
+            ['class' => 'categoryquestionscontainer', 'data-filtercondition' => $filtercondition]);
         if ($totalquestions > 0) {
             // Bulk load any required statistics.
             $this->load_required_statistics($questions);
@@ -1151,6 +1187,7 @@ class view {
 
         echo \html_writer::end_tag('fieldset');
         echo \html_writer::end_tag('form');
+        echo \html_writer::end_tag('div');
     }
 
     /**
@@ -1330,11 +1367,8 @@ class view {
         echo $OUTPUT->render($pagingbar);
 
         // Table of questions.
-        // Embeded filterconditon into the div.
-        $filtercondition = json_encode($this->get_pagevars());
-
         echo \html_writer::start_tag('div',
-            ['class' => 'question_table', 'id' => 'question_table', 'data-filtercondition' => $filtercondition]);
+            ['class' => 'question_table', 'id' => 'question_table']);
         $this->print_table($questions);
         echo \html_writer::end_tag('div');
         echo $OUTPUT->render($pagingbar);
@@ -1370,13 +1404,13 @@ class view {
         // Start of the table.
         echo \html_writer::start_tag('table', [
             'id' => 'categoryquestions',
-            'class' => 'table-responsive',
-            'data-defaultsort' => json_encode($this->sort)
+            'class' => 'question-bank-table generaltable',
+            'data-defaultsort' => json_encode($this->sort),
         ]);
 
         // Prints the table header.
         echo \html_writer::start_tag('thead');
-        echo \html_writer::start_tag('tr');
+        echo \html_writer::start_tag('tr', ['class' => 'qbank-column-list']);
         $this->print_table_headers();
         echo \html_writer::end_tag('tr');
         echo \html_writer::end_tag('thead');
@@ -1426,9 +1460,11 @@ class view {
     /**
      * Print table headers from child classes.
      */
-    public function print_table_headers(): void {
+    protected function print_table_headers(): void {
+        $columnactions = $this->columnmanager->get_column_actions($this);
         foreach ($this->visiblecolumns as $column) {
-            $column->display_header();
+            $width = $this->columnmanager->get_column_width($column);
+            $column->display_header($columnactions, $width);
         }
     }
 

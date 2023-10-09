@@ -23,8 +23,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'Cohort Factor';
-$string['privacy:metadata'] = 'The cohort membership factor plugin does not store any personal data';
+$string['pluginname'] = 'Cohort';
+$string['privacy:metadata'] = 'The Cohort factor plugin does not store any personal data.';
 $string['settings:cohort'] = 'Non-passing cohorts';
 $string['settings:cohort_help'] = 'Select the cohorts that will not pass this factor. This allows you to force these cohorts to use other factors to authenticate.';
 $string['summarycondition'] = 'does NOT have any of the following cohorts assigned in any context: {$a}';

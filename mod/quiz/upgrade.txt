@@ -4,6 +4,13 @@ This files describes API changes in the quiz code.
 
 * The method get_questions() has a new parameter 'requirequestionfullyloaded' which can be used to instruct whether the
   questions should be fully loaded or not.
+* the quiz_settings and quiz_attempt classes now always store the ->cm property as a cm_info class.
+  In the distant past it was always a stdClass, then at one point there was an undocumented change making
+  it sometimes a stdClass and sometimes a cm_info. Now it is consistently a cm_info. Type hints have been
+  updated to reflect this.
+* The parameter filtercondition in the web service mod_quiz_add_random_questions is now optional. This parameter is
+  only used when adding random questions from an existing category. It is not required when adding random questions from
+  a new category since it is not used in this case.
 
 === 4.2 ===
 
