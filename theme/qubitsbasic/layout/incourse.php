@@ -105,15 +105,14 @@ if($path_params == "/mod/qbassign/view.php"){
                 'moduleid' => $module_id
             ]);
             $muid = ($qbinstnce->uid) ? $qbinstnce->uid : '';
-            $qb_config_data = $DB->get_records("qbassign_plugin_config", [
-                'plugin' => 'codeblock',
-                'qbassignment' => $qbinstnce->id
+            $qb_config_data = $DB->get_record("qbassign_plugin_config", [
+                'plugin' => "scratch",
+                'qbassignment' => $qbinstnce->id,
+                'name' => "enabled",
+                'value' => "1"
             ]);
-            $aqb_config = array();
-            foreach($qb_config_data as $single_qb_config_data){
-                $aqb_config[$single_qb_config_data->name] = $single_qb_config_data->value;
-            }
-            if($aqb_config["enabled"]=="1" && $aqb_config["lang"]=="scratch"){
+           
+            if($qb_config_data){
                 $is_scratch = true;
             }
         }
