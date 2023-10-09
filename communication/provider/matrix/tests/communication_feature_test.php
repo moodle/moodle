@@ -368,8 +368,6 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::set_matrix_power_levels
      */
     public function test_add_and_remove_members_from_room(): void {
-        $this->markTestSkipped('Skipping while we update the Mock Server with the new route');
-
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
 
@@ -413,28 +411,32 @@ class communication_feature_test extends \advanced_testcase {
      * @covers ::get_user_allowed_power_level
      */
     public function test_update_room_membership(): void {
-        $this->markTestSkipped('Skipping while we update the Mock Server with the new route');
-
         $this->resetAfterTest();
 
         global $DB;
 
         // Create a new room.
         $course = $this->get_course('Sampleroom', 'none');
+        $coursecontext = \context_course::instance($course->id);
         $user = $this->get_user();
 
         $communication = $this->create_room(
             component: 'core_course',
             itemtype: 'coursecommunication',
-            itemid: $course->id
+            itemid: $course->id,
+            roomname: 'sampleroom',
+            roomtopic: 'sampltopic',
+            roomavatar: null,
+            members: [$user->id],
+            context: $coursecontext,
         );
+
         $provider = $communication->get_room_user_provider();
 
         // Add the members to the room.
         $provider->add_members_to_room([$user->id]);
 
         // Assign teacher role to the user.
-        $coursecontext = \context_course::instance($course->id);
         $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
         role_assign($teacherrole->id, $user->id, $coursecontext->id);
@@ -443,7 +445,7 @@ class communication_feature_test extends \advanced_testcase {
         $provider->update_room_membership([$user->id]);
 
         $processor = \core_communication\processor::load_by_instance(
-            context: \core\context\course::instance($course->id),
+            context: $coursecontext,
             component: 'core_course',
             instancetype: 'coursecommunication',
             instanceid: $course->id,
