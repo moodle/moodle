@@ -149,11 +149,19 @@ class condition extends \core_availability\condition {
 
             $allow = true;
             if ($this->expectedcompletion == COMPLETION_COMPLETE) {
-                // Complete also allows the pass, fail states.
+                // Complete also allows the pass state.
                 switch ($completiondata->completionstate) {
                     case COMPLETION_COMPLETE:
-                    case COMPLETION_COMPLETE_FAIL:
                     case COMPLETION_COMPLETE_PASS:
+                        break;
+                    default:
+                        $allow = false;
+                }
+            } else if ($this->expectedcompletion == COMPLETION_INCOMPLETE) {
+                // Incomplete also allows the fail state.
+                switch ($completiondata->completionstate) {
+                    case COMPLETION_INCOMPLETE:
+                    case COMPLETION_COMPLETE_FAIL:
                         break;
                     default:
                         $allow = false;
