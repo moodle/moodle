@@ -1622,11 +1622,6 @@ $string['cachesessionhelp'] = 'User specific cache that expires when the user\'s
 $string['cacheapplication'] = 'Application cache';
 $string['cacheapplicationhelp'] = 'Cached items are shared among all users and expire by a determined time to live (ttl).';
 
-// Deprecated since Moodle 4.0.
-$string['coursepage'] = 'Course page';
-$string['mediapluginswf'] = 'Enable .swf filter';
-$string['mediapluginswfnote'] = 'As a default security measure, normal users should not be allowed to embed swf flash files.';
-
 // Deprecated since Moodle 4.1.
 $string['multilangforceold'] = 'Force old multilang syntax: &lt;span&gt; without the class="multilang" and &lt;lang&gt;';
 

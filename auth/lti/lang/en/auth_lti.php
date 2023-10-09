@@ -52,8 +52,5 @@ $string['provisioningmodeexistingonly'] = 'Existing accounts only (prompt)';
 $string['useexistingaccount'] = 'Use existing account';
 $string['welcome'] = 'Welcome!';
 
-// Deprecated since Moodle 4.0.
-$string['privacy:metadata'] = 'The LTI authentication plugin does not store any personal data.';
-
 // Deprecated since Moodle 4.4.
 $string['firstlaunchnoauthnotice'] = 'To link your existing account you must be logged in to the site. Please log in to the site in a new tab/window and then relaunch the tool here. For further information, see the documentation <a href="{$a}" target="_blank">Publish as LTI tool</a>.';

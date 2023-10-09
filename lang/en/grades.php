@@ -892,12 +892,6 @@ $string['yourgrade'] = 'Your grade';
 $string['aria-toggledropdown'] = 'Toggle the following dropdown';
 $string['aria:dropdowngrades'] = 'Grade items found';
 
-// Deprecated since Moodle 4.0.
-$string['navmethod'] = 'Navigation method';
-$string['dropdown'] = 'Drop-down menu';
-$string['tabs'] = 'Tabs';
-$string['combo'] = 'Tabs and drop-down menu';
-
 // Deprecated since Moodle 4.2.
 $string['showanalysisicon'] = 'Show grade analysis icon';
 $string['showanalysisicon_desc'] = 'Whether to show grade analysis icon by default. If the activity module supports it, the grade analysis icon links to a page with more detailed explanation of the grade and how it was obtained.';

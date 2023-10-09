@@ -1,3 +1,0 @@
-clicktocontinue,mod_survey
-viewsurveyresponses,mod_survey
-allquestions,mod_survey

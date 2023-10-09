@@ -83,11 +83,11 @@ class string_manager_standard_test extends \advanced_testcase {
         $this->assertFalse($stringman->string_deprecated('hidden', 'grades'));
 
         // Check deprecated string, make sure to update once that chosen below is finally removed.
-        $this->assertTrue($stringman->string_deprecated('coursepage', 'core_admin'));
-        $this->assertTrue($stringman->string_exists('coursepage', 'core_admin'));
+        $this->assertTrue($stringman->string_deprecated('selectdevice', 'core_admin'));
+        $this->assertTrue($stringman->string_exists('selectdevice', 'core_admin'));
         $this->assertDebuggingNotCalled();
-        $this->assertEquals('Course page', get_string('coursepage', 'core_admin'));
-        $this->assertDebuggingCalled('String [coursepage,core_admin] is deprecated. '.
+        $this->assertEquals('Select device', get_string('selectdevice', 'core_admin'));
+        $this->assertDebuggingCalled('String [selectdevice,core_admin] is deprecated. '.
             'Either you should no longer be using that string, or the string has been incorrectly deprecated, in which case you should report this as a bug. '.
             'Please refer to https://moodledev.io/general/projects/api/string-deprecation');
     }

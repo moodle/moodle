@@ -77,12 +77,5 @@ $string['total'] = 'Total';
 $string['unknownquestion'] = 'Unknown question';
 $string['updategrade'] = 'update grades';
 
-// Deprecated since Moodle 4.0.
-$string['bydate'] = 'By date';
-$string['bystudentidnumber'] = 'By student ID number';
-$string['bystudentfirstname'] = 'By student first name';
-$string['bystudentlastname'] = 'By student last name';
-$string['gradingattemptwithidnumber'] = 'Attempt number {$a->attempt} for {$a->fullname} ({$a->idnumber})';
-$string['orderattempts'] = 'Order attempts';
-$string['randomly'] = 'Randomly';
+// Deprecated since Moodle 4.4.
 $string['grade'] = 'grade';

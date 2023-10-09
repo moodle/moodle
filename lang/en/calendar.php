@@ -283,8 +283,3 @@ $string['whendate'] = 'When: {$a}';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 $string['yoursubscriptions'] = 'Imported calendars';
-
-// Deprecated since Moodle 4.0.
-$string['calendarurl'] = 'Calendar URL: {$a}';
-$string['importfrominstructions'] = 'Please provide either a URL to a remote calendar, or upload a file.';
-$string['monthlyview'] = 'Monthly view';

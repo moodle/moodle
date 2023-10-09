@@ -144,9 +144,3 @@ $string['pluginname'] = 'Security checks';
 $string['security:view'] = 'View security report';
 $string['timewarning'] = 'Data processing may take a long time, please be patient...';
 $string['privacy:metadata'] = 'The Security overview plugin does not store any personal data.';
-
-// Deprecated since Moodle 4.0.
-$string['check_mediafilterswf_details'] = '<p>Automatic swf embedding is very dangerous - any registered user may launch an XSS attack against other server users. Please disable it on production servers.</p>';
-$string['check_mediafilterswf_error'] = 'Flash media filter is enabled - this is very dangerous for the majority of servers.';
-$string['check_mediafilterswf_name'] = 'Enabled .swf media filter';
-$string['check_mediafilterswf_ok'] = 'Flash media filter is not enabled.';
