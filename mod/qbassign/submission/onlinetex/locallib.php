@@ -362,9 +362,14 @@ class qbassign_submission_onlinetex extends qbassign_submission_plugin {
       * @return string
       */
     public function view_summary(stdClass $submission, & $showviewlink) {
-        global $CFG;
+        global $CFG,$DB;
 
         $onlinetexsubmission = $this->get_onlinetex_submission($submission->id);
+
+        // Additional Explanations
+        $get_submited = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $submission->id));
+        $expln = ($get_submited->explanation!='')?$get_submited->explanation:'-';
+
         // Always show the view link.
         $showviewlink = true;
 
@@ -398,7 +403,7 @@ class qbassign_submission_onlinetex extends qbassign_submission_plugin {
 
                 return $plagiarismlinks . $wordcount . $text;
             } else {
-                return $plagiarismlinks . $text;
+                return $plagiarismlinks . $text . "<div>Additional Comments :<br/>".$expln."</div>";
             }
         }
         return '';
