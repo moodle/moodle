@@ -33289,6 +33289,13 @@ fieldset.coursesearchbox label {
   color: #6a737b;
   background-color: #e9ecef;
 }
+.form-autocomplete-suggestions li.suggestions-heading {
+  pointer-events: none;
+  font-weight: bold;
+  color: #1d2125;
+  background-color: #fff;
+  padding-left: calc(1.5rem / 2);
+}
 .form-autocomplete-suggestions li::before {
   content: "​";
 }

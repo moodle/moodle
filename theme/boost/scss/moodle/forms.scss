@@ -306,6 +306,13 @@ fieldset.coursesearchbox label {
         color: $custom-select-disabled-color;
         background-color: $custom-select-disabled-bg;
     }
+    &.suggestions-heading {
+        pointer-events: none;
+        font-weight: bold;
+        color: $body-color;
+        background-color: $body-bg;
+        padding-left: calc(#{$dropdown-item-padding-x} / 2);
+    }
     &::before {
         content: "\200B";
     }
