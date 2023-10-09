@@ -1,4 +1,4 @@
-<?php
+<?php  
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -15,47 +15,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * This file contains the definition for the library class for codeblock submission plugin
+ * This file contains the definition for the library class for scratch submission plugin
  *
  * This class provides all the functionality for the new qbassign module.
  *
- * @package qbassignsubmission_codeblock
+ * @package qbassignsubmission_scratch
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-// File area for code block submission qbassignment.
-define('qbassignsubmission_codeblock_FILEAREA', 'submissions_codeblock');
- 
+// File area for Scratch submission qbassignment.
+define('qbassignsubmission_scratch_FILEAREA', 'submissions_scratch');
+
 /**
- * library class for codeblock submission plugin extending submission plugin base class
+ * library class for scratch submission plugin extending submission plugin base class
  *
- * @package qbassignsubmission_codeblock
+ * @package qbassignsubmission_scratch
  * @copyright 2012 NetSpot {@link http://www.netspot.com.au}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qbassign_submission_codeblock extends qbassign_submission_plugin {
+class qbassign_submission_scratch extends qbassign_submission_plugin {
 
     /**
-     * Get the name of the code block submission plugin
+     * Get the name of the Scratch submission plugin
      * @return string
      */
     public function get_name() {
-        return get_string('codeblock', 'qbassignsubmission_codeblock');
+        return get_string('scratch', 'qbassignsubmission_scratch');
     }
 
 
     /**
-     * Get codeblock submission information from the database
+     * Get scratch submission information from the database
      *
      * @param  int $submissionid
      * @return mixed
      */
-    private function get_codeblock_submission($submissionid) {
+    private function get_scratch_submission($submissionid) {
         global $DB;
 
-        return $DB->get_record('qbassignsubmission_codeblock', array('submission'=>$submissionid));
+        return $DB->get_record('qbassignsubmission_scratch', array('submission'=>$submissionid));
     }
 
     /**
@@ -66,89 +66,35 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      */
     public function remove(stdClass $submission) {
         global $DB;
-
+        //print_r($submission);die();
         $submissionid = $submission ? $submission->id : 0;
         if ($submissionid) {
-            $DB->delete_records('qbassignsubmission_codeblock', array('submission' => $submissionid));
+            $DB->delete_records('qbassignsubmission_scratch', array('submission' => $submissionid));
         }
         return true;
     }
 
     /**
-     * Get the settings for codeblock submission plugin
+     * Get the settings for scratch submission plugin
      *
      * @param MoodleQuickForm $mform The form to add elements to
      * @return void
      */
     public function get_settings(MoodleQuickForm $mform) {
-        global $PAGE;
-        $PAGE->requires->jquery();
+        global $CFG, $COURSE;
 
-        $PAGE->requires->js('/mod/qbassign/submission/codeblock/js/custom.js', true);
-
-
-      //  echo '<pre>'; print_r($COURSE); exit;
-        $name = 'CodeBlock Type';//get_string('Choose', 'qbassignsubmission_codeblock');
-        $mname = get_string('Manual', 'qbassignsubmission_codeblock');
-        $aname = get_string('automatic', 'qbassignsubmission_codeblock');
-       
-        $savedtype = $this->get_config('type');
-        $savedlang = $this->get_config('lang');
-
-        $wordlimitgrp = array();
-       
-        $wordlimitgrp[] = $mform->createElement('radio', 'qbassignsubmission_codeblock_type','',$mname,1);
-
-        $wordlimitgrp[] = $mform->createElement('radio', 'qbassignsubmission_codeblock_type','', $aname,2);
-
-        $mform->addGroup($wordlimitgrp, 'qbassignsubmission_codeblock_type_group',$name, '', ' ', false);
-
-        $mform->setType('qbassignsubmission_codeblock_type', PARAM_INT);
-        $mform->hideIf('qbassignsubmission_codeblock_type_group',
-                       'qbassignsubmission_codeblock_enabled',
-                       'notchecked');
-
-        if(empty($savedtype))
-        $mform->setDefault('qbassignsubmission_codeblock_type_group[qbassignsubmission_codeblock_type]', 1);
-        else
-        $mform->setDefault('qbassignsubmission_codeblock_type_group[qbassignsubmission_codeblock_type]', $savedtype);
-
-        $mform->addElement('select', 'qbassignsubmission_codeblock_language', 'Language', array('python'=>'Python', 'sql'=>'SQL', 'javascript'=>'Javascript','htmlcss'=>'HTML & CSS','scratch'=>'Scratch'));
-
-        $mform->hideIf('qbassignsubmission_codeblock_language',
-                       'qbassignsubmission_codeblock_enabled',
-                       'notchecked');
-        if(empty($savedlang))
-        $mform->setDefault('qbassignsubmission_codeblock_language', 'python');
-        else
-        $mform->setDefault('qbassignsubmission_codeblock_language', $savedlang);
-
+        
     }
 
     /**
-     * Save the settings for codeblock submission plugin
+     * Save the settings for scratch submission plugin
      *
      * @param stdClass $data
      * @return bool
      */
     public function save_settings(stdClass $data) {
-       // echo '<pre>'; print_r($data); exit;
-        if (empty($data->qbassignsubmission_codeblock_type_group['qbassignsubmission_codeblock_type']) || empty($data->qbassignsubmission_codeblock_enabled)) {
-            $type = 1;          
-        } else {
-            $type = $data->qbassignsubmission_codeblock_type_group['qbassignsubmission_codeblock_type'];            
-        }
+        
 
-        $this->set_config('type', $type);
-
-        if (empty($data->qbassignsubmission_codeblock_language)) {
-            $lang = 'python';          
-        } else {
-            $lang = $data->qbassignsubmission_codeblock_language;            
-        }
-
-        $this->set_config('lang', $lang);
-       
         return true;
     }
 
@@ -166,30 +112,30 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         $editoroptions = $this->get_edit_options();
         $submissionid = $submission ? $submission->id : 0;
 
-        if (!isset($data->codeblock)) {
-            $data->codeblock = '';
+        if (!isset($data->scratch)) {
+            $data->scratch = '';
         }
-        if (!isset($data->codeblockformat)) {
-            $data->codeblockformat = editors_get_preferred_format();
+        if (!isset($data->scratchformat)) {
+            $data->scratchformat = editors_get_preferred_format();
         }
 
         if ($submission) {
-            $codeblocksubmission = $this->get_codeblock_submission($submission->id);
-            if ($codeblocksubmission) {
-                $data->codeblock = $codeblocksubmission->codeblock;
-                $data->codeblockformat = $codeblocksubmission->onlineformat;
+            $scratchsubmission = $this->get_scratch_submission($submission->id);
+            if ($scratchsubmission) {
+                $data->scratch = $scratchsubmission->scratch;
+                $data->scratchformat = $scratchsubmission->onlineformat;
             }
 
         }
 
         $data = file_prepare_standard_editor($data,
-                                             'codeblock',
+                                             'scratch',
                                              $editoroptions,
                                              $this->qbassignment->get_context(),
-                                             'qbassignsubmission_codeblock',
-                                             qbassignsubmission_codeblock_FILEAREA,
+                                             'qbassignsubmission_scratch',
+                                             qbassignsubmission_scratch_FILEAREA,
                                              $submissionid);
-        $mform->addElement('editor', 'codeblock_editor', $this->get_name(), null, $editoroptions);
+        $mform->addElement('editor', 'scratch_editor', $this->get_name(), null, $editoroptions);
 
         return true;
     }
@@ -225,26 +171,26 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         $editoroptions = $this->get_edit_options();
 
         $data = file_postupdate_standard_editor($data,
-                                                'codeblock',
+                                                'scratch',
                                                 $editoroptions,
                                                 $this->qbassignment->get_context(),
-                                                'qbassignsubmission_codeblock',
-                                                qbassignsubmission_codeblock_FILEAREA,
+                                                'qbassignsubmission_scratch',
+                                                qbassignsubmission_scratch_FILEAREA,
                                                 $submission->id);
 
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
 
         $fs = get_file_storage();
 
         $files = $fs->get_area_files($this->qbassignment->get_context()->id,
-                                     'qbassignsubmission_codeblock',
-                                     qbassignsubmission_codeblock_FILEAREA,
+                                     'qbassignsubmission_scratch',
+                                     qbassignsubmission_scratch_FILEAREA,
                                      $submission->id,
                                      'id',
                                      false);
 
         // Check word count before submitting anything.
-        $exceeded = $this->check_word_count(trim($data->codeblock));
+        $exceeded = $this->check_word_count(trim($data->scratch));
         if ($exceeded) {
             $this->set_error($exceeded);
             return false;
@@ -256,8 +202,8 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
             'objectid' => $submission->id,
             'other' => array(
                 'pathnamehashes' => array_keys($files),
-                'content' => trim($data->codeblock),
-                'format' => $data->codeblock_editor['format']
+                'content' => trim($data->scratch),
+                'format' => $data->scratch_editor['format']
             )
         );
         if (!empty($submission->userid) && ($submission->userid != $USER->id)) {
@@ -266,7 +212,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         if ($this->qbassignment->is_blind_marking()) {
             $params['anonymous'] = 1;
         }
-        $event = \qbassignsubmission_codeblock\event\assessable_uploaded::create($params);
+        $event = \qbassignsubmission_scratch\event\assessable_uploaded::create($params);
         $event->trigger();
 
         $groupname = null;
@@ -279,7 +225,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
             $params['relateduserid'] = $submission->userid;
         }
 
-        $count = count_words($data->codeblock);
+        $count = count_words($data->scratch);
 
         // Unset the objectid and other field from params for use in submission events.
         unset($params['objectid']);
@@ -288,35 +234,35 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
             'submissionid' => $submission->id,
             'submissionattempt' => $submission->attemptnumber,
             'submissionstatus' => $submission->status,
-            'codeblockwordcount' => $count,
+            'scratchwordcount' => $count,
             'groupid' => $groupid,
             'groupname' => $groupname
         );
 
-        if ($codeblocksubmission) {
+        if ($scratchsubmission) {
 
-            $codeblocksubmission->codeblock = $data->codeblock;
-            $codeblocksubmission->onlineformat = $data->codeblock_editor['format'];
-            $params['objectid'] = $codeblocksubmission->id;
-            $updatestatus = $DB->update_record('qbassignsubmission_codeblock', $codeblocksubmission);
-            $event = \qbassignsubmission_codeblock\event\submission_updated::create($params);
+            $scratchsubmission->scratch = $data->scratch;
+            $scratchsubmission->onlineformat = $data->scratch_editor['format'];
+            $params['objectid'] = $scratchsubmission->id;
+            $updatestatus = $DB->update_record('qbassignsubmission_scratch', $scratchsubmission);
+            $event = \qbassignsubmission_scratch\event\submission_updated::create($params);
             $event->set_qbassign($this->qbassignment);
             $event->trigger();
             return $updatestatus;
         } else {
 
-            $codeblocksubmission = new stdClass();
-            $codeblocksubmission->codeblock = $data->codeblock;
-            $codeblocksubmission->onlineformat = $data->codeblock_editor['format'];
+            $scratchsubmission = new stdClass();
+            $scratchsubmission->scratch = $data->scratch;
+            $scratchsubmission->onlineformat = $data->scratch_editor['format'];
 
-            $codeblocksubmission->submission = $submission->id;
-            $codeblocksubmission->qbassignment = $this->qbassignment->get_instance()->id;
-            $codeblocksubmission->id = $DB->insert_record('qbassignsubmission_codeblock', $codeblocksubmission);
-            $params['objectid'] = $codeblocksubmission->id;
-            $event = \qbassignsubmission_codeblock\event\submission_created::create($params);
+            $scratchsubmission->submission = $submission->id;
+            $scratchsubmission->qbassignment = $this->qbassignment->get_instance()->id;
+            $scratchsubmission->id = $DB->insert_record('qbassignsubmission_scratch', $scratchsubmission);
+            $params['objectid'] = $scratchsubmission->id;
+            $event = \qbassignsubmission_scratch\event\submission_created::create($params);
             $event->set_qbassign($this->qbassignment);
             $event->trigger();
-            return $codeblocksubmission->id > 0;
+            return $scratchsubmission->id > 0;
         }
     }
 
@@ -326,7 +272,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return array An array of field names and descriptions. (name=>description, ...)
      */
     public function get_editor_fields() {
-        return array('codeblock' => get_string('pluginname', 'qbassignsubmission_codeblock'));
+        return array('scratch' => get_string('pluginname', 'qbassignsubmission_scratch'));
     }
 
     /**
@@ -337,10 +283,10 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return string
      */
     public function get_editor_text($name, $submissionid) {
-        if ($name == 'codeblock') {
-            $codeblocksubmission = $this->get_codeblock_submission($submissionid);
-            if ($codeblocksubmission) {
-                return $codeblocksubmission->codeblock;
+        if ($name == 'scratch') {
+            $scratchsubmission = $this->get_scratch_submission($submissionid);
+            if ($scratchsubmission) {
+                return $scratchsubmission->scratch;
             }
         }
 
@@ -355,10 +301,10 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return int
      */
     public function get_editor_format($name, $submissionid) {
-        if ($name == 'codeblock') {
-            $codeblocksubmission = $this->get_codeblock_submission($submissionid);
-            if ($codeblocksubmission) {
-                return $codeblocksubmission->onlineformat;
+        if ($name == 'scratch') {
+            $scratchsubmission = $this->get_scratch_submission($submissionid);
+            if ($scratchsubmission) {
+                return $scratchsubmission->onlineformat;
             }
         }
 
@@ -367,7 +313,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
 
 
      /**
-      * Display codeblock word count in the submission status table
+      * Display scratch word count in the submission status table
       *
       * @param stdClass $submission
       * @param bool $showviewlink - If the summary has been truncated set this to true
@@ -376,27 +322,27 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
     public function view_summary(stdClass $submission, & $showviewlink) {
         global $CFG,$DB;
 
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
 
-        // Additional Explanations
-        $get_submited = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $submission->id));
+         // Additional Explanations
+        $get_submited = $DB->get_record('qbassignsubmission_scratch', array('submission' => $submission->id));
         $expln = ($get_submited->explanation!='')?$get_submited->explanation:'-';
 
         // Always show the view link.
         $showviewlink = true;
 
-        if ($codeblocksubmission) {
+        if ($scratchsubmission) {
             // This contains the shortened version of the text plus an optional 'Export to portfolio' button.
-            $text = $this->qbassignment->render_editor_content(qbassignsubmission_codeblock_FILEAREA,
-                                                             $codeblocksubmission->submission,
+            $text = $this->qbassignment->render_editor_content(qbassignsubmission_scratch_FILEAREA,
+                                                             $scratchsubmission->submission,
                                                              $this->get_type(),
-                                                             'codeblock',
-                                                             'qbassignsubmission_codeblock', true);
+                                                             'scratch',
+                                                             'qbassignsubmission_scratch', true);
 
             // The actual submission text.
-            $codeblock = trim($codeblocksubmission->codeblock);
+            $scratch = trim($scratchsubmission->scratch);
             // The shortened version of the submission text.
-            $shorttext = shorten_text($codeblock, 140);
+            $shorttext = shorten_text($scratch, 140);
 
             $plagiarismlinks = '';
 
@@ -404,14 +350,14 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
                 require_once($CFG->libdir . '/plagiarismlib.php');
 
                 $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
-                    'content' => $codeblock,
+                    'content' => $scratch,
                     'cmid' => $this->qbassignment->get_course_module()->id,
                     'course' => $this->qbassignment->get_course()->id,
                     'qbassignment' => $submission->qbassignment));
             }
             // We compare the actual text submission and the shortened version. If they are not equal, we show the word count.
-            if ($codeblock != $shorttext) {
-                $wordcount = get_string('numwords', 'qbassignsubmission_codeblock', count_words($codeblock));
+            if ($scratch != $shorttext) {
+                $wordcount = get_string('numwords', 'qbassignsubmission_scratch', count_words($scratch));
 
                 return $plagiarismlinks . $wordcount . $text;
             } else {
@@ -432,25 +378,25 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         global $DB;
 
         $files = array();
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
 
         // Note that this check is the same logic as the result from the is_empty function but we do
         // not call it directly because we already have the submission record.
-        if ($codeblocksubmission) {
+        if ($scratchsubmission) {
             // Do not pass the text through format_text. The result may not be displayed in Moodle and
             // may be passed to external services such as document conversion or portfolios.
-            $formattedtext = $this->qbassignment->download_rewrite_pluginfile_urls($codeblocksubmission->codeblock, $user, $this);
+            $formattedtext = $this->qbassignment->download_rewrite_pluginfile_urls($scratchsubmission->scratch, $user, $this);
             $head = '<head><meta charset="UTF-8"></head>';
             $submissioncontent = '<!DOCTYPE html><html>' . $head . '<body>'. $formattedtext . '</body></html>';
 
-            $filename = get_string('codeblockfilename', 'qbassignsubmission_codeblock');
+            $filename = get_string('scratchfilename', 'qbassignsubmission_scratch');
             $files[$filename] = array($submissioncontent);
 
             $fs = get_file_storage();
 
             $fsfiles = $fs->get_area_files($this->qbassignment->get_context()->id,
-                                           'qbassignsubmission_codeblock',
-                                           qbassignsubmission_codeblock_FILEAREA,
+                                           'qbassignsubmission_scratch',
+                                           qbassignsubmission_scratch_FILEAREA,
                                            $submission->id,
                                            'timemodified',
                                            false);
@@ -474,22 +420,22 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         $result = '';
         $plagiarismlinks = '';
 
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
 
-        if ($codeblocksubmission) {
+        if ($scratchsubmission) {
 
             // Render for portfolio API.
-            $result .= $this->qbassignment->render_editor_content(qbassignsubmission_codeblock_FILEAREA,
-                                                                $codeblocksubmission->submission,
+            $result .= $this->qbassignment->render_editor_content(qbassignsubmission_scratch_FILEAREA,
+                                                                $scratchsubmission->submission,
                                                                 $this->get_type(),
-                                                                'codeblock',
-                                                                'qbassignsubmission_codeblock');
+                                                                'scratch',
+                                                                'qbassignsubmission_scratch');
 
             if (!empty($CFG->enableplagiarism)) {
                 require_once($CFG->libdir . '/plagiarismlib.php');
 
                 $plagiarismlinks .= plagiarism_get_links(array('userid' => $submission->userid,
-                    'content' => trim($codeblocksubmission->codeblock),
+                    'content' => trim($scratchsubmission->scratch),
                     'cmid' => $this->qbassignment->get_course_module()->id,
                     'course' => $this->qbassignment->get_course()->id,
                     'qbassignment' => $submission->qbassignment));
@@ -544,22 +490,22 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
                             & $log) {
         global $DB;
 
-        $codeblocksubmission = new stdClass();
-        $codeblocksubmission->codeblock = $oldsubmission->data1;
-        $codeblocksubmission->onlineformat = $oldsubmission->data2;
+        $scratchsubmission = new stdClass();
+        $scratchsubmission->scratch = $oldsubmission->data1;
+        $scratchsubmission->onlineformat = $oldsubmission->data2;
 
-        $codeblocksubmission->submission = $submission->id;
-        $codeblocksubmission->qbassignment = $this->qbassignment->get_instance()->id;
+        $scratchsubmission->submission = $submission->id;
+        $scratchsubmission->qbassignment = $this->qbassignment->get_instance()->id;
 
-        if ($codeblocksubmission->codeblock === null) {
-            $codeblocksubmission->codeblock = '';
+        if ($scratchsubmission->scratch === null) {
+            $scratchsubmission->scratch = '';
         }
 
-        if ($codeblocksubmission->onlineformat === null) {
-            $codeblocksubmission->onlineformat = editors_get_preferred_format();
+        if ($scratchsubmission->onlineformat === null) {
+            $scratchsubmission->onlineformat = editors_get_preferred_format();
         }
 
-        if (!$DB->insert_record('qbassignsubmission_codeblock', $codeblocksubmission) > 0) {
+        if (!$DB->insert_record('qbassignsubmission_scratch', $scratchsubmission) > 0) {
             $log .= get_string('couldnotconvertsubmission', 'mod_qbassign', $submission->userid);
             return false;
         }
@@ -570,8 +516,8 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
                                                         'submission',
                                                         $oldsubmission->id,
                                                         $this->qbassignment->get_context()->id,
-                                                        'qbassignsubmission_codeblock',
-                                                        qbassignsubmission_codeblock_FILEAREA,
+                                                        'qbassignsubmission_scratch',
+                                                        qbassignsubmission_scratch_FILEAREA,
                                                         $submission->id);
         return true;
     }
@@ -584,13 +530,13 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      */
     public function format_for_log(stdClass $submission) {
         // Format the info for each submission plugin (will be logged).
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
-        $codeblockloginfo = '';
-        $codeblockloginfo .= get_string('numwordsforlog',
-                                         'qbassignsubmission_codeblock',
-                                         count_words($codeblocksubmission->codeblock));
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
+        $scratchloginfo = '';
+        $scratchloginfo .= get_string('numwordsforlog',
+                                         'qbassignsubmission_scratch',
+                                         count_words($scratchsubmission->scratch));
 
-        return $codeblockloginfo;
+        return $scratchloginfo;
     }
 
     /**
@@ -600,7 +546,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      */
     public function delete_instance() {
         global $DB;
-        $DB->delete_records('qbassignsubmission_codeblock',
+        $DB->delete_records('qbassignsubmission_scratch',
                             array('qbassignment'=>$this->qbassignment->get_instance()->id));
 
         return true;
@@ -613,16 +559,16 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return bool
      */
     public function is_empty(stdClass $submission) {
-        $codeblocksubmission = $this->get_codeblock_submission($submission->id);
+        $scratchsubmission = $this->get_scratch_submission($submission->id);
         $wordcount = 0;
         $hasinsertedresources = false;
 
-        if (isset($codeblocksubmission->codeblock)) {
-            $wordcount = count_words(trim($codeblocksubmission->codeblock));
-            // Check if the code block submission contains video, audio or image elements
+        if (isset($scratchsubmission->scratch)) {
+            $wordcount = count_words(trim($scratchsubmission->scratch));
+            // Check if the Scratch submission contains video, audio or image elements
             // that can be ignored and stripped by count_words().
             $hasinsertedresources = preg_match('/<\s*((video|audio)[^>]*>(.*?)<\s*\/\s*(video|audio)>)|(img[^>]*>(.*?))/',
-                    trim($codeblocksubmission->codeblock));
+                    trim($scratchsubmission->scratch));
         }
 
         return $wordcount == 0 && !$hasinsertedresources;
@@ -638,18 +584,18 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return bool
      */
     public function submission_is_empty(stdClass $data) {
-        if (!isset($data->codeblock_editor)) {
+        if (!isset($data->scratch_editor)) {
             return true;
         }
         $wordcount = 0;
         $hasinsertedresources = false;
 
-        if (isset($data->codeblock_editor['text'])) {
-            $wordcount = count_words(trim((string)$data->codeblock_editor['text']));
-            // Check if the code block submission contains video, audio or image elements
+        if (isset($data->scratch_editor['text'])) {
+            $wordcount = count_words(trim((string)$data->scratch_editor['text']));
+            // Check if the Scratch submission contains video, audio or image elements
             // that can be ignored and stripped by count_words().
             $hasinsertedresources = preg_match('/<\s*((video|audio)[^>]*>(.*?)<\s*\/\s*(video|audio)>)|(img[^>]*>(.*?))/',
-                    trim((string)$data->codeblock_editor['text']));
+                    trim((string)$data->scratch_editor['text']));
         }
 
         return $wordcount == 0 && !$hasinsertedresources;
@@ -660,7 +606,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
      * @return array - An array of fileareas (keys) and descriptions (values)
      */
     public function get_file_areas() {
-        return array(qbassignsubmission_codeblock_FILEAREA=>$this->get_name());
+        return array(qbassignsubmission_scratch_FILEAREA=>$this->get_name());
     }
 
     /**
@@ -675,25 +621,25 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         // Copy the files across (attached via the text editor).
         $contextid = $this->qbassignment->get_context()->id;
         $fs = get_file_storage();
-        $files = $fs->get_area_files($contextid, 'qbassignsubmission_codeblock',
-                                     qbassignsubmission_codeblock_FILEAREA, $sourcesubmission->id, 'id', false);
+        $files = $fs->get_area_files($contextid, 'qbassignsubmission_scratch',
+                                     qbassignsubmission_scratch_FILEAREA, $sourcesubmission->id, 'id', false);
         foreach ($files as $file) {
             $fieldupdates = array('itemid' => $destsubmission->id);
             $fs->create_file_from_storedfile($fieldupdates, $file);
         }
 
-        // Copy the qbassignsubmission_codeblock record.
-        $codeblocksubmission = $this->get_codeblock_submission($sourcesubmission->id);
-        if ($codeblocksubmission) {
-            unset($codeblocksubmission->id);
-            $codeblocksubmission->submission = $destsubmission->id;
-            $DB->insert_record('qbassignsubmission_codeblock', $codeblocksubmission);
+        // Copy the qbassignsubmission_scratch record.
+        $scratchsubmission = $this->get_scratch_submission($sourcesubmission->id);
+        if ($scratchsubmission) {
+            unset($scratchsubmission->id);
+            $scratchsubmission->submission = $destsubmission->id;
+            $DB->insert_record('qbassignsubmission_scratch', $scratchsubmission);
         }
         return true;
     }
 
     /**
-     * Return a description of external params suitable for uploading an codeblock submission from a webservice.
+     * Return a description of external params suitable for uploading an scratch submission from a webservice.
      *
      * @return external_description|null
      */
@@ -702,13 +648,13 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
                               'format' => new external_value(PARAM_INT, 'The format for this submission'),
                               'itemid' => new external_value(PARAM_INT, 'The draft area id for files attached to the submission'));
         $editorstructure = new external_single_structure($editorparams, 'Editor structure', VALUE_OPTIONAL);
-        return array('codeblock_editor' => $editorstructure);
+        return array('scratch_editor' => $editorstructure);
     }
 
     /**
-     * Compare word count of codeblock submission to word limit, and return result.
+     * Compare word count of scratch submission to word limit, and return result.
      *
-     * @param string $submissiontext codeblock submission text from editor
+     * @param string $submissiontext scratch submission text from editor
      * @return string Error message if limit is enabled and exceeded, otherwise null
      */
     public function check_word_count($submissiontext) {
@@ -726,7 +672,7 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
         if ($wordcount <= $wordlimit) {
             return null;
         } else {
-            $errormsg = get_string('wordlimitexceeded', 'qbassignsubmission_codeblock',
+            $errormsg = get_string('wordlimitexceeded', 'qbassignsubmission_scratch',
                     array('limit' => $wordlimit, 'count' => $wordcount));
             return $OUTPUT->error_text($errormsg);
         }

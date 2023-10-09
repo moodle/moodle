@@ -325,4 +325,14 @@ $functions = array(
                 'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_scratch_submission' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'scratch_submission',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Save Students Scratch Submission',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
 );
