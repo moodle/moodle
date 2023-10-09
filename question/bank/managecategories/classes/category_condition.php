@@ -307,6 +307,7 @@ class category_condition extends condition {
                     'value' => '',
                     'title' => $heading,
                     'disabled' => true,
+                    'classes' => 'suggestions-heading',
                 ];
                 foreach ($catlist as $key => $value) {
                     $values[] = (object) [
