@@ -65,12 +65,16 @@
                 <div class="dropdown-divider" role="separator"></div>
             {{/divider1}}
             {{#ascendingfirstnameurl}}
-                <h6 class="dropdown-header">{{#str}} firstname, moodle {{/str}}</h6>
+            <div role="group" aria-label="{{#str}} sortbyfirstname, core_grades {{/str}}">
+                <div class="h6 dropdown-header">{{#str}} firstname, moodle {{/str}}</div>
                 {{{ascendingfirstnameurl}}}
                 {{{descendingfirstnameurl}}}
-                <h6 class="dropdown-header">{{#str}} lastname, moodle {{/str}}</h6>
+            </div>
+            <div role="group" aria-label="{{#str}} sortbylastname, core_grades {{/str}}">
+                <div class="h6 dropdown-header">{{#str}} lastname, moodle {{/str}}</div>
                 {{{ascendinglastnameurl}}}
                 {{{descendinglastnameurl}}}
+            </div>
             {{/ascendingfirstnameurl}}
             {{#ascendingurl}}
                 {{{ascendingurl}}}
