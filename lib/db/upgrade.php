@@ -3679,5 +3679,8 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023100400.03);
     }
 
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
