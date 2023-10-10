@@ -46,5 +46,8 @@ function xmldb_factor_auth_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2021020500, 'factor', 'auth');
     }
 
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
