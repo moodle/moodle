@@ -41,5 +41,7 @@ class plugin_feature extends plugin_features_base{
                 new tag_condition($qbank),
             ];
         }
+
+        return [];
     }
 }
