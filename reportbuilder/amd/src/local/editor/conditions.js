@@ -223,8 +223,10 @@ export const init = initialized => {
                 targetConditionPosition--;
             }
 
-            reorderCondition(reportElement.dataset.reportId, conditionId, targetConditionPosition)
-                .then(data => reloadSettingsConditionsRegion(reportElement, data))
+            // Re-order condition, giving drop event transition time to finish.
+            const reorderPromise = reorderCondition(reportElement.dataset.reportId, conditionId, targetConditionPosition);
+            Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
+                .then(([data]) => reloadSettingsConditionsRegion(reportElement, data))
                 .then(() => getString('conditionmoved', 'core_reportbuilder', info.element.data('conditionName')))
                 .then(addToast)
                 .then(() => {
