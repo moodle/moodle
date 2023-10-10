@@ -771,8 +771,6 @@ class grade_report_grader extends grade_report {
 
         $rows = [];
         $this->rowcount = 0;
-        $numusers = count($this->users);
-        $gradetabindex = 1;
         $strgrade = get_string('gradenoun');
         $this->get_sort_arrows();
 
@@ -789,14 +787,11 @@ class grade_report_grader extends grade_report {
 
         // Preload scale objects for items with a scaleid and initialize tab indices.
         $scaleslist = [];
-        $tabindices = [];
 
         foreach ($this->gtree->get_items() as $itemid => $item) {
             if (!empty($item->scaleid)) {
                 $scaleslist[] = $item->scaleid;
             }
-            $tabindices[$item->id]['grade'] = $gradetabindex;
-            $gradetabindex += $numusers * 2;
         }
 
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'gradereport_grader', 'scales');
@@ -1061,7 +1056,6 @@ class grade_report_grader extends grade_report {
                                 $nogradestr = get_string('nooutcome', 'grades');
                             }
                             $attributes = [
-                                'tabindex' => $tabindices[$item->id]['grade'],
                                 'id' => 'grade_' . $userid . '_' . $item->id
                             ];
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
@@ -1101,7 +1095,6 @@ class grade_report_grader extends grade_report {
                             $context->value = $value;
                             $context->label = get_string('useractivitygrade', 'gradereport_grader', $gradelabel);
                             $context->title = $strgrade;
-                            $context->tabindex = $tabindices[$item->id]['grade'];
                             $context->extraclasses = 'form-control';
                             if ($context->statusicons) {
                                 $context->extraclasses .= ' statusicons';
