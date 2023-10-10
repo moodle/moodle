@@ -1082,6 +1082,18 @@ class grade_report_grader extends grade_report {
                         // Value type.
                         if ($quickgrading and $grade->is_editable()) {
                             $context->iseditable = true;
+
+                            // Set this input field with type="number" if the decimal separator for current language is set to
+                            // a period. Other decimal separators may not be recognised by browsers yet which may cause issues
+                            // when entering grades.
+                            $decsep = get_string('decsep', 'core_langconfig');
+                            $context->isnumeric = $decsep === '.';
+                            // If we're rendering this as a number field, set min/max attributes, if applicable.
+                            if ($context->isnumeric) {
+                                $context->minvalue = $item->grademin ?? null;
+                                $context->maxvalue = $item->grademax ?? null;
+                            }
+
                             $value = format_float($gradeval, $decimalpoints);
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
 
