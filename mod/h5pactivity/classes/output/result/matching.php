@@ -27,7 +27,6 @@ namespace mod_h5pactivity\output\result;
 defined('MOODLE_INTERNAL') || die();
 
 use mod_h5pactivity\output\result;
-use renderer_base;
 
 /**
  * Class to display H5P matching result.
@@ -40,7 +39,7 @@ class matching extends result {
     /**
      * Return the options data structure.
      *
-     * @return array of options
+     * @return array|null of options
      */
     protected function export_options(): ?array {
         // Suppose H5P choices have only list of valid answers.
@@ -50,9 +49,9 @@ class matching extends result {
 
         // Get sources (options).
         if (isset($additionals->source)) {
-            $options = $this->get_descriptions($additionals->source);
+            $sources = $this->get_descriptions($additionals->source);
         } else {
-            $options = [];
+            $sources = [];
         }
 
         // Get targets.
@@ -61,55 +60,69 @@ class matching extends result {
         } else {
             $targets = [];
         }
+        // Create original options array.
+        $options = array_map(function ($source) {
+            $cloneddraggable = clone $source;
+            $cloneddraggable->correctanswers = [];
+            return $cloneddraggable;
+        }, $sources);
 
-        // Correct answers.
+        // Fill options with correct answers flags if they exist.
         foreach ($correctpattern as $pattern) {
             if (!is_array($pattern) || count($pattern) != 2) {
                 continue;
             }
-            // One pattern must be from options and the other from targets.
-            if (isset($options[$pattern[0]]) && isset($targets[$pattern[1]])) {
-                $option = $options[$pattern[0]];
-                $target = $targets[$pattern[1]];
-            } else if (isset($targets[$pattern[0]]) && isset($options[$pattern[1]])) {
-                $option = $options[$pattern[1]];
+            // We assume here that the activity is following the convention sets in:
+            // https://github.com/h5p/h5p-php-report/blob/master/type-processors/matching-processor.class.php
+            // i.e. source is index 1 and dropzone is index 0.
+            if (isset($sources[$pattern[1]]) && isset($targets[$pattern[0]])) {
                 $target = $targets[$pattern[0]];
-            } else {
-                $option = null;
-            }
-            if ($option) {
-                $option->correctanswer = $this->get_answer(parent::TEXT, $target->description);
-                $option->correctanswerid = $target->id;
+                $source = $sources[$pattern[1]];
+                $currentoption = $options[$source->id];
+                $currentoption->correctanswers[$target->id] = $target->description;
             }
         }
 
-        // User responses.
+        // Fill in user responses.
         foreach ($this->response as $response) {
             if (!is_array($response) || count($response) != 2) {
                 continue;
             }
-            // One repsonse must be from options and the other from targets.
-            if (isset($options[$response[0]]) && isset($targets[$response[1]])) {
-                $option = $options[$response[0]];
-                $target = $targets[$response[1]];
-                $answer = $response[1];
-            } else if (isset($targets[$response[0]]) && isset($options[$response[1]])) {
-                $option = $options[$response[1]];
+            if (isset($sources[$response[1]]) && isset($targets[$response[0]])) {
+                $source = $sources[$response[1]];
                 $target = $targets[$response[0]];
                 $answer = $response[0];
-            } else {
-                $option = null;
-            }
-            if ($option) {
-                if (isset($option->correctanswerid) && $option->correctanswerid == $answer) {
-                    $state = parent::CORRECT;
-                } else {
-                    $state = parent::INCORRECT;
+                $option = $options[$source->id] ?? null;
+                if ($option) {
+                    if (isset($option->correctanswers[$answer])) {
+                        $state = parent::CORRECT;
+                    } else {
+                        $state = parent::INCORRECT;
+                    }
+                    $option->useranswer = $this->get_answer($state, $target->description);
                 }
-                $option->useranswer = $this->get_answer($state, $target->description);
             }
         }
-        return $options;
+
+        // Fill in unchecked options.
+        foreach ($options as $option) {
+            if (!isset($option->useranswer)) {
+                if (!empty($option->correctanswers)) {
+                    $option->useranswer = $this->get_answer(parent::INCORRECT,
+                        get_string('answer_noanswer', 'mod_h5pactivity'));
+                } else {
+                    $option->useranswer = $this->get_answer(parent::CORRECT,
+                        get_string('answer_noanswer', 'mod_h5pactivity'));
+                }
+            }
+        }
+
+        // Now flattern correct answers.
+        foreach ($options as $option) {
+            $option->correctanswer = $this->get_answer( parent::TEXT, join(', ', $option->correctanswers));
+            unset($option->correctanswers);
+        }
+        return array_values($options);
     }
 
     /**
