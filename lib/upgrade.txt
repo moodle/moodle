@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 4.4 ===
 
 * Added modalform config object `moduleName` param that can be used to define alternative modal type for the modalform. By default 'core/modal_save_cancel' is used.
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
 
 === 4.3 ===
 
