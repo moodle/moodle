@@ -114,7 +114,7 @@ if ($mode == DELETION_OF_SELECTED_LANG and (!empty($uninstalllang) or !empty($co
     }
 }
 
-if ($mode == UPDATE_ALL_LANG) {
+if ($mode == UPDATE_ALL_LANG && confirm_sesskey()) {
     core_php_time_limit::raise();
     $controller->update_all_installed_languages();
 }
