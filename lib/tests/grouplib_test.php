@@ -1755,6 +1755,8 @@ class grouplib_test extends \advanced_testcase {
 
     /**
      * Tests for groups_get_groups_members() method.
+     *
+     * @covers ::groups_get_groups_members
      */
     public function test_groups_get_groups_members() {
         $this->resetAfterTest(true);
@@ -1817,10 +1819,9 @@ class grouplib_test extends \advanced_testcase {
         $members = groups_get_groups_members([$group3->id]);
         $this->assertCount(0, $members);
 
-        // Test groups_get_members.
-        $members = groups_get_members($group2->id, 'u.*', 'u.id ASC');
-        $this->assertCount(2, $members);
-        $this->assertEquals([$user1->id, $user2->id], array_keys($members));
+        // Our second group.
+        $members = groups_get_groups_members([$group2->id]);
+        $this->assertEqualsCanonicalizing([$user1->id, $user2->id], array_column($members, 'id'));
 
         // Test the info matches group membership for the entire course.
         $groups  = groups_get_all_groups($course2->id, 0, 0, 'g.*', true);
@@ -2183,9 +2184,33 @@ class grouplib_test extends \advanced_testcase {
     }
 
     /**
+     * Test groups_get_members
+     *
+     * @covers ::groups_get_members
+     */
+    public function test_groups_get_members(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $userone = $this->getDataGenerator()->create_and_enrol($course);
+        $usertwo = $this->getDataGenerator()->create_and_enrol($course);
+
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $userone->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $usertwo->id]);
+
+        $users = groups_get_members($group->id);
+        $this->assertEqualsCanonicalizing([$userone->id, $usertwo->id], array_column($users, 'id'));
+
+        // Test invalid group.
+        $users = groups_get_members(-1);
+        $this->assertEmpty($users);
+    }
+
+    /**
      * Test groups_get_members() using groups with different visibility settings.
      *
-     * @covers \groups_get_members()
+     * @covers ::groups_get_members
      */
     public function test_groups_get_members_with_visibility(): void {
         list($users, $groups) = $this->create_groups_with_visibilty();
