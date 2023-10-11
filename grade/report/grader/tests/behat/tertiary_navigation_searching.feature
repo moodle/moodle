@@ -244,10 +244,6 @@ Feature: Within the grader report, test that we can search for users
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     And I press the down key
     And ".active" "css_element" should exist in the "Student 1" "option_role"
-    And I press the end key
-    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
-    And I press the home key
-    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
     And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the down key

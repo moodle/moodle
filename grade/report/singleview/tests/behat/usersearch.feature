@@ -188,10 +188,6 @@ Feature: Within the singleview report, a teacher can search for users.
     When I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
     And ".active" "css_element" should exist in the "Student 1" "option_role"
-    And I press the end key
-    And ".active" "css_element" should exist in the "Dummy User" "option_role"
-    And I press the home key
-    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
     And ".active" "css_element" should exist in the "Dummy User" "option_role"
     And I press the down key

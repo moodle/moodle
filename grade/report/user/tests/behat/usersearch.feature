@@ -205,10 +205,6 @@ Feature: Within the User report, a teacher can search for users.
     When "Turtle Manatee" "option_role" should exist
     And I press the down key
     And ".active" "css_element" should exist in the "Student 1" "option_role"
-    And I press the end key
-    And ".active" "css_element" should exist in the "View all results (5)" "option_role"
-    And I press the home key
-    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
     And ".active" "css_element" should exist in the "View all results (5)" "option_role"
     And I press the down key

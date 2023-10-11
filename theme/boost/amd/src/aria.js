@@ -313,9 +313,9 @@ const comboboxFix = () => {
                     if (editable && !next) {
                         next = options[options.length - 1];
                     }
-                } else if (trigger == 'Home') {
+                } else if (trigger == 'Home' && !editable) {
                     next = options[0];
-                } else if (trigger == 'End') {
+                } else if (trigger == 'End' && !editable) {
                     next = options[options.length - 1];
                 } else if ((trigger == ' ' && !editable) || trigger == 'Enter') {
                     e.preventDefault();
