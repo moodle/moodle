@@ -2415,6 +2415,10 @@ $footer-link-color: $bg-inverse-link-color !default;
     }
 }
 
+.dropdown-menu {
+    width: fit-content;
+}
+
 .competency-tree {
     ul {
         padding-left: 1.5rem;
