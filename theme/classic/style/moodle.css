@@ -38666,6 +38666,10 @@ div.editor_atto_toolbar button .icon {
   font-size: 0.7rem;
 }
 
+.dropdown-menu {
+  width: fit-content;
+}
+
 .dropdown-item.text-primary {
   color: #0f6cbf;
 }
