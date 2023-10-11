@@ -569,7 +569,7 @@ class template {
         return html_writer::tag(
             'span',
             userdate($entry->timemodified, get_string('strftimedatemonthabbr', 'langconfig')),
-            ['title' => userdate($entry->timecreated)]
+            ['title' => userdate($entry->timemodified)]
         );
     }
 
