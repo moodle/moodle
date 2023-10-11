@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.7 ===
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
+
 === 4.1.6 ===
 * \moodle_page::set_title() has been updated to append the site name depending on the value of $CFG->sitenameintitle and whether
   the site's fullname/shortname has been set. So there's no need to manually add the site name whenever calling $PAGE->set_title().

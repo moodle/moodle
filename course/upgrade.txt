@@ -1,6 +1,11 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.1.7 ===
+* set_coursemodule_visible() has a new $rebuildcache parameter. If this is being called multiple times in the same request,
+  consider passing `false` for this parameter and rebuilding the cache once after all the course modules have been updated.
+  See course_update_section() for an example.
+
 === 4.1 ===
 * The function course_modchooser() has been finally deprecated and can not be used anymore. Please use
   course_activitychooser() instead.
