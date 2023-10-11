@@ -25223,6 +25223,10 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   font-size: 0.7rem;
 }
 
+.dropdown-menu {
+  width: fit-content;
+}
+
 .competency-tree ul {
   padding-left: 1.5rem;
 }
