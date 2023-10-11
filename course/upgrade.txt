@@ -1,6 +1,23 @@
 This files describes API changes in /course/*,
 information provided here is intended especially for developers.
 
+=== 4.3.1 ===
+* set_coursemodule_visible() has a new $rebuildcache parameter. If this is being called multiple times in the same request,
+  consider passing `false` for this parameter and rebuilding the cache once after all the course modules have been updated.
+  See course_update_section() for an example.
+
+=== 4.3 ===
+* The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
+* External function core_course_external::get_course_contents() now returns a new field activitybadge with the data to display
+  the activity badge when the module implements it.
+* prepare_new_moduleinfo_data() now accepts a parameter "suffix" that will be added to the name of the completion rules.
+* The method core_course_bulk_activity_completion_renderer:: edit_default_completion() has been deprecated and will be removed.
+* The `core_course\output\activity_information` output class has been deprecated. Use `core_course\output\activity_completion`
+  and `core_course\output\activity_dates` instead.
+  Alongside with that, the following methods have been deprecated too:
+  - `core_course_renderer::render_activity_information()`
+  - `renderer_base::activity_information()`
+
 === 4.2 ===
 * course/mod.php now accepts parameter beforemod for adding course modules. It contains the course module id
   of an existing course module. The new module is inserted before this module.

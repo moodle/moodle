@@ -530,9 +530,14 @@ class stateactions {
                 $allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
                 $coursevisible = ($allowstealth) ? 0 : 1;
             }
-            set_coursemodule_visible($cm->id, $visible, $coursevisible);
+            set_coursemodule_visible($cm->id, $visible, $coursevisible, false);
             $modcontext = context_module::instance($cm->id);
             course_module_updated::create_from_cm($cm, $modcontext)->trigger();
+        }
+        course_modinfo::purge_course_modules_cache($course->id, $ids);
+        rebuild_course_cache($course->id, false, true);
+
+        foreach ($cms as $cm) {
             $updates->add_cm_put($cm->id);
         }
     }
