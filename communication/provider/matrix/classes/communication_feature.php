@@ -191,6 +191,8 @@ class communication_feature implements
 
     public function update_room_membership(array $userids): void {
         $this->set_matrix_power_levels();
+        // Mark the users as synced for the updated members.
+        $this->processor->mark_users_as_synced($userids);
     }
 
     /**
