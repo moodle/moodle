@@ -643,7 +643,7 @@ abstract class testing_util {
         $borkedmysql = false;
         if ($DB->get_dbfamily() === 'mysql') {
             $version = $DB->get_server_info();
-            if (version_compare($version['version'], '5.6.0') == 1 and version_compare($version['version'], '5.6.16') == -1) {
+            if (version_compare($version['version'], '5.7.4', '<')) {
                 // Everything that comes from Oracle is evil!
                 //
                 // See http://dev.mysql.com/doc/refman/5.6/en/alter-table.html
@@ -652,31 +652,27 @@ abstract class testing_util {
                 // From 5.6.16 release notes:
                 //   InnoDB: The ALTER TABLE INPLACE algorithm would fail to decrease the auto-increment value.
                 //           (Bug #17250787, Bug #69882)
-                $borkedmysql = true;
-
-            } else if (version_compare($version['version'], '10.0.0') == 1) {
-                // And MariaDB is no better!
-                // Let's hope they pick the patch sometime later...
+                // This also impacts MySQL < 5.7.4.
                 $borkedmysql = true;
             }
-        }
 
-        if ($borkedmysql) {
-            $mysqlsequences = array();
-            $prefix = $DB->get_prefix();
-            $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
-            foreach ($rs as $info) {
-                $table = strtolower($info->name);
-                if (strpos($table, $prefix) !== 0) {
-                    // Incorrect table match caused by _ char.
-                    continue;
+            if ($borkedmysql) {
+                $mysqlsequences = array();
+                $prefix = $DB->get_prefix();
+                $rs = $DB->get_recordset_sql("SHOW TABLE STATUS LIKE ?", array($prefix.'%'));
+                foreach ($rs as $info) {
+                    $table = strtolower($info->name);
+                    if (strpos($table, $prefix) !== 0) {
+                        // Incorrect table match caused by _ char.
+                        continue;
+                    }
+                    if (!is_null($info->auto_increment)) {
+                        $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
+                        $mysqlsequences[$table] = $info->auto_increment;
+                    }
                 }
-                if (!is_null($info->auto_increment)) {
-                    $table = preg_replace('/^'.preg_quote($prefix, '/').'/', '', $table);
-                    $mysqlsequences[$table] = $info->auto_increment;
-                }
+                $rs->close();
             }
-            $rs->close();
         }
 
         foreach ($data as $table => $records) {
