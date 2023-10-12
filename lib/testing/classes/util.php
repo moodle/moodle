@@ -643,20 +643,19 @@ abstract class testing_util {
         $borkedmysql = false;
         if ($DB->get_dbfamily() === 'mysql') {
             $version = $DB->get_server_info();
-            if (version_compare($version['version'], '5.6.0') == 1 and version_compare($version['version'], '5.6.16') == -1) {
-                // Everything that comes from Oracle is evil!
-                //
-                // See http://dev.mysql.com/doc/refman/5.6/en/alter-table.html
-                // You cannot reset the counter to a value less than or equal to to the value that is currently in use.
-                //
-                // From 5.6.16 release notes:
-                //   InnoDB: The ALTER TABLE INPLACE algorithm would fail to decrease the auto-increment value.
-                //           (Bug #17250787, Bug #69882)
+            // Everything that comes from Oracle is evil!
+            //
+            // See http://dev.mysql.com/doc/refman/5.6/en/alter-table.html
+            // You cannot reset the counter to a value less than or equal to to the value that is currently in use.
+            //
+            // From 5.6.16 release notes:
+            //   InnoDB: The ALTER TABLE INPLACE algorithm would fail to decrease the auto-increment value.
+            //           (Bug #17250787, Bug #69882)
+            if (version_compare($version['version'], '5.6.0', '>=') && version_compare($version['version'], '5.6.16', '<')) {
                 $borkedmysql = true;
+            }
 
-            } else if (version_compare($version['version'], '10.0.0') == 1) {
-                // And MariaDB is no better!
-                // Let's hope they pick the patch sometime later...
+            if (version_compare($version['version'], '5.7.0', '>=') && version_compare($version['version'], '5.7.4', '<')) {
                 $borkedmysql = true;
             }
         }
