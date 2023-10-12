@@ -82,10 +82,26 @@ foreach ($requests as $request) {
 
     $response = external_api::call_external_function($methodname, $args, true);
     $responses[$index] = $response;
+
     if ($response['error']) {
-        // Do not process the remaining requests.
         $haserror = true;
-        break;
+        if (!NO_MOODLE_COOKIES) {
+            // If there was an error, and this HTTP request includes a Moodle cookie (and therefore a login), reject all
+            // subsequent changes.
+            //
+            // The reason for this is that an earlier step may be performing a dependant action. Consider the following:
+            // 1) Backup a thing
+            // 2) Reset the thing to its initial state
+            // 3) Restore the thing from the backup made in step 1.
+            //
+            // In the above example you do not want steps 2 and 3 to happen if step 1 fails.
+            // Do not process the remaining requests.
+
+            // If the request came through service-nologin.php which does not allow any kind of login,
+            // then it is not possible to make changes to the DB, session, site, etc.
+            // For all other cases, we *MUST* stop processing subsequent requests.
+            break;
+        }
     }
 }
 
