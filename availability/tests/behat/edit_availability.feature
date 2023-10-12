@@ -239,7 +239,7 @@ Feature: edit_availability
     And "Edit restrictions" "link" should exist in the "section-1" "core_availability > Section availability"
     When I click on "Edit restrictions" "link" in the "section-1" "core_availability > Section availability"
     Then I should see "Restrict access"
-    And I should not see "General"
+    And I should not see "Summary of General"
     And I should see "Collapse all"
     And I should not see "Expand all"
     And I click on "Cancel" "button"
