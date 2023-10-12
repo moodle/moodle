@@ -32252,7 +32252,8 @@ body.path-question-type .form-group .col-form-label.sr-only:not(legend):not([for
   max-width: inherit;
 }
 
-.path-mod-quiz input[size] {
+.que input[size],
+.que textarea[cols] {
   width: auto;
   max-width: 100%;
 }
