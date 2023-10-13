@@ -340,3 +340,80 @@ Feature: Within the grader report, test that we can search for users
     # One of the users' phone numbers also matches.
     And I wait until "View all results (2)" "link" exists
     Then "Student s42" "list_item" should exist in the ".user-search" "css_element"
+
+  Scenario: As a teacher I save grades using search and pagination
+    Given "42" "users" exist with the following data:
+      | username  | students[count]             |
+      | firstname | Student                     |
+      | lastname  | test[count]                    |
+      | email     | students[count]@example.com |
+    And "42" "course enrolments" exist with the following data:
+      | user   | students[count] |
+      | course | C1              |
+      | role   |student          |
+    And I reload the page
+    And I turn editing mode on
+    And the field "perpage" matches value "20"
+    # Search for a single user on second page and save grades.
+    When I set the field "Search users" to "test42"
+    And I wait until "View all results (1)" "link" exists
+    And I press the enter key
+    And I wait until the page is ready
+    And I give the grade "80.00" to the user "Student test42" for the grade item "Test assignment one"
+    And I press "Save changes"
+    And I wait until the page is ready
+    Then the field "Search users" matches value "test42"
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test42        |
+    And I set the field "Search users" to "test4"
+    And I click on "Student test41" "option_role"
+    And I wait until the page is ready
+    And I give the grade "70.00" to the user "Student test41" for the grade item "Test assignment one"
+    And I press "Save changes"
+    And I wait until the page is ready
+    Then the field "Search users" matches value "test4"
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test41        |
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test42        |
+    And I click on "Clear" "link" in the ".user-search" "css_element"
+    And I wait until the page is ready
+    And the following should not exist in the "user-grades" table:
+      | -1-                   |
+      | Student test42        |
+    And I click on "2" "link" in the ".stickyfooter .pagination" "css_element"
+    And I wait until the page is ready
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test41        |
+      | Student test42        |
+    # Set grade for a single user on second page without search and save grades.
+    And I give the grade "70.00" to the user "Student test41" for the grade item "Test assignment one"
+    And I press "Save changes"
+    And I wait until the page is ready
+    # We are still on second page.
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test41        |
+      | Student test42        |
+    # Search for multiple users on second page and save grades.
+    And I set the field "Search users" to "test4"
+    And I wait until "View all results (4)" "link" exists
+    And I press the enter key
+    And I wait until the page is ready
+    And I give the grade "10.00" to the user "Student test42" for the grade item "Test assignment one"
+    And I give the grade "20.00" to the user "Student test40" for the grade item "Test assignment one"
+    And I give the grade "30.00" to the user "Student test41" for the grade item "Test assignment one"
+    And I give the grade "40.00" to the user "Student test4" for the grade item "Test assignment one"
+    And I press "Save changes"
+    And I wait until the page is ready
+    Then the field "Search users" matches value "test4"
+    And the following should exist in the "user-grades" table:
+      | -1-                   |
+      | Student test4         |
+      | Student test40        |
+      | Student test41        |
+      | Student test42        |
