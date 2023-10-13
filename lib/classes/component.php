@@ -90,8 +90,8 @@ class core_component {
         'Mustache' => 'lib/mustache/src/Mustache',
         'CFPropertyList' => 'lib/plist/classes/CFPropertyList',
     );
-    /** @var array associative array of PRS-4 namespaces and corresponding paths. */
-    protected static $psr4namespaces = array(
+    /** @var array<string|array<string>> associative array of PRS-4 namespaces and corresponding paths. */
+    protected static $psr4namespaces = [
         'MaxMind' => 'lib/maxmind/MaxMind',
         'GeoIp2' => 'lib/maxmind/GeoIp2',
         'Sabberworm\\CSS' => 'lib/php-css-parser',
@@ -110,13 +110,16 @@ class core_component {
         'MyCLabs\\Enum' => 'lib/php-enum/src',
         'PhpXmlRpc' => 'lib/phpxmlrpc',
         'Psr\\Http\\Client' => 'lib/psr/http-client/src',
-        'Psr\\Http\\Factory' => 'lib/psr/http-factory/src',
-        'Psr\\Http\\Message' => 'lib/psr/http-message/src',
+        'Psr\\Http\\Message' => [
+            'lib/psr/http-message/src',
+            'lib/psr/http-factory/src',
+        ],
+        'Psr\\EventDispatcher' => 'lib/psr/event-dispatcher/src',
         'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
         'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
         'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
         'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
-    );
+    ];
 
     /**
      * Class loader for Frankenstyle named classes in standard locations.
@@ -175,10 +178,15 @@ class core_component {
      */
     protected static function psr_classloader($class) {
         // Iterate through each PSR-4 namespace prefix.
-        foreach (self::$psr4namespaces as $prefix => $path) {
-            $file = self::get_class_file($class, $prefix, $path, array('\\'));
-            if (!empty($file) && file_exists($file)) {
-                return $file;
+        foreach (self::$psr4namespaces as $prefix => $paths) {
+            if (!is_array($paths)) {
+                $paths = [$paths];
+            }
+            foreach ($paths as $path) {
+                $file = self::get_class_file($class, $prefix, $path, ['\\']);
+                if (!empty($file) && file_exists($file)) {
+                    return $file;
+                }
             }
         }
 

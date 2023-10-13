@@ -631,7 +631,8 @@ class component_test extends advanced_testcase {
         // This is not in the spec, but may come up in some libraries using both namespaces and PEAR-style class names.
         // If problems arise we can remove this test, but will need to add a warning.
         // Normalise to forward slash for testing purposes.
-        $directory = str_replace('\\', '/', $CFG->dirroot) . "/lib/tests/fixtures/component/";
+        $dirroot = str_replace('\\', '/', $CFG->dirroot);
+        $directory = "{$dirroot}/lib/tests/fixtures/component/";
 
         $psr0 = [
           'psr0'      => 'lib/tests/fixtures/component/psr0',
@@ -702,6 +703,28 @@ class component_test extends advanced_testcase {
               'classname' => 'overlap_subnamespace_example2',
               'file' => "{$directory}overlap/subnamespace/example2.php",
           ],
+            'PSR-4 namespaces can come from multiple sources - first source' => [
+                'psr0' => $psr0,
+                'psr4' => [
+                    'Psr\\Http\\Message' => [
+                        'lib/psr/http-message/src',
+                        'lib/psr/http-factory/src',
+                    ],
+                ],
+                'classname' => 'Psr\Http\Message\ServerRequestInterface',
+                'includedfiles' => "{$dirroot}/lib/psr/http-message/src/ServerRequestInterface.php",
+            ],
+            'PSR-4 namespaces can come from multiple sources - second source' => [
+                'psr0' => [],
+                'psr4' => [
+                    'Psr\\Http\\Message' => [
+                        'lib/psr/http-message/src',
+                        'lib/psr/http-factory/src',
+                    ],
+                ],
+                'classname' => 'Psr\Http\Message\ServerRequestFactoryInterface',
+                'includedfiles' => "{$dirroot}/lib/psr/http-factory/src/ServerRequestFactoryInterface.php",
+            ],
         ];
     }
 
