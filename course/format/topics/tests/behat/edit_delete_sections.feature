@@ -97,3 +97,10 @@ Feature: Sections can be edited and deleted in topics format
       | Assignment name | Very new activity |
       | Description     | Test              |
     Then I should see "Very new activity" in the "Topic 6" "section"
+
+  @javascript
+  Scenario: Copy section permalink URL to clipboard
+    When I open section "1" edit menu
+    And I click on "Permalink" "link" in the "Topic 1" "section"
+    And I click on "Copy to clipboard" "link" in the "Permalink" "dialogue"
+    Then I should see "Text copied to clipboard"
