@@ -25,13 +25,12 @@
 
     Example context (json):
     {
-        "text": "content for the input field that is being copied to the clipboard",
+        "text": "content for the input field that is being copied to the clipboard"
     }
 }}
 {{< core/modal }}
     {{$title}}{{#str}} copytoclipboard, core {{/str}}{{/title}}
     {{$body}}
-        {{> core/local/toast/wrapper }}
         {{^useTextArea}}
         <input type="text" id="directionlink-modal-{{uniqid}}" class="form-control bg-white" readonly {{!
             }} value="{{{text}}}"{{!
