@@ -762,7 +762,7 @@ class core_component_testcase extends advanced_testcase {
               'separators' => ['\\'],
               'result' => $CFG->dirroot . "/test/src/Multiple/Namespaces.php",
           ],
-          'Getting a file with multiple namespaces' => [
+          'Getting a file with multiple namespaces (non-existent)' => [
               'classname' => 'Nonexistant\\Namespace\\Test',
               'prefix' => "Test",
               'path' => 'test/src',
