@@ -187,7 +187,8 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
         $record->feedback = 'Some test feedback';
 
         $testobject = new \phpunit_gradeimport_csv_load_data();
-        $testobject->test_insert_grade_record($record, $user->id);
+
+        $testobject->test_insert_grade_record($record, $user->id, new \grade_item());
 
         $gradeimportvalues = $DB->get_records('grade_import_values');
         // Get the insert id.
