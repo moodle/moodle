@@ -137,6 +137,29 @@ class data_controller extends \core_customfield\data_controller {
     }
 
     /**
+     * Checks if the value is empty, overriding the base method to ensure it's the "text" element of our value being compared
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function is_empty($value): bool {
+        if (is_array($value)) {
+            $value = $value['text'];
+        }
+        return html_is_blank($value);
+    }
+
+    /**
+     * Checks if the value is unique, overriding the base method to ensure it's the "text" element of our value being compared
+     *
+     * @param mixed $value
+     * @return bool
+     */
+    protected function is_unique($value): bool {
+        return parent::is_unique($value['text']);
+    }
+
+    /**
      * Delete data
      *
      * @return bool
@@ -166,9 +189,6 @@ class data_controller extends \core_customfield\data_controller {
         require_once($CFG->libdir . '/filelib.php');
 
         $value = $this->get_value();
-        if ($this->is_empty($value)) {
-            return null;
-        }
 
         if ($dataid = $this->get('id')) {
             $context = $this->get_context();
