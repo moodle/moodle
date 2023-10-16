@@ -6,6 +6,8 @@ Information provided here is intended especially for developers.
 * The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
 * The grade_structure::get_element_header() function has been deprecated. Please use grade_helper::get_element_header() instead.
 * The grade_structure::get_activity_link() functions has been deprecated. Please use grade_helper::get_activity_link() instead.
+* The function gradeimport_csv_load_data::insert_grade_record() now has extra parameter $gradeitem to carry over the grade item related info
+  for validation.
 
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
