@@ -3907,7 +3907,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                     else
                     {
                         $updateactivityonline =  array(
-                            'qbassignment' => $returnid->id,
+                            'qbassignment' => $returnid,
                             'plugin' => 'codeblock',
                             'subtype' => 'qbassignsubmission',
                             'name' => 'type',
@@ -3916,7 +3916,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                         $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
     
                         $updateactivityonline =  array(
-                            'qbassignment' => $returnid->id,
+                            'qbassignment' => $returnid,
                             'plugin' => 'codeblock',
                             'subtype' => 'qbassignsubmission',
                             'name' => 'lang',
@@ -4944,5 +4944,409 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                     'submissionid'=> new external_value(PARAM_INT, 'Submission ID')
                 )
             );
+    }
+
+    /**
+    * List the Assignment module details for teacher view.
+    *
+    * @param int $uniquefield qbassign unique field
+    * @return array of warnings and status result
+    * @since Moodle 3.2
+    */
+
+    public static function get_teacherview_parameters()
+    {
+         return new external_function_parameters(
+             array(
+             'uniquefield' => new external_value(PARAM_TEXT, 'Unique Field'),
+             'user_id' => new external_value(PARAM_INT, 'User ID')
+          )
+         );
+    }
+ 
+    public static function get_teacherview($uniquefield,$user_id)
+    {      
+        global $DB, $CFG, $USER, $CONTEXT;
+
+        //Get activity unique field details       
+        $get_assignmentdetails = $DB->get_record('qbassign', array('uid' => $uniquefield));
+        if ($get_assignmentdetails->id != '') 
+        {
+            $get_assign_types = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype AND plugin = :plugin ";
+            $get_assign_types .= " AND name = :name AND value = :value ";
+            $assign_type_text = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'onlinetex',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_file = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'file',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+            $assign_type_code = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'codeblock',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+
+            $assign_type_scratch = $DB->get_records_sql(
+            $get_assign_types,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'plugin' => 'scratch',
+            'name' => 'enabled',
+            'value' => '1'
+            ]
+            );
+
+            if (!empty($assign_type_text))
+            $get_assign_type = "text";
+            elseif (!empty($assign_type_file))
+            $get_assign_type = "file";
+            elseif (!empty($assign_type_scratch))
+            $get_assign_type = "scratch";
+            elseif (!empty($assign_type_code))
+            $get_assign_type = "codeblock";
+            $assignid = $get_assignmentdetails->id;
+            $courseid = $get_assignmentdetails->course;
+
+            //Get activity Module details
+            $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid, 'course' => $courseid));
+            $moduleid = $get_coursefield->id;
+
+            $get_context = $DB->get_record('context', array('instanceid' => $moduleid,'contextlevel' => 70));
+            $contextid = $get_context->id;
+
+            //Get assignment submission details
+            $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $user_id, 'qbassignment' => $get_assignmentdetails->id));
+
+            if ($get_assign_type == "text") {
+            $getonline_content = $DB->get_record('qbassignsubmission_onlinetex', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            } 
+            elseif ($get_assign_type == "scratch") {
+            $getonline_content = $DB->get_record('qbassignsubmission_scratch', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            }
+            elseif ($get_assign_type == "codeblock") {
+            $getonline_content = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            }
+            else
+            {
+                $getonline_content = $DB->get_record('qbassignsubmission_file', array('submission' => $get_assignmentsubmission_details->id, 'qbassignment' => $get_assignmentdetails->id));
+            }
+
+            //Get submission type details (file,onlinetex,codeblock)
+
+            $sql = "SELECT * FROM {qbassign_plugin_config} WHERE qbassignment = :qbdetid AND subtype = :subtype ";
+            $sql .= " AND name = :name AND value = :value ";
+            $sql .= " AND (plugin = :type1 OR plugin = :type2 OR plugin = :type3 OR plugin = :type4)";
+            $getpluginconfig = $DB->get_records_sql(
+            $sql,
+            [
+            'qbdetid' => $get_assignmentdetails->id,
+            'subtype' => 'qbassignsubmission',
+            'name' => 'enabled',
+            'value' => '1',
+            'type1' => 'file',
+            'type2' => 'onlinetex',
+            'type3' => 'codeblock',
+            'type4' => 'scratch'
+            ]
+            );
+            $countsql = count($getpluginconfig);
+            if ($countsql > 0) {
+            foreach ($getpluginconfig as $config) {
+                if ($config->plugin == 'onlinetex') {
+                    $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'wordlimit', 'plugin' => 'onlinetex'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'additional_comments' => ($getonline_content->explanation!='')?$getonline_content->explanation:'',
+                    'wordlimit' => ($config->plugin == 'onlinetex') ? $get_qbdetails->value : ''
+                    );
+                }
+                if($config->plugin=='scratch')
+                    { 
+                       $get_qbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id,'name' => 'enabled','plugin'=>'scratch'));
+
+                       $submissintype = array(
+                        'type'=> $config->plugin,
+                        'additional_comments' => ($getonline_content->explanation!='')?$getonline_content->explanation:''      
+                        ); 
+                    }
+                if ($config->plugin == 'file') {
+                    $get_fbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxfilesubmissions', 'plugin' => 'file'));
+
+                    $get_fmbdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'maxsubmissionsizebytes', 'plugin' => 'file'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'additional_comments' => ($getonline_content->explanation!='')?$getonline_content->explanation:'',
+                    'maxfileallowed' => ($config->plugin == 'file') ? $get_fbdetails->value : '',
+                    'maxfilesize' => ($config->plugin == 'file') ? $get_fmbdetails->value : ''
+                    );
+
+                    $filesql = "SELECT * FROM {files} WHERE component = :component AND itemid = :itemid ";
+                    $filesql .= " AND filename!='.'";
+                    $get_filedetails = $DB->get_record_sql(
+                    $filesql,
+                    [
+                    'component' => 'qbassignsubmission_file',
+                    'itemid' => $get_assignmentsubmission_details->id
+                    ]
+                    );
+
+                    $fileurl =  $CFG->wwwroot . "/pluginfile.php/" . $get_filedetails->contextid . "/qbassignsubmission_file/submission_files/" . $get_assignmentsubmission_details->id . "/" . $get_filedetails->filename . "?forcedownload=1";
+                }
+                if ($config->plugin == 'codeblock') {
+                    $get_typedetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'type', 'plugin' => 'codeblock'));
+
+                    $get_langdetails = $DB->get_record('qbassign_plugin_config', array('qbassignment' => $get_assignmentdetails->id, 'name' => 'lang', 'plugin' => 'codeblock'));
+
+                    $submissintype = array(
+                    'type' => $config->plugin,
+                    'operation' => ($config->plugin == 'codeblock') ? $get_typedetails->value : '1',
+                    'language' => ($config->plugin == 'codeblock') ? $get_langdetails->value : 'python'
+                    );
+                }
+            }
+            }
+
+            //FEEDBACK Section start
+            $get_grade = $DB->get_record('qbassign_grades', array('qbassignment' => $get_assignmentdetails->id,'userid' => $user_id));
+
+            $grade_mark = ($get_grade->grade > 0?$get_grade->grade:0);
+            $total_mark = $get_assignmentdetails->grade;
+
+            if($get_grade->grader>0)
+            {
+                $feedback_status = 1;
+                $userObj = $DB->get_record("user", array("id" => $get_grade->grader));
+                $userdetails = fullname($userObj);
+                $first = strtoupper(substr($userObj->firstname,0,1)); 
+                $last = strtoupper(substr($userObj->lastname,0,1));
+
+                $feedbacks = array(
+                'feedback_status' => $feedback_status,
+                'grade'=> number_format($grade_mark,2).'/'.number_format($total_mark,2),
+                'grade_on' => date("l d F Y, h:i A",$get_grade->timemodified),
+                'grade_by' => $first.$last . " ". $userdetails                  
+                ); 
+            }
+            else
+            {
+                $feedback_status = 0; 
+                $feedbacks = array(
+                'feedback_status' => $feedback_status,
+                'grade'=> '',
+                'grade_on' => '',
+                'grade_by' => ''                  
+                ); 
+            }
+            //FEEDBACK Section ends
+
+            //COMMENTS SECTION starts
+            $comments_query = "SELECT * FROM {comments} WHERE component = :component";
+            $comments_query .= " AND itemid = :itemid";
+            $comments_sql = $DB->get_records_sql($comments_query,
+            [
+                'component' => 'qbassignsubmission_comments',
+                'itemid' => $get_assignmentsubmission_details->id
+            ]
+            );
+            $comment_total = count($comments_sql);   
+            if($comment_total > 0)
+            { 
+                $formatoptions = array('overflowdiv' => true, 'blanktarget' => true);
+                $itemid = $get_assignmentsubmission_details->id;
+                $userfieldsapi = \core_user\fields::for_userpic();
+                $ufields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+                $sortdirection = 'ASC';
+                $sortdirection = ($sortdirection === 'ASC') ? 'ASC' : 'DESC';
+                $params = array();
+                $page = 0;
+
+                $perpage = (!empty($CFG->commentsperpage))?$CFG->commentsperpage:15;
+                $start = $page * $perpage;
+                list($componentwhere, $component) = self::get_component_select_sql('c');
+                if ($component) {
+                 $params['component'] = $component;
+                } 
+                $sql = "SELECT $ufields, c.id AS cid, c.content AS ccontent, c.format AS cformat, c.timecreated AS ctimecreated
+                FROM {comments} c
+                JOIN {user} u ON u.id = c.userid
+                WHERE c.contextid = :contextid AND
+                c.commentarea = :commentarea AND
+                c.itemid = :itemid AND
+                $componentwhere
+                ORDER BY c.timecreated $sortdirection, c.id $sortdirection";
+                $params['contextid'] = $contextid;
+                $params['commentarea'] = 'submission_comments';
+                $params['itemid'] = $itemid; 
+                $rs = $DB->get_recordset_sql($sql, $params, $start, $perpage);
+                foreach ($rs as $u) {
+                    $first = strtoupper(substr($u->firstname,0,1)); 
+                    $last = strtoupper(substr($u->lastname,0,1));
+                    $c = new stdClass();
+                    $c->id          = $u->cid;
+                    $c->content     = $u->ccontent;
+                    $c->timecreated = $u->ctimecreated;
+                    $url = new moodle_url('/user/view.php', array('id'=>$u->id, 'course'=>$courseid));
+                    $c->profileurl = $url->out(false); // URL should not be escaped just yet.
+                    $c->fullname = fullname($u);
+                    $c->shortname = $first.$last;
+                    $c->time = userdate($c->timecreated, $c->strftimeformat);
+                    $c->content = format_text($c->content, $c->format, $formatoptions);
+                    $c->userid = $u->id;
+                    if($user_id == $u->id)
+                        $c->delete = true;
+                    else
+                       $c->delete = false; 
+                    $comments[] = $c;
+                }
+            }
+            else
+            {
+               $comments[] = ''; 
+            }
+
+            //COMMENTS SECTION ends 
+
+            //QBASSIGNMENT FEEDBACK STARTS
+            $getfeedback_cmnts = $DB->get_record('qbassign_grades', array('userid' => $user_id, 'qbassignment' => $get_assignmentdetails->id));
+            if($getfeedback_cmnts->id!='')
+            {
+                $feedback_cmnts = $DB->get_record('qbassignfeedback_comments', array('grade' => $getfeedback_cmnts->id));
+                $qbfeedback = ($feedback_cmnts->commenttext!='')?$feedback_cmnts->commenttext:'';
+            }
+             //QBASSIGNMENT FEEDBACK ENDS
+
+            if($get_assign_type == "text")
+                $content = $getonline_content->onlinetex;
+            elseif($get_assign_type == "scratch")
+            {                
+                $content = $getonline_content->scratch;
+            }
+            else
+                $content = $getonline_content->codeblock;
+
+            $context = context_course::instance($get_assignmentdetails->course);
+            $roles = get_user_roles($context, $user_id, true);
+            $role = key($roles);
+            $rolename = $roles[$role]->shortname;
+
+            $userdetails = array(
+            'userid' => $user_id
+            );
+            $returnarray = array(
+            'course_id' => $get_assignmentdetails->course,
+            'assignmentid' => $get_assignmentdetails->id,
+            'assignment_title' => $get_assignmentdetails->name,
+            'assignment_activitydesc' => $get_assignmentdetails->intro,
+            'duedate' => $get_assignmentdetails->duedate,
+            'allowsubmissionsfromdate' => $get_assignmentdetails->allowsubmissionsfromdate,
+            'assign_uniquefield' => $uniquefield,
+            'last_submitted_date' => $get_assignmentsubmission_details->timemodified,
+            'submission_id' => $get_assignmentsubmission_details->id,
+            'submission_status' => ($get_assignmentsubmission_details->status == 'new') ? 0 : 1,
+            'studentsubmitted_content' =>  $content,
+            'studentsubmitted_fileurl' => ($get_assignmentsubmission_details->status == 'new') ? '' : $fileurl,
+            'studentsubmitted_filename' => ($get_assignmentsubmission_details->status == 'new') ? '' : $get_filedetails->filename,
+            'submissiontypes' => $submissintype,
+            'feedback' => $feedbacks,            
+            'teacher_feedback' => $qbfeedback,
+            'comments' => ($comment_total>0)?$comments:array(),
+            'comment_total' => $comment_total
+            );
+
+            $contextsystem = context_module::instance($moduleid);
+            $checkenrol = is_enrolled($contextsystem, $USER, 'mod/qbassign:submit');
+            if ($checkenrol) {
+                $assign_updated = [
+                'message' => 'Assignment details',
+                'userdetails' => $userdetails,
+                'assignmentdetails' => $returnarray
+                ];
+                return $assign_updated;
+            } else {
+                throw new moodle_exception('This user not enrolled', 'error');
+            }
+        } else {
+            throw new moodle_exception('Invalid assignment uniqueid', 'error');
+        }
+    }
+ 
+    public static function get_teacherview_returns()
+    {
+         return new external_single_structure(
+                         array(
+                         'message' => new external_value(PARAM_RAW, 'success'),
+                         'userdetails' => new external_single_structure(
+                                     array(
+                                        'userid' => new external_value(PARAM_INT, 'USER id',VALUE_OPTIONAL)
+                                     )
+                                 ),
+                                 'User Details', VALUE_OPTIONAL,
+                         'assignmentdetails' => new external_single_structure(
+                                     array(
+                                        'course_id' => new external_value(PARAM_INT, 'course id',VALUE_OPTIONAL),
+                                        'assignmentid' => new external_value(PARAM_INT, 'Assignment ID',VALUE_OPTIONAL),
+                                        'assignment_title' => new external_value(PARAM_TEXT, 'Assignment Name',VALUE_OPTIONAL),
+                                        'assignment_activitydesc' => new external_value(PARAM_RAW, 'Assignment Question',VALUE_OPTIONAL),
+                                        'duedate' => new external_value(PARAM_INT, 'Last date',VALUE_OPTIONAL),
+                                        'allowsubmissionsfromdate' => new external_value(PARAM_INT, 'Start Submission date',VALUE_OPTIONAL),
+                                        'assign_uniquefield' => new external_value(PARAM_TEXT, 'Unique field',VALUE_OPTIONAL),
+                                        'last_submitted_date' => new external_value(PARAM_INT, 'Last Submitted date',VALUE_OPTIONAL),
+                                        'submission_id' => new external_value(PARAM_INT, 'Submission ID',VALUE_OPTIONAL),
+                                        'submission_status' => new external_value(PARAM_TEXT, 'Submission Status (New,submitted)',VALUE_OPTIONAL),
+                                        'studentsubmitted_content' => new external_value(PARAM_RAW, 'Submission Content',VALUE_OPTIONAL),
+                                        'studentsubmitted_fileurl' => new external_value(PARAM_RAW, 'Submission File Url',VALUE_OPTIONAL),
+                                        'studentsubmitted_filename' => new external_value(PARAM_RAW, 'Submission Filename',VALUE_OPTIONAL),
+                                        'submissiontypes' => new external_single_structure(
+                                         array(
+                                          'type' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                          'additional_comments' => new external_value(PARAM_TEXT, 'Additional Comments',VALUE_OPTIONAL),
+                                          'maxfileallowed' => new external_value(PARAM_TEXT, 'File Allowed',VALUE_OPTIONAL),
+                                          'maxfilesize' => new external_value(PARAM_TEXT, 'File Size Limit',VALUE_OPTIONAL),
+                                          'wordlimit' =>new external_value(PARAM_INT, 'Text Limit',VALUE_OPTIONAL),
+                                          'operation' =>new external_value(PARAM_TEXT, 'codeblock type',VALUE_OPTIONAL),
+                                          'language' =>new external_value(PARAM_TEXT, 'Language',VALUE_OPTIONAL)
+                                         )
+                                        ),
+                                     'Submission Type Details', VALUE_OPTIONAL,
+                                     'feedback' => new external_single_structure(
+                                        array(
+                                         'feedback_status' => new external_value(PARAM_INT, 'Feedback Status ',VALUE_OPTIONAL),
+                                         'grade' => new external_value(PARAM_TEXT, 'Submission Type (text,file,codblock)',VALUE_OPTIONAL),
+                                         'grade_on' =>new external_value(PARAM_TEXT, 'Text Limit',VALUE_OPTIONAL),
+                                         'grade_by' =>new external_value(PARAM_TEXT, 'Text Limit',VALUE_OPTIONAL)
+                                        )
+                                    ),
+                                    'Feedback Details', VALUE_OPTIONAL,
+                                    'comments' => new external_multiple_structure(
+                                    self::get_comment_structure(), 'List of comments'
+                                    ),
+                                    'comment_total' => new external_value(PARAM_INT, 'Comment Total',VALUE_OPTIONAL)
+                                    )
+                                 ),
+                                 'Assignment Details', VALUE_OPTIONAL
+                         )
+                 );        
     }
 }
