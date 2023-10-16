@@ -28,11 +28,13 @@ $string['matrixhomeserverurl'] = 'Homeserver URL';
 $string['matrixhomeserverurl_desc'] = 'The URL of the Synapse homeserver to connect to, for user and room creation.';
 $string['matrixaccesstoken'] = 'Access token';
 $string['matrixaccesstoken_desc'] = 'Access token for the account which will perform actions on the homeserver.';
-$string['matrixrefreshtoken'] = 'Refresh token';
-$string['matrixrefreshtoken_desc'] = 'Admin refresh token to associated with the access token.';
 $string['matrixelementurl'] = 'Element web URL';
 $string['matrixroomtopic'] = 'Room topic';
 $string['matrixroomtopic_help'] = 'A short description of what this room is for.';
 $string['matrix:moderator'] = 'Matrix moderator';
 $string['pluginname'] = 'Matrix';
 $string['privacy:metadata'] = 'The Matrix communication plugin does not store any personal data.';
+
+// Deprecated since Moodle 4.4.
+$string['matrixrefreshtoken'] = 'Refresh token';
+$string['matrixrefreshtoken_desc'] = 'Admin refresh token to associated with the access token.';
