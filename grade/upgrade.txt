@@ -1,6 +1,10 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.3.1 ===
+* The function gradeimport_csv_load_data::insert_grade_record() now has extra parameter $gradeitem to carry over the grade item related info
+  for validation.
+
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
 * The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying
