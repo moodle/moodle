@@ -17,8 +17,8 @@ Feature: Tiny editor autosave
       | teacher1 | C1     | editingteacher |
       | teacher2 | C1     | editingteacher |
     And the following "blocks" exist:
-      | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
-      | private_files | System       | 1         | my-index        | side-post     |
+      | blockname      | contextlevel | reference | pagetypepattern | defaultregion |
+      | private_files  | System       | 1         | my-index        | side-post     |
 
   @javascript
   Scenario: Restore a draft on user profile page
@@ -69,3 +69,16 @@ Feature: Tiny editor autosave
     And I navigate to "Settings" in current page administration
     Then I should not see "This is my draft" in the "#id_summary_editor" "css_element"
     And the field "Course summary" matches value "<p>Modified text</p>"
+
+  @javascript
+  Scenario: Draft should not be restored if the form was submitted via Javascript
+    Given I am on the "Course 1" course page logged in as teacher1
+    And I follow "Calendar" in the user menu
+    And I click on "New event" "button"
+    And I click on "Show more..." "link" in the "New event" "dialogue"
+    And I set the field "Event title" to "Test course event"
+    And I set the field "Description" to "This is my draft"
+    And I click on "Save" "button"
+    And I click on "New event" "button"
+    When I click on "Show more..." "link" in the "New event" "dialogue"
+    Then the field "Description" matches value ""
