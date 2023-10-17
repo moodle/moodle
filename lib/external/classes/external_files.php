@@ -40,6 +40,8 @@ class external_files extends external_multiple_structure {
                 'mimetype' => new external_value(PARAM_RAW, 'File mime type.', VALUE_OPTIONAL),
                 'isexternalfile' => new external_value(PARAM_BOOL, 'Whether is an external file.', VALUE_OPTIONAL),
                 'repositorytype' => new external_value(PARAM_PLUGIN, 'The repository type for external files.', VALUE_OPTIONAL),
+                'icon' => new external_value(PARAM_RAW,
+                    'The relative path to the relevant file type icon based on the file\'s mime type.', VALUE_OPTIONAL),
             ], 'File.'),
             $desc,
             $required,
@@ -99,6 +101,12 @@ class external_files extends external_multiple_structure {
             'repositorytype' => [
                 'type' => PARAM_PLUGIN,
                 'description' => 'The repository type for the external files.',
+                'optional' => true,
+                'null' => NULL_ALLOWED,
+            ],
+            'icon' => [
+                'type' => PARAM_RAW,
+                'description' => 'Relative path to the relevant file type icon based on the file\'s mime type.',
                 'optional' => true,
                 'null' => NULL_ALLOWED,
             ],

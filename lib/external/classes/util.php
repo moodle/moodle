@@ -154,6 +154,7 @@ class util {
                     $areafile->get_filepath(),
                     $areafile->get_filename()
                 )->out(false);
+                $file['icon'] = file_file_icon($areafile);
                 $files[] = $file;
             }
         }

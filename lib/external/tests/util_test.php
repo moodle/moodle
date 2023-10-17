@@ -199,6 +199,7 @@ class util_test extends \advanced_testcase {
             'filesize' => $filesize,
             'mimetype' => 'text/plain',
             'isexternalfile' => false,
+            'icon' => 'f/text',
         ],
         ];
         // Get all the files for the area.
