@@ -26,7 +26,7 @@
                 "name": "Assignment due 1",
                 "viewurl": "https://moodlesite/course/view.php?id=2",
                 "courseimage": "https://moodlesite/pluginfile/123/course/overviewfiles/123.jpg",
-                "fullname": "course 3",
+                "fullname": "Course 3 for \"Statistical and Computational Tools\" ",
                 "hasprogress": true,
                 "progress": 10,
                 "coursecategory": "Category 1",
@@ -50,8 +50,11 @@
         {{/hasprogress}}
     {{/progress}}
     {{$coursename}}
-        <span class="multiline">
-            {{#shortentext}}50, {{{fullname}}} {{/shortentext}}
+        <span class="multiline" title="{{fullname}}">
+            <span class="sr-only">{{{fullname}}}</span>
+            <span aria-hidden="true">
+                {{#shortentext}}55, {{{fullname}}} {{/shortentext}}
+            </span>
         </span>
     {{/coursename}}
     {{$coursecategory}}
