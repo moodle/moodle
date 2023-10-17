@@ -104,3 +104,9 @@ activitygradenotrequired,core_completion
 completionpassgrade_help,core_completion
 completionusegrade_help,core_completion
 moodlenet:sharetyperesource,core
+emailpasswordsent,core
+passwordsent,core
+passwordsenttext,core
+passwordrecovery,core
+passwordconfirmchange,core
+passwordnohelp,core
