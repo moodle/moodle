@@ -713,12 +713,16 @@ const registerListeners = () => {
 
             if (anyOpen) {
                 getBackdrop().then(backdrop => backdrop.show()).catch();
+                const pageWrapper = document.getElementById('page');
+                pageWrapper.style.overflow = 'hidden';
             }
         } else {
             drawerMap.forEach(drawerInstance => {
                 enableDrawerTooltips(drawerInstance.drawerNode);
             });
             getBackdrop().then(backdrop => backdrop.hide()).catch();
+            const pageWrapper = document.getElementById('page');
+            pageWrapper.style.overflow = 'auto';
         }
     };
 
