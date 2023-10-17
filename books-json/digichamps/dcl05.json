@@ -281,7 +281,7 @@
               "type": "page"
             },
             {
-              "uid": "DCL05-TP3-CHDRN5",
+              "uid": "DCL05-TP3-CHDRN500",
               "fname": "DCL05-TP3-CHDRN5.json",
               "type": "assignment"
             },
@@ -411,6 +411,11 @@
               "uid": "DCL05-TP4-CHDRN12",
               "fname": "DCL05-TP4-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL05-TP4-CHDRN13",
+              "fname": "DCL05-TP4-CHDRN13.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"
@@ -450,7 +455,7 @@
               "type": "page"
             },
             {
-              "uid": "DCL05-TP5-CHDRN5",
+              "uid": "DCL05-TP5-CHDRN500",
               "fname": "DCL05-TP5-CHDRN5.json",
               "type": "assignment"
             },
@@ -542,7 +547,7 @@
               "type": "page"
             },
             {
-              "uid": "DCL05-TP6-CHDRN5",
+              "uid": "DCL05-TP6-CHDRN500",
               "fname": "DCL05-TP6-CHDRN5.json",
               "type": "assignment"
             },
