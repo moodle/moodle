@@ -1,6 +1,11 @@
 This files describes API changes in tagging, information provided
 here is intended especially for developers.
 
+=== 4.4 ===
+
+* New additional property 'viewurl' has been added to the pre-defined structure in tag_item_exporter. This property
+  represents the URL to view a given tag.
+
 === 3.6 ===
 
 * The following functions have been finally deprecated and can not be used anymore:
