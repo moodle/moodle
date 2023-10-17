@@ -697,9 +697,15 @@ class observer {
         }
 
         // Check if there is already an entry for this.
-        if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
-                                                                'courseid' => $courseid,
-                                                                'timecompleted' => null))) {
+        if ($entry = $DB->get_record_sql("SELECT * FROM {local_iomad_track}
+                                          WHERE userid = :userid
+                                          AND courseid = :courseid
+                                          AND
+                                           (timecompleted IS NULL OR
+                                            timecompleted + 5 > :eventtime)",
+                                         array('userid' => $userid,
+                                               'courseid' => $courseid,
+                                               'eventtime' => $event->timecreated))) {
             // We already have an entry.  Remove it.
             // check for max grade = 0
             $mygrade = 0;
