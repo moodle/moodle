@@ -47,7 +47,6 @@ class recalculate extends \core\task\adhoc_task {
     public static function instance(int $quizid): recalculate {
         $task = new self();
         $task->set_component('quiz_statistics');
-        $task->set_userid(get_admin()->id);
         $task->set_custom_data((object)[
             'quizid' => $quizid,
         ]);
