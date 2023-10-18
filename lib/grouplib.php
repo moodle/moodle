@@ -1371,7 +1371,8 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                     [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
                         $prefix . 'g2',
                         $prefix . 'gm2',
-                        $ualias
+                        $ualias,
+                        $prefix . 'param_'
                     );
                     $where .= ' AND ' . $visibilitywhere;
                     $param = array_merge($param, $visibilityparams);
