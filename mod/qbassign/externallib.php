@@ -3069,6 +3069,9 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
             $get_coursefield = $DB->get_record('course_modules', array('instance' => $assignid, 'course' => $courseid));
             $moduleid = $get_coursefield->id;
 
+            $get_context = $DB->get_record('context', array('instanceid' => $moduleid,'contextlevel' => 70));
+            $contextid = $get_context->id;
+
             //Get assignment submission details
             $get_assignmentsubmission_details = $DB->get_record('qbassign_submission', array('userid' => $USER->id, 'qbassignment' => $get_assignmentdetails->id));
 
@@ -3632,7 +3635,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                     $updateactivityonline->id = $getactive_online->id;
                     $updateactivityonline->value = $submission_codestatus;           
                     $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
-                    if(isset($getactive_onlinetype))
+                    if(isset($getactive_onlinetype) and isset($getactive_onlinetype->id))
                     {
                         $updateactivityonline = new stdClass();
                         $updateactivityonline->id = $getactive_onlinetype->id;
