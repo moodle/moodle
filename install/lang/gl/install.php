@@ -44,7 +44,7 @@ $string['dataroot'] = 'Directorio de datos';
 $string['datarootpermission'] = 'Permisos dos directorios de datos';
 $string['dbprefix'] = 'Prefixo das táboas';
 $string['dirroot'] = 'Directorio de Moodle';
-$string['environmenthead'] = 'Comprobando o seu contorno...';
+$string['environmenthead'] = 'Comprobando o seu contorno…';
 $string['environmentsub2'] = 'Cada versión de Moodle ten algún requisito mínimo da versión de PHP e un número obrigatorio de extensións de PHP.
 Antes de cada instalación ou actualización faise unha comprobación completa do contorno. Póñase en contacto co administrador do servidor se non sabe como instalar a nova versión ou activar as extensións PHP.';
 $string['errorsinenvironment'] = 'A comprobación do contorno no foi satisfactoria!';
@@ -90,10 +90,9 @@ $string['pathsunsecuredataroot'] = 'A localización de dataroot non é segura';
 $string['pathswrongadmindir'] = 'Non existe o directorio Admin';
 $string['phpextension'] = 'Extensión PHP {$a}';
 $string['phpversion'] = 'Versión PHP';
-$string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de PHP 4.3.0 ou 5.1.0 ( as versións 5.0.x teñen unha serie de problemas coñecidos).</p>
+$string['phpversionhelp'] = '<p>Moodle require polo menos unha das versións de PHP 5.6.5 ou 7.1 (7.0.x ten algunhas limitacións do motor).</p>
 <p>Neste momento está executandose a versión {$a}</p>
-<p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP!<br />
-(NO caso de 5.0.x podería tamén reverter cara a versión 4.4.x)</p>';
+<p>Debe actualizar PHP ou trasladarse a outro servidor cunha versión máis recente de PHP!<br />';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Se esta a ver esta páxina é porque puido instalar correctamente e
     executar o paquete <strong>{$a->packname} {$a->packversion}</strong> no seu computador. Parabéns!';
