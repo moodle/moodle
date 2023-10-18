@@ -15,16 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'profilefield_checkbox', language 'en', branch 'MOODLE_20_STABLE'
- *
- * @package   profilefield_checkbox
- * @copyright  2008 onwards Shane Elliot {@link http://pukunui.com}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-/**
  * Class profile_field_checkbox
  *
+ * @package    profilefield_checkbox
  * @copyright  2008 onwards Shane Elliot {@link http://pukunui.com}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -52,10 +45,7 @@ class profile_field_checkbox extends profile_field_base {
      * @return string HTML.
      */
     public function display_data() {
-        $options = new stdClass();
-        $options->para = false;
-        $checked = intval($this->data) === 1 ? 'checked="checked"' : '';
-        return '<input disabled="disabled" type="checkbox" name="'.$this->inputname.'" '.$checked.' />';
+        return $this->data ? get_string('yes') : get_string('no');
     }
 
     /**
