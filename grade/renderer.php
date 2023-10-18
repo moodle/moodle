@@ -117,8 +117,8 @@ class core_grades_renderer extends plugin_renderer_base {
     ): stdClass {
         global $SESSION, $COURSE;
         // User search.
-        $searchvalue = optional_param('searchvalue', null, PARAM_NOTAGS);
-        $userid = optional_param('userid', null, PARAM_INT);
+        $searchvalue = optional_param('gpr_search', null, PARAM_NOTAGS);
+        $userid = optional_param('grp_userid', null, PARAM_INT);
         $url = new moodle_url($slug, ['id' => $course->id]);
         $firstinitial = $SESSION->gradereport["filterfirstname-{$context->id}"] ?? '';
         $lastinitial  = $SESSION->gradereport["filtersurname-{$context->id}"] ?? '';
