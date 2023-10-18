@@ -345,7 +345,7 @@ Feature: Within the grader report, test that we can search for users
     Given "42" "users" exist with the following data:
       | username  | students[count]             |
       | firstname | Student                     |
-      | lastname  | test[count]                    |
+      | lastname  | test[count]                 |
       | email     | students[count]@example.com |
     And "42" "course enrolments" exist with the following data:
       | user   | students[count] |
@@ -357,7 +357,7 @@ Feature: Within the grader report, test that we can search for users
     # Search for a single user on second page and save grades.
     When I set the field "Search users" to "test42"
     And I wait until "View all results (1)" "link" exists
-    And I press the enter key
+    And I click on "Student test42" "option_role"
     And I wait until the page is ready
     And I give the grade "80.00" to the user "Student test42" for the grade item "Test assignment one"
     And I press "Save changes"
@@ -402,7 +402,7 @@ Feature: Within the grader report, test that we can search for users
     # Search for multiple users on second page and save grades.
     And I set the field "Search users" to "test4"
     And I wait until "View all results (4)" "link" exists
-    And I press the enter key
+    And I click on "View all results (4)" "option_role"
     And I wait until the page is ready
     And I give the grade "10.00" to the user "Student test42" for the grade item "Test assignment one"
     And I give the grade "20.00" to the user "Student test40" for the grade item "Test assignment one"
