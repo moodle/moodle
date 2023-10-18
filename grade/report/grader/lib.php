@@ -1143,9 +1143,33 @@ class grade_report_grader extends grade_report {
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
                             $itemcell->text .= '<label class="accesshide" for="grade_'.$userid.'_'.$item->id.'">'
                                           .get_string('useractivitygrade', 'gradereport_grader', $gradelabel).'</label>';
-                            $itemcell->text .= '<input size="6" '
-                                          . ' type="text" class="text" title="'. $strgrade .'" name="grade['
-                                          .$userid.'][' .$item->id.']" id="grade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
+
+                            // Set this input field with type="number" if the decimal separator for current language is set to
+                            // a period. Other decimal separators may not be recognised by browsers yet which may cause issues
+                            // when entering grades.
+                            $decsep = get_string('decsep', 'core_langconfig');
+                            $isnumeric = $decsep === '.';
+                            $inputtype = $isnumeric ? 'number' : 'text';
+                            $inputparams = [
+                                'type' => $inputtype,
+                                'class' => 'text',
+                                'title' => $strgrade,
+                                'name' => "grade[{$userid}][{$item->id}]",
+                                'id' => "grade_{$userid}_{$item->id}",
+                                'value' => $value,
+                            ];
+                            // If we're rendering this as a number field, set step and min/max attributes (if applicable).
+                            if ($isnumeric) {
+                                $inputparams['step'] = 'any';
+                                if (isset($item->grademin)) {
+                                    $inputparams['min'] = $item->grademin;
+                                }
+                                if (isset($item->grademax)) {
+                                    $inputparams['max'] = $item->grademax;
+                                }
+                            }
+
+                            $itemcell->text .= html_writer::empty_tag('input', $inputparams);
                         } else {
                             $itemcell->text .= $gradepassicon . "<span class='gradevalue{$hidden}{$gradepass}'>" .
                                     format_float($gradeval, $decimalpoints) . "</span>";
