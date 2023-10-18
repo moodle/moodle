@@ -802,8 +802,6 @@ class grade_report_grader extends grade_report {
         $rows = array();
         $this->rowcount = 0;
         $numrows = count($this->gtree->get_levels());
-        $numusers = count($this->users);
-        $gradetabindex = 1;
         $columnstounset = array();
         $strgrade = $this->get_lang_string('gradenoun');
         $strfeedback  = $this->get_lang_string("feedback");
@@ -945,7 +943,6 @@ class grade_report_grader extends grade_report {
 
         // Preload scale objects for items with a scaleid and initialize tab indices
         $scaleslist = array();
-        $tabindices = array();
 
         foreach ($this->gtree->get_items() as $itemid => $item) {
             $scale = null;
@@ -955,9 +952,6 @@ class grade_report_grader extends grade_report {
             } else {
                 $jsarguments['items'][$itemid] = array('id'=>$itemid, 'name'=>$item->get_name(true), 'type'=>'value', 'scale'=>false, 'decimals'=>$item->get_decimals());
             }
-            $tabindices[$item->id]['grade'] = $gradetabindex;
-            $tabindices[$item->id]['feedback'] = $gradetabindex + $numusers;
-            $gradetabindex += $numusers * 2;
         }
         $scalesarray = array();
 
@@ -1123,7 +1117,7 @@ class grade_report_grader extends grade_report {
                             } else {
                                 $nogradestr = $this->get_lang_string('nooutcome', 'grades');
                             }
-                            $attributes = array('tabindex' => $tabindices[$item->id]['grade'], 'id'=>'grade_'.$userid.'_'.$item->id);
+                            $attributes = ['id' => 'grade_' . $userid . '_' . $item->id];
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
                             $itemcell->text .= html_writer::label(
                                 get_string('useractivitygrade', 'gradereport_grader', $gradelabel), $attributes['id'], false,
@@ -1149,8 +1143,8 @@ class grade_report_grader extends grade_report {
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
                             $itemcell->text .= '<label class="accesshide" for="grade_'.$userid.'_'.$item->id.'">'
                                           .get_string('useractivitygrade', 'gradereport_grader', $gradelabel).'</label>';
-                            $itemcell->text .= '<input size="6" tabindex="' . $tabindices[$item->id]['grade']
-                                          . '" type="text" class="text" title="'. $strgrade .'" name="grade['
+                            $itemcell->text .= '<input size="6" '
+                                          . ' type="text" class="text" title="'. $strgrade .'" name="grade['
                                           .$userid.'][' .$item->id.']" id="grade_'.$userid.'_'.$item->id.'" value="'.$value.'" />';
                         } else {
                             $itemcell->text .= $gradepassicon . "<span class='gradevalue{$hidden}{$gradepass}'>" .
@@ -1163,7 +1157,7 @@ class grade_report_grader extends grade_report {
                         $feedbacklabel = $fullname . ' ' . $item->get_name(true);
                         $itemcell->text .= '<label class="accesshide" for="feedback_'.$userid.'_'.$item->id.'">'
                                       .get_string('useractivityfeedback', 'gradereport_grader', $feedbacklabel).'</label>';
-                        $itemcell->text .= '<input class="quickfeedback" tabindex="' . $tabindices[$item->id]['feedback'].'" id="feedback_'.$userid.'_'.$item->id
+                        $itemcell->text .= '<input class="quickfeedback" id="feedback_'.$userid.'_'.$item->id
                                       . '" size="6" title="' . $strfeedback . '" type="text" name="feedback['.$userid.']['.$item->id.']" value="' . s($grade->feedback) . '" />';
                     }
 
