@@ -350,7 +350,7 @@ h6:target:before {
   font-family: var(--mono-font) !important;
 }
 
-.editor-container {
+.editor-container * {
   font-family: var(--mono-font) !important;
   line-height: 1.1;
 }
