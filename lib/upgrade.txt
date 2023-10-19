@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3.1 ===
+
+* Added modalform config object `moduleName` param that can be used to define alternative modal type for the modalform. By default 'core/modal_save_cancel' is used.
+
 === 4.3 ===
 
 * Unnecessary parameters of admin_apply_default_settings() function were removed; upgrade script lists
