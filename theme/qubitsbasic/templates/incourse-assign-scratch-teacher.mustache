@@ -158,9 +158,18 @@
                                 </div>
                             </div>
                         {{/overflow}}
+                            {{#is_showreact}}
+                            <div id="__next"></div>
+                            <div class="d-none">{{{ output.main_content }}}</div>
+                            {{{ output.activity_navigation }}}
+                            {{{ output.course_content_footer }}}
+                            {{/is_showreact}}
+
+                            {{^is_showreact}}
                             {{{ output.main_content }}}
                             {{{ output.activity_navigation }}}
                             {{{ output.course_content_footer }}}
+                            {{/is_showreact}}
                     </section>
                 </div>
             </div>
@@ -184,7 +193,7 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
 <script>
 M.assn = {
     "uid" : "{{muid}}",
-    "userid" : "{{userid}}"
+    "user_id" : "{{userid}}"
 }
 </script>
 <script type="text/javascript" src="{{scratch_aurl}}/lib.min.js"></script>

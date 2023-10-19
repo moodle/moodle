@@ -153,6 +153,7 @@ if($path_params == "/mod/qbassign/view.php"){
         $tmplpath = 'theme_qubitsbasic/incourse-assign-student';
         if($qb_config_data){
             $tmplpath = 'theme_qubitsbasic/incourse-assign-scratch-student';
+            $templatecontext["scratch_aurl"] = $CFG->wwwroot.'/third_party/scratch/assn';
         }
     }
 
@@ -166,12 +167,13 @@ if($path_params == "/mod/qbassign/view.php"){
         if($qb_config_data){
             $templatecontext["is_scratch"] = true;
             $tmplpath = 'theme_qubitsbasic/incourse-assign-scratch-teacher';
+            $templatecontext["scratch_aurl"] = $CFG->wwwroot.'/third_party/scratch/assntr';
         }
      }
 
     $templatecontext["userid"] = $userid;
     $templatecontext["muid"] = $muid;
-    $templatecontext["scratch_aurl"] = $CFG->wwwroot.'/third_party/scratch/assn';
+
 
 }
 
