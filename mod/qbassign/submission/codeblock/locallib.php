@@ -418,7 +418,6 @@ class qbassign_submission_codeblock extends qbassign_submission_plugin {
                 return $plagiarismlinks . $text . "<div>Additional Comments :<br/>".$expln."</div>";
             }
         }
-        return '';
     }
 
     /**

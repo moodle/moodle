@@ -3159,6 +3159,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
 
                     $submissintype = array(
                     'type' => $config->plugin,
+                    'additional_comments' => ($getonline_content->explanation!='')?$getonline_content->explanation:'',
                     'operation' => ($config->plugin == 'codeblock') ? $get_typedetails->value : '1',
                     'language' => ($config->plugin == 'codeblock') ? $get_langdetails->value : 'python'
                     );
@@ -4193,8 +4194,6 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                         $gets_submission = $DB->get_record('qbassignsubmission_codeblock', array('submission' => $get_submission->id,'qbassignment'=>$qbassignmentid));
 
                         $DB->set_field('qbassignsubmission_codeblock', 'explanation', $explain_data, array('id' => $gets_submission->id));
-
-                        $DB->set_field('qbassignsubmission_onlinetex', 'explanation', $explain_data, array('id' => $gets_submission->id));
                      }                     
                      else
                      {
