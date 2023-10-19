@@ -1179,7 +1179,14 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEmpty($module['afterlink']);
                 $this->assertEquals('1 unread post', $module['activitybadge']['badgecontent']);
                 $this->assertEquals('badge-dark', $module['activitybadge']['badgestyle']);
-
+                $this->assertEquals(
+                    plugin_supports(
+                        'mod',
+                        'forum',
+                        FEATURE_MOD_PURPOSE,
+                        MOD_PURPOSE_OTHER
+                    ), $module['purpose']
+                );
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
@@ -1191,17 +1198,41 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($module['noviewlink']);
                 $this->assertNotEmpty($module['description']);  // Label always prints the description.
                 $testexecuted = $testexecuted + 1;
+                $this->assertEquals(
+                    plugin_supports(
+                        'mod',
+                        'label',
+                        FEATURE_MOD_PURPOSE,
+                        MOD_PURPOSE_OTHER
+                    ), $module['purpose']
+                );
             } else if ($module['id'] == $datacm->id and $module['modname'] == 'data') {
                 $this->assertStringContainsString('customcompletionrules', $module['customdata']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertArrayNotHasKey('description', $module);
                 $testexecuted = $testexecuted + 1;
+                $this->assertEquals(
+                    plugin_supports(
+                        'mod',
+                        'data',
+                        FEATURE_MOD_PURPOSE,
+                        MOD_PURPOSE_OTHER
+                    ), $module['purpose']
+                );
             } else if ($module['instance'] == $resource->id && $module['modname'] == 'resource') {
                 // Resources have both, afterlink for the size and the update date and activitybadge for the file type.
                 $this->assertStringContainsString('32 bytes', $module['afterlink']);
                 $this->assertEquals('TXT', $module['activitybadge']['badgecontent']);
                 $this->assertEquals('badge-none', $module['activitybadge']['badgestyle']);
                 $testexecuted = $testexecuted + 1;
+                $this->assertEquals(
+                    plugin_supports(
+                        'mod',
+                        'resource',
+                        FEATURE_MOD_PURPOSE,
+                        MOD_PURPOSE_OTHER
+                    ), $module['purpose']
+                );
             }
         }
         foreach ($sections[2]['modules'] as $module) {
