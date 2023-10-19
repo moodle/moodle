@@ -5,6 +5,7 @@ here is intended especially for developers.
 
 * New additional property 'viewurl' has been added to the pre-defined structure in tag_item_exporter. This property
   represents the URL to view a given tag.
+* The `core_tag_manage_table` class has been deprecated, in favour of new report builder implementation
 
 === 3.6 ===
 
