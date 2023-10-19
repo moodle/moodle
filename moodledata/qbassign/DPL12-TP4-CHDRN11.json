@@ -1,0 +1,32 @@
+{
+	"title" : "4.2 Master Challenge 2",
+	"question": "Create a Calculator class that allows us to add, subtract, multiply, and divide double type values. In the main method, ask for two double values. Then print the sum, difference, product, and quotient.For example, your output should look like this,<br><img src='https://learn.qubitsedu.com/images/DP_L12_U04_S02_Challenge2.JPG' height='70%' width='50%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP4-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

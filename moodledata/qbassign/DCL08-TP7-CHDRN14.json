@@ -1,0 +1,32 @@
+{
+  "title": "7.3 Master Challenge 2",
+  "question": "a. Add a few more fields in the Excel file from challenge 1, as shown below <br><img src='https://learn.qubitsedu.com/images/DC-L08-U07-S03-Challenge2-image-1.jpg' width='50%' height='80%' /><br>b. Fill the Gender and Date of birth. Use DATE, MONTH, and YEAR functions to extract Date, Month and Year from the field Date of birth as shown below.<br><img src='https://learn.qubitsedu.com/images/DC-L08-U07-S03-Challenge2-image-2.jpg' width='50%' height='80%' /><br>c. Use the LEFT function to extract the first three letters of the First name. Merge the first three letters of the First name and the year of birth to form a code using the TEXTJOIN function as shown below.<br><img src='https://learn.qubitsedu.com/images/DC-L08-U07-S03-Challenge2-image-3.jpg' width='50%' height='80%' />",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinefile",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL08-TP7-CHDRN14",
+  "maxfilesubmissions": "5",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "2097152",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

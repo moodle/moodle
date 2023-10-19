@@ -1459,6 +1459,7 @@ class qbassign_grading_table extends table_sql implements renderable {
             $urlparams = array('id' => $this->qbassignment->get_course_module()->id,
                                                      'sid' => $item->id,
                                                      'gid' => $item->id,
+                                                     'userid' => $item->userid,
                                                      'plugin' => $plugin->get_type(),
                                                      'action' => 'viewplugin' . $plugin->get_subtype(),
                                                      'returnaction' => $returnaction,

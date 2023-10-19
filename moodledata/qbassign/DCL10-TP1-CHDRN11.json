@@ -1,0 +1,32 @@
+{
+	"title" : "1.2 Master Challenge 2",
+	"question": "Sana’s school is organizing a hill trek for the coming weekend. Thus, the guide of the trek, Ms. Alia, has decided to meet with all the participants' parents and share some guidelines regarding the upcoming events. However, due to time constraints and an extremely busy schedule, few parents are unable to attend the meeting. So, Ms. Alia has decided to host a Google Meet and share a document in Google Docs with them, explaining the required information. Parents can join the meeting as per their convenience. Help Ms. Alia execute the following:<br>1. Launch a video meeting on Google Meet from the document created in Google Docs.<br>2. Invite the participants’ parents to the meeting on Google Meet.<br>3. Share screen to present the doc file she created and discuss other necessary requirements for the trek.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL10-TP1-CHDRN11",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

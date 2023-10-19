@@ -1,0 +1,32 @@
+{
+	"title" : "4.2 Master Challenge 3",
+	"question": "The df_employee data frame is given below:<br><img src='https://learn.qubitsedu.com/images/DC-L11-U04-S02-Challenge3-codeblock.jpg' width='80%' height='80%' /><br>Using a loop structure, categorize the employees as A if the Emp_Score is greater than 8 , B if the Emp_Score is between 6 and 8 , and C if the Emp_Score is lesser than 6.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "R",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL11-TP4-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

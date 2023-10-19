@@ -1,0 +1,32 @@
+{
+  "title": "4.2 Master Challenge 2",
+  "question": "A software developer wants to write a pseudocode that sorts a list of integers in ascending order. Develop a procedure that takes in a list of integers and sorts them in ascending order. <br>Consider the following pseudocode that calculates and displays the Body Mass Index (BMI): <br><img src='https://learn.qubitsedu.com/images/DC-L12-U04-S02-Challenge2-codeblock.jpg' width='50%' height='20%' /><br>Modify this pseudocode using procedural abstraction to make it more organized and maintainable. Split the code into appropriate procedures and demonstrate how to call these procedures. Write a JavaScript program for the same.",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "pseudocode",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP4-CHDRN10",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

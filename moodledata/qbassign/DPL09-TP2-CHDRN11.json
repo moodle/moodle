@@ -1,0 +1,32 @@
+{
+	"title" : "2.2 Master Challenge 3",
+	"question": "The Caesar cipher, or shift cipher, is a simple substitution cipher where letter positions in a word shift by a certain number. In this encryption method, each letter in the message is replaced by the letter a certain number of positions down the alphabet. For example, shifting each letter by 2 places, A becomes C, and B becomes D.<br>Program a solution to input a string in uppercase without spaces or special characters. The software should apply the shift, following specified rules, and output the encoded string using the Caesar cipher.<br>Tips<br>●  ord(char) returns the ASCII value of a character.<br>●  chr(value) returns a character corresponding to a specific ASCII value.<br>●  For any given input character char (upper case), the line given below prints the respective character after shifting it to the specified value.<br><img src='https://learn.qubitsedu.com/images/DPL09U02S02Image3.png' width='60%' height='20%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "python",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP2-CHDRN11",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

@@ -1,0 +1,32 @@
+{
+	"title" : "6.1 Master Challenge 3",
+	"question": "Color intensity of red, green and blue is represented by values varying from 0 to 256. Half intensity of a color is represented by a value of 128. Given below are binary representations of these values.<br><img src='https://learn.qubitsedu.com/images/DC-L07-U06-S01-Challenge-3-Table-1.jpg' width='50%' height='80%' /><br>Write the RGB code and color name for the following binary representations of a color. (Hint: Use the Paint application to fi nd the color.)<br><img src='https://learn.qubitsedu.com/images/DC-L07-U06-S01-Challenge-3-Table-2.jpg' width='50%' height='80%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL07-TP6-CHDRN7",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

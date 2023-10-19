@@ -1,0 +1,32 @@
+{
+	"title" : "3.2 Master Challenge 2",
+	"question": "Make a treasure hunt game. It should have ﬁve stages. A mathematical question should be displayed at each stage, and there should be three options for the answer. If the user clicks the correct answer, the sprite should congratulate and move to the next stage of the treasure hunt. If the answer is wrong at any stage, the game should end.<br><img src='https://learn.qubitsedu.com/images/DP_L06_U03_S03_Challenge2_Image1.jpg' width='20%' height='70%' /><br><img src='https://learn.qubitsedu.com/images/DP_L06_U03_S03_Challenge2_Image2.jpg' width='20%' height='70%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "scratch", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - scratch - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL06-TP3-CHDRN10",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

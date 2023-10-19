@@ -1,0 +1,32 @@
+{
+	"title" : "5.3 Master Challenge 2",
+	"question": "Rick is in grade 2. He prepared a list of some living and nonliving things in an Excel worksheet and showed it to his mother. She noticed some errors in the data and highlighted them in red. The modifi ed list is shown below:<br><img src='https://learn.qubitsedu.com/images/DC_L06_U05_S03_Challenge2.jpg' height='90%' width='20%'><br>Prepare a similar worksheet and correct the inaccurate data using the skills learnt in this sprint",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL06-TP5-CHDRN12",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

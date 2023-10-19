@@ -60,14 +60,14 @@
                     "type": "page"
                   },   
                   {
-                    "title": "Sprint 2.2 If-Else Statements",
+                    "title": "Sprint 2.3 If-Else Statements",
                     "uid": "DPL12-TP0-CHDRN7",
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.3",
                     "type": "page"
                   },
                   {
-                    "title": "Sprint 2.3 If Statements And Control Flow",
+                    "title": "Sprint 2.2 If Statements And Control Flow",
                     "uid": "DPL12-TP0-CHDRN8",
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.2",
@@ -78,6 +78,216 @@
                     "uid": "DPL12-TP0-CHDRN9",
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.4",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 2.5 Compound Boolean Expressions",
+                    "uid": "DPL12-TP0-CHDRN10",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.5",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 2.6 Equivalent Boolean Expressions",
+                    "uid": "DPL12-TP0-CHDRN11",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.6",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 3.1 While Loops",
+                    "uid": "DPL12-TP0-CHDRN12",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit3&pdf=DP_L12_Unit3_Sprint3.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 3.2 For Loops",
+                    "uid": "DPL12-TP0-CHDRN13",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit3&pdf=DP_L12_Unit3_Sprint3.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 3.3 Nested Iteration",
+                    "uid": "DPL12-TP0-CHDRN14",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit3&pdf=DP_L12_Unit3_Sprint3.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 4.1 Classes, Objects, And Methods",
+                    "uid": "DPL12-TP0-CHDRN15",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit4&pdf=DP_L12_Unit4_Sprint4.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 4.2 Void Methods And Constructors",
+                    "uid": "DPL12-TP0-CHDRN16",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit4&pdf=DP_L12_Unit4_Sprint4.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 4.3 Accessors,Mutators and Non-Void Methods",
+                    "uid": "DPL12-TP0-CHDRN17",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit4&pdf=DP_L12_Unit4_Sprint4.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 4.4 Accessors,Mutators and Non-Void Methods",
+                    "uid": "DPL12-TP0-CHDRN18",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit4&pdf=DP_L12_Unit4_Sprint4.4",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 5.1 String Objects and Methods",
+                    "uid": "DPL12-TP0-CHDRN19",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit5&pdf=DP_L12_Unit5_Sprint5.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 5.2 Wrapper Classes:Integer and Double",
+                    "uid": "DPL12-TP0-CHDRN20",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit5&pdf=DP_L12_Unit5_Sprint5.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 5.3 Math Class",
+                    "uid": "DPL12-TP0-CHDRN21",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit5&pdf=DP_L12_Unit5_Sprint5.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 6.1 Array Creation and Access",
+                    "uid": "DPL12-TP0-CHDRN22",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit6&pdf=DP_L12_Unit6_Sprint6.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 6.2 Traversing Arrays",
+                    "uid": "DPL12-TP0-CHDRN23",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit6&pdf=DP_L12_Unit6_Sprint6.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 6.3 Enhanced for Loop For Arrays",
+                    "uid": "DPL12-TP0-CHDRN24",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit6&pdf=DP_L12_Unit6_Sprint6.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 6.4 2D Arrays",
+                    "uid": "DPL12-TP0-CHDRN25",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit6&pdf=DP_L12_Unit6_Sprint6.4",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 7.1 Introduction to ArrayList",
+                    "uid": "DPL12-TP0-CHDRN26",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit7&pdf=DP_L12_Unit7_Sprint7.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 7.2 Traversing ArrayLists",
+                    "uid": "DPL12-TP0-CHDRN27",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit7&pdf=DP_L12_Unit7_Sprint7.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 8.1 Standard Algorithms",
+                    "uid": "DPL12-TP0-CHDRN28",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit8&pdf=DP_L12_Unit8_Sprint8.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 8.2 Manipulating Arrays and ArrayLists",
+                    "uid": "DPL12-TP0-CHDRN29",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit8&pdf=DP_L12_Unit8_Sprint8.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 8.3 Searching and Sorting",
+                    "uid": "DPL12-TP0-CHDRN30",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit8&pdf=DP_L12_Unit8_Sprint8.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 8.4 String Manipulation",
+                    "uid": "DPL12-TP0-CHDRN31",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit8&pdf=DP_L12_Unit8_Sprint8.4",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 9.1 Creating Superclasses and Subclasses",
+                    "uid": "DPL12-TP0-CHDRN32",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit9&pdf=DP_L12_Unit9_Sprint9.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 9.2 Overriding Methods and Polymorphism",
+                    "uid": "DPL12-TP0-CHDRN33",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit9&pdf=DP_L12_Unit9_Sprint9.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 9.3 Polymorphism and Object Class",
+                    "uid": "DPL12-TP0-CHDRN34",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit9&pdf=DP_L12_Unit9_Sprint9.3",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 10.1 Introduction to Recursion",
+                    "uid": "DPL12-TP0-CHDRN35",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit10&pdf=DP_L12_Unit10_Sprint10.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 10.2 Recursive Searching and Sorting",
+                    "uid": "DPL12-TP0-CHDRN36",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit10&pdf=DP_L12_Unit10_Sprint10.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 11.1 Ethical and Social Implication",
+                    "uid": "DPL12-TP0-CHDRN37",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit11&pdf=DP_L12_Unit11_Sprint11.1",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Sprint 11.2 Ethical Issues Around Data Collection",
+                    "uid": "DPL12-TP0-CHDRN38",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit11&pdf=DP_L12_Unit11_Sprint11.2",
+                    "type": "page"
+                  },   
+                  {
+                    "title": "Teacher Guide",
+                    "uid": "DPL12-TP0-CHDRN39",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&pdf=DigiPro_L12_Teacher's Guide",
                     "type": "page"
                   }
             ]
@@ -442,6 +652,51 @@
                 "uid": "DPL12-U03-CHDRN1",
                 "fname": "DPL12-U03-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN7",
+                "fname": "DPL12-TP3-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN8",
+                "fname": "DPL12-TP3-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN9",
+                "fname": "DPL12-TP3-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN10",
+                "fname": "DPL12-TP3-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN11",
+                "fname": "DPL12-TP3-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN12",
+                "fname": "DPL12-TP3-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN13",
+                "fname": "DPL12-TP3-CHDRN13.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN14",
+                "fname": "DPL12-TP3-CHDRN14.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP3-CHDRN15",
+                "fname": "DPL12-TP3-CHDRN15.json",
+                "type": "assignment"
               }
             ],
             "teacheronly": "no"
@@ -498,6 +753,61 @@
                 "uid": "DPL12-U04-CHDRN1",
                 "fname": "DPL12-U04-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN7",
+                "fname": "DPL12-TP4-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN8",
+                "fname": "DPL12-TP4-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN9",
+                "fname": "DPL12-TP4-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN10",
+                "fname": "DPL12-TP4-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN11",
+                "fname": "DPL12-TP4-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN12",
+                "fname": "DPL12-TP4-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN13",
+                "fname": "DPL12-TP4-CHDRN13.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN14",
+                "fname": "DPL12-TP4-CHDRN14.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN15",
+                "fname": "DPL12-TP4-CHDRN15.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN16",
+                "fname": "DPL12-TP4-CHDRN16.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP4-CHDRN17",
+                "fname": "DPL12-TP4-CHDRN17.json",
+                "type": "assignment"
               }
               
             ],
@@ -548,6 +858,46 @@
                 "uid": "DPL12-U05-CHDRN1",
                 "fname": "DPL12-U05-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN6",
+                "fname": "DPL12-TP5-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN7",
+                "fname": "DPL12-TP5-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN8",
+                "fname": "DPL12-TP5-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN9",
+                "fname": "DPL12-TP5-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN10",
+                "fname": "DPL12-TP5-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN11",
+                "fname": "DPL12-TP5-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN12",
+                "fname": "DPL12-TP5-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP5-CHDRN13",
+                "fname": "DPL12-TP5-CHDRN13.json",
+                "type": "assignment"
               }
             ],
             "teacheronly": "no"
@@ -604,6 +954,66 @@
                 "uid": "DPL12-U06-CHDRN1",
                 "fname": "DPL12-U06-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN7",
+                "fname": "DPL12-TP6-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN8",
+                "fname": "DPL12-TP6-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN9",
+                "fname": "DPL12-TP6-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN10",
+                "fname": "DPL12-TP6-CHDRN10.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN11",
+                "fname": "DPL12-TP6-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN12",
+                "fname": "DPL12-TP6-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN13",
+                "fname": "DPL12-TP6-CHDRN13.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN14",
+                "fname": "DPL12-TP6-CHDRN14.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN15",
+                "fname": "DPL12-TP6-CHDRN15.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN16",
+                "fname": "DPL12-TP6-CHDRN16.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN17",
+                "fname": "DPL12-TP6-CHDRN17.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP6-CHDRN18",
+                "fname": "DPL12-TP6-CHDRN18.json",
+                "type": "assignment"
               }
             ],
             "teacheronly": "no"
@@ -646,6 +1056,36 @@
                 "uid": "DPL12-U07-CHDRN1",
                 "fname": "DPL12-U07-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN5",
+                "fname": "DPL12-TP7-CHDRN5.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN6",
+                "fname": "DPL12-TP7-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN7",
+                "fname": "DPL12-TP7-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN8",
+                "fname": "DPL12-TP7-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN9",
+                "fname": "DPL12-TP7-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP7-CHDRN10",
+                "fname": "DPL12-TP7-CHDRN10.json",
+                "type": "assignment"
               }
             ],
             "teacheronly": "no"
@@ -702,6 +1142,66 @@
               "uid": "DPL12-U08-CHDRN1",
               "fname": "DPL12-U08-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN7",
+              "fname": "DPL12-TP8-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN8",
+              "fname": "DPL12-TP8-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN9",
+              "fname": "DPL12-TP8-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN10",
+              "fname": "DPL12-TP8-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN11",
+              "fname": "DPL12-TP8-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN12",
+              "fname": "DPL12-TP8-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN13",
+              "fname": "DPL12-TP8-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN14",
+              "fname": "DPL12-TP8-CHDRN14.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN15",
+              "fname": "DPL12-TP8-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN16",
+              "fname": "DPL12-TP8-CHDRN16.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN17",
+              "fname": "DPL12-TP8-CHDRN17.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL12-TP8-CHDRN18",
+              "fname": "DPL12-TP8-CHDRN18.json",
+              "type": "assignment"
             }
             ],
             "teacheronly": "no"
@@ -751,6 +1251,51 @@
                "uid": "DPL12-U09-CHDRN1",
                "fname": "DPL12-U09-CHDRN1.json",
                "type": "quiz"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN6",
+               "fname": "DPL12-TP9-CHDRN6.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN7",
+               "fname": "DPL12-TP9-CHDRN7.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN8",
+               "fname": "DPL12-TP9-CHDRN8.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN9",
+               "fname": "DPL12-TP9-CHDRN9.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN10",
+               "fname": "DPL12-TP9-CHDRN10.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN11",
+               "fname": "DPL12-TP9-CHDRN11.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN12",
+               "fname": "DPL12-TP9-CHDRN12.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN13",
+               "fname": "DPL12-TP9-CHDRN13.json",
+               "type": "assignment"
+             },
+             {
+               "uid": "DPL12-TP9-CHDRN14",
+               "fname": "DPL12-TP9-CHDRN14.json",
+               "type": "assignment"
              }
             ],
             "teacheronly": "no"
@@ -793,6 +1338,36 @@
                 "uid": "DPL12-U10-CHDRN1",
                 "fname": "DPL12-U10-CHDRN1.json",
                 "type": "quiz"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN5",
+                "fname": "DPL12-TP10-CHDRN5.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN6",
+                "fname": "DPL12-TP10-CHDRN6.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN7",
+                "fname": "DPL12-TP10-CHDRN7.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN8",
+                "fname": "DPL12-TP10-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN9",
+                "fname": "DPL12-TP10-CHDRN9.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DPL12-TP10-CHDRN10",
+                "fname": "DPL12-TP10-CHDRN10.json",
+                "type": "assignment"
               }
             ],
             "teacheronly": "no"
@@ -825,46 +1400,76 @@
                 "type": "page"
               },
                {
-                "title": "11.3 -  Installing Java Development Kit",
+                "title": "Appendix A -  Installing Java Development Kit",
                 "uid": "DPL12-TP11-CHDRN4",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=60-Installing JDK - Google Docs",
                 "type": "page"
               },
               {
-               "title": "11.4 -  Using Flowcharts",
+               "title": "Appendix B -  Using Flowcharts",
                "uid": "DPL12-TP11-CHDRN5",
                "description": "",
                "route": "/pdf?course=DigiPro&Level=Level12&pdf=61-Using Flowcharts - Google Docs",
                "type": "page"
              },
              {
-              "title": "11.5 -  AP CS A Exam Guidelines",
+              "title": "Appendix C -  AP CS A Exam Guidelines",
               "uid": "DPL12-TP11-CHDRN6",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level12&pdf=62-AP CS A Exam Guidelines - Google Docs",
               "type": "page"
             },
             {
-             "title": "11.6 -   List of Programs",
+             "title": "Appendix D -   List of Programs",
              "uid": "DPL12-TP11-CHDRN7",
              "description": "",
              "route": "/pdf?course=DigiPro&Level=Level12&pdf=63-DP-L12-List of Programs - Google Docs",
              "type": "page"
            },
            {
-            "title": "11.7 -  Reference Sheet",
+            "title": "Appendix E -  Reference Sheet",
             "uid": "DPL12-TP11-CHDRN8",
             "description": "",
             "route": "/pdf?course=DigiPro&Level=Level12&pdf=64-Reference Sheet - Google Docs",
             "type": "page"
           },
           {
-           "title": "11.8 -  Glossary",
+           "title": "Glossary",
            "uid": "DPL12-TP11-CHDRN9",
            "description": "",
            "route": "/pdf?course=DigiPro&Level=Level12&pdf=65-Glossary - Google Docs",
            "type": "page"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN10",
+           "fname": "DPL12-TP11-CHDRN10.json",
+           "type": "assignment"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN11",
+           "fname": "DPL12-TP11-CHDRN11.json",
+           "type": "assignment"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN12",
+           "fname": "DPL12-TP11-CHDRN12.json",
+           "type": "assignment"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN13",
+           "fname": "DPL12-TP11-CHDRN13.json",
+           "type": "assignment"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN14",
+           "fname": "DPL12-TP11-CHDRN14.json",
+           "type": "assignment"
+         },
+         {
+           "uid": "DPL12-TP11-CHDRN15",
+           "fname": "DPL12-TP11-CHDRN15.json",
+           "type": "assignment"
          }
             ],
             "teacheronly": "no"

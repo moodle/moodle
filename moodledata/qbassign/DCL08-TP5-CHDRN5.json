@@ -1,0 +1,32 @@
+{
+  "title": "5.1 Master Challenge 2",
+  "question": "Create a presentation on the conservation of plants and animals. Prepare slides regarding deforestation, afforestation, and endangered animals and plants. Remember to create sections and add speaker notes for all the slides",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinefile",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL08-TP5-CHDRN5",
+  "maxfilesubmissions": "5",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "2097152",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "9.1 Master Challenge 2",
+  "question": "Many cities worldwide are using IoT to manage traffic flow, monitor air quality, and improve public safety. For example, traffic lights can be synchronized to improve traffic flow, while air quality sensors can detect pollutants and alert authorities in cases of high pollution levels. Smart city infrastructure is an emerging field that uses computing innovations to improve the quality of life in urban areas.<br> ● Provide some examples of computing innovation in smart city infrastructure.<br> ● Smart city innovations have not only helped in improving city infrastructure but also in other fields. Explain and support your answer with some examples.<br> ● While smart city innovations offer many benefits, there are also some potential drawbacks and challenges associated with their implementation. What are your viewpoints on this?",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN12",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

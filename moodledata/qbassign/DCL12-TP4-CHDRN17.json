@@ -1,0 +1,32 @@
+{
+  "title": "4.4 Master Challenge 3",
+  "question": "Create an Addition Quiz program using pseudocode and JavaScript. Create a procedure or function for the following tasks: <br>● Ask the user to enter how many questions they want. Use loops or iteration blocks to generate the specified number of questions.<br>● Generate two numbers from 1000 to 25000 and display them.<br> ● Ask the user to enter the answer for the addition of two numbers.<br> ● Evaluate the answer and print the appropriate result. Call the procedure or function to play the quiz.<br> Sample Output: <br><img src='https://learn.qubitsedu.com/images/DC-L12-U04-S03-Challenge3-Sampleoutput.jpg' width='50%' height='80%' />",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "javascript",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP4-CHDRN17",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

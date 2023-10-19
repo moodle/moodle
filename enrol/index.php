@@ -91,6 +91,8 @@ if (is_enrolled($context, $USER, '', true)) {
         $destination = "$CFG->wwwroot/course/view.php?id=$course->id";
     }
     redirect($destination);   // Bye!
+}else{
+    redirect("$CFG->wwwroot/my/courses.php");
 }
 
 $PAGE->set_title($course->shortname);

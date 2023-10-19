@@ -1,0 +1,32 @@
+{
+	"title" : "3.3 Master Challenge 3",
+	"question": "Create a voting system in Python. The voting system will first collect the names of the candidates running for the election. These candidate names will be stored in a dictionary as keys, and the initial count of votes, which is zero, will be stored as the corresponding value. The system will then enter a loop where it will keep asking for the voter's choice. If a voter enters a candidate's name, the system should increment the vote count of that particular candidate by one in the dictionary. This process will continue until the voting ends, which for the purposes of this challenge, can be indicated by entering a specific word or command, for example, 'END'. After the voting ends, the program should calculate and display the candidate with the maximum number of votes.<br>Sample output: <br><img src='https://learn.qubitsedu.com/images/DP_L09_U03_S03_Challenge3.jpg' width='70%'/>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "python",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP3-CHDRN14",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

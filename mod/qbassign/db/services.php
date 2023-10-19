@@ -325,4 +325,24 @@ $functions = array(
                 'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
                 'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
         ],
+        'mod_qbassign_scratch_submission' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'scratch_submission',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'Save Students Scratch Submission',
+                'type' => 'write',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view, mod/qbassign:submit',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
+        'mod_qbassign_get_teacherview' => [
+                'classname' => 'mod_qbassign_external',
+                'methodname' => 'get_teacherview',
+                'classpath' => 'mod/qbassign/externallib.php',
+                'description' => 'List assignment details for teachers using unique field',
+                'type' => 'read',
+                'ajax' => true,
+                'capabilities'  => 'mod/qbassign:view',
+                'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
+        ],
 );

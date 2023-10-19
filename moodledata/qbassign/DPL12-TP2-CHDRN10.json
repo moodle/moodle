@@ -1,0 +1,32 @@
+{
+	"title" : "2.1 Master Challenge 2",
+	"question": "Based on research, recommendations suggest that adult men consume no more than 36 grams of added sugar daily, while adult women should limit their intake to 35 grams daily.<br> Develop a program that prompts users to input the quantity of added sugar (measured in grams) they have consumed during a specific day. Utilizing a boolean condition with a threshold of 30 grams, determine whether the user is within a range where they can consume more sugar.<br>Here is what your output should look like:<br><img src='https://learn.qubitsedu.com/images/DPL12U02S01Image1.png' width='50%' height='80%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN10",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

@@ -1,0 +1,32 @@
+{
+  "title": "8.2 Master Challenge 3",
+  "question": "Companies increasingly rely on cloud services for data storage and computational needs. These services, offered by companies like Amazon ( AWS ), Google ( GCP ), and Microsoft ( Azure ), need to be highly available and fault-tolerant. Discuss how redundancy is employed in cloud services to ensure fault tolerance. What could be the potential impacts on businesses if these services lack adequate redundancy and experience failure? ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP8-CHDRN10",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

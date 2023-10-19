@@ -1,5 +1,7 @@
 <?php
 require('../../config.php');
+// We enabled the cache JS for this page only.
+$CFG->cachejs = "1";
 require_login();
 $PAGE->set_pagelayout('thirdparty');
 echo $OUTPUT->header();

@@ -1,0 +1,32 @@
+{
+	"title" : "5.4 Master Challenge 3",
+	"question": "Create a computational model to analyze the growth of investments over time under different scenarios (like interest rates, investment amounts, and time horizons) using Microsoft Excel and the compound interest formula.<br><br>Compound interest formula:<br>A = P (1 + r/n) nt<br><br>where,<br>● A is the future value of the investment;<br>● P is the initial invested amount;<br>● r is the annual interest rate;<br>● n is the number of times the interest is compounded per year;<br>● t is the number of years for which the money is invested.<br><br> Consider the initial amount, interest rate, and investment tenure of your choice.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL10-TP5-CHDRN18",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

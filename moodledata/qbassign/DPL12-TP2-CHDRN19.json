@@ -1,0 +1,32 @@
+{
+	"title" : "2.4 Master Challenge 2",
+	"question": "Write a program to calculate the electricity bill. Consider an example. A consumer consumes an average of 1400 watts per hour daily for one month. Calculate the total energy bill of that consumer if the per unit rate is $0.25. [Take 1 month = 30 Days].<br>As we know that 1 Unit = 1 kWh (kilowatt per hour) <br>So, Wh = 1400 watts x 24 hours x 30 days = 1008000 <br>So, we want to convert into units, where 1 unit = 1 kWh <br>Total consumed units are as 1008000/1000 = 1008 <br>And, cost per unit is = $0.25, the total cost of the electricity bill is 1008 x $0.25 = $252 <br>Take the inputs from the user using Scanner class and use nested if statements to calculate the electricity bill. Print the statements respectively.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN19",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

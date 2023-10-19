@@ -1,0 +1,30 @@
+{
+	"title" : "7.1 Master Challenge 2",
+	"question": "The table below shows the favorite color of 100 kids in a school.<br><img src='https://learn.qubitsedu.com/images/DPL02_U02_S02.PNG' width='55%' height='50%' /><br>(1) Enter the data in an Excel fi le. Save it in the Documents folder with the name Favorite color. <br>(2) Generate a bar graph for the given data.<br>(3) Which color is the most favorite and which color is the least favorite? _________________<br>(4) How many kids chose red as their favorite color? ________________.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "onlinefile", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "automate",
+	"__codeblock_mode_hint": "automate - manual",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DCL02-TP7-CHDRN6",
+	"maxfilesubmissions":"5",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"2097152",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

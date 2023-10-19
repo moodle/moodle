@@ -1,0 +1,32 @@
+{
+	"title" : "4.4 Master Challenge 2",
+	"question": "Create a program to append multiple rows of data into a CSV file. Read this data into a list and display it.<br>● Initialize your data: Set up a list of lists, where each sub-list represents a row of data that you want to append to the CSV file.<br>● Append the data: Using the CSV module, write a function that opens the CSV file in append mode and adds your data to the file. Each sub-list should correspond to a new row in the CSV.<br>● Read the CSV file: After appending the data, write a separate function that reads the CSV file and stores its contents into a list.<br>● Display the data: Finally, print out the list containing the CSV data to display it.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "python",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL09-TP4-CHDRN17",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

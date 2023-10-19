@@ -1,0 +1,32 @@
+{
+	"title" : "2.2 Master Challenge 1",
+	"question": "Look at the following scripts for two different sprites.<br><img src='https://learn.qubitsedu.com/images/DPL04U02S02Image1.png' width='40%' height='60%' /><br>Both the sprites move when the (green flag) is clicked.<br><br>Which of the following is correct? Tick the right choice.<br><br> Both the sprites cover different distances.<br>Both the sprites cover the same distance.<br><br>Give a reason for your answer.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "scratch", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - scratch - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL04-TP2-CHDRN9",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

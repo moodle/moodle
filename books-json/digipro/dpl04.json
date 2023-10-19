@@ -245,7 +245,7 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP2-CHDRN6",
+              "uid": "DPL04-TP2-CHDRN600",
               "fname": "DPL04-TP2-CHDRN6.json",
               "type": "assignment"
             },
@@ -378,7 +378,7 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP3-CHDRN8",
+              "uid": "DPL04-TP3-CHDRN800",
               "fname": "DPL04-TP3-CHDRN8.json",
               "type": "assignment"
             },
@@ -482,7 +482,7 @@
               "type": "page"
             },
             {
-              "uid": "DPL04-TP4-CHDRN6",
+              "uid": "DPL04-TP4-CHDRN600",
               "fname": "DPL04-TP4-CHDRN6.json",
               "type": "assignment"
             },
@@ -490,6 +490,46 @@
               "uid": "DPL04-U04-CHDRN1",
               "fname": "DPL04-U04-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN7",
+              "fname": "DPL04-TP4-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN8",
+              "fname": "DPL04-TP4-CHDRN8.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN9",
+              "fname": "DPL04-TP4-CHDRN9.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN10",
+              "fname": "DPL04-TP4-CHDRN10.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN11",
+              "fname": "DPL04-TP4-CHDRN11.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN12",
+              "fname": "DPL04-TP4-CHDRN12.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN13",
+              "fname": "DPL04-TP4-CHDRN13.json",
+              "type": "assignment"
+            },
+            {
+              "uid": "DPL04-TP4-CHDRN14",
+              "fname": "DPL04-TP4-CHDRN14.json",
+              "type": "assignment"
             }
           ],
           "teacheronly": "no"

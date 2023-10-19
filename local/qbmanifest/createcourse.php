@@ -467,7 +467,7 @@ class local_qbcourse extends external_api {
         $qa = new mod_qbassign_external();
         
        try {
-          return  $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size']);
+          return  $qa->create_assignment_service($cid,1,$secid,$data['title'],$data['duedate'],$data['submissionfrom'],$data['grade_duedate'],$data['grade'],$data['question'],$data['submission_type'],$data['submissionstatus'],$data['online_text_limit'],$data['uid'],$data['maxfilesubmissions'],$data['filetypeslist'],$data['maxfilesubmissions_size'],$data['language_type'],$data['codeblock_mode']);
         }
         catch(Error $e) { 
             return;

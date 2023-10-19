@@ -1,0 +1,32 @@
+{
+	"title" : "6.1 Master Challenge 1",
+	"question": "Update the given list of rankings. Start with the current ranking list as follows:<br><img src='https://learn.qubitsedu.com/images/DP_L12_U06_S01_Challenge1.jpg' height='20%' width='60%'><br><br>● Print the original ranking list.<br>● Update the rankings at the 2nd, 3rd, 6th, and 7th positions with the values 300, 450, 48,and 502, respectively. Note that the indexing starts from the 1st element.<br>● Print the updated ranking list.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP6-CHDRN7",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

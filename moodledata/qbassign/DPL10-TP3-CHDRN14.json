@@ -1,0 +1,32 @@
+{
+	"title" : "3.4 Master Challenge 2",
+	"question": "Write a program that draws a pattern of six squares on the screen, each with a different color and size. The squares should be arranged in a circular pattern, with each square rotated at 60 degrees from the previous square. The colors of the squares should be in the following order: red, orange, yellow, green, blue, and purple<br><br>The program may not produce the expected output if there are any bugs or errors in the code. Debug the program and fix any errors to get the program working as expected<br><img src='https://learn.qubitsedu.com/images/DP_L10_U03_S04_Challenge1.jpg' width='60%' height='80%' />",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "python",
+	"__language_type_hint": "python - sql - htmlcss  - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL10-TP3-CHDRN14",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

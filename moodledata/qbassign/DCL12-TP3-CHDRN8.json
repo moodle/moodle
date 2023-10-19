@@ -1,0 +1,32 @@
+{
+  "title": "3.2 Master Challenge 2",
+  "question": "Consider the list of patient ids stored as given here: <br><img src='https://learn.qubitsedu.com/images/DC-L12-U03-S02-Challenge-2-Code blocks.png' width='80%' height='20%' /><br>Each patient id is created by combining the first 4 characters of the patient's name and the last four characters of their registration number. Write a pseudocode to store the registration numbers of all patients in a new list by traversing the original list. Implement the same in JavaScript. <br>Sample output: <br><img src='https://learn.qubitsedu.com/images/DC-L12-U03-S02-Challenge-2-Sample output.png' width='80%' height='20%' /><br>Use the following SUBSTRING procedure to write the pseudocode:<br><img src='https://learn.qubitsedu.com/images/DC-L12-U03-S02-Challenge-2-Table.png' width='80%' height='20%' />",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "codeblock",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "pseudocode",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP3-CHDRN8",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

@@ -1,3 +1,147 @@
+/* * {
+  margin: 0;
+} */
+
+@font-face {
+  font-family: "qubits";
+  src: url("fonts/qubits.eot?vstzco");
+  src: url("../fonts/qubits.eot") format("embedded-opentype"),
+    url("../fonts/qubits.ttf") format("truetype"),
+    url("../fonts/qubits.woff") format("woff"),
+    url("../fonts/qubits.svg") format("svg");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="qicon-"],
+[class*=" qicon-"] {
+  font-family: "qubits" !important;
+  /* / speak: never; / */
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* / Better Font Rendering =========== / */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.qicon-anouncement:before {
+  content: "\e900";
+}
+
+.qicon-exercise:before {
+  content: "\e901";
+}
+
+.qicon-theory:before {
+  content: "\e902";
+}
+
+.qicon-challenge:before {
+  content: "\e903";
+}
+
+.qicon-search:before {
+  content: "\e904";
+}
+
+.qicon-progress:before {
+  content: "\e905";
+}
+
+.qicon-calendar:before {
+  content: "\e906";
+}
+
+.qicon-notifications:before {
+  content: "\e907";
+}
+
+.qicon-dashboard:before {
+  content: "\e908";
+}
+
+.qicon-assessment:before {
+  content: "\e909";
+}
+
+.qicon-chevron-down-thin:before {
+  content: "\e90a";
+}
+
+.qicon-menu:before {
+  content: "\e90b";
+}
+
+.qicon-my-courses:before {
+  content: "\e90c";
+}
+
+.qicon-tick-mark:before {
+  content: "\e90d";
+}
+
+.qicon-code-editor:before {
+  content: "\e90e";
+}
+
+.qicon-icon-close-drawer:before {
+  content: "\e90f";
+}
+
+.qicon-icon-back:before {
+  content: "\e910";
+  color: #b3b3b3;
+}
+
+.qicon-external-link-sign:before {
+  content: "\e911";
+  color: #6c6c6c;
+}
+
+.qicon-reset:before {
+  content: "\e912";
+  font-size: 16px;
+}
+
+.qicon-debug:before {
+  content: "\e913";
+  font-size: 16px;
+}
+
+.qicon-run:before {
+  content: "\e914";
+}
+
+.qicon-download:before {
+  content: "\e915";
+  margin-left: -3px;
+}
+
+.qicon-stick-bottom-active:before {
+  content: "\e916";
+}
+
+.qicon-stick-right-active:before {
+  content: "\e917";
+}
+
+.qicon-stick-right-inactive:before {
+  content: "\e918";
+}
+
+.qicon-stick-bottom-inactive:before {
+  content: "\e919";
+}
+
+.qicon-window-mode:before {
+  content: "\e91a";
+}
+
 .hintstyle {
   width: 80%;
 }
@@ -33,7 +177,7 @@
   --content-max-width: 100% !important;
   --menu-bar-height: 50px;
   --mono-font: Consolas, Menlo;
-  /* --code-font-size: 0.875em; */
+  /* / / --code-font-size: 0.875em; / / */
 }
 
 .content html {
@@ -177,6 +321,13 @@ h6:target:before {
   scroll-margin-top: calc(var(--menu-bar-height) + 0.5em);
 }
 
+.content main {
+  margin-left: auto;
+  margin-right: auto;
+  /* / once you proceed integration for moodle uncomment this line max-width: var(--content-max-width);  / */
+  max-width: var(--content-max-width);
+}
+
 .content ol,
 .content p,
 .content ul {
@@ -189,7 +340,7 @@ h6:target:before {
   margin-top: 23px;
 }
 
-.content * {
+.content {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif,
     "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
@@ -199,13 +350,9 @@ h6:target:before {
   font-family: var(--mono-font) !important;
 }
 
-.editor-container * {
+.editor-container {
   font-family: var(--mono-font) !important;
   line-height: 1.1;
-}
-
-.content p {
-  margin-top: 20px;
 }
 
 .content a {
@@ -213,6 +360,7 @@ h6:target:before {
 }
 
 .content a:hover {
+  text-decoration: underline !important;
   color: white !important;
 }
 
@@ -257,7 +405,7 @@ body {
 
 .content h1:not(.menu-title):before {
   content: "";
-  background: url(./images/chapter-tick.2f183901.png)
+  background: url(M.cfg.wwwroot/mod/qubitspage/_next/static/media/chapter-tick.2f183901.png)
     no-repeat;
   background-size: contain;
   width: 118px;
@@ -269,14 +417,10 @@ body {
 }
 
 .content h1:not(.menu-title) {
-    background-color: #47bbb6;
-    border-radius: 30px;
-    position: relative;
-    padding-left: 80px;
-}
-
-.content h1:not(.menu-title.heading-title) {
-  padding-left: 20px;
+  background-color: #47bbb6;
+  border-radius: 30px;
+  position: relative;
+  padding-left: 80px;
 }
 
 h1:target:before,
@@ -398,7 +542,7 @@ code {
 
 .editor-container {
   position: relative;
-  margin-top: 20px !important;
+  /* margin-top: 20px !important; */
 }
 
 .tool-button {
@@ -438,7 +582,7 @@ code {
   padding: 5px;
   position: absolute;
   top: 8px;
-  right: 5px;
+  right: 12px;
 }
 
 .console-wrapper {
@@ -559,6 +703,8 @@ code {
 .standalone-editor {
   min-height: 300px;
   overflow-y: scroll;
+  padding: 10px !important;
+  background-color: #f7f7f7;
 }
 
 .error404 {
@@ -612,17 +758,14 @@ code {
   color: #747474;
   border-color: #747474;
   margin: 0px;
-  padding: 3px 2px;
   border-radius: 4px;
+  height: 30px;
+  width: 40px;
 }
 
 .MuiButtonBase-root.tool-button:hover {
   color: #0f6cbf;
   border-color: #747474;
-}
-
-.MuiSvgIcon-fontSizeMedium {
-  margin-right: 4px;
 }
 
 .MuiButtonBase-root.ai-help-button {
@@ -641,7 +784,7 @@ code {
 
 .standalone-editor-container h1:not(.menu-standalone-editor-title) {
   background-color: #0f6cbf;
-  border-radius: 30px;
+  /* border-radius: 30px; */
   position: relative;
   padding-left: 80px;
 }
@@ -649,12 +792,13 @@ code {
 .standalone-editor-container
   h1:not(.menu-standalone-editor-title.standalone-editor-language-title) {
   padding-left: 20px;
+  margin-bottom: 0px;
 }
 
 .standalone-editor-container .standalone-editor-title a {
   color: white;
   font-weight: normal;
-  font-size: 18px;
+  font-size: 20px;
   position: relative;
   top: -0.5rem;
 }
@@ -664,7 +808,6 @@ code {
 }
 
 .standalone-editor-container a:hover {
-  text-decoration: underline !important;
   color: white !important;
 }
 
@@ -674,14 +817,9 @@ code {
   max-width: var(--content-max-width);
 }
 
-.iframe-container {
-  position: relative;
+.outputpanel .iframe {
   width: 100%;
-}
-
-.iframe {
-  width: 100%;
-  min-height: 300px;
+  height: 670px !important;
   border: none;
 }
 
@@ -791,12 +929,15 @@ thead {
   border: 1px solid black;
   border-radius: 8px;
   padding: 10px;
+  overflow: scroll !important;
 }
 .assignment-wrapper .css-r5rnga .css-vbnk1l {
   color: white;
   background-color: #116cbf;
-}
+  /* .validation-error {
 
+} */
+}
 
 .console-container {
   background-color: #000;
@@ -833,9 +974,12 @@ thead {
 
 .webide-wrapper {
   flex-grow: 1;
-  border-bottom-left-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
   overflow: hidden;
+  height: 670px !important;
+}
+
+.topcodepart .webide-wrapper {
+  height: 330px !important;
 }
 
 .webide-title {
@@ -887,28 +1031,286 @@ thead {
   }
 }
 
-.css-3tmnuj {
-  color: red;
-}
-
-.rpv-core__textbox {
-    width: 100% !important;
-}
-
-pre {
-	color: #fff;
-}
-
 .console-messages {
   padding: 10px;
   height: 330px;
   overflow-y: scroll;
 }
-/* //console-feed fontcolor */
-.css-e393sm {
-  color: white;
-}
-/* custom alert style */
+
+/* / //console-feed fontcolor /
+/ custom alert style / */
 .MuiAlert-filled.error-alert {
   margin-top: 30px;
+}
+
+.flex-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: absolute;
+  right: 5px;
+  top: 25px;
+  width: 50px;
+  color: #6d6d6d;
+}
+
+.flex-tabs svg,
+.output-heading svg {
+  color: #6d6d6d;
+  cursor: pointer;
+}
+
+.flex-tabs svg:hover,
+.output-heading svg:hover {
+  color: #116cbf;
+}
+
+.codepart {
+  height: 670px !important;
+  /* width: 60%; */
+  margin: 5px;
+  background-color: white;
+  overflow: hidden;
+  overflow-y: scroll;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+  height: 670px;
+  background-color: #ebebeb;
+}
+
+.outputpanel {
+  /* width: 40%; */
+  margin: 5px;
+  background-color: white;
+  height: 665px;
+}
+
+.MuiButtonBase-root {
+  text-transform: none !important;
+  font-size: 16px !important;
+  letter-spacing: normal !important;
+}
+
+.output-heading {
+  background-color: #f1f1f1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  font-size: 18px;
+}
+
+.output-main {
+  padding: 10px;
+}
+
+.MuiTooltip-tooltip {
+  background-color: #116cbf !important;
+  padding: 6px !important;
+}
+
+.MuiTooltip-arrow {
+  color: #116cbf !important;
+}
+
+.dockicon {
+  margin-left: 10px;
+}
+
+.bottom-flex-container {
+  background-color: #ebebeb;
+  display: flex;
+  flex-direction: column;
+}
+
+.topcodepart {
+  margin: 5px;
+  background-color: white;
+}
+
+.bottomoutputpanel {
+  margin: 5px;
+  background-color: white;
+}
+
+.consolebutton {
+  background: #116cbf;
+  border: none;
+  padding: 10px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  height: 35px;
+}
+
+.css-1uj0xw4 {
+  border-top: none !important;
+  border-bottom: none !important;
+  color: black !important;
+  padding-left: 5px !important;
+  align-items: center;
+  margin-top: 0 !important;
+}
+
+.css-22elso {
+  color: white !important;
+  background-color: #116cbf !important;
+}
+
+.output-heading .active {
+  color: #116cbf;
+}
+
+/* //split-panel-styles */
+.react-split {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  width: 100%;
+}
+
+.react-split__pane {
+  height: 100%;
+  position: absolute;
+  white-space: normal;
+  width: 100%;
+  overflow: hidden;
+}
+
+.react-split__sash {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  transition: background-color 0.1s;
+  width: 100%;
+  z-index: 2;
+}
+
+.react-split__sash--disabled {
+  pointer-events: none;
+}
+
+.react-split__sash--vertical {
+  cursor: col-resize;
+}
+
+.react-split__sash--horizontal {
+  cursor: row-resize;
+}
+
+.react-split__sash-content {
+  width: 100%;
+  height: 100%;
+}
+
+.react-split__sash-content--active {
+  background-color: #175ede;
+}
+
+.react-split--dragging.react-split--vertical {
+  cursor: col-resize;
+}
+
+.react-split--dragging.react-split--horizontal {
+  cursor: row-resize;
+}
+
+body.react-split--disabled {
+  user-select: none;
+}
+
+.split-sash-content {
+  width: 100%;
+  height: 100%;
+}
+
+.split-sash-content.split-sash-content-vscode.split-sash-content-active {
+  background-color: #175ede;
+}
+
+.dragsection {
+  height: calc(100vh - 72px);
+  background-color: #ebebeb;
+}
+
+.css-1aquho2-MuiTabs-indicator {
+  height: 3px !important;
+}
+
+.css-dnj0yz li {
+  background-color: transparent !important;
+}
+
+.css-dnj0yz li span {
+  color: black !important;
+}
+
+.css-1h9z7r5-MuiButtonBase-root-MuiTab-root.Mui-selected,
+.css-1ocpf3a-MuiButtonBase-root-MuiTab-root.Mui-selected {
+  font-weight: 600;
+}
+
+.css-9tj150-MuiButton-endIcon > *:nth-of-type(1) {
+  font-size: 16px !important;
+}
+
+.accordion {
+  box-shadow: none !important;
+}
+.shortname-profile {
+  background-color: #9e9ea2;
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+}
+.flexrow {
+  display: flex;
+  align-items: center;
+}
+.fullname,
+.comment-heading {
+  color: #116cbf !important;
+}
+.fullname:hover,
+.comment-heading:hover {
+  text-decoration: underline;
+}
+.delete-icon {
+  color: #116cbf;
+  display: flex;
+  justify-content: center;
+}
+
+.MuiSvgIcon-root.delete-icon {
+  margin-left: 50px;
+}
+.no-overflow {
+  margin-left: 55px;
+}
+.expand-icon:hover {
+  background: #116cbf;
+  color: white;
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+  border-radius: 50%;
+  justify-content: end;
+}
+.expand-icon {
+  height: 30px;
+  width: 30px;
+}
+.css-o4b71y-MuiAccordionSummary-content.Mui-expanded {
+  margin: 0 !important;
+}
+.p-0 {
+  padding: 0 !important;
 }

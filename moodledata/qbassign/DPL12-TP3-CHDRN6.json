@@ -1,0 +1,32 @@
+{
+	"title" : "3.1 Master Challenge 1",
+	"question": "Write a program that will help a cook make candy. When you make candy, you must heat the candy mixture to 270 degrees Fahrenheit. The cook should be able to enter the temperature reading from their thermometer into the program. The program should continue to let the cook enter temperatures until the temperature is at least 270 degrees. When the mixture reaches or exceeds 270 degrees, the program should stop asking for the temperature and print Your candy is ready for the next step!<br>Here is a sample run of what it should look like:<br><img src='https://learn.qubitsedu.com/images/DP_L12_U03_S01_Challenge1.jpg' width='70%' height='100%'>",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP3-CHDRN6",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

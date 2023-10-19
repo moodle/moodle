@@ -1,0 +1,32 @@
+{
+	"title" : "6.2 Master Challenge 3",
+	"question": "Write a program that creates an integer array and prints only the elements stored at the odd indexes of the array.<br>For example: int array ={10, 20, 30, 40, 50};<br><br>For this array the output should be printed as shown below:<br><img src='https://learn.qubitsedu.com/images/DP_L12_U06_S02_Challenge3.jpg' height='35%' width='60%'><br><br>Since the odd indexes in the array are 1 and 3, index 1 stores the value 20, index 3 stores the value 40.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",
+	"uid": "DPL12-TP6-CHDRN12",
+	"maxfilesubmissions":"",	
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}

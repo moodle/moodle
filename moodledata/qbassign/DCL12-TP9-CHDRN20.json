@@ -1,0 +1,32 @@
+{
+  "title": "9.4 Master Challenge 1",
+  "question": "Wikipedia - an online encyclopedia written and maintained by a community of volunteers. Wikipedia's crowdsourced model has enabled it to become one of the world's largest repositories of knowledge.<br> 1. How does Wikipedia's crowdsourced model work, and what are some of the benefits and limitations of this approach?<br> 2. What are some of the challenges facing Wikipedia's crowdsourced model, such as issues with vandalism or bias? How is the platform adapting to address these challenges? ",
+  "duedate": "",
+  "submissionfrom": "",
+  "grade_duedate": "",
+  "grade": 100,
+  "submission_type": "onlinetext",
+  "__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+  "activity_instruction": "Sum of 2 numbers",
+  "submissionstatus": "yes",
+  "online_text_limit": "500",
+  "additional_files": "",
+  "codeblock_mode": "automate",
+  "__codeblock_mode_hint": "automate - manual",
+  "language_type": "",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+  "grade_type": "scale",
+  "grading_method": "direct",
+  "uid": "DCL12-TP9-CHDRN20",
+  "maxfilesubmissions": "",
+  "filetypeslist": "",
+  "maxfilesubmissions_size": "",
+  "testcases": [
+    {
+      "value": "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+    },
+    {
+      "value": "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+    }
+  ]
+}

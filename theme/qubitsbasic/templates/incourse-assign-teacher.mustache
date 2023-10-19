@@ -1,0 +1,340 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/drawers
+
+    Boost drawer template.
+
+    Context variables required for this template:
+    * sitename - The name of the site
+    * output - The core renderer for the page
+    * bodyattributes - attributes for the body tag as a string of html attributes
+    * sidepreblocks - HTML for the blocks
+    * hasblocks - true if there are blocks on this page
+    * courseindexopen - true if the nav drawer should be open on page load
+    * regionmainsettingsmenu - HTML for the region main settings menu
+    * hasregionmainsettingsmenu - There is a region main settings menu on this page.
+
+    Example context (json):
+    {
+        "sitename": "Moodle",
+        "output": {
+            "doctype": "<!DOCTYPE html>",
+            "page_title": "Test page",
+            "favicon": "favicon.ico",
+            "main_content": "<h1>Headings make html validators happier</h1>"
+         },
+        "bodyattributes":"",
+        "sidepreblocks": "<h2>Blocks html goes here</h2>",
+        "hasblocks":true,
+        "courseindexopen": true,
+        "navdraweropen": false,
+        "blockdraweropen": true,
+        "regionmainsettingsmenu": "",
+        "hasregionmainsettingsmenu": false,
+        "addblockbutton": ""
+    }
+}}
+{{> theme_boost/head }}
+
+<body {{{ bodyattributes }}}>
+{{> core/local/toast/wrapper}}
+<div id="page-wrapper" class="d-print-block">
+
+    {{{ output.standard_top_of_body_html }}}
+
+    {{> theme_qubitsbasic/sidebar }}
+    {{> theme_qubitsbasic/navbar }}
+    {{#courseindex}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-courseindex{{/id}}
+            {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                {{{courseindex}}}
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-index{{/drawerpreferencename}}
+            {{$drawerstate}}show-drawer-left{{/drawerstate}}
+            {{$tooltipplacement}}right{{/tooltipplacement}}
+            {{$closebuttontext}}{{#str}}closecourseindex, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/courseindex}}
+    {{#hasblocks}}
+        {{< theme_boost/drawer }}
+            {{$id}}theme_boost-drawers-blocks{{/id}}
+            {{$drawerclasses}}drawer drawer-right{{#blockdraweropen}} show{{/blockdraweropen}}{{/drawerclasses}}
+            {{$drawercontent}}
+                <section class="d-print-none" aria-label="{{#str}}blocks{{/str}}">
+                    {{{ addblockbutton }}}
+                    {{{ sidepreblocks }}}
+                </section>
+            {{/drawercontent}}
+            {{$drawerpreferencename}}drawer-open-block{{/drawerpreferencename}}
+            {{$forceopen}}{{#forceblockdraweropen}}1{{/forceblockdraweropen}}{{/forceopen}}
+            {{$drawerstate}}show-drawer-right{{/drawerstate}}
+            {{$tooltipplacement}}left{{/tooltipplacement}}
+            {{$drawercloseonresize}}1{{/drawercloseonresize}}
+            {{$closebuttontext}}{{#str}}closeblockdrawer, core{{/str}}{{/closebuttontext}}
+        {{/ theme_boost/drawer}}
+    {{/hasblocks}}
+    <div id="page" data-region="mainpage" data-usertour="scroller" class="drawers {{#courseindexopen}}show-drawer-left{{/courseindexopen}} {{#blockdraweropen}}show-drawer-right{{/blockdraweropen}} drag-container">
+        <div id="topofscroll" class="main-inner">
+            <div class="drawer-toggles d-flex">
+                {{#courseindex}}
+                    <div class="drawer-toggler drawer-left-toggle open-nav d-print-none d-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-courseindex"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerindex, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerindex, core{{/str}}</span>
+                            {{#pix}} t/index_drawer, moodle {{/pix}}
+                        </button>
+                    </div>
+                {{/courseindex}}
+                {{#hasblocks}}
+                    <div class="drawer-toggler drawer-right-toggle ml-auto d-print-none d-none">
+                        <button
+                            class="btn icon-no-margin"
+                            data-toggler="drawers"
+                            data-action="toggle"
+                            data-target="theme_boost-drawers-blocks"
+                            data-toggle="tooltip"
+                            data-placement="right"
+                            title="{{#str}}opendrawerblocks, core{{/str}}"
+                        >
+                            <span class="sr-only">{{#str}}opendrawerblocks, core{{/str}}</span>
+                            <span class="dir-rtl-hide">{{#pix}}t/blocks_drawer, core{{/pix}}</span>
+                            <span class="dir-ltr-hide">{{#pix}}t/blocks_drawer_rtl, core{{/pix}}</span>
+                        </button>
+                    </div>
+                {{/hasblocks}}
+            </div>
+            {{{ output.full_header }}}
+            {{#secondarymoremenu}}
+                <div class="secondary-navigation d-print-none">
+                    {{> core/moremenu}}
+                </div>
+            {{/secondarymoremenu}}
+            <div id="page-content" class="pb-3 d-print-block">
+                <div id="region-main-box">
+                    {{#hasregionmainsettingsmenu}}
+                    <div id="region-main-settings-menu" class="d-print-none">
+                        <div> {{{ regionmainsettingsmenu }}} </div>
+                    </div>
+                    {{/hasregionmainsettingsmenu}}
+                    <section id="region-main" aria-label="{{#str}}content{{/str}}">
+
+                        {{#hasregionmainsettingsmenu}}
+                            <div class="region_main_settings_menu_proxy"></div>
+                        {{/hasregionmainsettingsmenu}}
+                        {{{ output.course_content_header }}}
+                        
+                            {{#headercontent}}
+                                {{> core/activity_header }}
+                            {{/headercontent}}
+                       
+                        {{#overflow}}
+                            <div class="container-fluid tertiary-navigation">
+                                <div class="navitem">
+                                    {{> core/url_select}}
+                                </div>
+                            </div>
+                        {{/overflow}}
+                            {{#is_showreact}}
+                            <div id="__next"></div>
+                            <div class="d-none">{{{ output.main_content }}}</div>
+                            {{{ output.activity_navigation }}}
+                            {{{ output.course_content_footer }}}
+                            {{/is_showreact}}
+
+                            {{^is_showreact}}
+                            {{{ output.main_content }}}
+                            {{{ output.activity_navigation }}}
+                            {{{ output.course_content_footer }}}
+                            {{/is_showreact}}
+                    </section>
+                </div>
+            </div>
+        </div>
+        {{> theme_boost/footer }}
+    </div>
+    {{{ output.standard_after_main_region_html }}}
+</div>
+
+</body>
+</html>
+{{#js}}
+M.util.js_pending('theme_boost/loader');
+require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
+    Drawer.init();
+    M.util.js_complete('theme_boost/loader');
+});
+{{/js}}
+{{#is_showreact}}
+<link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/Chapter.css" />
+<link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/highlight.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" integrity="sha512-5A8nwdMOWrSz20fDsjczgUidUBR8liPYU+WymTZP1lmY9G6Oc7HlZv156XqnsgNUzTyMefFTcsFH/tnJE/+xBg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<script src="https://cdn.jsdelivr.net/gh/qubits-platform/sqlite-wasm@master/sqlite3.js" defer=""></script>
+<link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/pytutor.css" />
+<link rel="stylesheet" href="{{globals.config.wwwroot}}/third_party/qubits/css/jquery-ui.min.css" />
+<style>
+.ace-tm{
+    background-color: #fff;
+}
+</style>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<noscript data-n-css=""></noscript>
+<style data-href="https://fonts.googleapis.com/icon?family=Material+Icons">
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNa.woff) format('woff')
+      }
+
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        font-feature-settings: 'liga'
+      }
+
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/materialicons/v140/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2) format('woff2')
+      }
+
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased
+      }
+</style>
+
+<script id="__NEXT_DATA__" type="application/json">
+    {
+    "props": {
+        "pageProps": {}
+    },
+    "page": "/TeacherSideView",
+    "query": {
+        "ufield" : "{{muid}}",
+        "userid" : "{{userid}}"
+    },
+    "buildId": "Uax2aoFve0fGjmf5qSMjb",
+    "nextExport": true,
+    "autoExport": true,
+    "isFallback": false,
+    "scriptLoader": []
+    }
+</script>
+
+
+{{#js}}
+let murl = M.cfg.wwwroot + '/third_party/qubits';
+require(["jquery", "jqueryui"], function($, jqui){
+    $.getScript( "https://cdn.jsdelivr.net/pyodide/v0.21.3/full/pyodide.js" )
+    .done(function( script, textStatus ) {
+        $.when(
+            $.getScript(`${murl}/js/d3.v2.min.js`),
+            $.getScript(`${murl}/js/jquery.jsPlumb-1.3.10-all-min.js`),
+            $.getScript(`${murl}/js/pytutor.js`),
+            $.getScript(`${murl}/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js`),
+$.getScript(`${murl}/_next/static/chunks/webpack-7edae2f81c64c5b2.js`),
+$.getScript(`${murl}/_next/static/chunks/framework-73b8966a3c579ab0.js`),
+$.getScript(`${murl}/_next/static/chunks/main-b2630dc1035b5fee.js`),
+$.getScript(`${murl}/_next/static/chunks/110-fc5d51b4955c2c4e.js`),
+$.getScript(`${murl}/_next/static/chunks/119-77838d3189794a28.js`),
+$.getScript(`${murl}/_next/static/chunks/132-30e7292a7acd5b9d.js`),
+$.getScript(`${murl}/_next/static/chunks/176.73b8a81db93d2e40.js`),
+$.getScript(`${murl}/_next/static/chunks/241-d5ad5b38883a5bf9.js`),
+$.getScript(`${murl}/_next/static/chunks/26-d50e3ad951892cd1.js`),
+$.getScript(`${murl}/_next/static/chunks/268.d4f2a5abaecfe937.js`),
+$.getScript(`${murl}/_next/static/chunks/2b7b2d2a-bf3badb4f8422355.js`),
+$.getScript(`${murl}/_next/static/chunks/308-24d18944ee292eb0.js`),
+$.getScript(`${murl}/_next/static/chunks/395-49eb72d4e7d7c7c8.js`),
+$.getScript(`${murl}/_next/static/chunks/441.1d49677cbddfbd30.js`),
+$.getScript(`${murl}/_next/static/chunks/489.5f85e480483bd8ae.js`),
+$.getScript(`${murl}/_next/static/chunks/513-32c986c787971bf3.js`),
+$.getScript(`${murl}/_next/static/chunks/568.25e344edffa76485.js`),
+$.getScript(`${murl}/_next/static/chunks/581.c79b1e130d5ee6d2.js`),
+$.getScript(`${murl}/_next/static/chunks/583.92971570c5af7c36.js`),
+$.getScript(`${murl}/_next/static/chunks/667-94e8bd101f6c09f1.js`),
+$.getScript(`${murl}/_next/static/chunks/697.125cdcaa49d704f7.js`),
+$.getScript(`${murl}/_next/static/chunks/70.1fae6ae48a390866.js`),
+$.getScript(`${murl}/_next/static/chunks/868-d97d1c8bf82105eb.js`),
+$.getScript(`${murl}/_next/static/chunks/8a28b14e-96237857ba0e8686.js`),
+$.getScript(`${murl}/_next/static/chunks/95-05f034fd9c73f188.js`),
+$.getScript(`${murl}/_next/static/chunks/981-c9b1114f978652c7.js`),
+$.getScript(`${murl}/_next/static/chunks/d2094a0f-45a7e1bd71808f43.js`),
+$.getScript(`${murl}/_next/static/chunks/d3048c20-6953e1ade0ff3a81.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/Assignment-ddc27baf28d3626b.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/Chapter1-47a095daa938964a.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/Chapter2-e4e8f348bbf673b3.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/Chapter3-27f67bd0a7713e8c.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/CloudIDE-59d07be30c972a2a.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/Editor/[language]-b440db8d24280f81.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/index-e5e200aa3454aed5.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/pdf-04074dd6a9619057.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/TeacherSideView-b2f4fcba756318d8.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/_app-c69b2c1c2c2a4ea3.js`),
+$.getScript(`${murl}/_next/static/chunks/pages/_error-a2805152a5cb71b2.js`),
+$.getScript(`${murl}/_next/static/Uax2aoFve0fGjmf5qSMjb/_buildManifest.js`),
+$.getScript(`${murl}/_next/static/Uax2aoFve0fGjmf5qSMjb/_ssgManifest.js`),
+
+
+     $.Deferred(
+                function( deferred ){
+                    $( deferred.resolve );
+                }
+            )
+        ).done(function(){
+
+        })
+
+    })
+    .fail(function( jqxhr, settings, exception ) {
+        console.log( "Triggered ajaxError handler." );
+    });
+
+});
+{{/js}}
+{{/is_showreact}}

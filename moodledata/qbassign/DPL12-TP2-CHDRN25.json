@@ -1,0 +1,32 @@
+{
+	"title" : "2.6 Master Challenge 2",
+	"question": "Write a program that takes input from the user to determine if two numbers are both negative. The program should compute two boolean expressions in order to determine if the equivalent De Morgan expression gives the same result when checking for negative numbers.<br>This expression is given in the following code:<br>Convert the bothNegative boolean into its equivalent boolean expression on its own line and call it bothNegativeDeMorgan. De Morgan’s laws show equivalencies, so you can work with boolean expressions in either direction, not just with distributing the ! throughout an expression.<br>Your resulting boolean expression for bothNegativeDeMorgan should produce the same result as both negative. The resulting program should still be able to successfully determine if two numbers entered by a user are both negative or not.",
+	"duedate": "",
+	"submissionfrom": "",
+	"grade_duedate": "",
+	"grade":100,	
+	"submission_type": "codeblock", 
+	"__submission_type_hint": "onlinetext - onlinefile - scratch - codeblock",
+	"activity_instruction":"Sum of 2 numbers",	
+	"submissionstatus": "yes",
+	"online_text_limit":"500",
+	"additional_files": "",	
+	"codeblock_mode": "manual",
+	"__codeblock_mode_hint": "automate - manual",
+	"language_type": "java",
+	"__language_type_hint": "python - sql - htmlcss - javascript - R - pseudocode - java",
+	"grade_type":"scale",
+	"grading_method": "direct",   
+	"uid": "DPL12-TP2-CHDRN25",
+	"maxfilesubmissions":"",
+	"filetypeslist":"",	
+	"maxfilesubmissions_size":"",	
+	"testcases" : [
+	  {
+		"value" : "Case = Test integer sum\ninput = 1 2 3 5\noutput = 11"
+	  },
+	  {
+		"value" : "Case = Test integer sum\ninput = 1\n -2\n 3\n 5\noutput = 7"
+	  }
+	]
+}
