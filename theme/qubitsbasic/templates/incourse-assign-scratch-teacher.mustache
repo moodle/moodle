@@ -179,3 +179,21 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
     M.util.js_complete('theme_boost/loader');
 });
 {{/js}}
+
+{{#is_scratch}}
+<script>
+M.assn = {
+    "uid" : "{{muid}}",
+    "userid" : "{{userid}}"
+}
+</script>
+<script type="text/javascript" src="{{scratch_aurl}}/lib.min.js"></script>
+<script type="text/javascript" src="{{scratch_aurl}}/chunks/gui.js"></script>
+{{#js}}
+require(['jquery'], function($) {
+   $('.index_app_2mqDO').appendTo('#topofscroll');
+});
+{{/js}}
+{{/is_scratch}}
+
+

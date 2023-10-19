@@ -147,10 +147,6 @@
                         {{/hasregionmainsettingsmenu}}
                         {{{ output.course_content_header }}}
                         
-                            {{#headercontent}}
-                                {{> core/activity_header }}
-                            {{/headercontent}}
-                       
                         {{#overflow}}
                             <div class="container-fluid tertiary-navigation">
                                 <div class="navitem">
@@ -158,9 +154,13 @@
                                 </div>
                             </div>
                         {{/overflow}}
-                            {{{ output.main_content }}}
-                            {{{ output.activity_navigation }}}
-                            {{{ output.course_content_footer }}}
+                        
+                        <div id="__next"></div>
+                        <div class="d-none">{{{ output.main_content }}}</div>
+                        {{{ output.activity_navigation }}}
+                        {{{ output.course_content_footer }}}
+                        
+                        
                     </section>
                 </div>
             </div>
@@ -179,3 +179,17 @@ require(['theme_boost/loader', 'theme_boost/drawer'], function(Loader, Drawer) {
     M.util.js_complete('theme_boost/loader');
 });
 {{/js}}
+
+<script>
+M.assn = {
+    "uid" : "{{muid}}"
+}
+</script>
+<script type="text/javascript" src="{{scratch_aurl}}/lib.min.js"></script>
+<script type="text/javascript" src="{{scratch_aurl}}/chunks/gui.js"></script>
+{{#js}}
+require(['jquery'], function($) {
+   $('.index_app_2mqDO').appendTo('#topofscroll');
+});
+{{/js}}
+
