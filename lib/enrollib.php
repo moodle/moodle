@@ -1740,9 +1740,11 @@ function enrol_get_course_by_user_enrolment_id($ueid) {
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param array $usersfilter Limit the results obtained to this list of user ids. $uefilter compatibility not guaranteed.
  * @param array $uefilter Limit the results obtained to this list of user enrolment ids. $usersfilter compatibility not guaranteed.
+ * @param array $usergroups Limit the results of users to the ones that belong to one of the submitted group ids.
  * @return stdClass[]
  */
-function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = array(), $uefilter = array()) {
+function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfilter = [], $uefilter = [],
+                                $usergroups = []) {
     global $DB;
 
     if (!$courseid && !$usersfilter && !$uefilter) {
@@ -1783,6 +1785,16 @@ function enrol_get_course_users($courseid = false, $onlyactive = false, $usersfi
         list($uesql, $ueparams) = $DB->get_in_or_equal($uefilter, SQL_PARAMS_NAMED);
         $conditions[] = "ue.id $uesql";
         $params = $params + $ueparams;
+    }
+
+    // Only select enrolled users that belong to a specific group(s).
+    if (!empty($usergroups)) {
+        $usergroups = array_map(function ($item) { // Sanitize groupid to int to be save for sql.
+            return (int)$item;
+        }, $usergroups);
+        list($ugsql, $ugparams) = $DB->get_in_or_equal($usergroups, SQL_PARAMS_NAMED);
+        $conditions[] = 'ue.userid IN (SELECT userid FROM {groups_members} WHERE groupid ' . $ugsql . ')';
+        $params = $params + $ugparams;
     }
 
     return $DB->get_records_sql($sql . ' ' . implode(' AND ', $conditions), $params);
