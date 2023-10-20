@@ -970,6 +970,13 @@ $functions = array(
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_grades_get_gradable_users' => [
+        'classname' => 'core_grades\external\get_gradable_users',
+        'description' => 'Returns the gradable users in a course',
+        'type' => 'read',
+        'ajax' => true,
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_grading_get_definitions' => array(
         'classname' => 'core_grading_external',
         'methodname' => 'get_definitions',
