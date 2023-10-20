@@ -168,6 +168,8 @@ class report_loglive_renderable implements renderable {
      * @return stdClass filters
      */
     protected function setup_filters() {
+        global $USER;
+
         $readers = $this->get_readers();
 
         // Set up filters.
@@ -177,6 +179,15 @@ class report_loglive_renderable implements renderable {
             $context = context_course::instance($filter->courseid);
             if (!has_capability('moodle/site:viewanonymousevents', $context)) {
                 $filter->anonymous = 0;
+            }
+            if (groups_get_course_groupmode($this->course) == SEPARATEGROUPS &&
+                !has_capability('moodle/site:accessallgroups', $context)) {
+                if ($cgroups = groups_get_all_groups($this->course->id, $USER->id)) {
+                    $filter->groups = [];
+                    foreach ($cgroups as $cgroup) {
+                        $filter->groups[] = (int)$cgroup->id;
+                    }
+                }
             }
         } else {
             $filter->courseid = 0;
