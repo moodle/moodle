@@ -3896,7 +3896,7 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                     $updateactivityonline->value = $submission_codestatus;           
                     $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
 
-                    if(isset($getactive_onlinetype))
+                    if(isset($getactive_onlinetype) and isset($getactive_onlinetype->id))
                     {
                         $updateactivityonline = new stdClass();
                         $updateactivityonline->id = $getactive_onlinetype->id;

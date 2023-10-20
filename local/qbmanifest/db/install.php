@@ -88,6 +88,34 @@ function xmldb_local_qbmanifest_install() {
             $dbman->add_field($table, $field);
         }
 
+        $table = new xmldb_table('qbassignsubmission_onlinetex');
+        $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('qbassignsubmission_file');
+        $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('qbassignsubmission_scratch');
+        $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        $table = new xmldb_table('qbassignsubmission_codeblock');
+        $field = new xmldb_field('explanation', XMLDB_TYPE_TEXT, null, null, null, null, null);
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
         $cexists = $DB->get_record('question_categories', array("idnumber" => 'qbtopcat'));
 
         if(empty($cexists)){
