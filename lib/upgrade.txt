@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.0.12 ===
+* In enrollib.php, the method enrol_get_course_users() got an optional 5th parameter $usergroups that
+  defaults to an empty array. Here, user group ids can be provided, to select enrolled users in a course
+  that are also members of these groups.
+
 === 4.0.11 ===
 * New Behat step \behat_general::the_page_title_should_contain() has been added to allow checking of page titles. You can use this
   when writing feature files to check that the page title contains the expected string.
