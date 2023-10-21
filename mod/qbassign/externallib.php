@@ -3699,6 +3699,30 @@ class mod_qbassign_external extends \mod_qbassign\external\external_api {
                     $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
                  }           
              } 
+
+             if($submission_type == 'scratch') 
+            {  
+                $submission_scratchstatus = ($submissionstatus=='yes')?1:0;
+                $getactive_online = $DB->get_record('qbassign_plugin_config', array('plugin' => 'scratch','subtype' => 'qbassignsubmission','name'=>'enabled','qbassignment'=>$check_uniquefield->id));
+                if(isset($getactive_online))
+                {
+                    $updateactivityonline = new stdClass();
+                    $updateactivityonline->id = $getactive_online->id;
+                    $updateactivityonline->value = $submission_scratchstatus;           
+                    $onlinetext_default = $DB->update_record('qbassign_plugin_config', $updateactivityonline);
+                }
+                else
+                {
+                    $updateactivityonline =  array(
+                     'qbassignment' => $check_uniquefield->id,
+                     'plugin' => 'scratch',
+                     'subtype' => 'qbassignsubmission',
+                     'name' => 'enabled',
+                     'value' => $submission_scratchstatus
+                     );
+                    $onlinetext_default = $DB->insert_record('qbassign_plugin_config', $updateactivityonline);
+                }           
+            }
              
              $assign_updated = [                        
                          'message'=>'Successfuly updated assignment',
