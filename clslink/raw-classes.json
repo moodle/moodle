@@ -1,111 +1,17 @@
 {
     "classes": [
         {
-            "sourcedId": "109511",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109512",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "10959",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL01",
+                "dnsbarshaG1DDCL01"
+              ],
             "sourcedId": "109510",
             "status": "active",
             "dateLastModified": "2023-10-13T08:09:55.000Z",
@@ -141,496 +47,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109592",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1E)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109593",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1F)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109594",
-            "status": "active",
-            "dateLastModified": "2023-10-13T08:09:55.000Z",
-            "title": "Design & Technology (1G)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "01"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109513",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109514",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109515",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109516",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109595",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2E)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109596",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2F)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109597",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (2G)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "02"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109517",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (3A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "03"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109518",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (3B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "03"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109519",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (3C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "03"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109520",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (3D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "03"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL03",
+                "dnsbarshaG1EDCL03"
+              ],
             "sourcedId": "1095101",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -666,6 +93,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL03",
+                "dnsbarshaG1FDCL03"
+              ],
             "sourcedId": "1095102",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -701,6 +139,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+            "DPL03",
+            "DCL03"
+          ],
+          "qubitsgrade": "G1",
+          "qubitssection": "G",
+          "qubitscohort": "dnsbarsha",
+          "qubitsgroup": [
+            "dnsbarshaG1GDPL03",
+            "dnsbarshaG1GDCL03"
+          ],
             "sourcedId": "1095103",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -736,146 +185,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109521",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (4A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "04"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109522",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (4B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "04"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109523",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (4C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "04"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109524",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (4D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "04"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL04",
+                "dnsbarshaG1EDCL04"
+              ],
             "sourcedId": "1095107",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -911,6 +231,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL04",
+                "dnsbarshaG1FDCL04"
+              ],
             "sourcedId": "1095108",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -946,6 +277,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL04",
+                "dnsbarshaG1GDCL04"
+              ],
             "sourcedId": "1095109",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -981,6 +323,63 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL01",
+                "dnsbarshaG1ADCL01"
+              ],
+            "sourcedId": "109511",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "H",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1HDPL04",
+                "dnsbarshaG1HDCL04"
+              ],
             "sourcedId": "1095110",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1016,6 +415,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "J",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1JDPL04",
+                "dnsbarshaG1JDCL04"
+              ],
             "sourcedId": "1095112",
             "status": "active",
             "dateLastModified": "2023-08-28T16:58:46.000Z",
@@ -1051,146 +461,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109525",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (5A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "05"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109526",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (5B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "05"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109527",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (5C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "05"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109528",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (5D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "05"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL05",
+                "dnsbarshaG1EDCL05"
+              ],
             "sourcedId": "1095113",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1226,6 +507,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL05",
+                "dnsbarshaG1FDCL05"
+              ],
             "sourcedId": "1095114",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1261,6 +553,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL05",
+                "dnsbarshaG1GDCL05"
+              ],
             "sourcedId": "1095115",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1296,6 +599,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+            "DPL05",
+            "DCL05"
+          ],
+          "qubitsgrade": "G1",
+          "qubitssection": "H",
+          "qubitscohort": "dnsbarsha",
+          "qubitsgroup": [
+            "dnsbarshaG1HDPL05",
+            "dnsbarshaG1HDCL05"
+          ],
             "sourcedId": "1095116",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1331,146 +645,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109529",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (6A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "06"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109530",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (6B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "06"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109531",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (6C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "06"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109532",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (6D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "06"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL06",
+                "dnsbarshaG1EDCL06"
+              ],
             "sourcedId": "1095119",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1506,6 +691,63 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL01",
+                "dnsbarshaG1BDCL01"
+              ],
+            "sourcedId": "109512",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL06",
+                "dnsbarshaG1FDCL06"
+              ],
             "sourcedId": "1095120",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1541,6 +783,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL06",
+                "dnsbarshaG1GDCL06"
+              ],
             "sourcedId": "1095121",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1576,6 +829,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "H",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1HDPL06",
+                "dnsbarshaG1HDCL06"
+              ],
             "sourcedId": "1095122",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1611,6 +875,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "I",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1IDPL06",
+                "dnsbarshaG1IDCL06"
+              ],
             "sourcedId": "1095123",
             "status": "active",
             "dateLastModified": "2023-08-28T16:58:46.000Z",
@@ -1646,146 +921,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109533",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (7A)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "07"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109534",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (7B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "07"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109535",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (7C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "07"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109536",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:58:46.000Z",
-            "title": "Design & Technology (7D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "07"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL07",
+                "dnsbarshaG1EDCL07"
+              ],
             "sourcedId": "1095125",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1821,6 +967,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL07",
+                "dnsbarshaG1FDCL07"
+              ],
             "sourcedId": "1095126",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1856,6 +1013,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL07",
+                "dnsbarshaG1GDCL07"
+              ],
             "sourcedId": "1095127",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1891,6 +1059,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "H",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1HDPL07",
+                "dnsbarshaG1HDCL07"
+              ],
             "sourcedId": "1095128",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -1926,15 +1105,26 @@
             "resources": []
         },
         {
-            "sourcedId": "109537",
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL02",
+                "dnsbarshaG1ADCL02"
+              ],
+            "sourcedId": "109513",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (8A)",
+            "title": "Design & Technology (2A)",
             "classCode": "",
             "classType": "scheduled",
             "location": "",
             "grades": [
-                "08"
+                "02"
             ],
             "subjects": [],
             "course": {
@@ -1961,111 +1151,17 @@
             "resources": []
         },
         {
-            "sourcedId": "109538",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (8B)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "08"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109539",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (8C)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "08"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
-            "sourcedId": "109540",
-            "status": "active",
-            "dateLastModified": "2023-08-28T16:57:18.000Z",
-            "title": "Design & Technology (8D)",
-            "classCode": "",
-            "classType": "scheduled",
-            "location": "",
-            "grades": [
-                "08"
-            ],
-            "subjects": [],
-            "course": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
-                "sourcedId": "1_95",
-                "type": "course"
-            },
-            "school": {
-                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
-                "sourcedId": "1",
-                "type": "org"
-            },
-            "terms": [
-                {
-                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
-                    "sourcedId": "2024",
-                    "type": "academicSession"
-                }
-            ],
-            "subjectCodes": [],
-            "periods": [
-                "1"
-            ],
-            "resources": []
-        },
-        {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL08",
+                "dnsbarshaG1EDCL08"
+              ],
             "sourcedId": "1095131",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -2101,6 +1197,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL08",
+                "dnsbarshaG1FDCL08"
+              ],
             "sourcedId": "1095132",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -2136,6 +1243,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL08",
+                "dnsbarshaG1GDCL08"
+              ],
             "sourcedId": "1095133",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -2171,6 +1289,17 @@
             "resources": []
         },
         {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "H",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1HDPL08",
+                "dnsbarshaG1HDCL08"
+              ],
             "sourcedId": "1095134",
             "status": "active",
             "dateLastModified": "2023-08-28T16:57:18.000Z",
@@ -2180,6 +1309,1570 @@
             "location": "",
             "grades": [
                 "08"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL02",
+                "dnsbarshaG1BDCL02"
+              ],
+            "sourcedId": "109514",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL02",
+                "dnsbarshaG1CDCL02"
+              ],
+            "sourcedId": "109515",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL02",
+                "dnsbarshaG1DDCL02"
+              ],
+            "sourcedId": "109516",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL03",
+                "dnsbarshaG1ADCL03"
+              ],
+            "sourcedId": "109517",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (3A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "03"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL03",
+                "dnsbarshaG1BDCL03"
+              ],
+            "sourcedId": "109518",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (3B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "03"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL03",
+                "dnsbarshaG1CDCL03"
+              ],
+            "sourcedId": "109519",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (3C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "03"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL03",
+                "DCL03"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL03",
+                "dnsbarshaG1DDCL03"
+              ],
+            "sourcedId": "109520",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (3D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "03"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL04",
+                "dnsbarshaG1ADCL04"
+              ],
+            "sourcedId": "109521",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (4A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "04"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL04",
+                "dnsbarshaG1BDCL04"
+              ],
+            "sourcedId": "109522",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (4B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "04"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL04",
+                "dnsbarshaG1CDCL04"
+              ],
+            "sourcedId": "109523",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (4C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "04"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL04",
+                "DCL04"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL04",
+                "dnsbarshaG1DDCL04"
+              ],
+            "sourcedId": "109524",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (4D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "04"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL05",
+                "dnsbarshaG1ADCL05"
+              ],
+            "sourcedId": "109525",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (5A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "05"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL05",
+                "dnsbarshaG1BDCL05"
+              ],
+            "sourcedId": "109526",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (5B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "05"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL05",
+                "dnsbarshaG1CDCL05"
+              ],
+            "sourcedId": "109527",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (5C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "05"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL05",
+                "DCL05"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL05",
+                "dnsbarshaG1DDCL05"
+              ],
+            "sourcedId": "109528",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (5D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "05"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL06",
+                "dnsbarshaG1ADCL06"
+              ],
+            "sourcedId": "109529",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (6A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "06"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL06",
+                "dnsbarshaG1BDCL06"
+              ],
+            "sourcedId": "109530",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (6B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "06"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL06",
+                "dnsbarshaG1CDCL06"
+              ],
+            "sourcedId": "109531",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (6C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "06"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL06",
+                "DCL06"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL06",
+                "dnsbarshaG1DDCL06"
+              ],
+            "sourcedId": "109532",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (6D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "06"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL07",
+                "dnsbarshaG1ADCL07"
+              ],
+            "sourcedId": "109533",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (7A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "07"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL07",
+                "dnsbarshaG1BDCL07"
+              ],
+            "sourcedId": "109534",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (7B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "07"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL07",
+                "dnsbarshaG1CDCL07"
+              ],
+            "sourcedId": "109535",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (7C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "07"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL07",
+                "DCL07"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL07",
+                "dnsbarshaG1DDCL07"
+              ],
+            "sourcedId": "109536",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:58:46.000Z",
+            "title": "Design & Technology (7D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "07"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "A",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1ADPL08",
+                "dnsbarshaG1ADCL08"
+              ],
+            "sourcedId": "109537",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (8A)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "08"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "B",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1BDPL08",
+                "dnsbarshaG1BDCL08"
+              ],
+            "sourcedId": "109538",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (8B)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "08"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL08",
+                "dnsbarshaG1CDCL08"
+              ],
+            "sourcedId": "109539",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (8C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "08"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL08",
+                "DCL08"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "D",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1DDPL08",
+                "dnsbarshaG1DDCL08"
+              ],
+            "sourcedId": "109540",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (8D)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "08"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "C",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1CDPL01",
+                "dnsbarshaG1CDCL01"
+              ],
+            "sourcedId": "10959",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1C)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL01",
+                "dnsbarshaG1EDCL01"
+              ],
+            "sourcedId": "109592",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1E)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL01",
+                "dnsbarshaG1FDCL01"
+              ],
+            "sourcedId": "109593",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1F)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL01",
+                "DCL01"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL01",
+                "dnsbarshaG1GDCL01"
+              ],
+            "sourcedId": "109594",
+            "status": "active",
+            "dateLastModified": "2023-10-13T08:09:55.000Z",
+            "title": "Design & Technology (1G)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "01"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "E",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1EDPL02",
+                "dnsbarshaG1EDCL02"
+              ],
+            "sourcedId": "109595",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2E)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "F",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1FDPL02",
+                "dnsbarshaG1FDCL02"
+              ],
+            "sourcedId": "109596",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2F)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
+            ],
+            "subjects": [],
+            "course": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+                "sourcedId": "1_95",
+                "type": "course"
+            },
+            "school": {
+                "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+                "sourcedId": "1",
+                "type": "org"
+            },
+            "terms": [
+                {
+                    "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+                    "sourcedId": "2024",
+                    "type": "academicSession"
+                }
+            ],
+            "subjectCodes": [],
+            "periods": [
+                "1"
+            ],
+            "resources": []
+        },
+        {
+            "qubitscourses": [
+                "DPL02",
+                "DCL02"
+              ],
+              "qubitsgrade": "G1",
+              "qubitssection": "G",
+              "qubitscohort": "dnsbarsha",
+              "qubitsgroup": [
+                "dnsbarshaG1GDPL02",
+                "dnsbarshaG1GDCL02"
+              ],
+            "sourcedId": "109597",
+            "status": "active",
+            "dateLastModified": "2023-08-28T16:57:18.000Z",
+            "title": "Design & Technology (2G)",
+            "classCode": "",
+            "classType": "scheduled",
+            "location": "",
+            "grades": [
+                "02"
             ],
             "subjects": [],
             "course": {
