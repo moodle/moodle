@@ -22,7 +22,7 @@ use context_course;
 use context_user;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\local\filters\{boolean_select, date, select};
+use core_reportbuilder\local\filters\{boolean_select, date, number, select};
 use core_reportbuilder\local\filters\tags as tags_filter;
 
 defined('MOODLE_INTERNAL') || die();
@@ -97,6 +97,7 @@ class tags_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:description']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagged']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagcount']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:timemodified']);
 
         // Context.
@@ -113,29 +114,47 @@ class tags_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
-        $courserow = array_values($content[0]);
+        [
+            $collectiondefault,
+            $collectioncomponent,
+            $collectionsearchable,
+            $collectioncustomurl,
+            $tagname,
+            $tagdescription,
+            $tagflagged,
+            $tagflagcount,
+            $tagtimemodified,
+            $contextlink,
+            $instancearea,
+            $instancecomponent,
+            $instanceitemtype,
+            $instanceitemid,
+            $instancetimecreated,
+            $instancetimemodified,
+        ] = array_values($content[0]);
 
         // Collection.
-        $this->assertEquals('Yes', $courserow[0]);
-        $this->assertEmpty($courserow[1]);
-        $this->assertEquals('Yes', $courserow[2]);
-        $this->assertEmpty($courserow[3]);
+        $this->assertEquals('Yes', $collectiondefault);
+        $this->assertEmpty($collectioncomponent);
+        $this->assertEquals('Yes', $collectionsearchable);
+        $this->assertEmpty($collectioncustomurl);
 
         // Tag.
-        $this->assertEquals('Horses', $courserow[4]);
-        $this->assertEquals('<div class="text_to_html">Neigh</div>', $courserow[5]);
-        $this->assertEquals('Yes', $courserow[6]);
-        $this->assertNotEmpty($courserow[7]);
+        $this->assertEquals('Horses', $tagname);
+        $this->assertEquals('<div class="text_to_html">Neigh</div>', $tagdescription);
+        $this->assertEquals('Yes', $tagflagged);
+        $this->assertEquals(2, $tagflagcount);
+        $this->assertNotEmpty($tagtimemodified);
 
         // Instance.
         $this->assertEquals('<a href="' . $coursecontext->get_url()  . '">' . $coursecontext->get_context_name()  . '</a>',
-            $courserow[8]);
-        $this->assertEquals('Courses', $courserow[9]);
-        $this->assertEquals('core', $courserow[10]);
-        $this->assertEquals('course', $courserow[11]);
-        $this->assertEquals($course->id, $courserow[12]);
-        $this->assertNotEmpty($courserow[13]);
-        $this->assertNotEmpty($courserow[14]);
+            $contextlink);
+        $this->assertEquals('Courses', $instancearea);
+        $this->assertEquals('core', $instancecomponent);
+        $this->assertEquals('course', $instanceitemtype);
+        $this->assertEquals($course->id, $instanceitemid);
+        $this->assertNotEmpty($instancetimecreated);
+        $this->assertNotEmpty($instancetimemodified);
     }
 
     /**
@@ -189,6 +208,14 @@ class tags_test extends core_reportbuilder_testcase {
             ], true],
             'Filter tag flagged (no match)' => ['tag:flagged', [
                 'tag:flagged_operator' => boolean_select::NOT_CHECKED,
+            ], false],
+            'Filter tag flag count' => ['tag:flagcount', [
+                'tag:flagcount_operator' => number::GREATER_THAN,
+                'tag:flagcount_value1' => 1,
+            ], true],
+            'Filter tag flag count (no match)' => ['tag:flagcount', [
+                'tag:flagcount_operator' => number::EQUAL_TO,
+                'tag:flagcount_value1' => 0,
             ], false],
             'Filter tag time modified' => ['tag:timemodified', [
                 'tag:timemodified_operator' => date::DATE_RANGE,
