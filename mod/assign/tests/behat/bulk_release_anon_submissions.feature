@@ -27,25 +27,15 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
       | assignsubmission_onlinetext_enabled | 1                           |
       | assignsubmission_file_enabled       | 0                           |
       | markingworkflow                     | 1                           |
+      | markinganonymous                    | 0                           |
       | blindmarking                        | 1                           |
       | assignfeedback_comments_enabled     | 1                           |
       | assignfeedback_editpdf_enabled      | 1                           |
     # Add a submission.
-    And I am on the "Test assignment name" "assign activity" page logged in as "student1"
-    Then I should not see "Feedback"
-    And I should see "Not marked" in the "Grading status" "table_row"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm student1's submission |
-    And I press "Save changes"
-    # Add another submission.
-    And I am on the "Test assignment name" "assign activity" page logged in as "student2"
-    Then I should not see "Feedback"
-    And I should see "Not marked" in the "Grading status" "table_row"
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm student2's submission |
-    And I press "Save changes"
+    And the following "mod_assign > submissions" exist:
+      | assign               | user     | onlinetext                |
+      | Test assignment name | student1 | I'm student1's submission |
+      | Test assignment name | student2 | I'm student2's submission |
     # Mark the submissions.
     And I am on the "Test assignment name" "assign activity" page logged in as "teacher1"
     And I follow "View all submissions"
@@ -119,6 +109,32 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
     And I follow "View all submissions"
     Then I should see "Released" in the "Student 1" "table_row"
     And I should see "Released" in the "Student 2" "table_row"
+    And I am on the "Course 1" "grades > User report > View" page logged in as "student1"
+    Then I should see "50"
+    And I should see "Great job!"
+    And I am on the "Course 1" "grades > User report > View" page logged in as "student2"
+    Then I should see "50"
+    And I should see "Great job!"
+
+  @javascript @_alert
+  Scenario: Grades are released to the gradebook if markinganonymous is enabled
+    Given I follow "Settings"
+    And I expand all fieldsets
+    And I set the field "Allow partial release of grades while marking anonymously" to "Yes"
+    And I press "Save and display"
+    And I follow "View all submissions"
+    When I set the field "selectall" to "1"
+    And I set the field "operation" to "Set marking workflow state"
+    And I click on "Go" "button" confirming the dialogue
+    Then I should not see "Student 1 (student1@example.com)"
+    And I should not see "Student 2 (student2@example.com)"
+    And I set the field "Marking workflow state" to "Released"
+    And I set the field "Notify student" to "No"
+    And I press "Save changes"
+    And I am on the "Test assignment name" "assign activity" page
+    And I follow "View all submissions"
+    Then I should see "Released" in the "I'm student1's submission" "table_row"
+    And I should see "Released" in the "I'm student2's submission" "table_row"
     And I am on the "Course 1" "grades > User report > View" page logged in as "student1"
     Then I should see "50"
     And I should see "Great job!"

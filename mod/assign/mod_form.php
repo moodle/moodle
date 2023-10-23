@@ -226,6 +226,12 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addHelpButton('markingallocation', 'markingallocation', 'assign');
         $mform->hideIf('markingallocation', 'markingworkflow', 'eq', 0);
 
+        $name = get_string('markinganonymous', 'assign');
+        $mform->addElement('selectyesno', 'markinganonymous', $name);
+        $mform->addHelpButton('markinganonymous', 'markinganonymous', 'assign');
+        $mform->hideIf('markinganonymous', 'markingworkflow', 'eq', 0);
+        $mform->hideIf('markinganonymous', 'blindmarking', 'eq', 0);
+
         $this->standard_coursemodule_elements();
         $this->apply_admin_defaults();
 

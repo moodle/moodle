@@ -81,6 +81,85 @@ class restore_date_test extends \restore_date_testcase {
         // Assign grade time checks.
         $this->assertEquals($grade->timecreated, $newgrade->timecreated);
         $this->assertEquals($grade->timemodified, $newgrade->timemodified);
+    }
 
+    /**
+     * Test backup and restore of an assignment with non-default settings.
+     *
+     * @return void
+     */
+    public function test_restore_settings() {
+        global $DB;
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course(['startdate' => $this->startdate]);
+        $record = [
+            'course' => $course->id,
+            'name' => random_string(),
+            'intro' => random_string(),
+            'introformat' => FORMAT_MARKDOWN,
+            'alwaysshowdescription' => 1,
+            'submissiondrafts' => 1,
+            'sendnotifications' => 1,
+            'sendlatenotifications' => 1,
+            'sendstudentnotifications' => 0,
+            'duedate' => time() + 1,
+            'cutoffdate' => time(),
+            'gradingduedate' => time() + 2,
+            'allowsubmissionsfromdate' => time() - 1,
+            'grade' => 10,
+            'timemodified' => time(),
+            'completionsubmit' => 1,
+            'requiresubmissionstatement' => 1,
+            'teamsubmission' => 1,
+            'requireallteammemberssubmit' => 1,
+            'teamsubmissiongroupingid' => $generator->create_grouping(['courseid' => $course->id])->id,
+            'blindmarking' => 1,
+            'hidegrader' => 1,
+            'revealidentities' => 1,
+            'attemptreopenmethod' => 'manual',
+            'maxattempts' => 2,
+            'markingworkflow' => 1,
+            'markingallocation' => 1,
+            'markinganonymous' => 1,
+            'preventsubmissionnotingroup' => 1,
+            'activityeditor' => [
+                'text' => random_string(),
+                'format' => FORMAT_MARKDOWN,
+            ],
+            'timelimit' => DAYSECS,
+            'submissionattachments' => 1,
+        ];
+        $this->getDataGenerator()->create_module('assign', $record);
+
+        // Do backup and restore.
+        $newcourseid = $this->backup_and_restore($course, $this->startdate);
+        $newassign = $DB->get_record('assign', ['course' => $newcourseid]);
+        $newgrouping = $DB->get_record('groupings', ['courseid' => $newcourseid]);
+
+        // Verify that the settings of the restored assignment are correct.
+        foreach ($record as $setting => $value) {
+            $newsetting = $newassign->{$setting} ?? null;
+            switch ($setting) {
+                case 'course':
+                    // Should match the new course.
+                    $this->assertEquals($newcourseid, $newsetting);
+                    break;
+                case 'teamsubmissiongroupingid':
+                    // Should match the new grouping.
+                    $this->assertEquals($newgrouping->id, $newsetting);
+                    break;
+                case 'revealidentities':
+                    // Reset to default for a restore without user data.
+                    $this->assertEquals(0, $newsetting);
+                    break;
+                case 'activityeditor':
+                    $this->assertEquals($value['text'], $newassign->activity);
+                    $this->assertEquals($value['format'], $newassign->activityformat);
+                    break;
+                default:
+                    // All other settings should match the original assignment.
+                    $this->assertEquals($value, $newsetting);
+            }
+        }
     }
 }

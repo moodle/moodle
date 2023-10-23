@@ -768,7 +768,14 @@ class assign {
         if (empty($update->markingworkflow)) { // If marking workflow is disabled, make sure allocation is disabled.
             $update->markingallocation = 0;
         }
-
+        if (isset($formdata->markinganonymous)) {
+            // If marking workflow is disabled, or anonymous submissions is disabled then make sure marking anonymous is disabled.
+            if (empty($update->markingworkflow) || empty($update->blindmarking)) {
+                $update->markinganonymous = 0;
+            } else {
+                $update->markinganonymous = $formdata->markinganonymous;
+            }
+        }
         $returnid = $DB->insert_record('assign', $update);
         $this->instance = $DB->get_record('assign', array('id'=>$returnid), '*', MUST_EXIST);
         // Cache the course record.
@@ -1535,6 +1542,11 @@ class assign {
         $update->markingallocation = $formdata->markingallocation;
         if (empty($update->markingworkflow)) { // If marking workflow is disabled, make sure allocation is disabled.
             $update->markingallocation = 0;
+        }
+        $update->markinganonymous = $formdata->markinganonymous;
+        // If marking workflow is disabled, or blindmarking is disabled then make sure marking anonymous is disabled.
+        if (empty($update->markingworkflow) || empty($update->blindmarking)) {
+            $update->markinganonymous = 0;
         }
 
         $result = $DB->update_record('assign', $update);
@@ -8371,6 +8383,10 @@ class assign {
                     // Set assign gradebook feedback plugin status.
                     $assign->gradefeedbackenabled = $this->is_gradebook_feedback_enabled();
 
+                    // If markinganonymous is enabled then allow to release grades anonymously.
+                    if (isset($assign->markinganonymous) && $assign->markinganonymous == 1) {
+                        assign_update_grades($assign, $userid);
+                    }
                     $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
                     \mod_assign\event\workflow_state_updated::create_from_user($this, $user, $state)->trigger();
                 }

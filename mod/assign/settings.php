@@ -329,6 +329,16 @@ if ($ADMIN->fulltree) {
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
+
+    $name = new lang_string('markinganonymous', 'mod_assign');
+    $description = new lang_string('markinganonymous_help', 'mod_assign');
+    $setting = new admin_setting_configcheckbox('assign/markinganonymous',
+                                                    $name,
+                                                    $description,
+                                                    0);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
+    $settings->add($setting);
 }
 
 $ADMIN->add('modassignfolder', $settings);
