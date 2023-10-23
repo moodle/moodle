@@ -5,11 +5,42 @@ global $CFG, $DB, $USER, $OUTPUT;
 
 //$ref_csname = 'DCL02'; // Reference Course Short name
 //$cohort_idnumber = 'bfsajman';
-// Example http://qubits.localhost.com/local/qbmanifest/clonecourses.php?cshortname=DCL03&cohortid=bfsajman&mfile=/books-json/digichamps/dcl03.jso
+// Example http://qubits.localhost.com/local/qbmanifest/clonecourses.php?cshortname=DCL03&cohortid=bfsajman
+// Deprecated this param &mfile=/books-json/digichamps/dcl03.json
+
+$farr = array(
+    "DCL01" => "/books-json/digichamps/dcl01.json",
+    "DCL02" => "/books-json/digichamps/dcl02.json",
+    "DCL03" => "/books-json/digichamps/dcl03.json",
+    "DCL04" => "/books-json/digichamps/dcl04.json",
+    "DCL05" => "/books-json/digichamps/dcl05.json",
+    "DCL06" => "/books-json/digichamps/dcl06.json",
+    "DCL07" => "/books-json/digichamps/dcl07.json",
+    "DCL08" => "/books-json/digichamps/dcl08.json",
+    "DCL09" => "/books-json/digichamps/dcl09.json",
+    "DCL10" => "/books-json/digichamps/dcl10.json",
+    "DCL11" => "/books-json/digichamps/dcl11.json",
+    "DCL12" => "/books-json/digichamps/dcl12.json",
+    "DPL01" => "/books-json/digipro/dpl01.json",
+    "DPL02" => "/books-json/digipro/dpl02.json",
+    "DPL03" => "/books-json/digipro/dpl03.json",
+    "DPL04" => "/books-json/digipro/dpl04.json",
+    "DPL05" => "/books-json/digipro/dpl05.json",
+    "DPL06" => "/books-json/digipro/dpl06.json",
+    "DPL07" => "/books-json/digipro/dpl07.json",
+    "DPL08" => "/books-json/digipro/dpl08.json",
+    "DPL09" => "/books-json/digipro/dpl09.json",
+    "DPL10" => "/books-json/digipro/dpl10.json",
+    "DPL11" => "/books-json/digipro/dpl11.json",
+    "DPL12" => "/books-json/digipro/dpl12.json",
+    "DJL01" => "/books-json/djl01.json"
+);
+
 
 $ref_csname = required_param('cshortname', PARAM_ALPHANUMEXT);
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
-$cfilename = required_param('mfile', PARAM_RAW);
+//$cfilename = required_param('mfile', PARAM_RAW);
+$cfilename = $farr[$ref_csname];
 
 $coursefile = $CFG->dirroot.$cfilename; // '/books-json/digichamps/dcl02.json'
 $course_fcontent = file_get_contents($coursefile);
