@@ -3,11 +3,11 @@
 // File name   : tcpdf_static.php
 // Version     : 1.1.4
 // Begin       : 2002-08-03
-// Last Update : 2022-08-12
+// Last Update : 2023-09-06
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
-// Copyright (C) 2002-2022 Nicola Asuni - Tecnick.com LTD
+// Copyright (C) 2002-2023 Nicola Asuni - Tecnick.com LTD
 //
 // This file is part of TCPDF software library.
 //
@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.6.2';
+	private static $tcpdf_version = '6.6.5';
 
 	/**
 	 * String alias for total number of pages.
@@ -1780,7 +1780,7 @@ class TCPDF_STATIC {
 			if ($ret === false) {
 				return array();
 			}
-			return $ret;
+			return is_array($ret) ? $ret : array();
 		}
 		// preg_split is bugged - try alternative solution
 		$ret = array();

@@ -175,12 +175,13 @@
     <location>tcpdf</location>
     <name>TCPDF</name>
     <description>Class to generate PDF files</description>
-    <version>6.6.2</version>
+    <version>6.6.5</version>
     <license>LGPL</license>
-    <licenseversion>3.0-only</licenseversion>
+    <licenseversion>3.0-or-later</licenseversion>
     <repository>https://github.com/tecnickcom/TCPDF</repository>
     <copyrights>
       <copyright>Olivier PLATHEY</copyright>
+      <copyright>Nicola Asuni</copyright>
     </copyrights>
     <customised/>
   </library>
