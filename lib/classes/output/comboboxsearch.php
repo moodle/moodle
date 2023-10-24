@@ -54,6 +54,12 @@ class comboboxsearch implements renderable, templatable {
     /** @var boolean $usesbutton Whether to provide a A11y button. */
     protected $usesbutton;
 
+    /** @var null|string $name The name of the input element representing the combobox. */
+    protected $name;
+
+    /** @var null|string $value The value of the input element representing the combobox. */
+    protected $value;
+
     /**
      * The class constructor.
      *
@@ -64,7 +70,9 @@ class comboboxsearch implements renderable, templatable {
      * @param ?string $buttonclasses Any special classes that may be needed.
      * @param ?string $dropdownclasses Any special classes that may be needed.
      * @param ?string $buttonheader If the button item in the tertiary nav needs an extra top header for context.
-     * @param bool $usebutton If we want the mustache to add the button roles for us or do we have another aria role node?
+     * @param ?bool $usebutton If we want the mustache to add the button roles for us or do we have another aria role node?
+     * @param ?string $name The name of the input element representing the combobox.
+     * @param ?string $value The value of the input element representing the combobox.
      * @throws moodle_exception If the implementor incorrectly call this module.
      */
     public function __construct(
@@ -75,7 +83,9 @@ class comboboxsearch implements renderable, templatable {
         ?string $buttonclasses = null,
         ?string $dropdownclasses = null,
         ?string $buttonheader = null,
-        ?bool $usebutton = true
+        ?bool $usebutton = true,
+        ?string $name = null,
+        ?string $value = null
     ) {
         // Ensure implementors cant request to render the content now and not provide us any to show.
         if (!$renderlater && empty($dropdowncontent)) {
@@ -87,6 +97,13 @@ class comboboxsearch implements renderable, templatable {
             );
         }
 
+        if ($usebutton && !$name) {
+            debugging(
+                'You have requested to use the button but have not provided a name for the input element.',
+                DEBUG_DEVELOPER
+            );
+        }
+
         $this->renderlater = $renderlater;
         $this->buttoncontent = $buttoncontent;
         $this->dropdowncontent = $dropdowncontent;
@@ -95,6 +112,8 @@ class comboboxsearch implements renderable, templatable {
         $this->dropdownclasses = $dropdownclasses;
         $this->buttonheader = $buttonheader;
         $this->usesbutton = $usebutton;
+        $this->name = $name;
+        $this->value = $value;
     }
 
     /**
@@ -115,6 +134,8 @@ class comboboxsearch implements renderable, templatable {
             'buttonheader' => $this->buttonheader,
             'usebutton' => $this->usesbutton,
             'instance' => rand(), // Template uniqid is per render out so sometimes these conflict.
+            'name' => $this->name,
+            'value' => $this->value,
         ];
     }
 

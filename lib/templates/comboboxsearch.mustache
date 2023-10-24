@@ -17,6 +17,8 @@
     Combobox search selector dropdown.
 
     Context variables required for this template:
+    * name - The name of the input element representing the combobox.
+    * value - The value of the input element representing the combobox.
     * rtl - Is this dropdown being used in a RTL case? if so, we need to ensure it drops down in the right place.
     * renderlater - This determines if we show a placeholder whilst fetching content to replace within the placeholder region
     * buttoncontent - The string to be shown to users to trigger the dropdown
@@ -29,6 +31,8 @@
 
     Example context (json):
     {
+        "name": "input-1",
+        "value": "0",
         "rtl": false,
         "renderlater": false,
         "usebutton": true,
@@ -43,10 +47,7 @@
 {{#buttonheader}}
     <small>{{.}}</small>
 {{/buttonheader}}
-<div class="{{#parentclasses}}{{.}}{{/parentclasses}} dropdown"
-    {{^usebutton}}
-        data-input-element="input-{{uniqid}}"
-    {{/usebutton}}>
+<div class="{{#parentclasses}}{{.}}{{/parentclasses}} dropdown">
 
     {{#usebutton}}
         <div tabindex="0"
@@ -57,9 +58,10 @@
              aria-controls="dialog-{{instance}}-{{uniqid}}"
              class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
              aria-label="{{#cleanstr}} aria-toggledropdown, core {{/cleanstr}}"
-             data-input-element="input-{{uniqid}}">
+             data-input-element="input-{{instance}}-{{uniqid}}">
             {{{buttoncontent}}}
         </div>
+        <input type="hidden" name="{{name}}" value="{{value}}" id="input-{{instance}}-{{uniqid}}"/>
     {{/usebutton}}
 
     {{^usebutton}}{{{buttoncontent}}}{{/usebutton}}
