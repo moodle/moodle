@@ -24,7 +24,6 @@ import search_combobox from 'core/comboboxsearch/search_combobox';
 import {getStrings} from 'core/str';
 import {renderForPromise, replaceNodeContents} from 'core/templates';
 import $ from 'jquery';
-import Notification from 'core/notification';
 
 export default class UserSearch extends search_combobox {
 
@@ -182,7 +181,6 @@ export default class UserSearch extends search_combobox {
                         );
 
                         user.matchingField = `${escapedMatchingField} (${user.email})`;
-                        user.link = this.selectOneLink(user.id);
                         break;
                     }
                 }
@@ -192,17 +190,17 @@ export default class UserSearch extends search_combobox {
     }
 
     /**
-     * The handler for when a user interacts with the component.
+     * The handler for when a user changes the value of the component (selects an option from the dropdown).
      *
-     * @param {MouseEvent} e The triggering event that we are working with.
+     * @param {Event} e The change event.
      */
-    clickHandler(e) {
-        super.clickHandler(e).catch(Notification.exception);
-        if (e.target === this.getHTMLElements().currentViewAll && e.button === 0) {
+    changeHandler(e) {
+        this.toggleDropdown(); // Otherwise the dropdown stays open when user choose an option using keyboard.
+
+        if (e.target.value === '0') {
             window.location = this.selectAllResultsLink();
-        }
-        if (e.target.closest(this.selectors.resetPageButton)) {
-            window.location = e.target.closest(this.selectors.resetPageButton).href;
+        } else {
+            window.location = this.selectOneLink(e.target.value);
         }
     }
 

@@ -343,7 +343,7 @@ Feature: Within the grader report, test that we can search for users
     And the field "perpage" matches value "20"
     When I set the field "Search users" to "42"
     # One of the users' phone numbers also matches.
-    And I wait until "View all results (2)" "link" exists
+    And I wait until "View all results (2)" "option_role" exists
     Then I confirm "Student s42" in "user" search within the gradebook widget exists
 
   Scenario: As a teacher I save grades using search and pagination
@@ -364,7 +364,7 @@ Feature: Within the grader report, test that we can search for users
     And I wait until the page is ready
     # Search for a single user on second page and save grades.
     When I set the field "Search users" to "test32"
-    And I wait until "View all results (1)" "link" exists
+    And I wait until "View all results (1)" "option_role" exists
     And I click on "Student test32" "option_role"
     And I wait until the page is ready
     And I give the grade "80.00" to the user "Student test32" for the grade item "Test assignment one"
@@ -409,7 +409,7 @@ Feature: Within the grader report, test that we can search for users
       | Student test32        |
     # Search for multiple users on second page and save grades.
     And I set the field "Search users" to "test3"
-    And I wait until "View all results (11)" "link" exists
+    And I wait until "View all results (11)" "option_role" exists
     And I click on "View all results (11)" "option_role"
     And I wait until the page is ready
     And I give the grade "10.00" to the user "Student test32" for the grade item "Test assignment one"

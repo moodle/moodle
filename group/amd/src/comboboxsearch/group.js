@@ -39,6 +39,20 @@ export default class GroupSearch extends search_combobox {
         };
         const component = document.querySelector(this.componentSelector());
         this.courseID = component.querySelector(this.selectors.courseid).dataset.courseid;
+
+        const searchValueElement = this.component.querySelector(`#${this.searchInput.dataset.inputElement}`);
+        searchValueElement.addEventListener('change', () => {
+            this.toggleDropdown(); // Otherwise the dropdown stays open when user choose an option using keyboard.
+
+            const valueElement = this.component.querySelector(`#${this.combobox.dataset.inputElement}`);
+            if (valueElement.value !== searchValueElement.value) {
+                valueElement.value = searchValueElement.value;
+                valueElement.dispatchEvent(new Event('change', {bubbles: true}));
+            }
+
+            searchValueElement.value = '';
+        });
+
         this.renderDefault().catch(Notification.exception);
     }
 
@@ -137,7 +151,6 @@ export default class GroupSearch extends search_combobox {
                 return {
                     id: group.id,
                     name: group.name,
-                    link: this.selectOneLink(group.id),
                     groupimageurl: group.groupimageurl,
                 };
             })
@@ -180,10 +193,15 @@ export default class GroupSearch extends search_combobox {
             // Display results.
             await this.filterrenderpipe();
         }
-        // Prevent normal key presses activating this.
-        if (e.target.closest('.dropdown-item') && e.button === 0) {
-            window.location = e.target.closest('.dropdown-item').href;
-        }
+    }
+
+    /**
+     * The handler for when a user changes the value of the component (selects an option from the dropdown).
+     *
+     * @param {Event} e The change event.
+     */
+    changeHandler(e) {
+        window.location = this.selectOneLink(e.target.value);
     }
 
     /**
