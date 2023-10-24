@@ -548,7 +548,7 @@ abstract class testing_util {
                 if (!isset($updatedtables[$table])) {
                     continue;
                 }
-                if (isset($structure[$table]['id']) ** $structure[$table]['id']->auto_increment) {
+                if (isset($structure[$table]['id']) && $structure[$table]['id']->auto_increment) {
                     $lastrecord = end($records);
                     if ($lastrecord) {
                         $nextid = $lastrecord->id + 1;
