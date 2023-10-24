@@ -15,16 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Advanced test case.
- *
- * @package    core
- * @category   phpunit
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-
-/**
  * Advanced PHPUnit test case customised for Moodle.
  *
  * @package    core
@@ -34,6 +24,7 @@
  */
 abstract class advanced_testcase extends base_testcase {
     /** @var bool automatically reset everything? null means log changes */
+    // phpcs:ignore moodle.NamingConventions.ValidVariableName.MemberNameUnderscore
     private $resetAfterTest;
 
     /** @var moodle_transaction */
@@ -51,57 +42,40 @@ abstract class advanced_testcase extends base_testcase {
      * @param array  $data
      * @param string $dataName
      */
-    final public function __construct($name = null, array $data = array(), $dataName = '') {
-        parent::__construct($name, $data, $dataName);
+    final public function __construct($name = null, array $data = [], $dataname = '') {
+        parent::__construct($name, $data, $dataname);
 
         $this->setBackupGlobals(false);
         $this->setBackupStaticAttributes(false);
         $this->setPreserveGlobalState(false);
-
-    }
-
-    /**
-     * Hook into the setInIsolation method to define an optional constant.
-     *
-     * @param bool $inisolation
-     */
-    public function setInIsolation(bool $inisolation): void {
-        parent::setInIsolation($inisolation);
-        if ($inisolation) {
-            // Note: This is safe to do because it will only be set once per test run.
-            define('PHPUNIT_ISOLATED_TEST', true);
-        }
     }
 
     /**
      * Runs the bare test sequence.
-     * @return void
      */
     final public function runBare(): void {
         global $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
-            // this happens when previous test does not reset, we can not use transactions
+            // This happens when previous test does not reset, we can not use transactions.
             $this->testdbtransaction = null;
-
-        } else if ($DB->get_dbfamily() === 'postgres' or $DB->get_dbfamily() === 'mssql') {
-            // database must allow rollback of DDL, so no mysql here
+        } else if ($DB->get_dbfamily() === 'postgres' || $DB->get_dbfamily() === 'mssql') {
+            // Database must allow rollback of DDL, so no mysql here.
             $this->testdbtransaction = $DB->start_delegated_transaction();
         }
 
         try {
             $this->setCurrentTimeStart();
             parent::runBare();
-            // set DB reference in case somebody mocked it in test
+            // Set DB reference in case somebody mocked it in test.
             $DB = phpunit_util::get_global_backup('DB');
 
             // Deal with any debugging messages.
             $debugerror = phpunit_util::display_debugging_messages(true);
             $this->resetDebugging();
             if (!empty($debugerror)) {
-                trigger_error('Unexpected debugging() call detected.'."\n".$debugerror, E_USER_NOTICE);
+                trigger_error('Unexpected debugging() call detected.' . "\n" . $debugerror, E_USER_NOTICE);
             }
-
         } catch (Exception $ex) {
             $e = $ex;
         } catch (Throwable $ex) {
@@ -110,12 +84,12 @@ abstract class advanced_testcase extends base_testcase {
         }
 
         if (isset($e)) {
-            // cleanup after failed expectation
+            // Cleanup after failed expectation.
             self::resetAllData();
             throw $e;
         }
 
-        if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
+        if (!$this->testdbtransaction || $this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction = null;
         }
 
@@ -123,24 +97,22 @@ abstract class advanced_testcase extends base_testcase {
             if ($this->testdbtransaction) {
                 $DB->force_transaction_rollback();
                 phpunit_util::reset_all_database_sequences();
-                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // no db reset necessary
+                phpunit_util::$lastdbwrites = $DB->perf_get_writes(); // No db reset necessary.
             }
             self::resetAllData(null);
-
         } else if ($this->resetAfterTest === false) {
             if ($this->testdbtransaction) {
                 $this->testdbtransaction->allow_commit();
             }
-            // keep all data untouched for other tests
-
+            // Keep all data untouched for other tests.
         } else {
-            // reset but log what changed
+            // Reset but log what changed.
             if ($this->testdbtransaction) {
                 try {
                     $this->testdbtransaction->allow_commit();
                 } catch (dml_transaction_exception $e) {
                     self::resetAllData();
-                    throw new coding_exception('Invalid transaction state detected in test '.$this->getName());
+                    throw new coding_exception('Invalid transaction state detected in test ' . $this->getName());
                 }
             }
             self::resetAllData(true);
@@ -149,13 +121,15 @@ abstract class advanced_testcase extends base_testcase {
         // Reset context cache.
         context_helper::reset_caches();
 
-        // make sure test did not forget to close transaction
+        // Make sure test did not forget to close transaction.
         if ($DB->is_transaction_started()) {
             self::resetAllData();
-            if ($this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_PASSED
-                or $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_SKIPPED
-                or $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_INCOMPLETE) {
-                throw new coding_exception('Test '.$this->getName().' did not close database transaction');
+            if (
+                $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_PASSED
+                || $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_SKIPPED
+                || $this->getStatus() == PHPUnit\Runner\BaseTestRunner::STATUS_INCOMPLETE
+            ) {
+                throw new coding_exception('Test ' . $this->getName() . ' did not close database transaction');
             }
         }
     }
@@ -252,7 +226,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function preventResetByRollback() {
-        if ($this->testdbtransaction and !$this->testdbtransaction->is_disposed()) {
+        if ($this->testdbtransaction && !$this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction->allow_commit();
             $this->testdbtransaction = null;
         }
@@ -295,7 +269,7 @@ abstract class advanced_testcase extends base_testcase {
      */
     public function assertDebuggingCalled($debugmessage = null, $debuglevel = null, $message = '') {
         $debugging = $this->getDebuggingMessages();
-        $debugdisplaymessage = "\n".phpunit_util::display_debugging_messages(true);
+        $debugdisplaymessage = "\n" . phpunit_util::display_debugging_messages(true);
         $this->resetDebugging();
 
         $count = count($debugging);
@@ -308,7 +282,7 @@ abstract class advanced_testcase extends base_testcase {
         }
         if ($count > 1) {
             if ($message === '') {
-                $message = 'Expectation failed, debugging() triggered '.$count.' times.'.$debugdisplaymessage;
+                $message = 'Expectation failed, debugging() triggered ' . $count . ' times.' . $debugdisplaymessage;
             }
             $this->fail($message);
         }
@@ -333,20 +307,22 @@ abstract class advanced_testcase extends base_testcase {
      * @param string $message
      * @return void
      */
-    public function assertDebuggingCalledCount($expectedcount, $debugmessages = array(), $debuglevels = array(), $message = '') {
+    public function assertdebuggingcalledcount($expectedcount, $debugmessages = [], $debuglevels = [], $message = '') {
         if (!is_int($expectedcount)) {
             throw new coding_exception('assertDebuggingCalledCount $expectedcount argument should be an integer.');
         }
 
         $debugging = $this->getDebuggingMessages();
-        $message .= "\n".phpunit_util::display_debugging_messages(true);
+        $message .= "\n" . phpunit_util::display_debugging_messages(true);
         $this->resetDebugging();
 
         $this->assertEquals($expectedcount, count($debugging), $message);
 
         if ($debugmessages) {
             if (!is_array($debugmessages) || count($debugmessages) != $expectedcount) {
-                throw new coding_exception('assertDebuggingCalledCount $debugmessages should contain ' . $expectedcount . ' messages');
+                throw new coding_exception(
+                    'assertDebuggingCalledCount $debugmessages should contain ' . $expectedcount . ' messages',
+                );
             }
             foreach ($debugmessages as $key => $debugmessage) {
                 $this->assertSame($debugmessage, $debugging[$key]->message, $message);
@@ -355,7 +331,9 @@ abstract class advanced_testcase extends base_testcase {
 
         if ($debuglevels) {
             if (!is_array($debuglevels) || count($debuglevels) != $expectedcount) {
-                throw new coding_exception('assertDebuggingCalledCount $debuglevels should contain ' . $expectedcount . ' messages');
+                throw new coding_exception(
+                    'assertDebuggingCalledCount $debuglevels should contain ' . $expectedcount . ' messages',
+                );
             }
             foreach ($debuglevels as $key => $debuglevel) {
                 $this->assertSame($debuglevel, $debugging[$key]->level, $message);
@@ -454,9 +432,9 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function assertTimeCurrent($time, $message = '') {
-        $msg =  ($message === '') ? 'Time is lower that allowed start value' : $message;
+        $msg = ($message === '') ? 'Time is lower that allowed start value' : $message;
         $this->assertGreaterThanOrEqual($this->currenttimestart, $time, $msg);
-        $msg =  ($message === '') ? 'Time is in the future' : $message;
+        $msg = ($message === '') ? 'Time is in the future' : $message;
         $this->assertLessThanOrEqual(time(), $time, $msg);
     }
 
@@ -548,7 +526,7 @@ abstract class advanced_testcase extends base_testcase {
             $user->id = 0;
             $user->mnethostid = $CFG->mnet_localhost_id;
         } else {
-            $user = $DB->get_record('user', array('id'=>$user));
+            $user = $DB->get_record('user', ['id' => $user]);
         }
         unset($user->description);
         unset($user->access);
@@ -619,25 +597,25 @@ abstract class advanced_testcase extends base_testcase {
     public function getExternalTestFileUrl($path, $https = false) {
         $path = ltrim($path, '/');
         if ($path) {
-            $path = '/'.$path;
+            $path = '/' . $path;
         }
         if ($https) {
             if (defined('TEST_EXTERNAL_FILES_HTTPS_URL')) {
                 if (!TEST_EXTERNAL_FILES_HTTPS_URL) {
                     $this->markTestSkipped('Tests using external https test files are disabled');
                 }
-                return TEST_EXTERNAL_FILES_HTTPS_URL.$path;
+                return TEST_EXTERNAL_FILES_HTTPS_URL . $path;
             }
-            return 'https://download.moodle.org/unittest'.$path;
+            return 'https://download.moodle.org/unittest' . $path;
         }
 
         if (defined('TEST_EXTERNAL_FILES_HTTP_URL')) {
             if (!TEST_EXTERNAL_FILES_HTTP_URL) {
                 $this->markTestSkipped('Tests using external http test files are disabled');
             }
-            return TEST_EXTERNAL_FILES_HTTP_URL.$path;
+            return TEST_EXTERNAL_FILES_HTTP_URL . $path;
         }
-        return 'http://download.moodle.org/unittest'.$path;
+        return 'http://download.moodle.org/unittest' . $path;
     }
 
     /**
@@ -656,9 +634,9 @@ abstract class advanced_testcase extends base_testcase {
         $files = scandir($path);
 
         foreach ($files as $file) {
-            $filepath = $path .'/'. $file;
+            $filepath = $path . '/' . $file;
             if (strpos($file, '.') === 0) {
-                /// Don't check hidden files.
+                // Don't check hidden files.
                 continue;
             } else if (is_dir($filepath)) {
                 if (!in_array($filepath, $ignorefolders)) {
