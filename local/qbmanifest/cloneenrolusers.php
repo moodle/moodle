@@ -59,8 +59,8 @@ foreach($course_groups as $course_group){
 	   foreach($egusers as $eguser){
 		   $manplugin->enrol_user($cur_course_instance, $eguser->id, $roleid);
 		   groups_add_member($gid, $eguser->id);
-           groups_remove_member($old_group_id, $eguser->id);
-           $manplugin->unenrol_user($par_course_instance, $eguser->id); // unenroll user from parent course
+           //groups_remove_member($old_group_id, $eguser->id);
+           //$manplugin->unenrol_user($par_course_instance, $eguser->id); // unenroll user from parent course
 	   }
 	 // $manplugin->enrol_user($cur_course_instance, $user1->id, $studentrole->id);  
    }

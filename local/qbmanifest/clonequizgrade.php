@@ -181,9 +181,10 @@ foreach($enrolledusers as $enrolleduser){
                     "attempt" => $old_attempt->attempt
                 ]);
                 if(empty($new_attempt)){
-                    //unset($old_attempt->id);
+                    unset($old_attempt->id);
                     $old_attempt->quiz = $nqzid;
-                    $DB->update_record("quiz_attempts", $old_attempt);
+                    $DB->insert_record("quiz_attempts", $old_attempt);
+                    //$DB->update_record("quiz_attempts", $old_attempt);
                 }
             }
         }

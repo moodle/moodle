@@ -254,9 +254,22 @@ foreach($enrolledusers as $enrolleduser){
         
         if($old_files){      
             foreach($old_files as $old_file){
-                $old_file->contextid = $nctxt_id;
-                $old_file->itemid = $newsub_id;
-                $DB->update_record("files", $old_file);
+                $new_file = $DB->get_record("files",
+                    [
+                        "contextid" => $nctxt_id,
+                        "component" => "qbassignsubmission_file",
+                        "filearea" => "submission_files",
+                        "itemid" => $newsub_id,
+                        "filesize" => $old_file->filesize
+                    ]
+                );
+                if(empty($new_file)){
+                    unset($old_file->id);
+                    $old_file->contextid = $nctxt_id;
+                    $old_file->itemid = $newsub_id;
+                    $DB->insert_record("files", $old_file);
+                }
+                //$DB->update_record("files", $old_file);
             }
         } 
 
