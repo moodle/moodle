@@ -187,7 +187,7 @@
               "type": "page"
             },
             {
-              "title": "1.3 - Data Privacy",
+              "title": "1.4 - Data Privacy",
               "uid": "DCL10-TP1-CHDRN5",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.4 - Google Docs",
@@ -279,6 +279,13 @@
               "uid": "DCL10-U01-CHDRN1",
               "fname": "DCL10-U01-CHDRN1.json",
               "type": "quiz"
+            },
+            {
+              "title": "1.5 - Network And Security",
+              "uid": "DCL10-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.5 - Google Docs",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

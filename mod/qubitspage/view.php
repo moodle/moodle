@@ -95,7 +95,7 @@ parse_str(html_entity_decode($pq), $parsedpq);
 
 		"page": "/pdf",
 		"query": <?php echo json_encode($parsedpq); ?>,
-		"buildId": "AzQOWRgDBCjR9bLUeKbtB",
+		"buildId": "Uax2aoFve0fGjmf5qSMjb",
 		"isFallback": false,
 		"gsp": true,
 		"scriptLoader": []
