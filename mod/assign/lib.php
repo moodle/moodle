@@ -1613,6 +1613,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             return null;
         }
 
+        $instance = $assign->get_instance();
+        if ($instance->teamsubmission && !$instance->requireallteammemberssubmit) {
+            $groupsubmission = $assign->get_group_submission($userid, 0, false);
+            if ($groupsubmission && $groupsubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                return null;
+            }
+        }
+
         $participant = $assign->get_participant($userid);
 
         if (!$participant) {
