@@ -546,11 +546,6 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level8&pdf=DPL08_U05_Capstone",
               "type": "page"
-            },
-            {
-              "uid": "DPL08-TP6-CHDRN3",
-              "fname": "DPL08-TP6-CHDRN3.json",
-              "type": "assignment"
             }
           ],
           "teacheronly": "no"

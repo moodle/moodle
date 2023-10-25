@@ -454,11 +454,6 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level1&pdf=DPL01_Capstone project",
               "type": "page"
-            },
-            {
-              "uid": "DPL01-TP5-CHDRN2",
-              "fname": "DPL01-TP5-CHDRN2.json",
-              "type": "assignment"
             }
           ],
           "teacheronly": "no"

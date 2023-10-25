@@ -187,11 +187,6 @@
               "type": "page"
             },
             {
-              "uid": "DCL04-TP1-CHDRN4",
-              "fname": "DCL04-TP1-CHDRN4.json",
-              "type": "assignment"
-            },
-            {
               "uid": "DCL04-U01-CHDRN1",
               "fname": "DCL04-U01-CHDRN1.json",
               "type": "quiz"
@@ -239,11 +234,6 @@
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U02_S04",
               "type": "page"
-            },
-            {
-              "uid": "DCL04-TP2-CHDRN6",
-              "fname": "DCL04-TP2-CHDRN6.json",
-              "type": "assignment"
             },
             {
               "uid": "DCL04-U02-CHDRN1",

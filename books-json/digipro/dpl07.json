@@ -735,11 +735,6 @@
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U05_Capstone",
               "type": "page"
-            },
-            {
-              "uid": "DPL07-TP6-CHDRN3",
-              "fname": "DPL07-TP6-CHDRN3.json",
-              "type": "assignment"
             }
           ],
           "teacheronly": "no"
