@@ -166,7 +166,7 @@ class tool_task_renderer extends plugin_renderer_base {
         // Main tasks table.
         $table = $this->generate_adhoc_tasks_simple_table($tasks, $canruntasks);
 
-        $table->caption = "$classname "
+        $table->caption = s($classname) . " "
             . get_string($failedonly ? 'adhoctasksfailed' : 'adhoctasks', 'tool_task');
         $table->head[3] .= " $failedorall"; // Spice up faildelay heading.
 

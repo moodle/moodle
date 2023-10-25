@@ -35,7 +35,7 @@ $renderer = $PAGE->get_renderer('tool_task');
 if ($classname) {
     $pageurl = new moodle_url('/admin/tool/task/adhoctasks.php');
     $PAGE->navbar->add(get_string('adhoctasks', 'tool_task'), $pageurl);
-    $PAGE->navbar->add($classname, $PAGE->url);
+    $PAGE->navbar->add(s($classname), $PAGE->url);
 
     $tasks = core\task\manager::get_adhoc_tasks($classname, $failedonly);
 
