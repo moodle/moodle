@@ -88,11 +88,16 @@ if(is_array($isvalidjson) or is_object($isvalidjson)) {
                 $DB->set_field('course', 'summary', $course->summary, array('id' => $cexists->id));
                 $msg='Record has been updated successfully.';
                 $type = 2;
+                $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
             }
             else{
                 $course_details = $newcourse->create_course($datacourse);
                 $courseid = $course_details[0]['id'];
                 $type = 1;
+                $courseinstance = $DB->get_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster'));
+                if(empty($courseinstance)){
+                    $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
+                }
             }
 
             $newcourse->updateSections($courseid,$course->chapters,$course->otherfields,$type);

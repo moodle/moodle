@@ -28,13 +28,24 @@ $current_course = $DB->get_record("course",[
 // Get Source group users
 $qry = "SELECT * FROM {groups} WHERE ";
 $gparams["courseid"] = $parent_course->id;
-$gparams["name"] = $cohort_idnumber.$ref_csname.'%';
+
+if($cohort_idnumber=="dnsbarsha")
+  $gparams["name"] = $cohort_idnumber.'%'.$ref_csname;
+else
+  $gparams["name"] = $cohort_idnumber.$ref_csname.'%';
+
 $where = "courseid = :courseid ";
 $where .= " AND ".$DB->sql_like('name', ':name', false);
 
 $course_groups = $DB->get_records_sql("$qry $where", $gparams);
-$cur_course_instance = $DB->get_record('enrol', array('courseid'=>$current_course->id, 'enrol'=>'manual'), '*');
-$par_course_instance = $DB->get_record('enrol', array('courseid'=>$parent_course->id, 'enrol'=>'manual'), '*');
+if($cohort_idnumber=="dnsbarsha"){
+    $manplugin = enrol_get_plugin('oneroster');
+    $cur_course_instance = $DB->get_record('enrol', array('courseid'=>$current_course->id, 'enrol'=>'oneroster'), '*');
+    $par_course_instance = $DB->get_record('enrol', array('courseid'=>$parent_course->id, 'enrol'=>'oneroster'), '*');
+}else{
+    $cur_course_instance = $DB->get_record('enrol', array('courseid'=>$current_course->id, 'enrol'=>'manual'), '*');
+    $par_course_instance = $DB->get_record('enrol', array('courseid'=>$parent_course->id, 'enrol'=>'manual'), '*');    
+}
 
 foreach($course_groups as $course_group){
    $old_group_id = $course_group->id;
