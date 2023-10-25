@@ -444,6 +444,7 @@ class user extends base {
             'username' => new lang_string('username'),
             'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
             'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
+            'lastip' => new lang_string('lastip'),
         ];
     }
 
