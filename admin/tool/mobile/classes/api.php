@@ -515,6 +515,7 @@ class api {
             'comments' => 'CoreBlockDelegate_AddonBlockComments',
             'completionstatus' => 'CoreBlockDelegate_AddonBlockCompletionStatus',
             'feedback' => 'CoreBlockDelegate_AddonBlockFeedback',
+            'globalsearch' => 'CoreBlockDelegate_AddonBlockGlobalSearch',
             'glossary_random' => 'CoreBlockDelegate_AddonBlockGlossaryRandom',
             'html' => 'CoreBlockDelegate_AddonBlockHtml',
             'lp' => 'CoreBlockDelegate_AddonBlockLp',
@@ -523,6 +524,7 @@ class api {
             'private_files' => 'CoreBlockDelegate_AddonBlockPrivateFiles',
             'recent_activity' => 'CoreBlockDelegate_AddonBlockRecentActivity',
             'rss_client' => 'CoreBlockDelegate_AddonBlockRssClient',
+            'search_forums' => 'CoreBlockDelegate_AddonBlockSearchForums',
             'selfcompletion' => 'CoreBlockDelegate_AddonBlockSelfCompletion',
             'tags' => 'CoreBlockDelegate_AddonBlockTags',
         );
