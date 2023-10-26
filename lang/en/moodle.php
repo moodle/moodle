@@ -758,10 +758,6 @@ Someone (probably you) has requested a new password for your account on \'{$a->s
 
 Unfortunately passwords cannot be reset on this site. Please contact the site administrator {$a->admin}.';
 $string['emailpasswordchangeinfosubject'] = '{$a}: Change password information';
-$string['emailpasswordsent'] = 'Thank you for confirming the change of password.
-An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
-The new password was automatically generated - you might like to
-<a href="{$a->link}">change your password</a> to something easier to remember.';
 $string['emailresetconfirmation'] = 'Hi {$a->firstname},
 
 A password reset was requested for your account \'{$a->username}\' at {$a->sitename}.
@@ -1663,23 +1659,15 @@ $string['participantslist'] = 'Participants list';
 $string['participationratio'] = 'Participation ratio';
 $string['participationreport'] = 'Participation report';
 $string['password'] = 'Password';
-$string['passwordconfirmchange'] = 'Confirm password change';
 $string['passwordextlink'] = 'The following link has been provided to recover your lost password. This will take you out of Moodle.';
 $string['passwordforgotten'] = 'Forgotten password';
 $string['passwordforgotteninstructions'] = 'Your details must first be found in the user database. Please enter <strong>either</strong> your username or your registered email address in the appropriate box. There is no need to enter both.';
 $string['passwordforgotteninstructions2'] = 'To reset your password, submit your username or your email address below. If we can find you in the database, an email will be sent to your email address, with instructions how to get access again.';
 $string['passwordchanged'] = 'Password has been changed';
-$string['passwordnohelp'] = 'No help is available to find your lost password. Please contact your Moodle administrator.';
 $string['passwordpolicynomatch'] = 'Your current password no longer matches the set password policy.
    {$a}';
-$string['passwordrecovery'] = 'Yes, help me log in';
 $string['passwordsdiffer'] = 'These passwords do not match';
-$string['passwordsent'] = 'Password has been sent';
 $string['passwordset'] = 'Your password has been set.';
-$string['passwordsenttext'] = '<p>An email has been sent to your address at {$a->email}.</p>
-   <p><b>Please check your email for your new password</b></p>
-   <p>The new password was automatically generated, so you might like to
-   <a href="{$a->link}">change it to something easier to remember</a>.</p>';
 $string['path'] = 'Path';
 $string['pathnotexists'] = 'Path doesn\'t exist in your server!';
 $string['pathslasherror'] = 'Path can\'t end with a slash!!';
@@ -2483,3 +2471,17 @@ $string['clicktochangeinbrackets'] = '{$a} (Click to change)';
 $string['modshowcmtitle'] = 'Show activity';
 $string['makeavailablecmtitle'] = 'Make activity available';
 $string['moodlenet:sharetyperesource'] = 'resource';
+
+// Deprecated since Moodle 4.4.
+$string['emailpasswordsent'] = 'Thank you for confirming the change of password.
+An email containing your new password has been sent to your address at<br /><b>{$a->email}</b>.<br />
+The new password was automatically generated - you might like to
+<a href="{$a->link}">change your password</a> to something easier to remember.';
+$string['passwordsenttext'] = '<p>An email has been sent to your address at {$a->email}.</p>
+   <p><b>Please check your email for your new password</b></p>
+   <p>The new password was automatically generated, so you might like to
+   <a href="{$a->link}">change it to something easier to remember</a>.</p>';
+$string['passwordsent'] = 'Password has been sent';
+$string['passwordrecovery'] = 'Yes, help me log in';
+$string['passwordconfirmchange'] = 'Confirm password change';
+$string['passwordnohelp'] = 'No help is available to find your lost password. Please contact your Moodle administrator.';
