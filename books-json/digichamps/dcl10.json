@@ -276,13 +276,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL10-TP1-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit1-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-U01-CHDRN1",
               "fname": "DCL10-U01-CHDRN1.json",
               "type": "quiz"
@@ -369,13 +362,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL10-TP2-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit2-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-U02-CHDRN1",
               "fname": "DCL10-U02-CHDRN1.json",
               "type": "quiz"
@@ -439,13 +425,6 @@
               "uid": "DCL10-TP3-CHDRN10",
               "fname": "DCL10-TP3-CHDRN10.json",
               "type": "assignment"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DCL10-U03-CHDRN1",
@@ -557,13 +536,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL10-TP4-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit4-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-U04-CHDRN1",
               "fname": "DCL10-U04-CHDRN1.json",
               "type": "quiz"
@@ -671,13 +643,6 @@
               "uid": "DCL10-TP5-CHDRN18",
               "fname": "DCL10-TP5-CHDRN18.json",
               "type": "assignment"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP5-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DCL10-U05-CHDRN1",

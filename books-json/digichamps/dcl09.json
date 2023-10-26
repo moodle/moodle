@@ -216,13 +216,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL09-TP1-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit1-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL09-U01-CHDRN1",
               "fname": "DCL09-U01-CHDRN1.json",
               "type": "quiz"
@@ -247,13 +240,6 @@
               "uid": "DCL09-TP2-CHDRN2",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Sprint2.1 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL09-TP2-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit2-Exercise - Google Docs",
               "type": "page"
             },
             {
@@ -381,13 +367,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL09-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit3-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL09-U03-CHDRN1",
               "fname": "DCL09-U03-CHDRN1.json",
               "type": "quiz"
@@ -473,13 +452,6 @@
               "uid": "DCL09-TP4-CHDRN14",
               "fname": "DCL09-TP4-CHDRN14.json",
               "type": "assignment"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL09-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit4-Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DCL09-U04-CHDRN1",
@@ -594,13 +566,6 @@
               "uid": "DCL09-TP5-CHDRN19",
               "fname": "DCL09-TP5-CHDRN19.json",
               "type": "assignment"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL09-TP5-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level9&pdf=DC-L9-Unit5-Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DCL09-U05-CHDRN1",

@@ -572,10 +572,10 @@
                 "type": "page"
               },
               {
-                "title": "4.2 - Developing Procedures",
-                "uid": "DCL12-TP4-CHDRN3",
+                "title": "4.1 - Calling Procedures",
+                "uid": "DCL12-TP4-CHDRN2",
                 "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=19 DCL12_Unit4_Sprint4.2 - Google Docs",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=18 DCL12_Unit4_Sprint4.1 - Google Docs",
                 "type": "page"
               },
               {
@@ -594,10 +594,10 @@
                 "type": "assignment"
               },
               {
-                "title": "4.1 - Calling Procedures",
-                "uid": "DCL12-TP4-CHDRN2",
+                "title": "4.2 - Developing Procedures",
+                "uid": "DCL12-TP4-CHDRN3",
                 "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=18 DCL12_Unit4_Sprint4.1 - Google Docs",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=19 DCL12_Unit4_Sprint4.2 - Google Docs",
                 "type": "page"
               },
               {
@@ -1100,27 +1100,6 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=47 DC_L12-Unit9-Sprint9.1 - Google Docs",
                 "type": "page"
-              },   
-              {
-                "title": "Exam format",
-                "uid": "DCL12-TP9-CHDRN8",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=54_Exam Guide - Google Docs",
-                "type": "page"
-              },     
-              {
-                "title": "Reference Sheet",
-                "uid": "DCL12-TP9-CHDRN9",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=55_Reference Sheet - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "Glossary",
-                "uid": "DCL12-TP9-CHDRN10",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=56_Glossary - Google Docs",
-                "type": "page"
               },      
               {
                 "uid": "DCL12-TP9-CHDRN1100",
@@ -1246,6 +1225,27 @@
                 "uid": "DCL12-TP9-CHDRN28",
                 "fname": "DCL12-TP9-CHDRN28.json",
                 "type": "assignment"
+              },   
+              {
+                "title": "Exam format",
+                "uid": "DCL12-TP9-CHDRN8",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=54_Exam Guide - Google Docs",
+                "type": "page"
+              },     
+              {
+                "title": "Reference Sheet",
+                "uid": "DCL12-TP9-CHDRN9",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=55_Reference Sheet - Google Docs",
+                "type": "page"
+              },
+              {
+                "title": "Glossary",
+                "uid": "DCL12-TP9-CHDRN10",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=56_Glossary - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-U09-CHDRN1",

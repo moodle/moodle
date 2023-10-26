@@ -357,16 +357,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL08-TP3-CHDRN9",
-              "fname": "DCL08-TP3-CHDRN9.json",
-              "type": "assignment"
-            },
-            {
               "title": "3.2 - Tags In HTML",
               "uid": "DCL08-TP3-CHDRN3",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U03_S02",
               "type": "page"
+            },
+            {
+              "uid": "DCL08-TP3-CHDRN9",
+              "fname": "DCL08-TP3-CHDRN9.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL08-TP3-CHDRN10",
@@ -570,16 +570,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL08-TP5-CHDRN6",
-              "fname": "DCL08-TP5-CHDRN6.json",
-              "type": "assignment"
-            },
-            {
               "title": "5.2  Coll Aboration And Review",
               "uid": "DCL08-TP5-CHDRN3",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U05_S02",
               "type": "page"
+            },
+            {
+              "uid": "DCL08-TP5-CHDRN6",
+              "fname": "DCL08-TP5-CHDRN6.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL08-TP5-CHDRN7",
@@ -603,7 +603,7 @@
           "route": "book/DCL08/DCL08-TP1-000.mdx",
           "title": "Unit 6: Document Review",
           "type": "topic",
-          "uid": "DCL08-TP4-000",
+          "uid": "DCL08-TP6-000",
           "children": [
             {
               "title": "Unit 6 Summary",
@@ -771,16 +771,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL08-TP7-CHDRN16",
-              "fname": "DCL08-TP7-CHDRN16.json",
-              "type": "assignment"
-            },
-            {
               "title": "7.4 - Computational Models",
               "uid": "DCL08-TP7-CHDRN5",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level8&pdf=DCL08_U07_S04",
               "type": "page"
+            },
+            {
+              "uid": "DCL08-TP7-CHDRN16",
+              "fname": "DCL08-TP7-CHDRN16.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL08-TP7-CHDRN17",

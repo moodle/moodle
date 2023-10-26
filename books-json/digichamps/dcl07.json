@@ -256,16 +256,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL07-TP2-CHDRN12",
-              "fname": "DCL07-TP2-CHDRN12.json",
-              "type": "assignment"
-            },
-            {
               "title": "2.3 - Image Carousel And Navigation",
               "uid": "DCL07-TP2-CHDRN4",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U02_S03",
               "type": "page"
+            },
+            {
+              "uid": "DCL07-TP2-CHDRN12",
+              "fname": "DCL07-TP2-CHDRN12.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL07-TP2-CHDRN13",

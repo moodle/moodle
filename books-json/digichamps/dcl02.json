@@ -686,13 +686,6 @@
               "type": "assignment"
             },
             {
-              "title": "Exercise",
-              "uid": "DCL02-TP7-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-U07-CHDRN1",
               "fname": "DCL02-U07-CHDRN1.json",
               "type": "quiz"
