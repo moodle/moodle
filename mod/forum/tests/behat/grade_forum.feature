@@ -161,3 +161,18 @@ Feature: I can grade a students interaction across a forum
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
+
+  Scenario: Ensure that only gradable users are available in forum grading interface
+    Given I am on the "Test Forum 1" "forum activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    When I set the field "Whole forum grading > Type" to "Point"
+    And I set the field "Whole forum grading > Maximum grade" to "10"
+    And I set the field "Whole forum grading > Grade to pass" to "4"
+    And I press "Save and display"
+    And I press "Grade users"
+    Then I should see "1 out of 1"
+    And I should see "Student 1"
+    And I should not see "Teacher 1"
+    And I press "Save changes and proceed to the next user"
+    And I should see "Student 1"
+    And I should not see "Teacher 1"
