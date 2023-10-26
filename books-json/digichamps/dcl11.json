@@ -258,13 +258,6 @@
               "type": "assignment"
             },
             {
-              "title": "2.2 - Version Control And Project Management",
-              "uid": "DCL11-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level11&pdf=08_DCL11_Unit2_Sprint2.2 - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL11-TP2-CHDRN8",
               "fname": "DCL11-TP2-CHDRN8.json",
               "type": "assignment"
@@ -273,6 +266,13 @@
               "uid": "DCL11-TP2-CHDRN9",
               "fname": "DCL11-TP2-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.2 - Version Control And Project Management",
+              "uid": "DCL11-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level11&pdf=08_DCL11_Unit2_Sprint2.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL11-TP2-CHDRN10",
