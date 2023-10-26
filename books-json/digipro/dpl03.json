@@ -151,20 +151,6 @@
               "type": "page"
             },
             {
-              "title": "1.2 - interface",
-              "uid": "DPL03-TP1-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U01_S02",
-              "type": "page"
-            },
-            {
-              "title": "1.3 - Save and Share",
-              "uid": "DPL03-TP1-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U01_S03",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-TP1-CHDRN5",
               "fname": "DPL03-TP1-CHDRN5.json",
               "type": "assignment"
@@ -178,6 +164,13 @@
               "uid": "DPL03-TP1-CHDRN7",
               "fname": "DPL03-TP1-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.2 - interface",
+              "uid": "DPL03-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U01_S02",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP1-CHDRN8",
@@ -198,6 +191,13 @@
               "uid": "DPL03-TP1-CHDRN11",
               "fname": "DPL03-TP1-CHDRN11.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.3 - Save and Share",
+              "uid": "DPL03-TP1-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U01_S03",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP1-CHDRN12",
@@ -243,20 +243,6 @@
               "type": "page"
             },
             {
-              "title": "2.2 - Sprites",
-              "uid": "DPL03-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U02_S02",
-              "type": "page"
-            },
-            {
-              "title": "2.3 - Backdrop",
-              "uid": "DPL03-TP2-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U02_S03",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-TP2-CHDRN500",
               "fname": "DPL03-TP2-CHDRN5.json",
               "type": "assignment"
@@ -267,6 +253,13 @@
               "type": "assignment"
             },
             {
+              "title": "2.2 - Sprites",
+              "uid": "DPL03-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U02_S02",
+              "type": "page"
+            },
+            {
               "uid": "DPL03-TP2-CHDRN7",
               "fname": "DPL03-TP2-CHDRN7.json",
               "type": "assignment"
@@ -275,6 +268,13 @@
               "uid": "DPL03-TP2-CHDRN8",
               "fname": "DPL03-TP2-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.3 - Backdrop",
+              "uid": "DPL03-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U02_S03",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP2-CHDRN9",
@@ -315,20 +315,6 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Hide and Show",
-              "uid": "DPL03-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U03_S02",
-              "type": "page"
-            },
-            {
-              "title": "3.3 - Sound on Click",
-              "uid": "DPL03-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U03_S03",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-TP3-CHDRN500",
               "fname": "DPL03-TP3-CHDRN5.json",
               "type": "assignment"
@@ -349,6 +335,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.2 - Hide and Show",
+              "uid": "DPL03-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U03_S02",
+              "type": "page"
+            },
+            {
               "uid": "DPL03-TP3-CHDRN9",
               "fname": "DPL03-TP3-CHDRN9.json",
               "type": "assignment"
@@ -357,6 +350,13 @@
               "uid": "DPL03-TP3-CHDRN10",
               "fname": "DPL03-TP3-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.3 - Sound on Click",
+              "uid": "DPL03-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U03_S03",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP3-CHDRN11",
@@ -404,28 +404,9 @@
               "type": "page"
             },
             {
-              "title": "4.3 - Say Block",
-              "uid": "DPL03-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_S03",
-              "type": "page"
-            },
-            {
-              "title": "Capstone Project - Amazing Dancers",
-              "uid": "DPL03-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_Capstone Project",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-TP4-CHDRN600",
               "fname": "DPL03-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DPL03-U04-CHDRN1",
-              "fname": "DPL03-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DPL03-TP4-CHDRN7",
@@ -438,6 +419,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - Say Block",
+              "uid": "DPL03-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_S03",
+              "type": "page"
+            },
+            {
               "uid": "DPL03-TP4-CHDRN9",
               "fname": "DPL03-TP4-CHDRN9.json",
               "type": "assignment"
@@ -446,6 +434,18 @@
               "uid": "DPL03-TP4-CHDRN10",
               "fname": "DPL03-TP4-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "Capstone Project - Amazing Dancers",
+              "uid": "DPL03-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_Capstone Project",
+              "type": "page"
+            },
+            {
+              "uid": "DPL03-U04-CHDRN1",
+              "fname": "DPL03-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -471,40 +471,21 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Computer Vision",
-              "uid": "DPL03-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 Face Sensing",
-              "uid": "DPL03-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_S03",
-              "type": "page"
-            },
-            {
-              "title": "Capstone Project - Face Filter",
-              "uid": "DPL03-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_Capstone Project",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-TP5-CHDRN600",
               "fname": "DPL03-TP5-CHDRN6.json",
               "type": "assignment"
             },
             {
-              "uid": "DPL03-U05-CHDRN1",
-              "fname": "DPL03-U05-CHDRN1.json",
-              "type": "quiz"
-            },
-            {
               "uid": "DPL03-TP5-CHDRN7",
               "fname": "DPL03-TP5-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Computer Vision",
+              "uid": "DPL03-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP5-CHDRN8",
@@ -515,6 +496,13 @@
               "uid": "DPL03-TP5-CHDRN9",
               "fname": "DPL03-TP5-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.3 Face Sensing",
+              "uid": "DPL03-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_S03",
+              "type": "page"
             },
             {
               "uid": "DPL03-TP5-CHDRN10",
@@ -530,6 +518,18 @@
               "uid": "DPL03-TP5-CHDRN12",
               "fname": "DPL03-TP5-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "title": "Capstone Project - Face Filter",
+              "uid": "DPL03-TP5-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_Capstone Project",
+              "type": "page"
+            },
+            {
+              "uid": "DPL03-U05-CHDRN1",
+              "fname": "DPL03-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

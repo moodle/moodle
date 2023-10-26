@@ -320,41 +320,6 @@
                 "type": "page"
               },
               {
-                "title": "1.2 - Variables And Data Types",
-                "uid": "DPL12-TP1-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=03-DP_L12_Unit1_Sprint1.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.3 - Arithmetic Operations In Java",
-                "uid": "DPL12-TP1-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=04-DP_L12_Unit1_Sprint1.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.4 - Compound Assignment Operators",
-                "uid": "DPL12-TP1-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=05-DP_L12_Unit1_Sprint1.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.5 - Casting And Ranges Of Variables",
-                "uid": "DPL12-TP1-CHDRN7",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=06-DP_L12_Unit1_Sprint1.5 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.6 - Exercise",
-                "uid": "DPL12-TP1-CHDRN8",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=07-DP_L12_Unit1_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-TP1-CHDRN9",
                 "fname": "DPL12-TP1-CHDRN9.json",
                 "type": "assignment"
@@ -370,6 +335,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.2 - Variables And Data Types",
+                "uid": "DPL12-TP1-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=03-DP_L12_Unit1_Sprint1.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP1-CHDRN12",
                 "fname": "DPL12-TP1-CHDRN12.json",
                 "type": "assignment"
@@ -383,6 +355,13 @@
                 "uid": "DPL12-TP1-CHDRN14",
                 "fname": "DPL12-TP1-CHDRN14.json",
                 "type": "assignment"
+              },
+              {
+                "title": "1.3 - Arithmetic Operations In Java",
+                "uid": "DPL12-TP1-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=04-DP_L12_Unit1_Sprint1.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP1-CHDRN15",
@@ -405,6 +384,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.4 - Compound Assignment Operators",
+                "uid": "DPL12-TP1-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=05-DP_L12_Unit1_Sprint1.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP1-CHDRN19",
                 "fname": "DPL12-TP1-CHDRN19.json",
                 "type": "assignment"
@@ -420,6 +406,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.5 - Casting And Ranges Of Variables",
+                "uid": "DPL12-TP1-CHDRN7",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=06-DP_L12_Unit1_Sprint1.5 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP1-CHDRN22",
                 "fname": "DPL12-TP1-CHDRN22.json",
                 "type": "assignment"
@@ -433,6 +426,13 @@
                 "uid": "DPL12-TP1-CHDRN24",
                 "fname": "DPL12-TP1-CHDRN24.json",
                 "type": "assignment"
+              },
+              {
+                "title": "1.6 - Exercise",
+                "uid": "DPL12-TP1-CHDRN8",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=07-DP_L12_Unit1_Exercise - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-U01-CHDRN1",
@@ -463,48 +463,6 @@
                 "type": "page"
               },
               {
-                "title": "2.2 - If Statements And Control Flow",
-                "uid": "DPL12-TP2-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=10 DP_ L12 _Unit2_Sprint2.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.3 - If-Else Statements",
-                "uid": "DPL12-TP2-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=11 DP_ L12 _Unit2_Sprint2.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.4 - If-Else-If Statements",
-                "uid": "DPL12-TP2-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=12 DP_ L12 _Unit2_Sprint2.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.5 - Compound Boolean Expressions",
-                "uid": "DPL12-TP2-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=13 DP_ L12 _Unit2_Sprint2.5 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.6 - Equivalent Boolean Expressions",
-                "uid": "DPL12-TP2-CHDRN7",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=14 DP_ L12 _Unit2_Sprint2.6 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.7 - Exercise",
-                "uid": "DPL12-TP2-CHDRN8",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=15 DP_L12_Unit 2_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-TP2-CHDRN9",
                 "fname": "DPL12-TP2-CHDRN9.json",
                 "type": "assignment"
@@ -518,6 +476,13 @@
                 "uid": "DPL12-TP2-CHDRN11",
                 "fname": "DPL12-TP2-CHDRN11.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.2 - If Statements And Control Flow",
+                "uid": "DPL12-TP2-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=10 DP_ L12 _Unit2_Sprint2.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP2-CHDRN12",
@@ -535,6 +500,13 @@
                 "type": "assignment"
               },
               {
+                "title": "2.3 - If-Else Statements",
+                "uid": "DPL12-TP2-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=11 DP_ L12 _Unit2_Sprint2.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP2-CHDRN15",
                 "fname": "DPL12-TP2-CHDRN15.json",
                 "type": "assignment"
@@ -548,6 +520,13 @@
                 "uid": "DPL12-TP2-CHDRN17",
                 "fname": "DPL12-TP2-CHDRN17.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.4 - If-Else-If Statements",
+                "uid": "DPL12-TP2-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=12 DP_ L12 _Unit2_Sprint2.4 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP2-CHDRN18",
@@ -565,6 +544,13 @@
                 "type": "assignment"
               },
               {
+                "title": "2.5 - Compound Boolean Expressions",
+                "uid": "DPL12-TP2-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=13 DP_ L12 _Unit2_Sprint2.5 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP2-CHDRN21",
                 "fname": "DPL12-TP2-CHDRN21.json",
                 "type": "assignment"
@@ -580,6 +566,13 @@
                 "type": "assignment"
               },
               {
+                "title": "2.6 - Equivalent Boolean Expressions",
+                "uid": "DPL12-TP2-CHDRN7",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=14 DP_ L12 _Unit2_Sprint2.6 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP2-CHDRN24",
                 "fname": "DPL12-TP2-CHDRN24.json",
                 "type": "assignment"
@@ -593,6 +586,13 @@
                 "uid": "DPL12-TP2-CHDRN26",
                 "fname": "DPL12-TP2-CHDRN26.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.7 - Exercise",
+                "uid": "DPL12-TP2-CHDRN8",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=15 DP_L12_Unit 2_Exercise - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-U02-CHDRN1",
@@ -623,40 +623,21 @@
                 "type": "page"
               },
               {
-                "title": "3.2 - For Loops",
-                "uid": "DPL12-TP3-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=18 DP_ L12 _Unit3_Sprint3.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "3.3 - Nested Iteration",
-                "uid": "DPL12-TP3-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=19 DP_ L12 _Unit3_Sprint3.3 - Google Docs",
-                "type": "page"
-              }, 
-              {
-                "title": "3.4 - Exercise",
-                "uid": "DPL12-TP3-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=20 DPL12_Unit3_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-TP3-CHDRN6",
                 "fname": "DPL12-TP3-CHDRN6.json",
                 "type": "assignment"
               },
               {
-                "uid": "DPL12-U03-CHDRN1",
-                "fname": "DPL12-U03-CHDRN1.json",
-                "type": "quiz"
-              },
-              {
                 "uid": "DPL12-TP3-CHDRN7",
                 "fname": "DPL12-TP3-CHDRN7.json",
                 "type": "assignment"
+              },
+              {
+                "title": "3.2 - For Loops",
+                "uid": "DPL12-TP3-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=18 DP_ L12 _Unit3_Sprint3.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP3-CHDRN8",
@@ -684,6 +665,13 @@
                 "type": "assignment"
               },
               {
+                "title": "3.3 - Nested Iteration",
+                "uid": "DPL12-TP3-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=19 DP_ L12 _Unit3_Sprint3.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP3-CHDRN13",
                 "fname": "DPL12-TP3-CHDRN13.json",
                 "type": "assignment"
@@ -697,6 +685,18 @@
                 "uid": "DPL12-TP3-CHDRN15",
                 "fname": "DPL12-TP3-CHDRN15.json",
                 "type": "assignment"
+              }, 
+              {
+                "title": "3.4 - Exercise",
+                "uid": "DPL12-TP3-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=20 DPL12_Unit3_Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL12-U03-CHDRN1",
+                "fname": "DPL12-U03-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -722,39 +722,6 @@
                 "type": "page"
               },
               {
-                "title": "4.2 - Void Methods And Constructors",
-                "uid": "DPL12-TP4-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=23 DP-L12-Unit4-Sprint4.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.3 - Accessors,Mutators,And Non-Void Methods",
-                "uid": "DPL12-TP4-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=24 DP-L12-Unit4-Sprint4.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.4 - Access Modifiers,Libraries,And Packages",
-                "uid": "DPL12-TP4-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=25 DP-L12-Unit4-Sprint4.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.5 - Exercise",
-                "uid": "DPL12-TP4-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=26 DPL12_Unit4_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL12-U04-CHDRN1",
-                "fname": "DPL12-U04-CHDRN1.json",
-                "type": "quiz"
-              },
-              {
                 "uid": "DPL12-TP4-CHDRN7",
                 "fname": "DPL12-TP4-CHDRN7.json",
                 "type": "assignment"
@@ -768,6 +735,13 @@
                 "uid": "DPL12-TP4-CHDRN9",
                 "fname": "DPL12-TP4-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "4.2 - Void Methods And Constructors",
+                "uid": "DPL12-TP4-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=23 DP-L12-Unit4-Sprint4.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP4-CHDRN10",
@@ -785,6 +759,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.3 - Accessors,Mutators,And Non-Void Methods",
+                "uid": "DPL12-TP4-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=24 DP-L12-Unit4-Sprint4.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP4-CHDRN13",
                 "fname": "DPL12-TP4-CHDRN13.json",
                 "type": "assignment"
@@ -800,6 +781,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.4 - Access Modifiers,Libraries,And Packages",
+                "uid": "DPL12-TP4-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=25 DP-L12-Unit4-Sprint4.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP4-CHDRN16",
                 "fname": "DPL12-TP4-CHDRN16.json",
                 "type": "assignment"
@@ -808,6 +796,18 @@
                 "uid": "DPL12-TP4-CHDRN17",
                 "fname": "DPL12-TP4-CHDRN17.json",
                 "type": "assignment"
+              },
+              {
+                "title": "4.5 - Exercise",
+                "uid": "DPL12-TP4-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=26 DPL12_Unit4_Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL12-U04-CHDRN1",
+                "fname": "DPL12-U04-CHDRN1.json",
+                "type": "quiz"
               }
               
             ],
@@ -834,32 +834,6 @@
                 "type": "page"
               },
               {
-                "title": "5.2 - Wrapper Classes:Integer And Double",
-                "uid": "DPL12-TP5-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=29 DP_L12_Unit5_Sprint5.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.3 - Math Class",
-                "uid": "DPL12-TP5-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=30 DP_L12_Unit5_Sprint5.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.4 - Exercise",
-                "uid": "DPL12-TP5-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=31 DP_L12_Unit5_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL12-U05-CHDRN1",
-                "fname": "DPL12-U05-CHDRN1.json",
-                "type": "quiz"
-              },
-              {
                 "uid": "DPL12-TP5-CHDRN6",
                 "fname": "DPL12-TP5-CHDRN6.json",
                 "type": "assignment"
@@ -875,6 +849,13 @@
                 "type": "assignment"
               },
               {
+                "title": "5.2 - Wrapper Classes:Integer And Double",
+                "uid": "DPL12-TP5-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=29 DP_L12_Unit5_Sprint5.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP5-CHDRN9",
                 "fname": "DPL12-TP5-CHDRN9.json",
                 "type": "assignment"
@@ -883,6 +864,13 @@
                 "uid": "DPL12-TP5-CHDRN10",
                 "fname": "DPL12-TP5-CHDRN10.json",
                 "type": "assignment"
+              },
+              {
+                "title": "5.3 - Math Class",
+                "uid": "DPL12-TP5-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=30 DP_L12_Unit5_Sprint5.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP5-CHDRN11",
@@ -898,6 +886,18 @@
                 "uid": "DPL12-TP5-CHDRN13",
                 "fname": "DPL12-TP5-CHDRN13.json",
                 "type": "assignment"
+              },
+              {
+                "title": "5.4 - Exercise",
+                "uid": "DPL12-TP5-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=31 DP_L12_Unit5_Exercise - Google Docs",
+                "type": "page"
+              },
+              {
+                "uid": "DPL12-U05-CHDRN1",
+                "fname": "DPL12-U05-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -920,27 +920,6 @@
                 "uid": "DPL12-TP6-CHDRN2",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=33 DP_L12_Unit6_Sprint6.1 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.2 - Traversing Arrays",
-                "uid": "DPL12-TP6-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=34 DP_L12_Unit6_Sprint6.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.3 - Enhanced For Loop For Arrays",
-                "uid": "DPL12-TP6-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=35 DP_L12_Unit6_Sprint6.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.4 - 2D Arrays",
-                "uid": "DPL12-TP6-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=36 DP_L12_Unit6_Sprint6.4 - Google Docs",
                 "type": "page"
               },
               {
@@ -971,6 +950,13 @@
                 "type": "assignment"
               },
               {
+                "title": "6.2 - Traversing Arrays",
+                "uid": "DPL12-TP6-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=34 DP_L12_Unit6_Sprint6.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP6-CHDRN10",
                 "fname": "DPL12-TP6-CHDRN10.json",
                 "type": "assignment"
@@ -986,6 +972,13 @@
                 "type": "assignment"
               },
               {
+                "title": "6.3 - Enhanced For Loop For Arrays",
+                "uid": "DPL12-TP6-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=35 DP_L12_Unit6_Sprint6.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP6-CHDRN13",
                 "fname": "DPL12-TP6-CHDRN13.json",
                 "type": "assignment"
@@ -999,6 +992,13 @@
                 "uid": "DPL12-TP6-CHDRN15",
                 "fname": "DPL12-TP6-CHDRN15.json",
                 "type": "assignment"
+              },
+              {
+                "title": "6.4 - 2D Arrays",
+                "uid": "DPL12-TP6-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=36 DP_L12_Unit6_Sprint6.4 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL12-TP6-CHDRN16",
@@ -1039,25 +1039,6 @@
                 "type": "page"
               },
               {
-                "title": "7.2 - Traversing Arraylists",
-                "uid": "DPL12-TP7-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=40 DP_L12_Unit7_Sprint7.2 - Google Docs",
-                "type": "page"
-              },
-               {
-                "title": "7.3 - Exercise",
-                "uid": "DPL12-TP7-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=41 DP_L12_Unit7_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL12-U07-CHDRN1",
-                "fname": "DPL12-U07-CHDRN1.json",
-                "type": "quiz"
-              },
-              {
                 "uid": "DPL12-TP7-CHDRN5",
                 "fname": "DPL12-TP7-CHDRN5.json",
                 "type": "assignment"
@@ -1073,6 +1054,13 @@
                 "type": "assignment"
               },
               {
+                "title": "7.2 - Traversing Arraylists",
+                "uid": "DPL12-TP7-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=40 DP_L12_Unit7_Sprint7.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP7-CHDRN8",
                 "fname": "DPL12-TP7-CHDRN8.json",
                 "type": "assignment"
@@ -1086,7 +1074,19 @@
                 "uid": "DPL12-TP7-CHDRN10",
                 "fname": "DPL12-TP7-CHDRN10.json",
                 "type": "assignment"
-              }
+              },
+              {
+               "title": "7.3 - Exercise",
+               "uid": "DPL12-TP7-CHDRN4",
+               "description": "",
+               "route": "/pdf?course=DigiPro&Level=Level12&pdf=41 DP_L12_Unit7_Exercise - Google Docs",
+               "type": "page"
+             },
+             {
+               "uid": "DPL12-U07-CHDRN1",
+               "fname": "DPL12-U07-CHDRN1.json",
+               "type": "quiz"
+             }
             ],
             "teacheronly": "no"
           },
@@ -1110,39 +1110,6 @@
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=43 DP_L12_Unit8_Sprint8.1 - Google Docs",
                 "type": "page"
               },
-              {
-                "title": "8.2 - Manipulating Arrays And ArrayLists",
-                "uid": "DPL12-TP8-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=44 DP_L12_Unit8_Sprint8.2 - Google Docs",
-                "type": "page"
-              },
-               {
-                "title": "8.3 - Searching And Sorting",
-                "uid": "DPL12-TP8-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=45 DP_L12_Unit8_Sprint8.3 - Google Docs",
-                "type": "page"
-              },
-              {
-               "title": "8.4 - String Manipulation",
-               "uid": "DPL12-TP8-CHDRN5",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level12&pdf=46 DP_L12_Unit8_Sprint8.4 - Google Docs",
-               "type": "page"
-             },
-             {
-              "title": "8.5 - Exercise",
-              "uid": "DPL12-TP8-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level12&pdf=47 DP_L12_Unit8_Exercise - Google Docs",
-              "type": "page"
-            },
-            {
-              "uid": "DPL12-U08-CHDRN1",
-              "fname": "DPL12-U08-CHDRN1.json",
-              "type": "quiz"
-            },
             {
               "uid": "DPL12-TP8-CHDRN7",
               "fname": "DPL12-TP8-CHDRN7.json",
@@ -1157,6 +1124,13 @@
               "uid": "DPL12-TP8-CHDRN9",
               "fname": "DPL12-TP8-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "8.2 - Manipulating Arrays And ArrayLists",
+              "uid": "DPL12-TP8-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level12&pdf=44 DP_L12_Unit8_Sprint8.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DPL12-TP8-CHDRN10",
@@ -1174,6 +1148,13 @@
               "type": "assignment"
             },
             {
+             "title": "8.3 - Searching And Sorting",
+             "uid": "DPL12-TP8-CHDRN4",
+             "description": "",
+             "route": "/pdf?course=DigiPro&Level=Level12&pdf=45 DP_L12_Unit8_Sprint8.3 - Google Docs",
+             "type": "page"
+           },
+            {
               "uid": "DPL12-TP8-CHDRN13",
               "fname": "DPL12-TP8-CHDRN13.json",
               "type": "assignment"
@@ -1189,6 +1170,13 @@
               "type": "assignment"
             },
             {
+             "title": "8.4 - String Manipulation",
+             "uid": "DPL12-TP8-CHDRN5",
+             "description": "",
+             "route": "/pdf?course=DigiPro&Level=Level12&pdf=46 DP_L12_Unit8_Sprint8.4 - Google Docs",
+             "type": "page"
+           },
+            {
               "uid": "DPL12-TP8-CHDRN16",
               "fname": "DPL12-TP8-CHDRN16.json",
               "type": "assignment"
@@ -1202,7 +1190,19 @@
               "uid": "DPL12-TP8-CHDRN18",
               "fname": "DPL12-TP8-CHDRN18.json",
               "type": "assignment"
-            }
+            },
+            {
+             "title": "8.5 - Exercise",
+             "uid": "DPL12-TP8-CHDRN6",
+             "description": "",
+             "route": "/pdf?course=DigiPro&Level=Level12&pdf=47 DP_L12_Unit8_Exercise - Google Docs",
+             "type": "page"
+           },
+           {
+             "uid": "DPL12-U08-CHDRN1",
+             "fname": "DPL12-U08-CHDRN1.json",
+             "type": "quiz"
+           }
             ],
             "teacheronly": "no"
           },
@@ -1226,32 +1226,6 @@
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=49 DP-L12-Unit9-Sprint9.1 - Google Docs",
                 "type": "page"
               },
-              {
-                "title": "9.2 - Overriding Methods And Polymorphism",
-                "uid": "DPL12-TP9-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=50 DP-L12-Unit9-Sprint9.2 - Google Docs",
-                "type": "page"
-              },
-               {
-                "title": "9.3 - Polymorphism And The Object Class",
-                "uid": "DPL12-TP9-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=51 DP-L12-Unit9-Sprint9.3 - Google Docs",
-                "type": "page"
-              },
-              {
-               "title": "9.4 - Exercise",
-               "uid": "DPL12-TP9-CHDRN5",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level12&pdf=52 DP_L12_Unit9_Exercise - Google Docs",
-               "type": "page"
-             },
-             {
-               "uid": "DPL12-U09-CHDRN1",
-               "fname": "DPL12-U09-CHDRN1.json",
-               "type": "quiz"
-             },
              {
                "uid": "DPL12-TP9-CHDRN6",
                "fname": "DPL12-TP9-CHDRN6.json",
@@ -1266,6 +1240,13 @@
                "uid": "DPL12-TP9-CHDRN8",
                "fname": "DPL12-TP9-CHDRN8.json",
                "type": "assignment"
+             },
+             {
+               "title": "9.2 - Overriding Methods And Polymorphism",
+               "uid": "DPL12-TP9-CHDRN3",
+               "description": "",
+               "route": "/pdf?course=DigiPro&Level=Level12&pdf=50 DP-L12-Unit9-Sprint9.2 - Google Docs",
+               "type": "page"
              },
              {
                "uid": "DPL12-TP9-CHDRN9",
@@ -1283,6 +1264,13 @@
                "type": "assignment"
              },
              {
+              "title": "9.3 - Polymorphism And The Object Class",
+              "uid": "DPL12-TP9-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level12&pdf=51 DP-L12-Unit9-Sprint9.3 - Google Docs",
+              "type": "page"
+            },
+             {
                "uid": "DPL12-TP9-CHDRN12",
                "fname": "DPL12-TP9-CHDRN12.json",
                "type": "assignment"
@@ -1296,7 +1284,19 @@
                "uid": "DPL12-TP9-CHDRN14",
                "fname": "DPL12-TP9-CHDRN14.json",
                "type": "assignment"
-             }
+             },
+             {
+              "title": "9.4 - Exercise",
+              "uid": "DPL12-TP9-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level12&pdf=52 DP_L12_Unit9_Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DPL12-U09-CHDRN1",
+              "fname": "DPL12-U09-CHDRN1.json",
+              "type": "quiz"
+            }
             ],
             "teacheronly": "no"
           },
@@ -1321,25 +1321,6 @@
                 "type": "page"
               },
               {
-                "title": "10.2 - Recursive Searching And Sorting",
-                "uid": "DPL12-TP10-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=55 DP-L12-Unit10-Sprint10.2 - Google Docs",
-                "type": "page"
-              },
-               {
-                "title": "10.3 - Exercise",
-                "uid": "DPL12-TP10-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=56-DPL12_Unit10_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL12-U10-CHDRN1",
-                "fname": "DPL12-U10-CHDRN1.json",
-                "type": "quiz"
-              },
-              {
                 "uid": "DPL12-TP10-CHDRN5",
                 "fname": "DPL12-TP10-CHDRN5.json",
                 "type": "assignment"
@@ -1355,6 +1336,13 @@
                 "type": "assignment"
               },
               {
+                "title": "10.2 - Recursive Searching And Sorting",
+                "uid": "DPL12-TP10-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=55 DP-L12-Unit10-Sprint10.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL12-TP10-CHDRN8",
                 "fname": "DPL12-TP10-CHDRN8.json",
                 "type": "assignment"
@@ -1368,7 +1356,19 @@
                 "uid": "DPL12-TP10-CHDRN10",
                 "fname": "DPL12-TP10-CHDRN10.json",
                 "type": "assignment"
-              }
+              },
+              {
+               "title": "10.3 - Exercise",
+               "uid": "DPL12-TP10-CHDRN4",
+               "description": "",
+               "route": "/pdf?course=DigiPro&Level=Level12&pdf=56-DPL12_Unit10_Exercise - Google Docs",
+               "type": "page"
+             },
+             {
+               "uid": "DPL12-U10-CHDRN1",
+               "fname": "DPL12-U10-CHDRN1.json",
+               "type": "quiz"
+             }
             ],
             "teacheronly": "no"
           },
