@@ -68,9 +68,6 @@ foreach($course_groups as $course_group){
 	   $roleid = $egroup_member->id;
 	   $egusers = $egroup_member->users;
 	   foreach($egusers as $eguser){
-           if($cohort_idnumber=="efalcon" && $roleid=="3"){
-               $roleid = "9";
-           }
            echo 'Group '.$gid.' User '.$eguser->id.' Role '.$roleid."<br/>";
 		   $manplugin->enrol_user($cur_course_instance, $eguser->id, $roleid);
 		   groups_add_member($gid, $eguser->id);

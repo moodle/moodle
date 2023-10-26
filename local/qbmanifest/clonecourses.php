@@ -36,17 +36,28 @@ $farr = array(
     "DJL01" => "/books-json/djl01.json"
 );
 
-$carr = array(
-    "efalcon" => array(
-        "name" => "Emirates Falcon",
-        "idnumber" => "efalcon"
-    )
-);
 
 $ref_csname = required_param('cshortname', PARAM_ALPHANUMEXT);
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
 //$cfilename = required_param('mfile', PARAM_RAW);
 $cfilename = $farr[$ref_csname];
+
+$rcohort = $DB->get_record("cohort", [
+    "idnumber" => $cohort_idnumber
+], '*', MUST_EXIST);
+
+$coursecategory = $DB->get_record("course_categories", [
+    "idnumber" => $cohort_idnumber
+], '*');
+
+if(empty($coursecategory)){
+    $coursecategory = new stdClass;
+    $coursecategory->name = $rcohort->description;
+    $coursecategory->idnumber = $rcohort->idnumber;
+    $coursecategory->parent = 0;
+    $rcat = core_course_category::create($coursecategory, '');
+}
+
 
 $coursefile = $CFG->dirroot.$cfilename; // '/books-json/digichamps/dcl02.json'
 $course_fcontent = file_get_contents($coursefile);
@@ -68,12 +79,8 @@ if(is_array($isvalidjson) or is_object($isvalidjson)) {
 
             $datacourse[0]['fullname'] = $course->name;
             $datacourse[0]['shortname'] = $course->code;
-            $datacourse[0]['category'] = $course->category;
-            $datacourse[0]['categoryid'] = $course->categorycode;
-            if(isset($carr[$cohort_idnumber])){
-                $datacourse[0]['category'] = $carr[$cohort_idnumber]["name"];
-                $datacourse[0]['categoryid'] = $carr[$cohort_idnumber]["idnumber"];
-            }
+            $datacourse[0]['category'] = $coursecategory->name;
+            $datacourse[0]['categoryid'] = $coursecategory->idnumber;
 
             $datacourse[0]['numsections'] = count($course->chapters);
             $datacourse[0]['summary'] = $course->summary;
