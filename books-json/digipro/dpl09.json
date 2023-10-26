@@ -308,13 +308,6 @@
                 "type": "assignment"
               },
               {
-                "title": "1.5 - Exercise",
-                "uid": "DPL09-TP1-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=06-DP-L9-Unit1-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL09-U01-CHDRN1",
                 "fname": "DPL09-U01-CHDRN1.json",
                 "type": "quiz"
@@ -402,13 +395,6 @@
                 "type": "assignment"
               },
               {
-                "title": "2.4 - Exercise",
-                "uid": "DPL09-TP2-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=11-DP-L9-Unit2-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL09-U02-CHDRN1",
                 "fname": "DPL09-U02-CHDRN1.json",
                 "type": "quiz"
@@ -494,13 +480,6 @@
                 "uid": "DPL09-TP3-CHDRN14",
                 "fname": "DPL09-TP3-CHDRN14.json",
                 "type": "assignment"
-              }, 
-              {
-                "title": "3.4 - Exercise",
-                "uid": "DPL09-TP3-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=16-DP_L9_Unit3_Exercise - Google Docsoogle Docs",
-                "type": "page"
               },
               {
                 "uid": "DPL09-U03-CHDRN1",
@@ -612,13 +591,6 @@
                 "type": "assignment"
               },
               {
-                "title": "4.5 - Exercise",
-                "uid": "DPL09-TP4-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=22-DPL9_Unit4_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL09-U04-CHDRN1",
                 "fname": "DPL09-U04-CHDRN1.json",
                 "type": "quiz"
@@ -691,24 +663,27 @@
                 "type": "assignment"
               },
               {
-                "title": "5.4 - Exercise",
-                "uid": "DPL09-TP5-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=27-DPL9_Unit5_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.5 - Food Calorie Management Project",
-                "uid": "DPL09-TP5-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=28-Capstone_ Daily Calorie Intake - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL09-U05-CHDRN1",
                 "fname": "DPL09-U05-CHDRN1.json",
                 "type": "quiz"
               }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL09/DPL09-TP8-000.mdx",
+            "title": "Capstone Project - Food Calorie Management Project",
+            "type": "topic",
+            "uid": "DPL09-TP8-000",
+            "children": [
+              {
+                "title": "Capstone Project - Food Calorie Management Project",
+                "uid": "DPL09-TP8-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=28-Capstone_ Daily Calorie Intake - Google Docs",
+                "type": "page"
+              }
+              
             ],
             "teacheronly": "no"
           },
@@ -730,13 +705,6 @@
                 "uid": "DPL09-TP6-CHDRN2",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level9&pdf=30-DP_L9_Unit6_Sprint6.1 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.5 - Exercise",
-                "uid": "DPL09-TP6-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=34-DP-L9-Unit6-Exercise - Google Docs",
                 "type": "page"
               },
               {
@@ -906,13 +874,6 @@
                 "uid": "DPL09-TP7-CHDRN15",
                 "fname": "DPL09-TP7-CHDRN15.json",
                 "type": "assignment"
-              },
-              {
-                "title": "7.5 - Exercise",
-                "uid": "DPL09-TP7-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=39-DP_L9_Unit7_Exercise - Google Docs",
-                "type": "page"
               },
               {
                 "uid": "DPL09-U07-CHDRN1",

@@ -426,16 +426,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Escape and Collect Game",
-              "uid": "DPL04-TP3-CHDRN7",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Capstone",
-              "type": "page"
-            },
-            {
               "uid": "DPL04-U03-CHDRN1",
               "fname": "DPL04-U03-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL04/DPL04-TP5-000.mdx",
+          "title": "Capstone Project - Escape and Collect Game",
+          "type": "topic",
+          "uid": "DPL04-TP5-000",
+          "children": [
+            {
+              "title": "Capstone Project - Escape and Collect Game",
+              "uid": "DPL04-TP5-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U03_Capstone",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -520,16 +529,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - AI-Based Waste Segregation",
-              "uid": "DPL04-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Capstone",
-              "type": "page"
-            },
-            {
               "uid": "DPL04-U04-CHDRN1",
               "fname": "DPL04-U04-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL04/DPL04-TP6-000.mdx",
+          "title": "Capstone Project - AI-Based Waste Segregation",
+          "type": "topic",
+          "uid": "DPL04-TP6-000",
+          "children": [
+            {
+              "title": "Capstone Project - AI-Based Waste Segregation",
+              "uid": "DPL04-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level4&pdf=DPL04_U04_Capstone",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

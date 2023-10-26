@@ -397,16 +397,16 @@
               "type": "page"
             },
             {
+              "uid": "DPL03-TP4-CHDRN600",
+              "fname": "DPL03-TP4-CHDRN6.json",
+              "type": "assignment"
+            },
+            {
               "title": "4.2 - Costume Change",
               "uid": "DPL03-TP4-CHDRN3",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_S02",
               "type": "page"
-            },
-            {
-              "uid": "DPL03-TP4-CHDRN600",
-              "fname": "DPL03-TP4-CHDRN6.json",
-              "type": "assignment"
             },
             {
               "uid": "DPL03-TP4-CHDRN7",
@@ -436,16 +436,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Amazing Dancers",
-              "uid": "DPL03-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_Capstone Project",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-U04-CHDRN1",
               "fname": "DPL03-U04-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL03/DPL03-TP6-000.mdx",
+          "title": "Capstone Project - Amazing Dancers",
+          "type": "topic",
+          "uid": "DPL03-TP6-000",
+          "children": [
+            {
+              "title": "Capstone Project - Amazing Dancers",
+              "uid": "DPL03-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U04_Capstone Project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -520,16 +529,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Face Filter",
-              "uid": "DPL03-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_Capstone Project",
-              "type": "page"
-            },
-            {
               "uid": "DPL03-U05-CHDRN1",
               "fname": "DPL03-U05-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL03/DPL03-TP7-000.mdx",
+          "title": "Capstone Project - Face Filter",
+          "type": "topic",
+          "uid": "DPL03-TP7-000",
+          "children": [
+            {
+              "title": "Capstone Project - Face Filter",
+              "uid": "DPL03-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level3&pdf=DPL03_U05_Capstone Project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

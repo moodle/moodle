@@ -18,6 +18,13 @@
             "uid": "DPL12-TP0-000",
             "children": [
               {
+                "title": "Teacher Guide",
+                "uid": "DPL12-TP0-CHDRN39",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=DigiPro_L12_Teacher's Guide",
+                "type": "page"
+              },
+              {
                     "title": "Sprint 1.1 Introduction to Java",
                     "uid": "DPL12-TP0-CHDRN1",
                     "description": "",
@@ -58,13 +65,6 @@
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.1",
                     "type": "page"
-                  },   
-                  {
-                    "title": "Sprint 2.3 If-Else Statements",
-                    "uid": "DPL12-TP0-CHDRN7",
-                    "description": "",
-                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.3",
-                    "type": "page"
                   },
                   {
                     "title": "Sprint 2.2 If Statements And Control Flow",
@@ -72,6 +72,13 @@
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.2",
                     "type": "page" 
+                  },   
+                  {
+                    "title": "Sprint 2.3 If-Else Statements",
+                    "uid": "DPL12-TP0-CHDRN7",
+                    "description": "",
+                    "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit2&pdf=DP_L12_Unit2_Sprint2.3",
+                    "type": "page"
                   },   
                   {
                     "title": "Sprint 2.4 If-Else-If Statements",
@@ -282,14 +289,8 @@
                     "description": "",
                     "route": "/pdf?course=DigiPro&Level=Level12&unit=Unit11&pdf=DP_L12_Unit11_Sprint11.2",
                     "type": "page"
-                  },   
-                  {
-                    "title": "Teacher Guide",
-                    "uid": "DPL12-TP0-CHDRN39",
-                    "description": "",
-                    "route": "/pdf?course=DigiPro&Level=Level12&pdf=DigiPro_L12_Teacher's Guide",
-                    "type": "page"
-                  }
+                  } 
+                  
             ]
           },
           {
@@ -426,13 +427,6 @@
                 "uid": "DPL12-TP1-CHDRN24",
                 "fname": "DPL12-TP1-CHDRN24.json",
                 "type": "assignment"
-              },
-              {
-                "title": "1.6 - Exercise",
-                "uid": "DPL12-TP1-CHDRN8",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=07-DP_L12_Unit1_Exercise - Google Docs",
-                "type": "page"
               },
               {
                 "uid": "DPL12-U01-CHDRN1",
@@ -588,13 +582,6 @@
                 "type": "assignment"
               },
               {
-                "title": "2.7 - Exercise",
-                "uid": "DPL12-TP2-CHDRN8",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=15 DP_L12_Unit 2_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-U02-CHDRN1",
                 "fname": "DPL12-U02-CHDRN1.json",
                 "type": "quiz"
@@ -633,16 +620,16 @@
                 "type": "assignment"
               },
               {
+                "uid": "DPL12-TP3-CHDRN8",
+                "fname": "DPL12-TP3-CHDRN8.json",
+                "type": "assignment"
+              },
+              {
                 "title": "3.2 - For Loops",
                 "uid": "DPL12-TP3-CHDRN3",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=18 DP_ L12 _Unit3_Sprint3.2 - Google Docs",
                 "type": "page"
-              },
-              {
-                "uid": "DPL12-TP3-CHDRN8",
-                "fname": "DPL12-TP3-CHDRN8.json",
-                "type": "assignment"
               },
               {
                 "uid": "DPL12-TP3-CHDRN9",
@@ -685,13 +672,6 @@
                 "uid": "DPL12-TP3-CHDRN15",
                 "fname": "DPL12-TP3-CHDRN15.json",
                 "type": "assignment"
-              }, 
-              {
-                "title": "3.4 - Exercise",
-                "uid": "DPL12-TP3-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=20 DPL12_Unit3_Exercise - Google Docs",
-                "type": "page"
               },
               {
                 "uid": "DPL12-U03-CHDRN1",
@@ -798,13 +778,6 @@
                 "type": "assignment"
               },
               {
-                "title": "4.5 - Exercise",
-                "uid": "DPL12-TP4-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=26 DPL12_Unit4_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-U04-CHDRN1",
                 "fname": "DPL12-U04-CHDRN1.json",
                 "type": "quiz"
@@ -888,13 +861,6 @@
                 "type": "assignment"
               },
               {
-                "title": "5.4 - Exercise",
-                "uid": "DPL12-TP5-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=31 DP_L12_Unit5_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL12-U05-CHDRN1",
                 "fname": "DPL12-U05-CHDRN1.json",
                 "type": "quiz"
@@ -921,18 +887,6 @@
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=33 DP_L12_Unit6_Sprint6.1 - Google Docs",
                 "type": "page"
-              },
-              {
-                "title": "6.5 - Exercise",
-                "uid": "DPL12-TP6-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=37 DC-L12-Unit6-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL12-U06-CHDRN1",
-                "fname": "DPL12-U06-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DPL12-TP6-CHDRN7",
@@ -1014,6 +968,11 @@
                 "uid": "DPL12-TP6-CHDRN18",
                 "fname": "DPL12-TP6-CHDRN18.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL12-U06-CHDRN1",
+                "fname": "DPL12-U06-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -1075,13 +1034,6 @@
                 "fname": "DPL12-TP7-CHDRN10.json",
                 "type": "assignment"
               },
-              {
-               "title": "7.3 - Exercise",
-               "uid": "DPL12-TP7-CHDRN4",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level12&pdf=41 DP_L12_Unit7_Exercise - Google Docs",
-               "type": "page"
-             },
              {
                "uid": "DPL12-U07-CHDRN1",
                "fname": "DPL12-U07-CHDRN1.json",
@@ -1191,13 +1143,6 @@
               "fname": "DPL12-TP8-CHDRN18.json",
               "type": "assignment"
             },
-            {
-             "title": "8.5 - Exercise",
-             "uid": "DPL12-TP8-CHDRN6",
-             "description": "",
-             "route": "/pdf?course=DigiPro&Level=Level12&pdf=47 DP_L12_Unit8_Exercise - Google Docs",
-             "type": "page"
-           },
            {
              "uid": "DPL12-U08-CHDRN1",
              "fname": "DPL12-U08-CHDRN1.json",
@@ -1285,13 +1230,6 @@
                "fname": "DPL12-TP9-CHDRN14.json",
                "type": "assignment"
              },
-             {
-              "title": "9.4 - Exercise",
-              "uid": "DPL12-TP9-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level12&pdf=52 DP_L12_Unit9_Exercise - Google Docs",
-              "type": "page"
-            },
             {
               "uid": "DPL12-U09-CHDRN1",
               "fname": "DPL12-U09-CHDRN1.json",
@@ -1357,13 +1295,6 @@
                 "fname": "DPL12-TP10-CHDRN10.json",
                 "type": "assignment"
               },
-              {
-               "title": "10.3 - Exercise",
-               "uid": "DPL12-TP10-CHDRN4",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level12&pdf=56-DPL12_Unit10_Exercise - Google Docs",
-               "type": "page"
-             },
              {
                "uid": "DPL12-U10-CHDRN1",
                "fname": "DPL12-U10-CHDRN1.json",
@@ -1392,55 +1323,6 @@
                 "route": "/pdf?course=DigiPro&Level=Level12&pdf=58-DP-L12-Unit11-Sprint 11.1 - Google Docs",
                 "type": "page"
               },
-              {
-                "title": "11.2 - Ethical Issues Around Data Collection",
-                "uid": "DPL12-TP11-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=59-DP-L12-Unit11-Sprint 11.2 - Google Docs",
-                "type": "page"
-              },
-               {
-                "title": "Appendix A -  Installing Java Development Kit",
-                "uid": "DPL12-TP11-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level12&pdf=60-Installing JDK - Google Docs",
-                "type": "page"
-              },
-              {
-               "title": "Appendix B -  Using Flowcharts",
-               "uid": "DPL12-TP11-CHDRN5",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level12&pdf=61-Using Flowcharts - Google Docs",
-               "type": "page"
-             },
-             {
-              "title": "Appendix C -  AP CS A Exam Guidelines",
-              "uid": "DPL12-TP11-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level12&pdf=62-AP CS A Exam Guidelines - Google Docs",
-              "type": "page"
-            },
-            {
-             "title": "Appendix D -   List of Programs",
-             "uid": "DPL12-TP11-CHDRN7",
-             "description": "",
-             "route": "/pdf?course=DigiPro&Level=Level12&pdf=63-DP-L12-List of Programs - Google Docs",
-             "type": "page"
-           },
-           {
-            "title": "Appendix E -  Reference Sheet",
-            "uid": "DPL12-TP11-CHDRN8",
-            "description": "",
-            "route": "/pdf?course=DigiPro&Level=Level12&pdf=64-Reference Sheet - Google Docs",
-            "type": "page"
-          },
-          {
-           "title": "Glossary",
-           "uid": "DPL12-TP11-CHDRN9",
-           "description": "",
-           "route": "/pdf?course=DigiPro&Level=Level12&pdf=65-Glossary - Google Docs",
-           "type": "page"
-         },
          {
            "uid": "DPL12-TP11-CHDRN10",
            "fname": "DPL12-TP11-CHDRN10.json",
@@ -1457,6 +1339,13 @@
            "type": "assignment"
          },
          {
+           "title": "11.2 - Ethical Issues Around Data Collection",
+           "uid": "DPL12-TP11-CHDRN3",
+           "description": "",
+           "route": "/pdf?course=DigiPro&Level=Level12&pdf=59-DP-L12-Unit11-Sprint 11.2 - Google Docs",
+           "type": "page"
+         },
+         {
            "uid": "DPL12-TP11-CHDRN13",
            "fname": "DPL12-TP11-CHDRN13.json",
            "type": "assignment"
@@ -1470,6 +1359,73 @@
            "uid": "DPL12-TP11-CHDRN15",
            "fname": "DPL12-TP11-CHDRN15.json",
            "type": "assignment"
+         }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL12/DPL12-TP12-000.mdx",
+            "title": "Appendix",
+            "type": "topic",
+            "uid": "DPL12-TP12-000",
+            "children": [
+               {
+                "title": "Appendix A -  Installing Java Development Kit",
+                "uid": "DPL12-TP12-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level12&pdf=60-Installing JDK - Google Docs",
+                "type": "page"
+              },
+              {
+               "title": "Appendix B -  Using Flowcharts",
+               "uid": "DPL12-TP12-CHDRN2",
+               "description": "",
+               "route": "/pdf?course=DigiPro&Level=Level12&pdf=61-Using Flowcharts - Google Docs",
+               "type": "page"
+             },
+             {
+              "title": "Appendix C -  AP CS A Exam Guidelines",
+              "uid": "DPL12-TP12-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level12&pdf=62-AP CS A Exam Guidelines - Google Docs",
+              "type": "page"
+            },
+            {
+             "title": "Appendix D -   List of Programs",
+             "uid": "DPL12-TP12-CHDRN4",
+             "description": "",
+             "route": "/pdf?course=DigiPro&Level=Level12&pdf=63-DP-L12-List of Programs - Google Docs",
+             "type": "page"
+           },
+           {
+            "title": "Appendix E -  Reference Sheet",
+            "uid": "DPL12-TP12-CHDRN5",
+            "description": "",
+            "route": "/pdf?course=DigiPro&Level=Level12&pdf=64-Reference Sheet - Google Docs",
+            "type": "page"
+          },
+          {
+           "title": "Glossary",
+           "uid": "DPL12-TP11-CHDRN9",
+           "description": "",
+           "route": "/pdf?course=DigiPro&Level=Level12&pdf=65-Glossary - Google Docs",
+           "type": "page"
+         }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL12/DPL12-TP13-000.mdx",
+            "title": "Glossary",
+            "type": "topic",
+            "uid": "DPL12-TP13-000",
+            "children": [
+          {
+           "title": "Glossary",
+           "uid": "DPL12-TP13-CHDRN1",
+           "description": "",
+           "route": "/pdf?course=DigiPro&Level=Level12&pdf=65-Glossary - Google Docs",
+           "type": "page"
          }
             ],
             "teacheronly": "no"

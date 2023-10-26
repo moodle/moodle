@@ -437,16 +437,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Create a Wandering BOT Animation Using Scratch",
-              "uid": "DPL05-TP3-CHDRN7",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level5&pdf=DPL05_U3_Capstone project",
-              "type": "page"
-            },
-            {
               "uid": "DPL05-U03-CHDRN1",
               "fname": "DPL05-U03-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL05/DPL05-TP6-000.mdx",
+          "title": "Capstone Project - Create a Wandering BOT Animation Using Scratch",
+          "type": "topic",
+          "uid": "DPL05-TP6-000",
+          "children": [
+            {
+              "title": "Capstone Project - Create a Wandering BOT Animation Using Scratch",
+              "uid": "DPL05-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level5&pdf=DPL05_U3_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -475,11 +484,6 @@
               "uid": "DPL05-TP4-CHDRN600",
               "fname": "DPL05-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DPL05-U04-CHDRN1",
-              "fname": "DPL05-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DPL05-TP4-CHDRN7",
@@ -526,8 +530,22 @@
               "type": "assignment"
             },
             {
+              "uid": "DPL05-U04-CHDRN1",
+              "fname": "DPL05-U04-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL05/DPL05-TP7-000.mdx",
+          "title": "Capstone Project - Gesture Detection",
+          "type": "topic",
+          "uid": "DPL05-TP7-000",
+          "children": [
+            {
               "title": "Capstone Project - Gesture Detection",
-              "uid": "DPL05-TP4-CHDRN5",
+              "uid": "DPL05-TP7-CHDRN1",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level5&pdf=DPL05_U4_Capstone project",
               "type": "page"
@@ -610,16 +628,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - My School!",
-              "uid": "DPL05-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level5&pdf=DPL05_U5_Capstone Project",
-              "type": "page"
-            },
-            {
               "uid": "DPL05-U05-CHDRN1",
               "fname": "DPL05-U05-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL05/DPL05-TP8-000.mdx",
+          "title": "Capstone Project - My School!",
+          "type": "topic",
+          "uid": "DPL05-TP8-000",
+          "children": [
+            {
+              "title": "Capstone Project - My School!",
+              "uid": "DPL05-TP8-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level5&pdf=DPL05_U5_Capstone Project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

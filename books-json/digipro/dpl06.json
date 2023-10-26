@@ -373,16 +373,16 @@
               "type": "assignment"
             },
             {
+              "uid": "DPL06-TP3-CHDRN15",
+              "fname": "DPL06-TP3-CHDRN15.json",
+              "type": "assignment"
+            },
+            {
               "title": "3.2 - Nested Conditions",
               "uid": "DPL06-TP3-CHDRN8",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U03_S02",
               "type": "page"
-            },
-            {
-              "uid": "DPL06-TP3-CHDRN15",
-              "fname": "DPL06-TP3-CHDRN15.json",
-              "type": "assignment"
             },
             {
               "uid": "DPL06-TP3-CHDRN9",
@@ -436,16 +436,25 @@
               "type": "page"
             },
             {
-              "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
-              "uid": "DPL06-TP3-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_Capstone project",
-              "type": "page"
-            },
-            {
               "uid": "DPL06-U3-CHDRN1",
               "fname": "DPL06-U3-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP6-000.mdx",
+          "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
+          "type": "topic",
+          "uid": "DPL06-TP6-000",
+          "children": [
+            {
+              "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
+              "uid": "DPL06-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -525,16 +534,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Create an AI-Based ChatBot for your school",
-              "uid": "DPL06-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_Capstone project",
-              "type": "page"
-            },
-            {
               "uid": "DPL06-U4-CHDRN1",
               "fname": "DPL06-U4-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP7-000.mdx",
+          "title": "Capstone Project - Create an AI-Based ChatBot for your school",
+          "type": "topic",
+          "uid": "DPL06-TP7-000",
+          "children": [
+            {
+              "title": "Capstone Project - Create an AI-Based ChatBot for your school",
+              "uid": "DPL06-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -619,16 +637,25 @@
               "type": "assignment"
             },
             {
-              "title": "Capstone Project - Stop Global Warming",
-              "uid": "DPL06-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_Capstone project",
-              "type": "page"
-            },
-            {
               "uid": "DPL06-U5-CHDRN1",
               "fname": "DPL06-U5-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP8-000.mdx",
+          "title": "Capstone Project - Stop Global Warming",
+          "type": "topic",
+          "uid": "DPL06-TP8-000",
+          "children": [
+            {
+              "title": "Capstone Project - Stop Global Warming",
+              "uid": "DPL06-TP8-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

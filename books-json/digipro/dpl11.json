@@ -290,13 +290,6 @@
               "type": "assignment"
             },
             {
-              "title": "1.6 - Exercise",
-              "uid": "DPL11-TP1-CHDRN7",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=07 DP_L11_Unit1_Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DPL11-U01-CHDRN1",
               "fname": "DPL11-U01-CHDRN1.json",
               "type": "quiz"
@@ -360,13 +353,6 @@
               "uid": "DPL11-TP2-CHDRN10",
               "fname": "DPL11-TP2-CHDRN10.json",
               "type": "assignment"
-            },
-            {
-              "title": "2.3 - Exercise",
-              "uid": "DPL11-TP2-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=11 DP_L11_Unit2_Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DPL11-U02-CHDRN1",
@@ -490,13 +476,6 @@
               "type": "assignment"
             },
             {
-              "title": "3.6 - Exercise",
-              "uid": "DPL11-TP3-CHDRN7",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=18 DPL11-Unit3-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DPL11-U03-CHDRN1",
               "fname": "DPL11-U03-CHDRN1.json",
               "type": "quiz"
@@ -557,13 +536,6 @@
               "type": "assignment"
             },
             {
-              "title": "4.3 - Exercise",
-              "uid": "DPL11-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=23 DP_L11_Unit4_Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DPL11-U04-CHDRN1",
               "fname": "DPL11-U04-CHDRN1.json",
               "type": "quiz"
@@ -602,16 +574,16 @@
               "type": "assignment"
             },
             {
+              "uid": "DPL11-TP5-CHDRN7",
+              "fname": "DPL11-TP5-CHDRN7.json",
+              "type": "assignment"
+            },
+            {
               "title": "5.2 - Applications Of Recursion",
               "uid": "DPL11-TP5-CHDRN3",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level11&pdf=26 DPL11_Unit5_Sprint5.2 - NEW - Google Docs",
               "type": "page"
-            },
-            {
-              "uid": "DPL11-TP5-CHDRN7",
-              "fname": "DPL11-TP5-CHDRN7.json",
-              "type": "assignment"
             },
             {
               "uid": "DPL11-TP5-CHDRN8",
@@ -622,13 +594,6 @@
               "uid": "DPL11-TP5-CHDRN9",
               "fname": "DPL11-TP5-CHDRN9.json",
               "type": "assignment"
-            },
-            {
-              "title": "5.3 - Exercise",
-              "uid": "DPL11-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=27 DPL11_Unit5_Exercise - Google Docs",
-              "type": "page"
             },
             {
               "uid": "DPL11-U05-CHDRN1",
@@ -696,13 +661,6 @@
               "type": "assignment"
             },
             {
-              "title": "6.3 - Exercise",
-              "uid": "DPL11-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level11&pdf=31 DPL11_Unit6_Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DPL11-U06-CHDRN1",
               "fname": "DPL11-U06-CHDRN1.json",
               "type": "quiz"
@@ -767,13 +725,6 @@
               "fname": "DPL11-TP7-CHDRN10.json",
               "type": "assignment"
             },
-            {
-             "title": "7.3 - Exercise",
-             "uid": "DPL11-TP7-CHDRN4",
-             "description": "",
-             "route": "/pdf?course=DigiPro&Level=Level11&pdf=38-DPL11_U7_EXERCISE - Google Docs",
-             "type": "page"
-           },
            {
              "uid": "DPL11-U07-CHDRN1",
              "fname": "DPL11-U07-CHDRN1.json",

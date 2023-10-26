@@ -311,13 +311,6 @@
                 "type": "assignment"
               },
               {
-                "title": "1.6 - Exercise",
-                "uid": "DPL10-TP1-CHDRN7",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=07 DPL10_U1_EXERCISE - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL10-U1-CHDRN1",
                 "fname": "DPL10-U1-CHDRN1.json",
                 "type": "quiz"
@@ -398,13 +391,6 @@
                 "uid": "DPL10-TP2-CHDRN13",
                 "fname": "DPL10-TP2-CHDRN13.json",
                 "type": "assignment"
-              },
-              {
-                "title": "2.4 - Exercise",
-                "uid": "DPL10-TP2-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=12 DP-L10-Unit2-Exercise - Google Docs",
-                "type": "page"
               },
               {
                 "uid": "DPL10-U2-CHDRN1",
@@ -501,13 +487,6 @@
                 "type": "assignment"
               },
               {
-                "title": "3.5 - Exercise",
-                "uid": "DPL10-TP3-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=18 DP_L10_U3_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL10-U3-CHDRN1",
                 "fname": "DPL10-U3-CHDRN1.json",
                 "type": "quiz"
@@ -533,13 +512,6 @@
                 "uid": "DPL10-TP4-CHDRN2",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level10&pdf=20 DP_L10_U4_Sprint4.1 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.5 - Exercise",
-                "uid": "DPL10-TP4-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=24 DP_L10_U4_Exercise V2 - Google Docs",
                 "type": "page"
               },
               {
@@ -689,13 +661,6 @@
                 "type": "assignment"
               },
               {
-                "title": "5.3 - Exercise",
-                "uid": "DPL10-TP5-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=28 DPL10_U5_EXERCISE - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL10-U5-CHDRN1",
                 "fname": "DPL10-U5-CHDRN1.json",
                 "type": "quiz"
@@ -721,13 +686,6 @@
                 "uid": "DPL10-TP6-CHDRN2",
                 "description": "",
                 "route": "/pdf?course=DigiPro&Level=Level10&pdf=30 DP-L10 Unit 6-Sprint6.1 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.4 - Exercise",
-                "uid": "DPL10-TP6-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level10&pdf=33 DP-L10-Unit6-Exercise - Google Docs",
                 "type": "page"
               },
               {
@@ -849,13 +807,6 @@
                 "fname": "DPL10-TP7-CHDRN9.json",
                 "type": "assignment"
               },
-              {
-               "title": "7.3 - Exercise",
-               "uid": "DPL10-TP7-CHDRN4",
-               "description": "",
-               "route": "/pdf?course=DigiPro&Level=Level10&pdf=37 DP-L10-Unit7-Exercise.2gdoc - Google Docs",
-               "type": "page"
-             },
               {
                 "uid": "DPL10-U7-CHDRN1",
                 "fname": "DPL10-U7-CHDRN1.json",

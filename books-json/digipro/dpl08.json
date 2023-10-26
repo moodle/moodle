@@ -456,6 +456,22 @@
           "teacheronly": "no"
         },
         {
+          "route": "book/DPL08/DPL08-TP7-000.mdx",
+          "title": "Capstone Project -Develop A Quiz Using Python",
+          "type": "topic",
+          "uid": "DPL08-TP7-000",
+          "children": [
+            {
+              "title": "Capstone Project -Develop A Quiz Using Python",
+              "uid": "DPL08-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level8&pdf=DPL08_U04_Capstone",
+              "type": "page"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
           "route": "book/DPL08/DPL08-TP1-000.mdx",
           "title": "Unit 5: AI on Thunkable",
           "type": "topic",
@@ -529,17 +545,10 @@
         },
         {
           "route": "book/DPL08/DPL08-TP1-000.mdx",
-          "title": "Capstone Project",
+          "title": "Capstone Project - Multi-Utility Mobile App",
           "type": "topic",
           "uid": "DPL08-TP6-000",
           "children": [
-            {
-              "title": "Capstone Project -Develop A Quiz Using Python",
-              "uid": "DPL08-TP6-CHDRN1",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level8&pdf=DPL08_U04_Capstone",
-              "type": "page"
-            },
             {
               "title": "Capstone Project - Multi-Utility Mobile App",
               "uid": "DPL08-TP6-CHDRN2",

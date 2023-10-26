@@ -203,7 +203,7 @@
               "type": "page"
             },
             {
-              "title": "2.1 Set the Number Line",
+              "title": "2.1 -  Characters And Backgrounds",
               "uid": "DPL01-TP2-CHDRN2",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level1&pdf=DPL01_U02_S01",
@@ -449,7 +449,7 @@
           "uid": "DPL01-TP5-000",
           "children": [
             {
-              "title": "Summary",
+              "title": "Create a New Year Project using ScratchJr",
               "uid": "DPL01-TP5-CHDRN1",
               "description": "",
               "route": "/pdf?course=DigiPro&Level=Level1&pdf=DPL01_Capstone project",
