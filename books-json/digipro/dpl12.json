@@ -1403,14 +1403,7 @@
             "description": "",
             "route": "/pdf?course=DigiPro&Level=Level12&pdf=64-Reference Sheet - Google Docs",
             "type": "page"
-          },
-          {
-           "title": "Glossary",
-           "uid": "DPL12-TP11-CHDRN9",
-           "description": "",
-           "route": "/pdf?course=DigiPro&Level=Level12&pdf=65-Glossary - Google Docs",
-           "type": "page"
-         }
+          }
             ],
             "teacheronly": "no"
           },

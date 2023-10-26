@@ -403,6 +403,13 @@
               "type": "page"
             },
             {
+              "title": "3.1 - Strings",
+              "uid": "DPL07-TP3-CHDRN2",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level7&pdf=DPL07_U03_S01",
+              "type": "page"
+            },
+            {
               "uid": "DPL07-TP3-CHDRN600",
               "fname": "DPL07-TP3-CHDRN6.json",
               "type": "assignment"
