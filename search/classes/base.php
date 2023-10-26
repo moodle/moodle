@@ -67,13 +67,6 @@ abstract class base {
     protected static $levels = [CONTEXT_SYSTEM];
 
     /**
-     * An area id from the componentname and the area name.
-     *
-     * @var string
-     */
-    public $areaid;
-
-    /**
      * Constructor.
      *
      * @throws \coding_exception

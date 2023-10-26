@@ -71,13 +71,13 @@ class block_base {
 
     /**
      * An object to contain the information to be displayed in the block.
-     * @var stdClass $content
+     * @var stdObject $content
      */
     var $content       = NULL;
 
     /**
      * The initialized instance of this block object.
-     * @var stdClass $instance
+     * @var block $instance
      */
     var $instance      = NULL;
 
@@ -89,13 +89,13 @@ class block_base {
 
     /**
      * This blocks's context.
-     * @var context
+     * @var stdClass
      */
     public $context    = NULL;
 
     /**
      * An object containing the instance configuration information for the current instance of this block.
-     * @var stdClass $config
+     * @var stdObject $config
      */
     var $config        = NULL;
 
@@ -278,7 +278,7 @@ class block_base {
      * Return an object containing all the block content to be returned by external functions.
      *
      * If your block is returning formatted content or provide files for download, you should override this method to use the
-     * \core_external\util::format_text, \core_external\util::format_string functions for formatting or external_util::get_area_files for files.
+     * external_format_text, external_format_string functions for formatting or external_util::get_area_files for files.
      *
      * @param  core_renderer $output the rendered used for output
      * @return stdClass      object containing the block title, central content, footer and linked files (if any).
@@ -462,7 +462,7 @@ class block_base {
      * table and the current page. (See {@link block_manager::load_blocks()}.)
      *
      * @param stdClass $instance data from block_insances, block_positions, etc.
-     * @param moodle_page $page the page this block is on.
+     * @param moodle_page $the page this block is on.
      */
     function _load_instance($instance, $page) {
         if (!empty($instance->configdata)) {
@@ -855,6 +855,9 @@ class block_tree extends block_list {
         $this->get_required_javascript();
         $this->get_content();
         $content = $output->tree_block_contents($this->content->items,array('class'=>'block_tree list'));
+        if (isset($this->id) && !is_numeric($this->id)) {
+            $content = $output->box($content, 'block_tree_box', $this->id);
+        }
         return $content;
     }
 }

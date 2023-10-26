@@ -23,17 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_files;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util as external_util;
-
 defined('MOODLE_INTERNAL') || die;
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/user/externallib.php");
 require_once("$CFG->dirroot/mod/assign/locallib.php");
 
@@ -412,7 +404,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                         'id' => $module->assignmentid,
                         'cmid' => $module->id,
                         'course' => $module->course,
-                        'name' => \core_external\util::format_string($module->name, $context),
+                        'name' => external_format_string($module->name, $context),
                         'nosubmissions' => $module->nosubmissions,
                         'submissiondrafts' => $module->submissiondrafts,
                         'sendnotifications' => $module->sendnotifications,
@@ -445,15 +437,9 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     // Return or not intro and file attachments depending on the plugin settings.
                     if ($assign->show_intro()) {
                         $options = array('noclean' => true);
-                        [$assignment['intro'], $assignment['introformat']] = \core_external\util::format_text(
-                            $module->intro,
-                            $module->introformat,
-                            $context,
-                            'mod_assign',
-                            'intro',
-                            null,
-                            $options
-                        );
+                        list($assignment['intro'], $assignment['introformat']) =
+                            external_format_text($module->intro, $module->introformat, $context->id, 'mod_assign', 'intro', null,
+                                $options);
                         $assignment['introfiles'] = external_util::get_area_files($context->id, 'mod_assign', 'intro', false,
                                                                                     false);
                         if ($assign->should_provide_intro_attachments($USER->id)) {
@@ -468,33 +454,27 @@ class mod_assign_external extends \mod_assign\external\external_api {
                         // Single submission.
                         if (!$module->teamsubmission) {
                             list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
-                                \core_external\util::format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $context->id,
+                                external_format_text($adminconfig->submissionstatement, FORMAT_MOODLE, $context->id,
                                     'mod_assign', '', 0);
                         } else { // Team submission.
                             // One user can submit for the whole team.
                             if (!empty($adminconfig->submissionstatementteamsubmission) && !$module->requireallteammemberssubmit) {
                                 list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
-                                    \core_external\util::format_text($adminconfig->submissionstatementteamsubmission,
+                                    external_format_text($adminconfig->submissionstatementteamsubmission,
                                         FORMAT_MOODLE, $context->id, 'mod_assign', '', 0);
                             } else if (!empty($adminconfig->submissionstatementteamsubmissionallsubmit) &&
                                 $module->requireallteammemberssubmit) {
                                 // All team members must submit.
                                 list($assignment['submissionstatement'], $assignment['submissionstatementformat']) =
-                                    \core_external\util::format_text($adminconfig->submissionstatementteamsubmissionallsubmit,
+                                    external_format_text($adminconfig->submissionstatementteamsubmissionallsubmit,
                                         FORMAT_MOODLE, $context->id, 'mod_assign', '', 0);
                             }
                         }
                     }
 
                     if ($module->activity && $assign->submissions_open($USER->id, true)) {
-                        list($assignment['activity'], $assignment['activityformat']) = \core_external\util::format_text(
-                            $module->activity,
-                            $module->activityformat,
-                            $context,
-                            'mod_assign',
-                            ASSIGN_ACTIVITYATTACHMENT_FILEAREA,
-                            0
-                        );
+                        list($assignment['activity'], $assignment['activityformat']) = external_format_text($module->activity,
+                                $module->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
                         $assignment['activityattachments'] = external_util::get_area_files($context->id, 'mod_assign',
                             ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
                     }
@@ -504,8 +484,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
             }
             $coursearray[]= array(
                 'id' => $courses[$id]->id,
-                'fullname' => \core_external\util::format_string($courses[$id]->fullname, $course->contextid),
-                'shortname' => \core_external\util::format_string($courses[$id]->shortname, $course->contextid),
+                'fullname' => external_format_string($courses[$id]->fullname, $course->contextid),
+                'shortname' => external_format_string($courses[$id]->shortname, $course->contextid),
                 'timemodified' => $courses[$id]->timemodified,
                 'assignments' => $assignmentarray
             );
@@ -678,8 +658,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
 
                 // Now format the text.
                 foreach ($fileareas as $filearea => $name) {
-                    list($editorfieldinfo['text'], $editorfieldinfo['format']) = \core_external\util::format_text(
-                        $editorfieldinfo['text'], $editorfieldinfo['format'], $assign->get_context(),
+                    list($editorfieldinfo['text'], $editorfieldinfo['format']) = external_format_text(
+                        $editorfieldinfo['text'], $editorfieldinfo['format'], $assign->get_context()->id,
                         $component, $filearea, $item->id);
                 }
 
@@ -2248,14 +2228,16 @@ class mod_assign_external extends \mod_assign\external\external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function view_grading_table_returns() {
-        return new external_single_structure([
-            'status' => new external_value(PARAM_BOOL, 'status: true if success'),
-            'warnings' => new external_warnings()
-        ]);
+        return new external_single_structure(
+            array(
+                'status' => new external_value(PARAM_BOOL, 'status: true if success'),
+                'warnings' => new external_warnings()
+            )
+        );
     }
 
     /**
@@ -2265,9 +2247,11 @@ class mod_assign_external extends \mod_assign\external\external_api {
      * @since Moodle 3.1
      */
     public static function view_submission_status_parameters() {
-        return new external_function_parameters ([
-            'assignid' => new external_value(PARAM_INT, 'assign instance id'),
-        ]);
+        return new external_function_parameters (
+            array(
+                'assignid' => new external_value(PARAM_INT, 'assign instance id'),
+            )
+        );
     }
 
     /**
@@ -2514,14 +2498,8 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     ASSIGN_INTROATTACHMENT_FILEAREA, 0);
         }
         if ($instance->activity && ($lastattempt || $assign->submissions_open($user->id, true))) {
-            [$assignmentdata['activity'], $assignmentdata['activityformat']] = \core_external\util::format_text(
-                $instance->activity,
-                $instance->activityformat,
-                $context,
-                'mod_assign',
-                ASSIGN_ACTIVITYATTACHMENT_FILEAREA,
-                0
-            );
+            list($assignmentdata['activity'], $assignmentdata['activityformat']) = external_format_text($instance->activity,
+                $instance->activityformat, $context->id, 'mod_assign', ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
             $attachments['activity'] = external_util::get_area_files($context->id, 'mod_assign',
                 ASSIGN_ACTIVITYATTACHMENT_FILEAREA, 0);
         }
@@ -2738,7 +2716,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
                     if (!empty($coursegroups[$record->groupid])) {
                         // Format properly the group name.
                         $group = $coursegroups[$record->groupid];
-                        $userdetails['groupname'] = \core_external\util::format_string($group->name, $context);
+                        $userdetails['groupname'] = format_string($group->name);
                     }
                 }
                 // Unique id is required for blind marking.
@@ -2756,7 +2734,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
     /**
      * Returns the description of the results of the mod_assign_external::list_participants() method.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function list_participants_returns() {
@@ -2900,7 +2878,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
 
             if ($group = groups_get_group($participant->groupid)) {
                 // Format properly the group name.
-                $return['groupname'] = \core_external\util::format_string($group->name, $context);
+                $return['groupname'] = format_string($group->name);
             }
         }
 
@@ -2918,7 +2896,7 @@ class mod_assign_external extends \mod_assign\external\external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_participant_returns() {

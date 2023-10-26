@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template gradereport_singleview/gradesearch_body
+    @template core_grades/report/singleview/gradesearch_body
 
     The body of the grade item widget.
 
@@ -29,13 +29,6 @@
     {{$placeholder}}{{#str}}
         searchgrades, gradereport_singleview
     {{/str}}{{/placeholder}}
-    {{$additionalattributes}}
-        role="combobox"
-        aria-expanded="true"
-        aria-controls="listbox-{{uniqid}}"
-        aria-autocomplete="list"
-        data-input-element="input-{{uniqid}}"
-    {{/additionalattributes}}
 {{/ core/search_input_auto }}
-<input type="hidden" name="search" id="input-{{uniqid}}"/>
-<div role="listbox" id="listbox-{{uniqid}}" class="searchresultscontainer" data-region="search-results-container-widget"></div>
+
+<div class="searchresultscontainer" data-region="search-results-container-widget" aria-live="polite"></div>

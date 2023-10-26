@@ -1412,25 +1412,27 @@ Category.prototype = {
      * @param {Course} course
      */
     moveCourseTo: function(course) {
-        require(['core/notification'], function(Notification) {
-            Notification.saveCancelPromise(
-                M.util.get_string('confirmation', 'admin'),
-                M.util.get_string('confirmcoursemove', 'moodle',
-                {
+        var self = this;
+        Y.use('moodle-core-notification-confirm', function() {
+            var confirm = new M.core.confirm({
+                title: M.util.get_string('confirm', 'moodle'),
+                question: M.util.get_string('confirmcoursemove', 'moodle', {
                     course: course.getName(),
-                    category: this.getName(),
+                    category: self.getName()
                 }),
-                M.util.get_string('move', 'moodle')
-            ).then(function() {
-                this.get('console').performAjaxAction('movecourseintocategory', {
-                    courseid: course.get('courseid'),
-                    categoryid: this.get('categoryid'),
-                }, this.completeMoveCourse, this);
-                return;
-            }.bind(this)).catch(function() {
-                // User cancelled.
+                yesLabel: M.util.get_string('move', 'moodle'),
+                noLabel: M.util.get_string('cancel', 'moodle')
             });
-        }.bind(this));
+            confirm.on('complete-yes', function() {
+                confirm.hide();
+                confirm.destroy();
+                this.get('console').performAjaxAction('movecourseintocategory', {
+                    categoryid: this.get('categoryid'),
+                    courseid: course.get('courseid')
+                }, this.completeMoveCourse, this);
+            }, self);
+            confirm.show();
+        });
     },
 
     /**

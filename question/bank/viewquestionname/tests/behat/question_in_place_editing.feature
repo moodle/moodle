@@ -21,22 +21,20 @@ Feature: Use the qbank view page to edit question title using in place edit feat
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
 
+  @javascript
   Scenario: Question title can be changed from the question bank view
     Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Filter type" to "Category"
-    And I set the field "Category" to "Test questions"
-    And I press "Apply filters"
+    And I set the field "Select a category" to "Test questions"
     When I set the field "Edit question name" in the "First question" "table_row" to "Edited question"
     Then I should not see "First question"
     And I should see "Edited question"
 
+  @javascript
   Scenario: Teacher without permission can not change the title from question bank view
     Given the following "role capability" exists:
       | role                    | editingteacher |
       | moodle/question:editall | prevent        |
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
-    And I set the field "Filter type" to "Category"
-    And I set the field "Category" to "Test questions"
-    And I press "Apply filters"
+    When I set the field "Select a category" to "Test questions"
     And I should see "First question"
     And "Edit question name" "field" should not exist

@@ -32,9 +32,6 @@ require_once($CFG->libdir.'/authlib.php');
  */
 class auth_plugin_mnet extends auth_plugin_base {
 
-    /** @var mnet_environment mnet environment. */
-    protected $mnet;
-
     /**
      * Constructor.
      */

@@ -23,17 +23,12 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\event\question_category_viewed;
-use core_question\output\qbank_action_menu;
-use core_question\local\bank\view;
-
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->dirroot . '/question/editlib.php');
 
 list($thispageurl, $contexts, $cmid, $cm, $module, $pagevars) =
         question_edit_setup('questions', '/question/edit.php');
 
-$actionurl = new moodle_url($thispageurl);
 if (($lastchanged = optional_param('lastchanged', 0, PARAM_INT)) !== 0) {
     $thispageurl->param('lastchanged', $lastchanged);
 }
@@ -44,7 +39,7 @@ if ($PAGE->course->id == $SITE->id) {
 }
 
 $thispageurl->param('deleteall', 1);
-$questionbank = new view($contexts, $thispageurl, $COURSE, $cm, $pagevars);
+$questionbank = new core_question\local\bank\view($contexts, $thispageurl, $COURSE, $cm);
 
 $context = $contexts->lowest();
 $streditingquestions = get_string('editquestions', 'question');
@@ -58,18 +53,18 @@ echo $OUTPUT->header();
 $renderer = $PAGE->get_renderer('core_question', 'bank');
 
 // Render the selection action.
-$qbankaction = new qbank_action_menu($actionurl);
+$qbankaction = new \core_question\output\qbank_action_menu($thispageurl);
 echo $renderer->render($qbankaction);
 
 // Print the question area.
-$questionbank->display();
+$questionbank->display($pagevars, 'questions');
 
 // Log the view of this category.
 list($categoryid, $contextid) = explode(',', $pagevars['cat']);
 $category = new stdClass();
 $category->id = $categoryid;
-$catcontext = context::instance_by_id($contextid);
-$event = question_category_viewed::create_from_question_category_instance($category, $catcontext);
+$catcontext = \context::instance_by_id($contextid);
+$event = \core\event\question_category_viewed::create_from_question_category_instance($category, $catcontext);
 $event->trigger();
 
 echo $OUTPUT->footer();

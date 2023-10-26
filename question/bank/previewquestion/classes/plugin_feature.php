@@ -26,9 +26,9 @@ namespace qbank_previewquestion;
  */
 class plugin_feature extends \core_question\local\bank\plugin_features_base{
 
-    public function get_question_actions($qbank): array {
+    public function get_question_columns($qbank): array {
         return [
-            new preview_action($qbank)
+            new preview_action_column($qbank)
         ];
     }
 }

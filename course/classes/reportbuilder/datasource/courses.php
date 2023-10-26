@@ -19,12 +19,10 @@ declare(strict_types=1);
 namespace core_course\reportbuilder\datasource;
 
 use core_course\reportbuilder\local\entities\course_category;
-use core_files\reportbuilder\local\entities\file;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\course;
 use core_reportbuilder\local\helpers\database;
 use core_tag\reportbuilder\local\entities\tag;
-use lang_string;
 
 /**
  * Courses datasource
@@ -72,20 +70,6 @@ class courses extends datasource {
         $this->add_entity($tagentity
             ->add_joins($courseentity->get_tag_joins()));
 
-        // Join the files entity.
-        $contextalias = $courseentity->get_table_alias('context');
-        $fileentity = (new file())
-            ->set_entity_title(new lang_string('courseoverviewfiles'));
-        $filesalias = $fileentity->get_table_alias('files');
-        $this->add_entity($fileentity
-            ->add_join($courseentity->get_context_join())
-            ->add_join("LEFT JOIN {files} {$filesalias}
-                ON {$filesalias}.contextid = {$contextalias}.id
-               AND {$filesalias}.component = 'course'
-               AND {$filesalias}.filearea = 'overviewfiles'
-               AND {$filesalias}.itemid = 0
-               AND {$filesalias}.filename != '.'"));
-
         // Add all columns/filters/conditions from entities to be available in custom reports.
         $this->add_all_from_entity($coursecatentity->get_entity_name());
         $this->add_all_from_entity($courseentity->get_entity_name());
@@ -94,12 +78,6 @@ class courses extends datasource {
         $this->add_columns_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink']);
         $this->add_filter($tagentity->get_filter('name'));
         $this->add_condition($tagentity->get_condition('name'));
-
-        // Add specific file entity elements.
-        $this->add_columns_from_entity($fileentity->get_entity_name(), ['name', 'size', 'type', 'timecreated']);
-        $this->add_filters_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-        $this->add_conditions_from_entity($fileentity->get_entity_name(), ['name', 'size', 'timecreated']);
-
     }
 
     /**

@@ -164,11 +164,9 @@ class Cells
      */
     public function getCurrentColumn(): string
     {
-        $column = 0;
-        $row = '';
         sscanf($this->currentCoordinate ?? '', '%[A-Z]%d', $column, $row);
 
-        return (string) $column;
+        return $column;
     }
 
     /**
@@ -176,8 +174,6 @@ class Cells
      */
     public function getCurrentRow(): int
     {
-        $column = 0;
-        $row = '';
         sscanf($this->currentCoordinate ?? '', '%[A-Z]%d', $column, $row);
 
         return (int) $row;
@@ -356,7 +352,7 @@ class Cells
     private function storeCurrentCell(): void
     {
         if ($this->currentCellIsDirty && isset($this->currentCoordinate, $this->currentCell)) {
-            $this->currentCell->/** @scrutinizer ignore-call */ detach();
+            $this->currentCell->detach();
 
             $stored = $this->cache->set($this->cachePrefix . $this->currentCoordinate, $this->currentCell);
             if ($stored === false) {
@@ -389,10 +385,8 @@ class Cells
         if ($cellCoordinate !== $this->currentCoordinate) {
             $this->storeCurrentCell();
         }
-        $column = 0;
-        $row = '';
         sscanf($cellCoordinate, '%[A-Z]%d', $column, $row);
-        $this->index[$cellCoordinate] = (--$row * self::MAX_COLUMN_ID) + Coordinate::columnIndexFromString((string) $column);
+        $this->index[$cellCoordinate] = (--$row * self::MAX_COLUMN_ID) + Coordinate::columnIndexFromString($column);
 
         $this->currentCoordinate = $cellCoordinate;
         $this->currentCell = $cell;
@@ -471,7 +465,7 @@ class Cells
      */
     private function getAllCacheKeys()
     {
-        foreach ($this->index as $coordinate => $value) {
+        foreach ($this->getCoordinates() as $coordinate) {
             yield $this->cachePrefix . $coordinate;
         }
     }

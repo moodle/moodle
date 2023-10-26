@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -229,7 +228,6 @@ class Google_Service_Clouddebugger extends Google_Service
  *   $controller = $clouddebuggerService->controller;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Controller_Resource extends Google_Service_Resource
 {
 }
@@ -242,7 +240,6 @@ class Google_Service_Clouddebugger_Controller_Resource extends Google_Service_Re
  *   $debuggees = $clouddebuggerService->debuggees;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ControllerDebuggees_Resource extends Google_Service_Resource
 {
 
@@ -275,7 +272,6 @@ class Google_Service_Clouddebugger_ControllerDebuggees_Resource extends Google_S
  *   $breakpoints = $clouddebuggerService->breakpoints;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ControllerDebuggeesBreakpoints_Resource extends Google_Service_Resource
 {
 
@@ -339,7 +335,6 @@ class Google_Service_Clouddebugger_ControllerDebuggeesBreakpoints_Resource exten
  *   $debugger = $clouddebuggerService->debugger;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Debugger_Resource extends Google_Service_Resource
 {
 }
@@ -352,7 +347,6 @@ class Google_Service_Clouddebugger_Debugger_Resource extends Google_Service_Reso
  *   $debuggees = $clouddebuggerService->debuggees;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_DebuggerDebuggees_Resource extends Google_Service_Resource
 {
 
@@ -384,7 +378,6 @@ class Google_Service_Clouddebugger_DebuggerDebuggees_Resource extends Google_Ser
  *   $breakpoints = $clouddebuggerService->breakpoints;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_DebuggerDebuggeesBreakpoints_Resource extends Google_Service_Resource
 {
 
@@ -468,7 +461,6 @@ class Google_Service_Clouddebugger_DebuggerDebuggeesBreakpoints_Resource extends
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Breakpoint extends Google_Collection
 {
   protected $collection_key = 'variableTable';
@@ -618,7 +610,6 @@ class Google_Service_Clouddebugger_Breakpoint extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_CloudRepoSourceContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -655,7 +646,6 @@ class Google_Service_Clouddebugger_CloudRepoSourceContext extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_CloudWorkspaceId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -683,7 +673,6 @@ class Google_Service_Clouddebugger_CloudWorkspaceId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_CloudWorkspaceSourceContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -711,7 +700,6 @@ class Google_Service_Clouddebugger_CloudWorkspaceSourceContext extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Debuggee extends Google_Collection
 {
   protected $collection_key = 'sourceContexts';
@@ -813,17 +801,14 @@ class Google_Service_Clouddebugger_Debuggee extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_DebuggeeLabels extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Empty extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_FormatMessage extends Google_Collection
 {
   protected $collection_key = 'parameters';
@@ -851,7 +836,6 @@ class Google_Service_Clouddebugger_FormatMessage extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_GerritSourceContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -896,7 +880,6 @@ class Google_Service_Clouddebugger_GerritSourceContext extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_GetBreakpointResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -915,7 +898,6 @@ class Google_Service_Clouddebugger_GetBreakpointResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_GitSourceContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -942,7 +924,6 @@ class Google_Service_Clouddebugger_GitSourceContext extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ListActiveBreakpointsResponse extends Google_Collection
 {
   protected $collection_key = 'breakpoints';
@@ -971,7 +952,6 @@ class Google_Service_Clouddebugger_ListActiveBreakpointsResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ListBreakpointsResponse extends Google_Collection
 {
   protected $collection_key = 'breakpoints';
@@ -1000,7 +980,6 @@ class Google_Service_Clouddebugger_ListBreakpointsResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ListDebuggeesResponse extends Google_Collection
 {
   protected $collection_key = 'debuggees';
@@ -1020,7 +999,6 @@ class Google_Service_Clouddebugger_ListDebuggeesResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_ProjectRepoId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1047,7 +1025,6 @@ class Google_Service_Clouddebugger_ProjectRepoId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_RegisterDebuggeeRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1066,7 +1043,6 @@ class Google_Service_Clouddebugger_RegisterDebuggeeRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_RegisterDebuggeeResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1085,7 +1061,6 @@ class Google_Service_Clouddebugger_RegisterDebuggeeResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_RepoId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1113,7 +1088,6 @@ class Google_Service_Clouddebugger_RepoId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_SetBreakpointResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1132,7 +1106,6 @@ class Google_Service_Clouddebugger_SetBreakpointResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_SourceContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1181,7 +1154,6 @@ class Google_Service_Clouddebugger_SourceContext extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_SourceLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1208,7 +1180,6 @@ class Google_Service_Clouddebugger_SourceLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_StackFrame extends Google_Collection
 {
   protected $collection_key = 'locals';
@@ -1257,7 +1228,6 @@ class Google_Service_Clouddebugger_StackFrame extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_StatusMessage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1294,7 +1264,6 @@ class Google_Service_Clouddebugger_StatusMessage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_UpdateActiveBreakpointRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1313,12 +1282,10 @@ class Google_Service_Clouddebugger_UpdateActiveBreakpointRequest extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_UpdateActiveBreakpointResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Clouddebugger_Variable extends Google_Collection
 {
   protected $collection_key = 'members';

@@ -459,6 +459,11 @@ class mock_base_setting extends base_setting {
         $this->set_visibility($setting->get_visibility());
         $this->set_status($setting->get_status());
     }
+
+    public function get_ui_info() {
+        // Return an array with all the ui info to be tested
+        return array($this->ui_type, $this->ui_label, $this->ui_values, $this->ui_options);
+    }
 }
 
 /**

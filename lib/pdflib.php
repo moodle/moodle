@@ -250,32 +250,4 @@ class pdf extends TCPDF {
 
         return $families;
     }
-
-    /**
-     * Get font list from config.
-     * @return array|string[]
-     */
-    public function get_export_fontlist(): array {
-        global $CFG;
-        $fontlist = [];
-        if (!empty($CFG->pdfexportfont)) {
-            if (is_array($CFG->pdfexportfont)) {
-                $fontlist = $CFG->pdfexportfont;
-            } else {
-                $fontlist[$CFG->pdfexportfont] = $CFG->pdfexportfont;
-            }
-        }
-        // Verify fonts.
-        $availablefonts = $this->get_font_families();
-        foreach ($fontlist as $key => $value) {
-            if (empty($availablefonts[$key])) {
-                unset($fontlist[$key]);
-            }
-        }
-        if (empty($fontlist)) {
-            // Default font if there is no value set in CFG.
-            $fontlist = ['freesans' => 'FreeSans'];
-        }
-        return $fontlist;
-    }
 }

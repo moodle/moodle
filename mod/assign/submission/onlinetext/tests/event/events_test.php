@@ -79,6 +79,7 @@ class events_test extends \advanced_testcase {
         $expected->courseid = $course->id;
         $expected->userid = $student->id;
         $expected->content = 'Submission text';
+        $this->assertEventLegacyData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 

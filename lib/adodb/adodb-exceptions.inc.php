@@ -30,9 +30,6 @@ var $params = '';
 var $host = '';
 var $database = '';
 
-	/** @var string A message text. */
-	var $msg = '';
-
 	function __construct($dbms, $fn, $errno, $errmsg, $p1, $p2, $thisConnection)
 	{
 		switch($fn) {

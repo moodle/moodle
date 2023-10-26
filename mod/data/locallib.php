@@ -65,6 +65,13 @@ class data_portfolio_caller extends portfolio_module_caller_base {
      */
     public function __construct($callbackargs) {
         parent::__construct($callbackargs);
+        // set up the list of fields to export
+        $this->selectedfields = array();
+        foreach ($callbackargs as $key => $value) {
+            if (strpos($key, 'field_') === 0) {
+                $this->selectedfields[] = substr($key, 6);
+            }
+        }
     }
 
     /**

@@ -14,9 +14,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * CSS selectors for the calendar.
+ * This module is responsible for the calendar filter.
  *
- * @module     core_calendar/selectors
+ * @module     core_calendar/calendar_selectors
  * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

@@ -20,8 +20,6 @@ use core_collator;
 use Moodle\H5PCore;
 use Moodle\H5PDisplayOptionBehaviour;
 
-// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
-
 /**
  *
  * Test class covering the H5PFrameworkInterface interface implementation.
@@ -30,7 +28,6 @@ use Moodle\H5PDisplayOptionBehaviour;
  * @category   test
  * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \core_h5p\framework
  * @runTestsInSeparateProcesses
  */
 class framework_test extends \advanced_testcase {
@@ -1064,7 +1061,6 @@ class framework_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        /** @var \core_h5p_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
 
         // Create a library record.
@@ -1089,8 +1085,6 @@ class framework_test extends \advanced_testcase {
 
         // Make sure the h5p content was properly updated.
         $this->assertNotEmpty($h5pcontent);
-        $this->assertNotEmpty($h5pcontent->pathnamehash);
-        $this->assertNotEmpty($h5pcontent->contenthash);
         $this->assertEquals($content['params'], $h5pcontent->jsoncontent);
         $this->assertEquals($content['library']['libraryId'], $h5pcontent->mainlibraryid);
         $this->assertEquals($content['disable'], $h5pcontent->displayoptions);
@@ -1145,102 +1139,33 @@ class framework_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        /** @var \core_h5p_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
-        // For the mod_h5pactivity component, the activity needs to be created too.
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $this->setUser($user);
-        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
-        $activitycontext = \context_module::instance($activity->cmid);
-        $filerecord = [
-            'contextid' => $activitycontext->id,
-            'component' => 'mod_h5pactivity',
-            'filearea' => 'package',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'dummy.h5p',
-            'addxapistate' => true,
-        ];
 
         // Generate some h5p related data.
-        $data = $generator->generate_h5p_data(false, $filerecord);
+        $data = $generator->generate_h5p_data();
         $h5pid = $data->h5pcontent->h5pid;
 
+        $h5pcontent = $DB->get_record('h5p', ['id' => $h5pid]);
         // Make sure the particular h5p content exists in the DB.
-        $this->assertNotEmpty($DB->get_record('h5p', ['id' => $h5pid]));
+        $this->assertNotEmpty($h5pcontent);
+
+        // Get the h5p content libraries from the DB.
+        $h5pcontentlibraries = $DB->get_records('h5p_contents_libraries', ['h5pid' => $h5pid]);
+
         // Make sure the content libraries exists in the DB.
-        $this->assertCount(5, $DB->get_records('h5p_contents_libraries', ['h5pid' => $h5pid]));
-        // Make sure the particular xAPI state exists in the DB.
-        $records = $DB->get_records('xapi_states');
-        $record = reset($records);
-        $this->assertCount(1, $records);
-        $this->assertNotNull($record->statedata);
+        $this->assertNotEmpty($h5pcontentlibraries);
+        $this->assertCount(5, $h5pcontentlibraries);
 
         // Delete the h5p content and it's related data.
         $this->framework->deleteContentData($h5pid);
 
+        $h5pcontent = $DB->get_record('h5p', ['id' => $h5pid]);
+        $h5pcontentlibraries = $DB->get_record('h5p_contents_libraries', ['h5pid' => $h5pid]);
+
         // The particular h5p content should no longer exist in the db.
-        $this->assertEmpty($DB->get_record('h5p', ['id' => $h5pid]));
+        $this->assertEmpty($h5pcontent);
         // The particular content libraries should no longer exist in the db.
-        $this->assertEmpty($DB->get_record('h5p_contents_libraries', ['h5pid' => $h5pid]));
-        // The xAPI state should be reseted.
-        $records = $DB->get_records('xapi_states');
-        $record = reset($records);
-        $this->assertCount(1, $records);
-        $this->assertNull($record->statedata);
-    }
-
-    /**
-     * Test the behaviour of resetContentUserData().
-     */
-    public function test_resetContentUserData() {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        /** @var \core_h5p_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
-        // For the mod_h5pactivity component, the activity needs to be created too.
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $this->setUser($user);
-        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
-        $activitycontext = \context_module::instance($activity->cmid);
-        $filerecord = [
-            'contextid' => $activitycontext->id,
-            'component' => 'mod_h5pactivity',
-            'filearea' => 'package',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'dummy.h5p',
-            'addxapistate' => true,
-        ];
-
-        // Generate some h5p related data.
-        $data = $generator->generate_h5p_data(false, $filerecord);
-        $h5pid = $data->h5pcontent->h5pid;
-
-        // Make sure the H5P content, libraries and xAPI state exist in the DB.
-        $this->assertNotEmpty($DB->get_record('h5p', ['id' => $h5pid]));
-        $this->assertCount(5, $DB->get_records('h5p_contents_libraries', ['h5pid' => $h5pid]));
-        $records = $DB->get_records('xapi_states');
-        $record = reset($records);
-        $this->assertCount(1, $records);
-        $this->assertNotNull($record->statedata);
-
-        // Reset the user data associated to this H5P content.
-        $this->framework->resetContentUserData($h5pid);
-
-        // The H5P content should still exist in the db.
-        $this->assertNotEmpty($DB->get_record('h5p', ['id' => $h5pid]));
-        // The particular content libraries should still exist in the db.
-        $this->assertCount(5, $DB->get_records('h5p_contents_libraries', ['h5pid' => $h5pid]));
-        // The xAPI state should still exist in the db, but should be reset.
-        $records = $DB->get_records('xapi_states');
-        $record = reset($records);
-        $this->assertCount(1, $records);
-        $this->assertNull($record->statedata);
+        $this->assertEmpty($h5pcontentlibraries);
     }
 
     /**

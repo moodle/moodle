@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * The xapi_handler for xAPI statements.
+ *
+ * @package    mod_h5pactivity
+ * @since      Moodle 3.9
+ * @copyright  2020 Ferran Recio <ferran@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_h5pactivity\xapi;
 
 use mod_h5pactivity\local\attempt;
@@ -22,8 +31,7 @@ use mod_h5pactivity\event\statement_received;
 use core_xapi\local\statement;
 use core_xapi\handler as handler_base;
 use core\event\base as event_base;
-use core_xapi\local\state;
-use moodle_exception;
+use context_module;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,12 +39,11 @@ global $CFG;
 require_once($CFG->dirroot.'/mod/h5pactivity/lib.php');
 
 /**
- * Class xapi_handler for H5P statements and states.
+ * Class xapi_handler for H5P statements.
  *
- * @package    mod_h5pactivity
+ * @package mod_h5pactivity
  * @since      Moodle 3.9
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class handler extends handler_base {
 
@@ -137,50 +144,5 @@ class handler extends handler_base {
             'userid' => $user->id,
         ];
         return statement_received::create($params);
-    }
-
-    /**
-     * Validate a xAPI state.
-     *
-     * Check if the state is valid for this handler.
-     *
-     * This method is used also for the state get requests so the validation
-     * cannot rely on having state data.
-     *
-     * @param state $state
-     * @return bool if the state is valid or not
-     */
-    protected function validate_state(state $state): bool {
-        $xapiobject = $state->get_activity_id();
-
-        // H5P add some extra params to ID to define subcontents.
-        $parts = explode('?', $xapiobject, 2);
-        $contextid = array_shift($parts);
-        if (empty($contextid) || !is_numeric($contextid)) {
-            return false;
-        }
-
-        try {
-            $context = \context::instance_by_id($contextid);
-            if (!$context instanceof \context_module) {
-                return false;
-            }
-        } catch (moodle_exception $exception) {
-            return false;
-        }
-
-        $cm = get_coursemodule_from_id('h5pactivity', $context->instanceid, 0, false);
-        if (!$cm) {
-            return false;
-        }
-
-        // If tracking is not enabled, the state won't be considered valid.
-        $manager = manager::create_from_coursemodule($cm);
-        $user = $state->get_user();
-        if (!$manager->is_tracking_enabled($user)) {
-            return false;
-        }
-
-        return true;
     }
 }

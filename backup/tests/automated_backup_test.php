@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/backup/util/helper/backup_cron_helper.class.php');
+require_once($CFG->libdir.'/cronlib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
 /**

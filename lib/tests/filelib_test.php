@@ -247,11 +247,7 @@ class filelib_test extends \advanced_testcase {
      * Test a curl basic request with security enabled.
      */
     public function test_curl_basics_with_security_helper() {
-        global $USER;
-
         $this->resetAfterTest();
-
-        $sink = $this->redirectEvents();
 
         // Test a request with a basic hostname filter applied.
         $testhtml = $this->getExternalTestFileUrl('/test.html');
@@ -265,18 +261,6 @@ class filelib_test extends \advanced_testcase {
         $expected = $curl->get_security()->get_blocked_url_string();
         $this->assertSame($expected, $contents);
         $this->assertSame(0, $curl->get_errno());
-        $this->assertDebuggingCalled(
-            "Blocked $testhtml: The URL is blocked. [user {$USER->id}]", DEBUG_NONE);
-
-        $events = $sink->get_events();
-        $this->assertCount(1, $events);
-        $event = reset($events);
-
-        $this->assertEquals('\core\event\url_blocked', $event->eventname);
-        $this->assertEquals("Blocked $testhtml: $expected", $event->get_description());
-        $this->assertEquals(\context_system::instance(), $event->get_context());
-        $this->assertEquals($testhtml, $event->other['url']);
-        $this->assertEventContextNotUsed($event);
 
         // Now, create a curl using the 'ignoresecurity' override.
         // We expect this request to pass, despite the admin setting having been set earlier.
@@ -284,9 +268,6 @@ class filelib_test extends \advanced_testcase {
         $contents = $curl->get($testhtml);
         $this->assertSame('47250a973d1b88d9445f94db4ef2c97a', md5($contents));
         $this->assertSame(0, $curl->get_errno());
-
-        $events = $sink->get_events();
-        $this->assertCount(1, $events);
 
         // Now, try injecting a mock security helper into curl. This will override the default helper.
         $mockhelper = $this->getMockBuilder('\core\files\curl_security_helper')->getMock();
@@ -301,10 +282,6 @@ class filelib_test extends \advanced_testcase {
         $contents = $curl->get($testhtml);
         $this->assertSame('You shall not pass', $curl->get_security()->get_blocked_url_string());
         $this->assertSame($curl->get_security()->get_blocked_url_string(), $contents);
-        $this->assertDebuggingCalled();
-
-        $events = $sink->get_events();
-        $this->assertCount(2, $events);
     }
 
     public function test_curl_redirects() {
@@ -430,14 +407,12 @@ class filelib_test extends \advanced_testcase {
         $contents = $curl->get("{$testurl}?redir=1&extdest=1");
         $this->assertSame($blockedstring, $contents);
         $this->assertSame(0, $curl->get_errno());
-        $this->assertDebuggingCalled();
 
         // Redirecting to the blocked host after multiple successful redirects should also fail.
         $curl = new \curl();
         $contents = $curl->get("{$testurl}?redir=3&extdest=1");
         $this->assertSame($blockedstring, $contents);
         $this->assertSame(0, $curl->get_errno());
-        $this->assertDebuggingCalled();
     }
 
     public function test_curl_relative_redirects() {
@@ -2017,8 +1992,8 @@ EOF;
      * @param string $expected
      */
     public function test_file_get_typegroup(
-        string|array $group,
-        string $expected,
+        $group,
+        string $expected
     ): void {
         $result = file_get_typegroup('type', $group);
         $this->assertContains($expected, $result);

@@ -17,39 +17,37 @@
     Actions bar in the course completion pages.
 
     Context variables required for this template:
-    * navigation - The data object containing the required properties to render core/tertiary_navigation_selector.
+    * urlselect - The data object containing the required properties to render core/url_select.
 
     Example context (json):
     {
-        "navigation": {
-            "name":"coursecompletionnavigation",
-            "label": "Course completion tertiary navigation",
-            "value": "\/course\/completion.php?id=4",
-            "baseid": "select-menu64a40e3ea86ed8",
-            "selectedoption": "Grader report",
+        "urlselect": {
+            "id": "url_select_test",
+            "action": "https://example.com/post",
+            "formid": "url_select_form",
+            "sesskey": "sesskey",
+            "classes": "urlselect",
+            "label": "",
+            "helpicon": false,
+            "showbutton": null,
             "options": [
                 {
-                    "id": "select-menu-option1",
-                    "name": "Course completion settings",
-                    "value": "/course/completion.php?id=4",
-                    "selected": true
+                    "name": "Some name",
+                    "value": "/mod/data/someurl.php",
+                    "selected": false
                 }
             ],
-            "labelattributes":[
-                {
-                    "name":"class",
-                    "value":"sr-only"
-                }
-            ]
+            "disabled": false,
+            "title": null
         }
     }
 }}
-<div class="container-fluid tertiary-navigation border-bottom" id="tertiary-navigation">
+<div class="container-fluid tertiary-navigation">
     <div class="row">
-        {{#navigation}}
+        {{#urlselect}}
             <div class="navitem">
-                {{>core/tertiary_navigation_selector}}
+                {{>core/url_select}}
             </div>
-        {{/navigation}}
+        {{/urlselect}}
     </div>
 </div>

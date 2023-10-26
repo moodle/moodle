@@ -56,7 +56,10 @@ Feature: Group overview
       | GG2      | G3    |
 
   Scenario: Filter the overview in various different ways
-    Given I am on the "Course 1" "groups overview" page logged in as "teacher1"
+    Given I log in as "teacher1"
+    And I am on the "Course 1" "groups" page
+    And I select "Overview" from the "jump" singleselect
+
     # Grouping All and Group All filter
     When I select "All" from the "Grouping" singleselect
     And I select "All" from the "group" singleselect

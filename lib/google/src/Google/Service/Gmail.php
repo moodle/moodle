@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail extends Google_Service
 {
   /** View and manage your mail. */
@@ -684,7 +683,6 @@ class Google_Service_Gmail extends Google_Service
  *   $users = $gmailService->users;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Users_Resource extends Google_Service_Resource
 {
 
@@ -743,7 +741,6 @@ class Google_Service_Gmail_Users_Resource extends Google_Service_Resource
  *   $drafts = $gmailService->drafts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersDrafts_Resource extends Google_Service_Resource
 {
 
@@ -858,7 +855,6 @@ class Google_Service_Gmail_UsersDrafts_Resource extends Google_Service_Resource
  *   $history = $gmailService->history;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersHistory_Resource extends Google_Service_Resource
 {
 
@@ -903,7 +899,6 @@ class Google_Service_Gmail_UsersHistory_Resource extends Google_Service_Resource
  *   $labels = $gmailService->labels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersLabels_Resource extends Google_Service_Resource
 {
 
@@ -1013,7 +1008,6 @@ class Google_Service_Gmail_UsersLabels_Resource extends Google_Service_Resource
  *   $messages = $gmailService->messages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersMessages_Resource extends Google_Service_Resource
 {
 
@@ -1206,7 +1200,6 @@ class Google_Service_Gmail_UsersMessages_Resource extends Google_Service_Resourc
  *   $attachments = $gmailService->attachments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersMessagesAttachments_Resource extends Google_Service_Resource
 {
 
@@ -1235,7 +1228,6 @@ class Google_Service_Gmail_UsersMessagesAttachments_Resource extends Google_Serv
  *   $threads = $gmailService->threads;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Gmail_UsersThreads_Resource extends Google_Service_Resource
 {
 
@@ -1355,7 +1347,6 @@ class Google_Service_Gmail_UsersThreads_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Draft extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1383,7 +1374,6 @@ class Google_Service_Gmail_Draft extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_History extends Google_Collection
 {
   protected $collection_key = 'messagesDeleted';
@@ -1452,7 +1442,6 @@ class Google_Service_Gmail_History extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_HistoryLabelAdded extends Google_Collection
 {
   protected $collection_key = 'labelIds';
@@ -1481,7 +1470,6 @@ class Google_Service_Gmail_HistoryLabelAdded extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_HistoryLabelRemoved extends Google_Collection
 {
   protected $collection_key = 'labelIds';
@@ -1510,7 +1498,6 @@ class Google_Service_Gmail_HistoryLabelRemoved extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_HistoryMessageAdded extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1529,7 +1516,6 @@ class Google_Service_Gmail_HistoryMessageAdded extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_HistoryMessageDeleted extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1548,7 +1534,6 @@ class Google_Service_Gmail_HistoryMessageDeleted extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Label extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1638,7 +1623,6 @@ class Google_Service_Gmail_Label extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ListDraftsResponse extends Google_Collection
 {
   protected $collection_key = 'drafts';
@@ -1676,7 +1660,6 @@ class Google_Service_Gmail_ListDraftsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ListHistoryResponse extends Google_Collection
 {
   protected $collection_key = 'history';
@@ -1714,7 +1697,6 @@ class Google_Service_Gmail_ListHistoryResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ListLabelsResponse extends Google_Collection
 {
   protected $collection_key = 'labels';
@@ -1734,7 +1716,6 @@ class Google_Service_Gmail_ListLabelsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ListMessagesResponse extends Google_Collection
 {
   protected $collection_key = 'messages';
@@ -1772,7 +1753,6 @@ class Google_Service_Gmail_ListMessagesResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ListThreadsResponse extends Google_Collection
 {
   protected $collection_key = 'threads';
@@ -1810,7 +1790,6 @@ class Google_Service_Gmail_ListThreadsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Message extends Google_Collection
 {
   protected $collection_key = 'labelIds';
@@ -1902,7 +1881,6 @@ class Google_Service_Gmail_Message extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_MessagePart extends Google_Collection
 {
   protected $collection_key = 'parts';
@@ -1969,7 +1947,6 @@ class Google_Service_Gmail_MessagePart extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_MessagePartBody extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2005,7 +1982,6 @@ class Google_Service_Gmail_MessagePartBody extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_MessagePartHeader extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2032,7 +2008,6 @@ class Google_Service_Gmail_MessagePartHeader extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ModifyMessageRequest extends Google_Collection
 {
   protected $collection_key = 'removeLabelIds';
@@ -2060,7 +2035,6 @@ class Google_Service_Gmail_ModifyMessageRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_ModifyThreadRequest extends Google_Collection
 {
   protected $collection_key = 'removeLabelIds';
@@ -2088,7 +2062,6 @@ class Google_Service_Gmail_ModifyThreadRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Profile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2133,7 +2106,6 @@ class Google_Service_Gmail_Profile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_Thread extends Google_Collection
 {
   protected $collection_key = 'messages';
@@ -2180,7 +2152,6 @@ class Google_Service_Gmail_Thread extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_WatchRequest extends Google_Collection
 {
   protected $collection_key = 'labelIds';
@@ -2217,7 +2188,6 @@ class Google_Service_Gmail_WatchRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Gmail_WatchResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(

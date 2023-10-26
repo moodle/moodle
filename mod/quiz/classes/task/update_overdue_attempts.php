@@ -24,13 +24,8 @@
  */
 namespace mod_quiz\task;
 
-use mod_quiz\quiz_attempt;
-use moodle_exception;
-use moodle_recordset;
-
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 
 /**
@@ -44,112 +39,27 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  */
 class update_overdue_attempts extends \core\task\scheduled_task {
 
-    public function get_name(): string {
+    public function get_name() {
         return get_string('updateoverdueattemptstask', 'mod_quiz');
     }
 
     /**
+     *
      * Close off any overdue attempts.
      */
     public function execute() {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/mod/quiz/cronlib.php');
         $timenow = time();
+        $overduehander = new \mod_quiz_overdue_attempt_updater();
+
         $processto = $timenow - get_config('quiz', 'graceperiodmin');
 
         mtrace('  Looking for quiz overdue quiz attempts...');
 
-        list($count, $quizcount) = $this->update_all_overdue_attempts($timenow, $processto);
+        list($count, $quizcount) = $overduehander->update_overdue_attempts($timenow, $processto);
 
         mtrace('  Considered ' . $count . ' attempts in ' . $quizcount . ' quizzes.');
-    }
-
-    /**
-     * Do the processing required.
-     *
-     * @param int $timenow the time to consider as 'now' during the processing.
-     * @param int $processto only process attempt with timecheckstate longer ago than this.
-     * @return array with two elements, the number of attempt considered, and how many different quizzes that was.
-     */
-    public function update_all_overdue_attempts(int $timenow, int $processto): array {
-        global $DB;
-
-        $attemptstoprocess = $this->get_list_of_overdue_attempts($processto);
-
-        $course = null;
-        $quiz = null;
-        $cm = null;
-
-        $count = 0;
-        $quizcount = 0;
-        foreach ($attemptstoprocess as $attempt) {
-            try {
-
-                // If we have moved on to a different quiz, fetch the new data.
-                if (!$quiz || $attempt->quiz != $quiz->id) {
-                    $quiz = $DB->get_record('quiz', ['id' => $attempt->quiz], '*', MUST_EXIST);
-                    $cm = get_coursemodule_from_instance('quiz', $attempt->quiz);
-                    $quizcount += 1;
-                }
-
-                // If we have moved on to a different course, fetch the new data.
-                if (!$course || $course->id != $quiz->course) {
-                    $course = get_course($quiz->course);
-                }
-
-                // Make a specialised version of the quiz settings, with the relevant overrides.
-                $quizforuser = clone($quiz);
-                $quizforuser->timeclose = $attempt->usertimeclose;
-                $quizforuser->timelimit = $attempt->usertimelimit;
-
-                // Trigger any transitions that are required.
-                $attemptobj = new quiz_attempt($attempt, $quizforuser, $cm, $course);
-                $attemptobj->handle_if_time_expired($timenow, false);
-                $count += 1;
-
-            } catch (moodle_exception $e) {
-                // If an error occurs while processing one attempt, don't let that kill cron.
-                mtrace("Error while processing attempt $attempt->id at $attempt->quiz quiz:");
-                mtrace($e->getMessage());
-                mtrace($e->getTraceAsString());
-                // Close down any currently open transactions, otherwise one error
-                // will stop following DB changes from being committed.
-                $DB->force_transaction_rollback();
-            }
-        }
-
-        $attemptstoprocess->close();
-        return [$count, $quizcount];
-    }
-
-    /**
-     * Get a recordset of all the attempts that need to be processed now.
-     *
-     * (Only public to allow unit testing. Do not use!)
-     *
-     * @param int $processto timestamp to process up to.
-     * @return moodle_recordset of quiz_attempts that need to be processed because time has
-     *     passed, sorted by courseid then quizid.
-     */
-    public function get_list_of_overdue_attempts(int $processto): moodle_recordset {
-        global $DB;
-
-        // SQL to compute timeclose and timelimit for each attempt.
-        $quizausersql = quiz_get_attempt_usertime_sql(
-                "iquiza.state IN ('inprogress', 'overdue') AND iquiza.timecheckstate <= :iprocessto");
-
-        // This query should have all the quiz_attempts columns.
-        return $DB->get_recordset_sql("
-         SELECT quiza.*,
-                quizauser.usertimeclose,
-                quizauser.usertimelimit
-
-           FROM {quiz_attempts} quiza
-           JOIN {quiz} quiz ON quiz.id = quiza.quiz
-           JOIN ( $quizausersql ) quizauser ON quizauser.id = quiza.id
-
-          WHERE quiza.state IN ('inprogress', 'overdue')
-            AND quiza.timecheckstate <= :processto
-       ORDER BY quiz.course, quiza.quiz",
-
-                ['processto' => $processto, 'iprocessto' => $processto]);
     }
 }

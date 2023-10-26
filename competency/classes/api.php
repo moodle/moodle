@@ -459,7 +459,7 @@ class api {
      *
      * @param int $id The id of the competency to read.
      * @param bool $includerelated Include related tags or not.
-     * @return competency
+     * @return stdClass
      */
     public static function read_competency($id, $includerelated = false) {
         static::require_enabled();
@@ -4043,7 +4043,7 @@ class api {
      * This method does not copy the related competencies.
      *
      * @param int $frameworkid - framework id
-     * @param stdClass[] $tree - list of framework competency nodes
+     * @param competency[] $tree - array of competencies object
      * @param int $oldparent - old parent id
      * @param int $newparent - new parent id
      * @return competency[] $matchids - List of old competencies ids matched with new competencies object.
@@ -4083,7 +4083,7 @@ class api {
     /**
      * Recursively migrate competency rules.
      *
-     * @param array $tree - array of competencies object
+     * @param competency[] $tree - array of competencies object
      * @param competency[] $matchids - List of old competencies ids matched with new competencies object
      */
     protected static function migrate_competency_tree_rules($tree, $matchids) {
@@ -4116,7 +4116,7 @@ class api {
     /**
      * Archive user competencies in a plan.
      *
-     * @param plan $plan The plan object.
+     * @param int $plan The plan object.
      * @return void
      */
     protected static function archive_user_competencies_in_plan($plan) {
@@ -4166,7 +4166,7 @@ class api {
     /**
      * Delete archived user competencies in a plan.
      *
-     * @param plan $plan The plan object.
+     * @param int $plan The plan object.
      * @return void
      */
     protected static function remove_archived_user_competencies_in_plan($plan) {

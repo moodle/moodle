@@ -41,18 +41,10 @@ class mysqli_native_moodle_database extends moodle_database {
         can_use_readonly as read_slave_can_use_readonly;
     }
 
-    /** @var array $sslmodes */
-    private static $sslmodes = [
-        'require',
-        'verify-full'
-    ];
-
     /** @var mysqli $mysqli */
     protected $mysqli = null;
     /** @var bool is compressed row format supported cache */
     protected $compressedrowformatsupported = null;
-    /** @var string DB server actual version */
-    protected $serverversion = null;
 
     private $transactions_supported = null;
 
@@ -543,8 +535,6 @@ class mysqli_native_moodle_database extends moodle_database {
      * @param mixed $prefix string means moodle db prefix, false used for external databases where prefix not used
      * @param array $dboptions driver specific options
      * @return bool success
-     * @throws moodle_exception
-     * @throws dml_connection_exception if error
      */
     public function raw_connect(string $dbhost, string $dbuser, string $dbpass, string $dbname, $prefix, array $dboptions=null): bool {
         $driverstatus = $this->driver_installed();
@@ -585,31 +575,16 @@ class mysqli_native_moodle_database extends moodle_database {
             $this->mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, $this->dboptions['connecttimeout']);
         }
 
-        $flags = 0;
-        if ($this->dboptions['clientcompress'] ?? false) {
-            $flags |= MYSQLI_CLIENT_COMPRESS;
-        }
-        if (isset($this->dboptions['ssl'])) {
-            $sslmode = $this->dboptions['ssl'];
-            if (!in_array($sslmode, self::$sslmodes, true)) {
-                throw new moodle_exception("Invalid 'dboptions''ssl' value '$sslmode'");
-            }
-            $flags |= MYSQLI_CLIENT_SSL;
-            if ($sslmode === 'verify-full') {
-                $flags |= MYSQLI_CLIENT_SSL_VERIFY_SERVER_CERT;
-            }
-        }
-
         $conn = null;
         $dberr = null;
         try {
             // real_connect() is doing things we don't expext.
-            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket, $flags);
+            $conn = @$this->mysqli->real_connect($dbhost, $dbuser, $dbpass, $dbname, $dbport, $dbsocket);
         } catch (\Exception $e) {
             $dberr = "$e";
         }
         if (!$conn) {
-            $dberr = $dberr ?: "{$this->mysqli->connect_error} ({$this->mysqli->connect_errno})";
+            $dberr = $dberr ?: $this->mysqli->connect_error;
             $this->mysqli = null;
             throw new dml_connection_exception($dberr);
         }
@@ -695,102 +670,11 @@ class mysqli_native_moodle_database extends moodle_database {
     }
 
     /**
-     * Returns the version of the MySQL server, as reported by the PHP client connection.
-     *
-     * Wrap $this->mysqli->server_info to improve testing strategy.
-     *
-     * @return string A string representing the version of the MySQL server that the MySQLi extension is connected to.
-     */
-    protected function get_mysqli_server_info(): string {
-        return $this->mysqli->server_info;
-    }
-
-    /**
-     * Returns the version of the MySQL server, as reported by 'SELECT VERSION()' query.
-     *
-     * @return string A string that indicates the MySQL server version.
-     * @throws dml_read_exception If the execution of 'SELECT VERSION()' query will fail.
-     */
-    protected function get_version_from_db(): string {
-        $version = null;
-        // Query the DB server for the server version.
-        $sql = "SELECT VERSION() version;";
-        try {
-            $result = $this->mysqli->query($sql);
-            if ($result) {
-                if ($row = $result->fetch_assoc()) {
-                    $version = $row['version'];
-                }
-                $result->close();
-                unset($row);
-            }
-        } catch (\Throwable $e) { // Exceptions in case of MYSQLI_REPORT_STRICT.
-            // It looks like we've an issue out of the expected boolean 'false' result above.
-            throw new dml_read_exception($e->getMessage(), $sql);
-        }
-        if (empty($version)) {
-            // Exception dml_read_exception usually reports raw mysqli errors i.e. not localised by Moodle.
-            throw new dml_read_exception("Unable to read the DB server version.", $sql);
-        }
-
-        return $version;
-    }
-
-    /**
-     * Returns whether $CFG->dboptions['versionfromdb'] has been set to boolean `true`.
-     *
-     * @return bool True if $CFG->dboptions['versionfromdb'] has been set to boolean `true`. Otherwise, `false`.
-     */
-    protected function should_db_version_be_read_from_db(): bool {
-        if (!empty($this->dboptions['versionfromdb'])) {
-            return true;
-        }
-
-        return false;
-    }
-
-    /**
-     * Returns database server info array.
-     * @return array Array containing 'description' and 'version' info.
-     * @throws dml_read_exception If the execution of 'SELECT VERSION()' query will fail.
+     * Returns database server info array
+     * @return array Array containing 'description' and 'version' info
      */
     public function get_server_info() {
-        $version = $this->serverversion;
-        if (empty($version)) {
-            $version = $this->get_mysqli_server_info();
-            // The version returned by the PHP client could not be the actual DB server version.
-            // For example in MariaDB, it was prefixed by the RPL_VERSION_HACK, "5.5.5-" (MDEV-4088), starting from 10.x,
-            // when not using an authentication plug-in.
-            // Strip the RPL_VERSION_HACK prefix off - it will be "always" there in MariaDB until MDEV-28910 will be implemented.
-            $version = str_replace('5.5.5-', '', $version);
-
-            // Should we use the VERSION function to get the actual DB version instead of the PHP client version above?
-            if ($this->should_db_version_be_read_from_db()) {
-                // Try to query the actual version of the target database server: indeed some cloud providers, e.g. Azure,
-                // put a gateway in front of the actual instance which reports its own version to the PHP client
-                // and it doesn't represent the actual version of the DB server the PHP client is connected to.
-                // Refs:
-                // - https://learn.microsoft.com/en-us/azure/mariadb/concepts-supported-versions
-                // - https://learn.microsoft.com/en-us/azure/mysql/single-server/concepts-connect-to-a-gateway-node .
-                // Reset the version returned by the PHP client with the actual DB version reported by 'VERSION' function.
-                $version = $this->get_version_from_db();
-            }
-
-            // The version here starts with the following naming scheme: 'X.Y.Z[-<suffix>]'.
-            // Example: in MariaDB at least one suffix is "always" there, hardcoded in 'mysql_version.h.in':
-            // #define MYSQL_SERVER_VERSION       "@VERSION@-MariaDB"
-            // MariaDB and MySQL server version could have extra suffixes too, set by the compilation environment,
-            // e.g. '-debug', '-embedded', '-log' or any other vendor specific suffix (e.g. build information).
-            // Strip out any suffix.
-            $parts = explode('-', $version, 2);
-            // Finally, keep just major, minor and patch versions (X.Y.Z) from the reported DB server version.
-            $this->serverversion = $parts[0];
-        }
-
-        return [
-            'description' => $this->get_mysqli_server_info(),
-            'version' => $this->serverversion
-        ];
+        return array('description'=>$this->mysqli->server_info, 'version'=>$this->mysqli->server_info);
     }
 
     /**
@@ -1683,7 +1567,7 @@ class mysqli_native_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param stdClass|array $params data record as object or array
+     * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1730,8 +1614,7 @@ class mysqli_native_moodle_database extends moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
-     *        Must have an entry for 'id' to map to the table specified.
+     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.

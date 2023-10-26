@@ -22,7 +22,6 @@ use PDO;
  */
 
 
-#[\AllowDynamicProperties]
 class DataConnector_pdo extends DataConnector
 {
 

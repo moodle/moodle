@@ -23,10 +23,9 @@
  */
 namespace core\plugininfo;
 
-use admin_settingpage;
-use core_plugin_manager;
-use moodle_url;
-use part_of_admin_tree;
+use moodle_url, part_of_admin_tree, admin_settingpage, admin_externalpage, core_plugin_manager;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for dataformats
@@ -36,10 +35,6 @@ use part_of_admin_tree;
  * @copyright  2016 Brendan Heywood (brendan@catalyst-au.net)
  */
 class dataformat extends base {
-
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
 
     /**
      * Display name
@@ -156,7 +151,6 @@ class dataformat extends base {
      */
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $dataformat = $this;     // Also can be used inside settings.php.

@@ -35,7 +35,7 @@ class TimeZone
      */
     public static function setTimeZone(string $timezoneName): bool
     {
-        if (self::validateTimeZone($timezoneName)) {
+        if (self::validateTimezone($timezoneName)) {
             self::$timezone = $timezoneName;
 
             return true;
@@ -67,7 +67,7 @@ class TimeZone
     {
         $timezoneName = $timezoneName ?? self::$timezone;
         $dtobj = Date::dateTimeFromTimestamp("$timestamp");
-        if (!self::validateTimeZone($timezoneName)) {
+        if (!self::validateTimezone($timezoneName)) {
             throw new PhpSpreadsheetException("Invalid timezone $timezoneName");
         }
         $dtobj->setTimeZone(new DateTimeZone($timezoneName));

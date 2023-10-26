@@ -75,6 +75,28 @@ class course_category_updated extends base {
         return "The user with id '$this->userid' updated the course category with id '$this->objectid'.";
     }
 
+    /**
+     * Set the legacy data used for add_to_log().
+     *
+     * @param array $logdata
+     */
+    public function set_legacy_logdata($logdata) {
+        $this->legacylogdata = $logdata;
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        if (!empty($this->legacylogdata)) {
+            return $this->legacylogdata;
+        }
+
+        return array(SITEID, 'category', 'update', 'editcategory.php?id=' . $this->objectid, $this->objectid);
+    }
+
     public static function get_objectid_mapping() {
         // Categories are not backed up, so no need to map them on restore.
         return array('db' => 'course_categories', 'restore' => base::NOT_MAPPED);

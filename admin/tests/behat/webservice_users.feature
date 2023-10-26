@@ -1,4 +1,4 @@
-@core @core_admin @core_webservice
+@core @core_admin
 Feature: Web service user settings
   In order to configure authorised users for a web service
   As an admin
@@ -29,13 +29,3 @@ Feature: Web service user settings
     Then I should see "User One" in the ".alloweduserlist" "css_element"
     And I should see "1@example.org" in the ".alloweduserlist" "css_element"
     And I should see "Kermit" in the ".alloweduserlist" "css_element"
-
-  @javascript
-  Scenario: Add a function to a web service
-    When I log in as "admin"
-    And I navigate to "Server > Web services > External services" in site administration
-    And I click on "Functions" "link" in the "Silly service" "table_row"
-    And I follow "Add functions"
-    And I set the field "Name" to "core_blog_get_entries"
-    And I click on "Add functions" "button" in the "#fgroup_id_buttonar" "css_element"
-    Then I should see "core_blog_get_entries" in the "generaltable" "table"

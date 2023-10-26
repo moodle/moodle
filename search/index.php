@@ -48,6 +48,9 @@ if (!empty($CFG->forcelogin)) {
     require_login();
 }
 
+// Unlock the session during a search.
+\core\session\manager::write_close();
+
 require_capability('moodle/search:query', $context);
 
 $searchrenderer = $PAGE->get_renderer('core_search');
@@ -165,9 +168,6 @@ $PAGE->set_url($url);
 
 // We are ready to render.
 echo $OUTPUT->header();
-
-// Unlock the session only after outputting the header as this modifies the session cachestore.
-\core\session\manager::write_close();
 
 // Get the results.
 if ($data) {

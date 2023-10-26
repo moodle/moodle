@@ -302,77 +302,262 @@ if (empty($CFG->version)) {
     throw new \moodle_exception('missingconfigversion', 'debug');
 }
 
-// If an upgrade is running, an admin page starting a frontend upgrade could corrupt the
-// DB if the upgrade collided with an already running upgrade process at the wrong time.
-// Pull the value direct from the DB, this needs to *always* be correct.
-$outagelessupgrade = !empty($DB->get_field('config', 'value', ['name' => 'outagelessupgrade']));
-if (!$outagelessupgrade) {
-    // Detect config cache inconsistency, this happens when you switch branches on dev servers.
-    if ($CFG->version != $DB->get_field('config', 'value', array('name' => 'version'))) {
-        purge_all_caches();
-        redirect(new moodle_url($PAGE->url), 'Config cache inconsistency detected, resetting caches...');
+// Detect config cache inconsistency, this happens when you switch branches on dev servers.
+if ($CFG->version != $DB->get_field('config', 'value', array('name'=>'version'))) {
+    purge_all_caches();
+    redirect(new moodle_url($PAGE->url), 'Config cache inconsistency detected, resetting caches...');
+}
+
+if (!$cache and $version > $CFG->version) {  // upgrade
+
+    $PAGE->set_url(new moodle_url($PAGE->url, array(
+        'confirmupgrade' => $confirmupgrade,
+        'confirmrelease' => $confirmrelease,
+        'confirmplugincheck' => $confirmplugins,
+    )));
+
+    check_upgrade_key($upgradekeyhash);
+
+    // Warning about upgrading a test site.
+    $testsite = false;
+    if (defined('BEHAT_SITE_RUNNING')) {
+        $testsite = 'behat';
     }
 
-    if (!$cache && $version > $CFG->version && !$outagelessupgrade) {  // Upgrade.
+    if (isset($CFG->themerev)) {
+        // Store the themerev to restore after purging caches.
+        $themerev = $CFG->themerev;
+    }
 
-        $PAGE->set_url(new moodle_url($PAGE->url, array(
-            'confirmupgrade' => $confirmupgrade,
-            'confirmrelease' => $confirmrelease,
-            'confirmplugincheck' => $confirmplugins,
-        )));
+    // We purge all of MUC's caches here.
+    // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
+    // This ensures a real config object is loaded and the stores will be purged.
+    // This is the only way we can purge custom caches such as memcache or APC.
+    // Note: all other calls to caches will still used the disabled API.
+    cache_helper::purge_all(true);
+    // We then purge the regular caches.
+    purge_all_caches();
 
-        check_upgrade_key($upgradekeyhash);
+    if (isset($themerev)) {
+        // Restore the themerev
+        set_config('themerev', $themerev);
+    }
 
-        // Warning about upgrading a test site.
-        $testsite = false;
-        if (defined('BEHAT_SITE_RUNNING')) {
-            $testsite = 'behat';
+    $output = $PAGE->get_renderer('core', 'admin');
+
+    if (upgrade_stale_php_files_present()) {
+        $PAGE->set_title($stradministration);
+        $PAGE->set_cacheable(false);
+
+        echo $output->upgrade_stale_php_files_page();
+        die();
+    }
+
+    if (empty($confirmupgrade)) {
+        $a = new stdClass();
+        $a->oldversion = "$CFG->release (".sprintf('%.2f', $CFG->version).")";
+        $a->newversion = "$release (".sprintf('%.2f', $version).")";
+        $strdatabasechecking = get_string('databasechecking', '', $a);
+
+        $PAGE->set_title($stradministration);
+        $PAGE->set_heading($strdatabasechecking);
+        $PAGE->set_cacheable(false);
+
+        echo $output->upgrade_confirm_page($a->newversion, $maturity, $testsite);
+        die();
+
+    } else if (empty($confirmrelease)) {
+        require_once($CFG->libdir.'/environmentlib.php');
+        list($envstatus, $environmentresults) = check_moodle_environment($release, ENV_SELECT_RELEASE);
+        $strcurrentrelease = get_string('currentrelease');
+
+        $PAGE->navbar->add($strcurrentrelease);
+        $PAGE->set_title($strcurrentrelease);
+        $PAGE->set_heading($strcurrentrelease);
+        $PAGE->set_cacheable(false);
+
+        echo $output->upgrade_environment_page($release, $envstatus, $environmentresults);
+        die();
+
+    } else if (empty($confirmplugins)) {
+        $strplugincheck = get_string('plugincheck');
+
+        $PAGE->navbar->add($strplugincheck);
+        $PAGE->set_title($strplugincheck);
+        $PAGE->set_heading($strplugincheck);
+        $PAGE->set_cacheable(false);
+
+        $pluginman = core_plugin_manager::instance();
+
+        // Check for available updates.
+        if ($fetchupdates) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $updateschecker = \core\update\checker::instance();
+            if ($updateschecker->enabled()) {
+                $updateschecker->fetch();
+            }
+            redirect($PAGE->url);
         }
 
-        if (isset($CFG->themerev)) {
-            // Store the themerev to restore after purging caches.
-            $themerev = $CFG->themerev;
+        // Cancel all plugin installations.
+        if ($abortinstallx) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $abortables = $pluginman->list_cancellable_installations();
+            if ($abortables) {
+                if ($confirmabortinstall) {
+                    foreach ($abortables as $plugin) {
+                        $pluginman->cancel_plugin_installation($plugin->component);
+                    }
+                    redirect($PAGE->url);
+                } else {
+                    $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1));
+                    echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
+                    die();
+                }
+            }
+            redirect($PAGE->url);
         }
 
-        // We purge all of MUC's caches here.
-        // Caches are disabled for upgrade by CACHE_DISABLE_ALL so we must set the first arg to true.
-        // This ensures a real config object is loaded and the stores will be purged.
-        // This is the only way we can purge custom caches such as memcache or APC.
-        // Note: all other calls to caches will still used the disabled API.
-        cache_helper::purge_all(true);
-        // We then purge the regular caches.
-        purge_all_caches();
-
-        if (isset($themerev)) {
-            // Restore the themerev.
-            set_config('themerev', $themerev);
+        // Cancel single plugin installation.
+        if ($abortinstall) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            if ($confirmabortinstall) {
+                $pluginman->cancel_plugin_installation($abortinstall);
+                redirect($PAGE->url);
+            } else {
+                $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
+                $abortable = $pluginman->get_plugin_info($abortinstall);
+                if ($pluginman->can_cancel_plugin_installation($abortable)) {
+                    echo $output->upgrade_confirm_abort_install_page(array($abortable), $continue);
+                    die();
+                }
+                redirect($PAGE->url);
+            }
         }
 
+        // Cancel all plugins upgrades (that is, restore archived versions).
+        if ($abortupgradex) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $restorable = $pluginman->list_restorable_archives();
+            if ($restorable) {
+                upgrade_install_plugins($restorable, $confirmabortupgrade,
+                    get_string('cancelupgradehead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('abortupgradex' => 1, 'confirmabortupgrade' => 1))
+                );
+            }
+            redirect($PAGE->url);
+        }
+
+        // Cancel single plugin upgrade (that is, install the archived version).
+        if ($abortupgrade) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $restorable = $pluginman->list_restorable_archives();
+            if (isset($restorable[$abortupgrade])) {
+                $restorable = array($restorable[$abortupgrade]);
+                upgrade_install_plugins($restorable, $confirmabortupgrade,
+                    get_string('cancelupgradehead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('abortupgrade' => $abortupgrade, 'confirmabortupgrade' => 1))
+                );
+            }
+            redirect($PAGE->url);
+        }
+
+        // Install all available missing dependencies.
+        if ($installdepx) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+            upgrade_install_plugins($installable, $confirminstalldep,
+                get_string('dependencyinstallhead', 'core_plugin'),
+                new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
+            );
+        }
+
+        // Install single available missing dependency.
+        if ($installdep) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
+            if (!empty($installable[$installdep])) {
+                $installable = array($installable[$installdep]);
+                upgrade_install_plugins($installable, $confirminstalldep,
+                    get_string('dependencyinstallhead', 'core_plugin'),
+                    new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
+                );
+            }
+        }
+
+        // Install all available updates.
+        if ($installupdatex) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            $installable = $pluginman->filter_installable($pluginman->available_updates());
+            upgrade_install_plugins($installable, $confirminstallupdate,
+                get_string('updateavailableinstallallhead', 'core_admin'),
+                new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
+            );
+        }
+
+        // Install single available update.
+        if ($installupdate and $installupdateversion) {
+            // No sesskey support guaranteed here, because sessions might not work yet.
+            if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
+                $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
+                upgrade_install_plugins($installable, $confirminstallupdate,
+                    get_string('updateavailableinstallallhead', 'core_admin'),
+                    new moodle_url($PAGE->url, array('installupdate' => $installupdate,
+                        'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
+                    )
+                );
+            }
+        }
+
+        echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
+                $version, $showallplugins, $PAGE->url, new moodle_url($PAGE->url, array('confirmplugincheck' => 1)));
+        die();
+
+    } else {
+        // Always verify plugin dependencies!
+        $failed = array();
+        if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
+            echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
+                array('confirmplugincheck' => 0)));
+            die();
+        }
+        unset($failed);
+
+        // Launch main upgrade.
+        upgrade_core($version, true);
+    }
+} else if ($version < $CFG->version) {
+    // better stop here, we can not continue with plugin upgrades or anything else
+    throw new moodle_exception('downgradedcore', 'error', new moodle_url('/admin/'));
+}
+
+// Updated human-readable release version if necessary
+if (!$cache and $release <> $CFG->release) {  // Update the release version
+    set_config('release', $release);
+}
+
+if (!$cache and $branch <> $CFG->branch) {  // Update the branch
+    set_config('branch', $branch);
+}
+
+if (!$cache and moodle_needs_upgrading()) {
+
+    $PAGE->set_url(new moodle_url($PAGE->url, array(
+        'confirmrelease' => $confirmrelease,
+        'confirmplugincheck' => $confirmplugins,
+    )));
+
+    check_upgrade_key($upgradekeyhash);
+
+    if (!$PAGE->headerprinted) {
+        // means core upgrade or installation was not already done
+
+        $pluginman = core_plugin_manager::instance();
         $output = $PAGE->get_renderer('core', 'admin');
 
-        if (upgrade_stale_php_files_present()) {
-            $PAGE->set_title($stradministration);
-            $PAGE->set_cacheable(false);
+        if (empty($confirmrelease)) {
+            require_once($CFG->libdir . '/environmentlib.php');
 
-            echo $output->upgrade_stale_php_files_page();
-            die();
-        }
-
-        if (empty($confirmupgrade)) {
-            $a = new stdClass();
-            $a->oldversion = "$CFG->release (".sprintf('%.2f', $CFG->version).")";
-            $a->newversion = "$release (".sprintf('%.2f', $version).")";
-            $strdatabasechecking = get_string('databasechecking', '', $a);
-
-            $PAGE->set_title($stradministration);
-            $PAGE->set_heading($strdatabasechecking);
-            $PAGE->set_cacheable(false);
-
-            echo $output->upgrade_confirm_page($a->newversion, $maturity, $testsite);
-            die();
-
-        } else if (empty($confirmrelease)) {
-            require_once($CFG->libdir.'/environmentlib.php');
             list($envstatus, $environmentresults) = check_moodle_environment($release, ENV_SELECT_RELEASE);
             $strcurrentrelease = get_string('currentrelease');
 
@@ -384,7 +569,7 @@ if (!$outagelessupgrade) {
             echo $output->upgrade_environment_page($release, $envstatus, $environmentresults);
             die();
 
-        } else if (empty($confirmplugins)) {
+        } else if (!$confirmplugins) {
             $strplugincheck = get_string('plugincheck');
 
             $PAGE->navbar->add($strplugincheck);
@@ -392,11 +577,9 @@ if (!$outagelessupgrade) {
             $PAGE->set_heading($strplugincheck);
             $PAGE->set_cacheable(false);
 
-            $pluginman = core_plugin_manager::instance();
-
             // Check for available updates.
             if ($fetchupdates) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $updateschecker = \core\update\checker::instance();
                 if ($updateschecker->enabled()) {
                     $updateschecker->fetch();
@@ -406,7 +589,7 @@ if (!$outagelessupgrade) {
 
             // Cancel all plugin installations.
             if ($abortinstallx) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $abortables = $pluginman->list_cancellable_installations();
                 if ($abortables) {
                     if ($confirmabortinstall) {
@@ -415,7 +598,8 @@ if (!$outagelessupgrade) {
                         }
                         redirect($PAGE->url);
                     } else {
-                        $continue = new moodle_url($PAGE->url, ['abortinstallx' => $abortinstallx, 'confirmabortinstall' => 1]);
+                        $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx,
+                            'confirmabortinstall' => 1));
                         echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
                         die();
                     }
@@ -425,7 +609,7 @@ if (!$outagelessupgrade) {
 
             // Cancel single plugin installation.
             if ($abortinstall) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 if ($confirmabortinstall) {
                     $pluginman->cancel_plugin_installation($abortinstall);
                     redirect($PAGE->url);
@@ -442,7 +626,7 @@ if (!$outagelessupgrade) {
 
             // Cancel all plugins upgrades (that is, restore archived versions).
             if ($abortupgradex) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $restorable = $pluginman->list_restorable_archives();
                 if ($restorable) {
                     upgrade_install_plugins($restorable, $confirmabortupgrade,
@@ -455,7 +639,7 @@ if (!$outagelessupgrade) {
 
             // Cancel single plugin upgrade (that is, install the archived version).
             if ($abortupgrade) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $restorable = $pluginman->list_restorable_archives();
                 if (isset($restorable[$abortupgrade])) {
                     $restorable = array($restorable[$abortupgrade]);
@@ -469,7 +653,7 @@ if (!$outagelessupgrade) {
 
             // Install all available missing dependencies.
             if ($installdepx) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
                 upgrade_install_plugins($installable, $confirminstalldep,
                     get_string('dependencyinstallhead', 'core_plugin'),
@@ -479,7 +663,7 @@ if (!$outagelessupgrade) {
 
             // Install single available missing dependency.
             if ($installdep) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
                 if (!empty($installable[$installdep])) {
                     $installable = array($installable[$installdep]);
@@ -492,7 +676,7 @@ if (!$outagelessupgrade) {
 
             // Install all available updates.
             if ($installupdatex) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 $installable = $pluginman->filter_installable($pluginman->available_updates());
                 upgrade_install_plugins($installable, $confirminstallupdate,
                     get_string('updateavailableinstallallhead', 'core_admin'),
@@ -502,7 +686,7 @@ if (!$outagelessupgrade) {
 
             // Install single available update.
             if ($installupdate and $installupdateversion) {
-                // No sesskey support guaranteed here, because sessions might not work yet.
+                require_sesskey();
                 if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
                     $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
                     upgrade_install_plugins($installable, $confirminstallupdate,
@@ -514,280 +698,89 @@ if (!$outagelessupgrade) {
                 }
             }
 
-            echo $output->upgrade_plugin_check_page(core_plugin_manager::instance(), \core\update\checker::instance(),
-                    $version, $showallplugins, $PAGE->url, new moodle_url($PAGE->url, array('confirmplugincheck' => 1)));
+            // Show plugins info.
+            echo $output->upgrade_plugin_check_page($pluginman, \core\update\checker::instance(),
+                    $version, $showallplugins,
+                    new moodle_url($PAGE->url),
+                    new moodle_url($PAGE->url, array('confirmplugincheck' => 1, 'cache' => 0)));
             die();
-
-        } else {
-            // Always verify plugin dependencies!
-            $failed = array();
-            if (!core_plugin_manager::instance()->all_plugins_ok($version, $failed, $CFG->branch)) {
-                echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
-                    array('confirmplugincheck' => 0)));
-                die();
-            }
-            unset($failed);
-
-            // Launch main upgrade.
-            upgrade_core($version, true);
         }
-    } else if ($version < $CFG->version) {
-        // Better stop here, we can not continue with plugin upgrades or anything else.
-        throw new moodle_exception('downgradedcore', 'error', new moodle_url('/admin/'));
-    }
 
-    // Updated human-readable release version if necessary.
-    if (!$cache && $release <> $CFG->release ) {  // Update the release version.
-        set_config('release', $release);
-    }
-
-    if (!$cache && $branch <> $CFG->branch) {  // Update the branch.
-        set_config('branch', $branch);
-    }
-
-    if (!$cache && moodle_needs_upgrading()) {
-
-        $PAGE->set_url(new moodle_url($PAGE->url, array(
-            'confirmrelease' => $confirmrelease,
-            'confirmplugincheck' => $confirmplugins,
-        )));
-
-        check_upgrade_key($upgradekeyhash);
-
-        if (!$PAGE->headerprinted) {
-            // Means core upgrade or installation was not already done.
-
-            $pluginman = core_plugin_manager::instance();
+        // Make sure plugin dependencies are always checked.
+        $failed = array();
+        if (!$pluginman->all_plugins_ok($version, $failed, $CFG->branch)) {
             $output = $PAGE->get_renderer('core', 'admin');
-
-            if (empty($confirmrelease)) {
-                require_once($CFG->libdir . '/environmentlib.php');
-
-                list($envstatus, $environmentresults) = check_moodle_environment($release, ENV_SELECT_RELEASE);
-                $strcurrentrelease = get_string('currentrelease');
-
-                $PAGE->navbar->add($strcurrentrelease);
-                $PAGE->set_title($strcurrentrelease);
-                $PAGE->set_heading($strcurrentrelease);
-                $PAGE->set_cacheable(false);
-
-                echo $output->upgrade_environment_page($release, $envstatus, $environmentresults);
-                die();
-
-            } else if (!$confirmplugins) {
-                $strplugincheck = get_string('plugincheck');
-
-                $PAGE->navbar->add($strplugincheck);
-                $PAGE->set_title($strplugincheck);
-                $PAGE->set_heading($strplugincheck);
-                $PAGE->set_cacheable(false);
-
-                // Check for available updates.
-                if ($fetchupdates) {
-                    require_sesskey();
-                    $updateschecker = \core\update\checker::instance();
-                    if ($updateschecker->enabled()) {
-                        $updateschecker->fetch();
-                    }
-                    redirect($PAGE->url);
-                }
-
-                // Cancel all plugin installations.
-                if ($abortinstallx) {
-                    require_sesskey();
-                    $abortables = $pluginman->list_cancellable_installations();
-                    if ($abortables) {
-                        if ($confirmabortinstall) {
-                            foreach ($abortables as $plugin) {
-                                $pluginman->cancel_plugin_installation($plugin->component);
-                            }
-                            redirect($PAGE->url);
-                        } else {
-                            $continue = new moodle_url($PAGE->url, array('abortinstallx' => $abortinstallx,
-                                'confirmabortinstall' => 1));
-                            echo $output->upgrade_confirm_abort_install_page($abortables, $continue);
-                            die();
-                        }
-                    }
-                    redirect($PAGE->url);
-                }
-
-                // Cancel single plugin installation.
-                if ($abortinstall) {
-                    require_sesskey();
-                    if ($confirmabortinstall) {
-                        $pluginman->cancel_plugin_installation($abortinstall);
-                        redirect($PAGE->url);
-                    } else {
-                        $continue = new moodle_url($PAGE->url, array('abortinstall' => $abortinstall, 'confirmabortinstall' => 1));
-                        $abortable = $pluginman->get_plugin_info($abortinstall);
-                        if ($pluginman->can_cancel_plugin_installation($abortable)) {
-                            echo $output->upgrade_confirm_abort_install_page(array($abortable), $continue);
-                            die();
-                        }
-                        redirect($PAGE->url);
-                    }
-                }
-
-                // Cancel all plugins upgrades (that is, restore archived versions).
-                if ($abortupgradex) {
-                    require_sesskey();
-                    $restorable = $pluginman->list_restorable_archives();
-                    if ($restorable) {
-                        upgrade_install_plugins($restorable, $confirmabortupgrade,
-                            get_string('cancelupgradehead', 'core_plugin'),
-                            new moodle_url($PAGE->url, array('abortupgradex' => 1, 'confirmabortupgrade' => 1))
-                        );
-                    }
-                    redirect($PAGE->url);
-                }
-
-                // Cancel single plugin upgrade (that is, install the archived version).
-                if ($abortupgrade) {
-                    require_sesskey();
-                    $restorable = $pluginman->list_restorable_archives();
-                    if (isset($restorable[$abortupgrade])) {
-                        $restorable = array($restorable[$abortupgrade]);
-                        upgrade_install_plugins($restorable, $confirmabortupgrade,
-                            get_string('cancelupgradehead', 'core_plugin'),
-                            new moodle_url($PAGE->url, array('abortupgrade' => $abortupgrade, 'confirmabortupgrade' => 1))
-                        );
-                    }
-                    redirect($PAGE->url);
-                }
-
-                // Install all available missing dependencies.
-                if ($installdepx) {
-                    require_sesskey();
-                    $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
-                    upgrade_install_plugins($installable, $confirminstalldep,
-                        get_string('dependencyinstallhead', 'core_plugin'),
-                        new moodle_url($PAGE->url, array('installdepx' => 1, 'confirminstalldep' => 1))
-                    );
-                }
-
-                // Install single available missing dependency.
-                if ($installdep) {
-                    require_sesskey();
-                    $installable = $pluginman->filter_installable($pluginman->missing_dependencies(true));
-                    if (!empty($installable[$installdep])) {
-                        $installable = array($installable[$installdep]);
-                        upgrade_install_plugins($installable, $confirminstalldep,
-                            get_string('dependencyinstallhead', 'core_plugin'),
-                            new moodle_url($PAGE->url, array('installdep' => $installdep, 'confirminstalldep' => 1))
-                        );
-                    }
-                }
-
-                // Install all available updates.
-                if ($installupdatex) {
-                    require_sesskey();
-                    $installable = $pluginman->filter_installable($pluginman->available_updates());
-                    upgrade_install_plugins($installable, $confirminstallupdate,
-                        get_string('updateavailableinstallallhead', 'core_admin'),
-                        new moodle_url($PAGE->url, array('installupdatex' => 1, 'confirminstallupdate' => 1))
-                    );
-                }
-
-                // Install single available update.
-                if ($installupdate && $installupdateversion) {
-                    require_sesskey();
-                    if ($pluginman->is_remote_plugin_installable($installupdate, $installupdateversion)) {
-                        $installable = array($pluginman->get_remote_plugin_info($installupdate, $installupdateversion, true));
-                        upgrade_install_plugins($installable, $confirminstallupdate,
-                            get_string('updateavailableinstallallhead', 'core_admin'),
-                            new moodle_url($PAGE->url, array('installupdate' => $installupdate,
-                                'installupdateversion' => $installupdateversion, 'confirminstallupdate' => 1)
-                            )
-                        );
-                    }
-                }
-
-                // Show plugins info.
-                echo $output->upgrade_plugin_check_page($pluginman, \core\update\checker::instance(),
-                        $version, $showallplugins,
-                        new moodle_url($PAGE->url),
-                        new moodle_url($PAGE->url, array('confirmplugincheck' => 1, 'cache' => 0)));
-                die();
-            }
-
-            // Make sure plugin dependencies are always checked.
-            $failed = array();
-            if (!$pluginman->all_plugins_ok($version, $failed, $CFG->branch)) {
-                $output = $PAGE->get_renderer('core', 'admin');
-                echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
-                    array('confirmplugincheck' => 0)));
-                die();
-            }
-            unset($failed);
+            echo $output->unsatisfied_dependencies_page($version, $failed, new moodle_url($PAGE->url,
+                array('confirmplugincheck' => 0)));
+            die();
         }
-
-        // Install/upgrade all plugins and other parts.
-        upgrade_noncore(true);
+        unset($failed);
     }
 
-    // If this is the first install, indicate that this site is fully configured,
-    // Except the admin password.
-    if (during_initial_install()) {
-        set_config('rolesactive', 1); // After this, during_initial_install will return false.
-        set_config('adminsetuppending', 1);
-        set_config('registrationpending', 1); // Remind to register site after all other setup is finished.
+    // install/upgrade all plugins and other parts
+    upgrade_noncore(true);
+}
 
-        // Apply default preset, if it is defined in $CFG and has a valid value.
-        if (!empty($CFG->setsitepresetduringinstall)) {
-            \core_adminpresets\helper::change_default_preset($CFG->setsitepresetduringinstall);
-        }
+// If this is the first install, indicate that this site is fully configured
+// except the admin password
+if (during_initial_install()) {
+    set_config('rolesactive', 1); // after this, during_initial_install will return false.
+    set_config('adminsetuppending', 1);
+    set_config('registrationpending', 1); // Remind to register site after all other setup is finished.
 
-        // We need this redirect to setup proper session.
-        upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
+    // Apply default preset, if it is defined in $CFG and has a valid value.
+    if (!empty($CFG->setsitepresetduringinstall)) {
+        \core_adminpresets\helper::change_default_preset($CFG->setsitepresetduringinstall);
     }
 
-    // Make sure admin user is created - this is the last step,
-    // We need session to be working properly in order to edit admin account.
-    if (!empty($CFG->adminsetuppending)) {
-        $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
-        if (!$sessionstarted) {
-            redirect("index.php?sessionstarted=1&lang=$CFG->lang");
+    // we need this redirect to setup proper session
+    upgrade_finished("index.php?sessionstarted=1&amp;lang=$CFG->lang");
+}
+
+// make sure admin user is created - this is the last step because we need
+// session to be working properly in order to edit admin account
+ if (!empty($CFG->adminsetuppending)) {
+    $sessionstarted = optional_param('sessionstarted', 0, PARAM_BOOL);
+    if (!$sessionstarted) {
+        redirect("index.php?sessionstarted=1&lang=$CFG->lang");
+    } else {
+        $sessionverify = optional_param('sessionverify', 0, PARAM_BOOL);
+        if (!$sessionverify) {
+            $SESSION->sessionverify = 1;
+            redirect("index.php?sessionstarted=1&sessionverify=1&lang=$CFG->lang");
         } else {
-            $sessionverify = optional_param('sessionverify', 0, PARAM_BOOL);
-            if (!$sessionverify) {
-                $SESSION->sessionverify = 1;
-                redirect("index.php?sessionstarted=1&sessionverify=1&lang=$CFG->lang");
-            } else {
-                if (empty($SESSION->sessionverify)) {
-                    throw new \moodle_exception('installsessionerror', 'admin', "index.php?sessionstarted=1&lang=$CFG->lang");
-                }
-                unset($SESSION->sessionverify);
+            if (empty($SESSION->sessionverify)) {
+                throw new \moodle_exception('installsessionerror', 'admin', "index.php?sessionstarted=1&lang=$CFG->lang");
             }
+            unset($SESSION->sessionverify);
         }
+    }
 
-        // Cleanup SESSION to make sure other code does not complain in the future.
-        unset($SESSION->has_timed_out);
-        unset($SESSION->wantsurl);
+    // Cleanup SESSION to make sure other code does not complain in the future.
+    unset($SESSION->has_timed_out);
+    unset($SESSION->wantsurl);
 
-        // At this stage there can be only one admin unless more were added by install,
-        // Users may change username, so do not rely on that.
-        $adminids = explode(',', $CFG->siteadmins);
-        $adminuser = get_complete_user_data('id', reset($adminids));
+    // at this stage there can be only one admin unless more were added by install - users may change username, so do not rely on that
+    $adminids = explode(',', $CFG->siteadmins);
+    $adminuser = get_complete_user_data('id', reset($adminids));
 
-        if ($adminuser->password === 'adminsetuppending') {
-            // Prevent installation hijacking.
-            if ($adminuser->lastip !== getremoteaddr()) {
-                throw new \moodle_exception('installhijacked', 'admin');
-            }
-            // Login user and let him set password and admin details.
-            $adminuser->newadminuser = 1;
-            complete_user_login($adminuser);
-            redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself.
-
-        } else {
-            unset_config('adminsetuppending');
+    if ($adminuser->password === 'adminsetuppending') {
+        // prevent installation hijacking
+        if ($adminuser->lastip !== getremoteaddr()) {
+            throw new \moodle_exception('installhijacked', 'admin');
         }
+        // login user and let him set password and admin details
+        $adminuser->newadminuser = 1;
+        complete_user_login($adminuser);
+        redirect("$CFG->wwwroot/user/editadvanced.php?id=$adminuser->id"); // Edit thyself
 
     } else {
-        // Just make sure upgrade logging is properly terminated.
-        upgrade_finished('upgradesettings.php');
+        unset_config('adminsetuppending');
     }
+
+} else {
+    // just make sure upgrade logging is properly terminated
+    upgrade_finished('upgradesettings.php');
 }
 
 if (has_capability('moodle/site:config', context_system::instance())) {

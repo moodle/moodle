@@ -24,9 +24,6 @@
  */
 class restore_qbank_customfields_plugin extends restore_qbank_plugin {
 
-    /** @var stdClass|null a fieldset object. */
-    protected $cachedcategory;
-
     /**
      * Returns the paths to be handled by the plugin at question level.
      *

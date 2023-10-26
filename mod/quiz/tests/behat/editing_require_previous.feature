@@ -228,7 +228,7 @@ Feature: Edit quizzes where some questions require the previous one to have been
       | TF2      | 1    | 1               |
       | TF3      | 1    | 1               |
     And I am on the "Quiz 1" "mod_quiz > Edit" page
-    When I move "TF1" to "After Question 3" in the quiz by clicking the move icon
+    When I move "Question 1" to "After Question 3" in the quiz by clicking the move icon
     Then "Question 2 cannot be attempted until the previous question 1 has been completed • Click to change" "link" should be visible
     And "No restriction on when question 3 can be attempted • Click to change" "link" should be visible
     And "be attempted" "link" in the "TF2" "list_item" should not be visible

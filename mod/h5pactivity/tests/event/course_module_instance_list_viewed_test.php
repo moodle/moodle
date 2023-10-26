@@ -64,6 +64,8 @@ class course_module_instance_list_viewed_test extends advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_h5pactivity\event\course_module_instance_list_viewed', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $expected = [$course->id, 'h5pactivity', 'view all', 'index.php?id='.$course->id, ''];
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

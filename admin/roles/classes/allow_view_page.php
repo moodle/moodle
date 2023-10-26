@@ -54,9 +54,10 @@ class core_role_allow_view_page extends core_role_allow_role_page {
 
     /**
      * Get tool tip for cell.
-     * @param stdClass $fromrole
-     * @param stdClass $targetrole
+     * @param string $fromrole
+     * @param string $targetrole
      * @return string
+     * @throws \coding_exception
      */
     protected function get_cell_tooltip($fromrole, $targetrole) {
         $a = new stdClass;

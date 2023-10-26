@@ -1,6 +1,6 @@
 .editor_atto_content_wrap {
-    background-color: $atto-content-wrap-bg;
-    color: $atto-content-wrap-color;
+    background-color: white;
+    color: #333;
 }
 
 .editor_atto_content {
@@ -23,7 +23,7 @@
 
 div.editor_atto_toolbar {
     display: block;
-    background: $atto-toolbar-bg;
+    background: #f2f2f2;
     min-height: 35px;
     border: 1px solid $input-border-color;
     width: 100%;
@@ -48,7 +48,7 @@ div.editor_atto_toolbar .menuplaceholder {
 div.editor_atto_toolbar {
     button + button,
     .menuplaceholder + button {
-        border-left: 1px solid $atto-toolbar-border-color;
+        border-left: 1px solid #ccc;
     }
 }
 
@@ -59,24 +59,14 @@ div.editor_atto_toolbar button[disabled] {
 }
 
 .editor_atto_toolbar button:hover {
-    background-image:
-        radial-gradient(
-            ellipse at center,
-            $atto-toolbar-button-gradient-inner 60%,
-            $atto-toolbar-button-gradient-outer 100%
-        );
-    background-color: $atto-toolbar-button-hover-bg;
+    background-image: radial-gradient(ellipse at center, #fff 60%, #dfdfdf 100%);
+    background-color: #ebebeb;
 }
 
 .editor_atto_toolbar button:active,
 .editor_atto_toolbar button.highlight {
-    background-image:
-        radial-gradient(
-            ellipse at center,
-            $atto-toolbar-button-gradient-inner 40%,
-            $atto-toolbar-button-gradient-outer 100%
-        );
-    background-color: $atto-toolbar-button-active-bg;
+    background-image: radial-gradient(ellipse at center, #fff 40%, #dfdfdf 100%);
+    background-color: #dfdfdf;
 }
 
 /* Make firefox button sizes match other browsers */
@@ -92,11 +82,11 @@ div.editor_atto_toolbar button .icon {
 
 div.editor_atto_toolbar div.atto_group {
     display: inline-block;
-    border: 1px solid $atto-toolbar-border-color;
-    border-bottom: 1px solid $atto-toolbar-group-border-bottom-color;
+    border: 1px solid #ccc;
+    border-bottom: 1px solid #b3b3b3;
     border-radius: 4px;
     margin: 9px 0 0 9px;
-    background: $atto-toolbar-group-bg;
+    background: #fff;
 }
 
 div.editor_atto_toolbar .atto_toolbar_row {
@@ -160,7 +150,7 @@ div.editor_atto_toolbar .atto_toolbar_row {
 }
 
 .atto_control .icon {
-    background-color: $atto-control-icon-bg;
+    background-color: white;
 }
 
 div.editor_atto_content:focus .atto_control,
@@ -202,21 +192,23 @@ div.editor_atto_content:hover .atto_control {
     direction: ltr;
 }
 
-.editor_atto_notification {
+.editor_atto_notification .atto_info,
+.editor_atto_notification .atto_warning {
     display: inline-block;
+    background-color: #f2f2f2;
     padding: 0.5em;
     padding-left: 1em;
     padding-right: 1em;
     border-bottom-left-radius: 1em;
     border-bottom-right-radius: 1em;
+}
 
-    .atto_info {
-        background-color: $atto-notif-info;
-    }
+.editor_atto_notification .atto_info {
+    background-color: #f2f2f2;
+}
 
-    .atto_warning {
-        background-color: $atto-notif-warning;
-    }
+.editor_atto_notification .atto_warning {
+    background-color: #ffd700;
 }
 
 .editor_atto_toolbar,
@@ -243,5 +235,5 @@ div.editor_atto_content:hover .atto_control {
     display: block;
 }
 div.editor_atto_toolbar button .icon {
-    color: $atto-toolbar-button-color;
+    color: $gray-700;
 }

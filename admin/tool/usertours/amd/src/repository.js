@@ -1,7 +1,7 @@
 /**
- * Javascript module to handle tool_usertour AJAX requests.
+ * Step management code.
  *
- * @module     tool_usertours/repository
+ * @module     tool_usertours/managesteps
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 import {call as fetchMany} from 'core/ajax';

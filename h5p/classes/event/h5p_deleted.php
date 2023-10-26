@@ -85,4 +85,13 @@ class h5p_deleted extends \core\event\base {
         // There is no url since the previous event already has the url where the h5p content has been displayed.
         return null;
     }
+
+    /**
+     * Return the legacy event name.
+     *
+     * @return string
+     */
+    public static function get_legacy_eventname() {
+        return 'core_h5p_deleted';
+    }
 }

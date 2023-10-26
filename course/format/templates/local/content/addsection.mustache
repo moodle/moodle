@@ -39,7 +39,7 @@
     }
 }}
 {{#showaddsection}}
-<div class="mdl-left py-2 changenumsections bulk-hidden">
+<div class="mdl-left py-2 changenumsections">
     {{#increase}}
     <a href="{{{url}}}" class="increase-sections">
         {{#pix}}t/switch_plus, moodle, {{#str}} increasesections, moodle {{/str}}{{/pix}}
@@ -53,13 +53,13 @@
     {{#addsections}}
     <a
         href="{{{url}}}"
-        class="add-sections btn btn-link px-0"
+        class="add-sections"
         data-add-sections="{{title}}"
         data-new-sections="{{newsection}}"
         data-action="addSection"
         {{#insertafter}} data-id="{{id}}" {{/insertafter}}
     >
-        {{#pix}}t/switch_plus, moodle{{/pix}}{{title}}
+        {{title}}
     </a>
     {{/addsections}}
 </div>

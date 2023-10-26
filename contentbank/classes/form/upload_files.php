@@ -16,8 +16,6 @@
 
 namespace core_contentbank\form;
 
-use core\output\notification;
-
 /**
  * Upload files to content bank form
  *
@@ -163,20 +161,20 @@ class upload_files extends \core_form\dynamic_form {
                 }
                 $params = ['id' => $content->get_id(), 'contextid' => $this->get_context_for_dynamic_submission()->id];
                 $url = new \moodle_url('/contentbank/view.php', $params);
-            } catch (\moodle_exception $e) {
+            } catch (\Exception $e) {
                 // Redirect to the right page (depending on if content is new or existing) and display an error.
                 if ($this->get_data()->id) {
                     $content = $cb->get_content_from_id($this->get_data()->id);
                     $params = [
                         'id' => $content->get_id(),
                         'contextid' => $this->get_context_for_dynamic_submission()->id,
-                        'errormsg' => $e->errorcode,
+                        'errormsg' => 'notvalidpackage',
                     ];
                     $url = new \moodle_url('/contentbank/view.php', $params);
                 } else {
                     $url = new \moodle_url('/contentbank/index.php', [
                         'contextid' => $this->get_context_for_dynamic_submission()->id,
-                        'errormsg' => $e->errorcode],
+                        'errormsg' => 'notvalidpackage'],
                     );
                 }
             }

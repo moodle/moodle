@@ -73,11 +73,6 @@ class feedback_item_multichoicerated extends feedback_item_base {
         $this->item_form = new feedback_multichoicerated_form('edit_item.php', $customdata);
     }
 
-    /**
-     * Saves item
-     *
-     * @return stdClass
-     */
     public function save_item() {
         global $DB;
 

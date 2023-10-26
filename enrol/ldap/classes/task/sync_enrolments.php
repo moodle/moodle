@@ -54,7 +54,7 @@ class sync_enrolments extends \core\task\scheduled_task {
             exit(0); // Note, exit with success code, this is not an error - it's just disabled.
         }
 
-        /** @var \enrol_ldap_plugin $enrol */
+        /** @var enrol_ldap_plugin $enrol */
         $enrol = enrol_get_plugin('ldap');
 
         $trace = new \text_progress_trace();

@@ -87,6 +87,9 @@ if (!isset($USER->grade_last_report)) {
 }
 $USER->grade_last_report[$course->id] = 'overview';
 
+// First make sure we have proper final grades.
+grade_regrade_final_grades_if_required($course);
+
 $actionbar = new \core_grades\output\general_action_bar($context,
     new moodle_url('/grade/report/overview/index.php', ['id' => $courseid]), 'report', 'overview');
 
@@ -123,9 +126,6 @@ if (has_capability('moodle/grade:viewall', $context) && $courseid != SITEID) {
 
     } else { // Only show one user's report
         $report = new grade_report_overview($userid, $gpr, $context);
-        // Make sure we have proper final grades - this report shows grades from other courses, not just the
-        // selected one, so we need to check and regrade all courses the user is enrolled in.
-        $report->regrade_all_courses_if_needed(true);
         print_grade_page_head($courseid, 'report', 'overview', get_string('pluginname', 'gradereport_overview') .
             ' - ' . fullname($report->user), false, false, true, null, null,
             $report->user, $actionbar);

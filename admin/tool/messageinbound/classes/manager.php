@@ -366,7 +366,7 @@ class manager {
         }
 
         // Record the user that this script is currently being run as.  This is important when re-processing existing
-        // messages, as \core\cron::setup_user is called multiple times.
+        // messages, as cron_setup_user is called multiple times.
         $originaluser = $USER;
 
         $envelope = $message->getEnvelope();
@@ -433,7 +433,7 @@ class manager {
             // Process the message as the user.
             $user = $this->addressmanager->get_data()->user;
             mtrace("-- Processing the message as user {$user->id} ({$user->username}).");
-            \core\cron::setup_user($user);
+            cron_setup_user($user);
 
             // Process and retrieve the message data for this message.
             // This includes fetching the full content, as well as all headers, and attachments.
@@ -459,7 +459,7 @@ class manager {
 
                 // Returning to normal cron user.
                 mtrace("-- Returning to the original user.");
-                \core\cron::setup_user($originaluser);
+                cron_setup_user($originaluser);
                 return;
             }
 
@@ -478,7 +478,7 @@ class manager {
 
                 // Returning to normal cron user.
                 mtrace("-- Returning to the original user.");
-                \core\cron::setup_user($originaluser);
+                cron_setup_user($originaluser);
                 return;
             } catch (\Exception $e) {
                 // An unknown error occurred. The user is not informed, but the administrator is.
@@ -487,7 +487,7 @@ class manager {
 
                 // Returning to normal cron user.
                 mtrace("-- Returning to the original user.");
-                \core\cron::setup_user($originaluser);
+                cron_setup_user($originaluser);
                 return;
             }
 
@@ -501,7 +501,7 @@ class manager {
 
             // Returning to normal cron user.
             mtrace("-- Returning to the original user.");
-            \core\cron::setup_user($originaluser);
+            cron_setup_user($originaluser);
 
             mtrace("-- Finished processing " . $message->getUid());
 

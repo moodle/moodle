@@ -9,7 +9,7 @@ videojs.addLanguage('sr', {
   "Loaded": "Učitan",
   "Progress": "Progres",
   "Fullscreen": "Pun ekran",
-  "Exit Fullscreen": "Mali ekran",
+  "Non-Fullscreen": "Mali ekran",
   "Mute": "Prigušen",
   "Unmute": "Ne-prigušen",
   "Playback Rate": "Stopa reprodukcije",

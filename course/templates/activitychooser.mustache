@@ -15,31 +15,21 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_course/activitychooser
+    @template core_course/chooser
 
     Chooser dialog template.
 
     Example context (json):
     {
-        "recommendedBeginning": true,
-        "favouritesFirst": true,
-        "favourites": [
-            {
-                "title": "Option name 1",
-                "description": "Option description 1"
+        "title": "Chooser title",
+        "options": {
+            "label": "Option name",
+            "description": "Option description",
+            "urls": {
+                "addoption": "http://addoptionurl.com"
             },
-            {
-                "title": "Option name 2",
-                "description": "Option description 2"
-            }
-        ],
-        "recommended": [
-            {
-                "title": "Option name 3",
-                "description": "Option description 3"
-            }
-        ],
-        "showAll": true
+            "icon": "<img class='icon' src='http://urltooptionicon'>"
+        }
     }
 }}
 
@@ -65,21 +55,6 @@
                         >
                             {{#str}} favourites, core {{/str}}
                         </a>
-                        {{#recommendedBeginning}}
-                        <a class="nav-item nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
-                           id="recommended-tab-{{uniqid}}"
-                           data-region="recommended-tab-nav"
-                           data-toggle="tab"
-                           href="#recommended-{{uniqid}}"
-                           role="tab"
-                           aria-label="{{#str}} aria:recommendedtab, core_course {{/str}}"
-                           aria-controls="recommended-{{uniqid}}"
-                           aria-selected="false"
-                           tabindex="-1"
-                        >
-                            {{#str}} recommended, core {{/str}}
-                        </a>
-                        {{/recommendedBeginning}}
                         <a class="nav-item nav-link {{#fallback}}active{{/fallback}} {{^showAll}}d-none{{/showAll}}"
                            id="all-tab-{{uniqid}}"
                            data-toggle="tab"
@@ -119,8 +94,7 @@
                         >
                             {{#str}} resources, core {{/str}}
                         </a>
-                        {{^recommendedBeginning}}
-                        <a class="nav-item nav-link {{#recommendedFirst}}active{{/recommendedFirst}} {{^recommended}}d-none{{/recommended}}"
+                        <a class="nav-item nav-link {{^recommended}}d-none{{/recommended}}"
                            id="recommended-tab-{{uniqid}}"
                            data-region="recommended-tab-nav"
                            data-toggle="tab"
@@ -133,7 +107,6 @@
                         >
                             {{#str}} recommended, core {{/str}}
                         </a>
-                        {{/recommendedBeginning}}
                     </div>
                     <div class="tab-content flex-fill border-left border-right border-bottom bg-light" id="tabbed-activities-{{uniqid}}">
                         <div class="tab-pane {{#favouritesFirst}}active{{/favouritesFirst}}" id="starred-{{uniqid}}" data-region="favourites" role="tabpanel" aria-labelledby="starred-tab-{{uniqid}}">
@@ -162,7 +135,7 @@
                                 {{/resources}}
                             </div>
                         </div>
-                        <div class="tab-pane {{#recommendedFirst}}active{{/recommendedFirst}}" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
+                        <div class="tab-pane" id="recommended-{{uniqid}}" data-region="recommended" role="tabpanel" aria-labelledby="recommended-tab-{{uniqid}}">
                             <div class="optionscontainer d-flex flex-wrap p-1 mw-100 position-relative" role="menubar" data-region="chooser-options-container">
                                 {{#recommended}}
                                     {{>core_course/local/activitychooser/item}}

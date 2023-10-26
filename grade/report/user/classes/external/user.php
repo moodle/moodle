@@ -16,22 +16,25 @@
 
 namespace gradereport_user\external;
 
+use external_api;
 use context_course;
 use core_user;
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_description;
+use external_format_value;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
 use grade_plugin_return;
 use graded_users_iterator;
 use moodle_exception;
 use stdClass;
 use gradereport_user\report\user as user_report;
 
+defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir.'/externallib.php');
 require_once($CFG->dirroot.'/grade/lib.php');
 
 /**
@@ -472,7 +475,7 @@ class user extends external_api {
         foreach ($gradeitems as $gradeitem) {
             if (isset($gradeitem['feedback']) && isset($gradeitem['feedbackformat'])) {
                 list($gradeitem['feedback'], $gradeitem['feedbackformat']) =
-                    \core_external\util::format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
+                    external_format_text($gradeitem['feedback'], $gradeitem['feedbackformat'], $context->id);
             }
         }
 

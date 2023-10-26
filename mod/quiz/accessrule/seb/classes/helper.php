@@ -47,7 +47,7 @@ class helper {
      * @param array $options Display options.
      * @return string
      */
-    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = []) {
+    public static function format_icon_link($url, $icon, $alt, $iconcomponent = 'moodle', $options = array()) {
         global $OUTPUT;
 
         return $OUTPUT->action_icon(
@@ -121,7 +121,7 @@ class helper {
         require_login($cm->course, false, $cm);
 
         // Retrieve the config for quiz.
-        $config = seb_quiz_settings::get_config_by_quiz_id($cm->instance);
+        $config = quiz_settings::get_config_by_quiz_id($cm->instance);
         if (empty($config)) {
             throw new \moodle_exception('noconfigfound', 'quizaccess_seb', '', $cm->id);
         }

@@ -52,7 +52,6 @@ $PAGE->set_pagelayout('login');
 
 /// Initialize variables
 $errormsg = '';
-$infomsg = '';
 $errorcode = 0;
 
 // login page requested session test
@@ -152,8 +151,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     } else {
         if (empty($errormsg)) {
             $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            $loginrecaptcha = $frm->{'g-recaptcha-response'} ?? false;
-            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken, $loginrecaptcha);
+            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
         }
     }
 
@@ -272,7 +270,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
         // Discard any errors before the last redirect.
         unset($SESSION->loginerrormsg);
-        unset($SESSION->logininfomsg);
 
         // test the session actually works by redirecting to self
         $SESSION->wantsurl = $urltogo;
@@ -282,8 +279,6 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         if (empty($errormsg)) {
             if ($errorcode == AUTH_LOGIN_UNAUTHORISED) {
                 $errormsg = get_string("unauthorisedlogin", "", $frm->username);
-            } else if ($errorcode == AUTH_LOGIN_FAILED_RECAPTCHA) {
-                $errormsg = get_string('missingrecaptchachallengefield');
             } else {
                 $errormsg = get_string("invalidlogin");
                 $errorcode = 3;
@@ -319,7 +314,7 @@ if (!empty($CFG->alternateloginurl)) {
 
     $loginurlstr = $loginurl->out(false);
 
-    if ($SESSION->wantsurl != '' && strpos($SESSION->wantsurl, $loginurlstr) === 0) {
+    if (strpos($SESSION->wantsurl ?? '', $loginurlstr) === 0) {
         // We do not want to return to alternate url.
         $SESSION->wantsurl = null;
     }
@@ -349,17 +344,14 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
     $frm->password = "";
 }
 
-if (!empty($SESSION->loginerrormsg) || !empty($SESSION->logininfomsg)) {
-    // We had some messages before redirect, show them now.
-    $errormsg = $SESSION->loginerrormsg ?? '';
-    $infomsg = $SESSION->logininfomsg ?? '';
+if (!empty($SESSION->loginerrormsg)) {
+    // We had some errors before redirect, show them now.
+    $errormsg = $SESSION->loginerrormsg;
     unset($SESSION->loginerrormsg);
-    unset($SESSION->logininfomsg);
 
 } else if ($testsession) {
     // No need to redirect here.
     unset($SESSION->loginerrormsg);
-    unset($SESSION->logininfomsg);
 
 } else if ($errormsg or !empty($frm->password)) {
     // We must redirect after every password submission.
@@ -384,7 +376,6 @@ if (isloggedin() and !isguestuser()) {
 } else {
     $loginform = new \core_auth\output\login($authsequence, $frm->username);
     $loginform->set_error($errormsg);
-    $loginform->set_info($infomsg);
     echo $OUTPUT->render($loginform);
 }
 

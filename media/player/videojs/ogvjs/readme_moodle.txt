@@ -1,4 +1,4 @@
-ogv.js 1.8.9
+ogv.js 1.8.4
 --------------
 https://github.com/brion/ogv.js
 

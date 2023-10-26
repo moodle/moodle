@@ -38,6 +38,11 @@ function report_participation_get_log_table_name() {
     // Get preferred reader.
     if (!empty($readers)) {
         foreach ($readers as $readerpluginname => $reader) {
+            // If legacy reader is preferred reader.
+            if ($readerpluginname == 'logstore_legacy') {
+                break;
+            }
+
             // If sql_internal_table_reader is preferred reader.
             if ($reader instanceof \core\log\sql_internal_table_reader) {
                 $logtable = $reader->get_internal_log_table_name();

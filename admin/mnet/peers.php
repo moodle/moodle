@@ -83,6 +83,7 @@ if ($formdata = $simpleform->get_data()) {
     $mnet_peer->bootstrap($formdata->wwwroot, null, $application);
     // bootstrap the second form straight with the data from the first form
     $reviewform = new mnet_review_host_form(null, array('peer' => $mnet_peer)); // the second step (also the edit host form)
+    $formdata->oldpublickey = $mnet_peer->public_key; // set this so we can confirm on form post without having to recreate the mnet_peer object
     $reviewform->set_data($mnet_peer);
     echo $OUTPUT->header();
     echo $OUTPUT->box_start();
@@ -114,6 +115,7 @@ if (!empty($hostid)) {
         }
         $credentials = $mnet_peer->check_credentials($mnet_peer->public_key);
         $reviewform = new mnet_review_host_form(null, array('peer' => $mnet_peer)); // the second step (also the edit host form)
+        $mnet_peer->oldpublickey = $mnet_peer->public_key; // set this so we can confirm on form post without having to recreate the mnet_peer object
         $reviewform->set_data((object)$mnet_peer);
         echo $OUTPUT->box_start();
         $reviewform->display();

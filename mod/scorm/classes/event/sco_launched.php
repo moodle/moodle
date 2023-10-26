@@ -80,6 +80,16 @@ class sco_launched extends \core\event\base {
     }
 
     /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'scorm', 'launch', 'view.php?id=' . $this->contextinstanceid,
+                $this->other['loadedcontent'], $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

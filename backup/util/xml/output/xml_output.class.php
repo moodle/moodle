@@ -49,9 +49,6 @@ abstract class xml_output {
 
     protected $running; // To know if output is running
 
-    /** @var string|float finish microtime. */
-    protected $finishtime;
-
     public function __construct($usebuffer = true) {
         $this->inittime   = microtime(true);
         $this->finishtime = $this->inittime;

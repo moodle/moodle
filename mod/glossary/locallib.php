@@ -224,9 +224,6 @@ class glossary_entry_portfolio_caller extends portfolio_module_caller_base {
     /** @var array Array that contains all aliases for the given glossary entry. */
     private array $aliases = [];
 
-    /** @var array categories. */
-    private array $categories = [];
-
     /*
      * @return array
      */

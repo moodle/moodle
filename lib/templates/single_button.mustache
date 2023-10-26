@@ -31,18 +31,16 @@
     * url - the action url to submit to
     * formid - optional id value for the form
     * params - array of params with name and value attributes
+    * primary - true if this is a primary action button
     * id - id for the element
-    * type - type for the element
     * tooltip - tooltip text for the button
     * disabled - true if this element is disabled
     * label - text to show on the button
 
     Example context (json):
-    {
-      "method" : "get",
-      "id": "buttonid-123",
-      "type": "primary",
+    { "method" : "get",
       "url" : "#",
+      "primary" : true,
       "tooltip" : "This is a tooltip",
       "label" : "This is a the button text",
       "attributes": [
@@ -58,7 +56,7 @@
         {{#params}}
             <input type="hidden" name="{{name}}" value="{{value}}">
         {{/params}}
-        <button type="submit" class="btn btn-{{type}}"
+        <button type="submit" class="btn {{#primary}}btn-primary{{/primary}}{{^primary}}btn-secondary{{/primary}}"
             id="{{id}}"
             {{#tooltip}}title="{{tooltip}}"{{/tooltip}}
             {{#disabled}}disabled{{/disabled}}

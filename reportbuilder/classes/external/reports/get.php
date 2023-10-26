@@ -18,15 +18,20 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\external\reports;
 
-use core_external\external_api;
-use core_external\external_value;
-use core_external\external_single_structure;
-use core_external\external_function_parameters;
+use external_api;
+use external_value;
+use external_single_structure;
+use external_function_parameters;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
 use core_reportbuilder\output\custom_report;
 use core_reportbuilder\external\custom_report_exporter;
 use moodle_url;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * External method for getting a custom report
@@ -46,7 +51,6 @@ class get extends external_api {
         return new external_function_parameters([
             'reportid' => new external_value(PARAM_INT, 'Report ID'),
             'editmode' => new external_value(PARAM_BOOL, 'Whether editing mode is enabled', VALUE_DEFAULT, 0),
-            'pagesize' => new external_value(PARAM_INT, 'Page size', VALUE_DEFAULT, 0),
         ]);
     }
 
@@ -55,26 +59,20 @@ class get extends external_api {
      *
      * @param int $reportid
      * @param bool $editmode
-     * @param int $pagesize
      * @return array
      */
-    public static function execute(int $reportid, bool $editmode, int $pagesize = 0): array {
+    public static function execute(int $reportid, bool $editmode): array {
         global $PAGE, $OUTPUT;
 
         [
             'reportid' => $reportid,
             'editmode' => $editmode,
-            'pagesize' => $pagesize,
         ] = self::validate_parameters(self::execute_parameters(), [
             'reportid' => $reportid,
             'editmode' => $editmode,
-            'pagesize' => $pagesize,
         ]);
 
         $report = manager::get_report_from_id($reportid);
-        if ($pagesize > 0) {
-            $report->set_default_per_page($pagesize);
-        }
         self::validate_context($report->get_context());
 
         if ($editmode) {

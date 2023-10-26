@@ -401,7 +401,7 @@ abstract class grade_object {
      * Given an associated array or object, cycles through each key/variable
      * and assigns the value to the corresponding variable in this object.
      *
-     * @param grade_object $instance The object to set the properties on
+     * @param stdClass $instance The object to set the properties on
      * @param array $params An array of properties to set like $propertyname => $propertyvalue
      * @return array|stdClass Either an associative array or an object containing property name, property value pairs
      */

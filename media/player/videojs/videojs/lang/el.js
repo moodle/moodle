@@ -9,7 +9,7 @@ videojs.addLanguage('el', {
   "Loaded": "Φόρτωση επιτυχής",
   "Progress": "Πρόοδος",
   "Fullscreen": "Πλήρης οθόνη",
-  "Exit Fullscreen": "Έξοδος από πλήρη οθόνη",
+  "Non-Fullscreen": "Έξοδος από πλήρη οθόνη",
   "Mute": "Σίγαση",
   "Unmute": "Kατάργηση σίγασης",
   "Playback Rate": "Ρυθμός αναπαραγωγής",

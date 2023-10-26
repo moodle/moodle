@@ -236,6 +236,7 @@ class html_writer_test extends basic_testcase {
 
         // The data-name will be present in the output.
         $row->attributes['data-name'] = 'Fred';
+        $row->class = 'this is a table row';
 
         $cell = new html_table_cell();
 
@@ -245,6 +246,7 @@ class html_writer_test extends basic_testcase {
 
         // The data-name will be present in the output.
         $cell->attributes['data-name'] = 'John';
+        $cell->class = 'this is a table cell';
 
         $row->cells[] = $cell;
 

@@ -36,14 +36,15 @@ class manager_test extends \advanced_testcase {
         $this->assertCount(0, $stores);
 
         $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/standard/version.php");
+        $this->assertFileExists("$CFG->dirroot/$CFG->admin/tool/log/store/legacy/version.php");
 
-        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        set_config('enabled_stores', 'logstore_standard,logstore_legacy', 'tool_log');
         $manager = get_log_manager(true);
         $this->assertInstanceOf('core\log\manager', $manager);
 
         $stores = $manager->get_readers();
         $this->assertIsArray($stores);
-        $this->assertCount(1, $stores);
+        $this->assertCount(2, $stores);
         foreach ($stores as $key => $store) {
             $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);
@@ -60,7 +61,7 @@ class manager_test extends \advanced_testcase {
 
         $stores = $manager->get_readers('core\log\sql_reader');
         $this->assertIsArray($stores);
-        $this->assertCount(1, $stores);
+        $this->assertCount(2, $stores);
         foreach ($stores as $key => $store) {
             $this->assertIsString($key);
             $this->assertInstanceOf('core\log\sql_reader', $store);

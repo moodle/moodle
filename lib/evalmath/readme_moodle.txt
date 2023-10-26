@@ -29,24 +29,3 @@ Changes by Stefan Erlachner, Thomas Niedermaier (MDL-64414):
 e.g. if (or(condition_1, condition_2, ... condition_n))
 * add function and:
 e.g. if (and(condition_1, condition_2, ... condition_n))
-
-Changes by Raquel Ortega (MDL-76413)
-* Avoid PHP 8.2: Partially-supported callable deprecations
-* eg: call_user_func_array(array('self', 'sum'), $args to call_user_func_array(array(self::class, 'sum'), $args)
-
-Changes by Meirza (MDL-75464)
-* EvalMath has unit tests in lib/tests/mathslib_test.php,
-  since version 1.0.1, there are two additional tests:
-  - shouldSupportModuloOperator()
-  - shouldConsiderDoubleMinusAsPlus()
-  To pass the test, some modifications must be made:
-  - Adjust the test code so it can run properly by using \calc_formula.
-  Please see the differences between the code in MDL-75464 and the upstream code.
-  - In the dataprovider for both tests, add the formula in the first array with "=" at the first character.
-  Before:
-  ```
-  'a%b', // 9%3 => 0
-  ```
-  After:
-  ```
-  '=a%b', // 9%3 => 0

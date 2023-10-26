@@ -59,9 +59,6 @@ class index_page implements renderable, templatable {
     /** @var array Groups that can't be deleted by the user. */
     public $undeletablegroups;
 
-    /** @var bool Whether to show/hide the messaging setting buttons. */
-    public $messagingsettingsvisible;
-
     /**
      * index_page constructor.
      *
@@ -72,10 +69,9 @@ class index_page implements renderable, templatable {
      * @param bool $disableaddedit Whether to disable the add members/edit group buttons.
      * @param bool $disabledelete Whether to disable the delete group button.
      * @param array $undeletablegroups Groups that can't be deleted by the user.
-     * @param bool $messagingsettingsvisible If the messaging settings buttons should be visible.
      */
     public function __construct($courseid, $groups, $selectedgroupname, $selectedgroupmembers, $disableaddedit, $disabledelete,
-                                $undeletablegroups, $messagingsettingsvisible) {
+                                $undeletablegroups) {
         $this->courseid = $courseid;
         $this->groups = $groups;
         $this->selectedgroupname = $selectedgroupname;
@@ -83,7 +79,6 @@ class index_page implements renderable, templatable {
         $this->disableaddedit = $disableaddedit;
         $this->disabledelete = $disabledelete;
         $this->undeletablegroups = $undeletablegroups;
-        $this->messagingsettingsvisible = $messagingsettingsvisible;
     }
 
     /**
@@ -110,7 +105,6 @@ class index_page implements renderable, templatable {
         $data->groups = $this->groups;
         $data->members = $this->selectedgroupmembers;
         $data->selectedgroup = $this->selectedgroupname;
-        $data->messagingsettingsvisible = $this->messagingsettingsvisible;
 
         return $data;
     }

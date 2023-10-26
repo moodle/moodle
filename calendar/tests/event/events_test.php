@@ -87,8 +87,10 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals(0, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
+        $expectedlog = array(0, 'calendar', 'add', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'event');
         $this->assertEquals($other, $event->other);
+        $this->assertEventLegacyLogData($expectedlog, $event);
         $this->assertEventContextNotUsed($event);
 
         // Now we create a repeated course event.
@@ -192,6 +194,8 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals(0, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
+        $expectedlog = array(0, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name);
+        $this->assertEventLegacyLogData($expectedlog, $event);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'new event');
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);
@@ -245,6 +249,8 @@ class events_test extends \advanced_testcase {
         $this->assertEquals('event', $event->objecttable);
         $this->assertEquals($siteid, $event->courseid);
         $this->assertEquals($calevent->context, $event->get_context());
+        $expectedlog = [$siteid, 'calendar', 'edit', 'event.php?action=edit&amp;id=' . $calevent->id , $calevent->name];
+        $this->assertEventLegacyLogData($expectedlog, $event);
         $other = array('repeatid' => 0, 'timestart' => $time, 'name' => 'Some wickedly awesome event yo!');
         $this->assertEquals($other, $event->other);
         $this->assertEventContextNotUsed($event);

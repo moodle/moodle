@@ -74,9 +74,9 @@ class flatfile_test extends \advanced_testcase {
         global $CFG, $DB;
         $this->resetAfterTest();
 
-        /** @var \enrol_flatfile_plugin $flatfileplugin  */
+        /** @var enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var \enrol_manual_plugin $manualplugin  */
+        /** @var enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -283,9 +283,9 @@ class flatfile_test extends \advanced_testcase {
 
         $this->preventResetByRollback();
 
-        /** @var \enrol_flatfile_plugin $flatfileplugin  */
+        /** @var enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var \enrol_manual_plugin $manualplugin  */
+        /** @var enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 
@@ -368,9 +368,9 @@ class flatfile_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
 
-        /** @var \enrol_flatfile_plugin $flatfileplugin  */
+        /** @var enrol_flatfile_plugin $flatfileplugin  */
         $flatfileplugin = enrol_get_plugin('flatfile');
-        /** @var \enrol_manual_plugin $manualplugin  */
+        /** @var enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 

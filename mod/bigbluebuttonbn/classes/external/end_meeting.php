@@ -17,16 +17,21 @@
 namespace mod_bigbluebuttonbn\external;
 
 use core\notification;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\restricted_context_exception;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\bigbluebutton;
 use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\meeting;
+use restricted_context_exception;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to end a meeting.
@@ -120,7 +125,7 @@ class end_meeting extends external_api {
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
-            'warnings' => new external_warnings(),
+            'warnings' => new \external_warnings()
         ]);
     }
 }

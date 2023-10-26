@@ -37,10 +37,10 @@ THE SOFTWARE. */
   var _isOnMobile = videojs.browser.IS_IOS || videojs.browser.IS_NATIVE_ANDROID;
   var Tech = videojs.getTech('Tech');
 
-  class Youtube extends Tech {
+  var Youtube = videojs.extend(Tech, {
 
-    constructor(options, ready) {
-      super(options, ready);
+    constructor: function(options, ready) {
+      Tech.call(this, options, ready);
 
       this.setPoster(options.poster);
       this.setSrc(this.options_.source, true);
@@ -62,9 +62,9 @@ THE SOFTWARE. */
           }
         }
       }.bind(this));
-    }
+    },
 
-    dispose() {
+    dispose: function() {
       if (this.ytPlayer) {
         //Dispose of the YouTube Player
         if (this.ytPlayer.stopVideo) {
@@ -83,15 +83,15 @@ THE SOFTWARE. */
       this.ytPlayer = null;
 
       this.el_.parentNode.className = this.el_.parentNode.className
-          .replace(' vjs-youtube', '')
-          .replace(' vjs-youtube-mobile', '');
+        .replace(' vjs-youtube', '')
+        .replace(' vjs-youtube-mobile', '');
       this.el_.parentNode.removeChild(this.el_);
 
       //Needs to be called after the YouTube player is destroyed, otherwise there will be a null reference exception
       Tech.prototype.dispose.call(this);
-    }
+    },
 
-    createEl() {
+    createEl: function() {
       var div = document.createElement('div');
       div.setAttribute('id', this.options_.techId);
       div.setAttribute('style', 'width:100%;height:100%;top:0;left:0;position:absolute');
@@ -114,9 +114,9 @@ THE SOFTWARE. */
       }
 
       return divWrapper;
-    }
+    },
 
-    initYTPlayer() {
+    initYTPlayer: function() {
       var playerVars = {
         controls: 0,
         modestbranding: 1,
@@ -249,9 +249,9 @@ THE SOFTWARE. */
       }
 
       this.ytPlayer = new YT.Player(this.options_.techId, playerConfig);
-    }
+    },
 
-    onPlayerReady() {
+    onPlayerReady: function() {
       if (this.options_.muted) {
         this.ytPlayer.mute();
       }
@@ -270,17 +270,17 @@ THE SOFTWARE. */
         this.cueVideoById_(this.url.videoId);
         this.activeVideoId = this.url.videoId;
       }
-    }
+    },
 
-    onPlayerPlaybackQualityChange() {
+    onPlayerPlaybackQualityChange: function() {
 
-    }
+    },
 
-    onPlayerPlaybackRateChange() {
+    onPlayerPlaybackRateChange: function() {
       this.trigger('ratechange');
-    }
+    },
 
-    onPlayerStateChange(e) {
+    onPlayerStateChange: function(e) {
       var state = e.data;
 
       if (state === this.lastState || this.errorNumber) {
@@ -326,19 +326,19 @@ THE SOFTWARE. */
           this.player_.trigger('waiting');
           break;
       }
-    }
+    },
 
-    onPlayerVolumeChange() {
+    onPlayerVolumeChange: function() {
       this.trigger('volumechange');
-    }
+    },
 
-    onPlayerError(e) {
+    onPlayerError: function(e) {
       this.errorNumber = e.data;
       this.trigger('pause');
       this.trigger('error');
-    }
+    },
 
-    error() {
+    error: function() {
       var code = 1000 + this.errorNumber; // as smaller codes are reserved
       switch (this.errorNumber) {
         case 5:
@@ -357,9 +357,9 @@ THE SOFTWARE. */
       }
 
       return { code: code, message: 'YouTube unknown error (' + this.errorNumber + ')' };
-    }
+    },
 
-    loadVideoById_(id) {
+    loadVideoById_: function(id) {
       var options = {
         videoId: id
       };
@@ -370,9 +370,9 @@ THE SOFTWARE. */
         options.endSeconds = this.options_.end;
       }
       this.ytPlayer.loadVideoById(options);
-    }
+    },
 
-    cueVideoById_(id) {
+    cueVideoById_: function(id) {
       var options = {
         videoId: id
       };
@@ -383,17 +383,17 @@ THE SOFTWARE. */
         options.endSeconds = this.options_.end;
       }
       this.ytPlayer.cueVideoById(options);
-    }
+    },
 
-    src(src) {
+    src: function(src) {
       if (src) {
         this.setSrc({ src: src });
       }
 
       return this.source;
-    }
+    },
 
-    poster() {
+    poster: function() {
       // You can't start programmaticlly a video with a mobile
       // through the iframe so we hide the poster and the play button (with CSS)
       if (_isOnMobile) {
@@ -401,13 +401,13 @@ THE SOFTWARE. */
       }
 
       return this.poster_;
-    }
+    },
 
-    setPoster(poster) {
+    setPoster: function(poster) {
       this.poster_ = poster;
-    }
+    },
 
-    setSrc(source) {
+    setSrc: function(source) {
       if (!source || !source.src) {
         return;
       }
@@ -441,25 +441,25 @@ THE SOFTWARE. */
           this.cueOnReady = true;
         }
       }
-    }
+    },
 
-    autoplay() {
+    autoplay: function() {
       return this.options_.autoplay;
-    }
+    },
 
-    setAutoplay(val) {
+    setAutoplay: function(val) {
       this.options_.autoplay = val;
-    }
+    },
 
-    loop() {
+    loop: function() {
       return this.options_.loop;
-    }
+    },
 
-    setLoop(val) {
+    setLoop: function(val) {
       this.options_.loop = val;
-    }
+    },
 
-    play() {
+    play: function() {
       if (!this.url || !this.url.videoId) {
         return;
       }
@@ -486,25 +486,25 @@ THE SOFTWARE. */
         this.trigger('waiting');
         this.playOnReady = true;
       }
-    }
+    },
 
-    pause() {
+    pause: function() {
       if (this.ytPlayer) {
         this.ytPlayer.pauseVideo();
       }
-    }
+    },
 
-    paused() {
+    paused: function() {
       return (this.ytPlayer) ?
-          (this.lastState !== YT.PlayerState.PLAYING && this.lastState !== YT.PlayerState.BUFFERING)
-          : true;
-    }
+        (this.lastState !== YT.PlayerState.PLAYING && this.lastState !== YT.PlayerState.BUFFERING)
+        : true;
+    },
 
-    currentTime() {
+    currentTime: function() {
       return this.ytPlayer ? this.ytPlayer.getCurrentTime() : 0;
-    }
+    },
 
-    setCurrentTime(seconds) {
+    setCurrentTime: function(seconds) {
       if (this.lastState === YT.PlayerState.PAUSED) {
         this.timeBeforeSeek = this.currentTime();
       }
@@ -533,21 +533,21 @@ THE SOFTWARE. */
           }
         }.bind(this), 250);
       }
-    }
+    },
 
-    seeking() {
+    seeking: function () {
       return this.isSeeking;
-    }
+    },
 
-    seekable() {
+    seekable: function () {
       if(!this.ytPlayer) {
         return videojs.createTimeRange();
       }
 
       return videojs.createTimeRange(0, this.ytPlayer.getDuration());
-    }
+    },
 
-    onSeeked() {
+    onSeeked: function() {
       clearInterval(this.checkSeekedInPauseInterval);
       this.isSeeking = false;
 
@@ -556,49 +556,49 @@ THE SOFTWARE. */
       }
 
       this.trigger('seeked');
-    }
+    },
 
-    playbackRate() {
+    playbackRate: function() {
       return this.ytPlayer ? this.ytPlayer.getPlaybackRate() : 1;
-    }
+    },
 
-    setPlaybackRate(suggestedRate) {
+    setPlaybackRate: function(suggestedRate) {
       if (!this.ytPlayer) {
         return;
       }
 
       this.ytPlayer.setPlaybackRate(suggestedRate);
-    }
+    },
 
-    duration() {
+    duration: function() {
       return this.ytPlayer ? this.ytPlayer.getDuration() : 0;
-    }
+    },
 
-    currentSrc() {
+    currentSrc: function() {
       return this.source && this.source.src;
-    }
+    },
 
-    ended() {
+    ended: function() {
       return this.ytPlayer ? (this.lastState === YT.PlayerState.ENDED) : false;
-    }
+    },
 
-    volume() {
+    volume: function() {
       return this.ytPlayer ? this.ytPlayer.getVolume() / 100.0 : 1;
-    }
+    },
 
-    setVolume(percentAsDecimal) {
+    setVolume: function(percentAsDecimal) {
       if (!this.ytPlayer) {
         return;
       }
 
       this.ytPlayer.setVolume(percentAsDecimal * 100.0);
-    }
+    },
 
-    muted() {
+    muted: function() {
       return this.ytPlayer ? this.ytPlayer.isMuted() : false;
-    }
+    },
 
-    setMuted(mute) {
+    setMuted: function(mute) {
       if (!this.ytPlayer) {
         return;
       }
@@ -614,9 +614,9 @@ THE SOFTWARE. */
       this.setTimeout( function(){
         this.trigger('volumechange');
       }, 50);
-    }
+    },
 
-    buffered() {
+    buffered: function() {
       if(!this.ytPlayer || !this.ytPlayer.getVideoLoadedFraction) {
         return videojs.createTimeRange();
       }
@@ -624,13 +624,13 @@ THE SOFTWARE. */
       var bufferedEnd = this.ytPlayer.getVideoLoadedFraction() * this.ytPlayer.getDuration();
 
       return videojs.createTimeRange(0, bufferedEnd);
-    }
+    },
 
     // TODO: Can we really do something with this on YouTUbe?
-    preload() {}
-    load() {}
-    reset() {}
-    networkState() {
+    preload: function() {},
+    load: function() {},
+    reset: function() {},
+    networkState: function () {
       if (!this.ytPlayer) {
         return 0; //NETWORK_EMPTY
       }
@@ -642,8 +642,8 @@ THE SOFTWARE. */
         default:
           return 1; //NETWORK_IDLE
       }
-    }
-    readyState() {
+    },
+    readyState: function () {
       if (!this.ytPlayer) {
         return 0; //HAVE_NOTHING
       }
@@ -657,17 +657,17 @@ THE SOFTWARE. */
         default:
           return 4; //HAVE_ENOUGH_DATA
       }
-    }
+    },
 
-    supportsFullScreen() {
+    supportsFullScreen: function() {
       return document.fullscreenEnabled ||
-          document.webkitFullscreenEnabled ||
-          document.mozFullScreenEnabled ||
-          document.msFullscreenEnabled;
-    }
+             document.webkitFullscreenEnabled ||
+             document.mozFullScreenEnabled ||
+             document.msFullscreenEnabled;
+    },
 
     // Tries to get the highest resolution thumbnail available for the video
-    checkHighResPoster(){
+    checkHighResPoster: function(){
       var uri = 'https://img.youtube.com/vi/' + this.url.videoId + '/maxresdefault.jpg';
 
       try {
@@ -690,7 +690,7 @@ THE SOFTWARE. */
       }
       catch(e){}
     }
-  }
+  });
 
   Youtube.isSupported = function() {
     return true;
@@ -763,10 +763,10 @@ THE SOFTWARE. */
 
   function injectCss() {
     var css = // iframe blocker to catch mouse events
-        '.vjs-youtube .vjs-iframe-blocker { display: none; }' +
-        '.vjs-youtube.vjs-user-inactive .vjs-iframe-blocker { display: block; }' +
-        '.vjs-youtube .vjs-poster { background-size: cover; }' +
-        '.vjs-youtube-mobile .vjs-big-play-button { display: none; }';
+              '.vjs-youtube .vjs-iframe-blocker { display: none; }' +
+              '.vjs-youtube.vjs-user-inactive .vjs-iframe-blocker { display: block; }' +
+              '.vjs-youtube .vjs-poster { background-size: cover; }' +
+              '.vjs-youtube-mobile .vjs-big-play-button { display: none; }';
 
     var head = document.head || document.getElementsByTagName('head')[0];
 

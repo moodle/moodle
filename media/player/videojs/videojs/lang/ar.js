@@ -9,7 +9,7 @@ videojs.addLanguage('ar', {
   "Loaded": "تم التحميل",
   "Progress": "التقدم",
   "Fullscreen": "ملء الشاشة",
-  "Exit Fullscreen": "تعطيل ملء الشاشة",
+  "Non-Fullscreen": "تعطيل ملء الشاشة",
   "Mute": "صامت",
   "Unmute": "غير الصامت",
   "Playback Rate": "معدل التشغيل",
@@ -37,7 +37,6 @@ videojs.addLanguage('ar', {
   "Seek to live, currently behind live": "ذهاب إلى نقطة البث المباشر، متأخر عن البث المباشر حاليًا",
   "Seek to live, currently playing live": "ذهاب إلى نقطة البث المباشر، البث المباشر قيد التشغيل حاليًا",
   "Progress Bar": "شريط التقدم",
-  "progress bar timing: currentTime={1} duration={2}": "{1} من {2}",
   "Descriptions": "الأوصاف",
   "descriptions off": "إخفاء الأوصاف",
   "Audio Track": "المسار الصوتي",
@@ -83,12 +82,5 @@ videojs.addLanguage('ar', {
   "Caption Settings Dialog": "مربع حوار إعدادات التعليقات التوضيحية",
   "Beginning of dialog window. Escape will cancel and close the window.": "بداية نافذة مربع حوار. الضغط على زر \"Escape\" سيؤدي إلى الإلغاء وإغلاق النافذة.",
   "End of dialog window.": "نهاية نافذة مربع حوار.",
-  "{1} is loading.": "{1} قيد التحميل.",
-  "Exit Picture-in-Picture": "خرج من وضع صورة داخل صورة",
-  "Picture-in-Picture": "صورة داخل صورة",
-  "No content": "لا يوجد محتوى",
-  "Color": "اللون",
-  "Opacity": "معدل الشفافية",
-  "Text Background": "خلفية النص",
-  "Caption Area Background": "خلفية منطقة التسمية التوضيحية"
+  "{1} is loading.": "{1} قيد التحميل."
 });

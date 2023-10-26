@@ -1,11 +1,6 @@
 This files describes changes in /admin/tool/lp/* - plugins,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* The `tool_lp/form-cohort-selector` autocomplete AJAX module has been removed, as it was superseded by the
-  core cohort form element which already provides autocomplete functionality
-
 === 3.3 ===
 
 * Deprecated classes and their new equivalent:

@@ -81,6 +81,37 @@ class role_assigned extends base {
     }
 
     /**
+     * Does this event replace legacy event?
+     *
+     * @return null|string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'role_assigned';
+    }
+
+    /**
+     * Legacy event data if get_legacy_eventname() is not empty.
+     *
+     * @return mixed
+     */
+    protected function get_legacy_eventdata() {
+        return $this->get_record_snapshot('role_assignments', $this->other['id']);
+    }
+
+    /**
+     * Returns array of parameters to be passed to legacy add_to_log() function.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $roles = get_all_roles();
+        $neededrole = array($this->objectid => $roles[$this->objectid]);
+        $rolenames = role_fix_names($neededrole, $this->get_context(), ROLENAME_ORIGINAL, true);
+        return array($this->courseid, 'role', 'assign', 'admin/roles/assign.php?contextid='.$this->contextid.'&roleid='.$this->objectid,
+                $rolenames[$this->objectid], '', $this->userid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

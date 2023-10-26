@@ -51,7 +51,7 @@ abstract class activity_base extends \core_analytics\local\indicator\community_o
      * @return string[]
      */
     protected function feedback_viewed_events() {
-        return ['\mod_quiz\event\course_module_viewed'];
+        return array('\mod_quiz\event\course_module_viewed');
     }
 
     /**

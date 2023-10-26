@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -523,7 +522,6 @@ class Google_Service_CloudUserAccounts extends Google_Service
  *   $globalAccountsOperations = $clouduseraccountsService->globalAccountsOperations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_GlobalAccountsOperations_Resource extends Google_Service_Resource
 {
 
@@ -608,7 +606,6 @@ class Google_Service_CloudUserAccounts_GlobalAccountsOperations_Resource extends
  *   $groups = $clouduseraccountsService->groups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Groups_Resource extends Google_Service_Resource
 {
 
@@ -792,7 +789,6 @@ class Google_Service_CloudUserAccounts_Groups_Resource extends Google_Service_Re
  *   $linux = $clouduseraccountsService->linux;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Linux_Resource extends Google_Service_Resource
 {
 
@@ -874,7 +870,6 @@ class Google_Service_CloudUserAccounts_Linux_Resource extends Google_Service_Res
  *   $users = $clouduseraccountsService->users;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Users_Resource extends Google_Service_Resource
 {
 
@@ -1056,7 +1051,6 @@ class Google_Service_CloudUserAccounts_Users_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_AuthorizedKeysView extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -1084,7 +1078,6 @@ class Google_Service_CloudUserAccounts_AuthorizedKeysView extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Binding extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -1112,7 +1105,6 @@ class Google_Service_CloudUserAccounts_Binding extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Condition extends Google_Collection
 {
   protected $collection_key = 'values';
@@ -1176,7 +1168,6 @@ class Google_Service_CloudUserAccounts_Condition extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Group extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -1249,7 +1240,6 @@ class Google_Service_CloudUserAccounts_Group extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_GroupList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1305,7 +1295,6 @@ class Google_Service_CloudUserAccounts_GroupList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_GroupsAddMemberRequest extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -1324,7 +1313,6 @@ class Google_Service_CloudUserAccounts_GroupsAddMemberRequest extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_GroupsRemoveMemberRequest extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -1343,7 +1331,6 @@ class Google_Service_CloudUserAccounts_GroupsRemoveMemberRequest extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LinuxAccountViews extends Google_Collection
 {
   protected $collection_key = 'userViews';
@@ -1382,7 +1369,6 @@ class Google_Service_CloudUserAccounts_LinuxAccountViews extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LinuxGetAuthorizedKeysViewResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1401,7 +1387,6 @@ class Google_Service_CloudUserAccounts_LinuxGetAuthorizedKeysViewResponse extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LinuxGetLinuxAccountViewsResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1420,7 +1405,6 @@ class Google_Service_CloudUserAccounts_LinuxGetLinuxAccountViewsResponse extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LinuxGroupView extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -1457,7 +1441,6 @@ class Google_Service_CloudUserAccounts_LinuxGroupView extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LinuxUserView extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1520,7 +1503,6 @@ class Google_Service_CloudUserAccounts_LinuxUserView extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LogConfig extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1539,7 +1521,6 @@ class Google_Service_CloudUserAccounts_LogConfig extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_LogConfigCounterOptions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1566,7 +1547,6 @@ class Google_Service_CloudUserAccounts_LogConfigCounterOptions extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1776,7 +1756,6 @@ class Google_Service_CloudUserAccounts_Operation extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1796,7 +1775,6 @@ class Google_Service_CloudUserAccounts_OperationError extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1832,7 +1810,6 @@ class Google_Service_CloudUserAccounts_OperationErrorErrors extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1888,7 +1865,6 @@ class Google_Service_CloudUserAccounts_OperationList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1926,7 +1902,6 @@ class Google_Service_CloudUserAccounts_OperationWarnings extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1953,7 +1928,6 @@ class Google_Service_CloudUserAccounts_OperationWarningsData extends Google_Mode
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Policy extends Google_Collection
 {
   protected $collection_key = 'rules';
@@ -2001,7 +1975,6 @@ class Google_Service_CloudUserAccounts_Policy extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_PublicKey extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2055,7 +2028,6 @@ class Google_Service_CloudUserAccounts_PublicKey extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_Rule extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -2130,7 +2102,6 @@ class Google_Service_CloudUserAccounts_Rule extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_TestPermissionsRequest extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -2149,7 +2120,6 @@ class Google_Service_CloudUserAccounts_TestPermissionsRequest extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_TestPermissionsResponse extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -2168,7 +2138,6 @@ class Google_Service_CloudUserAccounts_TestPermissionsResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_User extends Google_Collection
 {
   protected $collection_key = 'publicKeys';
@@ -2260,7 +2229,6 @@ class Google_Service_CloudUserAccounts_User extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudUserAccounts_UserList extends Google_Collection
 {
   protected $collection_key = 'items';

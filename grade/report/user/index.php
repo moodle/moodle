@@ -93,10 +93,6 @@ if (has_capability('moodle/grade:viewall', $context)) {
     // Verify if we are using groups or not.
     $groupmode = groups_get_course_groupmode($course);
     $currentgroup = $gpr->groupid;
-    // Conditionally add the group JS if we have groups enabled.
-    if ($groupmode) {
-        $PAGE->requires->js_call_amd('gradereport_user/group', 'init');
-    }
 
     // To make some other functions work better later.
     if (!$currentgroup) {
@@ -141,7 +137,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
     if (is_null($userid)) { // Zero state.
         $actionbar = new \gradereport_user\output\action_bar($context, $userview, null, $currentgroup);
         // Print header.
-        print_grade_page_head($courseid, 'report', 'user', false, false, null, true,
+        print_grade_page_head($courseid, 'report', 'user', ' ', false, null, true,
             null, null, null, $actionbar);
 
         if (empty($gradableusers)) { // There are no available gradable users, display a notification.
@@ -156,7 +152,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
         $SESSION->gradereport_user["useritem-{$context->id}"] = $userid;
 
         $actionbar = new \gradereport_user\output\action_bar($context, $userview, 0, $currentgroup);
-        print_grade_page_head($courseid, 'report', 'user', false, false, null, true,
+        print_grade_page_head($courseid, 'report', 'user', ' ', false, null, true,
             null, null, null, $actionbar);
 
         while ($userdata = $gui->next_user()) {
@@ -188,9 +184,8 @@ if (has_capability('moodle/grade:viewall', $context)) {
             }
         }
         $userreportrenderer = $PAGE->get_renderer('gradereport_user');
-        // Render the user report (previous/next) navigation in a sticky footer.
-        $stickyfooter = new core\output\sticky_footer($userreportrenderer->user_navigation($gui, $userid, $courseid));
-        echo $OUTPUT->render($stickyfooter);
+        // Add previous/next user navigation.
+        echo $userreportrenderer->user_navigation($gui, $userid, $courseid);
     }
 } else {
     // Students will see just their own report.

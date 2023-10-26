@@ -47,7 +47,7 @@ class TextElement implements ITextElement
     }
 
     /**
-     * Get font. For this class, the return value is always null.
+     * Get font.
      *
      * @return null|\PhpOffice\PhpSpreadsheet\Style\Font
      */

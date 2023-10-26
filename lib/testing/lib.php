@@ -274,7 +274,7 @@ function testing_update_composer_dependencies(bool $selfupdate = true, bool $upd
  * paths returned by the shell.
  *
  * @param string $path
- * @return string
+ * @return string.
  */
 function testing_cli_fix_directory_separator($path) {
     global $CFG;

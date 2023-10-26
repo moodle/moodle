@@ -52,11 +52,8 @@ class frontend extends \core_availability\frontend {
         $jsarray = array();
         $context = \context_course::instance($course->id);
         foreach ($groups as $rec) {
-            $jsarray[] = (object)array(
-                'id' => $rec->id,
-                'name' => format_string($rec->name, true, array('context' => $context)),
-                'visibility' => $rec->visibility
-            );
+            $jsarray[] = (object)array('id' => $rec->id, 'name' =>
+                    format_string($rec->name, true, array('context' => $context)));
         }
         return array($jsarray);
     }

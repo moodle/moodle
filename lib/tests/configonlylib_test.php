@@ -152,7 +152,7 @@ class configonlylib_test extends \advanced_testcase {
     public function test_min_get_minimum_version(): void {
         // This is fairly hard to write a test for, but we can at least check that it returns a number
         // greater than the version when the feature was first introduced.
-        $firstintroduced = 1693612800; // Equivalent to 20230902 00:00:00 GMT.
+        $firstintroduced = 1669593600; // Equivalent to 20221128 00:00:00 GMT.
         $this->assertGreaterThanOrEqual($firstintroduced, min_get_minimum_revision());
     }
 

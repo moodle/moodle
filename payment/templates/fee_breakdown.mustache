@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_payment/fee_breakdown
+    @template core_payment/fee_breakdown_placeholder
 
     Classes required for JS:
     * none
@@ -24,14 +24,26 @@
     * none
 
     Context variables required for this template:
-    * surchargestr
+    * none
 
     Example context (json):
-    {
-        "surchargestr": "Cost: $10.00"
-    }
+    {}
 
 }}
 <div class="core_payment_fee_breakdown">
-    {{surchargestr}}
+    {{#surcharge}}
+        {{# str }} labelvalue, core, {
+            "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
+            "value": {{# quote }}{{# str }} feeincludesurcharge, core_payment, {
+                "fee": "{{fee}}",
+                "surcharge": {{surcharge}}
+                } {{/ str }}{{/ quote }}
+            } {{/ str }}
+    {{/surcharge}}
+    {{^surcharge}}
+        {{# str }} labelvalue, core, {
+            "label": {{# quote }}{{# str }} cost {{/ str }}{{/ quote }},
+            "value": "{{fee}}"
+            } {{/ str }}
+    {{/surcharge}}
 </div>

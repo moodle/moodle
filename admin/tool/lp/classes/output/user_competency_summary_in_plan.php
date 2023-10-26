@@ -38,10 +38,10 @@ use tool_lp\external\user_competency_summary_in_plan_exporter;
  */
 class user_competency_summary_in_plan implements renderable, templatable {
 
-    /** @var int competencyid */
+    /** @var competencyid */
     protected $competencyid;
 
-    /** @var int planid */
+    /** @var planid */
     protected $planid;
 
     /**
@@ -58,8 +58,8 @@ class user_competency_summary_in_plan implements renderable, templatable {
     /**
      * Export the data.
      *
-     * @param \renderer_base $output
-     * @return \stdClass
+     * @param renderer_base $output
+     * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
         global $DB;

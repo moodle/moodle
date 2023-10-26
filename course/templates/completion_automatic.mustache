@@ -29,37 +29,37 @@
 }}
 {{#istrackeduser}}
     {{#statuscomplete}}
-    <div class="badge badge-pill alert-success icon-no-margin" role="listitem" {{!
+    <span class="badge badge-pill alert-success icon-no-margin" role="listitem" {{!
         }}{{#accessibledescription}}{{!
             }}title="{{.}}" {{!
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
         {{#pix}}i/checked{{/pix}}
         <strong>{{#str}}completion_automatic:done, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
-    </div>
+    </span>
     {{/statuscomplete}}
     {{#statuscompletefail}}
-    <div class="badge badge-pill alert-danger icon-no-margin" role="listitem" {{!
+    <span class="badge badge-pill alert-danger icon-no-margin" role="listitem" {{!
         }}{{#accessibledescription}}{{!
             }}title="{{.}}" {{!
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
         {{#pix}}e/cancel{{/pix}}
         <strong>{{#str}}completion_automatic:failed, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
-    </div>
+    </span>
     {{/statuscompletefail}}
     {{#statusincomplete}}
-    <div class="badge badge-pill badge-light" role="listitem" {{!
+    <span class="badge badge-pill badge-light" role="listitem" {{!
         }}{{#accessibledescription}}{{!
             }}title="{{.}}" {{!
             }}aria-label="{{.}}" {{!
         }}{{/accessibledescription}}>
         <strong>{{#str}}completion_automatic:todo, core_course{{/str}}</strong> <span class="font-weight-normal">{{description}}</span>
-    </div>
+    </span>
     {{/statusincomplete}}
 {{/istrackeduser}}
 {{^istrackeduser}}
-    <div class="badge badge-pill badge-light" role="listitem">
+    <span class="badge badge-pill badge-light" role="listitem">
         <span class="font-weight-normal">{{description}}</span>
-    </div>
+    </span>
 {{/istrackeduser}}

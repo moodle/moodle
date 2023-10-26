@@ -29,30 +29,3 @@ Changed:
 
 3. Check if there are changes in the getLocalization() method in h5p.classes.php and update lang/en/h5p.php accordingly.
    If there are changes, check the t() method in h5p/classes/framework.php too (updating or adding new ones).
-
-4. In saveLibraries() method in core/h5p.classes.php, check $this->h5pF->saveLibraryData is called before $this->h5pC->fs->saveLibrary.
-The library needs to be saved in the database first before creating the files, because the libraryid is used as itemid for the files.
-
-5. Check if new methods have been added to any of the interfaces. If that's the case, implement them in the proper class. For
-instance, if a new method is added to h5p-file-storage.interface.php, it should be implemented in h5p/classes/file_storage.php.
-
-6. Open js/h5p.js and in function contentUserDataAjax() add the following patch:
-  function contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async) {
-    if (H5PIntegration.user === undefined) {
-      // Not logged in, no use in saving.
-      done('Not signed in.');
-      return;
-    }
-    // Moodle patch to let override this method.
-    if (H5P.contentUserDataAjax !== undefined) {
-      return H5P.contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async);
-    }
-    // End of Moodle patch.
-
-    var options = {
-
-Notes:
- * 2023-05-10 To avoid PHP 8.2 deprecations, please apply below patches:
-   - https://github.com/h5p/h5p-php-library/pull/146
-   - https://github.com/h5p/h5p-php-library/pull/148
-   See MDL-78147 for more details.

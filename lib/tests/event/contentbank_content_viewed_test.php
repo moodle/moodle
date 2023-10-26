@@ -61,7 +61,6 @@ class contentbank_content_viewed_test extends \advanced_testcase {
         $contenttype = new \contenttype_testable\contenttype();
 
         // Create a content bank content.
-        /** @var \core_contentbank_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
         $contents = $generator->generate_contentbank_data('contenttype_testable', 1);
         $content = array_shift($contents);

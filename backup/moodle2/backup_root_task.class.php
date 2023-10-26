@@ -192,12 +192,6 @@ class backup_root_task extends backup_task {
         $contentbank->set_ui(new backup_setting_ui_checkbox($contentbank, get_string('rootsettingcontentbankcontent', 'backup')));
         $this->add_setting($contentbank);
 
-        // Define xAPI state inclusion setting.
-        $xapistate = new backup_xapistate_setting('xapistate', base_setting::IS_BOOLEAN, true);
-        $xapistate->set_ui(new backup_setting_ui_checkbox($xapistate, get_string('rootsettingxapistate', 'backup')));
-        $this->add_setting($xapistate);
-        $users->add_dependency($xapistate);
-
         // Define legacy file inclusion setting.
         $legacyfiles = new backup_generic_setting('legacyfiles', base_setting::IS_BOOLEAN, true);
         $legacyfiles->set_ui(new backup_setting_ui_checkbox($legacyfiles, get_string('rootsettinglegacyfiles', 'backup')));

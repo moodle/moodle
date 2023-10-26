@@ -57,9 +57,6 @@ class brickfield_accessibility_test {
     /** @var array An array of translatable strings */
     public $strings = array('en' => '');
 
-    /** @var mixed Any additional options passed by htmlchecker. */
-    public $options;
-
     /**
      * The class constructor. We pass items by reference so we can alter the DOM if necessary
      * @param object $dom The DOMDocument object

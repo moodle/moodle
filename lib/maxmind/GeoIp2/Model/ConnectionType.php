@@ -20,19 +20,8 @@ use GeoIp2\Util;
  */
 class ConnectionType extends AbstractModel
 {
-    /**
-     * @var string|null
-     */
     protected $connectionType;
-
-    /**
-     * @var string
-     */
     protected $ipAddress;
-
-    /**
-     * @var string
-     */
     protected $network;
 
     /**

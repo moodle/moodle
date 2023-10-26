@@ -125,7 +125,7 @@ class filter_test extends \advanced_testcase {
                 array('course' => $course->id, 'mainglossary' => 1));
 
         // Create two entries with ampersands and one normal entry.
-        /** @var \mod_glossary_generator $generator */
+        /** @var mod_glossary_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
         $category = $generator->create_category($glossary, array('name' => 'My category', 'usedynalink' => 1));
 
@@ -163,7 +163,7 @@ class filter_test extends \advanced_testcase {
                 array('course' => $course->id, 'mainglossary' => 1));
 
         // Create two entries with ampersands and one normal entry.
-        /** @var \mod_glossary_generator $generator */
+        /** @var mod_glossary_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
         $normal = $generator->create_content($glossary, array('concept' => 'normal'));
         $amp1 = $generator->create_content($glossary, array('concept' => 'A&B'));
@@ -209,7 +209,7 @@ class filter_test extends \advanced_testcase {
                 array('course' => $course->id, 'mainglossary' => 1));
 
         // Create two entries with ampersands and one normal entry.
-        /** @var \mod_glossary_generator $generator */
+        /** @var mod_glossary_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
         $simple = $generator->create_content($glossary, array('concept' => 'simple'));
         $withbrackets = $generator->create_content($glossary, array('concept' => 'more complex (perhaps)'));
@@ -292,7 +292,7 @@ class filter_test extends \advanced_testcase {
                 array('course' => $course->id, 'mainglossary' => 1));
 
         // Create two entries with ampersands and one normal entry.
-        /** @var \mod_glossary_generator $generator */
+        /** @var mod_glossary_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_glossary');
         $category = $generator->create_category($glossary, array('name' => 'My category', 'usedynalink' => 1));
 

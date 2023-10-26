@@ -75,10 +75,7 @@ class event_factory_test extends \advanced_testcase {
         }
 
         if ($expectedattributevalue) {
-            $this->assertEquals(
-                $instance->get_description()->get_value(),
-                $expectedattributevalue
-            );
+            $this->assertEquals($instance->testattribute, $expectedattributevalue);
         }
     }
 
@@ -371,6 +368,7 @@ class event_factory_test extends \advanced_testcase {
                     'location' => 'Test location',
                 ],
                 'actioncallbackapplier' => function(event_interface $event) {
+                    $event->testattribute = 'Hello';
                     return $event;
                 },
                 'visibilitycallbackapplier' => function(event_interface $event) {
@@ -405,6 +403,7 @@ class event_factory_test extends \advanced_testcase {
                     'location' => 'Test location',
                 ],
                 'actioncallbackapplier' => function(event_interface $event) {
+                    $event->testattribute = 'Hello';
                     return $event;
                 },
                 'visibilitycallbackapplier' => function(event_interface $event) {
@@ -439,6 +438,7 @@ class event_factory_test extends \advanced_testcase {
                     'location' => 'Test location',
                 ],
                 'actioncallbackapplier' => function(event_interface $event) {
+                    $event->testattribute = 'Hello';
                     return $event;
                 },
                 'visibilitycallbackapplier' => function(event_interface $event) {

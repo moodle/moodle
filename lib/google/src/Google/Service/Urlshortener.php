@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener extends Google_Service
 {
   /** Manage your goo.gl short URLs. */
@@ -104,7 +103,6 @@ class Google_Service_Urlshortener extends Google_Service
  *   $url = $urlshortenerService->url;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_Url_Resource extends Google_Service_Resource
 {
 
@@ -159,7 +157,6 @@ class Google_Service_Urlshortener_Url_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_AnalyticsSnapshot extends Google_Collection
 {
   protected $collection_key = 'referrers';
@@ -227,7 +224,6 @@ class Google_Service_Urlshortener_AnalyticsSnapshot extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_AnalyticsSummary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -286,7 +282,6 @@ class Google_Service_Urlshortener_AnalyticsSummary extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_StringCount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -313,7 +308,6 @@ class Google_Service_Urlshortener_StringCount extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_Url extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -377,7 +371,6 @@ class Google_Service_Urlshortener_Url extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Urlshortener_UrlHistory extends Google_Collection
 {
   protected $collection_key = 'items';

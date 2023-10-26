@@ -55,8 +55,6 @@ class report implements renderable, templatable {
     protected $moduleid;
     /** @var array $competencies */
     protected $competencies;
-    /** @var int The user id */
-    protected $userid;
 
     /**
      * Construct this renderable.

@@ -72,9 +72,11 @@
 
     {{#hasdates}}
     <div data-region="activity-dates" class="activity-dates">
-        {{#activitydates}}
-            {{>core_course/activity_date}}
-        {{/activitydates}}
+        <div class="description-inner">
+            {{#activitydates}}
+                {{>core_course/activity_date}}
+            {{/activitydates}}
+        </div>
     </div>
     {{/hasdates}}
 </div>

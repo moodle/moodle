@@ -113,6 +113,7 @@ function s($var) {
  * @see s()
  *
  * @param string $var the string potentially containing HTML characters
+ * @return string
  */
 function p($var) {
     echo s($var);
@@ -900,20 +901,7 @@ class moodle_url {
     }
 
     /**
-     * Checks if URL is relative to $CFG->wwwroot.
-     *
-     * @return bool True if URL is relative to $CFG->wwwroot; otherwise, false.
-     */
-    public function is_local_url() : bool {
-        global $CFG;
-
-        $url = $this->out();
-        // Does URL start with wwwroot? Otherwise, URL isn't relative to wwwroot.
-        return ( ($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0) );
-    }
-
-    /**
-     * Returns URL as relative path from $CFG->wwwroot
+     * Returns URL a relative path from $CFG->wwwroot
      *
      * Can be used for passing around urls with the wwwroot stripped
      *
@@ -925,9 +913,10 @@ class moodle_url {
     public function out_as_local_url($escaped = true, array $overrideparams = null) {
         global $CFG;
 
-        // URL should be relative to wwwroot. If not then throw exception.
-        if ($this->is_local_url()) {
-            $url = $this->out($escaped, $overrideparams);
+        $url = $this->out($escaped, $overrideparams);
+
+        // Url should be equal to wwwroot. If not then throw exception.
+        if (($url === $CFG->wwwroot) || (strpos($url, $CFG->wwwroot.'/') === 0)) {
             $localurl = substr($url, strlen($CFG->wwwroot));
             return !empty($localurl) ? $localurl : '';
         } else {
@@ -1256,7 +1245,7 @@ function format_text_menu() {
  * @param string $text The text to be formatted. This is raw text originally from user input.
  * @param int $format Identifier of the text format to be used
  *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
- * @param stdClass|array $options text formatting options
+ * @param object/array $options text formatting options
  * @param int $courseiddonotuse deprecated course id, use context option instead
  * @return string
  */
@@ -1435,9 +1424,9 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         }
 
         // This regex is nasty and I don't like it. The correct way to solve this is by loading the HTML like so:
-        // $domdoc->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD); however it seems like some libxml
-        // versions don't work properly and end up leaving <html><body>, so I'm forced to use
-        // this regex to remove those tags as a preventive measure.
+        // $domdoc->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD); however it seems like the libxml
+        // version that travis uses doesn't work properly and ends up leaving <html><body>, so I'm forced to use
+        // this regex to remove those tags.
         $text = trim(preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $domdoc->saveHTML($domdoc->documentElement)));
     }
 
@@ -1938,9 +1927,6 @@ function purify_html($text, $options = array()) {
             $def->addElement('algebra', 'Inline', 'Inline', array());                   // Algebra syntax, equivalent to @@xx@@.
             $def->addElement('lang', 'Block', 'Flow', array(), array('lang'=>'CDATA')); // Original multilang style - only our hacked lang attribute.
             $def->addAttribute('span', 'xxxlang', 'CDATA');                             // Current very problematic multilang.
-            // Enable the bidirectional isolate element and its span equivalent.
-            $def->addElement('bdi', 'Inline', 'Flow', 'Common');
-            $def->addAttribute('span', 'dir', 'Enum#ltr,rtl,auto');
 
             // Media elements.
             // https://html.spec.whatwg.org/#the-video-element
@@ -2559,6 +2545,7 @@ function print_collapsible_region_start($classes, $id, $caption, $userpref = '',
 
     // Work out the initial state.
     if (!empty($userpref) and is_string($userpref)) {
+        user_preference_allow_ajax_update($userpref, PARAM_BOOL);
         $collapsed = get_user_preferences($userpref, $default);
     } else {
         $collapsed = $default;
@@ -2742,7 +2729,7 @@ function print_recent_activity_note($time, $user, $text, $link, $return=false, $
  * outputs a simple list structure in XHTML.
  * The data is taken from the serialised array stored in the course record.
  *
- * @param stdClass $course A course object.
+ * @param course $course A {@link $COURSE} object.
  * @param array $sections
  * @param course_modinfo $modinfo
  * @param string $strsection
@@ -3612,7 +3599,7 @@ class error_log_progress_trace extends progress_trace {
  * @package core
  */
 class progress_trace_buffer extends progress_trace {
-    /** @var progress_trace */
+    /** @var progres_trace */
     protected $trace;
     /** @var bool do we pass output out */
     protected $passthrough;
@@ -3782,7 +3769,7 @@ function print_password_policy() {
  *                which format to output the doclink in.
  * @param string|object|array $a An object, string or number that can be used
  *      within translation strings
- * @return stdClass An object containing:
+ * @return Object An object containing:
  * - heading: Any heading that there may be for this help string.
  * - text: The wiki-formatted help string.
  * - doclink: An object containing a link, the linktext, and any additional

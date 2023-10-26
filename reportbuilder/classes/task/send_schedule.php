@@ -71,7 +71,7 @@ class send_schedule extends adhoc_task {
         $originaluser = $USER;
 
         // Switch to schedule creator, and retrieve list of recipient users.
-        \core\cron::setup_user(core_user::get_user($schedule->get('usercreated')));
+        cron_setup_user(core_user::get_user($schedule->get('usercreated')));
 
         $users = helper::get_schedule_report_users($schedule);
         if (count($users) > 0) {
@@ -83,7 +83,7 @@ class send_schedule extends adhoc_task {
             if ($scheduleuserviewas === schedule::REPORT_VIEWAS_CREATOR) {
                 $scheduleattachment = helper::get_schedule_report_file($schedule);
             } else if ($scheduleuserviewas !== schedule::REPORT_VIEWAS_RECIPIENT) {
-                \core\cron::setup_user(core_user::get_user($scheduleuserviewas));
+                cron_setup_user(core_user::get_user($scheduleuserviewas));
                 $scheduleattachment = helper::get_schedule_report_file($schedule);
             }
 
@@ -102,7 +102,7 @@ class send_schedule extends adhoc_task {
                     if ($scheduleattachment !== null) {
                         helper::send_schedule_message($schedule, $user, $scheduleattachment);
                     } else {
-                        \core\cron::setup_user($user);
+                        cron_setup_user($user);
 
                         if ($schedulereportempty === schedule::REPORT_EMPTY_DONT_SEND &&
                             helper::get_schedule_report_count($schedule) === 0) {
@@ -129,6 +129,6 @@ class send_schedule extends adhoc_task {
         $this->log_finish('Sending schedule complete');
 
         // Restore cron user to original state.
-        \core\cron::setup_user($originaluser);
+        cron_setup_user($originaluser);
     }
 }

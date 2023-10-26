@@ -14,7 +14,7 @@ Feature: Atto editor with customised toolbar
       | label      | L1   | <a href="../lib/editor/atto/tests/fixtures/custom_toolbar_example.php">FixtureLink</a> | C1     | label1   |
     When I log in as "admin"
     And I am on "Course 1" course homepage
-    And I click on "FixtureLink" "link" in the "region-main" "region"
+    And I follow "FixtureLink"
 
   @javascript
   Scenario: Confirm that both editors have different toolbars but still function

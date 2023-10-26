@@ -18,11 +18,16 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\output;
 
+use core_external;
 use core\output\inplace_editable;
-use core_external\external_api;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
 use core_reportbuilder\local\models\column;
+
+defined('MOODLE_INTERNAL') || die;
+
+global $CFG;
+require_once("{$CFG->libdir}/external/externallib.php");
 
 /**
  * Column heading editable component
@@ -73,7 +78,7 @@ class column_heading_editable extends inplace_editable {
 
         $report = $column->get_report();
 
-        external_api::validate_context($report->get_context());
+        core_external::validate_context($report->get_context());
         permission::require_can_edit_report($report);
 
         $value = clean_param($value, PARAM_TEXT);

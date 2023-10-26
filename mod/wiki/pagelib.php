@@ -660,7 +660,7 @@ class page_wiki_comments extends page_wiki {
             $cell1 = new html_table_cell($OUTPUT->user_picture($user, array('popup' => true)));
             $cell2 = new html_table_cell(get_string('bynameondate', 'forum', $by));
             $cell3 = new html_table_cell();
-            $cell3->attributes['width'] = "80%";
+            $cell3->atributtes ['width'] = "80%";
             $cell4 = new html_table_cell();
             $cell5 = new html_table_cell();
 
@@ -1464,9 +1464,6 @@ class page_wiki_map extends page_wiki {
      */
     private $view;
 
-    /** @var renderer_base */
-    protected $output;
-
     function print_header() {
         parent::print_header();
         $this->print_pagetitle();
@@ -1997,7 +1994,9 @@ class page_wiki_deletecomment extends page_wiki {
     }
 
     public function set_action($action, $commentid, $content) {
+        $this->action = $action;
         $this->commentid = $commentid;
+        $this->content = $content;
     }
 
     protected function create_navbar() {

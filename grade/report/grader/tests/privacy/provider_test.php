@@ -68,6 +68,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
+        set_user_preference('grade_report_showcalculations', 1, $user);
         set_user_preference('grade_report_meanselection', GRADE_REPORT_MEAN_GRADED, $user);
         set_user_preference('grade_report_studentsperpage', 50, $user);
 
@@ -77,11 +78,14 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Validate exported data for our test user.
         provider::export_user_preferences($user->id);
         $context = \context_user::instance($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradereport_grader');
-        $this->assertCount(2, (array) $prefs);
+        $this->assertCount(3, (array) $prefs);
+        $this->assertEquals(
+            get_string('privacy:metadata:preference:grade_report_showcalculations', 'gradereport_grader'),
+            $prefs->grade_report_showcalculations->description
+        );
         $this->assertEquals(get_string('meangraded', 'grades'), $prefs->grade_report_meanselection->value);
         $this->assertEquals(50, $prefs->grade_report_studentsperpage->value);
     }
@@ -100,7 +104,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Validate exported data.
         provider::export_user_preferences($user->id);
         $context = \context_user::instance($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('gradereport_grader');

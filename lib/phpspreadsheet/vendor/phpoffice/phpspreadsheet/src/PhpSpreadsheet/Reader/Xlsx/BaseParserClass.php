@@ -10,13 +10,13 @@ class BaseParserClass
     protected static function boolean($value): bool
     {
         if (is_object($value)) {
-            $value = (string) $value; // @phpstan-ignore-line
+            $value = (string) $value;
         }
 
         if (is_numeric($value)) {
             return (bool) $value;
         }
 
-        return $value === 'true' || $value === 'TRUE';
+        return $value === strtolower('true');
     }
 }

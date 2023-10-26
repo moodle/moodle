@@ -137,6 +137,10 @@ if (!empty($reportlog->selectedlogreader)) {
 
 echo $output->reader_selector($reportlog);
 
+if ($mode === 'all') {
+    $reportlog->selecteddate = 0;
+}
+
 // Print the graphic chart accordingly to the mode (all, today).
 echo '<div class="graph">';
 report_log_print_graph($course, $user, $mode, 0, $logreader);

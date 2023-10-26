@@ -1,9 +1,9 @@
 <?php
 //============================================================+
 // File name   : tcpdf.php
-// Version     : 6.6.2
+// Version     : 6.4.4
 // Begin       : 2002-08-03
-// Last Update : 2022-12-06
+// Last Update : 2022-08-12
 // Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
 // License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
 // -------------------------------------------------------------------
@@ -104,7 +104,7 @@
  * Tools to encode your unicode fonts are on fonts/utils directory.</p>
  * @package com.tecnick.tcpdf
  * @author Nicola Asuni
- * @version 6.6.2
+ * @version 6.5.0
  */
 
 // TCPDF configuration
@@ -128,7 +128,7 @@ require_once(dirname(__FILE__).'/include/tcpdf_static.php');
  * TCPDF project (http://www.tcpdf.org) has been originally derived in 2002 from the Public Domain FPDF class by Olivier Plathey (http://www.fpdf.org), but now is almost entirely rewritten.<br>
  * @package com.tecnick.tcpdf
  * @brief PHP class for generating PDF documents without requiring external extensions.
- * @version 6.6.2
+ * @version 6.3.2
  * @author Nicola Asuni - info@tecnick.com
  * @IgnoreAnnotation("protected")
  * @IgnoreAnnotation("public")
@@ -2024,6 +2024,9 @@ class TCPDF {
 		$this->header_xobj_autoreset = false;
 		$this->custom_xmp = '';
 		$this->custom_xmp_rdf = '';
+		// Call cleanup method after script execution finishes or exit() is called.
+		// NOTE: This will not be executed if the process is killed with a SIGTERM or SIGKILL signal.
+		register_shutdown_function(array($this, '_destroy'), true);
 	}
 
 	/**
@@ -4280,7 +4283,7 @@ class TCPDF {
 			// all fonts must be embedded
 			$family = 'pdfa'.$family;
 		}
-		$tempstyle = strtoupper($style === null ? '' : $style);
+		$tempstyle = strtoupper($style);
 		$style = '';
 		// underline
 		if (strpos($tempstyle, 'U') !== false) {
@@ -4347,22 +4350,6 @@ class TCPDF {
 		}
 		// include font file
 		if (!TCPDF_STATIC::empty_string($fontfile) AND (@TCPDF_STATIC::file_exists($fontfile))) {
-			$type=null;
-			$name=null;
-			$desc=null;
-			$up=-null;
-			$ut=null;
-			$cw=null;
-			$cbbox=null;
-			$dw=null;
-			$enc=null;
-			$cidinfo=null;
-			$file=null;
-			$ctg=null;
-			$diff=null;
-			$originalsize=null;
-			$size1=null;
-			$size2=null;
 			include($fontfile);
 		} else {
 			$this->Error('Could not include font definition file: '.$family.'');
@@ -5540,12 +5527,12 @@ class TCPDF {
 			$xdk = $xdx * $k;
 			// print text
 			$s .= sprintf('BT %F %F Td [(%s)] TJ ET', $xdk, (($this->h - $basefonty) * $k), $txt2);
-			if (isset($uniblock)) { // @phpstan-ignore-line
+			if (isset($uniblock)) {
 				// print overlapping characters as separate string
 				$xshift = 0; // horizontal shift
 				$ty = (($this->h - $basefonty + (0.2 * $this->FontSize)) * $k);
 				$spw = (($w - $txwidth - $this->cell_padding['L'] - $this->cell_padding['R']) / ($ns?$ns:1));
-				foreach ($uniblock as $uk => $uniarr) { // @phpstan-ignore-line
+				foreach ($uniblock as $uk => $uniarr) {
 					if (($uk % 2) == 0) {
 						// x space to skip
 						if ($spacewidth != 0) {
@@ -7117,6 +7104,8 @@ class TCPDF {
 			} elseif ($type == 'jpg') {
 				$type = 'jpeg';
 			}
+			$mqr = TCPDF_STATIC::get_mqr();
+			TCPDF_STATIC::set_mqr(false);
 			// Specific image handlers (defined on TCPDF_IMAGES CLASS)
 			$mtd = '_parse'.$type;
 			// GD image handler function
@@ -7218,6 +7207,7 @@ class TCPDF {
 				// unable to process image
 				return false;
 			}
+			TCPDF_STATIC::set_mqr($mqr);
 			if ($ismask) {
 				// force grayscale
 				$info['cs'] = 'DeviceGray';
@@ -7245,7 +7235,7 @@ class TCPDF {
 		} elseif ($palign == 'R') {
 			$ximg = $this->w - $this->rMargin - $w;
 		} else {
-			$ximg = $this->rtl ? $x - $w : $x;
+			$ximg = $x;
 		}
 
 		if ($ismask OR $hidden) {
@@ -8881,6 +8871,8 @@ class TCPDF {
 			$this->_newobj();
 			$this->_out('<< /Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['.$diff.'] >>'."\n".'endobj');
 		}
+		$mqr = TCPDF_STATIC::get_mqr();
+		TCPDF_STATIC::set_mqr(false);
 		foreach ($this->FontFiles as $file => $info) {
 			// search and get font file to embedd
 			$fontfile = TCPDF_FONTS::getFontFullPath($file, $info['fontdir']);
@@ -8934,6 +8926,7 @@ class TCPDF {
 				$this->_out($out);
 			}
 		}
+		TCPDF_STATIC::set_mqr($mqr);
 		foreach ($this->fontkeys as $k) {
 			//Font objects
 			$font = $this->getFontBuffer($k);
@@ -9202,7 +9195,6 @@ class TCPDF {
 		foreach ($this->imagekeys as $file) {
 			$info = $this->getImageBuffer($file);
 			// set object for alternate images array
-			$altoid = null;
 			if ((!$this->pdfa_mode) AND isset($info['altimgs']) AND !empty($info['altimgs'])) {
 				$altoid = $this->_newobj();
 				$out = '[';
@@ -9250,7 +9242,7 @@ class TCPDF {
 				$out .= ' /Decode [1 0 1 0 1 0 1 0]';
 			}
 			$out .= ' /BitsPerComponent '.$info['bpc'];
-			if ($altoid > 0) {
+			if (isset($altoid) AND ($altoid > 0)) {
 				// reference to alternate images dictionary
 				$out .= ' /Alternates '.$altoid.' 0 R';
 			}
@@ -11710,7 +11702,7 @@ class TCPDF {
 		if ($this->state != 2) {
 			return;
 		}
-		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
 			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
@@ -11740,7 +11732,7 @@ class TCPDF {
 		if ($this->state != 2) {
 			return;
 		}
-		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
 			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
@@ -11783,7 +11775,7 @@ class TCPDF {
 		if (TCPDF_STATIC::empty_string($ry) OR ($ry == 0)) {
 			$ry = $rx;
 		}
-		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
 			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
@@ -12002,7 +11994,7 @@ class TCPDF {
 			}
 			$nc += 4;
 		}
-		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
 			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
@@ -12205,7 +12197,7 @@ class TCPDF {
 			return;
 		}
 		// Rounded
-		if (!(false === strpos($style, 'F')) AND is_array($fill_color)) {
+		if (!(false === strpos($style, 'F')) AND isset($fill_color)) {
 			$this->setFillColorArray($fill_color);
 		}
 		$op = TCPDF_STATIC::getPathPaintOperator($style);
@@ -15084,7 +15076,9 @@ class TCPDF {
 		// translate
 		$this->_out(sprintf('%F %F %F %F %F %F cm', 1, 0, 0, 1, $dx, $dy + ($this->hPt - (2 * $y * $k) - ($y2 - $y1))));
 		// scale
-		$this->_out(sprintf('%F %F %F %F %F %F cm', $scale_x, 0, 0, $scale_y, $x1 * (1 - $scale_x), $y2 * (1 - $scale_y)));
+		if (isset($scale_x)) {
+			$this->_out(sprintf('%F %F %F %F %F %F cm', $scale_x, 0, 0, $scale_y, $x1 * (1 - $scale_x), $y2 * (1 - $scale_y)));
+		}
 		// handle pc/unix/mac line endings
 		$lines = preg_split('/[\r\n]+/si', $data, -1, PREG_SPLIT_NO_EMPTY);
 		$u=0;
@@ -16368,7 +16362,6 @@ class TCPDF {
 				break;
 			}
 			default: {
-				$parentSize = $this->getHTMLUnitToUnits($parent_size, $refsize, $defaultunit, true);
 				$size = $this->getHTMLUnitToUnits($val, $parent_size, $defaultunit, true);
 			}
 		}
@@ -17750,7 +17743,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 							$pend = '';
 						}
 					}
-					if ((((($plalign == 'C') OR ($plalign == 'J') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
+					if ((isset($plalign) AND ((($plalign == 'C') OR ($plalign == 'J') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
 						// calculate shifting amount
 						$tw = $w;
 						if (($plalign == 'J') AND $this->isRTLTextDir() AND ($this->num_columns > 1)) {
@@ -18356,7 +18349,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 							$dom[$trid]['cellpos'][($cellid - 1)]['bgcolor'] = $dom[$parentid]['bgcolor'];
 						}
 						// store border info
-						if (!empty($tdborder)) {
+						if (isset($tdborder) AND !empty($tdborder)) {
 							$dom[$trid]['cellpos'][($cellid - 1)]['border'] = $tdborder;
 						}
 						$prevLastH = $this->lasth;
@@ -18592,7 +18585,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 						$strrest = $this->Write($this->lasth, $dom[$key]['value'], '', $wfill, '', false, 0, true, $firstblock, 0, $wadj);
 						// restore default direction
 						if ($reverse_dir AND ($wadj == 0)) {
-							$this->x = $xws; // @phpstan-ignore-line
+							$this->x = $xws;
 							$this->rtl = !$this->rtl;
 							$reverse_dir = false;
 						}
@@ -18701,7 +18694,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					$pend = '';
 				}
 			}
-			if ((((($plalign == 'C') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
+			if ((isset($plalign) AND ((($plalign == 'C') OR (($plalign == 'R') AND (!$this->rtl)) OR (($plalign == 'L') AND ($this->rtl)))))) {
 				// calculate shifting amount
 				$tw = $w;
 				if ($this->lMargin != $prevlMargin) {
@@ -19008,9 +19001,6 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					// data stream
 					$imgsrc = '@'.base64_decode(substr($imgsrc, 1));
 					$type = '';
-				} else if (preg_match('@^data:image/([^;]*);base64,(.*)@', $imgsrc, $reg)) {
-					$imgsrc = '@'.base64_decode($reg[2]);
-					$type = $reg[1];
 				} elseif ( $this->allowLocalFiles && substr($imgsrc, 0, 7) === 'file://') {
                     // get image type from a local file path
                     $imgsrc = substr($imgsrc, 7);
@@ -19724,7 +19714,7 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 					$table_el = $dom[($dom[$key]['parent'])];
 				}
 				// for each row
-				if (!empty($table_el['trids'])) {
+				if (count($table_el['trids']) > 0) {
 					unset($xmax);
 				}
 				foreach ($table_el['trids'] as $j => $trkey) {
@@ -23904,7 +23894,9 @@ Putting 1 is equivalent to putting 0 and calling Ln() just after. Default value:
 			}
 			$firstcmd = false;
 		} // end foreach
-		$this->_out($op);
+		if (!empty($op)) {
+			$this->_out($op);
+		}
 		return array($xmin, $ymin, ($xmax - $xmin), ($ymax - $ymin));
 	}
 

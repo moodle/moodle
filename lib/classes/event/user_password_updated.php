@@ -102,6 +102,19 @@ class user_password_updated extends base {
     }
 
     /**
+     * Returns array of parameters to be passed to legacy logging.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        if (!$this->other['forgottenreset']) {
+            // We did not log password changes in earlier versions.
+            return null;
+        }
+        return array(SITEID, 'user', 'set password', 'profile.php?id='.$this->userid, $this->relateduserid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -58,7 +58,7 @@ class add_entries_action implements templatable, renderable {
 
         if (data_user_can_add_entry($database, $currentgroup, $groupmode, $PAGE->context)) {
             $addentrylink = new moodle_url('/mod/data/edit.php', ['d' => $this->id, 'backto' => $PAGE->url->out(false)]);
-            $button = new \single_button($addentrylink, get_string('add', 'mod_data'), 'get', \single_button::BUTTON_PRIMARY);
+            $button = new \single_button($addentrylink, get_string('add', 'mod_data'), 'get', true);
             return $button->export_for_template($output);
         }
 

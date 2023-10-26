@@ -3,9 +3,3 @@
 .block_myoverview button#groupingdropdown + .dropdown-menu li:first-of-type.dropdown-divider:first-of-type {
     display: none;
 }
-.block_myoverview .whitebutton .btn-secondary {
-    background: white;
-    border-color: var(--primary);
-    color: var(--primary);
-}
-

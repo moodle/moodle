@@ -67,17 +67,6 @@ class api {
         $DB->delete_records('h5p_library_dependencies', array('libraryid' => $library->id));
         $DB->delete_records('h5p_libraries', array('id' => $library->id));
 
-        // Remove the library from the cache.
-        $libscache = \cache::make('core', 'h5p_libraries');
-        $libarray = [
-            'machineName' => $library->machinename,
-            'majorVersion' => $library->majorversion,
-            'minorVersion' => $library->minorversion,
-        ];
-        $libstring = H5PCore::libraryToString($libarray);
-        $librarykey = helper::get_cache_librarykey($libstring);
-        $libscache->delete($librarykey);
-
         // Remove the libraries using this library.
         $requiredlibraries = self::get_dependent_libraries($library->id);
         foreach ($requiredlibraries as $requiredlibrary) {

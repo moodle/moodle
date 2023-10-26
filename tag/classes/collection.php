@@ -392,7 +392,7 @@ class core_tag_collection {
         }
 
         self::$cloudsortfield = $sort;
-        usort($tagsincloud, self::class . "::cloud_sort");
+        usort($tagsincloud, "self::cloud_sort");
 
         return new core_tag\output\tagcloud($tagsincloud, $tagscount, $fromctx, $ctx, $rec);
     }

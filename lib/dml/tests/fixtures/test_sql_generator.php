@@ -29,9 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../../ddl/sql_generator.php');
 
-use xmldb_table;
-use xmldb_field;
-
 /**
  * Test SQL code generator class
  *

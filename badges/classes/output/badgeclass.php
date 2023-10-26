@@ -170,11 +170,6 @@ class badgeclass implements renderable {
             }
         }
 
-        // Field: Tags.
-        $tags = \core_tag_tag::get_item_tags('core_badges', 'badge', $this->badgeid);
-        $taglist = new \core_tag\output\taglist($tags);
-        $data->badgetag = $taglist->export_for_template($output);
-
         return $data;
     }
 }

@@ -16,7 +16,7 @@
 /**
  * Custom auto-complete adapter to load users from the assignment list_participants webservice.
  *
- * @module     mod_assign/participant_selector
+ * @module     mod_assign/participants_selector
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

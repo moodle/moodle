@@ -105,7 +105,7 @@ class view_page implements renderable, templatable {
         $templatedata->recordingwarnings = [];
         $check = new cronrunning();
         $result = $check->get_result();
-        if ($result->get_status() != result::OK && $this->instance->is_moderator()) {
+        if ($result->status != result::OK && $this->instance->is_moderator()) {
             $templatedata->recordingwarnings[] = (new notification(
                 get_string('view_message_cron_disabled', 'mod_bigbluebuttonbn',
                     $result->get_summary()),

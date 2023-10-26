@@ -123,15 +123,10 @@ if ($editorform->is_cancelled()) {
     }
     redirect($returnurl);
 } else if ($data = $editorform->get_data()) {
-    if (empty($id)) {
-        $msg = get_string('contentcreated', 'contentbank');
-    } else {
-        $msg = get_string('contentupdated', 'contentbank');
-    }
     $id = $editorform->save_content($data);
     // Just in case we've created a new content.
     $returnurl->param('id', $id);
-    redirect($returnurl, $msg, null, \core\output\notification::NOTIFY_SUCCESS);
+    redirect($returnurl);
 }
 
 echo $OUTPUT->header();

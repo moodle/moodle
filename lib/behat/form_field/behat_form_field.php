@@ -203,7 +203,7 @@ class behat_form_field implements behat_session_interface {
      * @return bool
      */
     protected function running_javascript() {
-        return get_class($this->session->getDriver()) !== 'Behat\Mink\Driver\BrowserKitDriver';
+        return get_class($this->session->getDriver()) !== 'Behat\Mink\Driver\GoutteDriver';
     }
 
     /**

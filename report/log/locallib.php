@@ -59,7 +59,7 @@ function report_log_print_graph($course, $user, $typeormode, $date=0, $logreader
         $reader = $readers[$logreader];
     }
     // If reader is not a sql_internal_table_reader and not legacy store then don't show graph.
-    if (!($reader instanceof \core\log\sql_internal_table_reader)) {
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
     $coursecontext = context_course::instance($course->id);
@@ -114,15 +114,23 @@ function report_log_usercourse($userid, $courseid, $coursestart, $logreader = ''
     }
 
     // If reader is not a sql_internal_table_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_internal_table_reader)) {
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
     $coursestart = (int)$coursestart; // Note: unfortunately pg complains if you use name parameter or column alias in GROUP BY.
-    $logtable = $reader->get_internal_log_table_name();
-    $timefield = 'timecreated';
-    $coursefield = 'courseid';
-    $nonanonymous = 'AND anonymous = 0';
+    if ($reader instanceof logstore_legacy\log\store) {
+        $logtable = 'log';
+        $timefield = 'time';
+        $coursefield = 'course';
+        // Anonymous actions are never logged in legacy log.
+        $nonanonymous = '';
+    } else {
+        $logtable = $reader->get_internal_log_table_name();
+        $timefield = 'timecreated';
+        $coursefield = 'courseid';
+        $nonanonymous = 'AND anonymous = 0';
+    }
 
     $params = array();
     $courseselect = '';
@@ -158,16 +166,24 @@ function report_log_userday($userid, $courseid, $daystart, $logreader = '') {
     }
 
     // If reader is not a sql_internal_table_reader and not legacy store then return.
-    if (!($reader instanceof \core\log\sql_internal_table_reader)) {
+    if (!($reader instanceof \core\log\sql_internal_table_reader) && !($reader instanceof logstore_legacy\log\store)) {
         return array();
     }
 
     $daystart = (int)$daystart; // Note: unfortunately pg complains if you use name parameter or column alias in GROUP BY.
 
-    $logtable = $reader->get_internal_log_table_name();
-    $timefield = 'timecreated';
-    $coursefield = 'courseid';
-    $nonanonymous = 'AND anonymous = 0';
+    if ($reader instanceof logstore_legacy\log\store) {
+        $logtable = 'log';
+        $timefield = 'time';
+        $coursefield = 'course';
+        // Anonymous actions are never logged in legacy log.
+        $nonanonymous = '';
+    } else {
+        $logtable = $reader->get_internal_log_table_name();
+        $timefield = 'timecreated';
+        $coursefield = 'courseid';
+        $nonanonymous = 'AND anonymous = 0';
+    }
     $params = array('userid' => $userid);
 
     $courseselect = '';

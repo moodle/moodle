@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 
 use dml_missing_record_exception;
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 
 /**

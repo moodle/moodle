@@ -14,19 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
+/**
+ * Implementaton of the quizaccess_ipaddress plugin.
+ *
+ * @package    quizaccess
+ * @subpackage ipaddress
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
 
 /**
  * A rule implementing the ipaddress check against the ->subnet setting.
  *
- * @package   quizaccess_ipaddress
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_ipaddress extends access_rule_base {
+class quizaccess_ipaddress extends quiz_access_rule_base {
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         if (empty($quizobj->get_quiz()->subnet)) {
             return null;
         }

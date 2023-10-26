@@ -25,7 +25,6 @@ use IMSGlobal\LTI\ToolProvider\User;
 ###
 
 
-#[\AllowDynamicProperties]
 class DataConnector_mysql extends DataConnector
 {
 

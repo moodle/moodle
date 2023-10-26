@@ -52,12 +52,10 @@
     }}data-field-name="{{name}}" {{!
     }}data-field-title="{{title}}" {{!
     }}data-allow-custom="{{allowcustom}}" {{!
-    }}data-required="{{required}}" {{!
-    }}data-join-list="{{joinlist}}" {{!
     }}class="hidden" {{!
     }}{{#filtertypeclass}}data-filter-type-class="{{filtertypeclass}}" {{/filtertypeclass}}{{!
 }}>
     {{#values}}
-        <option value="{{value}}"{{#disabled}} disabled{{/disabled}}>{{{title}}}</option>
+        <option value="{{value}}">{{{title}}}</option>
     {{/values}}
 </select>

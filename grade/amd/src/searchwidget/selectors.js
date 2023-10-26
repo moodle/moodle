@@ -33,7 +33,5 @@ export default {
     elements: {
         getSearchWidgetSelector: searchtype => `.search-widget[data-searchtype="${searchtype}"]`,
         getSearchWidgetDropdownSelector: searchtype => `.search-widget[data-searchtype="${searchtype}"] .dropdown-menu`,
-        getSearchWidgetSelectOption:
-            searchInput => `#${searchInput.getAttribute('aria-controls')} [role="option"][aria-selected="true"]`,
     },
 };

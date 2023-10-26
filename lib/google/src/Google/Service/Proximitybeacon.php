@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon extends Google_Service
 {
 
@@ -264,7 +263,6 @@ class Google_Service_Proximitybeacon extends Google_Service
  *   $beaconinfo = $proximitybeaconService->beaconinfo;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Beaconinfo_Resource extends Google_Service_Resource
 {
 
@@ -292,7 +290,6 @@ class Google_Service_Proximitybeacon_Beaconinfo_Resource extends Google_Service_
  *   $beacons = $proximitybeaconService->beacons;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Beacons_Resource extends Google_Service_Resource
 {
 
@@ -474,7 +471,6 @@ class Google_Service_Proximitybeacon_Beacons_Resource extends Google_Service_Res
  *   $attachments = $proximitybeaconService->attachments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_BeaconsAttachments_Resource extends Google_Service_Resource
 {
 
@@ -574,7 +570,6 @@ class Google_Service_Proximitybeacon_BeaconsAttachments_Resource extends Google_
  *   $diagnostics = $proximitybeaconService->diagnostics;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_BeaconsDiagnostics_Resource extends Google_Service_Resource
 {
 
@@ -611,7 +606,6 @@ class Google_Service_Proximitybeacon_BeaconsDiagnostics_Resource extends Google_
  *   $namespaces = $proximitybeaconService->namespaces;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Namespaces_Resource extends Google_Service_Resource
 {
 
@@ -635,7 +629,6 @@ class Google_Service_Proximitybeacon_Namespaces_Resource extends Google_Service_
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_AdvertisedId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -662,7 +655,6 @@ class Google_Service_Proximitybeacon_AdvertisedId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_AttachmentInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -689,7 +681,6 @@ class Google_Service_Proximitybeacon_AttachmentInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Beacon extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -782,7 +773,6 @@ class Google_Service_Proximitybeacon_Beacon extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_BeaconAttachment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -818,7 +808,6 @@ class Google_Service_Proximitybeacon_BeaconAttachment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_BeaconInfo extends Google_Collection
 {
   protected $collection_key = 'attachments';
@@ -866,12 +855,10 @@ class Google_Service_Proximitybeacon_BeaconInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_BeaconProperties extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Date extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -907,7 +894,6 @@ class Google_Service_Proximitybeacon_Date extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_DeleteAttachmentsResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -925,7 +911,6 @@ class Google_Service_Proximitybeacon_DeleteAttachmentsResponse extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Diagnostics extends Google_Collection
 {
   protected $collection_key = 'alerts';
@@ -963,12 +948,10 @@ class Google_Service_Proximitybeacon_Diagnostics extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Empty extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_GetInfoForObservedBeaconsRequest extends Google_Collection
 {
   protected $collection_key = 'observations';
@@ -997,7 +980,6 @@ class Google_Service_Proximitybeacon_GetInfoForObservedBeaconsRequest extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_GetInfoForObservedBeaconsResponse extends Google_Collection
 {
   protected $collection_key = 'beacons';
@@ -1017,7 +999,6 @@ class Google_Service_Proximitybeacon_GetInfoForObservedBeaconsResponse extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_IndoorLevel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1035,7 +1016,6 @@ class Google_Service_Proximitybeacon_IndoorLevel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_LatLng extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1062,7 +1042,6 @@ class Google_Service_Proximitybeacon_LatLng extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_ListBeaconAttachmentsResponse extends Google_Collection
 {
   protected $collection_key = 'attachments';
@@ -1082,7 +1061,6 @@ class Google_Service_Proximitybeacon_ListBeaconAttachmentsResponse extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_ListBeaconsResponse extends Google_Collection
 {
   protected $collection_key = 'beacons';
@@ -1120,7 +1098,6 @@ class Google_Service_Proximitybeacon_ListBeaconsResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_ListDiagnosticsResponse extends Google_Collection
 {
   protected $collection_key = 'diagnostics';
@@ -1149,7 +1126,6 @@ class Google_Service_Proximitybeacon_ListDiagnosticsResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_ListNamespacesResponse extends Google_Collection
 {
   protected $collection_key = 'namespaces';
@@ -1169,7 +1145,6 @@ class Google_Service_Proximitybeacon_ListNamespacesResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_Observation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1206,7 +1181,6 @@ class Google_Service_Proximitybeacon_Observation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Proximitybeacon_ProximitybeaconNamespace extends Google_Model
 {
   protected $internal_gapi_mappings = array(

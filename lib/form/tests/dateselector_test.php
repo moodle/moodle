@@ -47,7 +47,7 @@ require_once($CFG->libdir.'/formslib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class dateselector_test extends \advanced_testcase {
-    /** @var \MoodleQuickForm Keeps reference of dummy form object */
+    /** @var MoodleQuickForm Keeps reference of dummy form object */
     private $mform;
     /** @var array test fixtures */
     private $testvals;
@@ -184,7 +184,7 @@ class temp_form_date extends moodleform {
     }
     /**
      * Returns form reference
-     * @return \MoodleQuickForm
+     * @return MoodleQuickForm
      */
     public function getform() {
         $mform = $this->_form;

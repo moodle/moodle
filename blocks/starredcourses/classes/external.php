@@ -21,16 +21,14 @@
  * @copyright  2018 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir . '/externallib.php');
 
 require_once($CFG->dirroot . '/course/lib.php');
 require_once($CFG->dirroot . '/course/externallib.php');
 
-use core_course\external\course_summary_exporter;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
+use \core_course\external\course_summary_exporter;
 
 /**
  * Starred courses block external functions.
@@ -136,7 +134,7 @@ class block_starredcourses_external extends core_course_external {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.6
      */
     public static function get_starred_courses_returns() {

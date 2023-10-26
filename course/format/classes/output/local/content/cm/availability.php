@@ -86,16 +86,11 @@ class availability extends section_avalability {
             // Nothing to be displayed to the user.
             return [];
         }
-
         if (!$this->mod->uservisible) {
-            return ['info' => $this->user_availability_info($output)];
+            return $this->user_availability_info($output);
         }
 
-        $editurl = new \moodle_url(
-            '/course/modedit.php',
-            ['update' => $this->mod->id, 'showonly' => 'availabilityconditionsheader']
-        );
-        return ['editurl' => $editurl->out(false), 'info' => $this->conditional_availability_info($output)];
+        return $this->conditional_availability_info($output);
     }
 
     /**
@@ -113,7 +108,11 @@ class availability extends section_avalability {
         }
 
         $info = [];
-        $info[] = $this->get_availability_data($output, $this->mod->availableinfo, 'isrestricted');
+        $formattedinfo = \core_availability\info::format_info(
+            $this->mod->availableinfo,
+            $this->mod->get_course()
+        );
+        $info[] = $this->availability_info($formattedinfo, 'isrestricted');
         return $info;
     }
 
@@ -152,7 +151,11 @@ class availability extends section_avalability {
         if (!$mod->visible) {
             $hidinfoclass .= ' hide';
         }
-        $info[] = $this->get_availability_data($output, $fullinfo, $hidinfoclass);
+        $formattedinfo = info::format_info(
+            $fullinfo,
+            $mod->get_course()
+        );
+        $info[] = $this->availability_info($formattedinfo, $hidinfoclass);
 
         return $info;
     }

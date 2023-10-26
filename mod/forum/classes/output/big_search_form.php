@@ -59,8 +59,6 @@ class big_search_form implements renderable, templatable {
     public $guestuser;
     /** @var bool Whether the include starredonly checkbox is checked. */
     public $starredonly;
-    /** @var int forum ID. */
-    public $forumid;
 
     /**
      * Constructor.

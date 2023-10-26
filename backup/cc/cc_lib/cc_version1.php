@@ -37,9 +37,6 @@ class cc_version1 extends cc_version_base {
     const   discussiontopic     = 'imsdt_xmlv1p0';
     const   weblink             = 'imswl_xmlv1p0';
 
-    /** @var array CC URL profiles. */
-    protected $ccnsnames = [];
-
     public static $checker = array(self::webcontent,
                                    self::assessment,
                                    self::associatedcontent,

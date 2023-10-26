@@ -34,32 +34,22 @@ class helper {
      * @param \completion_info $completion Completion information of course.
      * @param string $activityinclude Activity type for filtering.
      * @param string $activityorder Activity sort option.
-     * @param int $activitysection Section number for filtering.
      * @return array The available activity types and activities array after filtering and sorting.
      * @throws \coding_exception
      */
     public static function get_activities_to_show(\completion_info $completion, string $activityinclude,
-            string $activityorder, int $activitysection = -1): array {
+            string $activityorder): array {
         // Get all activity types.
         $activities = $completion->get_activities();
         $availableactivitytypes = [];
 
         foreach ($activities as $activity) {
-            if ($activity->modname == $activityinclude || $activitysection == -1 || $activity->sectionnum == $activitysection) {
-                $availableactivitytypes[$activity->modname] = $activity->get_module_type_name(true);
-            }
+            $availableactivitytypes[$activity->modname] = $activity->get_module_type_name(true);
         }
 
         asort($availableactivitytypes);
         $availableactivitytypes = ['all' => get_string('allactivitiesandresources', 'report_progress')] +
             $availableactivitytypes;
-
-        // Filter activities by section.
-        if ($activitysection > -1) {
-            $activities = array_filter($activities, function($activity) use ($activitysection) {
-                return $activity->sectionnum == $activitysection;
-            });
-        }
 
         // Filter activities by type.
         if (!empty($activityinclude) && $activityinclude !== 'all') {

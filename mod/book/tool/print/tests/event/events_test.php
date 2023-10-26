@@ -60,6 +60,9 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\booktool_print\event\book_printed', $event);
         $this->assertEquals(\context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($book->id, $event->objectid);
+        $expected = array($course->id, 'book',  'print', 'tool/print/index.php?id=' . $book->cmid, $book->id, $book->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 
@@ -86,6 +89,10 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\booktool_print\event\chapter_printed', $event);
         $this->assertEquals(\context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($chapter->id, $event->objectid);
+        $expected = array($course->id, 'book', 'print chapter', 'tool/print/index.php?id=' . $book->cmid .
+            '&chapterid=' . $chapter->id, $chapter->id, $book->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

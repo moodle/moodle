@@ -19,9 +19,8 @@ declare(strict_types=1);
 namespace core_blog\reportbuilder\datasource;
 
 use context_system;
-use context_user;
 use core_blog_generator;
-use core_comment_generator;
+use core_collator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -50,19 +49,17 @@ class blogs_test extends core_reportbuilder_testcase {
         /** @var core_blog_generator $blogsgenerator */
         $blogsgenerator = $this->getDataGenerator()->get_plugin_generator('core_blog');
 
-        // Our first user will create a course blog.
         $course = $this->getDataGenerator()->create_course();
-        $userone = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe']);
-        $courseblog = $blogsgenerator->create_entry(['publishstate' => 'site', 'userid' => $userone->id,
+        $usercourseblog = $this->getDataGenerator()->create_and_enrol($course);
+        $courseblog = $blogsgenerator->create_entry(['publishstate' => 'site', 'userid' => $usercourseblog->id,
             'subject' => 'Course', 'summary' => 'Course summary', 'courseid' => $course->id]);
 
-        // Our second user will create a personal and site blog.
-        $usertwo = $this->getDataGenerator()->create_user(['firstname' => 'Amy']);
-        $personalblog = $blogsgenerator->create_entry(['publishstate' => 'draft', 'userid' => $usertwo->id,
+        $userpersonalblog = $this->getDataGenerator()->create_user();
+        $personalblog = $blogsgenerator->create_entry(['publishstate' => 'draft', 'userid' => $userpersonalblog->id,
             'subject' => 'Personal', 'summary' => 'Personal summary']);
 
-        $this->waitForSecond(); // For consistent ordering we need distinct time for second user blogs.
-        $siteblog = $blogsgenerator->create_entry(['publishstate' => 'public', 'userid' => $usertwo->id,
+        $usersiteblog = $this->getDataGenerator()->create_user();
+        $siteblog = $blogsgenerator->create_entry(['publishstate' => 'public', 'userid' => $usersiteblog->id,
             'subject' => 'Site', 'summary' => 'Site summary']);
 
         /** @var core_reportbuilder_generator $generator */
@@ -70,12 +67,17 @@ class blogs_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Blogs', 'source' => blogs::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(3, $content);
 
-        // Default columns are user, course, title, time created. Sorted by user and time created.
+        // Consistent order (course, personal, site), just in case.
+        core_collator::asort_array_of_arrays_by_key($content, 'c2_subject');
+        $content = array_values($content);
+
+        // Default columns are user, course, title, timecreated.
         $this->assertEquals([
-            [fullname($usertwo), '', $personalblog->subject, userdate($personalblog->created)],
-            [fullname($usertwo), '', $siteblog->subject, userdate($siteblog->created)],
-            [fullname($userone), $course->fullname, $courseblog->subject, userdate($courseblog->created)],
+            [fullname($usercourseblog), $course->fullname, $courseblog->subject, userdate($courseblog->created)],
+            [fullname($userpersonalblog), '', $personalblog->subject, userdate($personalblog->created)],
+            [fullname($usersiteblog), '', $siteblog->subject, userdate($siteblog->created)],
         ], array_map('array_values', $content));
     }
 
@@ -88,7 +90,6 @@ class blogs_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
 
         /** @var core_blog_generator $blogsgenerator */
         $blogsgenerator = $this->getDataGenerator()->get_plugin_generator('core_blog');
@@ -105,16 +106,6 @@ class blogs_test extends core_reportbuilder_testcase {
             'filepath' => '/',
             'filename' => 'hello.txt',
         ], 'hello');
-
-        /** @var core_comment_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_comment');
-        $generator->create_comment([
-            'context' => context_user::instance($user->id),
-            'component' => 'blog',
-            'area' => 'format_blog',
-            'itemid' => $blog->id,
-            'content' => 'Cool',
-        ]);
 
         // Manually update the created/modified date of the blog.
         $blog->created = 1654038000;
@@ -133,37 +124,15 @@ class blogs_test extends core_reportbuilder_testcase {
         // Tag entity (course/user presence already checked by default columns).
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
 
-        // File entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:size']);
-
-        // Comment entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'comment:content']);
-
-        // Commenter entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'commenter:fullname']);
-
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
-        [
-            $body,
-            $attachment,
-            $publishstate,
-            $timemodified,
-            $tags,
-            $filesize,
-            $comment,
-            $commenter,
-        ] = array_values($content[0]);
-
+        [$body, $attachment, $publishstate, $timemodified, $tags] = array_values($content[0]);
         $this->assertStringContainsString('Horses', $body);
         $this->assertStringContainsString('hello.txt', $attachment);
         $this->assertEquals('Yourself (draft)', $publishstate);
         $this->assertEquals(userdate($blog->lastmodified), $timemodified);
         $this->assertEquals('horse', $tags);
-        $this->assertEquals("5\xc2\xa0bytes", $filesize);
-        $this->assertEquals(format_text('Cool'), $comment);
-        $this->assertEquals(fullname($user), $commenter);
     }
 
     /**

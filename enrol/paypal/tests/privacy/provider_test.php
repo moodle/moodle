@@ -29,7 +29,6 @@ defined('MOODLE_INTERNAL') || die();
 use core_privacy\local\metadata\collection;
 use enrol_paypal\privacy\provider;
 use core_privacy\local\request\writer;
-use stdClass;
 
 /**
  * Privacy provider test for enrol_paypal.

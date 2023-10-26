@@ -16,7 +16,6 @@
 
 namespace mod_resource;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_resource_external;
 
@@ -78,7 +77,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_resource_external::view_resource($resource->id);
-        $result = external_api::clean_returnvalue(mod_resource_external::view_resource_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_resource_external::view_resource_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -185,7 +184,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_resource_external::get_resources_by_courses(array($course2->id, $course1->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         // Remove the contentfiles (to be checked bellow).
         $result['resources'][0]['contentfiles'] = [];
@@ -197,7 +196,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_resource_external::get_resources_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         // Remove the contentfiles (to be checked bellow).
         $result['resources'][0]['contentfiles'] = [];
@@ -222,7 +221,7 @@ class externallib_test extends externallib_advanced_testcase {
         $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
 
         $result = mod_resource_external::get_resources_by_courses(array($course2->id, $course1->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         // Check that we receive correctly the files.
         $this->assertCount(1, $result['resources'][0]['introfiles']);
@@ -239,7 +238,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_resource_external::get_resources_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         // Remove the contentfiles (to be checked bellow).
         $result['resources'][0]['contentfiles'] = [];

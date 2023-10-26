@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Freebase extends Google_Service
 {
 
@@ -263,7 +262,6 @@ class Google_Service_Freebase extends Google_Service
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Freebase_ReconcileCandidate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -318,7 +316,6 @@ class Google_Service_Freebase_ReconcileCandidate extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Freebase_ReconcileCandidateNotable extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -345,7 +342,6 @@ class Google_Service_Freebase_ReconcileCandidateNotable extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Freebase_ReconcileGet extends Google_Collection
 {
   protected $collection_key = 'warning';
@@ -395,7 +391,6 @@ class Google_Service_Freebase_ReconcileGet extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Freebase_ReconcileGetCosts extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -422,7 +417,6 @@ class Google_Service_Freebase_ReconcileGetCosts extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Freebase_ReconcileGetWarning extends Google_Model
 {
   protected $internal_gapi_mappings = array(

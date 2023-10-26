@@ -190,7 +190,7 @@ class helper_test extends advanced_testcase {
         // - https://unicode-org.atlassian.net/browse/ICU-8853
         // - https://unicode-org.atlassian.net/browse/ICU-8840
         // It has been detected that versions prior to ICU-61.1 / ICU-62.1 come with this
-        // problem. Noticeably some CI images (as of December 2021) use buggy ICU-60.1.
+        // problem. Noticeably Travis images (as of December 2021) use buggy ICU-60.1.
         // So, here, we are going to dynamically verify the behaviour and skip the
         // test when buggy one is found. No need to apply this to code as dar as the real
         // formatting is not critical for the functionality (just small glitch).

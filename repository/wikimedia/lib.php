@@ -38,9 +38,6 @@ require_once(__DIR__ . '/wikimedia.php');
 
 class repository_wikimedia extends repository {
 
-    /** @var string keyword search. */
-    protected $keyword;
-
     /**
      * Returns maximum width for images
      *

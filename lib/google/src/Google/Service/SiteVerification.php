@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification extends Google_Service
 {
   /** Manage the list of sites and domains you control. */
@@ -134,7 +133,6 @@ class Google_Service_SiteVerification extends Google_Service
  *   $webResource = $siteVerificationService->webResource;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_WebResource_Resource extends Google_Service_Resource
 {
 
@@ -245,7 +243,6 @@ class Google_Service_SiteVerification_WebResource_Resource extends Google_Servic
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -273,7 +270,6 @@ class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenRequest
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenRequestSite extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -300,7 +296,6 @@ class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenRequest
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -327,7 +322,6 @@ class Google_Service_SiteVerification_SiteVerificationWebResourceGettokenRespons
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -347,7 +341,6 @@ class Google_Service_SiteVerification_SiteVerificationWebResourceListResponse ex
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceResource extends Google_Collection
 {
   protected $collection_key = 'owners';
@@ -385,7 +378,6 @@ class Google_Service_SiteVerification_SiteVerificationWebResourceResource extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_SiteVerification_SiteVerificationWebResourceResourceSite extends Google_Model
 {
   protected $internal_gapi_mappings = array(

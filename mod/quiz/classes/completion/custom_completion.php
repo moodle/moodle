@@ -20,8 +20,10 @@ namespace mod_quiz\completion;
 
 use context_module;
 use core_completion\activity_custom_completion;
-use mod_quiz\quiz_settings;
-use mod_quiz\access_manager;
+use grade_grade;
+use grade_item;
+use quiz;
+use quiz_access_manager;
 
 /**
  * Activity custom completion subclass for the quiz activity.
@@ -69,8 +71,8 @@ class custom_completion extends activity_custom_completion {
         }
         $lastfinishedattempt = end($attempts);
         $context = context_module::instance($this->cm->id);
-        $quizobj = quiz_settings::create((int) $this->cm->instance, $this->userid);
-        $accessmanager = new access_manager(
+        $quizobj = quiz::create($this->cm->instance, $this->userid);
+        $accessmanager = new quiz_access_manager(
             $quizobj,
             time(),
             has_capability('mod/quiz:ignoretimelimits', $context, $this->userid, false)

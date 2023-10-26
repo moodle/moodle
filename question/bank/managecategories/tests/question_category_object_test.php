@@ -261,6 +261,8 @@ class question_category_object_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\question_category_created', $event);
         $this->assertEquals(context_module::instance($this->quiz->cmid), $event->get_context());
+        $expected = [$this->course->id, 'quiz', 'addcategory', 'view.php?id=' . $this->quiz->cmid , $categoryid, $this->quiz->cmid];
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 

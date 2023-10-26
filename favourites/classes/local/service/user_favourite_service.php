@@ -114,7 +114,7 @@ class user_favourite_service {
      * Find a list of favourites, by multiple types within a component.
      *
      * E.g. "Find all favourites in the activity chooser" might result in:
-     * $favcourses = find_all_favourites('core_course', ['contentitem_mod_assign');
+     * $favcourses = find_all_favourites('core_course', ['contentitem_mod_assign','contentitem_mod_assignment');
      *
      * @param string $component the frankenstyle component name.
      * @param array $itemtypes optional the type of the favourited item.

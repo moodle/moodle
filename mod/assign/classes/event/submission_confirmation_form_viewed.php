@@ -96,6 +96,17 @@ class submission_confirmation_form_viewed extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $logmessage = get_string('viewownsubmissionform', 'assign');
+        $this->set_legacy_logdata('view confirm submit assignment form', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

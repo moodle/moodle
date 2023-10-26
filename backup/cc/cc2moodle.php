@@ -206,7 +206,7 @@ class cc2moodle {
         if (array_key_exists("index", self::$instances)) {
 
             if (!file_put_contents(static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', $result_xml)) {
-                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_manifest_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
+                static::log_action('Cannot save the moodle manifest file: ' . static::$path_to_tmp_folder . DIRECTORY_SEPARATOR . 'moodle.xml', true);
             } else {
                 $status = true;
             }

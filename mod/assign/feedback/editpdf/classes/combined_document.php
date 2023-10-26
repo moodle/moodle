@@ -136,7 +136,7 @@ class combined_document {
     /**
      * Set the completed combined file.
      *
-     * @param   \stored_file $file The completed document for all files to be combined.
+     * @param   stored_file $file The completed document for all files to be combined.
      * @return  $this
      */
     public function set_combined_file($file) {
@@ -171,7 +171,7 @@ class combined_document {
     /**
      * Set all source files which are to be combined.
      *
-     * @param   \stored_file|conversion[] $files The complete list of all source files to be combined.
+     * @param   stored_file|conversion[] $files The complete list of all source files to be combined.
      * @return  $this
      */
     public function set_source_files($files) {
@@ -183,7 +183,7 @@ class combined_document {
     /**
      * Add an additional source file to the end of the existing list.
      *
-     * @param   \stored_file|conversion $file The file to add to the end of the list.
+     * @param   stored_file|conversion $file The file to add to the end of the list.
      * @return  $this
      */
     public function add_source_file($file) {

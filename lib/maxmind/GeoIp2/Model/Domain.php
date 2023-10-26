@@ -20,19 +20,8 @@ use GeoIp2\Util;
  */
 class Domain extends AbstractModel
 {
-    /**
-     * @var string|null
-     */
     protected $domain;
-
-    /**
-     * @var string
-     */
     protected $ipAddress;
-
-    /**
-     * @var string
-     */
     protected $network;
 
     /**

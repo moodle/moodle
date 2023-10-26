@@ -44,12 +44,6 @@ class related_competencies implements renderable, templatable {
     /** @var array Related competencies. */
     protected $relatedcompetencies = null;
 
-    /** @var \core_competency\competency|null */
-    protected $competency = null;
-
-    /** @var \context|null */
-    protected $context = null;
-
     /**
      * Construct this renderable.
      *

@@ -199,7 +199,7 @@ Feature: Edit quiz page - section headings
     Then I should see "TF5" on quiz page "2"
 
   @javascript
-  Scenario: Moving a question down from the first section to the second section.
+  Scenario: moving a question down from the first section to the second section.
     Given the following "activities" exist:
       | activity   | name   | intro              | course | idnumber |
       | quiz       | Quiz 1 | Quiz 1 description | C1     | quiz1    |

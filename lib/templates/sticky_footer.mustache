@@ -22,15 +22,6 @@
     Sticky footer behaviour depends on the theme. The default template is
     a regular element.
 
-    Classes required for JS:
-    * none
-
-    Data attributes optional for JS:
-    * data-disable Number|String - If the sticky footer should be disabled by default
-
-    Context variables required for this template:
-    * disable Boolean - if the sticky footer should be loaded hidden
-
     Example context (json):
     {
         "stickycontent" : "<a href=\"#\">Moodle</a>",
@@ -46,9 +37,6 @@
 <div
     id="sticky-footer"
     class="{{$ stickyclasses }}{{stickyclasses}}{{/ stickyclasses }}"
-    {{$ disable }}
-        {{#disable}} data-disable="true" {{/disable}}
-    {{/ disable }}
     {{#extras}}
     {{attribute}}="{{value}}"
     {{/extras}}
@@ -57,9 +45,3 @@
         {{{stickycontent}}}
     {{/ stickycontent }}
 </div>
-{{#js}}
-require(['core/sticky-footer'], function(footer) {
-    footer.init();
-});
-
-{{/js}}

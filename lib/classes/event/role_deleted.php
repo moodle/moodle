@@ -80,6 +80,16 @@ class role_deleted extends base {
     }
 
     /**
+     * Returns array of parameters to be passed to legacy add_to_log() function.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'role', 'delete', 'admin/roles/manage.php?action=delete&roleid=' . $this->objectid,
+            $this->other['shortname'], '');
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

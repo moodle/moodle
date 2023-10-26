@@ -166,6 +166,8 @@ echo $OUTPUT->header();
 $actionbar = new \core_course\output\completion_action_bar($course->id, $PAGE->url);
 echo $renderer->render_course_completion_action_bar($actionbar);
 
+echo $OUTPUT->heading(get_string('editcoursecompletionsettings', 'core_completion'));
+
 $form->display();
 
 echo $OUTPUT->footer();

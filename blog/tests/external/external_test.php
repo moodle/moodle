@@ -24,8 +24,6 @@
 
 namespace core_blog\external;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -47,9 +45,6 @@ class external_test extends \advanced_testcase {
     private $groupid;
     private $tagid;
     private $postid;
-
-    /** @var string publish state. */
-    protected $publishstate;
 
     protected function setUp(): void {
         global $DB, $CFG;
@@ -113,7 +108,7 @@ class external_test extends \advanced_testcase {
         $DB->set_field('post', 'publishstate', 'public', array('id' => $this->postid));
 
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertCount(1, $result['entries'][0]['tags']);
         $this->assertEquals('tag1', $result['entries'][0]['tags'][0]['rawname']);
@@ -149,7 +144,7 @@ class external_test extends \advanced_testcase {
 
         $this->setGuestUser();
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertCount(1, $result['entries'][0]['tags']);
         $this->assertEquals('tag1', $result['entries'][0]['tags'][0]['rawname']);
@@ -167,7 +162,7 @@ class external_test extends \advanced_testcase {
         $CFG->bloglevel = BLOG_GLOBAL_LEVEL;
 
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -182,7 +177,7 @@ class external_test extends \advanced_testcase {
 
         $this->setGuestUser();
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -203,7 +198,7 @@ class external_test extends \advanced_testcase {
 
         $this->setGuestUser();
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -214,7 +209,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($this->userid);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
     }
@@ -230,7 +225,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($this->userid);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
     }
@@ -247,7 +242,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($user);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -263,7 +258,7 @@ class external_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
     }
@@ -280,7 +275,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($this->userid);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
     }
@@ -298,7 +293,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($user);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -315,7 +310,7 @@ class external_test extends \advanced_testcase {
 
         $this->setAdminUser();
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
     }
@@ -341,7 +336,7 @@ class external_test extends \advanced_testcase {
 
         $this->setUser($this->userid);
         $result = \core_blog\external::get_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(2, $result['entries']);
         $this->assertEquals(2, $result['totalentries']);
         $this->assertCount(0, $result['entries'][0]['tags']);
@@ -349,13 +344,13 @@ class external_test extends \advanced_testcase {
         $this->assertEquals('tag1', $result['entries'][1]['tags'][0]['rawname']);
 
         $result = \core_blog\external::get_entries(array(), 0, 1);
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals(2, $result['totalentries']);
         $this->assertEquals($newpost->id, $result['entries'][0]['id']);
 
         $result = \core_blog\external::get_entries(array(), 1, 1);
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals(2, $result['totalentries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
@@ -379,19 +374,19 @@ class external_test extends \advanced_testcase {
 
         // There is one entry associated with a course.
         $result = \core_blog\external::get_entries(array(array('name' => 'courseid', 'value' => $this->courseid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertCount(1, $result['entries'][0]['tags']);
         $this->assertEquals('tag1', $result['entries'][0]['tags'][0]['rawname']);
 
         // There is no entry associated with a wrong course.
         $result = \core_blog\external::get_entries(array(array('name' => 'courseid', 'value' => $anothercourse->id)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
 
         // There is no entry associated with a module.
         $result = \core_blog\external::get_entries(array(array('name' => 'cmid', 'value' => $this->cmid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -414,17 +409,17 @@ class external_test extends \advanced_testcase {
 
         // There is no entry associated with a course.
         $result = \core_blog\external::get_entries(array(array('name' => 'courseid', 'value' => $this->courseid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
 
         // There is one entry associated with a module.
         $result = \core_blog\external::get_entries(array(array('name' => 'cmid', 'value' => $this->cmid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
 
         // There is no entry associated with a wrong module.
         $result = \core_blog\external::get_entries(array(array('name' => 'cmid', 'value' => $anothermodule->cmid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -435,12 +430,12 @@ class external_test extends \advanced_testcase {
         $this->setAdminUser();
         // Filter by author.
         $result = \core_blog\external::get_entries(array(array('name' => 'userid', 'value' => $this->userid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // No author.
         $anotheruser = $this->getDataGenerator()->create_user();
         $result = \core_blog\external::get_entries(array(array('name' => 'userid', 'value' => $anotheruser->id)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -451,7 +446,7 @@ class external_test extends \advanced_testcase {
         $this->setAdminUser();
         // Filter by correct entry.
         $result = \core_blog\external::get_entries(array(array('name' => 'entryid', 'value' => $this->postid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // Non-existent entry.
         $this->expectException('\moodle_exception');
@@ -465,11 +460,11 @@ class external_test extends \advanced_testcase {
         $this->setAdminUser();
         // Filter by correct search.
         $result = \core_blog\external::get_entries(array(array('name' => 'search', 'value' => 'test')));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // Non-existent search.
         $result = \core_blog\external::get_entries(array(array('name' => 'search', 'value' => 'abc')));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -480,14 +475,14 @@ class external_test extends \advanced_testcase {
         $this->setAdminUser();
         // Filter by correct tag.
         $result = \core_blog\external::get_entries(array(array('name' => 'tag', 'value' => 'tag1')));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // Create tag.
         $tag = $this->getDataGenerator()->create_tag(array('userid' => $this->userid, 'name' => 'tag2',
             'isstandard' => 1));
 
         $result = \core_blog\external::get_entries(array(array('name' => 'tag', 'value' => 'tag2')));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -498,7 +493,7 @@ class external_test extends \advanced_testcase {
         $this->setAdminUser();
         // Filter by correct tag.
         $result = \core_blog\external::get_entries(array(array('name' => 'tagid', 'value' => $this->tagid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // Non-existent tag.
 
@@ -507,7 +502,7 @@ class external_test extends \advanced_testcase {
             'isstandard' => 1));
 
         $result = \core_blog\external::get_entries(array(array('name' => 'tagid', 'value' => $tag->id)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -523,7 +518,7 @@ class external_test extends \advanced_testcase {
 
         // Filter by correct group.
         $result = \core_blog\external::get_entries(array(array('name' => 'groupid', 'value' => $this->groupid)));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         // Non-existent group.
         $anotheruser = $this->getDataGenerator()->create_user();
@@ -545,7 +540,7 @@ class external_test extends \advanced_testcase {
             array('name' => 'tagid', 'value' => $this->tagid),
             array('name' => 'userid', 'value' => $this->userid),
         ));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
 
         // Non-existent multiple filter.
@@ -553,7 +548,7 @@ class external_test extends \advanced_testcase {
             array('name' => 'search', 'value' => 'www'),
             array('name' => 'userid', 'value' => $this->userid),
         ));
-        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(0, $result['entries']);
     }
 
@@ -589,7 +584,7 @@ class external_test extends \advanced_testcase {
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
         $result = \core_blog\external::view_entries();
-        $result = external_api::clean_returnvalue(\core_blog\external::view_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::view_entries_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -620,7 +615,7 @@ class external_test extends \advanced_testcase {
             array('name' => 'tagid', 'value' => $this->tagid),
             array('name' => 'userid', 'value' => $this->userid),
         ));
-        $result = external_api::clean_returnvalue(\core_blog\external::view_entries_returns(), $result);
+        $result = \external_api::clean_returnvalue(\core_blog\external::view_entries_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);

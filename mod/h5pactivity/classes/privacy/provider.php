@@ -14,6 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Defines {@link \mod_h5pactivity\privacy\provider} class.
+ *
+ * @package     mod_h5pactivity
+ * @category    privacy
+ * @copyright   2020 Ferran Recio <ferran@moodle.com>
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace mod_h5pactivity\privacy;
 
 use core_privacy\local\metadata\collection;
@@ -29,8 +38,6 @@ use stdClass;
 /**
  * Privacy API implementation for the H5P activity plugin.
  *
- * @package    mod_h5pactivity
- * @category   privacy
  * @copyright  2020 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -38,6 +45,16 @@ class provider implements
         \core_privacy\local\metadata\provider,
         \core_privacy\local\request\core_userlist_provider,
         \core_privacy\local\request\plugin\provider {
+
+    /**
+     * Get the language string identifier with the component's language
+     * file to explain why this plugin stores no data.
+     *
+     * @return  string
+     */
+    public static function get_reason() : string {
+        return 'privacy:metadata';
+    }
 
     /**
      * Return the fields which contain personal data.
@@ -59,8 +76,6 @@ class provider implements
                 'timecreated' => 'privacy:metadata:timecreated',
                 'rawscore' => 'privacy:metadata:rawscore',
             ], 'privacy:metadata:xapi_track_results');
-
-        $collection->add_subsystem_link('core_xapi', [], 'privacy:metadata:xapisummary');
 
         return $collection;
     }
@@ -87,8 +102,6 @@ class provider implements
         $params = ['activityname' => 'h5pactivity', 'modlevel' => CONTEXT_MODULE, 'userid' => $userid];
         $contextlist = new contextlist();
         $contextlist->add_from_sql($sql, $params);
-
-        \core_xapi\privacy\provider::add_contexts_for_userid($contextlist, $userid, 'mod_h5pactivity');
 
         return $contextlist;
     }
@@ -120,8 +133,6 @@ class provider implements
         $params = ['modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
 
         $userlist->add_from_sql('userid', $sql, $params);
-
-        \core_xapi\privacy\provider::add_userids_for_context($userlist);
     }
 
     /**
@@ -152,16 +163,6 @@ class provider implements
             $data = helper::get_context_data($context, $user);
             writer::with_context($context)->export_data([], $data);
             helper::export_context_files($context, $user);
-
-            // Get user's xAPI state data for the particular context.
-            $state = \core_xapi\privacy\provider::get_xapi_states_for_user($contextlist->get_user()->id,
-                    'mod_h5pactivity', $context->instanceid);
-            if ($state) {
-                // If the activity has xAPI state data by the user, include it in the export.
-                writer::with_context($context)->export_data(
-                        [get_string('privacy:xapistate', 'core_xapi')], (object) $state);
-            }
-
         }
 
         // Get attempts track data.
@@ -225,7 +226,7 @@ class provider implements
     /**
      * Delete all user data which matches the specified context.
      *
-     * @param \context $context A user context.
+     * @param context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // This should not happen, but just in case.
@@ -240,10 +241,6 @@ class provider implements
         }
 
         self::delete_all_attempts($cm);
-
-        // Delete xAPI state data.
-        \core_xapi\privacy\provider::delete_states_for_all_users($context, 'mod_h5pactivity');
-
     }
 
     /**
@@ -267,9 +264,6 @@ class provider implements
             $user = $contextlist->get_user();
 
             self::delete_all_attempts($cm, $user);
-
-            // Delete xAPI state data.
-            \core_xapi\privacy\provider::delete_states_for_user($contextlist, 'mod_h5pactivity');
         }
     }
 
@@ -297,10 +291,6 @@ class provider implements
         foreach ($userids as $userid) {
             self::delete_all_attempts ($cm, (object)['id' => $userid]);
         }
-
-        // Delete xAPI states data.
-        \core_xapi\privacy\provider::delete_states_for_userlist($userlist);
-
     }
 
     /**

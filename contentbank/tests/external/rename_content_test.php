@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_contenttype.p
 require_once($CFG->dirroot . '/contentbank/tests/fixtures/testable_content.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
+use external_api;
 
 /**
  * Core content bank external functions tests.

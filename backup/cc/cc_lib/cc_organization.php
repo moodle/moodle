@@ -42,8 +42,7 @@ class cc_organization implements cc_i_organization {
     private  $metadata      = null;
     private  $sequencing    = null;
 
-    /** @var bool true if empty, otherwise false. */
-    protected $isempty;
+
 
     public function __construct($node=null, $doc=null) {
         if (is_object($node) && is_object($doc)) {
@@ -141,8 +140,7 @@ class cc_item implements cc_i_item  {
     private $parentItem     = null;
     private $isempty        = true;
 
-    /** @var mixed node structure. */
-    public $structure;
+
 
     public function __construct($node=null,$doc=null) {
         if (is_object($node)) {

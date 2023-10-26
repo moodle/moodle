@@ -92,14 +92,14 @@ Feature: Run tests over my courses.
     Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I add the "Text" block to the default region with:
-      | Text block title | Text on all pages                  |
-      | Content          | This is visible on all pages       |
-    And I configure the "Text on all pages" block
+    And I add the "Text" block
+    And I configure the "(new text block)" block
     And I set the following fields to these values:
       | Page contexts    | Display throughout the entire site |
+      | Text block title | Text on all pages                  |
+      | Content          | This is visible on all pages       |
       | Default region   | Right                              |
-    And I click on "Save changes" "button" in the "Configure Text on all pages block" "dialogue"
+    And I press "Save changes"
     And I should see "This is visible on all pages"
     And "Move Text on all pages block" "menuitem" should exist in the "Text on all pages" "block"
     When I am on the "My courses" page

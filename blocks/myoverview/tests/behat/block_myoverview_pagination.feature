@@ -35,7 +35,7 @@ Feature: My overview block pagination
 
   Scenario: The pagination controls should be hidden if I am not enrolled in any courses
     When I am on the "My courses" page logged in as "student1"
-    Then I should see "You're not enrolled in any course" in the "Course overview" "block"
+    Then I should see "No courses" in the "Course overview" "block"
     And I should not see "Show" in the "Course overview" "block"
     And ".block_myoverview .dropdown-menu.show" "css_element" should not be visible
     And ".block_myoverview [data-control='next']" "css_element" should not be visible

@@ -50,7 +50,6 @@ class recordset_walk_test extends \advanced_testcase {
     public function test_simple_callback() {
         global $DB;
 
-        /** @var \mod_assign_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $courses = array();
         for ($i = 0; $i < 10; $i++) {
@@ -75,7 +74,6 @@ class recordset_walk_test extends \advanced_testcase {
     public function test_extra_params_callback() {
         global $DB;
 
-        /** @var \mod_assign_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
         $courses = array();
         for ($i = 0; $i < 10; $i++) {

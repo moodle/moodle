@@ -25,33 +25,6 @@ namespace core_analytics;
  */
 class course_test extends \advanced_testcase {
 
-    /** @var \stdClass Course record. */
-    protected $course;
-
-    /** @var \stdClass Student 1 user record. */
-    protected $stu1;
-
-    /** @var \stdClass Student 2 user record. */
-    protected $stu2;
-
-    /** @var \stdClass Student both user record. */
-    protected $both;
-
-    /** @var \stdClass Editing teacher user record. */
-    protected $editingteacher;
-
-    /** @var \stdClass Teacher user record. */
-    protected $teacher;
-
-    /** @var int Student role ID record. */
-    protected $studentroleid;
-
-    /** @var int Editing teacher role ID record. */
-    protected $editingteacherroleid;
-
-    /** @var int Teacher role ID record. */
-    protected $teacherroleid;
-
     public function setUp(): void {
         global $DB;
 

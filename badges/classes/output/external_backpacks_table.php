@@ -48,9 +48,9 @@ class external_backpacks_table extends table_sql {
     public function __construct() {
         parent::__construct('backpacks');
 
-        $context = \context_system::instance();
+        $this->context = \context_system::instance();
         // This object should not be used without the right permissions.
-        require_capability('moodle/badges:manageglobalsettings', $context);
+        require_capability('moodle/badges:manageglobalsettings', $this->context);
 
         // Define columns in the table.
         $this->define_table_columns();

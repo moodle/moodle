@@ -41,7 +41,7 @@ class quiz_statistics_settings_form extends moodleform {
 
         $mform->addElement('header', 'preferencespage', get_string('reportsettings', 'quiz_statistics'));
 
-        $options = [];
+        $options = array();
         foreach (array_keys(quiz_get_grading_options()) as $which) {
             $options[$which] = \quiz_statistics\calculator::using_attempts_lang_string($which);
         }
@@ -49,10 +49,10 @@ class quiz_statistics_settings_form extends moodleform {
         $mform->addElement('select', 'whichattempts', get_string('calculatefrom', 'quiz_statistics'), $options);
 
         if (quiz_allows_multiple_tries($this->_customdata['quiz'])) {
-            $mform->addElement('select', 'whichtries', get_string('whichtries', 'quiz_statistics'), [
+            $mform->addElement('select', 'whichtries', get_string('whichtries', 'quiz_statistics'), array(
                                            question_attempt::FIRST_TRY    => get_string('firsttry', 'question'),
                                            question_attempt::LAST_TRY     => get_string('lasttry', 'question'),
-                                           question_attempt::ALL_TRIES    => get_string('alltries', 'question')]
+                                           question_attempt::ALL_TRIES    => get_string('alltries', 'question'))
             );
             $mform->setDefault('whichtries', question_attempt::LAST_TRY);
         }

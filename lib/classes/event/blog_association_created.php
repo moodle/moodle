@@ -81,6 +81,21 @@ class blog_association_created extends base {
     }
 
     /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        if ($this->other['associatetype'] === 'course') {
+            return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                    $this->other['blogid'], $this->other['subject'], 0, $this->relateduserid);
+        }
+
+        return array (SITEID, 'blog', 'add association', 'index.php?userid=' . $this->relateduserid. '&entryid=' .
+                $this->other['blogid'], $this->other['subject'], $this->other['associateid'], $this->relateduserid);
+    }
+
+    /**
      * Custom validations.
      *
      * @throws \coding_exception when validation fails.

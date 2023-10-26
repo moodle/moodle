@@ -21,7 +21,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {relativeUrl} from 'core/url';
 import {saveCancel} from 'core/notification';
@@ -42,9 +42,9 @@ prefetchStrings('core', [
  */
 const selectors = {
     toggleTemplateEditor: 'input[name="useeditor"]',
-    resetTemplateAction: '[data-action="resettemplate"]',
     resetTemplate: 'input[name="defaultform"]',
     resetAllTemplates: 'input[name="resetall"]',
+    resetButton: 'input[name="resetbutton"]',
     resetAllCheck: 'input[name="resetallcheck"]',
     editForm: '#edittemplateform',
 };
@@ -62,17 +62,15 @@ const registerEventListeners = (instanceId, mode) => {
 
 const registerResetButton = (mode) => {
     const editForm = document.querySelector(selectors.editForm);
+    const resetButton = document.querySelector(selectors.resetButton);
     const resetTemplate = document.querySelector(selectors.resetTemplate);
     const resetAllTemplates = document.querySelector(selectors.resetAllTemplates);
-    const resetTemplateAction = document.querySelector(selectors.resetTemplateAction);
 
-    if (!resetTemplateAction || !resetTemplate || !editForm) {
+    if (!resetButton || !resetTemplate || !editForm) {
         return;
     }
-    prefetchStrings('mod_data', [
-        mode
-    ]);
-    resetTemplateAction.addEventListener('click', async(event) => {
+
+    resetButton.addEventListener('click', async(event) => {
         event.preventDefault();
         const params = {
             resetallname: "resetallcheck",

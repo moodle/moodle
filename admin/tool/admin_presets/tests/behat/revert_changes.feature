@@ -20,11 +20,11 @@ Feature: I can revert changes after a load
     And the field "Enable badges" matches value "0"
     And the field "Enable competencies" matches value "0"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Chat" "icon" should not exist in the "Chat" "table_row"
+    And "Hide" "icon" should not exist in the "Chat" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should not exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Disable Logged in user" "icon" should not exist in the "Logged in user" "table_row"
+    And "Hide" "icon" should not exist in the "Logged in user" "table_row"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should not exist in the "Social format" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
@@ -39,11 +39,11 @@ Feature: I can revert changes after a load
     Then the field "Enable badges" matches value "1"
     And the field "Enable competencies" matches value "1"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Chat" "icon" should exist in the "Chat" "table_row"
+    And "Hide" "icon" should exist in the "Chat" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Disable Logged in user" "icon" should exist in the "Logged in user" "table_row"
+    And "Hide" "icon" should exist in the "Logged in user" "table_row"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should exist in the "Social format" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration

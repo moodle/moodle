@@ -17,7 +17,15 @@
 namespace tool_lp;
 
 use core_competency\api;
-use core_external\external_api;
+use core_competency\invalid_persistent_exception;
+use core_competency\plan;
+use core_competency\related_competency;
+use core_competency\user_competency;
+use core_competency\user_competency_plan;
+use core_competency\plan_competency;
+use core_competency\template;
+use core_competency\template_competency;
+use core_competency\course_competency_settings;
 use externallib_advanced_testcase;
 
 defined('MOODLE_INTERNAL') || die();
@@ -144,7 +152,7 @@ class externallib_test extends externallib_advanced_testcase {
         // First we search with no capability assigned.
         $this->setUser($ux);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
@@ -154,7 +162,7 @@ class externallib_test extends externallib_advanced_testcase {
         $customrole = $this->assignUserCapability('moodle/competency:planview', $usercontext->id);
 
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
@@ -163,14 +171,14 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assignUserCapability('moodle/competency:planmanage', $usercontext->id, $customrole);
 
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
         // Now assign another role with the same capability (test duplicates).
         role_assign($this->creatorrole, $ux->id, $usercontext->id);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
@@ -179,7 +187,7 @@ class externallib_test extends externallib_advanced_testcase {
         role_assign($this->creatorrole, $ux2->id, $systemcontext->id);
         $this->setUser($ux2);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
@@ -188,7 +196,7 @@ class externallib_test extends externallib_advanced_testcase {
         role_assign($this->creatorrole, $ux3->id, $usercontext->id);
         $this->setUser($ux3);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
@@ -198,14 +206,14 @@ class externallib_test extends externallib_advanced_testcase {
         // Now add a prevent override (will change nothing because we still have an ALLOW).
         assign_capability('moodle/competency:planmanage', CAP_PREVENT, $customrole, $usercontext->id);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
         // Now change to a prohibit override (should prevent access).
         assign_capability('moodle/competency:planmanage', CAP_PROHIBIT, $customrole, $usercontext->id);
         $result = external::search_users('yyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
 
@@ -313,14 +321,14 @@ class externallib_test extends externallib_advanced_testcase {
         // No identity fields.
         $CFG->showuseridentity = '';
         $result = external::search_users('cats', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
         // Filter by name.
         $CFG->showuseridentity = '';
         $result = external::search_users('dyyylan', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(2, $result['users']);
         $this->assertEquals(2, $result['count']);
         $this->assertEquals($u2->id, $result['users'][0]['id']);
@@ -329,7 +337,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Filter by institution and name.
         $CFG->showuseridentity = 'institution';
         $result = external::search_users('bob', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(2, $result['users']);
         $this->assertEquals(2, $result['count']);
         $this->assertEquals($u1->id, $result['users'][0]['id']);
@@ -338,7 +346,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Filter by id number.
         $CFG->showuseridentity = 'idnumber';
         $result = external::search_users('cats', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
         $this->assertEquals($u1->id, $result['users'][0]['id']);
@@ -352,7 +360,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Filter by email.
         $CFG->showuseridentity = 'email';
         $result = external::search_users('yyy', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
         $this->assertEquals($u2->id, $result['users'][0]['id']);
@@ -365,7 +373,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Filter by any.
         $CFG->showuseridentity = 'idnumber,email,phone1,phone2,department,institution';
         $result = external::search_users('yyy', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(3, $result['users']);
         $this->assertEquals(3, $result['count']);
         $this->assertArrayHasKey('idnumber', $result['users'][0]);
@@ -381,12 +389,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Only names are included.
         $result = external::search_users('fish');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(0, $result['users']);
         $this->assertEquals(0, $result['count']);
 
         $result = external::search_users('bob', 'moodle/competency:planmanage');
-        $result = external_api::clean_returnvalue(external::search_users_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::search_users_returns(), $result);
         $this->assertCount(1, $result['users']);
         $this->assertEquals(1, $result['count']);
         $this->assertEquals($u1->id, $result['users'][0]['id']);

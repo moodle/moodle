@@ -22,9 +22,16 @@
 
     Example context (json):
     {
-        "navigation" : {
-            "baseid": "select-menuf61834256d7754158",
-            "label": "Participant navigation",
+        "urlselect" : {
+            "formid": "url_select_f61834256d7754158",
+            "classes": "urlselect",
+            "label": "",
+            "disabled": false,
+            "title":null,
+            "id":"url_select61834256d7754159",
+            "sesskey":"LWILINyZMH",
+            "action":"http:\/\/localhost\/stable_master\/course\/jumpto.php",
+            "showbutton":null,
             "options": [
                 {
                     "name":"Enrolments",
@@ -85,26 +92,20 @@
                     ]
                 }
             ],
-            "selectedoption":"Enrolled users",
-            "name":"participantsnavigation",
-            "value":"\/user\/index.php?id=4",
-            "labelattributes":[
-                {
-                    "name":"class",
-                    "value":"sr-only"
-                }
-            ]
+            "labelattributes":[],
+            "helpicon":false,
+            "attributes":[]
         },
         "renderedcontent":"<div data-region=\"wrapper\" data-table-uniqueid=\"user-index-participants-4\"><\/div>"
     }
 }}
 <div class="container-fluid tertiary-navigation" id="action_bar">
     <div class="row">
-        {{#navigation}}
+        {{#urlselect}}
             <div class="navitem">
-                {{> core/tertiary_navigation_selector}}
+                {{> core/url_select }}
             </div>
-        {{/navigation}}
+        {{/urlselect}}
         {{#renderedcontent}}
             <div class="navitem">
                 {{{renderedcontent}}}

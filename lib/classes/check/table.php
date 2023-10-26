@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 class table implements \renderable {
 
     /**
-     * @var \moodle_url $url
+     * @var moodle_url $url
      */
     protected $url = '';
 

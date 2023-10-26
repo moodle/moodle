@@ -70,7 +70,6 @@ class provider_test extends provider_testcase {
 
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -108,7 +107,6 @@ class provider_test extends provider_testcase {
         // Export all keys in core_tests.
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -145,7 +143,6 @@ class provider_test extends provider_testcase {
 
         provider::export_userkeys($context, $subcontext, 'core_tests');
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data());
@@ -182,13 +179,11 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');
@@ -229,13 +224,11 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');
@@ -285,13 +278,11 @@ class provider_test extends provider_testcase {
 
         // Export all keys in core_tests against instance 43 - no keys.
         provider::export_userkeys($context, $subcontext, 'core_tests', 43);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
         // Export all keys in core_tests against instance 42.
         provider::export_userkeys($context, $subcontext, 'core_tests', 42);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $exported = $writer->get_related_data($subcontext, 'userkeys');

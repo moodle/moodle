@@ -5,7 +5,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Exception;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical;
 
 class Factorial
@@ -121,6 +120,6 @@ class Factorial
 
         $summer = self::fact($summer);
 
-        return is_numeric($summer) ? ($summer / $divisor) : ExcelError::VALUE();
+        return $summer / $divisor;
     }
 }

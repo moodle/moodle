@@ -714,7 +714,6 @@ class file_storage_test extends \advanced_testcase {
 
         // Create three aliases linking the same original: $aliasfile1 and $aliasfile2 are
         // created via create_file_from_reference(), $aliasfile3 created from $aliasfile2.
-        /** @var \stored_file $originalfile */
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -1863,7 +1862,6 @@ class file_storage_test extends \advanced_testcase {
         $repos = repository::get_instances(array('type'=>'user'));
         $repo = reset($repos);
 
-        /** @var \stored_file $file */
         $file = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {
@@ -1894,7 +1892,6 @@ class file_storage_test extends \advanced_testcase {
 
         // Create two aliases linking the same original.
 
-        /** @var \stored_file $originalfile */
         $originalfile = null;
         foreach ($fs->get_area_files($user->ctxid, 'user', 'private') as $areafile) {
             if (!$areafile->is_directory()) {

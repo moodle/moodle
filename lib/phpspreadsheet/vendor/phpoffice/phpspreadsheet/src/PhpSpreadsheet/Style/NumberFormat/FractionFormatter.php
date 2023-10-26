@@ -26,28 +26,23 @@ class FractionFormatter extends BaseFormatter
         $decimalLength = strlen($decimalPart);
         $decimalDivisor = 10 ** $decimalLength;
 
-        preg_match('/(#?.*\?)\/(\?+|\d+)/', $format, $matches);
-        $formatIntegerPart = $matches[1];
+        /** @var float */
+        $GCD = MathTrig\Gcd::evaluate($decimalPart, $decimalDivisor);
+        /** @var float */
+        $decimalPartx = $decimalPart;
 
-        if (is_numeric($matches[2])) {
-            $fractionDivisor = 100 / (int) $matches[2];
-        } else {
-            /** @var float */
-            $fractionDivisor = MathTrig\Gcd::evaluate((int) $decimalPart, $decimalDivisor);
-        }
+        $adjustedDecimalPart = $decimalPartx / $GCD;
+        $adjustedDecimalDivisor = $decimalDivisor / $GCD;
 
-        $adjustedDecimalPart = (int) round((int) $decimalPart / $fractionDivisor, 0);
-        $adjustedDecimalDivisor = $decimalDivisor / $fractionDivisor;
-
-        if ((strpos($formatIntegerPart, '0') !== false)) {
+        if ((strpos($format, '0') !== false)) {
             return "{$sign}{$integerPart} {$adjustedDecimalPart}/{$adjustedDecimalDivisor}";
-        } elseif ((strpos($formatIntegerPart, '#') !== false)) {
+        } elseif ((strpos($format, '#') !== false)) {
             if ($integerPart == 0) {
                 return "{$sign}{$adjustedDecimalPart}/{$adjustedDecimalDivisor}";
             }
 
             return "{$sign}{$integerPart} {$adjustedDecimalPart}/{$adjustedDecimalDivisor}";
-        } elseif ((substr($formatIntegerPart, 0, 3) == '? ?')) {
+        } elseif ((substr($format, 0, 3) == '? ?')) {
             if ($integerPart == 0) {
                 $integerPart = '';
             }

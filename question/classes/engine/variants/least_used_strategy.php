@@ -50,8 +50,8 @@ class least_used_strategy implements \question_variant_selection_strategy {
 
     /**
      * Constructor.
-     * @param \question_usage_by_activity $quba the question usage we will be picking variants for.
-     * @param \qubaid_condition $qubaids ids of the usages to consider when counting previous uses of each variant.
+     * @param question_usage_by_activity $quba the question usage we will be picking variants for.
+     * @param qubaid_condition $qubaids ids of the usages to consider when counting previous uses of each variant.
      */
     public function __construct(\question_usage_by_activity $quba, \qubaid_condition $qubaids) {
         $questionidtoseed = array();

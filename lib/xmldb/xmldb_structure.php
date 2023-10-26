@@ -34,7 +34,7 @@ class xmldb_structure extends xmldb_object {
     /** @var string */
     protected $version;
 
-    /** @var xmldb_table[] tables */
+    /** @var array tables */
     protected $tables;
 
     /**

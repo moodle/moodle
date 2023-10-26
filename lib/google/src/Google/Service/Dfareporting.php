@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting extends Google_Service
 {
   /** View and manage DoubleClick for Advertisers reports. */
@@ -4554,7 +4553,6 @@ class Google_Service_Dfareporting extends Google_Service
  *   $accountActiveAdSummaries = $dfareportingService->accountActiveAdSummaries;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountActiveAdSummaries_Resource extends Google_Service_Resource
 {
 
@@ -4583,7 +4581,6 @@ class Google_Service_Dfareporting_AccountActiveAdSummaries_Resource extends Goog
  *   $accountPermissionGroups = $dfareportingService->accountPermissionGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermissionGroups_Resource extends Google_Service_Resource
 {
 
@@ -4626,7 +4623,6 @@ class Google_Service_Dfareporting_AccountPermissionGroups_Resource extends Googl
  *   $accountPermissions = $dfareportingService->accountPermissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermissions_Resource extends Google_Service_Resource
 {
 
@@ -4669,7 +4665,6 @@ class Google_Service_Dfareporting_AccountPermissions_Resource extends Google_Ser
  *   $accountUserProfiles = $dfareportingService->accountUserProfiles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountUserProfiles_Resource extends Google_Service_Resource
 {
 
@@ -4778,7 +4773,6 @@ class Google_Service_Dfareporting_AccountUserProfiles_Resource extends Google_Se
  *   $accounts = $dfareportingService->accounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -4867,7 +4861,6 @@ class Google_Service_Dfareporting_Accounts_Resource extends Google_Service_Resou
  *   $ads = $dfareportingService->ads;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Ads_Resource extends Google_Service_Resource
 {
 
@@ -5001,7 +4994,6 @@ class Google_Service_Dfareporting_Ads_Resource extends Google_Service_Resource
  *   $advertiserGroups = $dfareportingService->advertiserGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdvertiserGroups_Resource extends Google_Service_Resource
 {
 
@@ -5119,7 +5111,6 @@ class Google_Service_Dfareporting_AdvertiserGroups_Resource extends Google_Servi
  *   $advertisers = $dfareportingService->advertisers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Advertisers_Resource extends Google_Service_Resource
 {
 
@@ -5234,7 +5225,6 @@ class Google_Service_Dfareporting_Advertisers_Resource extends Google_Service_Re
  *   $browsers = $dfareportingService->browsers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Browsers_Resource extends Google_Service_Resource
 {
 
@@ -5261,7 +5251,6 @@ class Google_Service_Dfareporting_Browsers_Resource extends Google_Service_Resou
  *   $campaignCreativeAssociations = $dfareportingService->campaignCreativeAssociations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CampaignCreativeAssociations_Resource extends Google_Service_Resource
 {
 
@@ -5313,7 +5302,6 @@ class Google_Service_Dfareporting_CampaignCreativeAssociations_Resource extends 
  *   $campaigns = $dfareportingService->campaigns;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Campaigns_Resource extends Google_Service_Resource
 {
 
@@ -5433,7 +5421,6 @@ class Google_Service_Dfareporting_Campaigns_Resource extends Google_Service_Reso
  *   $changeLogs = $dfareportingService->changeLogs;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ChangeLogs_Resource extends Google_Service_Resource
 {
 
@@ -5500,7 +5487,6 @@ class Google_Service_Dfareporting_ChangeLogs_Resource extends Google_Service_Res
  *   $cities = $dfareportingService->cities;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Cities_Resource extends Google_Service_Resource
 {
 
@@ -5533,7 +5519,6 @@ class Google_Service_Dfareporting_Cities_Resource extends Google_Service_Resourc
  *   $connectionTypes = $dfareportingService->connectionTypes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ConnectionTypes_Resource extends Google_Service_Resource
 {
 
@@ -5575,7 +5560,6 @@ class Google_Service_Dfareporting_ConnectionTypes_Resource extends Google_Servic
  *   $contentCategories = $dfareportingService->contentCategories;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ContentCategories_Resource extends Google_Service_Resource
 {
 
@@ -5693,7 +5677,6 @@ class Google_Service_Dfareporting_ContentCategories_Resource extends Google_Serv
  *   $countries = $dfareportingService->countries;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Countries_Resource extends Google_Service_Resource
 {
 
@@ -5735,7 +5718,6 @@ class Google_Service_Dfareporting_Countries_Resource extends Google_Service_Reso
  *   $creativeAssets = $dfareportingService->creativeAssets;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeAssets_Resource extends Google_Service_Resource
 {
 
@@ -5765,7 +5747,6 @@ class Google_Service_Dfareporting_CreativeAssets_Resource extends Google_Service
  *   $creativeFieldValues = $dfareportingService->creativeFieldValues;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFieldValues_Resource extends Google_Service_Resource
 {
 
@@ -5890,7 +5871,6 @@ class Google_Service_Dfareporting_CreativeFieldValues_Resource extends Google_Se
  *   $creativeFields = $dfareportingService->creativeFields;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFields_Resource extends Google_Service_Resource
 {
 
@@ -6011,7 +5991,6 @@ class Google_Service_Dfareporting_CreativeFields_Resource extends Google_Service
  *   $creativeGroups = $dfareportingService->creativeGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeGroups_Resource extends Google_Service_Resource
 {
 
@@ -6120,7 +6099,6 @@ class Google_Service_Dfareporting_CreativeGroups_Resource extends Google_Service
  *   $creatives = $dfareportingService->creatives;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Creatives_Resource extends Google_Service_Resource
 {
 
@@ -6239,7 +6217,6 @@ class Google_Service_Dfareporting_Creatives_Resource extends Google_Service_Reso
  *   $dimensionValues = $dfareportingService->dimensionValues;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DimensionValues_Resource extends Google_Service_Resource
 {
 
@@ -6272,7 +6249,6 @@ class Google_Service_Dfareporting_DimensionValues_Resource extends Google_Servic
  *   $directorySiteContacts = $dfareportingService->directorySiteContacts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySiteContacts_Resource extends Google_Service_Resource
 {
 
@@ -6332,7 +6308,6 @@ class Google_Service_Dfareporting_DirectorySiteContacts_Resource extends Google_
  *   $directorySites = $dfareportingService->directorySites;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySites_Resource extends Google_Service_Resource
 {
 
@@ -6416,7 +6391,6 @@ class Google_Service_Dfareporting_DirectorySites_Resource extends Google_Service
  *   $eventTags = $dfareportingService->eventTags;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_EventTags_Resource extends Google_Service_Resource
 {
 
@@ -6549,7 +6523,6 @@ class Google_Service_Dfareporting_EventTags_Resource extends Google_Service_Reso
  *   $files = $dfareportingService->files;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Files_Resource extends Google_Service_Resource
 {
 
@@ -6599,7 +6572,6 @@ class Google_Service_Dfareporting_Files_Resource extends Google_Service_Resource
  *   $floodlightActivities = $dfareportingService->floodlightActivities;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivities_Resource extends Google_Service_Resource
 {
 
@@ -6753,7 +6725,6 @@ class Google_Service_Dfareporting_FloodlightActivities_Resource extends Google_S
  *   $floodlightActivityGroups = $dfareportingService->floodlightActivityGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivityGroups_Resource extends Google_Service_Resource
 {
 
@@ -6885,7 +6856,6 @@ class Google_Service_Dfareporting_FloodlightActivityGroups_Resource extends Goog
  *   $floodlightConfigurations = $dfareportingService->floodlightConfigurations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightConfigurations_Resource extends Google_Service_Resource
 {
 
@@ -6964,7 +6934,6 @@ class Google_Service_Dfareporting_FloodlightConfigurations_Resource extends Goog
  *   $inventoryItems = $dfareportingService->inventoryItems;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_InventoryItems_Resource extends Google_Service_Resource
 {
 
@@ -7021,7 +6990,6 @@ class Google_Service_Dfareporting_InventoryItems_Resource extends Google_Service
  *   $landingPages = $dfareportingService->landingPages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_LandingPages_Resource extends Google_Service_Resource
 {
 
@@ -7131,7 +7099,6 @@ class Google_Service_Dfareporting_LandingPages_Resource extends Google_Service_R
  *   $metros = $dfareportingService->metros;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Metros_Resource extends Google_Service_Resource
 {
 
@@ -7158,7 +7125,6 @@ class Google_Service_Dfareporting_Metros_Resource extends Google_Service_Resourc
  *   $mobileCarriers = $dfareportingService->mobileCarriers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_MobileCarriers_Resource extends Google_Service_Resource
 {
 
@@ -7200,7 +7166,6 @@ class Google_Service_Dfareporting_MobileCarriers_Resource extends Google_Service
  *   $operatingSystemVersions = $dfareportingService->operatingSystemVersions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystemVersions_Resource extends Google_Service_Resource
 {
 
@@ -7243,7 +7208,6 @@ class Google_Service_Dfareporting_OperatingSystemVersions_Resource extends Googl
  *   $operatingSystems = $dfareportingService->operatingSystems;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystems_Resource extends Google_Service_Resource
 {
 
@@ -7286,7 +7250,6 @@ class Google_Service_Dfareporting_OperatingSystems_Resource extends Google_Servi
  *   $orderDocuments = $dfareportingService->orderDocuments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OrderDocuments_Resource extends Google_Service_Resource
 {
 
@@ -7351,7 +7314,6 @@ class Google_Service_Dfareporting_OrderDocuments_Resource extends Google_Service
  *   $orders = $dfareportingService->orders;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Orders_Resource extends Google_Service_Resource
 {
 
@@ -7410,7 +7372,6 @@ class Google_Service_Dfareporting_Orders_Resource extends Google_Service_Resourc
  *   $placementGroups = $dfareportingService->placementGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementGroups_Resource extends Google_Service_Resource
 {
 
@@ -7536,7 +7497,6 @@ class Google_Service_Dfareporting_PlacementGroups_Resource extends Google_Servic
  *   $placementStrategies = $dfareportingService->placementStrategies;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementStrategies_Resource extends Google_Service_Resource
 {
 
@@ -7655,7 +7615,6 @@ class Google_Service_Dfareporting_PlacementStrategies_Resource extends Google_Se
  *   $placements = $dfareportingService->placements;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Placements_Resource extends Google_Service_Resource
 {
 
@@ -7806,7 +7765,6 @@ class Google_Service_Dfareporting_Placements_Resource extends Google_Service_Res
  *   $platformTypes = $dfareportingService->platformTypes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlatformTypes_Resource extends Google_Service_Resource
 {
 
@@ -7848,7 +7806,6 @@ class Google_Service_Dfareporting_PlatformTypes_Resource extends Google_Service_
  *   $postalCodes = $dfareportingService->postalCodes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PostalCodes_Resource extends Google_Service_Resource
 {
 
@@ -7890,7 +7847,6 @@ class Google_Service_Dfareporting_PostalCodes_Resource extends Google_Service_Re
  *   $projects = $dfareportingService->projects;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Projects_Resource extends Google_Service_Resource
 {
 
@@ -7947,7 +7903,6 @@ class Google_Service_Dfareporting_Projects_Resource extends Google_Service_Resou
  *   $regions = $dfareportingService->regions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Regions_Resource extends Google_Service_Resource
 {
 
@@ -7974,7 +7929,6 @@ class Google_Service_Dfareporting_Regions_Resource extends Google_Service_Resour
  *   $remarketingListShares = $dfareportingService->remarketingListShares;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RemarketingListShares_Resource extends Google_Service_Resource
 {
 
@@ -8035,7 +7989,6 @@ class Google_Service_Dfareporting_RemarketingListShares_Resource extends Google_
  *   $remarketingLists = $dfareportingService->remarketingLists;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RemarketingLists_Resource extends Google_Service_Resource
 {
 
@@ -8143,7 +8096,6 @@ class Google_Service_Dfareporting_RemarketingLists_Resource extends Google_Servi
  *   $reports = $dfareportingService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Reports_Resource extends Google_Service_Resource
 {
 
@@ -8272,7 +8224,6 @@ class Google_Service_Dfareporting_Reports_Resource extends Google_Service_Resour
  *   $compatibleFields = $dfareportingService->compatibleFields;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportsCompatibleFields_Resource extends Google_Service_Resource
 {
 
@@ -8301,7 +8252,6 @@ class Google_Service_Dfareporting_ReportsCompatibleFields_Resource extends Googl
  *   $files = $dfareportingService->files;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportsFiles_Resource extends Google_Service_Resource
 {
 
@@ -8351,7 +8301,6 @@ class Google_Service_Dfareporting_ReportsFiles_Resource extends Google_Service_R
  *   $sites = $dfareportingService->sites;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Sites_Resource extends Google_Service_Resource
 {
 
@@ -8466,7 +8415,6 @@ class Google_Service_Dfareporting_Sites_Resource extends Google_Service_Resource
  *   $sizes = $dfareportingService->sizes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Sizes_Resource extends Google_Service_Resource
 {
 
@@ -8528,7 +8476,6 @@ class Google_Service_Dfareporting_Sizes_Resource extends Google_Service_Resource
  *   $subaccounts = $dfareportingService->subaccounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Subaccounts_Resource extends Google_Service_Resource
 {
 
@@ -8631,7 +8578,6 @@ class Google_Service_Dfareporting_Subaccounts_Resource extends Google_Service_Re
  *   $targetableRemarketingLists = $dfareportingService->targetableRemarketingLists;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TargetableRemarketingLists_Resource extends Google_Service_Resource
 {
 
@@ -8691,7 +8637,6 @@ class Google_Service_Dfareporting_TargetableRemarketingLists_Resource extends Go
  *   $userProfiles = $dfareportingService->userProfiles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserProfiles_Resource extends Google_Service_Resource
 {
 
@@ -8731,7 +8676,6 @@ class Google_Service_Dfareporting_UserProfiles_Resource extends Google_Service_R
  *   $userRolePermissionGroups = $dfareportingService->userRolePermissionGroups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermissionGroups_Resource extends Google_Service_Resource
 {
 
@@ -8774,7 +8718,6 @@ class Google_Service_Dfareporting_UserRolePermissionGroups_Resource extends Goog
  *   $userRolePermissions = $dfareportingService->userRolePermissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermissions_Resource extends Google_Service_Resource
 {
 
@@ -8819,7 +8762,6 @@ class Google_Service_Dfareporting_UserRolePermissions_Resource extends Google_Se
  *   $userRoles = $dfareportingService->userRoles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRoles_Resource extends Google_Service_Resource
 {
 
@@ -8935,7 +8877,6 @@ class Google_Service_Dfareporting_UserRoles_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Account extends Google_Collection
 {
   protected $collection_key = 'availablePermissionIds';
@@ -9117,7 +9058,6 @@ class Google_Service_Dfareporting_Account extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountActiveAdSummary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9171,7 +9111,6 @@ class Google_Service_Dfareporting_AccountActiveAdSummary extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermission extends Google_Collection
 {
   protected $collection_key = 'accountProfiles';
@@ -9235,7 +9174,6 @@ class Google_Service_Dfareporting_AccountPermission extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermissionGroup extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9271,7 +9209,6 @@ class Google_Service_Dfareporting_AccountPermissionGroup extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermissionGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'accountPermissionGroups';
@@ -9300,7 +9237,6 @@ class Google_Service_Dfareporting_AccountPermissionGroupsListResponse extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountPermissionsListResponse extends Google_Collection
 {
   protected $collection_key = 'accountPermissions';
@@ -9329,7 +9265,6 @@ class Google_Service_Dfareporting_AccountPermissionsListResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountUserProfile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9486,7 +9421,6 @@ class Google_Service_Dfareporting_AccountUserProfile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountUserProfilesListResponse extends Google_Collection
 {
   protected $collection_key = 'accountUserProfiles';
@@ -9524,7 +9458,6 @@ class Google_Service_Dfareporting_AccountUserProfilesListResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AccountsListResponse extends Google_Collection
 {
   protected $collection_key = 'accounts';
@@ -9562,7 +9495,6 @@ class Google_Service_Dfareporting_AccountsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Activities extends Google_Collection
 {
   protected $collection_key = 'metricNames';
@@ -9600,7 +9532,6 @@ class Google_Service_Dfareporting_Activities extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Ad extends Google_Collection
 {
   protected $collection_key = 'placementAssignments';
@@ -9963,7 +9894,6 @@ class Google_Service_Dfareporting_Ad extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdSlot extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10044,7 +9974,6 @@ class Google_Service_Dfareporting_AdSlot extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdsListResponse extends Google_Collection
 {
   protected $collection_key = 'ads';
@@ -10082,7 +10011,6 @@ class Google_Service_Dfareporting_AdsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Advertiser extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10219,7 +10147,6 @@ class Google_Service_Dfareporting_Advertiser extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdvertiserGroup extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10264,7 +10191,6 @@ class Google_Service_Dfareporting_AdvertiserGroup extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdvertiserGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'advertiserGroups';
@@ -10302,7 +10228,6 @@ class Google_Service_Dfareporting_AdvertiserGroupsListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AdvertisersListResponse extends Google_Collection
 {
   protected $collection_key = 'advertisers';
@@ -10340,7 +10265,6 @@ class Google_Service_Dfareporting_AdvertisersListResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AudienceSegment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10376,7 +10300,6 @@ class Google_Service_Dfareporting_AudienceSegment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_AudienceSegmentGroup extends Google_Collection
 {
   protected $collection_key = 'audienceSegments';
@@ -10414,7 +10337,6 @@ class Google_Service_Dfareporting_AudienceSegmentGroup extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Browser extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10477,7 +10399,6 @@ class Google_Service_Dfareporting_Browser extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_BrowsersListResponse extends Google_Collection
 {
   protected $collection_key = 'browsers';
@@ -10506,7 +10427,6 @@ class Google_Service_Dfareporting_BrowsersListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Campaign extends Google_Collection
 {
   protected $collection_key = 'traffickerEmails';
@@ -10779,7 +10699,6 @@ class Google_Service_Dfareporting_Campaign extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CampaignCreativeAssociation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10806,7 +10725,6 @@ class Google_Service_Dfareporting_CampaignCreativeAssociation extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CampaignCreativeAssociationsListResponse extends Google_Collection
 {
   protected $collection_key = 'campaignCreativeAssociations';
@@ -10844,7 +10762,6 @@ class Google_Service_Dfareporting_CampaignCreativeAssociationsListResponse exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CampaignsListResponse extends Google_Collection
 {
   protected $collection_key = 'campaigns';
@@ -10882,7 +10799,6 @@ class Google_Service_Dfareporting_CampaignsListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ChangeLog extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11017,7 +10933,6 @@ class Google_Service_Dfareporting_ChangeLog extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ChangeLogsListResponse extends Google_Collection
 {
   protected $collection_key = 'changeLogs';
@@ -11055,7 +10970,6 @@ class Google_Service_Dfareporting_ChangeLogsListResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CitiesListResponse extends Google_Collection
 {
   protected $collection_key = 'cities';
@@ -11084,7 +10998,6 @@ class Google_Service_Dfareporting_CitiesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_City extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11174,7 +11087,6 @@ class Google_Service_Dfareporting_City extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ClickTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11210,7 +11122,6 @@ class Google_Service_Dfareporting_ClickTag extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ClickThroughUrl extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11246,7 +11157,6 @@ class Google_Service_Dfareporting_ClickThroughUrl extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ClickThroughUrlSuffixProperties extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11273,7 +11183,6 @@ class Google_Service_Dfareporting_ClickThroughUrlSuffixProperties extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CompanionClickThroughOverride extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11301,7 +11210,6 @@ class Google_Service_Dfareporting_CompanionClickThroughOverride extends Google_M
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CompatibleFields extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11369,7 +11277,6 @@ class Google_Service_Dfareporting_CompatibleFields extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ConnectionType extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11405,7 +11312,6 @@ class Google_Service_Dfareporting_ConnectionType extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ConnectionTypesListResponse extends Google_Collection
 {
   protected $collection_key = 'connectionTypes';
@@ -11434,7 +11340,6 @@ class Google_Service_Dfareporting_ConnectionTypesListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ContentCategoriesListResponse extends Google_Collection
 {
   protected $collection_key = 'contentCategories';
@@ -11472,7 +11377,6 @@ class Google_Service_Dfareporting_ContentCategoriesListResponse extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ContentCategory extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11517,7 +11421,6 @@ class Google_Service_Dfareporting_ContentCategory extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CountriesListResponse extends Google_Collection
 {
   protected $collection_key = 'countries';
@@ -11546,7 +11449,6 @@ class Google_Service_Dfareporting_CountriesListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Country extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11600,7 +11502,6 @@ class Google_Service_Dfareporting_Country extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Creative extends Google_Collection
 {
   protected $collection_key = 'timerCustomEvents';
@@ -12128,7 +12029,6 @@ class Google_Service_Dfareporting_Creative extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeAsset extends Google_Collection
 {
   protected $collection_key = 'detectedFeatures';
@@ -12523,7 +12423,6 @@ class Google_Service_Dfareporting_CreativeAsset extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeAssetId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12550,7 +12449,6 @@ class Google_Service_Dfareporting_CreativeAssetId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeAssetMetadata extends Google_Collection
 {
   protected $collection_key = 'warnedValidationRules';
@@ -12607,7 +12505,6 @@ class Google_Service_Dfareporting_CreativeAssetMetadata extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeAssignment extends Google_Collection
 {
   protected $collection_key = 'richMediaExitOverrides';
@@ -12739,7 +12636,6 @@ class Google_Service_Dfareporting_CreativeAssignment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeCustomEvent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12839,7 +12735,6 @@ class Google_Service_Dfareporting_CreativeCustomEvent extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeField extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12912,7 +12807,6 @@ class Google_Service_Dfareporting_CreativeField extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFieldAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12939,7 +12833,6 @@ class Google_Service_Dfareporting_CreativeFieldAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFieldValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12975,7 +12868,6 @@ class Google_Service_Dfareporting_CreativeFieldValue extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFieldValuesListResponse extends Google_Collection
 {
   protected $collection_key = 'creativeFieldValues';
@@ -13013,7 +12905,6 @@ class Google_Service_Dfareporting_CreativeFieldValuesListResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeFieldsListResponse extends Google_Collection
 {
   protected $collection_key = 'creativeFields';
@@ -13051,7 +12942,6 @@ class Google_Service_Dfareporting_CreativeFieldsListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeGroup extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13133,7 +13023,6 @@ class Google_Service_Dfareporting_CreativeGroup extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeGroupAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13160,7 +13049,6 @@ class Google_Service_Dfareporting_CreativeGroupAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'creativeGroups';
@@ -13198,7 +13086,6 @@ class Google_Service_Dfareporting_CreativeGroupsListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeOptimizationConfiguration extends Google_Collection
 {
   protected $collection_key = 'optimizationActivitys';
@@ -13245,7 +13132,6 @@ class Google_Service_Dfareporting_CreativeOptimizationConfiguration extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeRotation extends Google_Collection
 {
   protected $collection_key = 'creativeAssignments';
@@ -13292,7 +13178,6 @@ class Google_Service_Dfareporting_CreativeRotation extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativeSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13319,7 +13204,6 @@ class Google_Service_Dfareporting_CreativeSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CreativesListResponse extends Google_Collection
 {
   protected $collection_key = 'creatives';
@@ -13357,7 +13241,6 @@ class Google_Service_Dfareporting_CreativesListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CrossDimensionReachReportCompatibleFields extends Google_Collection
 {
   protected $collection_key = 'overlapMetrics';
@@ -13416,7 +13299,6 @@ class Google_Service_Dfareporting_CrossDimensionReachReportCompatibleFields exte
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_CustomRichMediaEvents extends Google_Collection
 {
   protected $collection_key = 'filteredEventIds';
@@ -13445,7 +13327,6 @@ class Google_Service_Dfareporting_CustomRichMediaEvents extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DateRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13490,7 +13371,6 @@ class Google_Service_Dfareporting_DateRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DayPartTargeting extends Google_Collection
 {
   protected $collection_key = 'hoursOfDay';
@@ -13527,7 +13407,6 @@ class Google_Service_Dfareporting_DayPartTargeting extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DefaultClickThroughEventTagProperties extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13554,7 +13433,6 @@ class Google_Service_Dfareporting_DefaultClickThroughEventTagProperties extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DeliverySchedule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13600,7 +13478,6 @@ class Google_Service_Dfareporting_DeliverySchedule extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DfareportingFile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13701,7 +13578,6 @@ class Google_Service_Dfareporting_DfareportingFile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DfareportingFileUrls extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13728,7 +13604,6 @@ class Google_Service_Dfareporting_DfareportingFileUrls extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DfpSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13784,7 +13659,6 @@ class Google_Service_Dfareporting_DfpSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Dimension extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13811,7 +13685,6 @@ class Google_Service_Dfareporting_Dimension extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DimensionFilter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13847,7 +13720,6 @@ class Google_Service_Dfareporting_DimensionFilter extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DimensionValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13910,7 +13782,6 @@ class Google_Service_Dfareporting_DimensionValue extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DimensionValueList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -13957,7 +13828,6 @@ class Google_Service_Dfareporting_DimensionValueList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DimensionValueRequest extends Google_Collection
 {
   protected $collection_key = 'filters';
@@ -14013,7 +13883,6 @@ class Google_Service_Dfareporting_DimensionValueRequest extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySite extends Google_Collection
 {
   protected $collection_key = 'interstitialTagFormats';
@@ -14152,7 +14021,6 @@ class Google_Service_Dfareporting_DirectorySite extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySiteContact extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14251,7 +14119,6 @@ class Google_Service_Dfareporting_DirectorySiteContact extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySiteContactAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14278,7 +14145,6 @@ class Google_Service_Dfareporting_DirectorySiteContactAssignment extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySiteContactsListResponse extends Google_Collection
 {
   protected $collection_key = 'directorySiteContacts';
@@ -14316,7 +14182,6 @@ class Google_Service_Dfareporting_DirectorySiteContactsListResponse extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySiteSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14391,7 +14256,6 @@ class Google_Service_Dfareporting_DirectorySiteSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_DirectorySitesListResponse extends Google_Collection
 {
   protected $collection_key = 'directorySites';
@@ -14429,7 +14293,6 @@ class Google_Service_Dfareporting_DirectorySitesListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_EventTag extends Google_Collection
 {
   protected $collection_key = 'siteIds';
@@ -14594,7 +14457,6 @@ class Google_Service_Dfareporting_EventTag extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_EventTagOverride extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14621,7 +14483,6 @@ class Google_Service_Dfareporting_EventTagOverride extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_EventTagsListResponse extends Google_Collection
 {
   protected $collection_key = 'eventTags';
@@ -14650,7 +14511,6 @@ class Google_Service_Dfareporting_EventTagsListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FileList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -14697,7 +14557,6 @@ class Google_Service_Dfareporting_FileList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Flight extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14742,7 +14601,6 @@ class Google_Service_Dfareporting_Flight extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivitiesGenerateTagResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14769,7 +14627,6 @@ class Google_Service_Dfareporting_FloodlightActivitiesGenerateTagResponse extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivitiesListResponse extends Google_Collection
 {
   protected $collection_key = 'floodlightActivities';
@@ -14807,7 +14664,6 @@ class Google_Service_Dfareporting_FloodlightActivitiesListResponse extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivity extends Google_Collection
 {
   protected $collection_key = 'userDefinedVariableTypes';
@@ -15074,7 +14930,6 @@ class Google_Service_Dfareporting_FloodlightActivity extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivityDynamicTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15110,7 +14965,6 @@ class Google_Service_Dfareporting_FloodlightActivityDynamicTag extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivityGroup extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15230,7 +15084,6 @@ class Google_Service_Dfareporting_FloodlightActivityGroup extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivityGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'floodlightActivityGroups';
@@ -15268,7 +15121,6 @@ class Google_Service_Dfareporting_FloodlightActivityGroupsListResponse extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightActivityPublisherDynamicTag extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15333,7 +15185,6 @@ class Google_Service_Dfareporting_FloodlightActivityPublisherDynamicTag extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightConfiguration extends Google_Collection
 {
   protected $collection_key = 'userDefinedVariableConfigurations';
@@ -15502,7 +15353,6 @@ class Google_Service_Dfareporting_FloodlightConfiguration extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightConfigurationsListResponse extends Google_Collection
 {
   protected $collection_key = 'floodlightConfigurations';
@@ -15531,7 +15381,6 @@ class Google_Service_Dfareporting_FloodlightConfigurationsListResponse extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FloodlightReportCompatibleFields extends Google_Collection
 {
   protected $collection_key = 'metrics';
@@ -15580,7 +15429,6 @@ class Google_Service_Dfareporting_FloodlightReportCompatibleFields extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FrequencyCap extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15607,7 +15455,6 @@ class Google_Service_Dfareporting_FrequencyCap extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_FsCommand extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15661,7 +15508,6 @@ class Google_Service_Dfareporting_FsCommand extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_GeoTargeting extends Google_Collection
 {
   protected $collection_key = 'regions';
@@ -15730,7 +15576,6 @@ class Google_Service_Dfareporting_GeoTargeting extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_InventoryItem extends Google_Collection
 {
   protected $collection_key = 'adSlots';
@@ -15914,7 +15759,6 @@ class Google_Service_Dfareporting_InventoryItem extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_InventoryItemsListResponse extends Google_Collection
 {
   protected $collection_key = 'inventoryItems';
@@ -15952,7 +15796,6 @@ class Google_Service_Dfareporting_InventoryItemsListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_KeyValueTargetingExpression extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15970,7 +15813,6 @@ class Google_Service_Dfareporting_KeyValueTargetingExpression extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_LandingPage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16024,7 +15866,6 @@ class Google_Service_Dfareporting_LandingPage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_LandingPagesListResponse extends Google_Collection
 {
   protected $collection_key = 'landingPages';
@@ -16053,7 +15894,6 @@ class Google_Service_Dfareporting_LandingPagesListResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_LastModifiedInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16071,7 +15911,6 @@ class Google_Service_Dfareporting_LastModifiedInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ListPopulationClause extends Google_Collection
 {
   protected $collection_key = 'terms';
@@ -16091,7 +15930,6 @@ class Google_Service_Dfareporting_ListPopulationClause extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ListPopulationRule extends Google_Collection
 {
   protected $collection_key = 'listPopulationClauses';
@@ -16129,7 +15967,6 @@ class Google_Service_Dfareporting_ListPopulationRule extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ListPopulationTerm extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16210,7 +16047,6 @@ class Google_Service_Dfareporting_ListPopulationTerm extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ListTargetingExpression extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16228,7 +16064,6 @@ class Google_Service_Dfareporting_ListTargetingExpression extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_LookbackConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16255,7 +16090,6 @@ class Google_Service_Dfareporting_LookbackConfiguration extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Metric extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16282,7 +16116,6 @@ class Google_Service_Dfareporting_Metric extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Metro extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16354,7 +16187,6 @@ class Google_Service_Dfareporting_Metro extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_MetrosListResponse extends Google_Collection
 {
   protected $collection_key = 'metros';
@@ -16383,7 +16215,6 @@ class Google_Service_Dfareporting_MetrosListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_MobileCarrier extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16437,7 +16268,6 @@ class Google_Service_Dfareporting_MobileCarrier extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_MobileCarriersListResponse extends Google_Collection
 {
   protected $collection_key = 'mobileCarriers';
@@ -16466,7 +16296,6 @@ class Google_Service_Dfareporting_MobileCarriersListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ObjectFilter extends Google_Collection
 {
   protected $collection_key = 'objectIds';
@@ -16503,7 +16332,6 @@ class Google_Service_Dfareporting_ObjectFilter extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OffsetPosition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16530,7 +16358,6 @@ class Google_Service_Dfareporting_OffsetPosition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OmnitureSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16557,7 +16384,6 @@ class Google_Service_Dfareporting_OmnitureSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16611,7 +16437,6 @@ class Google_Service_Dfareporting_OperatingSystem extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystemVersion extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16675,7 +16500,6 @@ class Google_Service_Dfareporting_OperatingSystemVersion extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystemVersionsListResponse extends Google_Collection
 {
   protected $collection_key = 'operatingSystemVersions';
@@ -16704,7 +16528,6 @@ class Google_Service_Dfareporting_OperatingSystemVersionsListResponse extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OperatingSystemsListResponse extends Google_Collection
 {
   protected $collection_key = 'operatingSystems';
@@ -16733,7 +16556,6 @@ class Google_Service_Dfareporting_OperatingSystemsListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OptimizationActivity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16770,7 +16592,6 @@ class Google_Service_Dfareporting_OptimizationActivity extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Order extends Google_Collection
 {
   protected $collection_key = 'siteNames';
@@ -16962,7 +16783,6 @@ class Google_Service_Dfareporting_Order extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OrderContact extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17016,7 +16836,6 @@ class Google_Service_Dfareporting_OrderContact extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OrderDocument extends Google_Collection
 {
   protected $collection_key = 'approvedByUserProfileIds';
@@ -17162,7 +16981,6 @@ class Google_Service_Dfareporting_OrderDocument extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OrderDocumentsListResponse extends Google_Collection
 {
   protected $collection_key = 'orderDocuments';
@@ -17200,7 +17018,6 @@ class Google_Service_Dfareporting_OrderDocumentsListResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_OrdersListResponse extends Google_Collection
 {
   protected $collection_key = 'orders';
@@ -17238,7 +17055,6 @@ class Google_Service_Dfareporting_OrdersListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PathToConversionReportCompatibleFields extends Google_Collection
 {
   protected $collection_key = 'perInteractionDimensions';
@@ -17297,7 +17113,6 @@ class Google_Service_Dfareporting_PathToConversionReportCompatibleFields extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Placement extends Google_Collection
 {
   protected $collection_key = 'tagFormats';
@@ -17644,7 +17459,6 @@ class Google_Service_Dfareporting_Placement extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17690,7 +17504,6 @@ class Google_Service_Dfareporting_PlacementAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementGroup extends Google_Collection
 {
   protected $collection_key = 'childPlacementIds';
@@ -17953,7 +17766,6 @@ class Google_Service_Dfareporting_PlacementGroup extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'placementGroups';
@@ -17991,7 +17803,6 @@ class Google_Service_Dfareporting_PlacementGroupsListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementStrategiesListResponse extends Google_Collection
 {
   protected $collection_key = 'placementStrategies';
@@ -18029,7 +17840,6 @@ class Google_Service_Dfareporting_PlacementStrategiesListResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementStrategy extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18074,7 +17884,6 @@ class Google_Service_Dfareporting_PlacementStrategy extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementTag extends Google_Collection
 {
   protected $collection_key = 'tagDatas';
@@ -18103,7 +17912,6 @@ class Google_Service_Dfareporting_PlacementTag extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementsGenerateTagsResponse extends Google_Collection
 {
   protected $collection_key = 'placementTags';
@@ -18132,7 +17940,6 @@ class Google_Service_Dfareporting_PlacementsGenerateTagsResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlacementsListResponse extends Google_Collection
 {
   protected $collection_key = 'placements';
@@ -18170,7 +17977,6 @@ class Google_Service_Dfareporting_PlacementsListResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlatformType extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18206,7 +18012,6 @@ class Google_Service_Dfareporting_PlatformType extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PlatformTypesListResponse extends Google_Collection
 {
   protected $collection_key = 'platformTypes';
@@ -18235,7 +18040,6 @@ class Google_Service_Dfareporting_PlatformTypesListResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PopupWindowProperties extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18327,7 +18131,6 @@ class Google_Service_Dfareporting_PopupWindowProperties extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PostalCode extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18381,7 +18184,6 @@ class Google_Service_Dfareporting_PostalCode extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PostalCodesListResponse extends Google_Collection
 {
   protected $collection_key = 'postalCodes';
@@ -18410,7 +18212,6 @@ class Google_Service_Dfareporting_PostalCodesListResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Pricing extends Google_Collection
 {
   protected $collection_key = 'flights';
@@ -18475,7 +18276,6 @@ class Google_Service_Dfareporting_Pricing extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PricingSchedule extends Google_Collection
 {
   protected $collection_key = 'pricingPeriods';
@@ -18567,7 +18367,6 @@ class Google_Service_Dfareporting_PricingSchedule extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_PricingSchedulePricingPeriod extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18621,7 +18420,6 @@ class Google_Service_Dfareporting_PricingSchedulePricingPeriod extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ProgrammaticSetting extends Google_Collection
 {
   protected $collection_key = 'traffickerEmails';
@@ -18685,7 +18483,6 @@ class Google_Service_Dfareporting_ProgrammaticSetting extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Project extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -18884,7 +18681,6 @@ class Google_Service_Dfareporting_Project extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ProjectsListResponse extends Google_Collection
 {
   protected $collection_key = 'projects';
@@ -18922,7 +18718,6 @@ class Google_Service_Dfareporting_ProjectsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReachReportCompatibleFields extends Google_Collection
 {
   protected $collection_key = 'reachByFrequencyMetrics';
@@ -18991,7 +18786,6 @@ class Google_Service_Dfareporting_ReachReportCompatibleFields extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Recipient extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -19027,7 +18821,6 @@ class Google_Service_Dfareporting_Recipient extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Region extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -19090,7 +18883,6 @@ class Google_Service_Dfareporting_Region extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RegionsListResponse extends Google_Collection
 {
   protected $collection_key = 'regions';
@@ -19119,7 +18911,6 @@ class Google_Service_Dfareporting_RegionsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RemarketingList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -19247,7 +19038,6 @@ class Google_Service_Dfareporting_RemarketingList extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RemarketingListShare extends Google_Collection
 {
   protected $collection_key = 'sharedAdvertiserIds';
@@ -19293,7 +19083,6 @@ class Google_Service_Dfareporting_RemarketingListShare extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RemarketingListsListResponse extends Google_Collection
 {
   protected $collection_key = 'remarketingLists';
@@ -19331,7 +19120,6 @@ class Google_Service_Dfareporting_RemarketingListsListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Report extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -19509,7 +19297,6 @@ class Google_Service_Dfareporting_Report extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportCompatibleFields extends Google_Collection
 {
   protected $collection_key = 'pivotedActivityMetrics';
@@ -19568,7 +19355,6 @@ class Google_Service_Dfareporting_ReportCompatibleFields extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportCriteria extends Google_Collection
 {
   protected $collection_key = 'metricNames';
@@ -19637,7 +19423,6 @@ class Google_Service_Dfareporting_ReportCriteria extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportCrossDimensionReachCriteria extends Google_Collection
 {
   protected $collection_key = 'overlapMetricNames';
@@ -19713,7 +19498,6 @@ class Google_Service_Dfareporting_ReportCrossDimensionReachCriteria extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportDelivery extends Google_Collection
 {
   protected $collection_key = 'recipients';
@@ -19760,7 +19544,6 @@ class Google_Service_Dfareporting_ReportDelivery extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportFloodlightCriteria extends Google_Collection
 {
   protected $collection_key = 'metricNames';
@@ -19839,7 +19622,6 @@ class Google_Service_Dfareporting_ReportFloodlightCriteria extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportFloodlightCriteriaReportProperties extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -19875,7 +19657,6 @@ class Google_Service_Dfareporting_ReportFloodlightCriteriaReportProperties exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -19922,7 +19703,6 @@ class Google_Service_Dfareporting_ReportList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportPathToConversionCriteria extends Google_Collection
 {
   protected $collection_key = 'perInteractionDimensions';
@@ -20021,7 +19801,6 @@ class Google_Service_Dfareporting_ReportPathToConversionCriteria extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportPathToConversionCriteriaReportProperties extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20111,7 +19890,6 @@ class Google_Service_Dfareporting_ReportPathToConversionCriteriaReportProperties
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportReachCriteria extends Google_Collection
 {
   protected $collection_key = 'reachByFrequencyMetricNames';
@@ -20198,7 +19976,6 @@ class Google_Service_Dfareporting_ReportReachCriteria extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportSchedule extends Google_Collection
 {
   protected $collection_key = 'repeatsOnWeekDays';
@@ -20271,7 +20048,6 @@ class Google_Service_Dfareporting_ReportSchedule extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ReportsConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20308,7 +20084,6 @@ class Google_Service_Dfareporting_ReportsConfiguration extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_RichMediaExitOverride extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20344,7 +20119,6 @@ class Google_Service_Dfareporting_RichMediaExitOverride extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Site extends Google_Collection
 {
   protected $collection_key = 'siteContacts';
@@ -20466,7 +20240,6 @@ class Google_Service_Dfareporting_Site extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SiteContact extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20547,7 +20320,6 @@ class Google_Service_Dfareporting_SiteContact extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SiteSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20613,7 +20385,6 @@ class Google_Service_Dfareporting_SiteSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SitesListResponse extends Google_Collection
 {
   protected $collection_key = 'sites';
@@ -20651,7 +20422,6 @@ class Google_Service_Dfareporting_SitesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Size extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20705,7 +20475,6 @@ class Google_Service_Dfareporting_Size extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SizesListResponse extends Google_Collection
 {
   protected $collection_key = 'sizes';
@@ -20734,7 +20503,6 @@ class Google_Service_Dfareporting_SizesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SortedDimension extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20770,7 +20538,6 @@ class Google_Service_Dfareporting_SortedDimension extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_Subaccount extends Google_Collection
 {
   protected $collection_key = 'availablePermissionIds';
@@ -20825,7 +20592,6 @@ class Google_Service_Dfareporting_Subaccount extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_SubaccountsListResponse extends Google_Collection
 {
   protected $collection_key = 'subaccounts';
@@ -20863,7 +20629,6 @@ class Google_Service_Dfareporting_SubaccountsListResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TagData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20917,7 +20682,6 @@ class Google_Service_Dfareporting_TagData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TagSetting extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20962,7 +20726,6 @@ class Google_Service_Dfareporting_TagSetting extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TagSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -20989,7 +20752,6 @@ class Google_Service_Dfareporting_TagSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TargetWindow extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21016,7 +20778,6 @@ class Google_Service_Dfareporting_TargetWindow extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TargetableRemarketingList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21134,7 +20895,6 @@ class Google_Service_Dfareporting_TargetableRemarketingList extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TargetableRemarketingListsListResponse extends Google_Collection
 {
   protected $collection_key = 'targetableRemarketingLists';
@@ -21172,7 +20932,6 @@ class Google_Service_Dfareporting_TargetableRemarketingListsListResponse extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_TechnologyTargeting extends Google_Collection
 {
   protected $collection_key = 'platformTypes';
@@ -21242,7 +21001,6 @@ class Google_Service_Dfareporting_TechnologyTargeting extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_ThirdPartyTrackingUrl extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21269,7 +21027,6 @@ class Google_Service_Dfareporting_ThirdPartyTrackingUrl extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserDefinedVariableConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21305,7 +21062,6 @@ class Google_Service_Dfareporting_UserDefinedVariableConfiguration extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserProfile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21386,7 +21142,6 @@ class Google_Service_Dfareporting_UserProfile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserProfileList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -21424,7 +21179,6 @@ class Google_Service_Dfareporting_UserProfileList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRole extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -21507,7 +21261,6 @@ class Google_Service_Dfareporting_UserRole extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21561,7 +21314,6 @@ class Google_Service_Dfareporting_UserRolePermission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermissionGroup extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -21597,7 +21349,6 @@ class Google_Service_Dfareporting_UserRolePermissionGroup extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermissionGroupsListResponse extends Google_Collection
 {
   protected $collection_key = 'userRolePermissionGroups';
@@ -21626,7 +21377,6 @@ class Google_Service_Dfareporting_UserRolePermissionGroupsListResponse extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolePermissionsListResponse extends Google_Collection
 {
   protected $collection_key = 'userRolePermissions';
@@ -21655,7 +21405,6 @@ class Google_Service_Dfareporting_UserRolePermissionsListResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dfareporting_UserRolesListResponse extends Google_Collection
 {
   protected $collection_key = 'userRoles';

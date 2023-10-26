@@ -142,9 +142,11 @@ class qtype_truefalse extends question_type {
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
         $answers = $questiondata->options->answers;
-
-        /** @var qtype_truefalse_question $question */
-        $question->rightanswer = $answers[$questiondata->options->trueanswer]->fraction > 0.99;
+        if ($answers[$questiondata->options->trueanswer]->fraction > 0.99) {
+            $question->rightanswer = true;
+        } else {
+            $question->rightanswer = false;
+        }
         $question->truefeedback =  $answers[$questiondata->options->trueanswer]->feedback;
         $question->falsefeedback = $answers[$questiondata->options->falseanswer]->feedback;
         $question->truefeedbackformat =

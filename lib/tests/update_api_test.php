@@ -41,7 +41,6 @@ class update_api_test extends \advanced_testcase {
      */
     public function test_convert_branch_numbering_format() {
 
-        /** @var \core\update\testable_api $client */
         $client = \core\update\testable_api::client();
 
         $this->assertSame('2.9', $client->convert_branch_numbering_format(29));

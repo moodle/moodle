@@ -142,8 +142,7 @@ Feature: Users can use mod_data without editing the templates
     And I should not see "Some content 1"
     When I navigate to "Templates" in current page administration
     And I set the field "Templates tertiary navigation" to "List view template"
-    And I click on "Actions" "button"
-    And I choose "Reset current template" in the open action menu
+    And I click on "Reset" "button" in the "sticky-footer" "region"
     And I click on "Reset" "button" in the "Reset template?" "dialogue"
     And I should see "Template reset"
     And I navigate to "Database" in current page administration

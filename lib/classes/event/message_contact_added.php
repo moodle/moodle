@@ -73,6 +73,16 @@ class message_contact_added extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'message', 'add contact', 'index.php?user1=' . $this->relateduserid .
+            '&amp;user2=' . $this->userid, $this->relateduserid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

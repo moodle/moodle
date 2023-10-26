@@ -17,12 +17,15 @@
 namespace core_user\external;
 
 use context_system;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
 use core_user\devicekey;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
+use external_warnings;
+
+defined('MOODLE_INTERNAL') || die();
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * Update public key against registered user device.

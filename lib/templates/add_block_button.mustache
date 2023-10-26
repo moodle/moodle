@@ -23,21 +23,21 @@
     {
         "link" : "/my/index.php?bui_addblock&bui_blockregion=content&sesskey=M3mes",
         "escapedlink" : "?bui_addblock&bui_blockregion=content&sesskey=M3mes",
-        "pagehash": "abcdefgh",
-        "blockregion": "side-pre"
+        "pageType" : "my-index",
+        "pageLayout" : "mydashboard",
+        "subPage": "15"
     }
 
 }}
 <div class="add_block_button">
-    <a href="{{link}}" id="addblock-{{uniqid}}" class="btn btn-link block-add text-left mb-3" data-key="addblock"
-            data-url="{{escapedlink}}" data-blockregion="{{blockregion}}">
+    <a href="{{link}}" id="addblock-{{uniqid}}" class="btn btn-link block-add text-left mb-3" data-key="addblock" data-url="{{escapedlink}}">
         <i class="fa fa-plus py-2 mr-3" aria-hidden="true"></i>{{#str}}addblock{{/str}}
     </a>
 </div>
 
 {{#js}}
     // Initialise the JS for the modal window which displays the blocks available to add.
-    require(['core_block/add_modal'], function(addBlockModal) {
-        addBlockModal.init(null, '{{pagehash}}');
+    require(['core/addblockmodal'], function(addBlockModal) {
+        addBlockModal.init('{{pageType}}', '{{pageLayout}}', null, '{{subPage}}');
     });
 {{/js}}

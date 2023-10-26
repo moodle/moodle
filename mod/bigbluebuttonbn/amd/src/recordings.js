@@ -22,10 +22,12 @@
  */
 
 import * as repository from './repository';
-import {exception as displayException, saveCancelPromise} from 'core/notification';
+import {exception as displayException} from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {getString, getStrings} from 'core/str';
+import {get_string as getString, get_strings as getStrings} from 'core/str';
 import {addIconToContainerWithPromise} from 'core/loadingicon';
+import ModalFactory from 'core/modal_factory';
+import ModalEvents from 'core/modal_events';
 import Pending from 'core/pending';
 
 const stringsWithKeys = {
@@ -51,12 +53,9 @@ const getStringsForYui = () => {
 
     // Return an object with the matching string keys (we want an object with {<stringkey>: <stringvalue>...}).
     return getStrings(stringMap)
-        .then((stringArray) => Object.assign(
-            {},
-            ...Object.keys(stringsWithKeys).map(
-                (key, index) => ({[key]: stringArray[index]})
-            )
-        ));
+        .then((stringArray) => Object.assign({}, ...Object.keys(stringsWithKeys).map(
+            (key, index) => ({[key]: stringArray[index]})))
+        ).catch();
 };
 
 const getYuiInstance = lang => new Promise(resolve => {
@@ -172,7 +171,7 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
         }));
     };
 
-    const requestAction = async(element) => {
+    const requestAction = (element) => {
         const getDataFromAction = (element, dataType) => {
             const dataElement = element.closest(`[data-${dataType}]`);
             if (dataElement) {
@@ -206,19 +205,36 @@ const getDataTableFunctions = (tableId, searchFormId, dataTable) => {
         payload.additionaloptions = JSON.stringify(payload.additionaloptions);
         if (element.dataset.requireConfirmation === "1") {
             // Create the confirmation dialogue.
-            try {
-                await saveCancelPromise(
-                    getString('confirm'),
-                    recordingConfirmationMessage(payload),
-                    getString('ok', 'moodle'),
-                );
-            } catch {
-                // User cancelled the dialogue.
-                return;
-            }
-        }
+            return new Promise((resolve) =>
+                ModalFactory.create({
+                    title: getString('confirm'),
+                    body: recordingConfirmationMessage(payload),
+                    type: ModalFactory.types.SAVE_CANCEL
+                }).then(async(modal) => {
+                    modal.setSaveButtonText(await getString('ok', 'moodle'));
 
-        return repository.updateRecording(payload);
+                    // Handle save event.
+                    modal.getRoot().on(ModalEvents.save, () => {
+                        resolve(true);
+                    });
+
+                    // Handle hidden event.
+                    modal.getRoot().on(ModalEvents.hidden, () => {
+                        // Destroy when hidden.
+                        modal.destroy();
+                        resolve(false);
+                    });
+
+                    modal.show();
+
+                    return modal;
+                }).catch(displayException)
+            ).then((proceed) =>
+                proceed ? repository.updateRecording(payload) : () => null
+            );
+        } else {
+            return repository.updateRecording(payload);
+        }
     };
 
     const recordingConfirmationMessage = async(data) => {

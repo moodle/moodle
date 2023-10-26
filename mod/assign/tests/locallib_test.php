@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
+require_once($CFG->dirroot . '/mod/assign/upgradelib.php');
 require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 
 /**
@@ -44,12 +45,6 @@ class locallib_test extends \advanced_testcase {
 
     // Use the generator helper.
     use mod_assign_test_generator;
-
-    /** @var array */
-    public $extrastudents;
-
-    /** @var array */
-    public $extrasuspendedstudents;
 
     public function test_return_links() {
         global $PAGE;
@@ -1567,7 +1562,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1585,7 +1580,7 @@ class locallib_test extends \advanced_testcase {
         $this->mark_submission($teacher, $assign, $student, 50.0);
 
         $this->expectOutputRegex('/Done processing 1 assignment submissions/');
-        \core\cron::setup_user();
+        cron_setup_user();
         $sink = $this->redirectMessages();
         \assign::cron();
         $messages = $sink->get_messages();
@@ -1609,7 +1604,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1628,7 +1623,7 @@ class locallib_test extends \advanced_testcase {
             'sendstudentnotifications' => 0,
         ]);
 
-        \core\cron::setup_user();
+        cron_setup_user();
         $sink = $this->redirectMessages();
         \assign::cron();
         $messages = $sink->get_messages();
@@ -1640,7 +1635,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1658,14 +1653,14 @@ class locallib_test extends \advanced_testcase {
         $this->mark_submission($teacher, $assign, $student, 50.0);
 
         $this->expectOutputRegex('/Done processing 1 assignment submissions/');
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         // Regrade.
         $this->mark_submission($teacher, $assign, $student, 50.0);
 
         $this->expectOutputRegex('/Done processing 1 assignment submissions/');
-        \core\cron::setup_user();
+        cron_setup_user();
         $sink = $this->redirectMessages();
         \assign::cron();
         $messages = $sink->get_messages();
@@ -1682,7 +1677,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1705,7 +1700,7 @@ class locallib_test extends \advanced_testcase {
             'workflowstate' => ASSIGN_MARKING_WORKFLOW_STATE_READYFORRELEASE,
         ]);
 
-        \core\cron::setup_user();
+        cron_setup_user();
         $sink = $this->redirectMessages();
         \assign::cron();
         $messages = $sink->get_messages();
@@ -1719,7 +1714,7 @@ class locallib_test extends \advanced_testcase {
         $assign->testable_apply_grade_to_user($submission, $student->id, 0);
 
         // Now run cron and see that one message was sent.
-        \core\cron::setup_user();
+        cron_setup_user();
         $sink = $this->redirectMessages();
         $this->expectOutputRegex('/Done processing 1 assignment submissions/');
         \assign::cron();
@@ -1734,7 +1729,7 @@ class locallib_test extends \advanced_testcase {
         $this->resetAfterTest();
 
         // First run cron so there are no messages waiting to be sent (from other tests).
-        \core\cron::setup_user();
+        cron_setup_user();
         \assign::cron();
 
         $course = $this->getDataGenerator()->create_course();
@@ -1755,7 +1750,7 @@ class locallib_test extends \advanced_testcase {
         \phpunit_util::stop_message_redirection();
 
         // Now run cron and see that one message was sent.
-        \core\cron::setup_user();
+        cron_setup_user();
         $this->preventResetByRollback();
         $sink = $this->redirectEvents();
         $this->expectOutputRegex('/Done processing 1 assignment submissions/');

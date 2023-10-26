@@ -42,9 +42,6 @@ class checkbox_attribute extends element {
     /** @var bool If this is a read-only input. */
     private bool $isreadonly;
 
-    /** @var int Is this element locked either 0 or a time. */
-    protected int $locked;
-
     /**
      * Constructor
      *

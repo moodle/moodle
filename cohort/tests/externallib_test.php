@@ -17,9 +17,7 @@
 namespace core_cohort;
 
 use core_cohort_external;
-use core_external\external_api;
 use externallib_advanced_testcase;
-use core_cohort\customfield\cohort_handler;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -39,33 +37,10 @@ require_once($CFG->dirroot . '/cohort/externallib.php');
 class externallib_test extends externallib_advanced_testcase {
 
     /**
-     * Create cohort custom fields for testing.
-     */
-    protected function create_custom_fields(): void {
-        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
-            'component' => 'core_cohort',
-            'area' => 'cohort',
-            'name' => 'Other fields',
-        ]);
-        self::getDataGenerator()->create_custom_field([
-            'shortname' => 'testfield1',
-            'name' => 'Custom field',
-            'type' => 'text',
-            'categoryid' => $fieldcategory->get('id'),
-        ]);
-        self::getDataGenerator()->create_custom_field([
-            'shortname' => 'testfield2',
-            'name' => 'Custom field',
-            'type' => 'text',
-            'categoryid' => $fieldcategory->get('id'),
-        ]);
-    }
-
-    /**
      * Test create_cohorts
      */
     public function test_create_cohorts() {
-        global $DB;
+        global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
 
@@ -73,9 +48,6 @@ class externallib_test extends externallib_advanced_testcase {
 
         $contextid = \context_system::instance()->id;
         $category = $this->getDataGenerator()->create_category();
-
-        // Custom fields.
-        $this->create_custom_fields();
 
         $cohort1 = array(
             'categorytype' => array('type' => 'id', 'value' => $category->id),
@@ -109,27 +81,10 @@ class externallib_test extends externallib_advanced_testcase {
             'theme' => 'classic'
             );
 
-        $cohort5 = array(
-            'categorytype' => array('type' => 'id', 'value' => $category->id),
-            'name' => 'cohort test 5 (with custom fields)',
-            'idnumber' => 'cohorttest5',
-            'description' => 'This is a description for cohorttest5',
-            'customfields' => array(
-                array(
-                    'shortname' => 'testfield1',
-                    'value' => 'Test value 1',
-                ),
-                array(
-                    'shortname' => 'testfield2',
-                    'value' => 'Test value 2',
-                ),
-            ),
-        );
-
         // Call the external function.
         $this->setCurrentTimeStart();
         $createdcohorts = core_cohort_external::create_cohorts(array($cohort1, $cohort2));
-        $createdcohorts = external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
+        $createdcohorts = \external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
 
         // Check we retrieve the good total number of created cohorts + no error on capability.
         $this->assertEquals(2, count($createdcohorts));
@@ -159,25 +114,10 @@ class externallib_test extends externallib_advanced_testcase {
             $this->assertTimeCurrent($dbcohort->timemodified);
         }
 
-        $createdcohorts = core_cohort_external::create_cohorts(array($cohort5));
-        $createdcohorts = external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
-
-        $this->assertCount(1, $createdcohorts);
-        $createdcohort = reset($createdcohorts);
-        $dbcohort = $DB->get_record('cohort', array('id' => $createdcohort['id']));
-        $this->assertEquals($cohort5['name'], $dbcohort->name);
-        $this->assertEquals($cohort5['description'], $dbcohort->description);
-        $this->assertEquals(1, $dbcohort->visible);
-        $this->assertEquals('', $dbcohort->theme);
-
-        $data = cohort_handler::create()->export_instance_data_object($createdcohort['id'], true);
-        $this->assertEquals('Test value 1', $data->testfield1);
-        $this->assertEquals('Test value 2', $data->testfield2);
-
         // Call when $CFG->allowcohortthemes is disabled.
         set_config('allowcohortthemes', 0);
         $createdcohorts = core_cohort_external::create_cohorts(array($cohort4));
-        $createdcohorts = external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
+        $createdcohorts = \external_api::clean_returnvalue(core_cohort_external::create_cohorts_returns(), $createdcohorts);
         foreach ($createdcohorts as $createdcohort) {
             $dbcohort = $DB->get_record('cohort', array('id' => $createdcohort['id']));
             if ($createdcohort['idnumber'] == $cohort4['idnumber']) {
@@ -233,10 +173,9 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_cohorts
      */
     public function test_get_cohorts() {
-        $this->resetAfterTest(true);
+        global $USER, $CFG;
 
-        // Custom fields.
-        $this->create_custom_fields();
+        $this->resetAfterTest(true);
 
         set_config('allowcohortthemes', 1);
 
@@ -245,14 +184,8 @@ class externallib_test extends externallib_advanced_testcase {
             'name' => 'cohortnametest1',
             'idnumber' => 'idnumbertest1',
             'description' => 'This is a description for cohort 1',
-            'theme' => 'classic',
-            'customfield_testfield1' => 'Test value 1',
-            'customfield_testfield2' => 'Test value 2',
-        );
-
-        // We need a site admin to be able to populate cohorts custom fields.
-        $this->setAdminUser();
-
+            'theme' => 'classic'
+            );
         $cohort1 = self::getDataGenerator()->create_cohort($cohort1);
         $cohort2 = self::getDataGenerator()->create_cohort();
 
@@ -262,7 +195,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $returnedcohorts = core_cohort_external::get_cohorts(array(
             $cohort1->id, $cohort2->id));
-        $returnedcohorts = external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
+        $returnedcohorts = \external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
 
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
@@ -273,19 +206,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals($cohort1->description, $enrolledcohort['description']);
                 $this->assertEquals($cohort1->visible, $enrolledcohort['visible']);
                 $this->assertEquals($cohort1->theme, $enrolledcohort['theme']);
-                $this->assertIsArray($enrolledcohort['customfields']);
-                $this->assertCount(2, $enrolledcohort['customfields']);
-                $actual = [];
-                foreach ($enrolledcohort['customfields'] as $customfield) {
-                    $this->assertArrayHasKey('name', $customfield);
-                    $this->assertArrayHasKey('shortname', $customfield);
-                    $this->assertArrayHasKey('type', $customfield);
-                    $this->assertArrayHasKey('valueraw', $customfield);
-                    $this->assertArrayHasKey('value', $customfield);
-                    $actual[$customfield['shortname']] = $customfield;
-                }
-                $this->assertEquals('Test value 1', $actual['testfield1']['value']);
-                $this->assertEquals('Test value 2', $actual['testfield2']['value']);
             }
         }
 
@@ -295,7 +215,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Call the external function.
         $returnedcohorts = core_cohort_external::get_cohorts(array(
             $cohort1->id, $cohort2->id));
-        $returnedcohorts = external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
+        $returnedcohorts = \external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
 
         // Check we retrieve the good total number of enrolled cohorts + no error on capability.
         $this->assertEquals(2, count($returnedcohorts));
@@ -304,7 +224,7 @@ class externallib_test extends externallib_advanced_testcase {
         set_config('allowcohortthemes', 0);
         $returnedcohorts = core_cohort_external::get_cohorts(array(
             $cohort1->id));
-        $returnedcohorts = external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
+        $returnedcohorts = \external_api::clean_returnvalue(core_cohort_external::get_cohorts_returns(), $returnedcohorts);
         foreach ($returnedcohorts as $enrolledcohort) {
             if ($enrolledcohort['idnumber'] == $cohort1->idnumber) {
                 $this->assertNull($enrolledcohort['theme']);
@@ -316,20 +236,13 @@ class externallib_test extends externallib_advanced_testcase {
      * Test update_cohorts
      */
     public function test_update_cohorts() {
-        global $DB;
+        global $USER, $CFG, $DB;
 
         $this->resetAfterTest(true);
-
-        // Custom fields.
-        $this->create_custom_fields();
 
         set_config('allowcohortthemes', 0);
 
         $cohort1 = self::getDataGenerator()->create_cohort(array('visible' => 0));
-
-        $data = cohort_handler::create()->export_instance_data_object($cohort1->id, true);
-        $this->assertNull($data->testfield1);
-        $this->assertNull($data->testfield2);
 
         $cohort1 = array(
             'id' => $cohort1->id,
@@ -337,18 +250,8 @@ class externallib_test extends externallib_advanced_testcase {
             'name' => 'cohortnametest1',
             'idnumber' => 'idnumbertest1',
             'description' => 'This is a description for cohort 1',
-            'theme' => 'classic',
-            'customfields' => array(
-                array(
-                    'shortname' => 'testfield1',
-                    'value' => 'Test value 1',
-                ),
-                array(
-                    'shortname' => 'testfield2',
-                    'value' => 'Test value 2',
-                ),
-            ),
-        );
+            'theme' => 'classic'
+            );
 
         $context = \context_system::instance();
         $roleid = $this->assignUserCapability('moodle/cohort:manage', $context->id);
@@ -365,9 +268,6 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($dbcohort->description, $cohort1['description']);
         $this->assertEquals($dbcohort->visible, 0);
         $this->assertEmpty($dbcohort->theme);
-        $data = cohort_handler::create()->export_instance_data_object($cohort1['id'], true);
-        $this->assertEquals('Test value 1', $data->testfield1);
-        $this->assertEquals('Test value 2', $data->testfield2);
 
         // Since field 'visible' was added in 2.8, make sure that update works correctly with and without this parameter.
         core_cohort_external::update_cohorts(array($cohort1 + array('visible' => 1)));
@@ -388,22 +288,6 @@ class externallib_test extends externallib_advanced_testcase {
         core_cohort_external::update_cohorts(array($cohort1 + array('theme' => 'boost')));
         $dbcohort = $DB->get_record('cohort', array('id' => $cohort1['id']));
         $this->assertEquals('classic', $dbcohort->theme);
-
-        // Updating custom fields.
-        $cohort1['customfields'] = array(
-            array(
-                'shortname' => 'testfield1',
-                'value' => 'Test value 1 updated',
-            ),
-            array(
-                'shortname' => 'testfield2',
-                'value' => 'Test value 2 updated',
-            ),
-        );
-        core_cohort_external::update_cohorts(array($cohort1));
-        $data = cohort_handler::create()->export_instance_data_object($cohort1['id'], true);
-        $this->assertEquals('Test value 1 updated', $data->testfield1);
-        $this->assertEquals('Test value 2 updated', $data->testfield2);
 
         // Call without required capability.
         $this->unassignUserCapability('moodle/cohort:manage', $context->id, $roleid);
@@ -553,7 +437,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function.
         $addcohortmembers = core_cohort_external::add_cohort_members(array($cohort1));
-        $addcohortmembers = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $addcohortmembers);
+        $addcohortmembers = \external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $addcohortmembers);
 
         // Check we retrieve the good total number of created cohorts + no error on capability.
         $this->assertEquals(1, count($addcohortmembers));
@@ -595,14 +479,14 @@ class externallib_test extends externallib_advanced_testcase {
             'usertype' => array('type' => 'id', 'value' => $user1->id)
             );
         $cohortmembers1 = core_cohort_external::add_cohort_members(array($cohortaddmember1));
-        $cohortmembers1 = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers1);
+        $cohortmembers1 = \external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers1);
 
         $cohortaddmember2 = array(
             'cohorttype' => array('type' => 'id', 'value' => $cohort2->id),
             'usertype' => array('type' => 'id', 'value' => $user2->id)
             );
         $cohortmembers2 = core_cohort_external::add_cohort_members(array($cohortaddmember2));
-        $cohortmembers2 = external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers2);
+        $cohortmembers2 = \external_api::clean_returnvalue(core_cohort_external::add_cohort_members_returns(), $cohortmembers2);
 
         // Check we retrieve no cohorts + no error on capability.
         $this->assertEquals(2, $DB->count_records_select('cohort_members', ' ((cohortid = :idcohort1 AND userid = :iduser1)
@@ -638,7 +522,6 @@ class externallib_test extends externallib_advanced_testcase {
         global $DB, $CFG;
         $this->resetAfterTest(true);
 
-        $this->create_custom_fields();
         $creator = $this->getDataGenerator()->create_user();
         $user = $this->getDataGenerator()->create_user();
         $catuser = $this->getDataGenerator()->create_user();
@@ -678,19 +561,10 @@ class externallib_test extends externallib_advanced_testcase {
         $catcontext = array('contextid' => \context_coursecat::instance($category->id)->id);
         $othercatcontext = array('contextid' => \context_coursecat::instance($othercategory->id)->id);
         $coursecontext = array('contextid' => \context_course::instance($course->id)->id);
-        $customfields = array(
-            'contextid' => \context_system::instance()->id,
-            'customfield_testfield1' => 'Test value 1',
-            'customfield_testfield2' => 'Test value 2',
-        );
-
-        // We need a site admin to be able to populate cohorts custom fields.
-        $this->setAdminUser();
 
         $cohort1 = $this->getDataGenerator()->create_cohort(array_merge($syscontext, array('name' => 'Cohortsearch 1')));
         $cohort2 = $this->getDataGenerator()->create_cohort(array_merge($catcontext, array('name' => 'Cohortsearch 2')));
         $cohort3 = $this->getDataGenerator()->create_cohort(array_merge($othercatcontext, array('name' => 'Cohortsearch 3')));
-        $cohort4 = $this->getDataGenerator()->create_cohort(array_merge($customfields, array('name' => 'Cohortsearch 4')));
 
         // A user without permission in the system.
         $this->setUser($user);
@@ -712,31 +586,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // A user with permissions in the system.
         $this->setUser($creator);
-        $result = core_cohort_external::search_cohorts("Cohortsearch 4", $syscontext, 'parents');
-        $this->assertCount(1, $result['cohorts']);
-        $this->assertEquals('Cohortsearch 4', $result['cohorts'][$cohort4->id]->name);
-
-        $result = core_cohort_external::search_cohorts("Cohortsearch 4", $syscontext, 'parents');
-        $this->assertCount(1, $result['cohorts']);
-        $this->assertEquals('Cohortsearch 4', $result['cohorts'][$cohort4->id]->name);
-        $this->assertIsArray($result['cohorts'][$cohort4->id]->customfields);
-        $this->assertCount(2, $result['cohorts'][$cohort4->id]->customfields);
-        $actual = [];
-        foreach ($result['cohorts'][$cohort4->id]->customfields as $customfield) {
-            $this->assertArrayHasKey('name', $customfield);
-            $this->assertArrayHasKey('shortname', $customfield);
-            $this->assertArrayHasKey('type', $customfield);
-            $this->assertArrayHasKey('valueraw', $customfield);
-            $this->assertArrayHasKey('value', $customfield);
-            $actual[$customfield['shortname']] = $customfield;
-        }
-        $this->assertEquals('Test value 1', $actual['testfield1']['value']);
-        $this->assertEquals('Test value 2', $actual['testfield2']['value']);
+        $result = core_cohort_external::search_cohorts("Cohortsearch", $syscontext, 'parents');
+        $this->assertEquals(1, count($result['cohorts']));
+        $this->assertEquals('Cohortsearch 1', $result['cohorts'][$cohort1->id]->name);
 
         // A user with permissions in the category.
         $this->setUser($catcreator);
         $result = core_cohort_external::search_cohorts("Cohortsearch", $catcontext, 'parents');
-        $this->assertCount(3, $result['cohorts']);
+        $this->assertEquals(2, count($result['cohorts']));
         $cohorts = array();
         foreach ($result['cohorts'] as $cohort) {
             $cohorts[] = $cohort->name;
@@ -746,18 +603,18 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for parameter $includes = 'self'.
         $this->setUser($creator);
         $result = core_cohort_external::search_cohorts("Cohortsearch", $othercatcontext, 'self');
-        $this->assertCount(1, $result['cohorts']);
+        $this->assertEquals(1, count($result['cohorts']));
         $this->assertEquals('Cohortsearch 3', $result['cohorts'][$cohort3->id]->name);
 
         // Check for parameter $includes = 'all'.
         $this->setUser($creator);
         $result = core_cohort_external::search_cohorts("Cohortsearch", $syscontext, 'all');
-        $this->assertCount(4, $result['cohorts']);
+        $this->assertEquals(3, count($result['cohorts']));
 
         // A user in the course context with the system cohort:view capability. Check that all the system cohorts are returned.
         $this->setUser($courseuser);
         $result = core_cohort_external::search_cohorts("Cohortsearch", $coursecontext, 'all');
-        $this->assertCount(2, $result['cohorts']);
+        $this->assertEquals(1, count($result['cohorts']));
         $this->assertEquals('Cohortsearch 1', $result['cohorts'][$cohort1->id]->name);
 
         // Detect invalid parameter $includes.

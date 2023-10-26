@@ -5,7 +5,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  */
 import {prefetchStrings} from 'core/prefetch';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {confirm as confirmModal} from 'core/notification';
 
 /**

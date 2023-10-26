@@ -9,7 +9,7 @@ videojs.addLanguage('bg', {
   "Loaded": "Заредено",
   "Progress": "Прогрес",
   "Fullscreen": "Цял екран",
-  "Exit Fullscreen": "Спиране на цял екран",
+  "Non-Fullscreen": "Спиране на цял екран",
   "Mute": "Без звук",
   "Unmute": "Със звук",
   "Playback Rate": "Скорост на възпроизвеждане",

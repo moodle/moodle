@@ -18,7 +18,6 @@ namespace mod_bigbluebuttonbn\output;
 
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_data;
-use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\helpers\roles;
 use mod_bigbluebuttonbn\recording;
 use renderable;
@@ -107,21 +106,25 @@ class recording_row_playback implements renderable, templatable {
         if (array_key_exists('restricted', $playback) && strtolower($playback['restricted']) == 'false') {
             return true;
         }
+        // All types that are not statistics are included.
+        if ($playback['type'] != 'statistics') {
+            return true;
+        }
 
         // Exclude imported recordings.
         if ($this->recording->get('imported')) {
             return false;
         }
-        $canmanagerecordings = roles::has_capability_in_course(
-            $this->recording->get('courseid'), 'mod/bigbluebuttonbn:managerecordings');
-        $canviewallformats = roles::has_capability_in_course(
-            $this->recording->get('courseid'), 'mod/bigbluebuttonbn:viewallrecordingformats');
-        $issafeformat = false;
-        // Now check the list of safe formats.
-        if ($safeformats = config::get('recording_safe_formats')) {
-            $safeformatarray = str_getcsv($safeformats);
-            $issafeformat = in_array($playback['type'], $safeformatarray);
+
+        // Exclude non moderators.
+        if ($this->instance) {
+            if (!$this->instance->is_admin() && !$this->instance->is_moderator()) {
+                return false;
+            }
+        } else {
+            return roles::has_capability_in_course($this->recording->get('courseid'), 'mod/bigbluebuttonbn:managerecordings');
         }
-        return ($canmanagerecordings && $canviewallformats) || $issafeformat;
+        return true;
+
     }
 }

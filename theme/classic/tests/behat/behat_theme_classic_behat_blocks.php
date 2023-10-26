@@ -1,5 +1,4 @@
 <?php
-use Behat\Gherkin\Node\TableNode;
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -55,38 +54,6 @@ class behat_theme_classic_behat_blocks extends behat_blocks {
                     array(get_string('go'), "button", "#add_block", "css_element")
             );
         }
-    }
-
-    /**
-     * Adds the selected block to the specified region
-     *
-     * Editing mode must be previously enabled.
-     *
-     * @param string $blockname
-     * @param string $region
-     */
-    public function i_add_the_block_to_the_region(string $blockname, string $region) {
-        $this->execute('behat_blocks::i_add_the_block', [$blockname]);
-    }
-
-    /**
-     * Adds the selected block to the specified region and fills configuration form.
-     *
-     * Editing mode must be previously enabled.
-     *
-     * @param string $blockname
-     * @param string $region
-     * @param TableNode $data
-     */
-    public function i_add_the_block_to_the_region_with(string $blockname, string $region, TableNode $data) {
-        $this->execute('behat_blocks::i_add_the_block_to_the_region', [$blockname, $region]);
-        $this->wait_for_pending_js();
-        $blocktitle = $blockname === 'Text' ? '(new text block)' : $blockname;
-        $this->execute('behat_blocks::i_configure_the_block', [$blocktitle]);
-        $dialogname = get_string('configureblock', 'core_block', $blocktitle);
-        $this->execute('behat_forms::i_set_the_following_fields_in_container_to_these_values',
-            [$dialogname, "dialogue", $data]);
-        $this->execute('behat_general::i_click_on_in_the', ["Save changes", 'button', $dialogname, 'dialogue']);
     }
 
     /**

@@ -103,12 +103,6 @@ final class column {
     /** @var bool $available Used to know if column is available to the current user or not */
     protected $available = true;
 
-    /** @var bool $deprecated */
-    protected $deprecated = false;
-
-    /** @var string $deprecatedmessage */
-    protected $deprecatedmessage;
-
     /** @var column_model $persistent */
     protected $persistent;
 
@@ -479,20 +473,18 @@ final class column {
     }
 
     /**
-     * Adds column callback (in the case there are multiple, they will be called iteratively - the result of each passed
-     * along to the next in the chain)
+     * Adds column callback (in the case there are multiple, they will be applied one after another)
      *
      * The callback should implement the following signature (where $value is the first column field, $row is all column
-     * fields, $additionalarguments are those passed to this method, and $aggregation indicates the current aggregation type
-     * being applied to the column):
-     *
-     * function($value, stdClass $row, $additionalarguments, ?string $aggregation): string
+     * fields, and $additionalarguments are those passed on from this method):
      *
      * The type of the $value parameter passed to the callback is determined by calling {@see set_type}, this type is preserved
-     * if the column is part of a report source and is being aggregated. For entities that can be left joined to a report, the
-     * first argument of the callback must be nullable (as it should also be if the first column field is itself nullable).
+     * if the column is part of a report source and is being aggregated.
+     * For entities that can to be left joined to a report, the first argument to their column callbacks must be nullable.
      *
-     * @param callable $callable
+     * function($value, stdClass $row[, $additionalarguments]): string
+     *
+     * @param callable $callable function that takes arguments ($value, \stdClass $row, $additionalarguments)
      * @param mixed $additionalarguments
      * @return self
      */
@@ -695,7 +687,7 @@ final class column {
         } else {
             foreach ($this->callbacks as $callback) {
                 [$callable, $arguments] = $callback;
-                $value = ($callable)($value, (object) $values, $arguments, null);
+                $value = ($callable)($value, (object) $values, $arguments);
             }
         }
 
@@ -741,37 +733,6 @@ final class column {
     public function set_is_available(bool $available): self {
         $this->available = $available;
         return $this;
-    }
-
-    /**
-     * Set deprecated state of the column, in which case it will still be shown when already present in existing reports but
-     * won't be available for selection in the report editor
-     *
-     * @param string $deprecatedmessage
-     * @return self
-     */
-    public function set_is_deprecated(string $deprecatedmessage = ''): self {
-        $this->deprecated = true;
-        $this->deprecatedmessage = $deprecatedmessage;
-        return $this;
-    }
-
-    /**
-     * Return deprecated state of the column
-     *
-     * @return bool
-     */
-    public function get_is_deprecated(): bool {
-        return $this->deprecated;
-    }
-
-    /**
-     * Return deprecated message of the column
-     *
-     * @return string
-     */
-    public function get_is_deprecated_message(): string {
-        return $this->deprecatedmessage;
     }
 
     /**

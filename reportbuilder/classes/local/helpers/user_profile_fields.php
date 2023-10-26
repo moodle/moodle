@@ -113,7 +113,7 @@ class user_profile_fields {
     }
 
     /**
-     * Get table alias for given profile field
+     * Generate table alias for given profile field
      *
      * The entity name is used to ensure the alias differs when the entity is used multiple times within the same report, each
      * having their own table alias/join
@@ -133,7 +133,7 @@ class user_profile_fields {
     }
 
     /**
-     * Get table join for given profile field
+     * Generate table join for given profile field
      *
      * @param profile_field_base $profilefield
      * @return string

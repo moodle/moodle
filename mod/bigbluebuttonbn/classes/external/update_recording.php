@@ -17,13 +17,19 @@
 namespace mod_bigbluebuttonbn\external;
 
 use coding_exception;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_action;
+use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_helper;
 use mod_bigbluebuttonbn\recording;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to update the details of one recording.

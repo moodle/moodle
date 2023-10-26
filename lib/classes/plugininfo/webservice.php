@@ -23,18 +23,14 @@
  */
 namespace core\plugininfo;
 
-use admin_settingpage;
-use part_of_admin_tree;
+use part_of_admin_tree, admin_settingpage;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Class for webservice protocols
  */
 class webservice extends base {
-
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
-
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array of enabled plugins $pluginname => $pluginname
@@ -97,7 +93,6 @@ class webservice extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $webservice = $this; // Also can be used inside settings.php.

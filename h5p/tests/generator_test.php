@@ -19,14 +19,13 @@ namespace core_h5p;
 use core_h5p\local\library\autoloader;
 
 /**
- * Test class covering the h5p data generator class.
- *
- * @package    core_h5p
- * @category   test
- * @copyright  2019 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @runTestsInSeparateProcesses
- * @covers     \core_h5p_generator
+* Test class covering the h5p data generator class.
+*
+* @package    core_h5p
+* @category   test
+* @copyright  2019 Mihail Geshoski <mihail@moodle.com>
+* @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+* @runTestsInSeparateProcesses
 */
 class generator_test extends \advanced_testcase {
 
@@ -205,120 +204,6 @@ class generator_test extends \advanced_testcase {
                 true,
                 true
             ]
-        ];
-    }
-
-    /**
-     * Test the returned data of generate_h5p_data() when the method requests
-     * creation of H5P file and xAPI states.
-     *
-     * @dataProvider generate_h5p_data_xapistates_provider
-     * @param array|null $filerecord
-     */
-    public function test_generate_h5p_data_xapistates(?array $filerecord) {
-        global $DB;
-
-        $this->resetAfterTest();
-
-        /** @var \core_h5p_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $this->setUser($user);
-        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
-        $activitycontext = \context_module::instance($activity->cmid);
-        if ($filerecord) {
-            $filerecord['contextid'] = $activitycontext->id;
-            $filerecord['component'] = 'mod_h5pactivity';
-            $filerecord['filearea'] = 'package';
-            $filerecord['itemid'] = 0;
-            $filerecord['filepath'] = '/';
-            $filerecord['filepath'] = '/';
-            $filerecord['filename'] = 'dummy.h5p';
-        }
-
-        $data = $generator->generate_h5p_data(false, $filerecord);
-
-        $mainlib = $DB->get_record('h5p_libraries', ['machinename' => 'MainLibrary']);
-        $lib1 = $DB->get_record('h5p_libraries', ['machinename' => 'Library1']);
-        $lib2 = $DB->get_record('h5p_libraries', ['machinename' => 'Library2']);
-        $lib3 = $DB->get_record('h5p_libraries', ['machinename' => 'Library3']);
-        $lib4 = $DB->get_record('h5p_libraries', ['machinename' => 'Library4']);
-        $lib5 = $DB->get_record('h5p_libraries', ['machinename' => 'Library5']);
-
-        $h5p = $DB->get_record('h5p', ['mainlibraryid' => $mainlib->id]);
-
-        $expected = (object) [
-            'h5pcontent' => (object) [
-                 'h5pid' => $h5p->id,
-                 'contentdependencies' => [$mainlib, $lib1, $lib2, $lib3, $lib4],
-            ],
-            'mainlib' => (object) [
-                'data' => $mainlib,
-                'dependencies' => [$lib1, $lib2, $lib3],
-            ],
-            'lib1' => (object) [
-                'data' => $lib1,
-                'dependencies' => [$lib2, $lib3, $lib4],
-            ],
-            'lib2' => (object) [
-                'data' => $lib2,
-                'dependencies' => [],
-            ],
-            'lib3' => (object) [
-                'data' => $lib3,
-                'dependencies' => [$lib5],
-            ],
-            'lib4' => (object) [
-                'data' => $lib4,
-                'dependencies' => [],
-            ],
-            'lib5' => (object) [
-                'data' => $lib5,
-                'dependencies' => [],
-            ],
-        ];
-
-        $this->assertEquals($expected, $data);
-        if ($filerecord) {
-            // Confirm the H5P file has been created (when $filerecord is not empty).
-            $fs = get_file_storage();
-            $this->assertNotFalse($fs->get_file_by_hash($h5p->pathnamehash));
-            // Confirm xAPI state has been created when $filerecord['addxapistate'] is given.
-            if (array_key_exists('addxapistate', $filerecord) && $filerecord['addxapistate']) {
-                $this->assertEquals(1, $DB->count_records('xapi_states'));
-            } else {
-                $this->assertEquals(0, $DB->count_records('xapi_states'));
-            }
-        } else {
-            // Confirm the H5P file doesn't exist when $filerecord is null.
-            $fs = get_file_storage();
-            $this->assertFalse($fs->get_file_by_hash($h5p->pathnamehash));
-            // Confirm xAPI state hasn't been created when $filerecord is null.
-            $this->assertEquals(0, $DB->count_records('xapi_states'));
-        }
-    }
-
-    /**
-     * Data provider for test_generate_h5p_data_xapistates().
-     *
-     * @return array
-     */
-    public function generate_h5p_data_xapistates_provider(): array {
-        return [
-            'Do not create the file nor xAPI states' => [
-                'filerecord' => null,
-            ],
-            'Create the H5P file but not create any xAPI state' => [
-                'filerecord' => [
-                    'addxapistate' => false,
-                ],
-            ],
-            'Create the H5P file and the xAPI state' => [
-                'filerecord' => [
-                    'addxapistate' => true,
-                ],
-            ],
         ];
     }
 

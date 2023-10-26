@@ -29,17 +29,12 @@
  */
 abstract class base_task implements checksumable, executable, loggable {
 
-    /** @var string */
     protected $name;      // One simple name for identification purposes
-    /** @var backup_plan|restore_plan */
     protected $plan;      // Plan this is part of
-    /** @var base_setting[] */
     protected $settings;  // One array of base_setting elements to define this task
-    /** @var base_step[] */
     protected $steps;     // One array of base_step elements
-    /** @var bool */
+
     protected $built;     // Flag to know if one task has been built
-    /** @var bool */
     protected $executed;  // Flag to know if one task has been executed
 
     /**

@@ -43,14 +43,13 @@ class quiz_question_bank_view_test extends \advanced_testcase {
 
         // Create a course and a quiz.
         $course = $generator->create_course();
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quiz = $this->getDataGenerator()->create_module('quiz', array('course' => $course->id));
         $context = \context_module::instance($quiz->cmid);
         $cm = get_coursemodule_from_instance('quiz', $quiz->id);
 
         // Create a question in the default category.
         $contexts = new question_edit_contexts($context);
-        question_make_default_categories($contexts->all());
-        $cat = question_get_default_category($context->id);
+        $cat = question_make_default_categories($contexts->all());
         $questiondata = $questiongenerator->create_question('numerical', null,
                 ['name' => 'Example question', 'category' => $cat->id]);
 
@@ -59,19 +58,17 @@ class quiz_question_bank_view_test extends \advanced_testcase {
         $cache->delete($questiondata->id);
 
         // Generate the view.
-        $params = [
+        $view = new custom_view($contexts, new \moodle_url('/'), $course, $cm, $quiz);
+        ob_start();
+        $pagevars = [
             'qpage' => 0,
             'qperpage' => 20,
             'cat' => $cat->id . ',' . $context->id,
             'recurse' => false,
             'showhidden' => false,
-            'qbshowtext' => false,
-            'tabname' => 'editq'
+            'qbshowtext' => false
         ];
-        $extraparams = ['cmid' => $cm->id];
-        $view = new custom_view($contexts, new \moodle_url('/'), $course, $cm, $params, $extraparams);
-        ob_start();
-        $view->display();
+        $view->display($pagevars, 'editq');
         $html = ob_get_clean();
 
         // Verify the output includes the expected question.

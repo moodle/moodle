@@ -21,6 +21,30 @@ Feature: In a report, admin can filter log data
       | alternativefullnameformat | middlename, alternatename, firstname, lastname |
     And I log in as "admin"
 
+  Scenario: Filter log report for standard and legacy log reader
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
+    And I click on "Enable" "link" in the "Legacy log" "table_row"
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
+    And I am on homepage
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I follow "Ann, Jill, Grainne, Beauchamp"
+    And I click on "Log in as" "link"
+    And I press "Continue"
+    And I log out
+    And I log in as "admin"
+    When I navigate to "Reports > Logs" in site administration
+    And I set the field "id" to "Acceptance test site (Site)"
+    And I set the field "user" to "All participants"
+    And I set the field "logreader" to "Standard log"
+    And I press "Get these logs"
+    Then I should see "User logged in as another user"
+    And I set the field "logreader" to "Legacy log"
+    And I press "Get these logs"
+    And I should see "user login"
+    And I should not see "Nothing to display"
+
   Scenario: Filter log report for standard log reader
     Given I am on "Course 1" course homepage
     And I navigate to course participants
@@ -34,3 +58,25 @@ Feature: In a report, admin can filter log data
     And I set the field "user" to "All participants"
     And I press "Get these logs"
     Then I should see "User logged in as another user"
+
+  Scenario: Filter log report for legacy log reader
+    Given I navigate to "Plugins > Logging > Manage log stores" in site administration
+    And I click on "Enable" "link" in the "Legacy log" "table_row"
+    And I click on "Disable" "link" in the "Standard log" "table_row"
+    And the following config values are set as admin:
+      | loglegacy | 1 | logstore_legacy |
+    And I am on homepage
+    And I am on "Course 1" course homepage
+    And I am on homepage
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I follow "Ann, Jill, Grainne, Beauchamp"
+    And I click on "Log in as" "link"
+    And I press "Continue"
+    And I log out
+    And I log in as "admin"
+    When I navigate to "Reports > Logs" in site administration
+    And I set the field "id" to "Acceptance test site (Site)"
+    And I set the field "user" to "All participants"
+    And I press "Get these logs"
+    Then I should see "user login"

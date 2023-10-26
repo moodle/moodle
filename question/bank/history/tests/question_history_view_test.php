@@ -59,22 +59,18 @@ class question_history_view_test extends \advanced_testcase {
 
         $entry = get_question_bank_entry($questiondata1->id);
 
+        // Generate the view.
+        $view = new question_history_view($contexts, new \moodle_url('/'), $course,  $entry->id, '/');
+        ob_start();
         $pagevars = [
             'qpage' => 0,
-            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
+            'qperpage' => 20,
             'cat' => $cat->id . ',' . $cat->contextid,
-            'tabname' => 'questions'
+            'recurse' => false,
+            'showhidden' => false,
+            'qbshowtext' => false
         ];
-        // Generate the view.
-        $viewclass = \qbank_history\question_history_view::class;
-        $extraparams = [
-            'view' => $viewclass,
-            'entryid' => $entry->id,
-            'returnurl' => "/",
-        ];
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course, null, $pagevars, $extraparams);
-        ob_start();
-        $view->display();
+        $view->display($pagevars, 'questions');
         $html = ob_get_clean();
 
         // Verify the output includes the first version.
@@ -106,20 +102,9 @@ class question_history_view_test extends \advanced_testcase {
             ['name' => 'First version', 'category' => $cat->id]);
 
         $entry = get_question_bank_entry($questiondata1->id);
-        $pagevars = [
-            'qpage' => 0,
-            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
-            'cat' => $cat->id . ',' . $cat->contextid,
-            'tabname' => 'questions'
-        ];
+
         // Generate the view.
-        $viewclass = \qbank_history\question_history_view::class;
-        $extraparams = [
-            'view' => $viewclass,
-            'entryid' => $entry->id,
-            'returnurl' => "/",
-        ];
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course,  null, $pagevars, $extraparams);
+        $view = new question_history_view($contexts, new \moodle_url('/'), $course,  $entry->id, '/');
         ob_start();
         $view->display_question_bank_header();
         $headerhtml = ob_get_clean();
@@ -128,7 +113,7 @@ class question_history_view_test extends \advanced_testcase {
 
         $questiondata2 = $questiongenerator->update_question($questiondata1, null,
             ['name' => 'Second version']);
-        $view = new $viewclass($contexts, new \moodle_url('/'), $course,  null, $pagevars, $extraparams);
+        $view = new question_history_view($contexts, new \moodle_url('/'), $course,  $entry->id, new \moodle_url('/'));
         ob_start();
         $view->display_question_bank_header();
         $headerhtml = ob_get_clean();

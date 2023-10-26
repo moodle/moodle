@@ -27,10 +27,6 @@ use moodle_url;
  */
 class tiny extends \core\plugininfo\base {
 
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
-
     /**
      * These subplugins can be uninstalled.
      *
@@ -64,7 +60,6 @@ class tiny extends \core\plugininfo\base {
         // In case settings.php wants to refer to them.
         global $CFG, $USER, $DB, $OUTPUT, $PAGE;
 
-        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
 
@@ -99,53 +94,6 @@ class tiny extends \core\plugininfo\base {
      * @return null|string the settings section name.
      */
     public function get_settings_section_name(): ?string {
-        if (!file_exists($this->full_path('settings.php'))) {
-            return null;
-        }
-
         return "tiny_{$this->name}_settings";
-    }
-
-    public static function get_enabled_plugins(): array {
-        $pluginmanager = \core_plugin_manager::instance();
-        $plugins = $pluginmanager->get_installed_plugins('tiny');
-
-        if (!$plugins) {
-            return [];
-        }
-
-        // Filter to return only enabled plugins.
-        $enabled = [];
-        foreach (array_keys($plugins) as $pluginname) {
-            $disabled = get_config("tiny_{$pluginname}", 'disabled');
-            if (empty($disabled)) {
-                $enabled[$pluginname] = $pluginname;
-            }
-        }
-        return $enabled;
-    }
-
-    public static function enable_plugin(string $plugin, int $enabled): bool {
-        $pluginname = "tiny_{$plugin}";
-
-        $oldvalue = !empty(get_config($pluginname, 'disabled'));
-        $disabled = empty($enabled);
-        $haschanged = false;
-
-        // Only set value if there is no config setting or if the value is different from the previous one.
-        if (!$oldvalue && $disabled) {
-            set_config('disabled', $disabled, $pluginname);
-            $haschanged = true;
-        } else if ($oldvalue && !$disabled) {
-            unset_config('disabled', $pluginname);
-            $haschanged = true;
-        }
-
-        if ($haschanged) {
-            add_to_config_log('disabled', $oldvalue, $disabled, $pluginname);
-            \core_plugin_manager::reset_caches();
-        }
-
-        return $haschanged;
     }
 }

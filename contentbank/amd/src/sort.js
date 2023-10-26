@@ -22,10 +22,10 @@
  */
 
 import selectors from './selectors';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import Prefetch from 'core/prefetch';
+import Ajax from 'core/ajax';
 import Notification from 'core/notification';
-import {setUserPreference} from 'core_user/repository';
 
 /**
  * Set up the contentbank views.
@@ -168,8 +168,19 @@ const setViewListPreference = function(viewList) {
         viewList = null;
     }
 
-    return setUserPreference('core_contentbank_view_list', viewList)
-        .catch(Notification.exception);
+    const request = {
+        methodname: 'core_user_update_user_preferences',
+        args: {
+            preferences: [
+                {
+                    type: 'core_contentbank_view_list',
+                    value: viewList
+                }
+            ]
+        }
+    };
+
+    return Ajax.call([request])[0].catch(Notification.exception);
 };
 
 /**

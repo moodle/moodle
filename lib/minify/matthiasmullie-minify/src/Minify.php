@@ -1,7 +1,6 @@
 <?php
-
 /**
- * Abstract minifier class.
+ * Abstract minifier class
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
@@ -9,7 +8,6 @@
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
  */
-
 namespace MatthiasMullie\Minify;
 
 use MatthiasMullie\Minify\Exceptions\IOException;
@@ -20,6 +18,7 @@ use Psr\Cache\CacheItemInterface;
  *
  * Please report bugs on https://github.com/matthiasmullie/minify/issues
  *
+ * @package Minify
  * @author Matthias Mullie <minify@mullie.eu>
  * @copyright Copyright (c) 2012, Matthias Mullie. All rights reserved
  * @license MIT License
@@ -44,8 +43,6 @@ abstract class Minify
      * This array will hold content of strings and regular expressions that have
      * been extracted from the JS source code, so we can reliably match "code",
      * without having to worry about potential "code-like" characters inside.
-     *
-     * @internal
      *
      * @var string[]
      */
@@ -131,7 +128,7 @@ abstract class Minify
 
             // check if we can read the file
             if (!$this->canImportFile($path)) {
-                throw new IOException('The file "' . $path . '" could not be opened for reading. Check if PHP has enough permissions.');
+                throw new IOException('The file "'.$path.'" could not be opened for reading. Check if PHP has enough permissions.');
             }
 
             $this->add($path);
@@ -360,7 +357,6 @@ abstract class Minify
         foreach ($match as &$matchItem) {
             $matchItem = $matchItem[0];
         }
-
         return $replacement($match);
     }
 
@@ -395,8 +391,8 @@ abstract class Minify
             }
 
             $count = count($minifier->extracted);
-            $placeholder = $match[1] . $placeholderPrefix . $count . $match[1];
-            $minifier->extracted[$placeholder] = $match[1] . $match[2] . $match[1];
+            $placeholder = $match[1].$placeholderPrefix.$count.$match[1];
+            $minifier->extracted[$placeholder] = $match[1].$match[2].$match[1];
 
             return $placeholder;
         };
@@ -413,7 +409,7 @@ abstract class Minify
          * considered as escape-char (times 2) and to get it in the regex,
          * escaped (times 2)
          */
-        $this->registerPattern('/([' . $chars . '])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
+        $this->registerPattern('/(['.$chars.'])(.*?(?<!\\\\)(\\\\\\\\)*+)\\1/s', $callback);
     }
 
     /**
@@ -473,7 +469,7 @@ abstract class Minify
     protected function openFileForWriting($path)
     {
         if ($path === '' || ($handler = @fopen($path, 'w')) === false) {
-            throw new IOException('The file "' . $path . '" could not be opened for writing. Check if PHP has enough permissions.');
+            throw new IOException('The file "'.$path.'" could not be opened for writing. Check if PHP has enough permissions.');
         }
 
         return $handler;
@@ -495,17 +491,15 @@ abstract class Minify
             ($result = @fwrite($handler, $content)) === false ||
             ($result < strlen($content))
         ) {
-            throw new IOException('The file "' . $path . '" could not be written to. Check your disk space and file permissions.');
+            throw new IOException('The file "'.$path.'" could not be written to. Check your disk space and file permissions.');
         }
     }
 
-    protected static function str_replace_first($search, $replace, $subject)
-    {
+    protected static function str_replace_first($search, $replace, $subject) {
         $pos = strpos($subject, $search);
         if ($pos !== false) {
             return substr_replace($subject, $replace, $pos, strlen($search));
         }
-
         return $subject;
     }
 }

@@ -61,7 +61,7 @@ class course_exporter extends component_exporter {
     /**
      * Export the course.
      *
-     * @param   \context[] $exportedcontexts A list of contexts which were successfully exported
+     * @param   context[] $exportedcontexts A list of contexts which were successfully exported
      */
     public function export_course(array $exportedcontexts): void {
         // A course export is composed of:
@@ -155,7 +155,7 @@ class course_exporter extends component_exporter {
     /**
      * Fetch data for the specified course section.
      *
-     * @param   \context[] $exportedcontexts A list of contexts which were successfully exported
+     * @param   context[] $exportedcontexts A list of contexts which were successfully exported
      * @param   section_info $section The section being exported
      * @return  stdClass
      */

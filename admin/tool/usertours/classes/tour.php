@@ -367,7 +367,7 @@ class tour {
     /**
      * The link to view this tour.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_view_link() {
         return helper::get_view_tour_link($this->id);
@@ -376,7 +376,7 @@ class tour {
     /**
      * The link to edit this tour.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_edit_link() {
         return helper::get_edit_tour_link($this->id);

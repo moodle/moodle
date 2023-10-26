@@ -49,11 +49,4 @@ $functions = [
         'capabilities' => 'gradereport/user:view',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
-    'gradereport_user_get_access_information' => [
-        'classname' => 'gradereport_user\external\get_access_information',
-        'methodname' => 'execute',
-        'description' => 'Returns user access information for the user grade report.',
-        'type' => 'read',
-        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
-    ],
 ];

@@ -52,7 +52,6 @@ Feature: The recently accessed items block allows users to easily access their m
     And I click on "Show more items" "button" in the "Recently accessed items" "block"
     And I should see "Test forum name" in the "Recently accessed items" "block"
     And I turn editing mode on
-    And I am on homepage
     And I configure the "Recently accessed items" block
     And I set the following fields to these values:
       | Region | content |

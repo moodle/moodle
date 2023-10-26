@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost extends Google_Service
 {
   /** View and manage your AdSense host data and associated accounts. */
@@ -640,7 +639,6 @@ class Google_Service_AdSenseHost extends Google_Service
  *   $accounts = $adsensehostService->accounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -682,7 +680,6 @@ class Google_Service_AdSenseHost_Accounts_Resource extends Google_Service_Resour
  *   $adclients = $adsensehostService->adclients;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AccountsAdclients_Resource extends Google_Service_Resource
 {
 
@@ -731,7 +728,6 @@ class Google_Service_AdSenseHost_AccountsAdclients_Resource extends Google_Servi
  *   $adunits = $adsensehostService->adunits;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AccountsAdunits_Resource extends Google_Service_Resource
 {
 
@@ -872,7 +868,6 @@ class Google_Service_AdSenseHost_AccountsAdunits_Resource extends Google_Service
  *   $reports = $adsensehostService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AccountsReports_Resource extends Google_Service_Resource
 {
 
@@ -917,7 +912,6 @@ class Google_Service_AdSenseHost_AccountsReports_Resource extends Google_Service
  *   $adclients = $adsensehostService->adclients;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Adclients_Resource extends Google_Service_Resource
 {
 
@@ -964,7 +958,6 @@ class Google_Service_AdSenseHost_Adclients_Resource extends Google_Service_Resou
  *   $associationsessions = $adsensehostService->associationsessions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Associationsessions_Resource extends Google_Service_Resource
 {
 
@@ -1011,7 +1004,6 @@ class Google_Service_AdSenseHost_Associationsessions_Resource extends Google_Ser
  *   $customchannels = $adsensehostService->customchannels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Customchannels_Resource extends Google_Service_Resource
 {
 
@@ -1127,7 +1119,6 @@ class Google_Service_AdSenseHost_Customchannels_Resource extends Google_Service_
  *   $reports = $adsensehostService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Reports_Resource extends Google_Service_Resource
 {
 
@@ -1171,7 +1162,6 @@ class Google_Service_AdSenseHost_Reports_Resource extends Google_Service_Resourc
  *   $urlchannels = $adsensehostService->urlchannels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Urlchannels_Resource extends Google_Service_Resource
 {
 
@@ -1231,7 +1221,6 @@ class Google_Service_AdSenseHost_Urlchannels_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Account extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1276,7 +1265,6 @@ class Google_Service_AdSenseHost_Account extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Accounts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1314,7 +1302,6 @@ class Google_Service_AdSenseHost_Accounts extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdClient extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1368,7 +1355,6 @@ class Google_Service_AdSenseHost_AdClient extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdClients extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1415,7 +1401,6 @@ class Google_Service_AdSenseHost_AdClients extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdCode extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1442,7 +1427,6 @@ class Google_Service_AdSenseHost_AdCode extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1489,7 +1473,6 @@ class Google_Service_AdSenseHost_AdStyle extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdStyleColors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1543,7 +1526,6 @@ class Google_Service_AdSenseHost_AdStyleColors extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdStyleFont extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1570,7 +1552,6 @@ class Google_Service_AdSenseHost_AdStyleFont extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdUnit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1654,7 +1635,6 @@ class Google_Service_AdSenseHost_AdUnit extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdUnitContentAdsSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1691,7 +1671,6 @@ class Google_Service_AdSenseHost_AdUnitContentAdsSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdUnitContentAdsSettingsBackupOption extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1727,7 +1706,6 @@ class Google_Service_AdSenseHost_AdUnitContentAdsSettingsBackupOption extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdUnitMobileContentAdsSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1772,7 +1750,6 @@ class Google_Service_AdSenseHost_AdUnitMobileContentAdsSettings extends Google_M
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AdUnits extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1819,7 +1796,6 @@ class Google_Service_AdSenseHost_AdUnits extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_AssociationSession extends Google_Collection
 {
   protected $collection_key = 'productCodes';
@@ -1910,7 +1886,6 @@ class Google_Service_AdSenseHost_AssociationSession extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_CustomChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1955,7 +1930,6 @@ class Google_Service_AdSenseHost_CustomChannel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_CustomChannels extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2002,7 +1976,6 @@ class Google_Service_AdSenseHost_CustomChannels extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_Report extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -2076,7 +2049,6 @@ class Google_Service_AdSenseHost_Report extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_ReportHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2112,7 +2084,6 @@ class Google_Service_AdSenseHost_ReportHeaders extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_UrlChannel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2148,7 +2119,6 @@ class Google_Service_AdSenseHost_UrlChannel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdSenseHost_UrlChannels extends Google_Collection
 {
   protected $collection_key = 'items';

@@ -75,7 +75,17 @@ class attempt_deleted extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/report.php', ['id' => $this->contextinstanceid]);
+        return new \moodle_url('/mod/quiz/report.php', array('id' => $this->contextinstanceid));
+    }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'quiz', 'delete attempt', 'report.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
     }
 
     /**
@@ -97,12 +107,12 @@ class attempt_deleted extends \core\event\base {
     }
 
     public static function get_objectid_mapping() {
-        return ['db' => 'quiz_attempts', 'restore' => 'quiz_attempt'];
+        return array('db' => 'quiz_attempts', 'restore' => 'quiz_attempt');
     }
 
     public static function get_other_mapping() {
-        $othermapped = [];
-        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
 
         return $othermapped;
     }

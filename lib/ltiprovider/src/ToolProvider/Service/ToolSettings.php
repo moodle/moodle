@@ -11,7 +11,6 @@ namespace IMSGlobal\LTI\ToolProvider\Service;
  * @version 3.0.0
  * @license http://www.apache.org/licenses/LICENSE-2.0 Apache License, Version 2.0
  */
-#[\AllowDynamicProperties]
 class ToolSettings extends Service
 {
 

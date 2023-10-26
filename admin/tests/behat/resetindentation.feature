@@ -56,12 +56,12 @@ Feature: Reset course indentation
   Scenario Outline: Apply course indentation reset
     Given I navigate to "Plugins > Course formats > <format> format" in site administration
     And I wait "5" seconds
-    And "Reset indentation sitewide" "link" should exist
-    When I click on "Reset indentation sitewide" "link"
-    And I should see "Reset indentation sitewide"
-    And "Reset indentation sitewide" "button" should exist
-    And I click on "Reset indentation sitewide" "button"
-    Then I should see "Indentation reset."
+    And "Reset indentation" "link" should exist
+    When I click on "Reset indentation" "link"
+    And I should see "Reset indentation on course page"
+    And "Reset indentation" "button" should exist
+    And I click on "Reset indentation" "button"
+    Then I should see "Indentation reset"
     And I am on "<format> Course 1" course homepage with editing mode on
     And I open "<format> forum name" actions menu
     And "Move right" "link" in the "<format> forum name" "activity" should be visible
@@ -87,13 +87,13 @@ Feature: Reset course indentation
 
   Scenario Outline: Cancel course indentation reset
     Given I navigate to "Plugins > Course formats > <format> format" in site administration
-    And "Reset indentation sitewide" "link" should exist
-    When I click on "Reset indentation sitewide" "link"
-    And I should see "Reset indentation sitewide"
-    And "Reset indentation sitewide" "button" should exist
+    And "Reset indentation" "link" should exist
+    When I click on "Reset indentation" "link"
+    And I should see "Reset indentation on course page"
+    And "Reset indentation" "button" should exist
     And "Cancel" "button" should exist
     And I click on "Cancel" "button"
-    Then I should not see "Indentation reset."
+    Then I should not see "Indentation reset"
     And I am on "<format> Course 1" course homepage with editing mode on
     And I open "<format> forum name" actions menu
     And "Move right" "link" in the "<format> forum name" "activity" should not be visible

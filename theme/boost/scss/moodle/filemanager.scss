@@ -15,7 +15,7 @@
 }
 
 .fp-panel-button {
-    background: $filemanager-panel-button-bg;
+    background: #fff;
     padding: 3px 20px 2px 20px;
     text-align: center;
     margin: 10px;
@@ -23,7 +23,7 @@
     @include border-radius(10px);
     display: inline-block;
 
-    @include box-shadow(2px 2px 3px .1px $filemanager-panel-button-shadow);
+    @include box-shadow(2px 2px 3px .1px #999);
 }
 
 // File Picker layout
@@ -49,7 +49,7 @@
 
 .file-picker .fp-content {
     border-top: 0;
-    background: $filemanager-picker-bg;
+    background: #fff;
     clear: none;
     overflow: auto;
     height: 452px;
@@ -88,7 +88,7 @@
 }
 
 .file-picker .fp-list .fp-repo.active {
-    background: $filemanager-picker-active-bg;
+    background: #f2f2f2;
 }
 
 .file-picker .fp-list .fp-repo-icon {
@@ -169,23 +169,23 @@
     min-height: 110px;
     line-height: 110px;
     text-align: center;
-    border: 1px solid $filemanager-thumbnail-border-color;
+    border: 1px solid #fff;
     display: block;
 }
 
 .fp-iconview .fp-thumbnail img {
-    border: 1px solid $filemanager-thumbnail-img-border-color;
+    border: 1px solid #ddd;
     padding: 3px;
     vertical-align: middle;
 
-    @include box-shadow(1px 1px 2px 0 $filemanager-thumbnail-shadow);
+    @include box-shadow(1px 1px 2px 0 #ccc);
 }
 
 .fp-iconview .fp-thumbnail:hover {
-    background: $filemanager-thumbnail-over-bg;
-    border: 1px solid $filemanager-thumbnail-hover-border-color;
+    background: #fff;
+    border: 1px solid #ddd;
 
-    @include box-shadow(inset 0 0 10px0 $filemanager-thumbnail-hover-shadow);
+    @include box-shadow(inset 0 0 10px0 #ccc);
 }
 
 .fp-iconview .fp-filename-field {
@@ -211,14 +211,14 @@
 }
 
 .fp-iconview .fp-filename-field .fp-filename {
-    background: $filemanager-filename-bg;
+    background: #fff;
     padding-top: 5px;
     padding-bottom: 12px;
     min-width: 112px;
 }
 // Table view (File Picker only)
 .file-picker .yui3-datatable table {
-    border: 0 solid $filemanager-picker-table-border-color;
+    border: 0 solid #bbb;
     width: 100%;
 }
 // Tree view (File Manager only)
@@ -378,7 +378,7 @@ a.ygtvspacer:hover {
 
 .file-picker .ygtvfocus,
 .filemanager .ygtvfocus {
-    background-color: $filemanager-ygtvfocus-bg;
+    background-color: #eee;
 }
 
 .fp-filename-icon {
@@ -494,14 +494,14 @@ a.ygtvspacer:hover {
     line-height: 110px;
     text-align: center;
     margin: 10px 20px 0 0;
-    background: $filemanager-picker-thumbnail-bg;
-    border: 1px solid $filemanager-picker-thumbnail-border-color;
+    background: #fff;
+    border: 1px solid #ddd;
 
-    @include box-shadow(inset 0 0 10px 0 $filemanager-thumbnail-shadow);
+    @include box-shadow(inset 0 0 10px 0 #ccc);
 }
 
 .fp-select .fp-thumbnail img {
-    border: 1px solid $filemanager-thumbnail-img-border-color;
+    border: 1px solid #ddd;
     padding: 3px;
     vertical-align: middle;
     margin: 10px;
@@ -634,7 +634,7 @@ a.ygtvspacer:hover {
 
 .fitem.disabled .filepicker-filelist,
 .fitem.disabled .filemanager-container {
-    background-color: $filemanager-item-disabled-bg;
+    background-color: #ebebe4;
 }
 
 .fitem.disabled .fp-btn-choose {
@@ -691,7 +691,7 @@ a.ygtvspacer:hover {
 }
 // Table view (File Manager only)
 .filemanager .yui3-datatable table {
-    border: 0 solid $filemanager-yui-table-border-color;
+    border: 0 solid #bbb;
     width: 100%;
 }
 
@@ -703,20 +703,20 @@ a.ygtvspacer:hover {
         /*rtl:raw:
         text-align: right;
         */
-        background: $filemanager-yui-table-header-bg !important;
-        border-bottom: 1px solid $filemanager-yui-table-header-border-bottom-color !important;
-        border-left: 0 solid $filemanager-yui-table-header-border-left-color !important;
-        color: $filemanager-yui-table-header-color !important;
+        background: #fff !important;
+        border-bottom: 1px solid #ccc !important;
+        border-left: 0 solid #fff !important;
+        color: #555 !important;
     }
 
     .yui3-datatable-odd .yui3-datatable-cell {
-        background-color: $filemanager-yui-table-cell-odd-bg !important;
-        border-left: 0 solid $filemanager-yui-table-cell-odd-border-color;
+        background-color: #f6f6f6 !important;
+        border-left: 0 solid #f6f6f6;
     }
 
     .yui3-datatable-even .yui3-datatable-cell {
-        background-color: $filemanager-yui-table-cell-even-bg !important;
-        border-left: 0 solid $filemanager-yui-table-cell-even-border-color;
+        background-color: #fff !important;
+        border-left: 0 solid #fff;
     }
 }
 /* stylelint-enable */
@@ -777,35 +777,35 @@ a.ygtvspacer:hover {
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed $filemanager-dnd-border-color;
+    border: 2px dashed #bbb;
     padding-top: 85px;
     text-align: center;
 }
 
 .filepicker-filelist .dndupload-target,
 .filemanager-container .dndupload-target {
-    background: $filemanager-dnd-upload-target-bg;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed $filemanager-dnd-upload-target-border-color;
+    border: 2px dashed #fb7979;
     padding-top: 85px;
     text-align: center;
 
-    @include box-shadow(0 0 0 10px $filemanager-dnd-upload-target-shadow);
+    @include box-shadow(0 0 0 10px #fff);
 }
 
 .filepicker-filelist.dndupload-over .dndupload-target,
 .filemanager-container.dndupload-over .dndupload-target {
-    background: $filemanager-dnd-upload-over-bg;
+    background: #fff;
     position: absolute;
     top: 10px;
     bottom: 10px;
     left: 10px;
     right: 10px;
-    border: 2px dashed $filemanager-dnd-upload-over-border-color;
+    border: 2px dashed #6c8cd3;
     padding-top: 85px;
     text-align: center;
 }
@@ -943,8 +943,8 @@ a.ygtvspacer:hover {
 }
 
 .filemanager.fp-select .fp-reflist .fp-value {
-    background: $filemanager-select-bg;
-    border: 1px solid $filemanager-select-border-color;
+    background: #f9f9f9;
+    border: 1px solid #bbb;
     padding: 8px 7px;
     margin: 0;
     max-height: 75px;

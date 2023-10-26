@@ -16,10 +16,9 @@
 
 namespace enrol_meta\external;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 /**
@@ -127,7 +126,7 @@ class add_instances_test extends \externallib_advanced_testcase {
 
         // Add instance.
         $result = add_instances::execute([['metacourseid' => $metacourse->id, 'courseid' => $course->id]]);
-        $result = external_api::clean_returnvalue(add_instances::execute_returns(), $result);
+        $result = \external_api::clean_returnvalue(add_instances::execute_returns(), $result);
         $this->assertEquals($result[0]['metacourseid'], $metacourse->id);
         $this->assertEquals($result[0]['courseid'], $course->id);
         $this->assertEquals($result[0]['status'], 1);
@@ -139,7 +138,7 @@ class add_instances_test extends \externallib_advanced_testcase {
 
         // Add same instance.
         $result = add_instances::execute([['metacourseid' => $metacourse->id, 'courseid' => $course->id]]);
-        $result = external_api::clean_returnvalue(add_instances::execute_returns(), $result);
+        $result = \external_api::clean_returnvalue(add_instances::execute_returns(), $result);
         $this->assertEquals($result[0]['metacourseid'], $metacourse->id);
         $this->assertEquals($result[0]['courseid'], $course->id);
         $this->assertEquals($result[0]['status'], 0);

@@ -1,10 +1,6 @@
 This files describes changes in tool_mobile code.
 Information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* External function tool_mobile::get_config now returns the timezone and forcetimezone settings.
-
 === 4.1 ===
 
 * External function tool_mobile::get_config now returns the customusermenuitems setting.

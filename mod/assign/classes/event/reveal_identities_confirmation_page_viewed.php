@@ -95,6 +95,17 @@ class reveal_identities_confirmation_page_viewed extends base {
             "assignment with course module id '$this->contextinstanceid'.";
     }
 
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $this->set_legacy_logdata('view', get_string('viewrevealidentitiesconfirm', 'assign'));
+        return parent::get_legacy_logdata();
+    }
+
     /**
      * Custom validation.
      *

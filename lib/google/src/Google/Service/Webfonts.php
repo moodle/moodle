@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Webfonts extends Google_Service
 {
 
@@ -80,7 +79,6 @@ class Google_Service_Webfonts extends Google_Service
  *   $webfonts = $webfontsService->webfonts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webfonts_Webfonts_Resource extends Google_Service_Resource
 {
 
@@ -104,7 +102,6 @@ class Google_Service_Webfonts_Webfonts_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Webfonts_Webfont extends Google_Collection
 {
   protected $collection_key = 'variants';
@@ -186,12 +183,10 @@ class Google_Service_Webfonts_Webfont extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webfonts_WebfontFiles extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webfonts_WebfontList extends Google_Collection
 {
   protected $collection_key = 'items';

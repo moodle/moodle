@@ -373,7 +373,7 @@ class event_vault implements event_vault_interface {
      * Fetches records from DB.
      *
      * @param int    $userid
-     * @param array|null $whereconditions
+     * @param string $whereconditions
      * @param array  $whereparams
      * @param string $ordersql
      * @param int    $offset

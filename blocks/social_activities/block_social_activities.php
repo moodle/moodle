@@ -61,11 +61,6 @@ class block_social_activities extends block_list {
         $cmnameclass = $format->get_output_classname('content\\cm\\cmname');
         $controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
 
-        $badgeattributes = [
-            'class' => 'badge badge-pill badge-warning mt-2',
-            'data-region' => 'visibility'
-        ];
-
         // Extra fast view mode.
         if (!$isediting) {
             if (!empty($modinfo->sections[0])) {
@@ -80,7 +75,7 @@ class block_social_activities extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenfromstudents'),
-                            $badgeattributes
+                            ['class' => 'badge badge-pill badge-warning mt-2']
                         );
                     }
 
@@ -88,7 +83,7 @@ class block_social_activities extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenoncoursepage'),
-                            $badgeattributes
+                            ['class' => 'badge badge-pill badge-warning mt-2']
                         );
                     }
 
@@ -99,8 +94,7 @@ class block_social_activities extends block_list {
                         );
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'contentwithoutlink activity-item activity',
-                            ['data-activityname' => $cm->name]
+                            'contentwithoutlink activity-item activity'
                         );
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
@@ -111,8 +105,7 @@ class block_social_activities extends block_list {
                             'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'activity-item activity',
-                            ['data-activityname' => $cm->name]
+                            'activity-item activity'
                         );
                         $this->content->items[] = $content;
                     }
@@ -186,7 +179,7 @@ class block_social_activities extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenfromstudents'),
-                            $badgeattributes
+                            ['class' => 'badge badge-pill badge-warning mt-2']
                         );
                     }
 
@@ -194,7 +187,7 @@ class block_social_activities extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenoncoursepage'),
-                            $badgeattributes
+                            ['class' => 'badge badge-pill badge-warning mt-2']
                         );
                     }
 
@@ -207,8 +200,7 @@ class block_social_activities extends block_list {
                             $moveaction .
                             $activitybasis .
                             $badges,
-                            'contentwithoutlink activity-item activity',
-                            ['data-activityname' => $mod->name]
+                            'contentwithoutlink activity-item activity'
                         );
                         $this->content->items[] = $content;
                         $this->content->icons[] = '';
@@ -222,8 +214,7 @@ class block_social_activities extends block_list {
                             $moveaction .
                             $activitybasis .
                             $badges,
-                            'activity-item activity',
-                            ['data-activityname' => $mod->name]
+                            'activity-item activity'
                         );
                         $this->content->items[] = $content;
                     }

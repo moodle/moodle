@@ -88,21 +88,6 @@ class webdav_client {
      */
     private $oauthtoken;
 
-    /** @var string Username (for basic/digest auth, see $auth). */
-    private $user;
-
-    /** @var string Password (for basic/digest auth, see $auth). */
-    private $pass;
-
-    /** @var mixed to store xml data that need to be handled. */
-    private $_lock_ref_cdata;
-
-    /** @var mixed to store the deleted xml data. */
-    private $_delete_cdata;
-
-    /** @var string to store the locked xml data. */
-    private $_lock_cdata;
-
     /**#@-*/
 
     /**
@@ -1731,7 +1716,7 @@ EOD;
             if (iconv('UTF-8', 'UTF-8', $parts[$i]) == $parts[$i]) {
                 $parts[$i] = rawurlencode($parts[$i]);
             } else {
-                $parts[$i] = rawurlencode(\core_text::convert($parts[$i], 'ISO-8859-1', 'UTF-8'));
+                $parts[$i] = rawurlencode(utf8_encode($parts[$i]));
             }
         }
         return implode('/', $parts);
@@ -1748,7 +1733,7 @@ EOD;
         $fullpath = $path;
         if (iconv('UTF-8', 'UTF-8', $fullpath) == $fullpath) {
             $this->_error_log("filename is utf-8. Needs conversion...");
-            $fullpath = \core_text::convert($fullpath, 'UTF-8', 'ISO-8859-1');
+            $fullpath = utf8_decode($fullpath);
         }
         return $fullpath;
     }

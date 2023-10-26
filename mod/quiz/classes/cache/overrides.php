@@ -45,7 +45,7 @@ class overrides implements \cache_data_source {
      * specified by this interface.
      *
      * @param cache_definition $definition
-     * @return stdClass
+     * @return object
      */
     public static function get_instance_for_cache(cache_definition $definition): overrides {
         if (is_null(self::$instance)) {

@@ -200,13 +200,13 @@ if (empty($redirectbackto)) {
 $actionbuttons = html_writer::link(
     $redirectbackto,
     get_string('cancel'),
-    ['class' => 'btn btn-secondary mx-1', 'role' => 'button']
+    ['class' => 'btn btn-secondary', 'role' => 'button']
 );
 $actionbuttons .= html_writer::empty_tag('input', [
     'type' => 'submit',
     'name' => 'saveandview',
     'value' => get_string('save'),
-    'class' => 'btn btn-primary mx-1'
+    'class' => 'btn btn-primary ml-2'
 ]);
 
 if (!$rid && ((!$data->maxentries) ||
@@ -214,7 +214,7 @@ if (!$rid && ((!$data->maxentries) ||
     (data_numentries($data) < ($data->maxentries - 1)))) {
     $actionbuttons .= html_writer::empty_tag('input', [
         'type' => 'submit', 'name' => 'saveandadd',
-        'value' => get_string('saveandadd', 'data'), 'class' => 'btn btn-primary mx-1'
+        'value' => get_string('saveandadd', 'data'), 'class' => 'btn btn-primary ml-2'
     ]);
 }
 

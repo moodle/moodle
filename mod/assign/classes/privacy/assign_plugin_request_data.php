@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class assign_plugin_request_data {
 
-    /** @var \context The context that we are dealing with. */
+    /** @var context The context that we are dealing with. */
     protected $context;
 
     /** @var object For submisisons the submission object, for feedback the grade object. */
@@ -57,7 +57,7 @@ class assign_plugin_request_data {
     /** @var array The grades related to the users added. */
     protected $grades = [];
 
-    /** @var \assign The assign object */
+    /** @var assign The assign object */
     protected $assign;
 
     /**
@@ -91,7 +91,7 @@ class assign_plugin_request_data {
     /**
      * Getter for this attribute.
      *
-     * @return \context Context
+     * @return context Context
      */
     public function get_context() {
         return $this->context;
@@ -127,7 +127,7 @@ class assign_plugin_request_data {
     /**
      * Getter for this attribute.
      *
-     * @return \assign The assign object.
+     * @return assign The assign object.
      */
     public function get_assign() {
         return $this->assign;

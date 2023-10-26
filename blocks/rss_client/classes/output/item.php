@@ -112,7 +112,7 @@ class item implements \renderable, \templatable {
      * Export context for use in mustache templates
      *
      * @see templatable::export_for_template()
-     * @param \renderer_base $output
+     * @param renderer_base $output
      * @return array
      */
     public function export_for_template(\renderer_base $output) {

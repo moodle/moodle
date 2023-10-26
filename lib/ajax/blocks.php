@@ -26,29 +26,52 @@ define('AJAX_SCRIPT', true);
 require_once(__DIR__ . '/../../config.php');
 
 // Initialise ALL common incoming parameters here, up front.
-$pagehash = required_param('pagehash', PARAM_RAW);
+$courseid = required_param('courseid', PARAM_INT);
+$pagelayout = required_param('pagelayout', PARAM_ALPHAEXT);
+$pagetype = required_param('pagetype', PARAM_ALPHANUMEXT);
+$contextid = required_param('contextid', PARAM_INT);
+$subpage = optional_param('subpage', '', PARAM_ALPHANUMEXT);
+$cmid = optional_param('cmid', null, PARAM_INT);
 $action = optional_param('action', '', PARAM_ALPHA);
 // Params for blocks-move actions.
 $buimoveid = optional_param('bui_moveid', 0, PARAM_INT);
 $buinewregion = optional_param('bui_newregion', '', PARAM_ALPHAEXT);
 $buibeforeid = optional_param('bui_beforeid', 0, PARAM_INT);
 
-$PAGE->set_url('/lib/ajax/blocks.php', ['pagehash' => $pagehash]);
-
-// Retrieve the edited page from the session hash.
-$page = moodle_page::retrieve_edited_page($pagehash, MUST_EXIST);
+// Setting pagetype and URL.
+$PAGE->set_pagetype($pagetype);
+$PAGE->set_url('/lib/ajax/blocks.php', array('courseid' => $courseid, 'pagelayout' => $pagelayout, 'pagetype' => $pagetype));
 
 // Verifying login and session.
 $cm = null;
-if (!is_null($page->cm)) {
-    $cm = get_coursemodule_from_id(null, $page->cm->id, $page->course->id, false, MUST_EXIST);
+if (!is_null($cmid)) {
+    $cm = get_coursemodule_from_id(null, $cmid, $courseid, false, MUST_EXIST);
 }
-require_login($page->course, false, $cm);
+require_login($courseid, false, $cm);
 require_sesskey();
-$PAGE->set_context($page->context);
 
-if (!$page->user_can_edit_blocks() || !$page->user_is_editing()) {
-    throw new moodle_exception('nopermissions', '', $page->url->out(), get_string('editblock'));
+// Set context from ID, so we don't have to guess it from other info.
+$PAGE->set_context(context::instance_by_id($contextid));
+
+// Setting layout to replicate blocks configuration for the page we edit.
+$PAGE->set_pagelayout($pagelayout);
+$PAGE->set_subpage($subpage);
+$PAGE->blocks->add_custom_regions_for_pagetype($pagetype);
+$pagetype = explode('-', $pagetype);
+switch ($pagetype[0]) {
+    case 'my':
+    case 'mycourses':
+        $PAGE->set_blocks_editing_capability('moodle/my:manageblocks');
+        break;
+    case 'user':
+        if ($pagetype[1] === 'profile' && $PAGE->context->contextlevel == CONTEXT_USER
+                && $PAGE->context->instanceid == $USER->id) {
+            // A user can only move blocks on their own site profile.
+            $PAGE->set_blocks_editing_capability('moodle/user:manageownblocks');
+        } else {
+            $PAGE->set_blocks_editing_capability('moodle/user:manageblocks');
+        }
+        break;
 }
 
 // Send headers.
@@ -57,8 +80,8 @@ echo $OUTPUT->header();
 switch ($action) {
     case 'move':
         // Loading blocks and instances for the region.
-        $page->blocks->load_blocks();
-        $instances = $page->blocks->get_blocks_for_region($buinewregion);
+        $PAGE->blocks->load_blocks();
+        $instances = $PAGE->blocks->get_blocks_for_region($buinewregion);
 
         $buinewweight = null;
         if ($buibeforeid == 0) {
@@ -98,7 +121,7 @@ switch ($action) {
         if (isset($buinewweight)) {
             // Nasty hack.
             $_POST['bui_newweight'] = $buinewweight;
-            $page->blocks->process_url_move();
+            $PAGE->blocks->process_url_move();
         }
         break;
 }

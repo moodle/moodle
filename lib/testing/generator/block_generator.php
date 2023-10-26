@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class testing_block_generator extends component_generator_base {
-    /** @var int number of created instances */
+    /** @var number of created instances */
     protected $instancecount = 0;
 
     /**

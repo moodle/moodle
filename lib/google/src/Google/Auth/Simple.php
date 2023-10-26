@@ -24,7 +24,6 @@ if (!class_exists('Google_Client')) {
  * completely unauthenticated, or by using a Simple API Access developer
  * key.
  */
-#[AllowDynamicProperties]
 class Google_Auth_Simple extends Google_Auth_Abstract
 {
   private $client;

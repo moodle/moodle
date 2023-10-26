@@ -57,22 +57,10 @@ class grade extends tablelike implements selectable_items, filterable_items {
     private $requiresextra = false;
 
     /**
-     * True if there are more users than our limit.
+     *  True if there are more users than our limit.
      * @var bool $requirepaging
      */
     private $requirespaging = true;
-
-    /**
-     * To store UI element that generates a grade_item min/max range.
-     * @var range;
-     */
-    protected $range;
-
-    /**
-     * Returns a grade_item instance or false if none found.
-     * @var grade_item|bool
-     */
-    public $item;
 
     /**
      * True if $CFG->grade_overridecat is true
@@ -151,21 +139,11 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function init($selfitemisempty = false) {
 
-        $this->items = get_gradable_users($this->courseid, $this->groupid);
+        $this->items = $this->load_users();
         $this->totalitemcount = count($this->items);
 
         if ($selfitemisempty) {
             return;
-        }
-
-        // If we change perpage on pagination we might end up with a page that doesn't exist.
-        if ($this->perpage) {
-            $numpages = intval($this->totalitemcount / $this->perpage) + 1;
-            if ($numpages <= $this->page) {
-                $this->page = 0;
-            }
-        } else {
-            $this->page = 0;
         }
 
         $params = [
@@ -207,7 +185,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
     /**
      * Format a row in the table
      *
-     * @param stdClass $item
+     * @param user $item
      * @return array
      */
     public function format_line($item): array {
@@ -215,21 +193,24 @@ class grade extends tablelike implements selectable_items, filterable_items {
 
         $grade = $this->fetch_grade_or_default($this->item, $item->id);
 
-        $gradestatus = '';
-        $context = [
-            'hidden' => $grade->is_hidden(),
-            'locked' => $grade->is_locked(),
-        ];
+        $lockicon = '';
 
-        if (in_array(true, $context)) {
-            $context['classes'] = 'gradestatus';
-            $gradestatus = $OUTPUT->render_from_template('core_grades/status_icons', $context);
+        $lockedgrade = $lockedgradeitem = 0;
+        if (!empty($grade->locked)) {
+            $lockedgrade = 1;
+        }
+        if (!empty($grade->grade_item->locked)) {
+            $lockedgradeitem = 1;
+        }
+        // Check both grade and grade item.
+        if ( $lockedgrade || $lockedgradeitem ) {
+            $lockicon = $OUTPUT->pix_icon('t/locked', 'grade is locked') . ' ';
         }
 
         if (has_capability('moodle/site:viewfullnames', \context_course::instance($this->courseid))) {
-            $fullname = fullname($item, true);
+            $fullname = $lockicon . fullname($item, true);
         } else {
-            $fullname = fullname($item);
+            $fullname = $lockicon . fullname($item);
         }
 
         $item->imagealt = $fullname;
@@ -242,7 +223,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
         $line = [
             html_writer::link($url, $userpic . $fullname),
             $this->get_user_action_menu($item),
-            $formatteddefinition['finalgrade'] . $gradestatus,
+            $formatteddefinition['finalgrade'],
             $this->item_range(),
             $formatteddefinition['feedback'],
             $formatteddefinition['override'],

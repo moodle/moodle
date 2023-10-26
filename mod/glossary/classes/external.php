@@ -25,18 +25,10 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_files;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/glossary/lib.php');
 
 /**
@@ -141,15 +133,9 @@ class mod_glossary_external extends external_api {
         $canviewfullnames = has_capability('moodle/site:viewfullnames', $context);
 
         // Format concept and definition.
-        $entry->concept = \core_external\util::format_string($entry->concept, $context);
-        [$entry->definition, $entry->definitionformat] = \core_external\util::format_text(
-            $entry->definition,
-            $entry->definitionformat,
-            $context,
-            'mod_glossary',
-            'entry',
-            $entry->id
-        );
+        $entry->concept = external_format_string($entry->concept, $context->id);
+        list($entry->definition, $entry->definitionformat) = external_format_text($entry->definition, $entry->definitionformat,
+            $context->id, 'mod_glossary', 'entry', $entry->id);
 
         // Author details.
         $user = mod_glossary_entry_query_builder::get_user_from_record($entry);
@@ -162,9 +148,9 @@ class mod_glossary_external extends external_api {
         $entry->attachment = !empty($entry->attachment) ? 1 : 0;
         $entry->attachments = array();
         if ($entry->attachment) {
-            $entry->attachments = util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
+            $entry->attachments = external_util::get_area_files($context->id, 'mod_glossary', 'attachment', $entry->id);
         }
-        $definitioninlinefiles = util::get_area_files($context->id, 'mod_glossary', 'entry', $entry->id);
+        $definitioninlinefiles = external_util::get_area_files($context->id, 'mod_glossary', 'entry', $entry->id);
         if (!empty($definitioninlinefiles)) {
             $entry->definitioninlinefiles = $definitioninlinefiles;
         }
@@ -232,7 +218,7 @@ class mod_glossary_external extends external_api {
 
         // Ensure there are courseids to loop through.
         if (!empty($courseids)) {
-            list($courses, $warnings) = util::validate_courses($courseids, $courses);
+            list($courses, $warnings) = external_util::validate_courses($courseids, $courses);
 
             // Get the glossaries in these courses, this function checks users visibility permissions.
             $glossaries = get_all_instances_in_courses('glossary', $courses);
@@ -363,7 +349,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function view_glossary_returns() {
@@ -421,7 +407,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function view_entry_returns() {
@@ -505,7 +491,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_letter_returns() {
@@ -604,7 +590,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_date_returns() {
@@ -660,7 +646,7 @@ class mod_glossary_external extends external_api {
         $categories = array();
         list($records, $count) = glossary_get_categories($glossary, $from, $limit);
         foreach ($records as $category) {
-            $category->name = \core_external\util::format_string($category->name, $context);
+            $category->name = external_format_string($category->name, $context->id);
             $categories[] = $category;
         }
 
@@ -674,7 +660,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_categories_returns() {
@@ -767,7 +753,7 @@ class mod_glossary_external extends external_api {
                 $record->categoryid = GLOSSARY_SHOW_NOT_CATEGORISED;
             }
             if (isset($record->categoryname)) {
-                $record->categoryname = \core_external\util::format_string($record->categoryname, $context);
+                $record->categoryname = external_format_string($record->categoryname, $context->id);
             }
             $entries[] = $record;
         }
@@ -783,7 +769,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_category_returns() {
@@ -870,7 +856,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_authors_returns() {
@@ -979,7 +965,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_author_returns() {
@@ -1084,7 +1070,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_author_id_returns() {
@@ -1187,7 +1173,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_search_returns() {
@@ -1269,7 +1255,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_by_term_returns() {
@@ -1357,7 +1343,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entries_to_approve_returns() {
@@ -1428,7 +1414,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.1
      */
     public static function get_entry_by_id_returns() {
@@ -1568,7 +1554,7 @@ class mod_glossary_external extends external_api {
     /**
      * Returns the description of the external function return value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.2
      */
     public static function add_entry_returns() {

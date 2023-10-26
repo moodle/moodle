@@ -244,6 +244,7 @@ class brickfieldconnect extends curl {
     /**
      * Get the check registration API URI.
      * @return string
+     * @throws dml_exception
      */
     protected function get_baseapiuri(): string {
         $baseapiuri = get_config(manager::PLUGINNAME, 'baseapiuri');

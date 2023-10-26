@@ -38,7 +38,7 @@ use \core_question\statistics\questions\calculated_question_summary;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class quiz_statistics_table extends flexible_table {
-    /** @var stdClass the quiz settings. */
+    /** @var object the quiz settings. */
     protected $quiz;
 
     /** @var integer the quiz course_module id. */
@@ -55,7 +55,7 @@ class quiz_statistics_table extends flexible_table {
      * Set up the columns and headers and other properties of the table and then
      * call flexible_table::setup() method.
      *
-     * @param stdClass $quiz the quiz settings
+     * @param object $quiz the quiz settings
      * @param int $cmid the quiz course_module id
      * @param moodle_url $reporturl the URL to redisplay this report.
      * @param int $s number of attempts included in the statistics.
@@ -65,8 +65,8 @@ class quiz_statistics_table extends flexible_table {
         $this->cmid = $cmid;
 
         // Define the table columns.
-        $columns = [];
-        $headers = [];
+        $columns = array();
+        $headers = array();
 
         $columns[] = 'number';
         $headers[] = get_string('questionnumber', 'quiz_statistics');
@@ -140,8 +140,8 @@ class quiz_statistics_table extends flexible_table {
     public function  wrap_html_start() {
         // Horrible Moodle 2.0 wide-content work-around.
         if (!$this->is_downloading()) {
-            echo html_writer::start_tag('div', ['id' => 'tablecontainer',
-                    'class' => 'statistics-tablecontainer']);
+            echo html_writer::start_tag('div', array('id' => 'tablecontainer',
+                    'class' => 'statistics-tablecontainer'));
         }
     }
 
@@ -243,28 +243,28 @@ class quiz_statistics_table extends flexible_table {
         if (!is_null($questionstat->variant)) {
             if ($questionstat->subquestion) {
                 // Variant of a sub-question.
-                $url = new moodle_url($baseurl, ['qid' => $questionstat->questionid, 'variant' => $questionstat->variant]);
-                $name = html_writer::link($url, $name, ['title' => get_string('detailedanalysisforvariant',
+                $url = new moodle_url($baseurl, array('qid' => $questionstat->questionid, 'variant' => $questionstat->variant));
+                $name = html_writer::link($url, $name, array('title' => get_string('detailedanalysisforvariant',
                                                                                    'quiz_statistics',
-                                                                                   $questionstat->variant)]);
+                                                                                   $questionstat->variant)));
             } else if ($questionstat->slot) {
                 // Variant of a question in a slot.
-                $url = new moodle_url($baseurl, ['slot' => $questionstat->slot, 'variant' => $questionstat->variant]);
-                $name = html_writer::link($url, $name, ['title' => get_string('detailedanalysisforvariant',
+                $url = new moodle_url($baseurl, array('slot' => $questionstat->slot, 'variant' => $questionstat->variant));
+                $name = html_writer::link($url, $name, array('title' => get_string('detailedanalysisforvariant',
                                                                                    'quiz_statistics',
-                                                                                   $questionstat->variant)]);
+                                                                                   $questionstat->variant)));
             }
         } else {
             if ($questionstat->subquestion && !$questionstat->get_variants()) {
                 // Sub question without variants.
-                $url = new moodle_url($baseurl, ['qid' => $questionstat->questionid]);
-                $name = html_writer::link($url, $name, ['title' => get_string('detailedanalysis', 'quiz_statistics')]);
+                $url = new moodle_url($baseurl, array('qid' => $questionstat->questionid));
+                $name = html_writer::link($url, $name, array('title' => get_string('detailedanalysis', 'quiz_statistics')));
             } else if ($baseurl->param('slot') === null && $questionstat->slot) {
                 // Question in a slot, we are not on a page showing structural analysis of one slot,
                 // we don't want linking on those pages.
                 $number = $questionstat->question->number;
                 $israndomquestion = $questionstat->question->qtype == 'random';
-                $url = new moodle_url($baseurl, ['slot' => $questionstat->slot]);
+                $url = new moodle_url($baseurl, array('slot' => $questionstat->slot));
 
                 if ($this->is_calculated_question_summary($questionstat)) {
                     // Only make the random question summary row name link to the slot structure
@@ -276,14 +276,14 @@ class quiz_statistics_table extends flexible_table {
                     // Question cannot be broken down into sub-questions or variants. Link will show response analysis page.
                     $name = html_writer::link($url,
                                               $name,
-                                              ['title' => get_string('detailedanalysis', 'quiz_statistics')]);
+                                              array('title' => get_string('detailedanalysis', 'quiz_statistics')));
                 }
             }
         }
 
 
         if ($this->is_dubious_question($questionstat)) {
-            $name = html_writer::tag('div', $name, ['class' => 'dubious']);
+            $name = html_writer::tag('div', $name, array('class' => 'dubious'));
         }
 
         if ($this->is_calculated_question_summary($questionstat)) {
@@ -415,7 +415,7 @@ class quiz_statistics_table extends flexible_table {
             if (!$this->is_downloading()) {
                 $negcovar = html_writer::tag('div',
                         $negcovar . $OUTPUT->help_icon('negcovar', 'quiz_statistics'),
-                        ['class' => 'negcovar']);
+                        array('class' => 'negcovar'));
             }
 
             return $negcovar;

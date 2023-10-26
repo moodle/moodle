@@ -53,9 +53,6 @@ class competency extends persistent {
     /** @var competency Object before update. */
     protected $beforeupdate = null;
 
-    /** @var competency|null To store new parent. */
-    protected $newparent;
-
     /**
      * Return the definition of the properties of this model.
      *
@@ -724,7 +721,7 @@ class competency extends persistent {
      * Build a framework tree with competency nodes.
      *
      * @param  int  $frameworkid the framework id
-     * @return stdClass[] tree of framework competency nodes
+     * @return node[] tree of framework competency nodes
      */
     public static function get_framework_tree($frameworkid) {
         $competencies = self::search('', $frameworkid);
@@ -734,7 +731,7 @@ class competency extends persistent {
     /**
      * Get the context from the framework.
      *
-     * @return \context
+     * @return context
      */
     public function get_context() {
         return $this->get_framework()->get_context();
@@ -745,7 +742,7 @@ class competency extends persistent {
      *
      * @param array $all - List of all competency classes.
      * @param int $parentid - The current parent ID. Pass 0 to build the tree from the top.
-     * @return stdClass[] $tree tree of nodes
+     * @return node[] $tree tree of nodes
      */
     protected static function build_tree($all, $parentid) {
         $tree = array();

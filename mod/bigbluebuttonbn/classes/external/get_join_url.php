@@ -16,15 +16,19 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\restricted_context_exception;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\exceptions\meeting_join_exception;
 use mod_bigbluebuttonbn\meeting;
+use restricted_context_exception;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to create the meeting (if needed), check user limit, and return the join URL when we can join.
@@ -105,7 +109,7 @@ class get_join_url extends external_api {
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'join_url' => new external_value(PARAM_RAW, 'Can join session', VALUE_OPTIONAL),
-            'warnings' => new external_warnings(),
+            'warnings' => new \external_warnings()
         ]);
     }
 }

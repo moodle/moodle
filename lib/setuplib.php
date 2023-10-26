@@ -920,16 +920,9 @@ function initialise_fullme() {
         $_SERVER['SERVER_PORT'] = 443; // Assume default ssl port for the proxy.
     }
 
-    // Using Moodle in "reverse proxy" mode, it's expected that the HTTP Host Moodle receives is different
-    // from the wwwroot configured host. Those URLs being identical could be the consequence of various
-    // issues, including:
-    // - Intentionally trying to set up moodle with 2 distinct addresses for intranet and Internet: this
-    //   configuration is unsupported and will lead to bigger problems down the road (the proper solution
-    //   for this is adjusting the network routes, and avoid relying on the application for network concerns).
-    // - Misconfiguration of the reverse proxy that would be forwarding the Host header: while it is
-    //   standard in many cases that the reverse proxy would do that, in our case, the reverse proxy
-    //   must leave the Host header pointing to the internal name of the server.
-    // Port forwarding is allowed, though.
+    // Hopefully this will stop all those "clever" admins trying to set up moodle
+    // with two different addresses in intranet and Internet.
+    // Port forwarding is still allowed!
     if (!empty($CFG->reverseproxy) && $rurl['host'] === $wwwroot['host'] && (empty($wwwroot['port']) || $rurl['port'] === $wwwroot['port'])) {
         throw new \moodle_exception('reverseproxyabused', 'error');
     }
@@ -1202,6 +1195,7 @@ function init_performance_info() {
     global $PERF, $CFG, $USER;
 
     $PERF = new stdClass();
+    $PERF->logwrites = 0;
     if (function_exists('microtime')) {
         $PERF->starttime = microtime();
     }
@@ -2188,27 +2182,4 @@ function proxy_log_callback($code) {
         $error = "Unsafe internet IO detected: {$function['function']} with arguments " . join(', ', $function['args']) . "\n";
         error_log($error . format_backtrace($trace, true)); // phpcs:ignore
     }
-}
-
-/**
- * A helper function for deprecated files to use to ensure that, when they are included for unit tests,
- * they are run in an isolated process.
- *
- * @throws \coding_exception The exception thrown when the process is not isolated.
- */
-function require_phpunit_isolation(): void {
-    if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
-        // Not a test.
-        return;
-    }
-
-    if (defined('PHPUNIT_ISOLATED_TEST')) {
-        // Already isolated.
-        return;
-    }
-
-    throw new \coding_exception(
-        'When including this file for a unit test, the test must be run in an isolated process. ' .
-            'See the PHPUnit @runInSeparateProcess and @runTestsInSeparateProcesses annotations.'
-    );
 }

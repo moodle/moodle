@@ -17,10 +17,10 @@
 namespace qbank_columnsortorder\external;
 
 use context_system;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_value;
 use qbank_columnsortorder\column_manager;
 
 /**
@@ -41,14 +41,8 @@ class set_columnbank_order extends external_api {
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters([
             'columns' => new external_multiple_structure(
-                new external_value(PARAM_TEXT, 'Plugin name for the column', VALUE_REQUIRED),
-                'List of column in the desired order',
-                VALUE_DEFAULT,
-                null,
-                NULL_ALLOWED,
-            ),
-            'global' => new external_value(PARAM_BOOL, 'Set global config setting, rather than user preference',
-                    VALUE_DEFAULT, false),
+                new external_value(PARAM_TEXT, 'Plugin name for the column', VALUE_REQUIRED)
+            )
         ]);
     }
 
@@ -60,26 +54,16 @@ class set_columnbank_order extends external_api {
     }
 
     /**
-     * Set columns order.
+     * Returns the columns plugin order.
      *
-     * @param ?array $columns List of column names in the desired order. Null value clears the setting.
-     * @param bool $global Set global config setting, rather than user preference
+     * @param array $columns json string representing new column order.
      */
-    public static function execute(?array $columns, bool $global = false): void {
-        [
-            'columns' => $columns,
-            'global' => $global,
-        ] = self::validate_parameters(self::execute_parameters(), [
-            'columns' => $columns,
-            'global' => $global,
-        ]);
-
+    public static function execute(array $columns): void {
+        ['columns' => $columns] = self::validate_parameters(self::execute_parameters(), ['columns' => $columns]);
         $context = context_system::instance();
         self::validate_context($context);
-        if ($global) {
-            require_capability('moodle/site:config', $context);
-        }
+        require_capability('moodle/category:manage', $context);
 
-        column_manager::set_column_order($columns, $global);
+        column_manager::set_column_order($columns);
     }
 }

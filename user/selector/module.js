@@ -25,9 +25,8 @@ M.core_user.get_user_selector = function (name) {
  * @param {string} hash the hash that identifies this selector in the user's session.
  * @param {array} extrafields extra fields we are displaying for each user in addition to fullname.
  * @param {string} lastsearch The last search that took place
- * @param {int} searchtype the last search option that took place
  */
-M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch, searchtype) {
+M.core_user.init_user_selector = function (Y, name, hash, extrafields, lastsearch) {
     // Creates a new user_selector object
     var user_selector = {
         /** This id/name used for this control in the HTML. */
@@ -51,8 +50,6 @@ M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch
         /** Whether any options where selected last time we checked. Used by
          *  handle_selection_change to track when this status changes. */
         selectionempty : true,
-        /** The last search option that we use for*/
-        searchtype: searchtype,
         /**
          * Initialises the user selector object
          * @constructor
@@ -72,9 +69,7 @@ M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch
             this.listbox.on('change', this.handle_selection_change, this);
 
             // And when the search any substring preference changes. Do an immediate re-search.
-            Y.one('#userselector_searchfromstartid').on('click', this.handle_searchtype_change, this);
-            Y.one('#userselector_searchanywhereid').on('click', this.handle_searchtype_change, this);
-            Y.one('#userselector_searchexactmatchesonlyid').on('click', this.handle_searchtype_change, this);
+            Y.one('#userselector_searchanywhereid').on('click', this.handle_searchanywhere_change, this);
 
             // Define our custom event.
             //this.createEvent('selectionchanged');
@@ -119,22 +114,13 @@ M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch
             this.selectionempty = isselectionempty;
         },
         /**
-         * Trigger a re-search and set the user prefs when the search radio option is changed.
-         *
-         *  @param {Y.Event} e the change event.
+         * Trigger a re-search when the 'search any substring' option is changed.
          */
-        handle_searchtype_change: function(e) {
-            this.clear_search_radio_state();
-            e.currentTarget.set('checked', 1);
-            this.searchtype = e.currentTarget.get('value');
-            require(['core_user/repository'], function(UserRepository) {
-                UserRepository.setUserPreference('userselector_searchtype', e.currentTarget.get('value'));
-            });
+        handle_searchanywhere_change : function() {
             if (this.lastsearch != '' && this.get_search_text() != '') {
                 this.send_query(true);
             }
         },
-
         /**
          * Click handler for the clear button..
          */
@@ -143,16 +129,6 @@ M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch
             this.clearbutton.set('disabled',true);
             this.send_query(false);
         },
-
-        /**
-         * Clear all checked state in the radio search option.
-         */
-        clear_search_radio_state: function() {
-            Y.one('#userselector_searchfromstartid').set('checked', 0);
-            Y.one('#userselector_searchanywhereid').set('checked', 0);
-            Y.one('#userselector_searchexactmatchesonlyid').set('checked', 0);
-        },
-
         /**
          * Fires off the ajax search request.
          */
@@ -170,10 +146,10 @@ M.core_user.init_user_selector = function(Y, name, hash, extrafields, lastsearch
             Y.Object.each(this.iotransactions, function(trans) {
                 trans.abort();
             });
+
             var iotrans = Y.io(M.cfg.wwwroot + '/user/selector/search.php', {
                 method: 'POST',
-                data: 'selectorid=' + hash + '&sesskey=' + M.cfg.sesskey +
-                    '&search=' + value + '&userselector_searchtype=' + this.searchtype,
+                data: 'selectorid=' + hash + '&sesskey=' + M.cfg.sesskey + '&search=' + value + '&userselector_searchanywhere=' + this.get_option('searchanywhere'),
                 on: {
                     complete: this.handle_response
                 },
@@ -379,6 +355,7 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
             var settings = [
                 'userselector_preserveselected',
                 'userselector_autoselectunique',
+                'userselector_searchanywhere'
             ];
             for (var s in settings) {
                 var setting = settings[s];
@@ -391,9 +368,7 @@ M.core_user.init_user_selector_options_tracker = function(Y) {
          * @param {string} name The name of the preference to set
          */
         set_user_preference : function(e, name) {
-            require(['core_user/repository'], function(UserRepository) {
-                UserRepository.setUserPreference(name, Y.one('#' + name + 'id').get('checked'));
-            });
+            M.util.set_user_preference(name, Y.one('#' + name + 'id').get('checked'));
         }
     };
     // Initialise the options tracker

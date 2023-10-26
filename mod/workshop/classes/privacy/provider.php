@@ -293,7 +293,7 @@ class provider implements
      * his/her exported personal data. For example, we need to know what were the instructions for submissions or what
      * was the phase of the workshop when it was exported.
      *
-     * @param \context $context Workshop module content.
+     * @param context $context Workshop module content.
      * @param stdClass $user User for which we are exporting data.
      * @param stdClass $data Base data about the workshop instance to append to.
      * @param array $subcontext Subcontext path items to eventually write files into.

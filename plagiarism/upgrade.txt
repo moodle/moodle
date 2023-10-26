@@ -1,12 +1,5 @@
 This files describes API changes for code that uses the plagiarism API.
 
-=== 4.2 ===
-* Final deprecation and removal of the following functions:
-  - plagiarism_save_form_elements(), please use {plugin name}_coursemodule_edit_post_actions() instead.
-  - plagiarism_get_form_elements_module(), please use {plugin name}_coursemodule_standard_elements() instead.
-  - plagiarism_plugin::get_form_elements_module(), please use {plugin name}_coursemodule_edit_post_actions() instead.
-  - plagiarism_plugin::save_form_elements(), please use {plugin name}_coursemodule_standard_elements() instead.
-
 === 4.0 ===
 * The method update_status() has been deprecated. Please use {plugin name}_before_standard_top_of_body_html() instead.
 * The method get_configs() has been deprecated and will be removed from the abstract class as it was not used in core.

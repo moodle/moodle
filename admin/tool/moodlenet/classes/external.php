@@ -26,15 +26,15 @@ namespace tool_moodlenet;
 
 defined('MOODLE_INTERNAL') || die();
 
+require_once($CFG->libdir .'/externallib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once(__DIR__ . '/../lib.php');
 
 use core_course\external\course_summary_exporter;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
 
 /**
  * This is the external API for this component.
@@ -100,7 +100,7 @@ class external extends external_api {
     /**
      * verify_webfinger return.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function verify_webfinger_returns() {
         return new external_single_structure([
@@ -171,11 +171,11 @@ class external extends external_api {
     /**
      * search_courses_returns.
      *
-     * @return external_description
+     * @return \external_description
      */
     public static function search_courses_returns() {
         return new external_single_structure([
-            'courses' => new external_multiple_structure(
+            'courses' => new \external_multiple_structure(
                 new external_single_structure([
                     'id' => new external_value(PARAM_INT, 'course id'),
                     'fullname' => new external_value(PARAM_TEXT, 'course full name'),

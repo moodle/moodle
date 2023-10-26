@@ -112,6 +112,8 @@ class events_test extends \advanced_testcase {
          // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\course_searched', $event);
         $this->assertEquals($coursectx, $event->get_context());
+        $expected = array($course->id, 'forum', 'search', "search.php?id={$course->id}&amp;search={$searchterm}", $searchterm);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -189,6 +191,8 @@ class events_test extends \advanced_testcase {
         // Check that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_created', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'add discussion', "discuss.php?d={$discussion->id}", $discussion->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -342,6 +346,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_deleted', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'delete discussion', "view.php?id={$forum->cmid}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -449,6 +455,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_moved', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'move discussion', "discuss.php?d={$discussion->id}",
+            $discussion->id, $toforum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -515,6 +524,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\discussion_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'view discussion', "discuss.php?d={$discussion->id}",
+            $discussion->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -564,6 +576,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\course_module_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'view forum', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -662,6 +676,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscription_created', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'subscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -760,6 +776,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscription_deleted', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'unsubscribe', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/subscribers.php', array('id' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -849,6 +867,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\readtracking_enabled', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'start tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -938,6 +958,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\readtracking_disabled', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'stop tracking', "view.php?f={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -1008,6 +1030,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\subscribers_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'view subscribers', "subscribers.php?id={$forum->id}", $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1091,6 +1115,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'user report',
+            "user.php?id={$user->id}&amp;mode=discussions&amp;course={$course->id}", $user->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $this->assertNotEmpty($event->get_name());
@@ -1289,6 +1316,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_created', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'add post', "discuss.php?d={$discussion->id}#p{$post->id}",
+            $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1339,6 +1369,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_created', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'add post', "view.php?f={$forum->id}#p{$post->id}",
+            $forum->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1544,6 +1577,8 @@ class events_test extends \advanced_testcase {
         // Check that the events contain the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
         $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
+        $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $lastpost->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -1562,6 +1597,9 @@ class events_test extends \advanced_testcase {
                 // Check that the event contains the expected values.
                 $this->assertEquals($event->objectid, $discussion->id);
                 $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
+                $expected = array($course->id, 'forum', 'delete discussion', "view.php?id={$forum->cmid}",
+                    $forum->id, $forum->cmid);
+                $this->assertEventLegacyLogData($expected, $event);
                 $url = new \moodle_url('/mod/forum/view.php', array('id' => $forum->cmid));
                 $this->assertEquals($url, $event->get_url());
                 $this->assertEventContextNotUsed($event);
@@ -1572,6 +1610,8 @@ class events_test extends \advanced_testcase {
                 $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
                 $this->assertEquals($event->objectid, $post->id);
                 $this->assertEquals(\context_module::instance($forum->cmid), $event->get_context());
+                $expected = array($course->id, 'forum', 'delete post', "discuss.php?d={$discussion->id}", $post->id, $forum->cmid);
+                $this->assertEventLegacyLogData($expected, $event);
                 $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
                 $this->assertEquals($url, $event->get_url());
                 $this->assertEventContextNotUsed($event);
@@ -1622,6 +1662,8 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_deleted', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'delete post', "view.php?f={$forum->id}", $post->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $this->assertEquals($url, $event->get_url());
         $this->assertEventContextNotUsed($event);
@@ -1799,6 +1841,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_updated', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'update post', "discuss.php?d={$discussion->id}#p{$post->id}",
+            $post->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/discuss.php', array('d' => $discussion->id));
         $url->set_anchor('p'.$event->objectid);
         $this->assertEquals($url, $event->get_url());
@@ -1849,6 +1894,9 @@ class events_test extends \advanced_testcase {
         // Checking that the event contains the expected values.
         $this->assertInstanceOf('\mod_forum\event\post_updated', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, 'forum', 'update post', "view.php?f={$forum->id}#p{$post->id}",
+            $post->id, $forum->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
         $url = new \moodle_url('/mod/forum/view.php', array('f' => $forum->id));
         $url->set_anchor('p'.$post->id);
         $this->assertEquals($url, $event->get_url());

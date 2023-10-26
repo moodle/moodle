@@ -61,6 +61,7 @@ $eventinformation['explanation'] = $eventname::get_explanation($eventname);
 // Get event information nicely if we can.
 if (!$ref->isAbstract()) {
     $eventinformation = array_merge($eventinformation, $eventname::get_static_info());
+    $eventinformation['legacyevent'] = $eventname::get_legacy_eventname();
     $eventinformation['crud'] = report_eventlist_list_generator::get_crud_string($eventinformation['crud']);
     $eventinformation['edulevel'] = report_eventlist_list_generator::get_edulevel_string($eventinformation['edulevel']);
 } else {

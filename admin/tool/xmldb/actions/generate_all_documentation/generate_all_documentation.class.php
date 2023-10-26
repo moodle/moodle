@@ -76,7 +76,7 @@ class generate_all_documentation extends XMLDBAction {
         $c .= '</p>';
         $this->output.=$c;
 
-        $docs = '';
+        $this->docs = '';
 
         if(class_exists('XSLTProcessor')) {
 
@@ -97,16 +97,16 @@ class generate_all_documentation extends XMLDBAction {
 
                 $dir = trim(dirname(str_replace($CFG->dirroot, '', $path)), '/');
                 $index .= '<a href="#file_' . str_replace('/', '_', $dir) . '">' . $dir . '</a>, ';
-                $docs .= '<div class="file" id="file_' . str_replace('/', '_', $dir) . '">';
-                $docs .= '<h2>' . $dir . '</h2>';
+                $this->docs .= '<div class="file" id="file_' . str_replace('/', '_', $dir) . '">';
+                $this->docs .= '<h2>' . $dir . '</h2>';
 
                 $doc->load($path . '/install.xml');
-                $docs .= $xsl->transformToXML($doc);
+                $this->docs.=$xsl->transformToXML($doc);
 
-                $docs .= '</div>';
+                $this->docs .= '</div>';
             }
 
-            $this->output .= '<div id="file_idex">' . trim($index, ' ,') . '</div>' . $docs;
+            $this->output .= '<div id="file_idex">' . trim($index, ' ,') . '</div>' . $this->docs;
 
             $this->output.=$b;
         } else {

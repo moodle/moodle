@@ -85,7 +85,12 @@ class filter_mathjaxloader extends moodle_text_filter {
             $lang = $this->map_language_code(current_language());
             $url = new moodle_url($url, array('delayStartupUntil' => 'configured'));
 
-            $page->requires->js($url);
+            $moduleconfig = array(
+                'name' => 'mathjax',
+                'fullpath' => $url
+            );
+
+            $page->requires->js_module($moduleconfig);
 
             $config = get_config('filter_mathjaxloader', 'mathjaxconfig');
             $wwwroot = new moodle_url('/');
@@ -94,7 +99,7 @@ class filter_mathjaxloader extends moodle_text_filter {
 
             $params = array('mathjaxconfig' => $config, 'lang' => $lang);
 
-            $page->requires->js_call_amd('filter_mathjaxloader/loader', 'configure', [$params]);
+            $page->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.configure', array($params));
         }
     }
 
@@ -151,7 +156,7 @@ class filter_mathjaxloader extends moodle_text_filter {
         }
 
         if ($hasdisplayorinline || $hasextra) {
-            $PAGE->requires->js_call_amd('filter_mathjaxloader/loader', 'typeset');
+            $PAGE->requires->yui_module('moodle-filter_mathjaxloader-loader', 'M.filter_mathjaxloader.typeset');
             return '<span class="filter_mathjaxloader_equation">' . $text . '</span>';
         }
         return $text;

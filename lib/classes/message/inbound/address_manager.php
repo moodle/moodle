@@ -435,7 +435,9 @@ class address_manager {
         $this->process($recipient);
 
         // Validate the retrieved data against the e-mail address of the originator.
-        return $this->validate($sender);
+        $this->status = $this->validate($sender);
+
+        return $this->status;
     }
 
     /**

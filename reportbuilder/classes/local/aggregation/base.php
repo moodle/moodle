@@ -133,7 +133,7 @@ abstract class base {
     public static function format_value($value, array $values, array $callbacks, int $columntype) {
         foreach ($callbacks as $callback) {
             [$callable, $arguments] = $callback;
-            $value = ($callable)($value, (object) $values, $arguments, static::get_class_name());
+            $value = ($callable)($value, (object) $values, $arguments);
         }
 
         return $value;

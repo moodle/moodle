@@ -16,7 +16,7 @@
 
 namespace quizaccess_numattempts;
 
-use mod_quiz\quiz_settings;
+use quiz;
 use quizaccess_numattempts;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,7 +39,7 @@ class rule_test extends \basic_testcase {
         $quiz->attempts = 3;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_numattempts($quizobj, 0);
         $attempt = new \stdClass();
 

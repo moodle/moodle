@@ -45,9 +45,6 @@ class instance_updated_message implements renderable, templatable {
      */
     protected $instance;
 
-    /** @var int activity type. */
-    protected $type;
-
     /**
      * Instance updated constructor
      *

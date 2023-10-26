@@ -36,7 +36,7 @@ class DGet extends DatabaseAbstract
     {
         $field = self::fieldExtract($database, $field);
         if ($field === null) {
-            return ExcelError::VALUE();
+            return null;
         }
 
         $columnData = self::getFilteredColumn($database, $field, $criteria);

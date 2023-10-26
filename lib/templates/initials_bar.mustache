@@ -78,25 +78,15 @@
 
     <nav class="initialbargroups d-flex flex-wrap justify-content-center justify-content-md-start">
         <ul class="pagination pagination-sm">
-            <li id="{{class}}_page-item_{{all}}" class="initialbarall page-item {{^current}}active{{/current}}">
-                {{#url}}
-                    <a data-initial="" class="page-link" href="{{url}}"{{^current}} aria-current="true"{{/current}}>{{all}}</a>
-                {{/url}}
-                {{#input}}
-                    <input class="page-link mr-1 rounded" {{^current}} aria-current="true"{{/current}} value="{{all}}" type="button">
-                {{/input}}
+            <li class="initialbarall page-item{{^current}} active{{/current}}">
+                <a data-initial="" class="page-link" href="{{url}}"{{^current}} aria-current="true"{{/current}}>{{all}}</a>
             </li>
         </ul>
         {{#group}}
             <ul class="pagination pagination-sm">
                 {{#letter}}
-                    <li id="{{class}}_page-item_{{name}}" data-initial="{{name}}" class="page-item {{name}} {{#selected}}active{{/selected}}">
-                        {{#url}}
-                            <a class="page-link" href="{{url}}"{{#selected}} aria-current="true"{{/selected}}>{{name}}</a>
-                        {{/url}}
-                        {{#input}}
-                            <input class="page-link mr-1 rounded" {{#selected}} aria-current="true"{{/selected}} value="{{name}}" type="button">
-                        {{/input}}
+                    <li data-initial="{{name}}" class="page-item {{name}}{{#selected}} active{{/selected}}">
+                        <a class="page-link" href="{{url}}"{{#selected}} aria-current="true"{{/selected}}>{{name}}</a>
                     </li>
                 {{/letter}}
             </ul>

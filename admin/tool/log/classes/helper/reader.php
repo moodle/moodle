@@ -38,13 +38,6 @@ defined('MOODLE_INTERNAL') || die();
  * @property string $store short plugin name initialised in store trait.
  */
 trait reader {
-
-    /** @var string Frankenstyle plugin name initialised in store trait. */
-    protected $component;
-
-    /** @var string short plugin name initialised in store trait. */
-    protected $store;
-
     /**
      * Default get name api.
      *

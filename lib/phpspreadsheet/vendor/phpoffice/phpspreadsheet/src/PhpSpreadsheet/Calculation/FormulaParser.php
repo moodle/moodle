@@ -137,8 +137,7 @@ class FormulaParser
         // Helper variables
         $tokens1 = $tokens2 = $stack = [];
         $inString = $inPath = $inRange = $inError = false;
-        $nextToken = null;
-        //$token = $previousToken = null;
+        $token = $previousToken = $nextToken = null;
 
         $index = 1;
         $value = '';
@@ -528,11 +527,11 @@ class FormulaParser
             } else {
                 $previousToken = null;
             }
-            //if (isset($tokens2[$i + 1])) {
-            //    $nextToken = $tokens2[$i + 1];
-            //} else {
-            //    $nextToken = null;
-            //}
+            if (isset($tokens2[$i + 1])) {
+                $nextToken = $tokens2[$i + 1];
+            } else {
+                $nextToken = null;
+            }
 
             if ($token === null) {
                 continue;

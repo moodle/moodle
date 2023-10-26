@@ -25,8 +25,6 @@
 
 namespace core;
 
-use ReflectionProperty;
-
 /**
  * Read slave helper that exposes selected moodle_read_slave_trait metods
  *
@@ -51,11 +49,7 @@ trait test_moodle_read_slave_trait {
         fputs($ro, 'ro');
 
         $this->prefix = 'test_'; // Default, not to leave empty.
-
-        $rcp = new ReflectionProperty(parent::class, 'wantreadslave');
-        $rcp->setAccessible(true);
-        $rcp->setValue($this, true);
-
+        $this->wantreadslave = true;
         $this->dbhwrite = $rw;
         $this->dbhreadonly = $ro;
         $this->set_db_handle($this->dbhwrite);

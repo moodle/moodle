@@ -19,24 +19,15 @@ namespace core_question;
 use qubaid_list;
 use question_bank;
 use question_engine;
-use question_filter_test_helper;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.php');
 
 /**
- * Tests for the {@see \core_question\local\bank\random_question_loader} class.
+ * Tests for the {@see core_question\local\bank\random_question_loader} class.
  *
  * @package   core_question
  * @copyright  2015 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class random_question_loader_test extends \advanced_testcase {
-
-    use \quiz_question_helper_test_trait;
 
     public function test_empty_category_gives_null() {
         $this->resetAfterTest();
@@ -45,18 +36,14 @@ class random_question_loader_test extends \advanced_testcase {
         $cat = $generator->create_question_category();
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
-
-        $filters = question_filter_test_helper::create_filters([$cat->id], 1);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
+        $this->assertNull($loader->get_next_question_id($cat->id, 1));
     }
 
     public function test_unknown_category_behaves_like_empty() {
         // It is up the caller to make sure the category id is valid.
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
-        $filters = question_filter_test_helper::create_filters([-1], 1);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id(-1, 1));
     }
 
     public function test_descriptions_not_returned() {
@@ -67,8 +54,7 @@ class random_question_loader_test extends \advanced_testcase {
         $info = $generator->create_question('description', null, ['category' => $cat->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_hidden_questions_not_returned() {
@@ -82,8 +68,7 @@ class random_question_loader_test extends \advanced_testcase {
             \core_question\local\bank\question_version_status::QUESTION_STATUS_HIDDEN, ['questionid' => $question1->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_cloze_subquestions_not_returned() {
@@ -94,9 +79,8 @@ class random_question_loader_test extends \advanced_testcase {
         $question1 = $generator->create_question('multianswer', null, ['category' => $cat->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertEquals($question1->id, $loader->get_next_filtered_question_id($filters));
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat->id, 0));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_random_questions_not_returned() {
@@ -107,11 +91,10 @@ class random_question_loader_test extends \advanced_testcase {
         $cat = $generator->create_question_category();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course]);
-        $this->add_random_questions($quiz->id, 1, $cat->id, 1);
+        quiz_add_random_questions($quiz, 1, $cat->id, 1, false);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_one_question_category_returns_that_q_then_null() {
@@ -122,11 +105,8 @@ class random_question_loader_test extends \advanced_testcase {
         $question1 = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id], 1);
-        $this->assertEquals($question1->id, $loader->get_next_filtered_question_id($filters));
-
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat->id, 1));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_two_question_category_returns_both_then_null() {
@@ -139,14 +119,12 @@ class random_question_loader_test extends \advanced_testcase {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
         $questionids = [];
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $questionids[] = $loader->get_next_filtered_question_id($filters);
-        $questionids[] = $loader->get_next_filtered_question_id($filters);
+        $questionids[] = $loader->get_next_question_id($cat->id, 0);
+        $questionids[] = $loader->get_next_question_id($cat->id, 0);
         sort($questionids);
         $this->assertEquals([$question1->id, $question2->id], $questionids);
 
-        $filters = question_filter_test_helper::create_filters([$cat->id], 1);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat->id, 1));
     }
 
     public function test_nested_categories() {
@@ -159,13 +137,10 @@ class random_question_loader_test extends \advanced_testcase {
         $question2 = $generator->create_question('shortanswer', null, ['category' => $cat2->id]);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
-        $filters = question_filter_test_helper::create_filters([$cat2->id], 1);
-        $this->assertEquals($question2->id, $loader->get_next_filtered_question_id($filters));
-        $filters = question_filter_test_helper::create_filters([$cat1->id], 1);
-        $this->assertEquals($question1->id, $loader->get_next_filtered_question_id($filters));
+        $this->assertEquals($question2->id, $loader->get_next_question_id($cat2->id, 1));
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat1->id, 1));
 
-        $filters = question_filter_test_helper::create_filters([$cat1->id]);
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertNull($loader->get_next_question_id($cat1->id, 0));
     }
 
     public function test_used_question_not_returned_until_later() {
@@ -178,9 +153,8 @@ class random_question_loader_test extends \advanced_testcase {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]),
                 array($question2->id => 2));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertEquals($question1->id, $loader->get_next_filtered_question_id($filters));
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat->id, 0));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_previously_used_question_not_returned_until_later() {
@@ -200,10 +174,9 @@ class random_question_loader_test extends \advanced_testcase {
 
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list(array($quba->get_id())));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertEquals($question1->id, $loader->get_next_filtered_question_id($filters));
-        $this->assertEquals($question2->id, $loader->get_next_filtered_question_id($filters));
-        $this->assertNull($loader->get_next_filtered_question_id($filters));
+        $this->assertEquals($question1->id, $loader->get_next_question_id($cat->id, 0));
+        $this->assertEquals($question2->id, $loader->get_next_question_id($cat->id, 0));
+        $this->assertNull($loader->get_next_question_id($cat->id, 0));
     }
 
     public function test_empty_category_does_not_have_question_available() {
@@ -213,10 +186,8 @@ class random_question_loader_test extends \advanced_testcase {
         $cat = $generator->create_question_category();
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list(array()));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertFalse($loader->is_filtered_question_available($filters, 1));
-        $filters = question_filter_test_helper::create_filters([$cat->id], 1);
-        $this->assertFalse($loader->is_filtered_question_available($filters, 1));
+        $this->assertFalse($loader->is_question_available($cat->id, 0, 1));
+        $this->assertFalse($loader->is_question_available($cat->id, 1, 1));
     }
 
     public function test_descriptions_not_available() {
@@ -227,10 +198,8 @@ class random_question_loader_test extends \advanced_testcase {
         $info = $generator->create_question('description', null, array('category' => $cat->id));
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list(array()));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertFalse($loader->is_filtered_question_available($filters, $info->id));
-        $filters = question_filter_test_helper::create_filters([$cat->id], 1);
-        $this->assertFalse($loader->is_filtered_question_available($filters, $info->id));
+        $this->assertFalse($loader->is_question_available($cat->id, 0, $info->id));
+        $this->assertFalse($loader->is_question_available($cat->id, 1, $info->id));
     }
 
     public function test_existing_question_is_available_but_then_marked_used() {
@@ -241,11 +210,10 @@ class random_question_loader_test extends \advanced_testcase {
         $question1 = $generator->create_question('shortanswer', null, array('category' => $cat->id));
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list(array()));
 
-        $filters = question_filter_test_helper::create_filters([$cat->id]);
-        $this->assertTrue($loader->is_filtered_question_available($filters, $question1->id));
-        $this->assertFalse($loader->is_filtered_question_available($filters, $question1->id));
+        $this->assertTrue($loader->is_question_available($cat->id, 0, $question1->id));
+        $this->assertFalse($loader->is_question_available($cat->id, 0, $question1->id));
 
-        $this->assertFalse($loader->is_filtered_question_available($filters, -1));
+        $this->assertFalse($loader->is_question_available($cat->id, 0, -1));
     }
 
     /**
@@ -375,8 +343,7 @@ class random_question_loader_test extends \advanced_testcase {
         }, $usetagnames);
 
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
-        $filters = question_filter_test_helper::create_filters([$category->id], $includesubcategories, $tagids);
-        $result = $loader->get_filtered_questions($filters);
+        $result = $loader->get_questions($category->id, $includesubcategories, $tagids);
         // Generate the expected question set.
         $expectedquestions = array_map(function($index) use ($questions) {
             return $questions[$index];
@@ -408,10 +375,12 @@ class random_question_loader_test extends \advanced_testcase {
         array_walk($questions, function (&$value) use (&$questionsbyid) {
             $questionsbyid[$value->id] = $value;
         });
-        $filters = question_filter_test_helper::create_filters([$category->id], $includesubcategories, $tagids);
+
         for ($i = 0; $i < $numberofquestions; $i++) {
-            $result = $loader->get_filtered_questions(
-                    $filters,
+            $result = $loader->get_questions(
+                    $category->id,
+                    $includesubcategories,
+                    $tagids,
                     $limit,
                     $offset
             );
@@ -438,9 +407,10 @@ class random_question_loader_test extends \advanced_testcase {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         list($category, $questions) = $this->create_category_and_questions(1);
 
-        $filters = question_filter_test_helper::create_filters([$category->id], $includesubcategories, $tagids);
-        $result = $loader->get_filtered_questions(
-                $filters,
+        $result = $loader->get_questions(
+                $category->id,
+                $includesubcategories,
+                $tagids,
                 $limit,
                 $offset,
                 $fields
@@ -582,9 +552,8 @@ class random_question_loader_test extends \advanced_testcase {
             return $tags[$tagname]->id;
         }, $usetagnames);
 
-        $filters = question_filter_test_helper::create_filters([$category->id], $includesubcategories, $tagids);
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
-        $result = $loader->count_filtered_questions($filters);
+        $result = $loader->count_questions($category->id, $includesubcategories, $tagids);
 
         // Ensure the result matches what was expected.
         $this->assertEquals($expectedcount, $result);

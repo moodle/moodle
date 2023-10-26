@@ -76,6 +76,35 @@ class course_resources_list_viewed extends base {
     }
 
     /**
+     * List of resource types enabled in the system. This is used for legacy logging to log one record for each resource type.
+     *
+     * There is no public getter for this data because it does not depend on the
+     * course. It always includes the list of all resource types in the system
+     * even when some of them are not present in the course.
+     *
+     * @param array $data
+     */
+    public function set_legacy_logdata($data) {
+        $this->resourceslist = $data;
+    }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        if (empty($this->resourceslist)) {
+            return null;
+        }
+        $logs = array();
+        foreach ($this->resourceslist as $resourcename) {
+            $logs[] = array($this->courseid, $resourcename, 'view all', 'index.php?id=' . $this->courseid, '');
+        }
+        return $logs;
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

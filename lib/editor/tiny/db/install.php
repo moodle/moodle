@@ -23,9 +23,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * Enable the TinyMCE Editor on its install.
- */
+ /**
+  * Post installation procedure for the TinyMCE editor.
+  */
 function xmldb_editor_tiny_install(): void {
     $editormanager = \core_plugin_manager::resolve_plugininfo_class('editor');
     $editormanager::enable_plugin('tiny', true);

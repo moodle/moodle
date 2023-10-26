@@ -12,8 +12,8 @@ Feature: Preview a quiz as a teacher
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user     | course | role           |
-      | teacher  | C1     | editingteacher |
+      | user     | course | role    |
+      | teacher  | C1     | teacher |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
@@ -38,7 +38,6 @@ Feature: Preview a quiz as a teacher
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     And I follow "Review"
     Then I should see "25.00 out of 100.00"
-    And I should see "v1 (latest)" in the "Question 1" "question"
     And I follow "Finish review"
     And "Review" "link" in the "Preview" "table_row" should be visible
 
@@ -59,7 +58,6 @@ Feature: Preview a quiz as a teacher
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"
     When I press "Preview quiz"
     Then I should see "Question 1"
-    And I should see "v1 (latest)" in the "Question 1" "question"
     And "Start a new preview" "button" should exist
 
   Scenario: Teachers should see a notice if the quiz is not available to students

@@ -73,6 +73,39 @@ class course_module_deleted extends base {
     }
 
     /**
+     * Legacy event name.
+     *
+     * @return string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'mod_deleted';
+    }
+
+    /**
+     * Legacy event data.
+     *
+     * @return \stdClass
+     */
+    protected function get_legacy_eventdata() {
+        $eventdata = new \stdClass();
+        $eventdata->modulename = $this->other['modulename'];
+        $eventdata->cmid       = $this->objectid;
+        $eventdata->courseid   = $this->courseid;
+        $eventdata->userid     = $this->userid;
+        return $eventdata;
+    }
+
+    /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array ($this->courseid, "course", "delete mod", "view.php?id=$this->courseid",
+                $this->other['modulename'] . " " . $this->other['instanceid'], $this->objectid);
+    }
+
+    /**
      * custom validations
      *
      * Throw \coding_exception notice in case of any problems.

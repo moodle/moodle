@@ -70,7 +70,7 @@ class competency_framework extends persistent {
     /**
      * Get the context.
      *
-     * @return \context The context
+     * @return context The context
      */
     public function get_context() {
         return context::instance_by_id($this->get('contextid'));

@@ -23,20 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_files;
-use core_external\external_format_value;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_settings;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\restricted_context_exception;
-use core_external\util;
-use core_external\util as external_util;
-
 /**
  * In place editing callback for question name.
  *
@@ -57,7 +43,7 @@ function qbank_viewquestionname_inplace_editable ($itemtype, $itemid, $newvalue)
         question_require_capability_on($question, 'edit');
 
         // Context validation.
-        external_api::validate_context(context::instance_by_id($question->contextid));
+        \external_api::validate_context(context::instance_by_id($question->contextid));
 
         // Now update the question data.
         $record->name = $newvalue;

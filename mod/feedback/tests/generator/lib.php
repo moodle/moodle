@@ -179,7 +179,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_info($feedback, $record = array()) {
         global $DB, $CFG;
@@ -195,7 +195,7 @@ class mod_feedback_generator extends testing_module_generator {
             'template' => 0,
             'name' => 'Feedback question item ' . $position,
             'label' => 'Feedback label ' . $position,
-            'presentation' => \feedback_item_info::MODE_COURSE,
+            'presentation' => $itemobj::MODE_COURSE,
             'typ' => 'info',
             'hasvalue' => 0,
             'position' => $position,
@@ -214,7 +214,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_label($feedback, $record = array()) {
         global $DB, $CFG;
@@ -257,7 +257,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_multichoice($feedback, $record = array()) {
         global $DB, $CFG;
@@ -304,7 +304,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_multichoicerated($feedback, $record = array()) {
         global $DB, $CFG;
@@ -353,7 +353,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_numeric($feedback, $record = array()) {
         global $DB, $CFG;
@@ -398,7 +398,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_textarea($feedback, $record = array()) {
         global $DB, $CFG;
@@ -437,7 +437,7 @@ class mod_feedback_generator extends testing_module_generator {
      *
      * @param object $feedback feedback record
      * @param array $record (optional) to override default values
-     * @return stdClass
+     * @return int
      */
     public function create_item_textfield($feedback, $record = array()) {
         global $DB, $CFG;
@@ -475,7 +475,7 @@ class mod_feedback_generator extends testing_module_generator {
      * Create pagebreak.
      *
      * @param object $feedback feedback record
-     * @return int|false false if there already is a pagebreak on last position or the id of the pagebreak-item
+     * @return mixed false if there already is a pagebreak on last position or the id of the pagebreak-item
      */
     public function create_item_pagebreak($feedback) {
         global $CFG;

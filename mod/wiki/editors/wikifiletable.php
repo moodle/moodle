@@ -37,9 +37,6 @@ class MoodleQuickForm_wikifiletable extends HTML_QuickForm_element {
     private $_fileinfo;
     private $_value = array();
 
-    /** @var string */
-    protected $_format;
-
     public function __construct($elementName = null, $elementLabel = null, $attributes = null, $fileinfo = null, $format = null) {
 
         parent::__construct($elementName, $elementLabel, $attributes);

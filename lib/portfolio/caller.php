@@ -195,6 +195,7 @@ abstract class portfolio_caller_base {
     public final function set($field, &$value) {
         if (property_exists($this, $field)) {
             $this->{$field} =& $value;
+            $this->dirty = true;
             return true;
         }
         $a = (object)array('property' => $field, 'class' => get_class($this));

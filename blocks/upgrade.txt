@@ -1,21 +1,6 @@
 This files describes API changes in /blocks/* - activity modules,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* Block configuration form is now displayed in a modal. Class 'block_edit_form' now extends
-  '\core_form\dynamic_form' and properties $block and $page are read-only. Normally
-  no changes should be necessary to keep the old behavior of configuration form.
-* Block plugins can specify that they want to display configuration form when block is
-  added to the page by overriding static method block_edit_form::display_form_when_adding().
-* Web service 'core_block_fetch_addable_blocks' accepts new parameter 'pagehash'
-* JS module 'core/addblockmodal' is deprecated, instead there is new module
-  'core_block/add_modal' with similar functionality but different arguments.
-* Functions in the JS modules 'moodle-core-blockdraganddrop' have changed their parameters.
-  File lib/ajax/blocks.php takes different arguments.
-  No backward-compatibility is provided since these files are not part of the blocks API
-  and not intended to be used by plugins.
-
 === 4.0 ===
 
 * Block block_quiz_results has been completely removed from core.

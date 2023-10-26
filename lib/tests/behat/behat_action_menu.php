@@ -69,10 +69,6 @@ class behat_action_menu extends behat_base {
     /**
      * When an action menu is open, follow one of the items in it.
      *
-     * The > is used to indicate a sub-menu. For example "Group mode > Visible groups"
-     * will do two clicks, one on the Group mode menu item, and one on the Visible groups link
-     * in the sub-menu.
-     *
      * @Given /^I choose "(?P<link_string>(?:[^"]|\\")*)" in the open action menu$/
      * @param string $linkstring
      * @return void
@@ -81,16 +77,11 @@ class behat_action_menu extends behat_base {
         if (!$this->running_javascript()) {
             throw new DriverException('Action menu steps are not available with Javascript disabled');
         }
-        // Check for sub-menus.
-        $menuitems = explode('>', $menuitemstring);
-        foreach ($menuitems as $menuitem) {
-            // Gets the node based on the requested selector type and locator.
-            $menuselector = ".moodle-actionmenu .dropdown.show .dropdown-menu";
-            $node = $this->get_node_in_container("link", trim($menuitem), "css_element", $menuselector);
-            $this->ensure_node_is_visible($node);
-            $node->click();
-        }
-
+        // Gets the node based on the requested selector type and locator.
+        $menuselector = ".moodle-actionmenu .dropdown.show .dropdown-menu";
+        $node = $this->get_node_in_container("link", $menuitemstring, "css_element", $menuselector);
+        $this->ensure_node_is_visible($node);
+        $node->click();
     }
 
     /**

@@ -20,8 +20,8 @@
  * all keybindings and logic is compatible. This class translate the primitive opetations
  * to a bootstrap collapsible structure.
  *
- * @module     core_courseformat/local/courseeditor/contenttree
- * @class      core_courseformat/local/courseeditor/contenttree
+ * @module     core_courseformat/local/courseindex/keyboardnav
+ * @class      core_courseformat/local/courseindex/keyboardnav
  * @copyright  2021 Ferran Recio <ferran@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

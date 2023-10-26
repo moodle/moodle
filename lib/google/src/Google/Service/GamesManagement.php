@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement extends Google_Service
 {
   /** Share your Google+ profile information and view and manage your game activity. */
@@ -345,7 +344,6 @@ class Google_Service_GamesManagement extends Google_Service
  *   $achievements = $gamesManagementService->achievements;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Achievements_Resource extends Google_Service_Resource
 {
 
@@ -433,7 +431,6 @@ class Google_Service_GamesManagement_Achievements_Resource extends Google_Servic
  *   $applications = $gamesManagementService->applications;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Applications_Resource extends Google_Service_Resource
 {
 
@@ -468,7 +465,6 @@ class Google_Service_GamesManagement_Applications_Resource extends Google_Servic
  *   $events = $gamesManagementService->events;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Events_Resource extends Google_Service_Resource
 {
 
@@ -558,7 +554,6 @@ class Google_Service_GamesManagement_Events_Resource extends Google_Service_Reso
  *   $players = $gamesManagementService->players;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Players_Resource extends Google_Service_Resource
 {
 
@@ -607,7 +602,6 @@ class Google_Service_GamesManagement_Players_Resource extends Google_Service_Res
  *   $quests = $gamesManagementService->quests;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Quests_Resource extends Google_Service_Resource
 {
 
@@ -692,7 +686,6 @@ class Google_Service_GamesManagement_Quests_Resource extends Google_Service_Reso
  *   $rooms = $gamesManagementService->rooms;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Rooms_Resource extends Google_Service_Resource
 {
 
@@ -733,7 +726,6 @@ class Google_Service_GamesManagement_Rooms_Resource extends Google_Service_Resou
  *   $scores = $gamesManagementService->scores;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Scores_Resource extends Google_Service_Resource
 {
 
@@ -821,7 +813,6 @@ class Google_Service_GamesManagement_Scores_Resource extends Google_Service_Reso
  *   $turnBasedMatches = $gamesManagementService->turnBasedMatches;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_TurnBasedMatches_Resource extends Google_Service_Resource
 {
 
@@ -857,7 +848,6 @@ class Google_Service_GamesManagement_TurnBasedMatches_Resource extends Google_Se
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_AchievementResetAllResponse extends Google_Collection
 {
   protected $collection_key = 'results';
@@ -886,7 +876,6 @@ class Google_Service_GamesManagement_AchievementResetAllResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_AchievementResetMultipleForAllRequest extends Google_Collection
 {
   protected $collection_key = 'achievement_ids';
@@ -915,7 +904,6 @@ class Google_Service_GamesManagement_AchievementResetMultipleForAllRequest exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_AchievementResetResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -960,7 +948,6 @@ class Google_Service_GamesManagement_AchievementResetResponse extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_EventsResetMultipleForAllRequest extends Google_Collection
 {
   protected $collection_key = 'event_ids';
@@ -989,7 +976,6 @@ class Google_Service_GamesManagement_EventsResetMultipleForAllRequest extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_GamesPlayedResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1016,7 +1002,6 @@ class Google_Service_GamesManagement_GamesPlayedResource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_GamesPlayerExperienceInfoResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1063,7 +1048,6 @@ class Google_Service_GamesManagement_GamesPlayerExperienceInfoResource extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_GamesPlayerLevelResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1099,7 +1083,6 @@ class Google_Service_GamesManagement_GamesPlayerLevelResource extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_HiddenPlayer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1136,7 +1119,6 @@ class Google_Service_GamesManagement_HiddenPlayer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_HiddenPlayerList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1174,7 +1156,6 @@ class Google_Service_GamesManagement_HiddenPlayerList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_Player extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1276,7 +1257,6 @@ class Google_Service_GamesManagement_Player extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_PlayerName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1303,7 +1283,6 @@ class Google_Service_GamesManagement_PlayerName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_PlayerScoreResetAllResponse extends Google_Collection
 {
   protected $collection_key = 'results';
@@ -1332,7 +1311,6 @@ class Google_Service_GamesManagement_PlayerScoreResetAllResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_PlayerScoreResetResponse extends Google_Collection
 {
   protected $collection_key = 'resetScoreTimeSpans';
@@ -1369,7 +1347,6 @@ class Google_Service_GamesManagement_PlayerScoreResetResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_QuestsResetMultipleForAllRequest extends Google_Collection
 {
   protected $collection_key = 'quest_ids';
@@ -1398,7 +1375,6 @@ class Google_Service_GamesManagement_QuestsResetMultipleForAllRequest extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_GamesManagement_ScoresResetMultipleForAllRequest extends Google_Collection
 {
   protected $collection_key = 'leaderboard_ids';

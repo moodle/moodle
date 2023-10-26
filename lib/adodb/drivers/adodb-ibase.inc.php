@@ -320,7 +320,7 @@ class ADODB_ibase extends ADOConnection {
 
 	function ErrorMsg()
 	{
-		return $this->_errorMsg;
+			return $this->_errorMsg;
 	}
 
 	function Prepare($sql)
@@ -334,6 +334,7 @@ class ADODB_ibase extends ADOConnection {
 	// there have been reports of problems with nested queries - the code is probably not re-entrant?
 	function _query($sql,$iarr=false)
 	{
+
 		if (!$this->autoCommit && $this->_transactionID) {
 			$conn = $this->_transactionID;
 			$docommit = false;
@@ -345,34 +346,27 @@ class ADODB_ibase extends ADOConnection {
 			$fn = 'ibase_execute';
 			$sql = $sql[1];
 			if (is_array($iarr)) {
-				if (!isset($iarr[0])) {
-					$iarr[0] = '';  // PHP5 compat hack
-				}
-				$fnarr = array_merge(array($sql), $iarr);
-				$ret = call_user_func_array($fn, $fnarr);
-			} else {
+				if ( !isset($iarr[0]) ) 
+					$iarr[0] = ''; // PHP5 compat hack
+				$fnarr = array_merge( array($sql) , $iarr);
+				$ret = call_user_func_array($fn,$fnarr);
+			}
+			else {
 				$ret = $fn($sql);
 			}
 		} else {
 			$fn = 'ibase_query';
 
 			if (is_array($iarr)) {
-				if (sizeof($iarr) == 0) {
+				if (sizeof($iarr) == 0) 
 					$iarr[0] = ''; // PHP5 compat hack
-				}
-				$fnarr = array_merge(array($conn, $sql), $iarr);
-				$ret = call_user_func_array($fn, $fnarr);
-			} else {
+				$fnarr = array_merge( array($conn,$sql) , $iarr);
+				$ret = call_user_func_array($fn,$fnarr);
+			}
+			else {
 				$ret = $fn($conn, $sql);
 			}
 		}
-
-		// ibase_query() and ibase_execute() return number of affected rows
-		// ADOConnection::_Execute() expects true for INSERT/UPDATE/DELETE
-		if (is_numeric($ret)) {
-			$ret = true;
-		}
-
 		if ($docommit && $ret === true) {
 			ibase_commit($this->_connectionID);
 		}
@@ -520,24 +514,17 @@ class ADODB_ibase extends ADOConnection {
 
 				$fld->has_default = true;
 				$d = substr($rs->fields[2],strlen('default '));
-				switch ($fld->type) {
-					case 'smallint':
-					case 'integer':
-						$fld->default_value = (int)$d;
-						break;
-					case 'char':
-					case 'blob':
-					case 'text':
-					case 'varchar':
-						$fld->default_value = (string)substr($d, 1, strlen($d) - 2);
-						break;
-					case 'double':
-					case 'float':
-						$fld->default_value = (float)$d;
-						break;
-					default:
-						$fld->default_value = $d;
-						break;
+				switch ($fld->type)
+				{
+				case 'smallint':
+				case 'integer': $fld->default_value = (int) $d; break;
+				case 'char':
+				case 'blob':
+				case 'text':
+				case 'varchar': $fld->default_value = (string) substr($d,1,strlen($d)-2); break;
+				case 'double':
+				case 'float': $fld->default_value = (float) $d; break;
+				default: $fld->default_value = $d; break;
 				}
 		//	case 35:$tt = 'TIMESTAMP'; break;
 			}
@@ -570,6 +557,9 @@ class ADODB_ibase extends ADOConnection {
 	{
 		return $blob;
 	}
+
+
+
 
 	// old blobdecode function
 	// still used to auto-decode all blob's
@@ -635,34 +625,34 @@ class ADODB_ibase extends ADOConnection {
 	*/
 	function UpdateBlob($table,$column,$val,$where,$blobtype='BLOB')
 	{
-		$blob_id = ibase_blob_create($this->_connectionID);
+	$blob_id = ibase_blob_create($this->_connectionID);
 
-		// ibase_blob_add($blob_id, $val);
+	// ibase_blob_add($blob_id, $val);
 
-		// replacement that solves the problem by which only the first modulus 64K /
-		// of $val are stored at the blob field ////////////////////////////////////
-		// Thx Abel Berenstein  aberenstein#afip.gov.ar
-		$len = strlen($val);
-		$chunk_size = 32768;
-		$tail_size = $len % $chunk_size;
-		$n_chunks = ($len - $tail_size) / $chunk_size;
+	// replacement that solves the problem by which only the first modulus 64K /
+	// of $val are stored at the blob field ////////////////////////////////////
+	// Thx Abel Berenstein  aberenstein#afip.gov.ar
+	$len = strlen($val);
+	$chunk_size = 32768;
+	$tail_size = $len % $chunk_size;
+	$n_chunks = ($len - $tail_size) / $chunk_size;
 
-		for ($n = 0; $n < $n_chunks; $n++) {
-			$start = $n * $chunk_size;
-			$data = substr($val, $start, $chunk_size);
-			ibase_blob_add($blob_id, $data);
-		}
+	for ($n = 0; $n < $n_chunks; $n++) {
+		$start = $n * $chunk_size;
+		$data = substr($val, $start, $chunk_size);
+		ibase_blob_add($blob_id, $data);
+	}
 
-		if ($tail_size) {
-			$start = $n_chunks * $chunk_size;
-			$data = substr($val, $start, $tail_size);
-			ibase_blob_add($blob_id, $data);
-		}
-		// end replacement /////////////////////////////////////////////////////////
+	if ($tail_size) {
+		$start = $n_chunks * $chunk_size;
+		$data = substr($val, $start, $tail_size);
+		ibase_blob_add($blob_id, $data);
+	}
+	// end replacement /////////////////////////////////////////////////////////
 
-		$blob_id_str = ibase_blob_close($blob_id);
+	$blob_id_str = ibase_blob_close($blob_id);
 
-		return $this->Execute("UPDATE $table SET $column=(?) WHERE $where", array($blob_id_str)) != false;
+	return $this->Execute("UPDATE $table SET $column=(?) WHERE $where",array($blob_id_str)) != false;
 
 	}
 
@@ -854,12 +844,13 @@ class ADORecordset_ibase extends ADORecordSet
 		}
 
 		return $this->fields[$this->bind[strtoupper($colname)]];
+
 	}
 
 
 	function _close()
 	{
-		return @ibase_free_result($this->_queryID);
+			return @ibase_free_result($this->_queryID);
 	}
 
 	function MetaType($t,$len=-1,$fieldobj=false)
@@ -869,41 +860,35 @@ class ADORecordset_ibase extends ADORecordSet
 			$t = $fieldobj->type;
 			$len = $fieldobj->max_length;
 		}
-
+		
 		$t = strtoupper($t);
-
-		if (array_key_exists($t, $this->connection->customActualTypes)) {
-			return $this->connection->customActualTypes[$t];
-		}
+		
+		if (array_key_exists($t,$this->connection->customActualTypes))
+			return  $this->connection->customActualTypes[$t];
 
 		switch ($t) {
-			case 'CHAR':
-				return 'C';
+			
+		case 'CHAR':
+			return 'C';
 
-			case 'TEXT':
-			case 'VARCHAR':
-			case 'VARYING':
-				if ($len <= $this->blobSize) {
-					return 'C';
-				}
-				return 'X';
-			case 'BLOB':
-				return 'B';
+		case 'TEXT':
+		case 'VARCHAR':
+		case 'VARYING':
+		if ($len <= $this->blobSize) return 'C';
+			return 'X';
+		case 'BLOB':
+			return 'B';
 
-			case 'TIMESTAMP':
-			case 'DATE':
-				return 'D';
-			case 'TIME':
-				return 'T';
-			//case 'T': return 'T';
+		case 'TIMESTAMP':
+		case 'DATE': return 'D';
+		case 'TIME': return 'T';
+				//case 'T': return 'T';
 
-			//case 'L': return 'L';
-			case 'INT':
-			case 'SHORT':
-			case 'INTEGER':
-				return 'I';
-			default:
-				return ADODB_DEFAULT_METATYPE;
+				//case 'L': return 'L';
+		case 'INT':
+		case 'SHORT':
+		case 'INTEGER': return 'I';
+		default: return ADODB_DEFAULT_METATYPE;
 		}
 	}
 

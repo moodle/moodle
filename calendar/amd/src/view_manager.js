@@ -27,10 +27,11 @@ import Notification from 'core/notification';
 import * as CalendarRepository from 'core_calendar/repository';
 import CalendarEvents from 'core_calendar/events';
 import * as CalendarSelectors from 'core_calendar/selectors';
+import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import SummaryModal from 'core_calendar/summary_modal';
 import CustomEvents from 'core/custom_interaction_events';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 
@@ -93,7 +94,7 @@ export const foldDayEvents = () => {
                 moreEventsLink.attr('data-event-folded', 'false');
                 link.text(str);
                 return str;
-            }).catch(Notification.exception);
+            }).fail();
         } else {
             moreEventsLink.hide();
         }
@@ -523,6 +524,7 @@ const renderEventSummaryModal = (eventId) => {
         // Build the modal parameters from the event data.
         const modalParams = {
             title: eventData.name,
+            type: SummaryModal.TYPE,
             body: Templates.render('core_calendar/event_summary_body', eventData),
             templateContext: {
                 canedit: eventData.canedit,
@@ -535,7 +537,7 @@ const renderEventSummaryModal = (eventId) => {
         };
 
         // Create the modal.
-        return SummaryModal.create(modalParams);
+        return ModalFactory.create(modalParams);
     })
     .then(modal => {
         // Handle hidden event.

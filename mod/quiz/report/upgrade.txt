@@ -2,37 +2,12 @@ This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
 
-=== 4.2 ===
+=== 4.1.1 ===
 
-* There was an ill-advised, never documented, API change in quiz_report_get_significant_questions
-  in Moodle 4.0. The API has now been reverted to how it was before 4.0. Hopefully this
-  will not cause anyone a problem. (The API revert did not require any changes in any automated tests
-  or standard quiz reports.)
-
-* The quiz has a lot of old classes in lib.php files. These have now been moved into the classes folder,
-  and so are now in namespaces. Because of Moodle's class renaming support, your code should continue
-  working, but output deprecated warnings, so you probably want to update. This should mostly be
-  doable by adding use statements, and a search/replace.
-  - quiz_default_report => mod_quiz\local\reports\report_base
-  - quiz_attempts_report => mod_quiz\local\reports\attempts_report
-  - mod_quiz_attempts_report_form => mod_quiz\local\reports\attempts_report_options_form
-  - mod_quiz_attempts_report_options => mod_quiz\local\reports\attempts_report_options
-  - quiz_attempts_report_table => mod_quiz\local\reports\attempts_report_table
-
-  As part of the clean-up, the following files are no longer required, and if you try to
-  include them, you will get a debugging notices telling you not to:
-  - mod/quiz/report/attemptsreport.php
-  - mod/quiz/report/attemptsreport_form.php
-  - mod/quiz/report/attemptsreport_options.php
-  - mod/quiz/report/attemptsreport_table.php
-  - mod/quiz/report/default.php
-
-* Final deprecation (complete removal) of the following functions which were deprecated long ago:
-  - attempts_report::load_relevant_students - deprecated in 3.2
-  - quiz_statistics_graph_get_new_colour - deprecated since 3.2
-  - The file mod/quiz/report/overview/overviewgraph.php - deprecated since 3.2
-  - The file mod/quiz/report/statistics/statistics_graph.php - deprecated since 3.2
-
+There was an ill-advised, never documented, API change in quiz_report_get_significant_questions
+in Moodle 4.0. The API has now been reverted to how it was before 4.0. Hopefully this
+will not cause anyone a problem. (The API revert did not require any changes in any automated tests
+or standard quiz reports.)
 
 === 3.9 ===
 

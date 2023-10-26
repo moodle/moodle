@@ -39,36 +39,6 @@ use core_privacy\tests\provider_testcase;
  */
 class provider_test extends provider_testcase {
 
-    /** @var \testing_data_generator data generator. */
-    protected $generator;
-
-    /** @var \mod_workshop_generator workshop generator. */
-    protected $workshopgenerator;
-
-    /** @var \stdClass course data. */
-    protected $course1;
-
-    /** @var \stdClass student data. */
-    protected $student1;
-
-    /** @var \stdClass student data. */
-    protected $student2;
-
-    /** @var \stdClass first workshop in course1 */
-    protected $workshop11;
-
-    /** @var int ID of the submission in workshop11 by student1 */
-    protected $submission111;
-
-    /** @var int ID of the assessment of submission111 by student2 */
-    protected $assessment1112;
-
-    /** @var bool|int true or new id */
-    protected $dim1;
-
-    /** @var bool|int true or new id */
-    protected $dim2;
-
     /**
      * Test {@link workshopform_comments\privacy\provider::export_assessment_form()} implementation.
      */

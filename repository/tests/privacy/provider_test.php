@@ -263,6 +263,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @param int $userid       The Id of the User used for testing.
      * @param int $noscenarios  The number of repository_instance records to create for the User.
+     * @throws dml_exception
      */
     private function setup_test_scenario_data($userid, $noscenarios) {
         global $DB;

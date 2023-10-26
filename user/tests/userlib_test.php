@@ -201,7 +201,11 @@ class userlib_test extends \advanced_testcase {
         // Test event.
         $this->assertInstanceOf('\core\event\user_updated', $event);
         $this->assertSame($user->id, $event->objectid);
+        $this->assertSame('user_updated', $event->get_legacy_eventname());
+        $this->assertEventLegacyData($dbuser, $event);
         $this->assertEquals(\context_user::instance($user->id), $event->get_context());
+        $expectedlogdata = array(SITEID, 'user', 'update', 'view.php?id='.$user->id, '');
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
 
         // Update user with no password update.
         $password = $user->password = hash_internal_user_password('M00dLe@T');
@@ -292,7 +296,11 @@ class userlib_test extends \advanced_testcase {
         // Test event.
         $this->assertInstanceOf('\core\event\user_created', $event);
         $this->assertEquals($user['id'], $event->objectid);
+        $this->assertEquals('user_created', $event->get_legacy_eventname());
         $this->assertEquals(\context_user::instance($user['id']), $event->get_context());
+        $this->assertEventLegacyData($dbuser, $event);
+        $expectedlogdata = array(SITEID, 'user', 'add', '/view.php?id='.$event->objectid, fullname($dbuser));
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
 
         // Verify event is not triggred by user_create_user when needed.
         $user = array('username' => 'usernametest2'); // Create another user.

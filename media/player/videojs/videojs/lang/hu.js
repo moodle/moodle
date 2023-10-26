@@ -9,7 +9,7 @@ videojs.addLanguage('hu', {
   "Loaded": "Betöltve",
   "Progress": "Állapot",
   "Fullscreen": "Teljes képernyő",
-  "Exit Fullscreen": "Normál méret",
+  "Non-Fullscreen": "Normál méret",
   "Mute": "Némítás",
   "Unmute": "Némítás kikapcsolva",
   "Playback Rate": "Lejátszási sebesség",

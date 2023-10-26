@@ -143,6 +143,7 @@ class cache_config {
         $this->configlocks = array();
         $this->configmodemappings = array();
         $this->configdefinitionmappings = array();
+        $this->configlockmappings = array();
 
         $siteidentifier = 'unknown';
         if (array_key_exists('siteidentifier', $configuration)) {

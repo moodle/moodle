@@ -221,18 +221,16 @@ Feature: Inline editing H5P content anywhere
     Given I am on the "C1" "Course" page logged in as "admin"
     # Add H5P content to the block.
     And I turn editing mode on
-    And I add the "Text" block to the default region with:
-      | Text block title | H5PTest     |
-      | Content          | -           |
-    And I configure the "H5PTest" block
-    And I click on "Insert H5P" "button" in the "//div[contains(@id,'fitem_id_config_text')]" "xpath_element"
+    And I add the "Text" block
+    And I configure the "(new text block)" block
+    And I click on "Insert H5P" "button" in the "#fitem_id_config_text" "css_element"
     And I click on "Browse repositories..." "button" in the "Insert H5P" "dialogue"
     And I select "Content bank" repository in file picker
     And I click on "Greeting card" "file" in repository content area
     And I click on "Make a copy of the file" "radio"
     And I click on "Select this file" "button"
     And I click on "Insert H5P" "button" in the "Insert H5P" "dialogue"
-    And I click on "Save changes" "button" in the "Configure H5PTest block" "dialogue"
+    And I press "Save changes"
     And I switch to "h5p-iframe" class iframe
     And I switch to "h5p-iframe" class iframe
     And I should see "Hello world!"

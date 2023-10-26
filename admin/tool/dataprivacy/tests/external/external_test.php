@@ -24,7 +24,6 @@
 
 namespace tool_dataprivacy\external;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use tool_dataprivacy\api;
 use tool_dataprivacy\context_instance;
@@ -124,7 +123,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         api::update_request_status($datarequest->get('id'), api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
         $result = external::approve_data_request($datarequest->get('id'));
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -140,7 +139,7 @@ class external_test extends externallib_advanced_testcase {
 
         $result = external::approve_data_request(1);
 
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertFalse($return->result);
         $this->assertCount(1, $return->warnings);
         $warning = reset($return->warnings);
@@ -166,7 +165,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($otheruser);
 
         $result = external::cancel_data_request($datarequest->get('id'));
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertFalse($return->result);
         $this->assertCount(1, $return->warnings);
         $warning = reset($return->warnings);
@@ -195,7 +194,7 @@ class external_test extends externallib_advanced_testcase {
         $datarequest = api::create_data_request($otheruser->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
 
         $result = external::cancel_data_request($datarequest->get('id'));
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -251,7 +250,7 @@ class external_test extends externallib_advanced_testcase {
         $datarequest = api::create_data_request($otheruser->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
 
         $result = external::cancel_data_request($datarequest->get('id'));
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -274,7 +273,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($requester);
         $result = external::cancel_data_request($datarequest->get('id'));
 
-        $return = (object) external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::approve_data_request_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -291,7 +290,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($user);
         $message = 'Hello world!';
         $result = external::contact_dpo($message);
-        $return = (object) external_api::clean_returnvalue(external::contact_dpo_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::contact_dpo_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -386,7 +385,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         api::update_request_status($datarequest->get('id'), api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
         $result = external::approve_data_request($datarequest->get('id'));
-        $return = (object) external_api::clean_returnvalue(external::deny_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::deny_data_request_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -401,7 +400,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         $result = external::deny_data_request(1);
 
-        $return = (object) external_api::clean_returnvalue(external::deny_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::deny_data_request_returns(), $result);
         $this->assertFalse($return->result);
         $this->assertCount(1, $return->warnings);
         $warning = reset($return->warnings);
@@ -463,7 +462,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         $result = external::get_data_request($datarequest->get('id'));
 
-        $return = (object) external_api::clean_returnvalue(external::get_data_request_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::get_data_request_returns(), $result);
         $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $return->result['type']);
         $this->assertEquals('sample comment', $return->result['comments']);
         $this->assertEquals($requester->id, $return->result['userid']);
@@ -543,7 +542,7 @@ class external_test extends externallib_advanced_testcase {
         $result = external::set_context_defaults(CONTEXT_MODULE, $categoryid, $purposeid, $modulename, $override);
 
         // Extract the result.
-        $return = external_api::clean_returnvalue(external::set_context_defaults_returns(), $result);
+        $return = \external_api::clean_returnvalue(external::set_context_defaults_returns(), $result);
         $this->assertTrue($return['result']);
 
         // Check the assignment context instance.
@@ -627,7 +626,7 @@ class external_test extends externallib_advanced_testcase {
         $result = external::get_category_options($includeinherit, $includenotset);
 
         // Extract the options.
-        $return = (object) external_api::clean_returnvalue(external::get_category_options_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::get_category_options_returns(), $result);
         $options = $return->options;
 
         // Make sure everything checks out.
@@ -691,7 +690,7 @@ class external_test extends externallib_advanced_testcase {
         $result = external::get_purpose_options($includeinherit, $includenotset);
 
         // Extract the options.
-        $return = (object) external_api::clean_returnvalue(external::get_purpose_options_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::get_purpose_options_returns(), $result);
         $options = $return->options;
 
         // Make sure everything checks out.
@@ -750,7 +749,7 @@ class external_test extends externallib_advanced_testcase {
         $result = external::get_activity_options($nodefaults);
 
         // Extract the options.
-        $return = (object) external_api::clean_returnvalue(external::get_activity_options_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::get_activity_options_returns(), $result);
         $options = $return->options;
 
         // Make sure the options list is not empty.
@@ -793,7 +792,7 @@ class external_test extends externallib_advanced_testcase {
         api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
         $result = external::bulk_approve_data_requests([$requestid1, $requestid2]);
 
-        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -808,7 +807,7 @@ class external_test extends externallib_advanced_testcase {
 
         $result = external::bulk_approve_data_requests([42]);
 
-        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
         $this->assertFalse($return->result);
         $this->assertCount(1, $return->warnings);
         $warning = reset($return->warnings);
@@ -896,7 +895,7 @@ class external_test extends externallib_advanced_testcase {
         api::update_request_status($requestid2, api::DATAREQUEST_STATUS_AWAITING_APPROVAL);
         $result = external::bulk_deny_data_requests([$requestid1, $requestid2]);
 
-        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
         $this->assertTrue($return->result);
         $this->assertEmpty($return->warnings);
     }
@@ -909,7 +908,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setAdminUser();
         $result = external::bulk_deny_data_requests([42]);
-        $return = (object) external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
+        $return = (object) \external_api::clean_returnvalue(external::bulk_approve_data_requests_returns(), $result);
 
         $this->assertFalse($return->result);
         $this->assertCount(1, $return->warnings);

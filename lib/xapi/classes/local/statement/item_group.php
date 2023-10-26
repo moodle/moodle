@@ -41,10 +41,10 @@ defined('MOODLE_INTERNAL') || die();
  */
 class item_group extends item_actor {
 
-    /** @var array */
+    /** @var timestamp The statement timestamp. */
     protected $users;
 
-    /** @var stdClass */
+    /** @var timestamp The statement timestamp. */
     protected $group;
 
     /**

@@ -57,24 +57,6 @@ class tool_generator_make_course_form extends moodleform {
         $mform->addElement('editor', 'summary', get_string('coursesummary'));
         $mform->setType('summary', PARAM_RAW);
 
-        $additionalmodules = [];
-        $pluginsfunction = get_plugins_with_function('course_backend_generator_create_activity');
-        foreach ($pluginsfunction as $plugintype => $plugins) {
-            foreach ($plugins as $pluginname => $pluginfunction) {
-                $additionalmodules[$pluginname] = get_string("pluginname", "{$plugintype}_{$pluginname}");
-            }
-        }
-        $mform->addElement('autocomplete', 'additionalmodules',
-            get_string('additionalmodules', 'tool_generator'),
-            $additionalmodules,
-            [
-                'multiple' => true,
-                'noselectionstring' => get_string('noselection', 'form')
-            ]
-        );
-        $mform->addHelpButton('additionalmodules', 'additionalmodules', 'tool_generator');
-        $mform->setType('additionalmodules', PARAM_ALPHAEXT);
-
         $mform->addElement('submit', 'submit', get_string('createcourse', 'tool_generator'));
     }
 

@@ -229,7 +229,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         foreach ($contextlist as $context) {
             $this->assertEquals(CONTEXT_COURSE, $context->contextlevel);
 
-            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $this->assertTrue($writer->has_any_data());
         }

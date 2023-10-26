@@ -50,8 +50,6 @@ class pdf extends TcpdfFpdi {
     protected $imagefolder = null;
     /** @var string the path to the PDF currently being processed */
     protected $filename = null;
-    /** @var string the fontname used when the PDF being processed */
-    protected $fontname = null;
 
     /** No errors */
     const GSPATH_OK = 'ok';
@@ -83,21 +81,13 @@ class pdf extends TcpdfFpdi {
      * @return string
      */
     private function get_export_font_name() {
+        global $CFG;
+
         $fontname = 'freesans';
-        if (!empty($this->fontname)) {
-            $fontname = $this->fontname;
+        if (!empty($CFG->pdfexportfont)) {
+            $fontname = $CFG->pdfexportfont;
         }
         return $fontname;
-    }
-
-    /**
-     * Set font name.
-     *
-     * @param string $fontname Font name which is
-     * @return void
-     */
-    public function set_export_font_name($fontname): void {
-        $this->fontname = $fontname;
     }
 
     /**
@@ -705,7 +695,7 @@ class pdf extends TcpdfFpdi {
     /**
      * Check to see if PDF is version 1.4 (or below); if not: use ghostscript to convert it
      *
-     * @param \stored_file $file
+     * @param stored_file $file
      * @return string path to copy or converted pdf (false == fail)
      */
     public static function ensure_pdf_compatible(\stored_file $file) {

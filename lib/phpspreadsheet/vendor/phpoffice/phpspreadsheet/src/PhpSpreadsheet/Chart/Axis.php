@@ -52,9 +52,6 @@ class Axis extends Properties
     /** @var string */
     private $axisType = '';
 
-    /** @var ?AxisText */
-    private $axisText;
-
     /**
      * Axis Options.
      *
@@ -90,9 +87,6 @@ class Axis extends Properties
         Properties::FORMAT_CODE_DATE,
         Properties::FORMAT_CODE_DATE_ISO8601,
     ];
-
-    /** @var bool */
-    private $noFill = false;
 
     /**
      * Get Series Data Type.
@@ -189,14 +183,6 @@ class Axis extends Properties
      */
     public function getAxisOptionsProperty($property)
     {
-        if ($property === 'textRotation') {
-            if ($this->axisText !== null) {
-                if ($this->axisText->getRotation() !== null) {
-                    return (string) $this->axisText->getRotation();
-                }
-            }
-        }
-
         return $this->axisOptions[$property];
     }
 
@@ -258,9 +244,10 @@ class Axis extends Properties
     /**
      * Get Line Color Property.
      *
-     * @deprecated 1.24.0
+     * @Deprecated 1.24.0
+     *
+     * @See Properties::getLineColorProperty()
      *      Use the getLineColor property in the Properties class instead
-     * @see Properties::getLineColorProperty()
      *
      * @param string $propertyName
      *
@@ -308,29 +295,5 @@ class Axis extends Properties
         $this->minorGridlines = $gridlines;
 
         return $this;
-    }
-
-    public function getAxisText(): ?AxisText
-    {
-        return $this->axisText;
-    }
-
-    public function setAxisText(?AxisText $axisText): self
-    {
-        $this->axisText = $axisText;
-
-        return $this;
-    }
-
-    public function setNoFill(bool $noFill): self
-    {
-        $this->noFill = $noFill;
-
-        return $this;
-    }
-
-    public function getNoFill(): bool
-    {
-        return $this->noFill;
     }
 }

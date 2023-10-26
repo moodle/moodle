@@ -14,13 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * TinyMCE Equation external API for filtering the equation.
+ *
+ * @package    tiny_equation
+ * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace tiny_equation\external;
 
 use context;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use filter_manager;
 
 /**

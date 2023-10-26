@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -1037,7 +1036,6 @@ class Google_Service_Storage extends Google_Service
  *   $bucketAccessControls = $storageService->bucketAccessControls;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketAccessControls_Resource extends Google_Service_Resource
 {
 
@@ -1153,7 +1151,6 @@ class Google_Service_Storage_BucketAccessControls_Resource extends Google_Servic
  *   $buckets = $storageService->buckets;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_Buckets_Resource extends Google_Service_Resource
 {
 
@@ -1304,7 +1301,6 @@ class Google_Service_Storage_Buckets_Resource extends Google_Service_Resource
  *   $channels = $storageService->channels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_Channels_Resource extends Google_Service_Resource
 {
 
@@ -1330,7 +1326,6 @@ class Google_Service_Storage_Channels_Resource extends Google_Service_Resource
  *   $defaultObjectAccessControls = $storageService->defaultObjectAccessControls;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_DefaultObjectAccessControls_Resource extends Google_Service_Resource
 {
 
@@ -1453,7 +1448,6 @@ class Google_Service_Storage_DefaultObjectAccessControls_Resource extends Google
  *   $objectAccessControls = $storageService->objectAccessControls;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_ObjectAccessControls_Resource extends Google_Service_Resource
 {
 
@@ -1599,7 +1593,6 @@ class Google_Service_Storage_ObjectAccessControls_Resource extends Google_Servic
  *   $objects = $storageService->objects;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Storage_Objects_Resource extends Google_Service_Resource
 {
 
@@ -1974,7 +1967,6 @@ class Google_Service_Storage_Objects_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_Bucket extends Google_Collection
 {
   protected $collection_key = 'defaultObjectAcl';
@@ -2163,7 +2155,6 @@ class Google_Service_Storage_Bucket extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketAccessControl extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2272,7 +2263,6 @@ class Google_Service_Storage_BucketAccessControl extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketAccessControlProjectTeam extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2299,7 +2289,6 @@ class Google_Service_Storage_BucketAccessControlProjectTeam extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketAccessControls extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2328,7 +2317,6 @@ class Google_Service_Storage_BucketAccessControls extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketCors extends Google_Collection
 {
   protected $collection_key = 'responseHeader';
@@ -2374,7 +2362,6 @@ class Google_Service_Storage_BucketCors extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketLifecycle extends Google_Collection
 {
   protected $collection_key = 'rule';
@@ -2394,7 +2381,6 @@ class Google_Service_Storage_BucketLifecycle extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketLifecycleRule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2423,7 +2409,6 @@ class Google_Service_Storage_BucketLifecycleRule extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketLifecycleRuleAction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2441,7 +2426,6 @@ class Google_Service_Storage_BucketLifecycleRuleAction extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketLifecycleRuleCondition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2486,7 +2470,6 @@ class Google_Service_Storage_BucketLifecycleRuleCondition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketLogging extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2513,7 +2496,6 @@ class Google_Service_Storage_BucketLogging extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketOwner extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2540,7 +2522,6 @@ class Google_Service_Storage_BucketOwner extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketVersioning extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2558,7 +2539,6 @@ class Google_Service_Storage_BucketVersioning extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_BucketWebsite extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2585,7 +2565,6 @@ class Google_Service_Storage_BucketWebsite extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_Buckets extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2623,7 +2602,6 @@ class Google_Service_Storage_Buckets extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2722,12 +2700,10 @@ class Google_Service_Storage_Channel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ChannelParams extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ComposeRequest extends Google_Collection
 {
   protected $collection_key = 'sourceObjects';
@@ -2766,7 +2742,6 @@ class Google_Service_Storage_ComposeRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ComposeRequestSourceObjects extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2803,7 +2778,6 @@ class Google_Service_Storage_ComposeRequestSourceObjects extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ComposeRequestSourceObjectsObjectPreconditions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2821,7 +2795,6 @@ class Google_Service_Storage_ComposeRequestSourceObjectsObjectPreconditions exte
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ObjectAccessControl extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2948,7 +2921,6 @@ class Google_Service_Storage_ObjectAccessControl extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ObjectAccessControlProjectTeam extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2975,7 +2947,6 @@ class Google_Service_Storage_ObjectAccessControlProjectTeam extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_ObjectAccessControls extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3003,7 +2974,6 @@ class Google_Service_Storage_ObjectAccessControls extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_Objects extends Google_Collection
 {
   protected $collection_key = 'prefixes';
@@ -3050,7 +3020,6 @@ class Google_Service_Storage_Objects extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_RewriteResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3114,7 +3083,6 @@ class Google_Service_Storage_RewriteResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_StorageObject extends Google_Collection
 {
   protected $collection_key = 'acl';
@@ -3351,12 +3319,10 @@ class Google_Service_Storage_StorageObject extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_StorageObjectMetadata extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Storage_StorageObjectOwner extends Google_Model
 {
   protected $internal_gapi_mappings = array(

@@ -76,7 +76,17 @@ class group_override_updated extends \core\event\base {
      * @return \moodle_url
      */
     public function get_url() {
-        return new \moodle_url('/mod/quiz/overrideedit.php', ['id' => $this->objectid]);
+        return new \moodle_url('/mod/quiz/overrideedit.php', array('id' => $this->objectid));
+    }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'quiz', 'edit override', 'overrideedit.php?id=' . $this->objectid, $this->other['quizid'],
+            $this->contextinstanceid);
     }
 
     /**
@@ -98,13 +108,13 @@ class group_override_updated extends \core\event\base {
     }
 
     public static function get_objectid_mapping() {
-        return ['db' => 'quiz_overrides', 'restore' => 'quiz_override'];
+        return array('db' => 'quiz_overrides', 'restore' => 'quiz_override');
     }
 
     public static function get_other_mapping() {
-        $othermapped = [];
-        $othermapped['quizid'] = ['db' => 'quiz', 'restore' => 'quiz'];
-        $othermapped['groupid'] = ['db' => 'groups', 'restore' => 'group'];
+        $othermapped = array();
+        $othermapped['quizid'] = array('db' => 'quiz', 'restore' => 'quiz');
+        $othermapped['groupid'] = array('db' => 'groups', 'restore' => 'group');
 
         return $othermapped;
     }

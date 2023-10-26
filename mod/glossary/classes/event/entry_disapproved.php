@@ -75,6 +75,17 @@ class entry_disapproved extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    public function get_legacy_logdata() {
+        return array($this->courseid, 'glossary', 'disapprove entry',
+            "showentry.php?id={$this->contextinstanceid}&amp;eid={$this->objectid}",
+            $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

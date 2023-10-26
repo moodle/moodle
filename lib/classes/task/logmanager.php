@@ -301,7 +301,7 @@ class logmanager {
                 self::$logpath,
                 $failed,
                 $DB->perf_get_reads() - self::$taskloginfo->dbread,
-                $DB->perf_get_writes() - self::$taskloginfo->dbwrite,
+                $DB->perf_get_writes() - self::$taskloginfo->dbwrite - $PERF->logwrites,
                 self::$taskloginfo->timestart,
                 microtime(true)
             );

@@ -249,10 +249,7 @@ function xmldb_h5pactivity_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
-    // Automatically generated Moodle v4.2.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2023042401) {
+    if ($oldversion < 2022112801) {
 
         // Remove any orphaned attempt/result records (pointing to non-existing activities).
         $DB->delete_records_select('h5pactivity_attempts', 'NOT EXISTS (
@@ -264,11 +261,8 @@ function xmldb_h5pactivity_upgrade($oldversion) {
         )');
 
         // H5pactivity savepoint reached.
-        upgrade_mod_savepoint(true, 2023042401, 'h5pactivity');
+        upgrade_mod_savepoint(true, 2022112801, 'h5pactivity');
     }
-
-    // Automatically generated Moodle v4.3.0 release upgrade line.
-    // Put any upgrade step following this.
 
     return true;
 }

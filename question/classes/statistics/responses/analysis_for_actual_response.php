@@ -128,7 +128,7 @@ class analysis_for_actual_response {
         }
         $row->response = $this->response;
         $row->credit = $this->fraction;
-        $row->timemodified = $calculationtime ?? time();
+        $row->timemodified = $calculationtime ? $calculationtime : time();
         $analysisid = $DB->insert_record('question_response_analysis', $row);
         if ($whichtries === \question_attempt::ALL_TRIES) {
             foreach ($this->trycount as $try => $count) {

@@ -80,15 +80,8 @@ class core_role_preset {
         $top->appendChild($contextlevels);
         foreach (get_role_contextlevels($roleid) as $level) {
             $name = context_helper::get_class_for_level($level);
-            if (strpos($name, 'core\\context\\') === 0) {
-                // Use short names of standard contexts for backwards compatibility.
-                $value = preg_replace('/^core\\\\context\\\\/', '', $name);
-            } else {
-                // Must be a custom plugin level, use numbers to work around
-                // potential duplicate short names of contexts in add-ons.
-                $value = $level;
-            }
-            $contextlevels->appendChild($dom->createElement('level', $value));
+            $name = preg_replace('/^context_/', '', $name);
+            $contextlevels->appendChild($dom->createElement('level', $name));
         }
 
         foreach (array('assign', 'override', 'switch', 'view') as $type) {
@@ -204,10 +197,9 @@ class core_role_preset {
             $info['contextlevels'] = array();
             $levelmap = array_flip(context_helper::get_all_levels());
             foreach ($values as $value) {
-                // Numbers and short names are supported since Moodle 4.2.
-                $classname = \core\context_helper::parse_external_level($value);
-                if ($classname) {
-                    $cl = $classname::LEVEL;
+                $level = 'context_'.$value;
+                if (isset($levelmap[$level])) {
+                    $cl = $levelmap[$level];
                     $info['contextlevels'][$cl] = $cl;
                 }
             }

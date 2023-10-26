@@ -3027,6 +3027,7 @@ class workshop {
         $params['other']['pathnamehashes'] = array_keys($files);
 
         $event = \mod_workshop\event\assessable_uploaded::create($params);
+        $event->set_legacy_logdata($logdata);
         $event->trigger();
 
         return $submission->id;

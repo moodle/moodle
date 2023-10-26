@@ -125,7 +125,7 @@ class question_handler extends \core_customfield\handler {
      * Used primarily in showing or not the field in the question bank table.
      *
      * @param field_controller $field The field trying to be viewed.
-     * @param \context $context The context the field is being displayed in.
+     * @param context $context The context the field is being displayed in.
      * @return bool true if the current can edit custom fields, false otherwise.
      */
     public function can_view_type(field_controller $field, \context $context) : bool {

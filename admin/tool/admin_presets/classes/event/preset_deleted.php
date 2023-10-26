@@ -36,6 +36,10 @@ class preset_deleted extends base {
         return "User {$this->userid} has deleted the preset with id {$this->objectid}.";
     }
 
+    public function get_legacy_logdata(): array {
+        return [$this->courseid, 'tool_admin_presets', 'delete', '', $this->objectid, $this->contextinstanceid];
+    }
+
     protected function init(): void {
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;

@@ -270,5 +270,5 @@
 }
 
 body.hasstickyfooter #page-footer {
-    padding-bottom: calc(#{$spacer} * .5 + #{$stickyfooter-height});
+    padding-bottom: calc(#{$spacer} * .5 + #{$navbar-height});
 }

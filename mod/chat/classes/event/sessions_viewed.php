@@ -53,6 +53,16 @@ class sessions_viewed extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'chat', 'report', 'report.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

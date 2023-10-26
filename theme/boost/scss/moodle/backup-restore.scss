@@ -148,9 +148,9 @@
 .path-backup .wibbler {
     width: 500px;
     margin: 0 auto 10px;
-    border-bottom: 1px solid $backup-restore-wibbler-border-color;
-    border-right: 1px solid $backup-restore-wibbler-border-color;
-    border-left: 1px solid $backup-restore-wibbler-border-color;
+    border-bottom: 1px solid black;
+    border-right: 1px solid black;
+    border-left: 1px solid black;
     position: relative;
     min-height: 4px;
 
@@ -163,43 +163,43 @@
     }
 
     .state0 {
-        background: $backup-restore-state0-bg;
+        background: #eee;
     }
     .state1 {
-        background: $backup-restore-state1-bg;
+        background: #ddd;
     }
     .state2 {
-        background: $backup-restore-state2-bg;
+        background: #ccc;
     }
     .state3 {
-        background: $backup-restore-state3-bg;
+        background: #bbb;
     }
     .state4 {
-        background: $backup-restore-state4-bg;
+        background: #aaa;
     }
     .state5 {
-        background: $backup-restore-state5-bg;
+        background: #999;
     }
     .state6 {
-        background: $backup-restore-state6-bg;
+        background: #888;
     }
     .state7 {
-        background: $backup-restore-state7-bg;
+        background: #777;
     }
     .state8 {
-        background: $backup-restore-state8-bg;
+        background: #666;
     }
     .state9 {
-        background: $backup-restore-state9-bg;
+        background: #555;
     }
     .state10 {
-        background: $backup-restore-state10-bg;
+        background: #444;
     }
     .state11 {
-        background: $backup-restore-state11-bg;
+        background: #333;
     }
     .state12 {
-        background: $backup-restore-state12-bg;
+        background: #222;
     }
 }
 

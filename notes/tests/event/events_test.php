@@ -81,6 +81,8 @@ class events_test extends \advanced_testcase {
         $logurl = new \moodle_url('index.php',
                 array('course' => $this->eventnote->courseid, 'user' => $this->eventnote->userid));
         $logurl->set_anchor('note-' . $this->eventnote->id);
+        $arr = array($this->eventnote->courseid, 'notes', 'delete', $logurl, 'delete note');
+        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -105,6 +107,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
         $this->assertEquals(NOTES_STATE_SITE, $event->other['publishstate']);
+
+        // Test legacy data.
+        $logurl = new \moodle_url('index.php',
+            array('course' => $note->courseid, 'user' => $note->userid));
+        $logurl->set_anchor('note-' . $note->id);
+        $arr = array($note->courseid, 'notes', 'add', $logurl, 'add note');
+        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -129,6 +138,13 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($note->userid, $event->relateduserid);
         $this->assertEquals('post', $event->objecttable);
         $this->assertEquals(NOTES_STATE_DRAFT, $event->other['publishstate']);
+
+        // Test legacy data.
+        $logurl = new \moodle_url('index.php',
+            array('course' => $note->courseid, 'user' => $note->userid));
+        $logurl->set_anchor('note-' . $note->id);
+        $arr = array($note->courseid, 'notes', 'update', $logurl, 'update note');
+        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -154,6 +170,9 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\core\event\notes_viewed', $event);
         $this->assertEquals($coursecontext, $event->get_context());
+        $expected = array($this->eventnote->courseid, 'notes', 'view', 'index.php?course=' .
+                $this->eventnote->courseid.'&amp;user=' . $this->eventnote->userid, 'view notes');
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

@@ -36,6 +36,10 @@ class preset_reverted extends base {
         return "User {$this->userid} has reverted the preset with id {$this->objectid}.";
     }
 
+    public function get_legacy_logdata(): array {
+        return [$this->courseid, 'tool_admin_presets', 'rollback', '', $this->objectid, $this->contextinstanceid];
+    }
+
     protected function init(): void {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_OTHER;

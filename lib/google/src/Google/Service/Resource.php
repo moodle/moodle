@@ -25,7 +25,6 @@ if (!class_exists('Google_Client')) {
  * is available in this service, and if so construct an apiHttpRequest representing it.
  *
  */
-#[AllowDynamicProperties]
 class Google_Service_Resource
 {
   // Valid query parameters that work, but don't appear in discovery.

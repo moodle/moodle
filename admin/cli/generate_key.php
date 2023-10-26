@@ -39,6 +39,8 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
+// TODO: MDL-71421 - Remove the openssl alternative once sodium becomes a requirement in Moodle 4.2.
+
 if ($options['help']) {
     echo "Generate secure key
 
@@ -52,7 +54,9 @@ may be manually installed on multiple servers.
 
 Options:
 -h, --help         Print out this help
---method <method>  Generate key for specified encryption method instead of default (sodium)
+--method <method>  Generate key for specified encryption method instead of default.
+                   * sodium
+                   * openssl-aes-256-ctr
 
 Example:
 php admin/cli/generate_key.php

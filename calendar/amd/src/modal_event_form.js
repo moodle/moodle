@@ -16,38 +16,49 @@
 /**
  * Contain the logic for the quick add or update event modal.
  *
- * @module     core_calendar/modal_event_form
+ * @module     core_calendar/modal_quick_add_event
  * @copyright  2017 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-import $ from 'jquery';
-import * as CustomEvents from 'core/custom_interaction_events';
-import Modal from 'core/modal';
-import * as FormEvents from 'core_form/events';
-import CalendarEvents from './events';
-import * as Str from 'core/str';
-import * as Notification from 'core/notification';
-import * as Fragment from 'core/fragment';
-import * as Repository from 'core_calendar/repository';
-
-const SELECTORS = {
-    SAVE_BUTTON: '[data-action="save"]',
-    LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]',
-};
-
-export default class ModalEventForm extends Modal {
-    static TYPE = 'core_calendar-modal_event_form';
-    static TEMPLATE = 'calendar/modal_event_form';
+define([
+    'jquery',
+    'core_form/events',
+    'core/str',
+    'core/notification',
+    'core/templates',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/fragment',
+    'core_calendar/events',
+    'core_calendar/repository'
+],
+function(
+    $,
+    FormEvents,
+    Str,
+    Notification,
+    Templates,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    Fragment,
+    CalendarEvents,
+    Repository
+) {
+    var registered = false;
+    var SELECTORS = {
+        SAVE_BUTTON: '[data-action="save"]',
+        LOADING_ICON_CONTAINER: '[data-region="loading-icon-container"]',
+    };
 
     /**
      * Constructor for the Modal.
      *
      * @param {object} root The root jQuery element for the modal
      */
-    constructor(root) {
-        super(root);
-
+    var ModalEventForm = function(root) {
+        Modal.call(this, root);
         this.eventId = null;
         this.startTime = null;
         this.courseId = null;
@@ -56,12 +67,11 @@ export default class ModalEventForm extends Modal {
         this.reloadingBody = false;
         this.reloadingTitle = false;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
-    }
+    };
 
-    configure(modalConfig) {
-        modalConfig.large = true;
-        super.configure(modalConfig);
-    }
+    ModalEventForm.TYPE = 'core_calendar-modal_event_form';
+    ModalEventForm.prototype = Object.create(Modal.prototype);
+    ModalEventForm.prototype.constructor = ModalEventForm;
 
     /**
      * Set the context id to the given value.
@@ -69,9 +79,9 @@ export default class ModalEventForm extends Modal {
      * @method setContextId
      * @param {Number} id The event id
      */
-    setContextId(id) {
+    ModalEventForm.prototype.setContextId = function(id) {
         this.contextId = id;
-    }
+    };
 
     /**
      * Retrieve the current context id, if any.
@@ -79,49 +89,49 @@ export default class ModalEventForm extends Modal {
      * @method getContextId
      * @return {Number|null} The event id
      */
-    getContextId() {
+    ModalEventForm.prototype.getContextId = function() {
         return this.contextId;
-    }
+    };
 
     /**
      * Set the course id to the given value.
      *
      * @method setCourseId
-     * @param {Number} id The event id
+     * @param {int} id The event id
      */
-    setCourseId(id) {
+    ModalEventForm.prototype.setCourseId = function(id) {
         this.courseId = id;
-    }
+    };
 
     /**
      * Retrieve the current course id, if any.
      *
      * @method getCourseId
-     * @return {Number|null} The event id
+     * @return {int|null} The event id
      */
-    getCourseId() {
+    ModalEventForm.prototype.getCourseId = function() {
         return this.courseId;
-    }
+    };
 
     /**
      * Set the category id to the given value.
      *
      * @method setCategoryId
-     * @param {Number} id The event id
+     * @param {int} id The event id
      */
-    setCategoryId(id) {
+    ModalEventForm.prototype.setCategoryId = function(id) {
         this.categoryId = id;
-    }
+    };
 
     /**
      * Retrieve the current category id, if any.
      *
      * @method getCategoryId
-     * @return {Number|null} The event id
+     * @return {int|null} The event id
      */
-    getCategoryId() {
+    ModalEventForm.prototype.getCategoryId = function() {
         return this.categoryId;
-    }
+    };
 
     /**
      * Check if the modal has an course id.
@@ -129,9 +139,9 @@ export default class ModalEventForm extends Modal {
      * @method hasCourseId
      * @return {bool}
      */
-    hasCourseId() {
+    ModalEventForm.prototype.hasCourseId = function() {
         return this.courseId !== null;
-    }
+    };
 
     /**
      * Check if the modal has an category id.
@@ -139,29 +149,29 @@ export default class ModalEventForm extends Modal {
      * @method hasCategoryId
      * @return {bool}
      */
-    hasCategoryId() {
+    ModalEventForm.prototype.hasCategoryId = function() {
         return this.categoryId !== null;
-    }
+    };
 
     /**
      * Set the event id to the given value.
      *
      * @method setEventId
-     * @param {Number} id The event id
+     * @param {int} id The event id
      */
-    setEventId(id) {
+    ModalEventForm.prototype.setEventId = function(id) {
         this.eventId = id;
-    }
+    };
 
     /**
      * Retrieve the current event id, if any.
      *
      * @method getEventId
-     * @return {Number|null} The event id
+     * @return {int|null} The event id
      */
-    getEventId() {
+    ModalEventForm.prototype.getEventId = function() {
         return this.eventId;
-    }
+    };
 
     /**
      * Check if the modal has an event id.
@@ -169,29 +179,29 @@ export default class ModalEventForm extends Modal {
      * @method hasEventId
      * @return {bool}
      */
-    hasEventId() {
+    ModalEventForm.prototype.hasEventId = function() {
         return this.eventId !== null;
-    }
+    };
 
     /**
      * Set the start time to the given value.
      *
      * @method setStartTime
-     * @param {Number} time The start time
+     * @param {int} time The start time
      */
-    setStartTime(time) {
+    ModalEventForm.prototype.setStartTime = function(time) {
         this.startTime = time;
-    }
+    };
 
     /**
      * Retrieve the current start time, if any.
      *
      * @method getStartTime
-     * @return {Number|null} The start time
+     * @return {int|null} The start time
      */
-    getStartTime() {
+    ModalEventForm.prototype.getStartTime = function() {
         return this.startTime;
-    }
+    };
 
     /**
      * Check if the modal has start time.
@@ -199,9 +209,9 @@ export default class ModalEventForm extends Modal {
      * @method hasStartTime
      * @return {bool}
      */
-    hasStartTime() {
+    ModalEventForm.prototype.hasStartTime = function() {
         return this.startTime !== null;
-    }
+    };
 
     /**
      * Get the form element from the modal.
@@ -209,27 +219,27 @@ export default class ModalEventForm extends Modal {
      * @method getForm
      * @return {object}
      */
-    getForm() {
+    ModalEventForm.prototype.getForm = function() {
         return this.getBody().find('form');
-    }
+    };
 
     /**
      * Disable the buttons in the footer.
      *
      * @method disableButtons
      */
-    disableButtons() {
+    ModalEventForm.prototype.disableButtons = function() {
         this.saveButton.prop('disabled', true);
-    }
+    };
 
     /**
      * Enable the buttons in the footer.
      *
      * @method enableButtons
      */
-    enableButtons() {
+    ModalEventForm.prototype.enableButtons = function() {
         this.saveButton.prop('disabled', false);
-    }
+    };
 
     /**
      * Reload the title for the modal to the appropriate value
@@ -239,7 +249,7 @@ export default class ModalEventForm extends Modal {
      * @method reloadTitleContent
      * @return {object} A promise resolved with the new title text
      */
-    reloadTitleContent() {
+    ModalEventForm.prototype.reloadTitleContent = function() {
         if (this.reloadingTitle) {
             return this.titlePromise;
         }
@@ -252,18 +262,18 @@ export default class ModalEventForm extends Modal {
             this.titlePromise = Str.get_string('newevent', 'calendar');
         }
 
-        this.titlePromise.then((string) => {
+        this.titlePromise.then(function(string) {
             this.setTitle(string);
             return string;
-        })
-        .catch(Notification.exception)
-        .always(() => {
+        }.bind(this))
+        .always(function() {
             this.reloadingTitle = false;
             return;
-        });
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.titlePromise;
-    }
+    };
 
     /**
      * Send a request to the server to get the event_form in a fragment
@@ -278,7 +288,7 @@ export default class ModalEventForm extends Modal {
      * @param {string} formData The serialised form data
      * @return {object} A promise resolved with the fragment html and js from
      */
-    reloadBodyContent(formData) {
+    ModalEventForm.prototype.reloadBodyContent = function(formData) {
         if (this.reloadingBody) {
             return this.bodyPromise;
         }
@@ -286,7 +296,7 @@ export default class ModalEventForm extends Modal {
         this.reloadingBody = true;
         this.disableButtons();
 
-        const args = {};
+        var args = {};
 
         if (this.hasEventId()) {
             args.eventid = this.getEventId();
@@ -312,18 +322,19 @@ export default class ModalEventForm extends Modal {
 
         this.setBody(this.bodyPromise);
 
-        this.bodyPromise.then(() => {
+        this.bodyPromise.then(function() {
             this.enableButtons();
             return;
-        })
-        .catch(Notification.exception)
-        .always(() => {
+        }.bind(this))
+        .fail(Notification.exception)
+        .always(function() {
             this.reloadingBody = false;
             return;
-        });
+        }.bind(this))
+        .fail(Notification.exception);
 
         return this.bodyPromise;
-    }
+    };
 
     /**
      * Reload both the title and body content.
@@ -331,9 +342,9 @@ export default class ModalEventForm extends Modal {
      * @method reloadAllContent
      * @return {object} promise
      */
-    reloadAllContent() {
+    ModalEventForm.prototype.reloadAllContent = function() {
         return $.when(this.reloadTitleContent(), this.reloadBodyContent());
-    }
+    };
 
     /**
      * Kick off a reload the modal content before showing it. This
@@ -346,10 +357,10 @@ export default class ModalEventForm extends Modal {
      *
      * @method show
      */
-    show() {
+    ModalEventForm.prototype.show = function() {
         this.reloadAllContent();
-        super.show(this);
-    }
+        Modal.prototype.show.call(this);
+    };
 
     /**
      * Clear the event id from the modal when it's closed so
@@ -360,13 +371,13 @@ export default class ModalEventForm extends Modal {
      *
      * @method hide
      */
-    hide() {
-        super.hide(this);
+    ModalEventForm.prototype.hide = function() {
+        Modal.prototype.hide.call(this);
         this.setEventId(null);
         this.setStartTime(null);
         this.setCourseId(null);
         this.setCategoryId(null);
-    }
+    };
 
     /**
      * Get the serialised form data.
@@ -374,9 +385,9 @@ export default class ModalEventForm extends Modal {
      * @method getFormData
      * @return {string} serialised form data
      */
-    getFormData() {
+    ModalEventForm.prototype.getFormData = function() {
         return this.getForm().serialize();
-    }
+    };
 
     /**
      * Send the form data to the server to create or update
@@ -392,11 +403,12 @@ export default class ModalEventForm extends Modal {
      * @method save
      * @return {object} A promise
      */
-    save() {
-        const loadingContainer = this.saveButton.find(SELECTORS.LOADING_ICON_CONTAINER);
+    ModalEventForm.prototype.save = function() {
+        var invalid,
+            loadingContainer = this.saveButton.find(SELECTORS.LOADING_ICON_CONTAINER);
 
         // Now the change events have run, see if there are any "invalid" form fields.
-        const invalid = this.getForm().find('[aria-invalid="true"]');
+        invalid = this.getForm().find('[aria-invalid="true"]');
 
         // If we found invalid fields, focus on the first one and do not submit via ajax.
         if (invalid.length) {
@@ -407,10 +419,10 @@ export default class ModalEventForm extends Modal {
         loadingContainer.removeClass('hidden');
         this.disableButtons();
 
-        const formData = this.getFormData();
+        var formData = this.getFormData();
         // Send the form data to the server for processing.
         return Repository.submitCreateUpdateForm(formData)
-            .then((response) => {
+            .then(function(response) {
                 if (response.validationerror) {
                     // If there was a server side validation error then
                     // we need to re-request the rendered form from the server
@@ -420,7 +432,7 @@ export default class ModalEventForm extends Modal {
                 } else {
                     // Check whether this was a new event or not.
                     // The hide function unsets the form data so grab this before the hide.
-                    const isExisting = this.hasEventId();
+                    var isExisting = this.hasEventId();
 
                     // No problemo! Our work here is done.
                     this.hide();
@@ -434,17 +446,17 @@ export default class ModalEventForm extends Modal {
                 }
 
                 return;
-            })
-            .catch(Notification.exception)
-            .always(() => {
+            }.bind(this))
+            .always(function() {
                 // Regardless of success or error we should always stop
                 // the loading icon and re-enable the buttons.
                 loadingContainer.addClass('hidden');
                 this.enableButtons();
 
                 return;
-            });
-    }
+            }.bind(this))
+            .fail(Notification.exception);
+    };
 
     /**
      * Set up all of the event handling for the modal.
@@ -453,22 +465,22 @@ export default class ModalEventForm extends Modal {
      * @fires event:uploadStarted
      * @fires event:formSubmittedByJavascript
      */
-    registerEventListeners() {
+    ModalEventForm.prototype.registerEventListeners = function() {
         // Apply parent event listeners.
-        super.registerEventListeners(this);
+        Modal.prototype.registerEventListeners.call(this);
 
         // When the user clicks the save button we trigger the form submission. We need to
         // trigger an actual submission because there is some JS code in the form that is
         // listening for this event and doing some stuff (e.g. saving draft areas etc).
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.SAVE_BUTTON, (e, data) => {
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.SAVE_BUTTON, function(e, data) {
             this.getForm().submit();
             data.originalEvent.preventDefault();
             e.stopPropagation();
-        });
+        }.bind(this));
 
         // Catch the submit event before it is actually processed by the browser and
         // prevent the submission. We'll take it from here.
-        this.getModal().on('submit', (e) => {
+        this.getModal().on('submit', function(e) {
             FormEvents.notifyFormSubmittedByJavascript(this.getForm()[0]);
 
             this.save();
@@ -477,8 +489,15 @@ export default class ModalEventForm extends Modal {
             // propagation because we have already handled the event.
             e.preventDefault();
             e.stopPropagation();
-        });
-    }
-}
+        }.bind(this));
+    };
 
-ModalEventForm.registerModalType();
+    // Automatically register with the modal registry the first time this module is imported so that you can create modals
+    // of this type using the modal factory.
+    if (!registered) {
+        ModalRegistry.register(ModalEventForm.TYPE, ModalEventForm, 'calendar/modal_event_form');
+        registered = true;
+    }
+
+    return ModalEventForm;
+});

@@ -1,95 +1,87 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
-//
-// Moodle is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// Moodle is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A page to manage editor plugins.
- *
- * @package   core_admin
- * @copyright 2023 Andrew Lyons <andrew@nicols.co.uk>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Allows admin to configure editors.
  */
 
 require_once('../config.php');
-require_once($CFG->libdir . '/adminlib.php');
-require_once($CFG->libdir . '/tablelib.php');
+require_once($CFG->libdir.'/adminlib.php');
+require_once($CFG->libdir.'/tablelib.php');
 
-$action = required_param('action', PARAM_ALPHANUMEXT);
-$plugin = required_param('plugin', PARAM_PLUGIN);
+$action  = required_param('action', PARAM_ALPHANUMEXT);
+$editor  = required_param('editor', PARAM_PLUGIN);
+$confirm = optional_param('confirm', 0, PARAM_BOOL);
 
-$PAGE->set_url('/admin/editors.php', ['action' => $action, 'editor' => $plugin]);
+$PAGE->set_url('/admin/editors.php', array('action'=>$action, 'editor'=>$editor));
 $PAGE->set_context(context_system::instance());
 
 require_admin();
-require_sesskey();
 
-$returnurl = new moodle_url('/admin/settings.php', ['section' => 'manageeditors']);
+$returnurl = "$CFG->wwwroot/$CFG->admin/settings.php?section=manageeditors";
 
-// Get currently installed and enabled auth plugins.
-$availableeditors = editors_get_available();
-if (!empty($plugin) && empty($availableeditors[$plugin])) {
-    redirect($returnurl);
+// get currently installed and enabled auth plugins
+$available_editors = editors_get_available();
+if (!empty($editor) and empty($available_editors[$editor])) {
+    redirect ($returnurl);
 }
 
-$activeeditors = explode(',', $CFG->texteditors);
-foreach ($activeeditors as $key => $active) {
-    if (empty($availableeditors[$active])) {
-        unset($activeeditors[$key]);
+$active_editors = explode(',', $CFG->texteditors);
+foreach ($active_editors as $key=>$active) {
+    if (empty($available_editors[$active])) {
+        unset($active_editors[$key]);
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+// process actions
+
+if (!confirm_sesskey()) {
+    redirect($returnurl);
+}
+
+$return = true;
 switch ($action) {
     case 'disable':
         // Remove from enabled list.
         $class = \core_plugin_manager::resolve_plugininfo_class('editor');
-        $class::enable_plugin($plugin, false);
+        $class::enable_plugin($editor, false);
         break;
 
     case 'enable':
         // Add to enabled list.
-        if (!in_array($plugin, $activeeditors)) {
+        if (!in_array($editor, $active_editors)) {
             $class = \core_plugin_manager::resolve_plugininfo_class('editor');
-            $class::enable_plugin($plugin, true);
+            $class::enable_plugin($editor, true);
         }
         break;
 
     case 'down':
-        $key = array_search($plugin, $activeeditors);
+        $key = array_search($editor, $active_editors);
+        // check auth plugin is valid
         if ($key !== false) {
-            // Move down the list.
-            if ($key < (count($activeeditors) - 1)) {
-                $fsave = $activeeditors[$key];
-                $activeeditors[$key] = $activeeditors[$key + 1];
-                $activeeditors[$key + 1] = $fsave;
-                add_to_config_log('editor_position', $key, $key + 1, $plugin);
-                set_config('texteditors', implode(',', $activeeditors));
+            // move down the list
+            if ($key < (count($active_editors) - 1)) {
+                $fsave = $active_editors[$key];
+                $active_editors[$key] = $active_editors[$key + 1];
+                $active_editors[$key + 1] = $fsave;
+                add_to_config_log('editor_position', $key, $key + 1, $editor);
+                set_config('texteditors', implode(',', $active_editors));
                 core_plugin_manager::reset_caches();
             }
         }
         break;
 
     case 'up':
-        $key = array_search($plugin, $activeeditors);
+        $key = array_search($editor, $active_editors);
+        // check auth is valid
         if ($key !== false) {
-            // Move up the list.
+            // move up the list
             if ($key >= 1) {
-                $fsave = $activeeditors[$key];
-                $activeeditors[$key] = $activeeditors[$key - 1];
-                $activeeditors[$key - 1] = $fsave;
-                add_to_config_log('editor_position', $key, $key - 1, $plugin);
-                set_config('texteditors', implode(',', $activeeditors));
+                $fsave = $active_editors[$key];
+                $active_editors[$key] = $active_editors[$key - 1];
+                $active_editors[$key - 1] = $fsave;
+                add_to_config_log('editor_position', $key, $key - 1, $editor);
+                set_config('texteditors', implode(',', $active_editors));
                 core_plugin_manager::reset_caches();
             }
         }
@@ -99,4 +91,6 @@ switch ($action) {
         break;
 }
 
-redirect($returnurl);
+if ($return) {
+    redirect ($returnurl);
+}

@@ -47,7 +47,7 @@ class oci_native_moodle_database extends moodle_database {
     /** @var Default value initialised in connect method, we need the driver to be present.*/
     private $commit_status = null;
 
-    /** @var null|int To handle oci driver default verbosity.*/
+    /** @var To handle oci driver default verbosity.*/
     private $last_error_reporting;
     /** @var To store unique_session_id. Needed for temp tables unique naming.*/
     private $unique_session_id;
@@ -135,6 +135,11 @@ class oci_native_moodle_database extends moodle_database {
         if ($prefix == '' and !$this->external) {
             //Enforce prefixes for everybody but mysql
             throw new dml_exception('prefixcannotbeempty', $this->get_dbfamily());
+        }
+        if (!$this->external and strlen($prefix) > 2) {
+            //Max prefix length for Oracle is 2cc
+            $a = (object)array('dbfamily'=>'oracle', 'maxlength'=>2);
+            throw new dml_exception('prefixtoolong', $a);
         }
 
         $driverstatus = $this->driver_installed();
@@ -361,10 +366,6 @@ class oci_native_moodle_database extends moodle_database {
      * @return array ($sql, $params) updated query and parameters
      */
     protected function tweak_param_names($sql, array $params) {
-        global $CFG;
-
-        require_once($CFG->libdir . '/ddllib.php');
-
         if (empty($params)) {
             return array($sql, $params);
         }
@@ -372,8 +373,8 @@ class oci_native_moodle_database extends moodle_database {
         $newparams = array();
         $searcharr = array(); // search => replace pairs
         foreach ($params as $name => $value) {
-            // Keep the name within the  xmldb_field::NAME_MAX_LENGTH chars limit always (prefixing/replacing).
-            if (strlen($name) <= (xmldb_field::NAME_MAX_LENGTH - 2)) {
+            // Keep the name within the 30 chars limit always (prefixing/replacing)
+            if (strlen($name) <= 28) {
                 $newname = 'o_' . $name;
             } else {
                 $newname = 'o_' . substr($name, 2);
@@ -702,6 +703,48 @@ class oci_native_moodle_database extends moodle_database {
             }
         }
         return $value;
+    }
+
+    /**
+     * Transforms the sql and params in order to emulate the LIMIT clause available in other DBs
+     *
+     * @param string $sql the SQL select query to execute.
+     * @param array $params array of sql parameters
+     * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
+     * @param int $limitnum return a subset comprising this many records (optional, required if $limitfrom is set).
+     * @return array with the transformed sql and params updated
+     */
+    private function get_limit_sql($sql, array $params = null, $limitfrom=0, $limitnum=0) {
+
+        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
+        // TODO: Add the /*+ FIRST_ROWS */ hint if there isn't another hint
+
+        if ($limitfrom and $limitnum) {
+            $sql = "SELECT oracle_o.*
+                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
+                              FROM ($sql) oracle_i
+                             WHERE rownum <= :oracle_num_rows
+                            ) oracle_o
+                     WHERE oracle_rownum > :oracle_skip_rows";
+            $params['oracle_num_rows'] = $limitfrom + $limitnum;
+            $params['oracle_skip_rows'] = $limitfrom;
+
+        } else if ($limitfrom and !$limitnum) {
+            $sql = "SELECT oracle_o.*
+                      FROM (SELECT oracle_i.*, rownum AS oracle_rownum
+                              FROM ($sql) oracle_i
+                            ) oracle_o
+                     WHERE oracle_rownum > :oracle_skip_rows";
+            $params['oracle_skip_rows'] = $limitfrom;
+
+        } else if (!$limitfrom and $limitnum) {
+            $sql = "SELECT *
+                      FROM ($sql)
+                     WHERE rownum <= :oracle_num_rows";
+            $params['oracle_num_rows'] = $limitnum;
+        }
+
+        return array($sql, $params);
     }
 
     /**
@@ -1075,16 +1118,9 @@ class oci_native_moodle_database extends moodle_database {
      */
     public function get_recordset_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
 
-        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        if ($limitfrom) {
-            $sql .= " OFFSET $limitfrom ROWS";
-        }
-        if ($limitnum) {
-            $sql .= " FETCH NEXT $limitnum ROWS ONLY";
-        }
-
-        list($rawsql, $params, $type) = $this->fix_sql_params($sql, $params);
+        list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
 
         list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
         $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
@@ -1119,16 +1155,9 @@ class oci_native_moodle_database extends moodle_database {
      */
     public function get_records_sql($sql, array $params=null, $limitfrom=0, $limitnum=0) {
 
-        list($limitfrom, $limitnum) = $this->normalise_limit_from_num($limitfrom, $limitnum);
+        list($sql, $params, $type) = $this->fix_sql_params($sql, $params);
 
-        if ($limitfrom) {
-            $sql .= " OFFSET $limitfrom ROWS";
-        }
-        if ($limitnum) {
-            $sql .= " FETCH NEXT $limitnum ROWS ONLY";
-        }
-
-        list($rawsql, $params, $type) = $this->fix_sql_params($sql, $params);
+        list($rawsql, $params) = $this->get_limit_sql($sql, $params, $limitfrom, $limitnum);
 
         list($rawsql, $params) = $this->tweak_param_names($rawsql, $params);
         $this->query_start($rawsql, $params, SQL_QUERY_SELECT);
@@ -1326,7 +1355,7 @@ class oci_native_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param stdClass|array $params data record as object or array
+     * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.
@@ -1376,8 +1405,7 @@ class oci_native_moodle_database extends moodle_database {
      * specify the record to update
      *
      * @param string $table The database table to be checked against.
-     * @param stdClass|array $dataobject An object with contents equal to fieldname=>fieldvalue.
-     *        Must have an entry for 'id' to map to the table specified.
+     * @param object $dataobject An object with contents equal to fieldname=>fieldvalue. Must have an entry for 'id' to map to the table specified.
      * @param bool true means repeated updates expected
      * @return bool true
      * @throws dml_exception A DML specific exception is thrown for any errors.

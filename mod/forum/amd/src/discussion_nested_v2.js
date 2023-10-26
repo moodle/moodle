@@ -16,7 +16,7 @@
 /**
  * Module for viewing a discussion in nested v2 view.
  *
- * @module mod_forum/discussion_nested_v2
+ * @module mod_Forum/discussion_nested_v2
  * @copyright  2019 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

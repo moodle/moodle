@@ -102,17 +102,24 @@ class Replace
         return $returnValue;
     }
 
-    private static function executeSubstitution(string $text, string $fromText, string $toText, int $instance): string
+    /**
+     * @return string
+     */
+    private static function executeSubstitution(string $text, string $fromText, string $toText, int $instance)
     {
         $pos = -1;
         while ($instance > 0) {
             $pos = mb_strpos($text, $fromText, $pos + 1, 'UTF-8');
             if ($pos === false) {
-                return $text;
+                break;
             }
             --$instance;
         }
 
-        return Functions::scalar(self::REPLACE($text, ++$pos, StringHelper::countCharacters($fromText), $toText));
+        if ($pos !== false) {
+            return Functions::scalar(self::REPLACE($text, ++$pos, StringHelper::countCharacters($fromText), $toText));
+        }
+
+        return $text;
     }
 }

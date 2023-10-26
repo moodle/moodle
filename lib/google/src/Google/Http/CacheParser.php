@@ -23,7 +23,6 @@ if (!class_exists('Google_Client')) {
  * Implement the caching directives specified in rfc2616. This
  * implementation is guided by the guidance offered in rfc2616-sec13.
  */
-#[AllowDynamicProperties]
 class Google_Http_CacheParser
 {
   public static $CACHEABLE_HTTP_METHODS = array('GET', 'HEAD');

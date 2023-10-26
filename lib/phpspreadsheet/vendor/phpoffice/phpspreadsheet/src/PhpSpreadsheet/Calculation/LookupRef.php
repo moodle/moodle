@@ -26,9 +26,10 @@ class LookupRef
      * Excel Function:
      *        =ADDRESS(row, column, [relativity], [referenceStyle], [sheetText])
      *
-     * @deprecated 1.18.0
-     *      Use the cell() method in the LookupRef\Address class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\Address::cell()
+     *      Use the cell() method in the LookupRef\Address class instead
      *
      * @param mixed $row Row number to use in the cell reference
      * @param mixed $column Column number to use in the cell reference
@@ -62,9 +63,10 @@ class LookupRef
      * Excel Function:
      *        =COLUMN([cellAddress])
      *
-     * @deprecated 1.18.0
-     *      Use the COLUMN() method in the LookupRef\RowColumnInformation class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\RowColumnInformation::COLUMN()
+     *      Use the COLUMN() method in the LookupRef\RowColumnInformation class instead
      *
      * @param null|array|string $cellAddress A reference to a range of cells for which you want the column numbers
      *
@@ -83,9 +85,10 @@ class LookupRef
      * Excel Function:
      *        =COLUMNS(cellAddress)
      *
-     * @deprecated 1.18.0
-     *      Use the COLUMNS() method in the LookupRef\RowColumnInformation class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\RowColumnInformation::COLUMNS()
+     *      Use the COLUMNS() method in the LookupRef\RowColumnInformation class instead
      *
      * @param null|array|string $cellAddress An array or array formula, or a reference to a range of cells
      *                                          for which you want the number of columns
@@ -110,9 +113,10 @@ class LookupRef
      * Excel Function:
      *        =ROW([cellAddress])
      *
-     * @deprecated 1.18.0
-     *      Use the ROW() method in the LookupRef\RowColumnInformation class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\RowColumnInformation::ROW()
+     *      Use the ROW() method in the LookupRef\RowColumnInformation class instead
      *
      * @param null|array|string $cellAddress A reference to a range of cells for which you want the row numbers
      *
@@ -131,9 +135,10 @@ class LookupRef
      * Excel Function:
      *        =ROWS(cellAddress)
      *
-     * @deprecated 1.18.0
-     *      Use the ROWS() method in the LookupRef\RowColumnInformation class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\RowColumnInformation::ROWS()
+     *      Use the ROWS() method in the LookupRef\RowColumnInformation class instead
      *
      * @param null|array|string $cellAddress An array or array formula, or a reference to a range of cells
      *                                          for which you want the number of rows
@@ -151,15 +156,16 @@ class LookupRef
      * Excel Function:
      *        =HYPERLINK(linkURL,displayName)
      *
-     * @deprecated 1.18.0
-     *      Use the set() method in the LookupRef\Hyperlink class instead
-     * @see LookupRef\Hyperlink::set()
+     * @Deprecated 1.18.0
      *
      * @param mixed $linkURL Expect string. Value to check, is also the value returned when no error
      * @param mixed $displayName Expect string. Value to return when testValue is an error condition
      * @param Cell $cell The cell to set the hyperlink in
      *
      * @return string The value of $displayName (or $linkURL if $displayName was blank)
+     *
+     *@see LookupRef\Hyperlink::set()
+     *      Use the set() method in the LookupRef\Hyperlink class instead
      */
     public static function HYPERLINK($linkURL = '', $displayName = null, ?Cell $cell = null)
     {
@@ -175,14 +181,15 @@ class LookupRef
      * Excel Function:
      *        =INDIRECT(cellAddress)
      *
-     * @deprecated 1.18.0
-     *      Use the INDIRECT() method in the LookupRef\Indirect class instead
-     * @see LookupRef\Indirect::INDIRECT()
+     * @Deprecated 1.18.0
      *
      * @param array|string $cellAddress $cellAddress The cell address of the current cell (containing this formula)
      * @param Cell $cell The current cell (containing this formula)
      *
      * @return array|string An array containing a cell or range of cells, or a string on error
+     *
+     *@see LookupRef\Indirect::INDIRECT()
+     *      Use the INDIRECT() method in the LookupRef\Indirect class instead
      *
      * NOTE - INDIRECT() does not yet support the optional a1 parameter introduced in Excel 2010
      */
@@ -201,9 +208,10 @@ class LookupRef
      * Excel Function:
      *        =OFFSET(cellAddress, rows, cols, [height], [width])
      *
-     * @deprecated 1.18.0
-     *      Use the OFFSET() method in the LookupRef\Offset class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\Offset::OFFSET()
+     *      Use the OFFSET() method in the LookupRef\Offset class instead
      *
      * @param null|string $cellAddress The reference from which you want to base the offset.
      *                                     Reference must refer to a cell or range of adjacent cells;
@@ -223,7 +231,7 @@ class LookupRef
      * @param mixed $width The width, in number of columns, that you want the returned reference to be.
      *                         Width must be a positive number.
      *
-     * @return array|int|string An array containing a cell or range of cells, or a string on error
+     * @return array|string An array containing a cell or range of cells, or a string on error
      */
     public static function OFFSET($cellAddress = null, $rows = 0, $columns = 0, $height = null, $width = null, ?Cell $cell = null)
     {
@@ -239,11 +247,10 @@ class LookupRef
      * Excel Function:
      *        =CHOOSE(index_num, value1, [value2], ...)
      *
-     * @deprecated 1.18.0
-     *      Use the choose() method in the LookupRef\Selection class instead
-     * @see LookupRef\Selection::choose()
+     * @Deprecated 1.18.0
      *
-     * @param array $chooseArgs
+     * @see LookupRef\Selection::choose()
+     *      Use the choose() method in the LookupRef\Selection class instead
      *
      * @return mixed The selected value
      */
@@ -260,9 +267,10 @@ class LookupRef
      * Excel Function:
      *        =MATCH(lookup_value, lookup_array, [match_type])
      *
-     * @deprecated 1.18.0
-     *      Use the MATCH() method in the LookupRef\ExcelMatch class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\ExcelMatch::MATCH()
+     *      Use the MATCH() method in the LookupRef\ExcelMatch class instead
      *
      * @param mixed $lookupValue The value that you want to match in lookup_array
      * @param mixed $lookupArray The range of cells being searched
@@ -284,9 +292,10 @@ class LookupRef
      * Excel Function:
      *        =INDEX(range_array, row_num, [column_num])
      *
-     * @deprecated 1.18.0
-     *      Use the index() method in the LookupRef\Matrix class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\Matrix::index()
+     *      Use the index() method in the LookupRef\Matrix class instead
      *
      * @param mixed $rowNum The row in the array or range from which to return a value.
      *                          If row_num is omitted, column_num is required.
@@ -304,9 +313,10 @@ class LookupRef
     /**
      * TRANSPOSE.
      *
-     * @deprecated 1.18.0
-     *      Use the transpose() method in the LookupRef\Matrix class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\Matrix::transpose()
+     *      Use the transpose() method in the LookupRef\Matrix class instead
      *
      * @param array $matrixData A matrix of values
      *
@@ -325,9 +335,10 @@ class LookupRef
      * The VLOOKUP function searches for value in the left-most column of lookup_array and returns the value
      *     in the same row based on the index_number.
      *
-     * @deprecated 1.18.0
-     *      Use the lookup() method in the LookupRef\VLookup class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\VLookup::lookup()
+     *      Use the lookup() method in the LookupRef\VLookup class instead
      *
      * @param mixed $lookup_value The value that you want to match in lookup_array
      * @param mixed $lookup_array The range of cells being searched
@@ -347,9 +358,10 @@ class LookupRef
      * The HLOOKUP function searches for value in the top-most row of lookup_array and returns the value
      *     in the same column based on the index_number.
      *
-     * @deprecated 1.18.0
-     *      Use the lookup() method in the LookupRef\HLookup class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\HLookup::lookup()
+     *      Use the lookup() method in the LookupRef\HLookup class instead
      *
      * @param mixed $lookup_value The value that you want to match in lookup_array
      * @param mixed $lookup_array The range of cells being searched
@@ -368,9 +380,10 @@ class LookupRef
      * LOOKUP
      * The LOOKUP function searches for value either from a one-row or one-column range or from an array.
      *
-     * @deprecated 1.18.0
-     *      Use the lookup() method in the LookupRef\Lookup class instead
+     * @Deprecated 1.18.0
+     *
      * @see LookupRef\Lookup::lookup()
+     *      Use the lookup() method in the LookupRef\Lookup class instead
      *
      * @param mixed $lookup_value The value that you want to match in lookup_array
      * @param mixed $lookup_vector The range of cells being searched
@@ -386,14 +399,15 @@ class LookupRef
     /**
      * FORMULATEXT.
      *
-     * @deprecated 1.18.0
-     *      Use the text() method in the LookupRef\Formula class instead
-     * @see LookupRef\Formula::text()
+     * @Deprecated 1.18.0
      *
      * @param mixed $cellReference The cell to check
      * @param Cell $cell The current cell (containing this formula)
      *
      * @return string
+     *
+     *@see LookupRef\Formula::text()
+     *      Use the text() method in the LookupRef\Formula class instead
      */
     public static function FORMULATEXT($cellReference = '', ?Cell $cell = null)
     {

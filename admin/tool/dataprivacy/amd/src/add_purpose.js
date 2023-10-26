@@ -25,7 +25,7 @@ define([
     'core/str',
     'core/ajax',
     'core/notification',
-    'core/modal_save_cancel',
+    'core/modal_factory',
     'core/modal_events',
     'core/fragment',
     'core_form/changechecker',
@@ -34,7 +34,7 @@ define([
     Str,
     Ajax,
     Notification,
-    ModalSaveCancel,
+    ModalFactory,
     ModalEvents,
     Fragment,
     FormChangeChecker
@@ -78,18 +78,16 @@ define([
 
             var trigger = $(SELECTORS.PURPOSE_LINK);
             trigger.on('click', function() {
-                this.strings.then(function(strings) {
-                    return Promise.all([
-                        ModalSaveCancel.create({
-                            title: strings[0],
-                            body: '',
-                        }),
-                        strings[1],
-                    ]).then(function([modal, string]) {
-                        this.setupFormModal(modal, string);
+                return this.strings.then(function(strings) {
+                    ModalFactory.create({
+                        type: ModalFactory.types.SAVE_CANCEL,
+                        title: strings[0],
+                        body: '',
+                    }, trigger).done(function(modal) {
+                        this.setupFormModal(modal, strings[1]);
                     }.bind(this));
                 }.bind(this))
-                .catch(Notification.exception);
+                .fail(Notification.exception);
             }.bind(this));
 
         };
@@ -186,3 +184,4 @@ define([
         };
     }
 );
+

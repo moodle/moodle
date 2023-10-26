@@ -62,8 +62,8 @@
             .dropdown-item {
                 padding: .25rem 1.75rem .25rem .75rem;
                 &.carousel-navigation-link::after {
-                    @extend .fa-solid;
-                    content: fa-content($fa-var-caret-right);
+                    font-family: FontAwesome;
+                    content: $fa-var-caret-right;
                     font-size: 1rem;
                     right: .75rem;
                     position: absolute;
@@ -83,8 +83,8 @@
                 .items {
                     .dropdown-item {
                         &[aria-current="true"]::before {
-                            @extend .fa-solid;
-                            content: fa-content($fa-var-check);
+                            font-family: FontAwesome;
+                            content: $fa-var-check;
                             font-size: 0.75rem;
                             padding-left: .25rem;
                         }
@@ -140,8 +140,7 @@
         .dropdown-menu {
             .dropdown-item {
                 &.carousel-navigation-link::after {
-                    @extend .fa-solid;
-                    content: fa-content($fa-var-caret-left);
+                    content: $fa-var-caret-left;
                 }
             }
             .carousel {

@@ -83,6 +83,17 @@ class note_created extends base {
     }
 
     /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        $logurl = new \moodle_url('index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
+        $logurl->set_anchor('note-' . $this->objectid);
+        return array($this->courseid, 'notes', 'add', $logurl, 'add note');
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

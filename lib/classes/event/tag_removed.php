@@ -78,7 +78,7 @@ class tag_removed extends base {
      * Creates an event from taginstance object
      *
      * @since Moodle 3.1
-     * @param \stdClass $taginstance
+     * @param stdClass $taginstance
      * @param string $tagname
      * @param string $tagrawname
      * @param bool $addsnapshot trust that $taginstance has all necessary fields and add it as a record snapshot

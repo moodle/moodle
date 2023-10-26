@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -243,7 +242,6 @@ class Google_Service_Cloudresourcemanager extends Google_Service
  *   $organizations = $cloudresourcemanagerService->organizations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Organizations_Resource extends Google_Service_Resource
 {
 
@@ -369,7 +367,6 @@ class Google_Service_Cloudresourcemanager_Organizations_Resource extends Google_
  *   $projects = $cloudresourcemanagerService->projects;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Projects_Resource extends Google_Service_Resource
 {
 
@@ -577,7 +574,6 @@ class Google_Service_Cloudresourcemanager_Projects_Resource extends Google_Servi
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Binding extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -605,17 +601,14 @@ class Google_Service_Cloudresourcemanager_Binding extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Empty extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_GetIamPolicyRequest extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_ListOrganizationsResponse extends Google_Collection
 {
   protected $collection_key = 'organizations';
@@ -644,7 +637,6 @@ class Google_Service_Cloudresourcemanager_ListOrganizationsResponse extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_ListProjectsResponse extends Google_Collection
 {
   protected $collection_key = 'projects';
@@ -673,7 +665,6 @@ class Google_Service_Cloudresourcemanager_ListProjectsResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Organization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -710,7 +701,6 @@ class Google_Service_Cloudresourcemanager_Organization extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_OrganizationOwner extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -728,7 +718,6 @@ class Google_Service_Cloudresourcemanager_OrganizationOwner extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Policy extends Google_Collection
 {
   protected $collection_key = 'bindings';
@@ -766,7 +755,6 @@ class Google_Service_Cloudresourcemanager_Policy extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_Project extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -839,12 +827,10 @@ class Google_Service_Cloudresourcemanager_Project extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_ProjectLabels extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_ResourceId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -871,7 +857,6 @@ class Google_Service_Cloudresourcemanager_ResourceId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_SetIamPolicyRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -890,7 +875,6 @@ class Google_Service_Cloudresourcemanager_SetIamPolicyRequest extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_TestIamPermissionsRequest extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -909,7 +893,6 @@ class Google_Service_Cloudresourcemanager_TestIamPermissionsRequest extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudresourcemanager_TestIamPermissionsResponse extends Google_Collection
 {
   protected $collection_key = 'permissions';

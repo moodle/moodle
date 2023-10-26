@@ -26,9 +26,7 @@
 M.mod_quiz = M.mod_quiz || {};
 
 M.mod_quiz.init_attempt_form = function(Y) {
-    require(['core_question/question_engine'], function(qEngine) {
-        qEngine.initForm('#responseform');
-    });
+    M.core_question_engine.init_form(Y, '#responseform');
     Y.on('submit', M.mod_quiz.timer.stop, '#responseform');
     require(['core_form/changechecker'], function(FormChangeChecker) {
         FormChangeChecker.watchFormById('responseform');
@@ -36,9 +34,7 @@ M.mod_quiz.init_attempt_form = function(Y) {
 };
 
 M.mod_quiz.init_review_form = function(Y) {
-    require(['core_question/question_engine'], function(qEngine) {
-        qEngine.initForm('.questionflagsaveform');
-    });
+    M.core_question_engine.init_form(Y, '.questionflagsaveform');
     Y.on('submit', function(e) { e.halt(); }, '.questionflagsaveform');
 };
 
@@ -82,34 +78,6 @@ M.mod_quiz.timer = {
         require(['core_form/changechecker'], function(FormChangeChecker) {
             M.mod_quiz.timer.FormChangeChecker = FormChangeChecker;
         });
-        Y.one('#toggle-timer').on('click', function() {
-            M.mod_quiz.timer.toggleVisibility();
-        });
-    },
-
-    /**
-     * Hide or show the timer.
-     * @param {boolean} whether we are ultimately displaying the timer and disabling the button
-     */
-    toggleVisibility: function(finalShow = false) {
-        var Y = M.mod_quiz.timer.Y;
-        var timer = Y.one('#quiz-time-left');
-        var button = Y.one('#toggle-timer');
-
-        // When time is running out, we show the timer and disable the button.
-        if (finalShow) {
-            timer.show();
-            button.setContent(M.util.get_string('hide', 'moodle'));
-            button.setAttribute('disabled', true);
-            return;
-        }
-
-        timer.toggleView();
-        if (timer.getAttribute('hidden') === 'hidden') {
-            button.setContent(M.util.get_string('show', 'moodle'));
-        } else {
-            button.setContent(M.util.get_string('hide', 'moodle'));
-        }
     },
 
     /**
@@ -157,7 +125,6 @@ M.mod_quiz.timer = {
             Y.one('#quiz-timer').removeClass('timeleft' + (secondsleft + 2))
                     .removeClass('timeleft' + (secondsleft + 1))
                     .addClass('timeleft' + secondsleft);
-            M.mod_quiz.timer.toggleVisibility(true);
         }
 
         // Update the time display.

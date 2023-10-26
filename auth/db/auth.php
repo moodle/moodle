@@ -541,7 +541,7 @@ class auth_plugin_db extends auth_plugin_base {
      * Reads user information from DB and return it in an object.
      *
      * @param string $username username
-     * @return stdClass
+     * @return array
      */
     function get_userinfo_asobj($username) {
         $user_array = truncate_userinfo($this->get_userinfo($username));
@@ -760,7 +760,9 @@ class auth_plugin_db extends auth_plugin_base {
             $rs->close();
 
         } else {
-            $columns = array_keys($rs->fetchRow());
+            $fields_obj = $rs->FetchObj();
+            $columns = array_keys((array)$fields_obj);
+
             echo $OUTPUT->notification(get_string('auth_dbcolumnlist', 'auth_db', implode(', ', $columns)), 'notifysuccess');
             $rs->close();
         }

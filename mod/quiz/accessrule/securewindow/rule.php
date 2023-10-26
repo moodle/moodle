@@ -14,20 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
+/**
+ * Implementaton of the quizaccess_securewindow plugin.
+ *
+ * @package    quizaccess
+ * @subpackage securewindow
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
 
 /**
  * A rule for ensuring that the quiz is opened in a popup, with some JavaScript
  * to prevent copying and pasting, etc.
  *
- * @package   quizaccess_securewindow
  * @copyright  2009 Tim Hunt
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_securewindow extends access_rule_base {
+class quizaccess_securewindow extends quiz_access_rule_base {
     /** @var array options that should be used for opening the secure popup. */
-    protected static $popupoptions = [
+    protected static $popupoptions = array(
         'left' => 0,
         'top' => 0,
         'fullscreen' => true,
@@ -39,9 +50,9 @@ class quizaccess_securewindow extends access_rule_base {
         'location' => false,
         'status' => false,
         'menubar' => false,
-    ];
+    );
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 
         if ($quizobj->get_quiz()->browsersecurity !== 'securewindow') {
             return null;
@@ -77,7 +88,7 @@ class quizaccess_securewindow extends access_rule_base {
      *      security settings menu.
      */
     public static function get_browser_security_choices() {
-        return ['securewindow' =>
-                get_string('popupwithjavascriptsupport', 'quizaccess_securewindow')];
+        return array('securewindow' =>
+                get_string('popupwithjavascriptsupport', 'quizaccess_securewindow'));
     }
 }

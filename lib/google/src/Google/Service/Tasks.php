@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Tasks extends Google_Service
 {
   /** Manage your tasks. */
@@ -305,7 +304,6 @@ class Google_Service_Tasks extends Google_Service
  *   $tasklists = $tasksService->tasklists;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Tasks_Tasklists_Resource extends Google_Service_Resource
 {
 
@@ -409,7 +407,6 @@ class Google_Service_Tasks_Tasklists_Resource extends Google_Service_Resource
  *   $tasks = $tasksService->tasks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Tasks_Tasks_Resource extends Google_Service_Resource
 {
 
@@ -576,7 +573,6 @@ class Google_Service_Tasks_Tasks_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Tasks_Task extends Google_Collection
 {
   protected $collection_key = 'links';
@@ -722,7 +718,6 @@ class Google_Service_Tasks_Task extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Tasks_TaskLinks extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -758,7 +753,6 @@ class Google_Service_Tasks_TaskLinks extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Tasks_TaskList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -821,7 +815,6 @@ class Google_Service_Tasks_TaskList extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Tasks_TaskLists extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -868,7 +861,6 @@ class Google_Service_Tasks_TaskLists extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Tasks_Tasks extends Google_Collection
 {
   protected $collection_key = 'items';

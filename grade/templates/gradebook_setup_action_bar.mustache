@@ -18,7 +18,9 @@
 
     Context variables required for this template:
     * generalnavselector - The data object containing the required properties to render the general navigation selector.
-    * addmenu - The data object containing the required properties to render the 'Add' action menu.
+    * addgradeitembutton - The data object containing the required properties to render the 'add grade item' button.
+    * addoutcomeitembutton - The data object containing the required properties to render the 'add outcome item' button.
+    * addcategorybutton - The data object containing the required properties to render the 'add category' button.
 
     Example context (json):
     {
@@ -60,17 +62,39 @@
                 }
             ]
         },
-        "addmenu": [
-            {
-                "classes": "",
-                "primary": {
-                    "items": [{"rawhtml": "<p>Item in primary menu</p>"}]
-                },
-                "secondary": {
-                    "items": [{"rawhtml": "<p>Item in secondary menu</p>"}]
-                }
-            }
-        ]
+        "addgradeitembutton": {
+            "id": "single_button12345",
+            "method" : "get",
+            "classes": "singlebutton",
+            "formid": null,
+            "url" : "#",
+            "primary" : false,
+            "tooltip" : null,
+            "label" : "Add grade item",
+            "attributes": []
+        },
+        "addoutcomeitembutton": {
+            "id": "single_button13245",
+            "method" : "get",
+            "classes": "singlebutton",
+            "formid": null,
+            "url" : "#",
+            "primary" : false,
+            "tooltip" : null,
+            "label" : "Add outcome item",
+            "attributes": []
+        },
+        "addcategorybutton": {
+            "id": "single_button14325",
+            "method" : "get",
+            "classes": "singlebutton",
+            "formid": null,
+            "url" : "#",
+            "primary" : false,
+            "tooltip" : null,
+            "label" : "Add category",
+            "attributes": []
+        }
     }
 }}
 <div class="container-fluid tertiary-navigation full-width-bottom-border">
@@ -81,12 +105,20 @@
             </div>
             <div class="navitem-divider"></div>
         {{/generalnavselector}}
-        <div class="navitem-divider ml-auto"></div>
-        <div class="navitem">
-            {{#addmenu}}
-                {{>core/action_menu}}
-            {{/addmenu}}
-        </div>
-        <div class="navitem-divider"></div>
+        {{#addgradeitembutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addgradeitembutton}}
+        {{#addoutcomeitembutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addoutcomeitembutton}}
+        {{#addcategorybutton}}
+            <div class="navitem">
+                {{>core/single_button}}
+            </div>
+        {{/addcategorybutton}}
     </div>
 </div>

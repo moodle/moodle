@@ -16,8 +16,6 @@
 
 namespace core\lock;
 
-use coding_exception;
-
 /**
  * Timing wrapper around a lock factory.
  *
@@ -167,10 +165,13 @@ class timing_wrapper_lock_factory implements lock_factory {
     }
 
     /**
+     * Calls parent factory to check if it supports recursion.
+     *
      * @deprecated since Moodle 3.10.
+     * @return boolean True if attempting to get 2 locks on the same resource will "stack"
      */
     public function supports_recursion() {
-        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
+        return $this->factory->supports_recursion();
     }
 
     /**
@@ -183,9 +184,14 @@ class timing_wrapper_lock_factory implements lock_factory {
     }
 
     /**
+     * Calls parent factory to try to extend the lock.
+     *
      * @deprecated since Moodle 3.10.
+     * @param lock $lock Lock obtained from this factory
+     * @param int $maxlifetime New max time to hold the lock
+     * @return boolean True if the lock was extended.
      */
-    public function extend_lock() {
-        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
+    public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        return $this->factory->extend_lock($lock, $maxlifetime);
     }
 }

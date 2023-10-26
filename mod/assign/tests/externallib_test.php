@@ -16,8 +16,6 @@
 
 namespace mod_assign;
 
-use core_external\external_api;
-use core_external\external_settings;
 use core_user_external;
 use mod_assign_external;
 use mod_assign_testable_assign;
@@ -127,7 +125,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_grades($assignmentids);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
 
         // Check that the correct grade information for the student is returned.
         $this->assertEquals(1, count($result['assignments']));
@@ -153,7 +151,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', 1);
         // Set WS filtering.
-        $wssettings = external_settings::get_instance();
+        $wssettings = \external_settings::get_instance();
         $wssettings->set_filter(true);
 
         $category = self::getDataGenerator()->create_category(array(
@@ -163,8 +161,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // Create a course.
         $course1 = self::getDataGenerator()->create_course(array(
             'idnumber' => 'idnumbercourse1',
-            'fullname' => '<b>Lightwork Course 1</b>',      // Adding tags here to check that \core_external\util::format_string works.
-            'shortname' => '<b>Lightwork Course 1</b>',     // Adding tags here to check that \core_external\util::format_string works.
+            'fullname' => '<b>Lightwork Course 1</b>',      // Adding tags here to check that external_format_string works.
+            'shortname' => '<b>Lightwork Course 1</b>',     // Adding tags here to check that external_format_string works.
             'summary' => 'Lightwork Course 1 description',
             'summaryformat' => FORMAT_MOODLE,
             'category' => $category->id
@@ -230,7 +228,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_assignments();
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         // Check the course and assignment are returned.
         $this->assertEquals(1, count($result['courses']));
@@ -266,7 +264,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_assignments(array($course1->id));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
@@ -285,7 +283,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_assignments(array($course2->id));
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         $this->assertEquals(0, count($result['courses']));
         $this->assertEquals(1, count($result['warnings']));
@@ -293,18 +291,18 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // Test with non-enrolled user, but with view capabilities.
         $this->setAdminUser();
         $result = mod_assign_external::get_assignments();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
         $this->assertEquals(0, count($result['courses']));
         $this->assertEquals(0, count($result['warnings']));
 
         // Expect no courses, because we are not using the special flag.
         $result = mod_assign_external::get_assignments(array($course1->id));
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
         $this->assertCount(0, $result['courses']);
 
         // Now use the special flag to return courses where you are not enroled in.
         $result = mod_assign_external::get_assignments(array($course1->id), array(), true);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
         $this->assertCount(1, $result['courses']);
 
         $course = $result['courses'][0];
@@ -352,7 +350,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $result = mod_assign_external::get_assignments();
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         // Check that the amount of courses and assignments is right.
         $this->assertCount(1, $result['courses']);
@@ -413,7 +411,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = mod_assign_external::get_assignments();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
@@ -428,7 +426,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = mod_assign_external::get_assignments();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
@@ -441,7 +439,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // We need to execute the return values cleaning process to simulate the web service server.
         $result = mod_assign_external::get_assignments();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_assignments_returns(), $result);
 
         $this->assertEquals(1, count($result['courses']));
         $course = $result['courses'][0];
@@ -513,7 +511,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $assignmentids[] = $assign1->id;
         $result = mod_assign_external::get_submissions($assignmentids);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
         // Check the online text submission is NOT returned because the student is not yet enrolled in the course.
         $this->assertEquals(1, count($result['assignments']));
@@ -526,7 +524,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->getDataGenerator()->enrol_user($student->id, $course1->id, $studentrole->id);
 
         $result = mod_assign_external::get_submissions($assignmentids);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
         $this->assertEquals(1, count($result['assignments']));
         $assignment = $result['assignments'][0];
@@ -547,7 +545,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
         $assignmentids[] = $assign1->id;
         $result = mod_assign_external::get_submissions($assignmentids);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
         $this->assertEquals(1, count($result['assignments']));
     }
 
@@ -584,7 +582,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $assignmentids[] = $assignmodule->id;
         $result = mod_assign_external::get_submissions($assignmentids);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
         $this->assertEquals(1, count($result['assignments']));
         $assignment = $result['assignments'][0];
@@ -664,7 +662,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $result = mod_assign_external::get_submissions([$assignmodule->id]);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
         $this->assertEquals(1, count($result['assignments']));
         [$assignment] = $result['assignments'];
@@ -731,7 +729,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_user_flags($assignmentids);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_user_flags_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_user_flags_returns(), $result);
 
         // Check that the correct user flag information for the student is returned.
         $this->assertEquals(1, count($result['assignments']));
@@ -797,7 +795,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_user_mappings($assignmentids);
 
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = external_api::clean_returnvalue(mod_assign_external::get_user_mappings_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_user_mappings_returns(), $result);
 
         // Check that the correct user mapping information for the student is returned.
         $this->assertEquals(1, count($result['assignments']));
@@ -853,7 +851,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::lock_submissions($instance->id, $students);
-        $result = external_api::clean_returnvalue(mod_assign_external::lock_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::lock_submissions_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
@@ -914,13 +912,13 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::lock_submissions($instance->id, $students);
-        $result = external_api::clean_returnvalue(mod_assign_external::lock_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::lock_submissions_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
 
         $result = mod_assign_external::unlock_submissions($instance->id, $students);
-        $result = external_api::clean_returnvalue(mod_assign_external::unlock_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::unlock_submissions_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
@@ -976,13 +974,13 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $plugin->save($submission, $data);
 
         $result = mod_assign_external::submit_for_grading($instance->id, false);
-        $result = external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
 
         // Should be 1 fail because the submission statement was not aceptted.
         $this->assertEquals(1, count($result));
 
         $result = mod_assign_external::submit_for_grading($instance->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
@@ -1029,34 +1027,34 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $this->setUser($student1);
         $result = mod_assign_external::submit_for_grading($instance->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(1, count($result));
 
         $this->setUser($teacher);
         $result = mod_assign_external::save_user_extensions($instance->id, array($student1->id), array($now, $tomorrow));
-        $result = external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
         $this->assertEquals(1, count($result));
 
         $this->setUser($teacher);
         $result = mod_assign_external::save_user_extensions($instance->id, array($student1->id), array($yesterday - 10));
-        $result = external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
         $this->assertEquals(1, count($result));
 
         $this->setUser($teacher);
         $result = mod_assign_external::save_user_extensions($instance->id, array($student1->id), array($tomorrow));
-        $result = external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
         $this->assertEquals(0, count($result));
 
         $this->setUser($student1);
         $result = mod_assign_external::submit_for_grading($instance->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
         $this->assertEquals(0, count($result));
 
         $this->setUser($student1);
         $result = mod_assign_external::save_user_extensions($instance->id, array($student1->id), array($now, $tomorrow));
-        $result = external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_user_extensions_returns(), $result);
     }
 
     /**
@@ -1092,13 +1090,13 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($student1);
         $this->expectException(\required_capability_exception::class);
         $result = mod_assign_external::reveal_identities($instance->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
         $this->assertEquals(1, count($result));
         $this->assertEquals(true, $assign->is_blind_marking());
 
         $this->setUser($teacher);
         $result = mod_assign_external::reveal_identities($instance->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
         $this->assertEquals(0, count($result));
         $this->assertEquals(false, $assign->is_blind_marking());
 
@@ -1113,7 +1111,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $assign = new \assign($context, $cm, $course);
         $result = mod_assign_external::reveal_identities($instance->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::reveal_identities_returns(), $result);
         $this->assertEquals(1, count($result));
         $this->assertEquals(false, $assign->is_blind_marking());
 
@@ -1153,14 +1151,14 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // Simulate a submission.
         $this->setUser($student1);
         $result = mod_assign_external::submit_for_grading($instance->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::submit_for_grading_returns(), $result);
         $this->assertEquals(0, count($result));
 
         // Ready to test.
         $this->setUser($teacher);
         $students = array($student1->id, $student2->id);
         $result = mod_assign_external::revert_submissions_to_draft($instance->id, array($student1->id));
-        $result = external_api::clean_returnvalue(mod_assign_external::revert_submissions_to_draft_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::revert_submissions_to_draft_returns(), $result);
 
         // Check for 0 warnings.
         $this->assertEquals(0, count($result));
@@ -1241,7 +1239,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
             'itemid' => $draftidonlinetext);
         $submissionpluginparams['onlinetext_editor'] = $onlinetexteditorparams;
         $result = mod_assign_external::save_submission($instance->id, $submissionpluginparams);
-        $result = external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
 
         $this->assertEquals(0, count($result));
 
@@ -1251,7 +1249,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $DB->update_record('assign', $instance);
 
         $result = mod_assign_external::save_submission($instance->id, $submissionpluginparams);
-        $result = external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
 
         $this->assertCount(1, $result);
         $this->assertEquals(get_string('duedatereached', 'assign'), $result[0]['item']);
@@ -1329,7 +1327,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertNull($result);
 
         $result = mod_assign_external::get_grades(array($instance->id));
-        $result = external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_grades_returns(), $result);
 
         $this->assertEquals((float)$result['assignments'][0]['grades'][0]['grade'], '50.0');
     }
@@ -1571,7 +1569,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // Expect an exception since 2 grades have been submitted for the same team.
         $this->expectException(\invalid_parameter_exception::class);
         $result = mod_assign_external::save_grades($instance->id, true, $grades1);
-        $result = external_api::clean_returnvalue(mod_assign_external::save_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_grades_returns(), $result);
 
         $grades2 = array();
         $student3gradeinfo = array();
@@ -1592,7 +1590,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $student4gradeinfo['plugindata'] = $feedbackpluginparams;
         $grades2[] = $student4gradeinfo;
         $result = mod_assign_external::save_grades($instance->id, true, $grades2);
-        $result = external_api::clean_returnvalue(mod_assign_external::save_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_grades_returns(), $result);
         // There should be no warnings.
         $this->assertEquals(0, count($result));
 
@@ -1648,7 +1646,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $submissionpluginparams['onlinetext_editor'] = $onlinetexteditorparams;
         $submissionpluginparams['files_filemanager'] = file_get_unused_draft_itemid();
         $result = mod_assign_external::save_submission($instance->id, $submissionpluginparams);
-        $result = external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::save_submission_returns(), $result);
 
         $this->setUser($teacher);
         // Add a grade and reopen the attempt.
@@ -1671,13 +1669,13 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($student1);
         // Now copy the previous attempt.
         $result = mod_assign_external::copy_previous_attempt($instance->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::copy_previous_attempt_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::copy_previous_attempt_returns(), $result);
         // No warnings.
         $this->assertEquals(0, count($result));
 
         $this->setUser($teacher);
         $result = mod_assign_external::get_submissions(array($instance->id));
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submissions_returns(), $result);
 
         // Check we are now on the second attempt.
         $this->assertEquals($result['assignments'][0]['submissions'][0]['attemptnumber'], 1);
@@ -1735,7 +1733,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $createduserflags = mod_assign_external::set_user_flags($assign->id, $userflags);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $createduserflags = external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $createduserflags);
+        $createduserflags = \external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $createduserflags);
 
         $this->assertEquals($student->id, $createduserflags[0]['userid']);
         $createduserflag = $DB->get_record('assign_user_flags', array('id' => $createduserflags[0]['id']));
@@ -1757,7 +1755,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $updateduserflags = mod_assign_external::set_user_flags($assign->id, $userflags);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $updateduserflags = external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $updateduserflags);
+        $updateduserflags = \external_api::clean_returnvalue(mod_assign_external::set_user_flags_returns(), $updateduserflags);
 
         $this->assertEquals($student->id, $updateduserflags[0]['userid']);
         $updateduserflag = $DB->get_record('assign_user_flags', array('id' => $updateduserflags[0]['id']));
@@ -1837,7 +1835,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_assign_external::view_grading_table($assign->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::view_grading_table_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::view_grading_table_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1968,7 +1966,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_assign_external::view_submission_status($assign->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::view_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::view_submission_status_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -2009,7 +2007,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
 
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         // The submission is now in draft mode.
         $this->assertCount(0, $result['warnings']);
@@ -2043,15 +2041,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // Format expected online text.
         $onlinetext = 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>';
-        list($expectedtext,
-        $expectedformat) = \core_external\util::format_text(
-            $onlinetext,
-            FORMAT_HTML,
-            $assign->get_context(),
-            'assignsubmission_onlinetext',
-            ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
-            $studentsubmission->id
-        );
+        list($expectedtext, $expectedformat) = external_format_text($onlinetext, FORMAT_HTML, $assign->get_context()->id,
+                'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $studentsubmission->id);
 
         $this->assertEquals($expectedtext, $submissionplugins['onlinetext']['editorfields'][0]['text']);
         $this->assertEquals($expectedformat, $submissionplugins['onlinetext']['editorfields'][0]['format']);
@@ -2073,7 +2064,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['gradingsummary']));
@@ -2110,7 +2101,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id, 0, $g1->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['lastattempt']));
@@ -2127,7 +2118,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // Second group.
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id, 0, $g2->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['gradingsummary']['participantcount']);
         $this->assertEquals(0, $result['gradingsummary']['submissionssubmittedcount']); // G2 students didn't submit yet.
@@ -2135,7 +2126,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // Should not return information for all users (missing access to all groups capability for non-editing teacher).
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['gradingsummary']));
 
@@ -2146,7 +2137,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(2, $result['gradingsummary']['participantcount']);
         $this->assertEquals(0, $result['gradingsummary']['submissiondraftscount']);
@@ -2157,7 +2148,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(false);
         $this->setUser($teacher);
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id, 0, $g1->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals(1, $result['gradingsummary']['participantcount']);
         $this->assertEquals(1, $result['gradingsummary']['submissiondraftscount']); // We have a draft submission.
@@ -2203,7 +2194,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['gradingsummary']));
@@ -2252,14 +2243,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         }
         // Format expected online text.
         $onlinetext = 'Submission text with a <a href="@@PLUGINFILE@@/intro.txt">link</a>';
-        list($expectedtext, $expectedformat) = \core_external\util::format_text(
-            $onlinetext,
-            FORMAT_HTML,
-            $assign->get_context(),
-            'assignsubmission_onlinetext',
-            ASSIGNSUBMISSION_ONLINETEXT_FILEAREA,
-            $studentsubmission->id
-        );
+        list($expectedtext, $expectedformat) = external_format_text($onlinetext, FORMAT_HTML, $assign->get_context()->id,
+                'assignsubmission_onlinetext', ASSIGNSUBMISSION_ONLINETEXT_FILEAREA, $studentsubmission->id);
 
         $this->assertEquals($expectedtext, $submissionplugins['onlinetext']['editorfields'][0]['text']);
         $this->assertEquals($expectedformat, $submissionplugins['onlinetext']['editorfields'][0]['format']);
@@ -2309,7 +2294,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
 
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertTrue(isset($result['feedback']));
         $this->assertTrue(isset($result['feedback']['grade']));
@@ -2327,7 +2312,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         // Check that the student cannot see the grader anymore.
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertTrue(isset($result['feedback']));
         $this->assertTrue(isset($result['feedback']['grade']));
@@ -2337,7 +2322,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id, $student1->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertTrue(isset($result['feedback']));
         $this->assertTrue(isset($result['feedback']['grade']));
@@ -2366,7 +2351,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['gradingsummary']));
@@ -2387,7 +2372,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($student2);
 
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         // The submission is now in draft mode.
         $this->assertCount(0, $result['warnings']);
@@ -2452,7 +2437,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $result = mod_assign_external::get_submission_status($assign->get_instance()->id);
         // We expect debugging because of the $PAGE object, this won't happen in a normal WS request.
         $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_submission_status_returns(), $result);
 
         $this->assertCount(0, $result['warnings']);
         $this->assertFalse(isset($result['gradingsummary']));
@@ -2557,7 +2542,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $this->expectException(\moodle_exception::class);
         $result = mod_assign_external::get_participant($assign->id, $student->id, false);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
     }
 
     /**
@@ -2579,7 +2564,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $result = mod_assign_external::get_participant($assign->id, $student->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
         $this->assertEquals($student->id, $result['id']);
         $this->assertFalse(fullname($student) == $result['fullname']);
         $this->assertFalse($result['submitted']);
@@ -2634,7 +2619,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $result = mod_assign_external::get_participant($assignmodule->id, $student->id, false);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
         $this->assertEquals($student->id, $result['id']);
         $this->assertEquals(fullname($student), $result['fullname']);
         $this->assertTrue($result['submitted']);
@@ -2664,7 +2649,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $result = mod_assign_external::get_participant($assign->id, $student->id, true);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
         // Check some of the extended properties we get when requesting the user.
         $this->assertEquals($student->id, $result['id']);
         // We should get user infomation back.
@@ -2716,7 +2701,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $result = mod_assign_external::get_participant($assignmodule->id, $student->id, false);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
         // Check some of the extended properties we get when not requesting a summary.
         $this->assertEquals($student->id, $result['id']);
         $this->assertEquals($group->id, $result['groupid']);
@@ -2752,7 +2737,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $result = mod_assign_external::get_participant($assign->get_instance()->id, $user->id, false);
-        $result = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $result);
 
         foreach ($expectedproperties as $propertyname => $propertyval) {
             $this->assertEquals($propertyval, $result[$propertyname]);
@@ -2811,11 +2796,11 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0, false, true, true);
-        $participants = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $participants = \external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
         $this->assertCount(1, $participants);
 
         // Asser that we have a valid response data.
-        $response = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $response = \external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
         $this->assertEquals($response, $participants);
 
         // Check participant data.
@@ -2830,7 +2815,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertArrayHasKey('enrolledcourses', $participant);
 
         $participants = mod_assign_external::list_participants($assignment->id, 0, '', 0, 0, false, false, true);
-        $participants = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $participants = \external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
         // Check that the list of courses the participant is enrolled is not returned.
         $participant = $participants[0];
         $this->assertArrayNotHasKey('enrolledcourses', $participant);
@@ -2882,7 +2867,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         // Set up filtering.
         filter_set_global_state('multilang', TEXTFILTER_ON);
         filter_set_applies_to_strings('multilang', true);
-        external_settings::get_instance()->set_filter(true);
+        \external_settings::get_instance()->set_filter(true);
 
         $result = $this->create_assign_with_student_and_teacher([
             'assignsubmission_onlinetext_enabled' => 1,
@@ -2905,14 +2890,14 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->setUser($teacher);
 
         // Test mod_assign_external::list_participants.
-        $participants = mod_assign_external::list_participants($assignmodule->id, $group->id, '', 0, 0, false, true, true);
-        $participants = external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
+        $participants = \mod_assign_external::list_participants($assignmodule->id, $group->id, '', 0, 0, false, true, true);
+        $participants = \external_api::clean_returnvalue(mod_assign_external::list_participants_returns(), $participants);
         $this->assertEquals($group->id, $participants[0]['groupid']);
         $this->assertEquals(format_string($gname, true), $participants[0]['groupname']);
 
         // Test mod_assign_external::get_participant.
         $participant = mod_assign_external::get_participant($assignmodule->id, $student->id, true);
-        $participant = external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $participant);
+        $participant = \external_api::clean_returnvalue(mod_assign_external::get_participant_returns(), $participant);
         $this->assertEquals($group->id, $participant['groupid']);
         $this->assertEquals(format_string($gname, true), $participant['groupname']);
     }
@@ -2935,7 +2920,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $cm = get_coursemodule_from_instance('assign', $assign->id);
 
         $result = mod_assign_external::view_assign($assign->id);
-        $result = external_api::clean_returnvalue(mod_assign_external::view_assign_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_assign_external::view_assign_returns(), $result);
         $this->assertTrue($result['status']);
         $this->assertEmpty($result['warnings']);
 

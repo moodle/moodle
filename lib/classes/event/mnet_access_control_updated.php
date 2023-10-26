@@ -83,6 +83,16 @@ class mnet_access_control_updated extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php', 'SSO ACL: ' . $this->other['accessctrl'] .
+            ' user \'' . $this->other['username'] . '\' from ' . $this->other['hostname']);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

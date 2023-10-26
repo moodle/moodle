@@ -82,9 +82,7 @@ class tool_filetypes_renderer extends plugin_renderer_base {
 
                 // First cell has icon and extension.
                 $icon = $this->pix_icon('f/' . $filetype['icon'], '');
-                $iconcell = new html_table_cell($icon . ' ' . html_writer::span(s($extension)));
-                $iconcell->attributes['class'] = 'icon-size-5';
-                $row->cells[] = $iconcell;
+                $row->cells[] = new html_table_cell($icon . ' ' . html_writer::span(s($extension)));
 
                 // Reset URL and button if needed.
                 $reverturl = new \moodle_url('/admin/tool/filetypes/revert.php',

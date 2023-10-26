@@ -108,18 +108,3 @@ Feature: Create conversations for course's groups
     And I open messaging information
     And "No participants" "core_message > Message member" should not exist
     And "Student 4" "core_message > Message member" should exist
-
-  Scenario: Disable messaging for private groups
-    Given the following "groups" exist:
-      | name               | course | idnumber | visibility | enablemessaging |
-      | Messaging group    | C1     | MG       | 0          | 1               |
-      | No messaging group | C1     | NM       | 2          | 1               |
-    And the following "group members" exist:
-      | user     | group |
-      | student1 | MG    |
-      | student1 | NM    |
-    When I log in as "student1"
-    And I open messaging
-    And I open the "Group" conversations list
-    Then "Messaging group" "core_message > Message" should exist
-    Then "No messaging group" "core_message > Message" should not exist

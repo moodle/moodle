@@ -154,16 +154,6 @@ if (defined('BEHAT_SITE_RUNNING')) {
     }
 }
 
-// Set default warn runtime.
-if (!isset($CFG->taskruntimewarn)) {
-    $CFG->taskruntimewarn = 12 * 60 * 60;
-}
-
-// Set default error runtime.
-if (!isset($CFG->taskruntimeerror)) {
-    $CFG->taskruntimeerror = 24 * 60 * 60;
-}
-
 // Normalise dataroot - we do not want any symbolic links, trailing / or any other weirdness there
 if (!isset($CFG->dataroot)) {
     if (isset($_SERVER['REMOTE_ADDR'])) {
@@ -281,25 +271,21 @@ if (!defined('PHPUNIT_TEST')) {
     define('PHPUNIT_TEST', false);
 }
 
-// Performance tests needs to always display performance info, even in redirections;
-// MDL_PERF_TEST is used in https://github.com/moodlehq/moodle-performance-comparison scripts.
+// Performance tests needs to always display performance info, even in redirections.
 if (!defined('MDL_PERF_TEST')) {
     define('MDL_PERF_TEST', false);
+} else {
+    // We force the ones we need.
+    if (!defined('MDL_PERF')) {
+        define('MDL_PERF', true);
+    }
+    if (!defined('MDL_PERFDB')) {
+        define('MDL_PERFDB', true);
+    }
+    if (!defined('MDL_PERFTOFOOT')) {
+        define('MDL_PERFTOFOOT', true);
+    }
 }
-// Make sure all MDL_PERF* constants are always defined.
-if (!defined('MDL_PERF')) {
-    define('MDL_PERF', MDL_PERF_TEST);
-}
-if (!defined('MDL_PERFTOFOOT')) {
-    define('MDL_PERFTOFOOT', MDL_PERF_TEST);
-}
-if (!defined('MDL_PERFTOLOG')) {
-    define('MDL_PERFTOLOG', false);
-}
-if (!defined('MDL_PERFINC')) {
-    define('MDL_PERFINC', false);
-}
-// Note that PHPUnit and Behat tests should pass with both MDL_PERF true and false.
 
 // When set to true MUC (Moodle caching) will be disabled as much as possible.
 // A special cache factory will be used to handle this situation and will use special "disabled" equivalents objects.
@@ -392,7 +378,7 @@ if (!defined('AJAX_SCRIPT')) {
 
 // Exact version of currently used yui2 and 3 library.
 $CFG->yui2version = '2.9.0';
-$CFG->yui3version = '3.18.1';
+$CFG->yui3version = '3.17.2';
 
 // Patching the upstream YUI release.
 // If we need to patch a YUI modules between official YUI releases, the yuipatchlevel will need to be manually

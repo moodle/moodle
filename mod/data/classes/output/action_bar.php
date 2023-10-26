@@ -71,8 +71,13 @@ class action_bar {
             debugging('Deprecated argument passed to get_fields_action_bar method', DEBUG_DEVELOPER);
         }
 
+        $fieldselect = null;
+        if ($hasfieldselect) {
+            $fieldselect = $this->get_create_fields();
+        }
+
         $renderer = $PAGE->get_renderer('mod_data');
-        $fieldsactionbar = new fields_action_bar($this->id);
+        $fieldsactionbar = new fields_action_bar($this->id, null, null, null, null, $fieldselect);
 
         return $renderer->render_fields_action_bar($fieldsactionbar);
     }
@@ -95,10 +100,9 @@ class action_bar {
     /**
      * Generate the output for the create a new field action menu.
      *
-     * @param bool $isprimarybutton is the action trigger a primary or secondary button?
      * @return \action_menu Action menu to create a new field
      */
-    public function get_create_fields(bool $isprimarybutton = false): \action_menu {
+    public function get_create_fields(): \action_menu {
         // Get the list of possible fields (plugins).
         $plugins = \core_component::get_plugin_list('datafield');
         $menufield = [];
@@ -108,10 +112,8 @@ class action_bar {
         asort($menufield);
 
         $fieldselect = new \action_menu();
-        $triggerclasses = ['btn'];
-        $triggerclasses[] = $isprimarybutton ? 'btn-primary' : 'btn-secondary';
-        $fieldselect->set_menu_trigger(get_string('newfield', 'mod_data'), join(' ', $triggerclasses));
-        $fieldselectparams = ['id' => $this->cmid, 'mode' => 'new'];
+        $fieldselect->set_menu_trigger(get_string('newfield', 'mod_data'), 'btn btn-secondary');
+        $fieldselectparams = ['d' => $this->id, 'mode' => 'new'];
         foreach ($menufield as $fieldtype => $fieldname) {
             $fieldselectparams['newtype'] = $fieldtype;
             $fieldselect->add(new \action_menu_link(
@@ -193,17 +195,6 @@ class action_bar {
         $renderer = $PAGE->get_renderer('mod_data');
 
         $presetsactions = $this->get_presets_actions_select(false);
-
-        // Reset single template action.
-        $resetcurrrent = new moodle_url($this->currenturl);
-        $resetcurrrent->param('action', 'resettemplate');
-        $presetsactions->add(new \action_menu_link(
-            $resetcurrrent,
-            null,
-            get_string('resettemplate', 'mod_data'),
-            false,
-            ['data-action' => 'resettemplate', 'data-dataid' => $this->id]
-        ));
 
         // Reset all templates action.
         $resetallurl = new moodle_url($this->currenturl);

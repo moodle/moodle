@@ -54,7 +54,7 @@ class scheduled_allocator_test extends \advanced_testcase {
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
 
-        \core\cron::setup_user();
+        cron_setup_user();
 
         // Let the students add submissions.
         $this->workshop->switch_phase(\workshop::PHASE_SUBMISSION);
@@ -94,7 +94,7 @@ class scheduled_allocator_test extends \advanced_testcase {
 
         $workshopgenerator = $this->getDataGenerator()->get_plugin_generator('mod_workshop');
 
-        \core\cron::setup_user();
+        cron_setup_user();
 
         // Let the students add submissions.
         $this->workshop->switch_phase(\workshop::PHASE_SUBMISSION);

@@ -36,7 +36,7 @@
         {{#isactive}}active{{/isactive}}
         {{#hascmrestrictions}}restrictions{{/hascmrestrictions}}
         {{^accessvisible}}dimmed{{/accessvisible}}
-        d-flex
+        {{#url}} d-flex {{/url}} {{^url}} d-flex-noedit {{/url}}
         {{#indent}} indented {{/indent}}"
     id="course-index-cm-{{id}}"
     data-for="cm"
@@ -44,21 +44,23 @@
     role="treeitem"
 >
     <span class="completioninfo" data-for="cm_completion" data-value="NaN"></span>
-    {{#uservisible}}
-    <a
-        class="courseindex-link text-truncate"
-        {{#url}} href="{{{url}}}" {{/url}}{{^url}} href="#{{{anchor}}}" data-anchor="true" {{/url}}
-        data-for="cm_name"
-        tabindex="-1"
-    >
+    {{#url}}
+        {{#uservisible}}
+            <a class="courseindex-link text-truncate" href="{{{url}}}" data-for="cm_name" tabindex="-1">
+                {{{name}}}
+            </a>
+        {{/uservisible}}
+        {{^uservisible}}
+            <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
+                {{{name}}}
+            </a>
+        {{/uservisible}}
+    {{/url}}
+    {{^url}}
+    <span class="courseindex-name text-truncate" data-for="cm_name">
         {{{name}}}
-    </a>
-    {{/uservisible}}
-    {{^uservisible}}
-    <a class="courseindex-link text-truncate" href="#{{{anchor}}}" data-for="cm_name" tabindex="-1" data-anchor="true">
-        {{{name}}}
-    </a>
-    {{/uservisible}}
+    </span>
+    {{/url}}
     <span class="courseindex-locked ml-1" data-for="cm_name">
         {{#pix}} t/locked, core {{/pix}}
     </span>

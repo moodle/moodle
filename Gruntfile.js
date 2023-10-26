@@ -260,8 +260,6 @@ module.exports = function(grunt) {
     addTask('watch', grunt);
     addTask('startup', grunt);
 
-    addTask('upgradablelibs', grunt);
-
     // Register the default task.
     grunt.registerTask('default', ['startup']);
 };

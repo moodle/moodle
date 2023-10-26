@@ -23,7 +23,6 @@
  */
 
 $string['comment'] = 'Comment';
-$string['commenter'] = 'Commenter';
 $string['comments'] = 'Comments';
 $string['commentsubcontext'] = 'Comments';
 $string['privacy:metadata:comment'] = 'Stores comments of users.';

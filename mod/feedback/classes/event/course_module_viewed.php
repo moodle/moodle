@@ -96,6 +96,20 @@ class course_module_viewed extends \core\event\course_module_viewed {
     }
 
     /**
+     * Replace add_to_log() statement.Do this only for the case when anonymous mode is off,
+     * since this is what was happening before.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        if ($this->anonymous) {
+            return null;
+        } else {
+            return parent::get_legacy_logdata();
+        }
+    }
+
+    /**
      * Custom validations.
      *
      * @throws \coding_exception in case of any problems.

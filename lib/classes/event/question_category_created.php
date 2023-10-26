@@ -61,4 +61,19 @@ class question_category_created extends question_category_base {
     public function get_description() {
         return "The user with id '$this->userid' created the question category with id '$this->objectid'.";
     }
+
+    /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        if ($this->contextlevel == CONTEXT_MODULE) {
+            return array($this->courseid, 'quiz', 'addcategory', 'view.php?id=' . $this->contextinstanceid,
+                $this->objectid, $this->contextinstanceid);
+        }
+        // This is not related to individual quiz at all.
+        return null;
+    }
+
 }

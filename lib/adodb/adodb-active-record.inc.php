@@ -501,8 +501,7 @@ class ADODB_Active_Record {
 			}
 			break;
 		default:
-			foreach($cols as $fldobj) {
-				$name = $fldobj->name;
+			foreach($cols as $name => $fldobj) {
 
 				if ($ADODB_ACTIVE_DEFVALS && isset($fldobj->default_value)) {
 					$this->$name = $fldobj->default_value;

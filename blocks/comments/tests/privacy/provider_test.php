@@ -26,7 +26,6 @@ namespace block_comments\privacy;
 use core_privacy\local\metadata\collection;
 use block_comments\privacy\provider;
 use core_privacy\local\request\approved_userlist;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -84,7 +83,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Posts a comment on a given context.
      *
      * @param string $text The comment's text.
-     * @param \context $context The context on which we want to put the comment.
+     * @param context $context The context on which we want to put the comment.
      */
     protected function add_comment($text, \context $context) {
         $args = new \stdClass;
@@ -104,9 +103,9 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Creates a comments block on a context.
      *
-     * @param \context $context The context on which we want to put the block.
-     * @return \block_base The created block instance.
-     * @throws \coding_exception
+     * @param context $context The context on which we want to put the block.
+     * @return block_base The created block instance.
+     * @throws coding_exception
      */
     protected function add_comments_block_in_context(\context $context) {
         global $DB;

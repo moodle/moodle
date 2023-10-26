@@ -202,12 +202,6 @@ class ADODB_DataDict {
 	*/
 	public $blobAllowsDefaultValue;
 
-
-	/**
-	 * @var string String to use to quote identifiers and names
-	 */
-	public $quote;
-
 	function getCommentSQL($table,$col)
 	{
 		return false;
@@ -1013,17 +1007,11 @@ class ADODB_DataDict {
 	}
 
 	/**
-	 * This function changes/adds new fields to your table.
-	 *
-	 * You don't have to know if the col is new or not. It will check on its own.
-	 *
-	 * @param string   $tablename
-	 * @param string   $flds
-	 * @param string[] $tableoptions
-	 * @param bool     $dropOldFlds
-	 *
-	 * @return string[] Array of SQL Commands
-	 */
+	"Florian Buzin [ easywe ]" <florian.buzin#easywe.de>
+
+	This function changes/adds new fields to your table. You don't
+	have to know if the col is new or not. It will check on its own.
+	*/
 	function changeTableSQL($tablename, $flds, $tableoptions = false, $dropOldFlds=false)
 	{
 	global $ADODB_FETCH_MODE;
@@ -1082,14 +1070,37 @@ class ADODB_DataDict {
 			$flds = $holdflds;
 		}
 
-		$sql = $this->alterColumnSql($tablename, $flds);
+
+		// already exists, alter table instead
+		list($lines,$pkey,$idxs) = $this->_genFields($flds);
+		// genfields can return FALSE at times
+		if ($lines == null) $lines = array();
+		$alter = 'ALTER TABLE ' . $this->tableName($tablename);
+		$sql = array();
+
+		foreach ( $lines as $id => $v ) {
+			if ( isset($cols[$id]) && is_object($cols[$id]) ) {
+
+				$flds = lens_ParseArgs($v,',');
+
+				//  We are trying to change the size of the field, if not allowed, simply ignore the request.
+				// $flds[1] holds the type, $flds[2] holds the size -postnuke addition
+				if ($flds && in_array(strtoupper(substr($flds[0][1],0,4)),$this->invalidResizeTypes4)
+				 && (isset($flds[0][2]) && is_numeric($flds[0][2]))) {
+					if ($this->debug) ADOConnection::outp(sprintf("<h3>%s cannot be changed to %s currently</h3>", $flds[0][0], $flds[0][1]));
+					#echo "<h3>$this->alterCol cannot be changed to $flds currently</h3>";
+					continue;
+	 			}
+				$sql[] = $alter . $this->alterCol . ' ' . $v;
+			} else {
+				$sql[] = $alter . $this->addCol . ' ' . $v;
+			}
+		}
 
 		if ($dropOldFlds) {
-			foreach ($cols as $id => $v) {
-				if (!isset($lines[$id])) {
-					$sql[] = $this->dropColumnSQL($tablename, $flds);
-				}
-			}
+			foreach ( $cols as $id => $v )
+			    if ( !isset($lines[$id]) )
+					$sql[] = $alter . $this->dropCol . ' ' . $v->name;
 		}
 		return $sql;
 	}

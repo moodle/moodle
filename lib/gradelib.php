@@ -354,10 +354,6 @@ function grade_needs_regrade_final_grades($courseid) {
 function grade_needs_regrade_progress_bar($courseid) {
     global $DB;
     $grade_items = grade_item::fetch_all(array('courseid' => $courseid));
-    if (!$grade_items) {
-        // If there are no grade items then we definitely don't need a progress bar!
-        return false;
-    }
 
     list($sql, $params) = $DB->get_in_or_equal(array_keys($grade_items), SQL_PARAMS_NAMED, 'gi');
     $gradecount = $DB->count_records_select('grade_grades', 'itemid ' . $sql, $params);
@@ -439,8 +435,7 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
  * @param string $itemmodule More specific then $itemtype. For example, 'forum' or 'quiz'. May be NULL for some item types
  * @param int    $iteminstance ID of the item module
  * @param mixed  $userid_or_ids Either a single user ID, an array of user IDs or null. If user ID or IDs are not supplied returns information about grade_item
- * @return stdClass Object with keys {items, outcomes, errors}, where 'items' is an array of grade
- *               information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
+ * @return array Array of grade information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
@@ -448,20 +443,13 @@ function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $use
     $return = new stdClass();
     $return->items    = array();
     $return->outcomes = array();
-    $return->errors = [];
 
-    $courseitem = grade_item::fetch_course_item($courseid);
+    $course_item = grade_item::fetch_course_item($courseid);
     $needsupdate = array();
-    if ($courseitem->needsupdate) {
+    if ($course_item->needsupdate) {
         $result = grade_regrade_final_grades($courseid);
         if ($result !== true) {
             $needsupdate = array_keys($result);
-            // Return regrade errors if the user has capability.
-            $context = context_course::instance($courseid);
-            if (has_capability('moodle/grade:edit', $context)) {
-                $return->errors = $result;
-            }
-            $courseitem->regrading_finished();
         }
     }
 
@@ -1148,7 +1136,7 @@ function grade_recover_history_grades($userid, $courseid) {
  * @param int $userid If specified try to do a quick regrading of the grades of this user only
  * @param object $updated_item Optional grade item to be marked for regrading. It is required if $userid is set.
  * @param \core\progress\base $progress If provided, will be used to update progress on this long operation.
- * @return array|true true if ok, array of errors if problems found. Grade item id => error message
+ * @return bool true if ok, array of errors if problems found. Grade item id => error message
  */
 function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null, $progress=null) {
     // This may take a very long time and extra memory.
@@ -1321,10 +1309,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
                     continue; // this one is ok
                 }
                 $grade_items[$gid]->force_regrading();
-                if (!empty($grade_items[$gid]->calculation) && empty($errors[$gid])) {
-                    $itemname = $grade_items[$gid]->get_name();
-                    $errors[$gid] = get_string('errorcalculationbroken', 'grades', $itemname);
-                }
+                $errors[$grade_items[$gid]->id] = get_string('errorcalculationbroken', 'grades');
             }
             break; // Found error.
         }

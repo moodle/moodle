@@ -41,8 +41,6 @@ class repository_url extends repository {
     var $processedfiles = array();
     /** @var int Recursion counter. */
     var $recursioncounter = 0;
-    /** @var string file URL. */
-    public $file_url;
 
     /**
      * @param int $repositoryid

@@ -17,12 +17,10 @@ class BitWise
      * Split a number into upper and lower portions for full 32-bit support.
      *
      * @param float|int $number
-     *
-     * @return int[]
      */
     private static function splitNumber($number): array
     {
-        return [(int) floor($number / self::SPLIT_DIVISOR), (int) fmod($number, self::SPLIT_DIVISOR)];
+        return [floor($number / self::SPLIT_DIVISOR), fmod($number, self::SPLIT_DIVISOR)];
     }
 
     /**

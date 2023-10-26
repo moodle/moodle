@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\external\exporter;
 use renderer_base;
-use core_external\util as external_util;
-use core_external\external_files;
+use external_util;
+use external_files;
 
 /**
  * Class for exporting assessment data.

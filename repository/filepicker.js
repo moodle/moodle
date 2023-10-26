@@ -2125,10 +2125,8 @@ M.core_filepicker.init = function(Y, options) {
         },
         set_preference: function(name, value) {
             if (this.options.userprefs[name] != value) {
-                require(['core_user/repository'], function(UserRepository) {
-                    UserRepository.setUserPreference('filepicker_' + name, value);
-                    this.options.userprefs[name] = value;
-                }.bind(this));
+                M.util.set_user_preference('filepicker_' + name, value);
+                this.options.userprefs[name] = value;
             }
         },
         in_iframe: function () {

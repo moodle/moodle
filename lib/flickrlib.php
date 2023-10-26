@@ -57,9 +57,6 @@ class phpFlickr {
     var $token;
     var $php_version;
 
-    /** @var curl cURL class. */
-    private $curl;
-
     /**
      * When your database cache table hits this many rows, a cleanup
      * will occur to get rid of all of the old rows and cleanup the
@@ -81,6 +78,7 @@ class phpFlickr {
         $this->api_key = $api_key;
         $this->secret = $secret;
         $this->die_on_error = false;
+        $this->service = "flickr";
         $this->token = $token;
         //Find the PHP version and store it for future reference
         $this->php_version = explode("-", phpversion());
@@ -1136,6 +1134,12 @@ class phpFlickr {
         // $args['async'] = 1;
         $args['api_key'] = $this->api_key;
 
+        if (!empty($this->email)) {
+            $args['email'] = $this->email;
+        }
+        if (!empty($this->password)) {
+            $args['password'] = $this->password;
+        }
         if (!empty($this->token)) {
             $args['auth_token'] = $this->token;
         }

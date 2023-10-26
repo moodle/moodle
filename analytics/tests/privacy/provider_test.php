@@ -45,48 +45,6 @@ require_once(__DIR__ . '/../fixtures/test_target_course_users.php');
  */
 class provider_test extends \core_privacy\tests\provider_testcase {
 
-    /** @var \core_analytics\model Store Model 1. */
-    protected $model1;
-
-    /** @var \core_analytics\model Store Model 2. */
-    protected $model2;
-
-    /** @var \stdClass $modelobj1 Store Model 1 object. */
-    protected $modelobj1;
-
-    /** @var \stdClass $modelobj2 Store Model 2 object. */
-    protected $modelobj2;
-
-    /** @var \stdClass $u1 User 1 record. */
-    protected $u1;
-
-    /** @var \stdClass $u2 User 2 record. */
-    protected $u2;
-
-    /** @var \stdClass $u3 User 3 record. */
-    protected $u3;
-
-    /** @var \stdClass $u4 User 4 record. */
-    protected $u4;
-
-    /** @var \stdClass $u5 User 5 record. */
-    protected $u5;
-
-    /** @var \stdClass $u6 User 6 record. */
-    protected $u6;
-
-    /** @var \stdClass $u7 User 7 record. */
-    protected $u7;
-
-    /** @var \stdClass $u8 User 8 record. */
-    protected $u8;
-
-    /** @var \stdClass $c1 Course 1 record. */
-    protected $c1;
-
-    /** @var \stdClass $c2 Course 2 record. */
-    protected $c2;
-
     public function setUp(): void {
 
         $this->resetAfterTest(true);

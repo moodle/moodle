@@ -52,6 +52,16 @@ class course_module_viewed extends \core\event\course_module_viewed {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, $this->objecttable, 'view '. $this->other['viewed'], 'view.php?id=' .
+            $this->contextinstanceid, $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -17,27 +17,6 @@ class mnet_environment {
     var $keypair            = array();
     var $deleted            = 0;
 
-    /** @var string mnet host name. */
-    public $name;
-
-    /** @var int mnet host transport. */
-    public $transport;
-
-    /** @var int mnet host port number. */
-    public $portno;
-
-    /** @var int mnet host force theme. */
-    public $force_theme;
-
-    /** @var string mnet host theme. */
-    public $theme;
-
-    /** @var int mnet host application ID. */
-    public $applicationid;
-
-    /** @var int mnet host SSL verification. */
-    public $sslverification;
-
     function init() {
         global $CFG, $DB;
 

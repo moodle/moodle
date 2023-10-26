@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Replicapool extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -353,7 +352,6 @@ class Google_Service_Replicapool extends Google_Service
  *   $instanceGroupManagers = $replicapoolService->instanceGroupManagers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagers_Resource extends Google_Service_Resource
 {
 
@@ -571,7 +569,6 @@ class Google_Service_Replicapool_InstanceGroupManagers_Resource extends Google_S
  *   $zoneOperations = $replicapoolService->zoneOperations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_ZoneOperations_Resource extends Google_Service_Resource
 {
 
@@ -619,7 +616,6 @@ class Google_Service_Replicapool_ZoneOperations_Resource extends Google_Service_
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManager extends Google_Collection
 {
   protected $collection_key = 'targetPools';
@@ -756,7 +752,6 @@ class Google_Service_Replicapool_InstanceGroupManager extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagerList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -812,7 +807,6 @@ class Google_Service_Replicapool_InstanceGroupManagerList extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagersAbandonInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -831,7 +825,6 @@ class Google_Service_Replicapool_InstanceGroupManagersAbandonInstancesRequest ex
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagersDeleteInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -850,7 +843,6 @@ class Google_Service_Replicapool_InstanceGroupManagersDeleteInstancesRequest ext
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagersRecreateInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -869,7 +861,6 @@ class Google_Service_Replicapool_InstanceGroupManagersRecreateInstancesRequest e
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagersSetInstanceTemplateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -887,7 +878,6 @@ class Google_Service_Replicapool_InstanceGroupManagersSetInstanceTemplateRequest
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_InstanceGroupManagersSetTargetPoolsRequest extends Google_Collection
 {
   protected $collection_key = 'targetPools';
@@ -915,7 +905,6 @@ class Google_Service_Replicapool_InstanceGroupManagersSetTargetPoolsRequest exte
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1125,7 +1114,6 @@ class Google_Service_Replicapool_Operation extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -1145,7 +1133,6 @@ class Google_Service_Replicapool_OperationError extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1181,7 +1168,6 @@ class Google_Service_Replicapool_OperationErrorErrors extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1237,7 +1223,6 @@ class Google_Service_Replicapool_OperationList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1275,7 +1260,6 @@ class Google_Service_Replicapool_OperationWarnings extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1302,7 +1286,6 @@ class Google_Service_Replicapool_OperationWarningsData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Replicapool_ReplicaPoolAutoHealingPolicy extends Google_Model
 {
   protected $internal_gapi_mappings = array(

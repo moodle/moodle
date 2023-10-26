@@ -126,8 +126,7 @@
     </div>
 </div>
 {{#js}}
-    require(['tool_langimport/search', 'tool_langimport/uninstall'], function(search, uninstall) {
+    require(['tool_langimport/search'], function(search) {
         search.init(document.querySelector('#installform'));
-        uninstall.init(document.querySelector('#uninstallform'));
     });
 {{/js}}

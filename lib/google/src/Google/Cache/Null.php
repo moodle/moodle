@@ -23,7 +23,6 @@ if (!class_exists('Google_Client')) {
  * A blank storage class, for cases where caching is not
  * required.
  */
-#[AllowDynamicProperties]
 class Google_Cache_Null extends Google_Cache_Abstract
 {
   public function __construct(Google_Client $client)

@@ -22,7 +22,6 @@ if (!class_exists('Google_Client')) {
 /**
  * Credentials object used for OAuth 2.0 Signed JWT assertion grants.
  */
-#[AllowDynamicProperties]
 class Google_Auth_AssertionCredentials
 {
   const MAX_TOKEN_LIFETIME_SECS = 3600;

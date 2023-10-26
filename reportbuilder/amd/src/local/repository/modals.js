@@ -22,7 +22,7 @@
  */
 
 import ModalForm from 'core_form/modalform';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 
 /**
  * Return modal instance

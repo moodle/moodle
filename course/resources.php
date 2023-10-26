@@ -51,6 +51,7 @@ foreach ($allmodules as $key=>$module) {
 
 // Triger view event.
 $event = \core\event\course_resources_list_viewed::create(array('context' => context_course::instance($course->id)));
+$event->set_legacy_logdata($availableresources);
 $event->add_record_snapshot('course', $course);
 $event->trigger();
 

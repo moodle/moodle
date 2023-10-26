@@ -54,7 +54,7 @@ class export_key_manager_action_bar extends action_bar {
         // Add a button to the action bar with a link to the 'add user key' page.
         $adduserkeylink = new moodle_url('/grade/export/key.php', ['courseid' => $courseid]);
         $adduserkeybutton = new \single_button($adduserkeylink, get_string('adduserkey', 'userkey'),
-            'get', \single_button::BUTTON_PRIMARY);
+            'get', true);
         $data['adduserkeybutton'] = $adduserkeybutton->export_for_template($output);
 
         return $data;

@@ -45,6 +45,15 @@ class webservice_token_sent extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'webservice', 'sending requested user token', '' , 'User ID: ' . $this->userid);
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

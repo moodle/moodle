@@ -45,14 +45,6 @@ Local changes (to reapply until upstream upgrades contain them):
       we are using here.
     * MDL-76355 php81 compliance. Class methods require overriding methods to declare a
       compatible return type.
-    * MDL-77374 PHP 8.2 compliance.
-      To temporarily prevent the PHP 8.2 warning about the deprecation of dynamic properties,
-      the #[AllowDynamicProperties] attribute was added on top of the classes.
-      Below is a handy command to add the attribute above the class line:
-      ```
-      cd lib/google/src
-      for file in `find . -name '*.php' `; do sed -i '/^class /i #[AllowDynamicProperties]' $file; done
-      ```
 
 Information
 -----------

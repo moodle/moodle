@@ -216,7 +216,7 @@ class base_block_test extends \advanced_testcase {
     /**
      * Utility function to convert recordset to array for testing.
      *
-     * @param \moodle_recordset $rs Recordset to convert
+     * @param moodle_recordset $rs Recordset to convert
      * @return array Array indexed by number (0, 1, 2, ...)
      */
     protected static function recordset_to_indexed_array(\moodle_recordset $rs) {

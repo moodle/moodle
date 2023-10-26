@@ -1,6 +1,5 @@
-/* Import common fonts */
-@import 'font-open-sans.css';
 /* General CSS for H5P. Licensed under the MIT License.*/
+
 /* Custom H5P font to use for icons. */
 @font-face {
   font-family: 'h5p';
@@ -56,8 +55,6 @@ html.h5p-iframe .h5p-content {
   line-height: 1.5em;
   width: 100%;
   height: auto;
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
 }
 html.h5p-iframe .h5p-fullscreen .h5p-content,
 html.h5p-iframe .h5p-semi-fullscreen .h5p-content {
@@ -192,6 +189,7 @@ div.h5p-fullscreen {
 .h5p-content ul.h5p-actions {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+  overflow: hidden;
   list-style: none;
   padding: 0px 10px;
   margin: 0;
@@ -218,51 +216,36 @@ div.h5p-fullscreen {
   outline: none;
   line-height: 22px;
 }
-.h5p-actions button:hover {
+.h5p-actions > .h5p-button:hover {
   color: #333;
 }
-.h5p-actions button:active,
-.h5p-actions button:focus,
+.h5p-actions > .h5p-button:active,
+.h5p-actions > .h5p-button:focus,
 .h5p-actions .h5p-link:active,
 .h5p-actions .h5p-link:focus {
   color: #666;
 }
-.h5p-actions button {
-  display: inline-flex;
-  padding: 0;
-  margin: 0;
-  color: #6A6A6A;
-  position: relative;
-
-  /* Disable default button style */
-  background: none;
-  border: none;
-  font: inherit;
-  cursor: pointer;
-
-  line-height: 2;
-}
-.h5p-actions button:focus,
+.h5p-actions > .h5p-button:focus,
 .h5p-actions .h5p-link:focus {
   outline-style: solid;
   outline-width: thin;
   outline-offset: -2px;
-  outline-color: #5981A1;
+  outline-color: #9ecaed;
 }
-.h5p-actions button:before {
+.h5p-actions > .h5p-button:before {
   font-family: 'H5P';
   font-size: 20px;
   line-height: 23px;
   vertical-align: bottom;
   padding-right: 0;
 }
-.h5p-actions > .h5p-button.h5p-export > button:before {
+.h5p-actions > .h5p-button.h5p-export:before {
   content: "\e90b";
 }
-.h5p-actions > .h5p-button.h5p-copyrights > button:before {
+.h5p-actions > .h5p-button.h5p-copyrights:before {
   content: "\e88f";
 }
-.h5p-actions > .h5p-button.h5p-embed > button:before {
+.h5p-actions > .h5p-button.h5p-embed:before {
   content: "\e892";
 }
 .h5p-actions .h5p-link {
@@ -270,8 +253,8 @@ div.h5p-fullscreen {
   margin-right: 0;
   font-size: 2.0em;
   line-height: 23px;
-  position: relative;
-  color: #6a6a6a;
+  overflow: hidden;
+  color: #999;
   text-decoration: none;
   outline: none;
 }

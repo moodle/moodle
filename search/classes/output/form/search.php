@@ -29,6 +29,7 @@ use core_search\manager;
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir . '/formslib.php');
+require_once($CFG->libdir . '/externallib.php');
 
 class search extends \moodleform {
 

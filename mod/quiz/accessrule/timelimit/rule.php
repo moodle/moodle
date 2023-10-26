@@ -14,23 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\form\preflight_check_form;
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
+/**
+ * Implementaton of the quizaccess_timelimit plugin.
+ *
+ * @package    quizaccess
+ * @subpackage timelimit
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
 
 /**
- * A rule representing the time limit.
- *
- * It does not actually restrict access, but we use this
+ * A rule representing the time limit. It does not actually restrict access, but we use this
  * class to encapsulate some of the relevant code.
  *
- * @package   quizaccess_timelimit
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_timelimit extends access_rule_base {
+class quizaccess_timelimit extends quiz_access_rule_base {
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
 
         if (empty($quizobj->get_quiz()->timelimit) || $canignoretimelimits) {
             return null;
@@ -66,7 +74,7 @@ class quizaccess_timelimit extends access_rule_base {
         return $attemptid === null;
     }
 
-    public function add_preflight_check_form_fields(preflight_check_form $quizform,
+    public function add_preflight_check_form_fields(mod_quiz_preflight_check_form $quizform,
             MoodleQuickForm $mform, $attemptid) {
         $mform->addElement('header', 'honestycheckheader',
                 get_string('confirmstartheader', 'quizaccess_timelimit'));

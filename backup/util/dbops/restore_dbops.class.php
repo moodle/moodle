@@ -206,7 +206,7 @@ abstract class restore_dbops {
      * @param int $restoreid id of backup
      * @param string $itemname name of the item
      * @param int $itemid id of item
-     * @return stdClass|false record from 'backup_ids_temp' table
+     * @return array backup id's
      * @todo MDL-25290 replace static backupids* with MUC code
      */
     protected static function get_backup_ids_cached($restoreid, $itemname, $itemid) {
@@ -1167,10 +1167,9 @@ abstract class restore_dbops {
      * @param string $restoreid Restore ID
      * @param int $userid Default userid for files
      * @param \core\progress\base $progress Object used for progress tracking
-     * @param int $courseid Course ID
      */
     public static function create_included_users($basepath, $restoreid, $userid,
-            \core\progress\base $progress, int $courseid = 0) {
+            \core\progress\base $progress) {
         global $CFG, $DB;
         require_once($CFG->dirroot.'/user/profile/lib.php');
         $progress->start_progress('Creating included users');
@@ -1253,10 +1252,6 @@ abstract class restore_dbops {
                 } else if ($userauth->isinternal and $userauth->canresetpwd) {
                     $user->password = 'restored';
                 }
-            } else if (self::password_should_be_discarded($user->password)) {
-                // Password is not empty and it is MD5 hashed. Generate a new random password for the user.
-                // We don't want MD5 hashes in the database and users won't be able to log in with the associated password anyway.
-                $user->password = hash_internal_user_password(base64_encode(random_bytes(24)));
             }
 
             // Creating new user, we must reset the policyagreed always
@@ -1295,9 +1290,6 @@ abstract class restore_dbops {
                         }
                     }
                 }
-
-                // Trigger event that user was created.
-                \core\event\user_created::create_from_user_id_on_restore($newuserid, $restoreid, $courseid)->trigger();
 
                 // Process tags
                 if (core_tag_tag::is_enabled('core', 'user') && isset($user->tags)) { // If enabled in server and present in backup.
@@ -1907,17 +1899,6 @@ abstract class restore_dbops {
      */
     public static function delete_course_content($courseid, array $options = null) {
         return remove_course_contents($courseid, false, $options);
-    }
-
-    /**
-     * Checks if password stored in backup is a MD5 hash.
-     * Returns true if it is, false otherwise.
-     *
-     * @param string $password The password to check.
-     * @return bool
-     */
-    private static function password_should_be_discarded(#[\SensitiveParameter] string $password): bool {
-        return (bool) preg_match('/^[0-9a-f]{32}$/', $password);
     }
 }
 

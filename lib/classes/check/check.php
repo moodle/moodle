@@ -35,7 +35,7 @@ defined('MOODLE_INTERNAL') || die();
 abstract class check {
 
     /**
-     * @var string $component - The component / plugin this task belongs to.
+     * @var $string $component - The component / plugin this task belongs to.
      *
      * This is autopopulated by the check manager.
      */
@@ -101,7 +101,7 @@ abstract class check {
     /**
      * A link to a place to action this
      *
-     * @return \action_link|null
+     * @return action_link|null
      */
     public function get_action_link(): ?\action_link {
         return null;

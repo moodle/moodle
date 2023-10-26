@@ -175,12 +175,11 @@ class mod_feedback_mod_form extends moodleform_mod {
             $data->page_after_submit = $data->page_after_submit_editor['text'];
 
             if (!empty($data->completionunlocked)) {
-                // Turn off completion settings if the checkboxes aren't ticked.
-                $suffix = $this->get_suffix();
-                $completion = $data->{'completion' . $suffix};
-                $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
-                if (!$autocompletion || empty($data->{'completionsubmit' . $suffix})) {
-                    $data->{'completionsubmit' . $suffix} = 0;
+                // Turn off completion settings if the checkboxes aren't ticked
+                $autocompletion = !empty($data->completion) &&
+                    $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+                if (!$autocompletion || empty($data->completionsubmit)) {
+                    $data->completionsubmit=0;
                 }
             }
         }
@@ -207,20 +206,16 @@ class mod_feedback_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $suffix = $this->get_suffix();
-        $completionsubmitel = 'completionsubmit' . $suffix;
         $mform->addElement('checkbox',
-            $completionsubmitel,
-            '',
-            get_string('completionsubmit', 'feedback')
-        );
+                           'completionsubmit',
+                           '',
+                           get_string('completionsubmit', 'feedback'));
         // Enable this completion rule by default.
-        $mform->setDefault($completionsubmitel, 1);
-        return [$completionsubmitel];
+        $mform->setDefault('completionsubmit', 1);
+        return array('completionsubmit');
     }
 
     public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
-        return !empty($data['completionsubmit' . $suffix]);
+        return !empty($data['completionsubmit']);
     }
 }

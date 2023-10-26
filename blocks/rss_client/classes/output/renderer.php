@@ -40,8 +40,8 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render an RSS Item
      *
-     * @param \templatable $item
-     * @return string
+     * @param templatable $item
+     * @return string|boolean
      */
     public function render_item(\templatable $item) {
         $data = $item->export_for_template($this);
@@ -52,8 +52,8 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render an RSS Feed
      *
-     * @param \templatable $feed
-     * @return string
+     * @param templatable $feed
+     * @return string|boolean
      */
     public function render_feed(\templatable $feed) {
         $data = $feed->export_for_template($this);
@@ -65,7 +65,7 @@ class renderer extends \plugin_renderer_base {
      * Render an RSS feeds block
      *
      * @param \templatable $block
-     * @return string
+     * @return string|boolean
      */
     public function render_block(\templatable $block) {
         $data = $block->export_for_template($this);
@@ -76,8 +76,8 @@ class renderer extends \plugin_renderer_base {
     /**
      * Render the block footer
      *
-     * @param \templatable $footer
-     * @return string
+     * @param templatable $footer
+     * @return string|boolean
      */
     public function render_footer(\templatable $footer) {
         $data = $footer->export_for_template($this);

@@ -3,7 +3,6 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\Drawing as SharedDrawing;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -35,8 +34,8 @@ class Drawing extends WriterPart
 
         // xdr:wsDr
         $objWriter->startElement('xdr:wsDr');
-        $objWriter->writeAttribute('xmlns:xdr', Namespaces::SPREADSHEET_DRAWING);
-        $objWriter->writeAttribute('xmlns:a', Namespaces::DRAWINGML);
+        $objWriter->writeAttribute('xmlns:xdr', 'http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing');
+        $objWriter->writeAttribute('xmlns:a', 'http://schemas.openxmlformats.org/drawingml/2006/main');
 
         // Loop through images and write drawings
         $i = 1;
@@ -67,7 +66,7 @@ class Drawing extends WriterPart
         }
 
         // unparsed AlternateContent
-        $unparsedLoadedData = $worksheet->getParentOrThrow()->getUnparsedLoadedData();
+        $unparsedLoadedData = $worksheet->getParent()->getUnparsedLoadedData();
         if (isset($unparsedLoadedData['sheets'][$worksheet->getCodeName()]['drawingAlternateContents'])) {
             foreach ($unparsedLoadedData['sheets'][$worksheet->getCodeName()]['drawingAlternateContents'] as $drawingAlternateContent) {
                 $objWriter->writeRaw($drawingAlternateContent);
@@ -160,10 +159,10 @@ class Drawing extends WriterPart
 
         $objWriter->startElement('a:graphic');
         $objWriter->startElement('a:graphicData');
-        $objWriter->writeAttribute('uri', Namespaces::CHART);
+        $objWriter->writeAttribute('uri', 'http://schemas.openxmlformats.org/drawingml/2006/chart');
         $objWriter->startElement('c:chart');
-        $objWriter->writeAttribute('xmlns:c', Namespaces::CHART);
-        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
+        $objWriter->writeAttribute('xmlns:c', 'http://schemas.openxmlformats.org/drawingml/2006/chart');
+        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
         $objWriter->writeAttribute('r:id', 'rId' . $relationId);
         $objWriter->endElement();
         $objWriter->endElement();
@@ -266,7 +265,7 @@ class Drawing extends WriterPart
 
             // a:blip
             $objWriter->startElement('a:blip');
-            $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
+            $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
             $objWriter->writeAttribute('r:embed', 'rId' . $relationId);
             $objWriter->endElement();
 
@@ -363,9 +362,9 @@ class Drawing extends WriterPart
 
         // xml
         $objWriter->startElement('xml');
-        $objWriter->writeAttribute('xmlns:v', Namespaces::URN_VML);
-        $objWriter->writeAttribute('xmlns:o', Namespaces::URN_MSOFFICE);
-        $objWriter->writeAttribute('xmlns:x', Namespaces::URN_EXCEL);
+        $objWriter->writeAttribute('xmlns:v', 'urn:schemas-microsoft-com:vml');
+        $objWriter->writeAttribute('xmlns:o', 'urn:schemas-microsoft-com:office:office');
+        $objWriter->writeAttribute('xmlns:x', 'urn:schemas-microsoft-com:office:excel');
 
         // o:shapelayout
         $objWriter->startElement('o:shapelayout');
@@ -559,7 +558,7 @@ class Drawing extends WriterPart
         }
 
         $objWriter->startElement('a:hlinkClick');
-        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
+        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
         $objWriter->writeAttribute('r:id', 'rId' . $hlinkClickId);
         $objWriter->endElement();
     }

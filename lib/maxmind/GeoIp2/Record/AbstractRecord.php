@@ -6,9 +6,6 @@ namespace GeoIp2\Record;
 
 abstract class AbstractRecord implements \JsonSerializable
 {
-    /**
-     * @var array<string, mixed>
-     */
     private $record;
 
     /**
@@ -21,8 +18,6 @@ abstract class AbstractRecord implements \JsonSerializable
 
     /**
      * @ignore
-     *
-     * @return mixed
      */
     public function __get(string $attr)
     {
@@ -31,22 +26,20 @@ abstract class AbstractRecord implements \JsonSerializable
 
         if ($this->__isset($attr)) {
             return $this->record[$key];
-        }
-        if ($this->validAttribute($attr)) {
+        } elseif ($this->validAttribute($attr)) {
             if (preg_match('/^is_/', $key)) {
                 return false;
             }
 
             return null;
         }
-
         throw new \RuntimeException("Unknown attribute: $attr");
     }
 
     public function __isset(string $attr): bool
     {
-        return $this->validAttribute($attr)
-             && isset($this->record[$this->attributeToKey($attr)]);
+        return $this->validAttribute($attr) &&
+             isset($this->record[$this->attributeToKey($attr)]);
     }
 
     private function attributeToKey(string $attr): string
@@ -56,7 +49,6 @@ abstract class AbstractRecord implements \JsonSerializable
 
     private function validAttribute(string $attr): bool
     {
-        // @phpstan-ignore-next-line
         return \in_array($attr, $this->validAttributes, true);
     }
 

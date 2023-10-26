@@ -27,7 +27,6 @@ if (!class_exists('Google_Client')) {
  *
  * @author Chris Chabot <chabotc@google.com>
  */
-#[AllowDynamicProperties]
 class Google_Cache_File extends Google_Cache_Abstract
 {
   const MAX_LOCK_RETRIES = 10;

@@ -278,11 +278,6 @@ class core_upgrade_time {
 function upgrade_set_timeout($max_execution_time=300) {
     global $CFG;
 
-    // Support outageless upgrades.
-    if (defined('CLI_UPGRADE_RUNNING') && CLI_UPGRADE_RUNNING) {
-        return;
-    }
-
     if (!isset($CFG->upgraderunning) or $CFG->upgraderunning < time()) {
         $upgraderunning = get_config(null, 'upgraderunning');
     } else {
@@ -513,20 +508,6 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
-        // Removed in 4.3.
-        '/badges/ajax.php',
-        '/course/editdefaultcompletion.php',
-        '/grade/amd/src/searchwidget/group.js',
-        '/lib/behat/extension/Moodle/BehatExtension/Locator/FilesystemSkipPassedListLocator.php',
-        '/lib/classes/task/legacy_plugin_cron_task.php',
-        '/mod/lti/ajax.php',
-        '/pix/f/archive.png',
-        '/user/repository.php',
-        // Removed in 4.2.
-        '/admin/auth_config.php',
-        '/auth/yui/passwordunmask/passwordunmask.js',
-        '/lib/spout/readme_moodle.txt',
-        '/lib/yui/src/tooltip/js/tooltip.js',
         // Removed in 4.1.
         '/mod/forum/classes/task/refresh_forum_post_counts.php',
         '/user/amd/build/participantsfilter.min.js',
@@ -1175,7 +1156,7 @@ function upgrade_plugins_blocks($startcallback, $endcallback, $verbose) {
 /**
  * Log_display description function used during install and upgrade.
  *
- * @param string $component name of component (moodle, etc.)
+ * @param string $component name of component (moodle, mod_assignment, etc.)
  * @return void
  */
 function log_update_descriptions($component) {
@@ -1232,7 +1213,7 @@ function log_update_descriptions($component) {
 
 /**
  * Web service discovery function used during install and upgrade.
- * @param string $component name of component (moodle, etc.)
+ * @param string $component name of component (moodle, mod_assignment, etc.)
  * @return void
  */
 function external_update_descriptions($component) {
@@ -1241,7 +1222,8 @@ function external_update_descriptions($component) {
     $defpath = core_component::get_component_directory($component).'/db/services.php';
 
     if (!file_exists($defpath)) {
-        \core_external\util::delete_service_descriptions($component);
+        require_once($CFG->dirroot.'/lib/externallib.php');
+        external_delete_descriptions($component);
         return;
     }
 
@@ -1603,10 +1585,7 @@ function upgrade_started($preinstall=false) {
         ignore_user_abort(true);
         core_shutdown_manager::register_function('upgrade_finished_handler');
         upgrade_setup_debug(true);
-        // Support no-maintenance upgrades.
-        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
-            set_config('upgraderunning', time() + 300);
-        }
+        set_config('upgraderunning', time()+300);
         $started = true;
     }
 }
@@ -1890,11 +1869,9 @@ function upgrade_core($version, $verbose) {
     require_once($CFG->libdir.'/db/upgrade.php');    // Defines upgrades
 
     try {
-        // If we are in maintenance, we can purge all our caches here.
-        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
-            cache_helper::purge_all(true);
-            purge_all_caches();
-        }
+        // Reset caches before any output.
+        cache_helper::purge_all(true);
+        purge_all_caches();
 
         // Upgrade current language pack if we can
         upgrade_language_pack();
@@ -1929,12 +1906,10 @@ function upgrade_core($version, $verbose) {
         core_upgrade_time::record_detail('cache_helper::update_definitions');
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
-            cache_helper::purge_all(true);
-            core_upgrade_time::record_detail('cache_helper::purge_all');
-            purge_all_caches();
-            core_upgrade_time::record_detail('purge_all_caches');
-        }
+        cache_helper::purge_all(true);
+        core_upgrade_time::record_detail('cache_helper::purge_all');
+        purge_all_caches();
+        core_upgrade_time::record_detail('purge_all_caches');
 
         // Clean up contexts - more and more stuff depends on existence of paths and contexts
         context_helper::cleanup_instances();
@@ -1946,9 +1921,6 @@ function upgrade_core($version, $verbose) {
         $syscontext = context_system::instance();
         $syscontext->mark_dirty();
         core_upgrade_time::record_detail('context_system::mark_dirty');
-
-        // Prompt admin to register site. Reminder flow handles sites already registered, so admin won't be prompted if registered.
-        set_config('registrationpending', true);
 
         print_upgrade_part_end('moodle', false, $verbose);
     } catch (Exception $ex) {
@@ -1971,11 +1943,9 @@ function upgrade_noncore($verbose) {
 
     // upgrade all plugins types
     try {
-        // Reset caches before any output, unless we are not in maintenance.
-        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
-            cache_helper::purge_all(true);
-            purge_all_caches();
-        }
+        // Reset caches before any output.
+        cache_helper::purge_all(true);
+        purge_all_caches();
 
         $plugintypes = core_component::get_plugin_types();
         upgrade_started();
@@ -1999,16 +1969,12 @@ function upgrade_noncore($verbose) {
         // Mark the site as upgraded.
         set_config('allversionshash', core_component::get_all_versions_hash());
         core_upgrade_time::record_detail('core_component::get_all_versions_hash');
-        set_config('allcomponenthash', core_component::get_all_component_hash());
-        core_upgrade_time::record_detail('core_component::get_all_component_hash');
 
         // Purge caches again, just to be sure we arn't holding onto old stuff now.
-        if (!defined('CLI_UPGRADE_RUNNING') || !CLI_UPGRADE_RUNNING) {
-            cache_helper::purge_all(true);
-            core_upgrade_time::record_detail('cache_helper::purge_all');
-            purge_all_caches();
-            core_upgrade_time::record_detail('purge_all_caches');
-        }
+        cache_helper::purge_all(true);
+        core_upgrade_time::record_detail('cache_helper::purge_all');
+        purge_all_caches();
+        core_upgrade_time::record_detail('purge_all_caches');
 
         // Only display the final 'Success' if we also showed the heading.
         core_upgrade_time::record_end($CFG->debugdeveloper);
@@ -2559,7 +2525,7 @@ function check_igbinary322_version(environment_results $result) {
 }
 
 /**
- * This function checks that the database prefix ($CFG->prefix) is <= xmldb_table::PREFIX_MAX_LENGTH
+ * This function checks that the database prefix ($CFG->prefix) is <= 10
  *
  * @param environment_results $result
  * @return environment_results|null updated results object, or null if the prefix check is passing ok.
@@ -2567,10 +2533,9 @@ function check_igbinary322_version(environment_results $result) {
 function check_db_prefix_length(environment_results $result) {
     global $CFG;
 
-    require_once($CFG->libdir.'/ddllib.php');
     $prefixlen = strlen($CFG->prefix) ?? 0;
-    if ($prefixlen > xmldb_table::PREFIX_MAX_LENGTH) {
-        $parameters = (object)['current' => $prefixlen, 'maximum' => xmldb_table::PREFIX_MAX_LENGTH];
+    if ($prefixlen > 10) {
+        $parameters = (object)['current' => $prefixlen, 'maximum' => 10];
         $result->setFeedbackStr(['dbprefixtoolong', 'admin', $parameters]);
         $result->setInfo('db prefix too long');
         $result->setStatus(false);
@@ -2852,22 +2817,20 @@ function check_xmlrpc_usage(environment_results $result): ?environment_results {
  * @return environment_results|null
  */
 function check_mod_assignment(environment_results $result): ?environment_results {
-    global $CFG, $DB;
+    global $DB, $CFG;
 
-    if (!file_exists("{$CFG->dirroot}/mod/assignment/version.php")) {
-        // Check for mod_assignment instances.
-        if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
-            $result->setInfo('Assignment 2.2 is in use');
-            $result->setFeedbackStr('modassignmentinuse');
-            return $result;
-        }
+    // Check the number of records.
+    if ($DB->get_manager()->table_exists('assignment') && $DB->count_records('assignment') > 0) {
+        $result->setInfo('Assignment 2.2 is in use');
+        $result->setFeedbackStr('modassignmentinuse');
+        return $result;
+    }
 
-        // Check for mod_assignment subplugins.
-        if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
-            $result->setInfo('Assignment 2.2 subplugins present');
-            $result->setFeedbackStr('modassignmentsubpluginsexist');
-            return $result;
-        }
+    // Check for mod_assignment subplugins.
+    if (is_dir($CFG->dirroot . '/mod/assignment/type')) {
+        $result->setInfo('Assignment 2.2 subplugins present');
+        $result->setFeedbackStr('modassignmentsubpluginsexist');
+        return $result;
     }
 
     return null;

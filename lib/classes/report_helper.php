@@ -25,6 +25,7 @@
 
 namespace core;
 use moodle_url;
+use url_select;
 
 /**
  * A helper class with static methods to help report plugins
@@ -74,20 +75,12 @@ class report_helper {
                 }
 
             }
-            $selectmenu = new \core\output\select_menu('reporttype', $menuarray, $activeurl);
-            $selectmenu->set_label(get_string('reporttype'), ['class' => 'sr-only']);
-            $options = \html_writer::tag(
-                'div',
-                $OUTPUT->render_from_template('core/tertiary_navigation_selector', $selectmenu->export_for_template($OUTPUT)),
-                ['class' => 'row pb-3']
-            );
-            echo \html_writer::tag(
-                'div',
-                $options,
-                ['class' => 'tertiary-navigation full-width-bottom-border ml-0', 'id' => 'tertiary-navigation']);
-        } else {
-            echo $OUTPUT->heading($pluginname, 2, 'mb-3');
+
+            $select = new url_select($menuarray, $activeurl, null, 'choosecoursereport');
+            $select->set_label(get_string('reporttype'), ['class' => 'accesshide']);
+            echo \html_writer::tag('div', $OUTPUT->render($select), ['class' => 'tertiary-navigation']);
         }
+        echo $OUTPUT->heading($pluginname, 2, 'mb-3');
     }
 
     /**

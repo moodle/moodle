@@ -81,6 +81,16 @@ class subscribers_viewed extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'forum', 'view subscribers', 'subscribers.php?id=' . $this->other['forumid'],
+            $this->other['forumid'], $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

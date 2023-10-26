@@ -66,7 +66,7 @@ class file_system_test extends \advanced_testcase {
      * @param   string  $filename The file name to use in the stored_file
      * @param   array   $mockedmethods A list of methods you intend to override
      *                  If no methods are specified, only abstract functions are mocked.
-     * @return \stored_file
+     * @return stored_file
      */
     protected function get_stored_file($filecontent, $filename = null, $mockedmethods = []) {
         $contenthash = \file_storage::hash_from_string($filecontent);
@@ -1078,25 +1078,6 @@ class file_system_test extends \advanced_testcase {
     }
 
     /**
-     * Ensure that get_content_file_handle returns a valid file handle.
-     *
-     * @covers ::get_psr_stream
-     */
-    public function test_get_psr_stream(): void {
-        $file = $this->get_stored_file('');
-
-        $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
-        $fs->method('get_remote_path_from_storedfile')
-            ->willReturn(__FILE__);
-
-        $stream = $fs->get_psr_stream($file);
-        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
-        $this->assertEquals(file_get_contents(__FILE__), $stream->getContents());
-        $this->assertFalse($stream->isWritable());
-        $stream->close();
-    }
-
-    /**
      * Test that mimetype_from_hash returns the correct mimetype with
      * a file whose filename suggests mimetype.
      *
@@ -1267,3 +1248,4 @@ class file_system_test extends \advanced_testcase {
         ];
     }
 }
+

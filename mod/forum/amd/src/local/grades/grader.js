@@ -27,12 +27,13 @@ import {createLayout as createFullScreenWindow} from 'mod_forum/local/layout/ful
 import getGradingPanelFunctions from './local/grader/gradingpanel';
 import {add as addToast} from 'core/toast';
 import {addNotification} from 'core/notification';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {failedUpdate} from 'core_grades/grades/grader/gradingpanel/normalise';
-import {addIconToContainerWithPromise, getIcon as getSpinner} from 'core/loadingicon';
+import {addIconToContainerWithPromise} from 'core/loadingicon';
 import {debounce} from 'core/utils';
 import {fillInitialValues} from 'core_grades/grades/grader/gradingpanel/comparison';
-import Modal from 'core/modal_cancel';
+import * as Modal from 'core/modal_factory';
+import * as ModalEvents from 'core/modal_events';
 import {subscribe} from 'core/pubsub';
 import DrawerEvents from 'core/drawer_events';
 
@@ -495,21 +496,40 @@ export const view = async(getGradeForUser, userid, moduleName, {
         Modal.create({
             title: moduleName,
             large: true,
-            removeOnClose: true,
-            returnElement: focusOnClose,
-            show: true,
-            body: getSpinner(),
+            type: Modal.types.CANCEL
         }),
     ]);
 
-    modal.setBodyContent(Templates.renderForPromise('mod_forum/local/grades/view_grade', userGrade));
+    const spinner = addIconToContainerWithPromise(modal.getRoot());
+
+    // Handle hidden event.
+    modal.getRoot().on(ModalEvents.hidden, function() {
+        // Destroy when hidden.
+        modal.destroy();
+        if (focusOnClose) {
+            try {
+                focusOnClose.focus();
+            } catch (e) {
+                // eslint-disable-line
+            }
+        }
+    });
+
+    modal.show();
+    const output = document.createElement('div');
+    const {html, js} = await Templates.renderForPromise('mod_forum/local/grades/view_grade', userGrade);
+    Templates.replaceNodeContents(output, html, js);
 
     // Note: We do not use await here because it messes with the Modal transitions.
-    const [{html, js}] = await Promise.all([modal.getBodyPromise(), renderGradeTemplate(userGrade)]);
-    const gradeReplace = modal.getRoot()[0].querySelector('[data-region="grade-template"]');
-    Templates.replaceNodeContents(gradeReplace, html, js);
+    const [gradeHTML, gradeJS] = await renderGradeTemplate(userGrade);
+    const gradeReplace = output.querySelector('[data-region="grade-template"]');
+    Templates.replaceNodeContents(gradeReplace, gradeHTML, gradeJS);
+    modal.setBody(output.outerHTML);
+    spinner.resolve();
 };
 
-const renderGradeTemplate = (userGrade) => Templates.renderForPromise(userGrade.templatename, userGrade.grade);
-
+const renderGradeTemplate = async(userGrade) => {
+    const {html, js} = await Templates.renderForPromise(userGrade.templatename, userGrade.grade);
+    return [html, js];
+};
 export {getGradingPanelFunctions};

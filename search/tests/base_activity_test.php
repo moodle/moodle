@@ -36,7 +36,7 @@ class base_activity_test extends \advanced_testcase {
     protected $search = null;
 
     /**
-     * @var \core_search_generator Instace of core_search_generator.
+     * @var Instace of core_search_generator.
      */
     protected $generator = null;
 
@@ -45,10 +45,10 @@ class base_activity_test extends \advanced_testcase {
      */
     protected $engine = null;
 
-    /** @var \context[] Array of test contexts */
+    /** @var context[] Array of test contexts */
     protected $contexts;
 
-    /** @var \stdClass[] Array of test forum objects */
+    /** @var stdClass[] Array of test forum objects */
     protected $forums;
 
     public function setUp(): void {
@@ -256,7 +256,7 @@ class base_activity_test extends \advanced_testcase {
     /**
      * Utility function to convert recordset to array for testing.
      *
-     * @param \moodle_recordset $rs Recordset to convert
+     * @param moodle_recordset $rs Recordset to convert
      * @return array Array indexed by number (0, 1, 2, ...)
      */
     protected static function recordset_to_indexed_array(\moodle_recordset $rs) {

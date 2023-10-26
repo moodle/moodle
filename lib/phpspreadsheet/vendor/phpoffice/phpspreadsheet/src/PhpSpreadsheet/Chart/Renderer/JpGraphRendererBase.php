@@ -434,33 +434,12 @@ abstract class JpGraphRendererBase implements IRenderer
 
         //    Loop through each data series in turn
         for ($i = 0; $i < $seriesCount; ++$i) {
-            $plotCategoryByIndex = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotCategoryByIndex($i);
-            if ($plotCategoryByIndex === false) {
-                $plotCategoryByIndex = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotCategoryByIndex(0);
-            }
-            $dataValuesY = $plotCategoryByIndex->getDataValues();
+            $dataValuesY = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotCategoryByIndex($i)->getDataValues();
             $dataValuesX = $this->chart->getPlotArea()->getPlotGroupByIndex($groupID)->getPlotValuesByIndex($i)->getDataValues();
 
-            $redoDataValuesY = true;
-            if ($bubble) {
-                if (!$bubbleSize) {
-                    $bubbleSize = '10';
-                }
-                $redoDataValuesY = false;
-                foreach ($dataValuesY as $dataValueY) {
-                    if (!is_int($dataValueY) && !is_float($dataValueY)) {
-                        $redoDataValuesY = true;
-
-                        break;
-                    }
-                }
+            foreach ($dataValuesY as $k => $dataValueY) {
+                $dataValuesY[$k] = $k;
             }
-            if ($redoDataValuesY) {
-                foreach ($dataValuesY as $k => $dataValueY) {
-                    $dataValuesY[$k] = $k;
-                }
-            }
-            //var_dump($dataValuesY, $dataValuesX, $bubbleSize);
 
             $seriesPlot = new ScatterPlot($dataValuesX, $dataValuesY);
             if ($scatterStyle == 'lineMarker') {
@@ -504,7 +483,7 @@ abstract class JpGraphRendererBase implements IRenderer
 
             $dataValues = [];
             foreach ($dataValuesY as $k => $dataValueY) {
-                $dataValues[$k] = is_array($dataValueY) ? implode(' ', array_reverse($dataValueY)) : $dataValueY;
+                $dataValues[$k] = implode(' ', array_reverse($dataValueY));
             }
             $tmp = array_shift($dataValues);
             $dataValues[] = $tmp;

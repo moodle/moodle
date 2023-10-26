@@ -58,6 +58,9 @@ class core_event_course_module_viewed_testcase extends advanced_testcase {
         $event = reset($result);
         $sink->close();
 
+        // Test event data.
+        $legacydata = array($course->id, 'feedback', 'view', 'view.php?id=' . $cm->id, $feed->id, $cm->id);
+        $this->assertEventLegacyLogData($legacydata, $event);
         $this->assertSame('feedback', $event->objecttable);
         $url = new moodle_url('/mod/feedback/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());

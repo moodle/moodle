@@ -74,6 +74,8 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($messageid, $event->objectid);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertEquals($user1->id, $event->userid);
+        $expected = array($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id, $user1->id);
+        $this->assertEventLegacyLogData($expected, $event);
 
         // Send a messaging from the first user. We DO NOT pass the CM to chat_send_chatmessage() this time.
         // This ensures that the event triggered when sending a message is filled with the correct information.
@@ -87,6 +89,9 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($messageid, $event->objectid);
         $this->assertEquals($user2->id, $event->relateduserid);
         $this->assertEquals($user2->id, $event->userid);
+        $expected = array($course->id, 'chat', 'talk', "view.php?id=$cm->id", $chat->id, $cm->id, $user2->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
 
         // Sending a message from the system should not trigger any event.
         $sink->clear();
@@ -128,6 +133,9 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(5678, $event->other['end']);
         $this->assertEquals($chat->id, $event->objectid);
         $this->assertEquals($chat, $event->get_record_snapshot('chat', $chat->id));
+        $expected = array($course->id, 'chat', 'report', "report.php?id=$chat->cmid", $chat->id, $chat->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_instance_list_viewed() {
@@ -150,6 +158,9 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_chat\event\course_module_instance_list_viewed', $event);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals(\context_course::instance($course->id), $event->get_context());
+        $expected = array($course->id, 'chat', 'view all', "index.php?id=$course->id", '');
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     public function test_course_module_viewed() {
@@ -168,6 +179,9 @@ class events_test extends \advanced_testcase {
         $event->add_record_snapshot('chat', $chat);
         $event->trigger();
 
+        $expected = array($course->id, 'chat', 'view', "view.php?id=$cm->id", $chat->id, $cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/mod/chat/view.php', array('id' => $cm->id));
         $this->assertEquals($url, $event->get_url());
         $event->get_name();

@@ -27,8 +27,7 @@ H5PEditor.language.core = {
   addEntity: ' :entity 더하기',
   tooLong: '영역 값이 너무 김. 최대 문자 또는 그 이하를 포함해야 함',
   invalidFormat: '영역 값에 금지된 형식 혹은 금지된 문자가 포함됨.',
-  confirmChangeLibrary:
-    '이 작업을 수행하면 현재 콘텐츠 유형으로 수행된 모든 작업이 손실됨. 콘텐츠 유형을 변경하시겠습니까?',
+  confirmChangeLibrary: '이 작업을 수행하면 현재 콘텐츠 유형으로 수행된 모든 작업이 손실됨. 콘텐츠 유형을 변경하시겠습니까?',
   commonFields: '텍스트 재정의 및 변환',
   commonFieldsDescription: '여기에서 이 콘텐츠의 설정을 편집하거나 텍스트를 변환할 수 있다.',
   uploading: '업로드 중, 잠시 기다리십시오...',
@@ -55,8 +54,7 @@ H5PEditor.language.core = {
   enterVideoTitle: '유튜브 게시 링크 또는 기타 비디오 소스 URL 붙여넣기',
   uploadAudioTitle: '오디오 파일 업로드',
   uploadVideoTitle: '비디오 파일 업로드',
-  addVideoDescription:
-    'H5P는 비메오 프로처럼 mp4, webm 또는 ogv로 포맷된 모든 외부 비디오 소스를 지원하며, 유튜브 링크를 지원함.',
+  addVideoDescription: 'H5P는 비메오 프로처럼 mp4, webm 또는 ogv로 포맷된 모든 외부 비디오 소스를 지원하며, 유튜브 링크를 지원함.',
   insert: '삽입',
   cancel: '취소',
   height: '높이',
@@ -76,8 +74,7 @@ H5PEditor.language.core = {
   uploadTabLabel: '업로드',
   uploadPlaceholder: '파일 선택 없음',
   uploadInstructionsTitle: 'H5P 파일 업로드',
-  uploadInstructionsContent:
-    '<a href="https://h5p.org/content-types-and-applications" target="blank"의 예로부터 시작할 수 있습니다.',
+  uploadInstructionsContent: '<a href="https://h5p.org/content-types-and-applications" target="blank"의 예로부터 시작할 수 있습니다.',
   uploadFileButtonLabel: '파일 업로드',
   uploadFileButtonChangeLabel: '파일 바꾸기',
   uploadingThrobber: '업로드 중...',
@@ -87,10 +84,11 @@ H5PEditor.language.core = {
   h5pFileWrongExtensionTitle: '선택한 파일을 업로드할 수 없음',
   h5pFileWrongExtensionContent: '.h5p 확장명을 가진 파일만 허용됨.',
   h5pFileValidationFailedTitle: 'H5P 파일의 유효성을 검사할 수 없음.',
-  h5pFileValidationFailedContent:
-    '업로드된 H5P에 유효한 H5P 콘텐츠가 포함되어 있는지 확인하십시오. H5P 파일은 라이브러리를 포함하고 있을 때 H5P 라이브러리 페이지를 통해 업로드 되어야 함.',
+  h5pFileValidationFailedContent: '업로드된 H5P에 유효한 H5P 콘텐츠가 포함되어 있는지 확인하십시오. H5P' +
+  ' 파일은 라이브러리를 포함하고 있을 때 H5P 라이브러리 페이지를 통해 업로드 되어야 함.' ,
   h5pFileUploadServerErrorTitle: 'H5P 파일을 업로드할 수 없음',
-  h5pFileUploadServerErrorContent: '예상하지 않은 오류가 발생함. 서버 오류 로그 확인 더 자세한 내용.',
+  h5pFileUploadServerErrorContent: '예상하지 않은 오류가 발생함. 서버 오류 로그 확인' +
+  ' 더 자세한 내용.',
   contentTypeSectionAll: '모든 콘텐츠 유형',
   searchResults: '검색 결과',
   contentTypeSearchFieldPlaceholder: '콘텐츠 유형 검색',
@@ -130,14 +128,13 @@ H5PEditor.language.core = {
   currentMenuSelected: '현재 선택',
   errorCommunicatingHubTitle: '허브와 통신할 수 없음.',
   errorCommunicatingHubContent: '에러가 발생함. 다시 시도하십시오.',
-  warningNoContentTypesInstalled: '설치된 콘텐츠 유형이 없습니다.',
+  warningNoContentTypesInstalled: "설치된 콘텐츠 유형이 없습니다.",
   warningChangeBrowsingToSeeResults: '설치할 수 있는 모든 콘텐츠 유형 목록을 보려면 <em>All</em>(모두)을 클릭하십시오.',
   warningUpdateAvailableTitle: '새로운 버전의 :content 유형을 사용할 수 있음',
   warningUpdateAvailableBody: '더 나은 경험을 위해 최신 버전으로 업데이트',
-  licenseDescription:
-    '이 라이선스의 일부 기능은 다음과 같다. 원래 라이센스 텍스트를 읽으려면 위의 정보 아이콘을 클릭하십시오.',
-  licenseModalTitle: '라이선스 세부 정보',
-  licenseModalSubtitle: '적절한 사용에 대한 정보를 보려면 라이선스를 선택하십시오.',
+  licenseDescription: '이 라이선스의 일부 기능은 다음과 같다. 원래 라이센스 텍스트를 읽으려면 위의 정보 아이콘을 클릭하십시오.',
+  licenseModalTitle: '라이센스 세부 정보',
+  licenseModalSubtitle: '적절한 사용에 대한 정보를 보려면 라이센스를 선택하십시오.',
   licenseUnspecified: '지정되지 않음',
   licenseCanUseCommercially: '상업적으로 사용할 수 있음',
   licenseCanModify: '수정 가능',
@@ -155,15 +152,12 @@ H5PEditor.language.core = {
   screenshots: '스크린샷',
   reloadButtonLabel: '재로드',
   videoQuality: '비디오 품질 라벨',
-  videoQualityDescription:
-    '이 라벨은 사용자가 동영상의 현재 품질을 식별하는 데 도움이 됨. 예를 들어 1080p, 720p, HD 또는 Mobile',
+  videoQualityDescription: '이 라벨은 사용자가 동영상의 현재 품질을 식별하는 데 도움이 됨. 예를 들어 1080p, 720p, HD 또는 Mobile',
   videoQualityDefaultLabel: '품질 :index',
   noContentTypesAvailable: '사용할 수 있는 콘텐츠 유형 없음',
-  noContentTypesAvailableDesc:
-    '당신의 사이트는 H5P.org에 접속하여 사용 가능한 콘텐츠 유형을 나열하는 데 어려움을 겪고 있음.',
+  noContentTypesAvailableDesc: '당신의 사이트는 H5P.org에 접속하여 사용 가능한 콘텐츠 유형을 나열하는 데 어려움을 겪고 있음.',
   contentTypeCacheOutdated: '콘텐츠 유형 목록이 오래됨',
-  contentTypeCacheOutdatedDesc:
-    '당신의 사이트는 컨텐츠 유형 업데이트를 확인하기 위해 H5P.org에 연결하는 데 어려움을 겪고 있음. 새로운 콘텐츠 유형을 업데이트하거나 설치하지 못할 수 있다.',
+  contentTypeCacheOutdatedDesc: '당신의 사이트는 컨텐츠 유형 업데이트를 확인하기 위해 H5P.org에 연결하는 데 어려움을 겪고 있음. 새로운 콘텐츠 유형을 업데이트하거나 설치하지 못할 수 있다.',
   tryAgain: '재시도',
   getHelp: '도움',
   untitled: '제목없음 :libraryTitle',
@@ -172,29 +166,26 @@ H5PEditor.language.core = {
   addTitle: '제목추가',
   usedForSearchingReportsAndCopyrightInformation: '검색, 보고서 및 저작권 정보에 사용됨',
   metadataSharingAndLicensingInfo: '메타데이터 (공유 및 라이센싱 정보)',
-  fillInTheFieldsBelow: '아래 영역에 입력',
+  fillInTheFieldsBelow : '아래 영역에 입력',
   saveMetadata: '메타데이터 저장',
   addAuthor: '작성자 저장',
   confirmRemoveAuthor: '이 작성자를 제거하시겠습니까?',
   addNewChange: '새 변화 추가',
   confirmDeleteChangeLog: '이 변경 로그 항목을 삭제하시겠습니까?',
-  changelogDescription:
-    '일부 라이선스는 원본 작업에 대한 변경 사항을 요구하거나 파생 모델을 기록하여 표시해야 한다. 라이센싱상의 이유로 변경사항을 여기에 기록하거나 자신과 다른 사람이 이 콘텐츠에 대한 변경사항을 추적할 수 있도록 허용하십시오.',
+  changelogDescription: '일부 라이센스는 원본 작업에 대한 변경 사항을 요구하거나 파생 모델을 기록하여 표시해야 한다. 라이센싱상의 이유로 변경사항을 여기에 기록하거나 자신과 다른 사람이 이 콘텐츠에 대한 변경사항을 추적할 수 있도록 허용하십시오.',
   logThisChange: '변경 기록',
   newChangeHasBeenLogged: '새 변경 사항이 기록됨',
   loggedChanges: '변경 기록',
   noChangesHaveBeenLogged: '변경 사항이 기록되지 않음',
   errorHeader: '에러가 발생함',
-  errorCalculatingMaxScore:
-    '이 컨텐츠의 최대 점수를 계산할 수 없음. 최대 점수는 0으로 가정한다. 올바르지 않으면 관리자에게 문의하십시오.',
+  errorCalculatingMaxScore: '이 컨텐츠의 최대 점수를 계산할 수 없음. 최대 점수는 0으로 가정한다. 올바르지 않으면 관리자에게 문의하십시오.',
   maxScoreSemanticsMissing: '콘텐츠에서 기대되는 의미 있는 문장(semantics)를 찾을 수 없음.',
   copyButton: '복사',
   copiedButton: '복사완료',
   pasteButton: '붙여넣기',
   pasteAndReplaceButton: '붙여넣기 및 대체하기',
   pasteContent: '콘텐츠 대체하기',
-  confirmPasteContent:
-    '이 작업을 수행하면 현재 내용을 클립보드의 내용으로 바꿀 수 있음. 현재 내용은 손실됨. 계속하시겠습니까?',
+  confirmPasteContent: '이 작업을 수행하면 현재 내용을 클립보드의 내용으로 바꿀 수 있음. 현재 내용은 손실됨. 계속하시겠습니까?',
   confirmPasteButtonText: '콘텐츠 대체하기',
   copyToClipboard: 'H5P콘텐츠를 클립보드에 복사하기',
   copiedToClipboard: '콘텐츠가 클립보드로 복사되었습니다.',
@@ -204,10 +195,8 @@ H5PEditor.language.core = {
   pasteError: '클립보드에서 붙여넣을 수 없음',
   pasteContentNotSupported: 'H5P 클립보드의 콘텐츠는 이 컨텍스트에서 지원되지 않음',
   pasteContentRestricted: '클립보드의 콘텐츠가 이 사이트에서 제한됨',
-  pasteTooOld:
-    'H5P 클립보드의 콘텐츠는 이 컨텍스트(:local)에서 지원되는 것보다 낮은 버전(:clip)이며, 가능하면 붙여넣을 콘텐츠를 업그레이드한 후 다시 복사한 후 여기에 붙여 넣으십시오.',
-  pasteTooNew:
-    'H5P 클립보드의 콘텐츠는 이 컨텍스트에서 지원되는 것보다 더 높은 버전(:clip)이며, 가능하면 이 콘텐츠를 먼저 업그레이드한 다음 여기에 다시 붙여 넣으십시오.',
+  pasteTooOld: 'H5P 클립보드의 콘텐츠는 이 컨텍스트(:local)에서 지원되는 것보다 낮은 버전(:clip)이며, 가능하면 붙여넣을 콘텐츠를 업그레이드한 후 다시 복사한 후 여기에 붙여 넣으십시오.',
+  pasteTooNew: 'H5P 클립보드의 콘텐츠는 이 컨텍스트에서 지원되는 것보다 더 높은 버전(:clip)이며, 가능하면 이 콘텐츠를 먼저 업그레이드한 다음 여기에 다시 붙여 넣으십시오.',
   ok: 'OK',
   avTablistLabel: '삽입하기',
   tabTitleBasicFileUpload: '파일업로드',
@@ -220,12 +209,10 @@ H5PEditor.language.core = {
   language: '언어',
   noLanguagesSupported: '지원되는 언어 없음',
   changeLanguage: '언어를 :language 로 변경하시겠습니까?',
-  thisWillPotentially:
-    '이것은 잠재적으로 모든 텍스트와 변환을 재설정할 것이다. 이는 되돌릴 수 없고 콘텐츠 자체가 바뀌지 않을 것입니다. 계속하시겠습니까?',
+  thisWillPotentially: "이것은 잠재적으로 모든 텍스트와 변환을 재설정할 것이다. 이는 되돌릴 수 없고 콘텐츠 자체가 바뀌지 않을 것입니다. 계속하시겠습니까?",
   notAllTextsChanged: '모든 텍스트가 변경된 것은 아니며 :language 에 대한 부분적인 적용 범위만 있을 뿐임.',
-  contributeTranslations:
-    ':language 에 대한 번역을 완료하려면, <a href=":url" target="_new">contributing translations to H5P</a> (H5P 번역에 기여) 에 대해 배울 수 있음.',
-  unknownLibrary: "불행히도 선택한 콘텐츠 유형 '%lib'이(가) 이 시스템에 설치되지 않았음.",
+  contributeTranslations: ':language 에 대한 번역을 완료하려면, <a href=":url" target="_new">contributing translations to H5P</a> (H5P 번역에 기여) 에 대해 배울 수 있음.',
+  unknownLibrary: '불행히도 선택한 콘텐츠 유형 \'%lib\'이(가) 이 시스템에 설치되지 않았음.',
   proceedButtonLabel: '저장 진행',
   enterFullscreenButtonLabel: '전체화면',
   exitFullscreenButtonLabel: '전체화면 종료',
@@ -240,37 +227,44 @@ H5PEditor.language.core = {
   filterBy: '검색 조건',
   filter: '검색',
   filters: {
-    level: { dropdownLabel: '레벨', dialogHeader: '교육 레벨 선택', dialogButtonLabel: '교육 레벨에 따라 검색' },
+    level: {
+      dropdownLabel: '레벨',
+      dialogHeader: '교육 레벨 선택',
+      dialogButtonLabel: '교육 레벨에 따라 검색'
+    },
     language: {
       dropdownLabel: '언어',
       dialogHeader: '언어 선택',
       dialogButtonLabel: '언어에 따라 검색',
-      searchPlaceholder: '하나 이상의 언어 선택',
+      searchPlaceholder: '하나 이상의 언어 선택'
     },
     reviewed: {
       dropdownLabel: '검토됨',
       dialogHeader: '검토가 된 콘텐츠',
       dialogButtonLabel: '검색',
-      optionLabel: '검토된 내용만 표시',
+      optionLabel: '검토된 내용만 표시'
     },
     contentTypes: {
       dropdownLabel: '콘텐츠 유형',
       dialogHeader: '콘텐츠 유형 선택',
       dialogButtonLabel: '콘텐츠 유형 검색',
-      searchPlaceholder: '하나 이상의 콘텐츠 유형 선택',
+      searchPlaceholder: '하나 이상의 콘텐츠 유형 선택'
     },
     disciplines: {
       dropdownLabel: '과목',
       dialogHeader: '과목 선택',
       dialogButtonLabel: '과목 검색',
-      searchPlaceholder: '하나 이상의 과목 선택',
+      searchPlaceholder: '하나 이상의 과목 선택'
     },
     licenses: {
-      dropdownLabel: '라이선스',
+      dropdownLabel: '라이선츠',
       dialogHeader: '선호하는 사용 권한 선택',
       dialogButtonLabel: '라이선스에 따라 검색',
-      options: { modified: '수정할 수 있음', commercial: '상업적 사용 허용' },
-    },
+      options: {
+        modified: '수정할 수 있음',
+        commercial: '상업적 사용 허용'
+      }
+    }
   },
   clearFilters: '모든 검색 조건 지우기',
   contentSearchFieldPlaceholder: '콘텐츠 검색',
@@ -297,5 +291,5 @@ H5PEditor.language.core = {
   navigateToParent: '상위 탐색',
   a11yTitleShowLabel: 'AT 에 대한 라벨 표시',
   a11yTitleHideLabel: 'AT 에 대한 레이블 숨기기',
-  reuseSuccess: ':title 이 H5P 허브에서 성공적으로 가져오기 되었습니다.',
+  reuseSuccess: ':title was successfully imported from the H5P Hub.'
 };

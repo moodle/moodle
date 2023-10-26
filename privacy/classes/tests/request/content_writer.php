@@ -231,7 +231,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * Get all data within the subcontext.
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
-     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
+     * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_data(array $subcontext = []) {
         return $this->fetch_data_root($this->data, $subcontext);
@@ -263,7 +263,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * Get all metadata within the subcontext.
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
-     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
+     * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_all_metadata(array $subcontext = []) {
         return $this->fetch_data_root($this->metadata, $subcontext);
@@ -275,7 +275,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $key        The metadata to be fetched within the context + subcontext.
      * @param   boolean         $valueonly  Whether to fetch only the value, rather than the value + description.
-     * @return  \stdClass|array|null        The metadata as a series of keys to value + description objects.
+     * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_metadata(array $subcontext, $key, $valueonly = true) {
         $keys = $this->get_all_metadata($subcontext);
@@ -312,7 +312,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   array           $subcontext The location within the current context that this data belongs.
      * @param   string          $filename   The name of the intended filename.
-     * @return  \stdClass|array             The metadata as a series of keys to value + description objects.
+     * @return  array                       The metadata as a series of keys to value + descrition objects.
      */
     public function get_related_data(array $subcontext = [], $filename = null) {
         $current = $this->fetch_data_root($this->relateddata, $subcontext);
@@ -510,7 +510,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      * @param   \stdClass   $base The base to use - e.g. $this->data
      * @param   array       $subcontext The subcontext to fetch
      * @param   int         $temporarycontextid A temporary context ID to use for the fetch.
-     * @return  \stdClass|array
+     * @return  array
      */
     protected function fetch_root($base, $subcontext, $temporarycontextid = null) {
         $contextid = !empty($temporarycontextid) ? $temporarycontextid : $this->context->id;
@@ -540,7 +540,7 @@ class content_writer implements \core_privacy\local\request\content_writer {
      *
      * @param   \stdClass   $base The base to use - e.g. $this->data
      * @param   array       $subcontext The subcontext to fetch
-     * @return  \stdClass|array
+     * @return  array
      */
     protected function fetch_data_root($base, $subcontext) {
         $root = $this->fetch_root($base, $subcontext);

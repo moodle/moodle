@@ -226,8 +226,8 @@ class editor extends \texteditor {
             M.util.js_pending('editor_tiny/editor');
             require(['editor_tiny/editor'], (Tiny) => {
                 Tiny.setupForElementId({
-                    elementId: "{$elementid}",
-                    options: {$configoptions},
+                    elementId: "${elementid}",
+                    options: ${configoptions},
                 });
                 M.util.js_complete('editor_tiny/editor');
             });

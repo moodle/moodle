@@ -25,15 +25,12 @@ define([
     'core/ajax',
     'core/notification',
     'core/str',
-    'core/modal_save_cancel',
+    'core/modal_factory',
     'core/modal_events',
     'core/templates',
     'tool_dataprivacy/data_request_modal',
-    'tool_dataprivacy/events',
-    'tool_dataprivacy/selectedcourses'
-], function(
-    $, Ajax, Notification, Str, ModalSaveCancel, ModalEvents, Templates, ModalDataRequest, DataPrivacyEvents, SelectedCourses
-) {
+    'tool_dataprivacy/events'],
+function($, Ajax, Notification, Str, ModalFactory, ModalEvents, Templates, ModalDataRequest, DataPrivacyEvents) {
 
     /**
      * List of action selectors.
@@ -53,8 +50,7 @@ define([
         MARK_COMPLETE: '[data-action="complete"]',
         CHANGE_BULK_ACTION: '[id="bulk-action"]',
         CONFIRM_BULK_ACTION: '[id="confirm-bulk-action"]',
-        SELECT_ALL: '[data-action="selectall"]',
-        APPROVE_REQUEST_SELECT_COURSE: '[data-action="approve-selected-courses"]',
+        SELECT_ALL: '[data-action="selectall"]'
     };
 
     /**
@@ -92,7 +88,6 @@ define([
             e.preventDefault();
 
             var requestId = $(this).data('requestid');
-            var contextId = $(this).data('contextid');
 
             // Cancel the request.
             var params = {
@@ -120,12 +115,12 @@ define([
                 var body = Templates.render('tool_dataprivacy/request_details', data);
                 var templateContext = {
                     approvedeny: data.approvedeny,
-                    canmarkcomplete: data.canmarkcomplete,
-                    allowfiltering: data.allowfiltering
+                    canmarkcomplete: data.canmarkcomplete
                 };
-                return ModalDataRequest.create({
+                return ModalFactory.create({
                     title: data.typename,
                     body: body,
+                    type: ModalDataRequest.TYPE,
                     large: true,
                     templateContext: templateContext
                 });
@@ -155,25 +150,12 @@ define([
                     modal.destroy();
                 });
 
-                modal.getRoot().on(DataPrivacyEvents.approveSelectCourses, function() {
-                    new SelectedCourses(contextId, requestId);
-                });
-
                 // Show the modal!
                 modal.show();
 
                 return;
 
             }).catch(Notification.exception);
-        });
-
-        $(ACTIONS.APPROVE_REQUEST_SELECT_COURSE).click(function(e) {
-            e.preventDefault();
-
-            var requestId = $(this).data('requestid');
-            var contextId = $(this).data('contextid');
-
-            new SelectedCourses(contextId, requestId);
         });
 
         $(ACTIONS.APPROVE_REQUEST).click(function(e) {
@@ -399,9 +381,10 @@ define([
         Str.get_strings(keys).then(function(langStrings) {
             modalTitle = langStrings[0];
             var confirmMessage = langStrings[1];
-            return ModalSaveCancel.create({
+            return ModalFactory.create({
                 title: modalTitle,
                 body: confirmMessage,
+                type: ModalFactory.types.SAVE_CANCEL
             });
         }).then(function(modal) {
             modal.setSaveButtonText(modalTitle);

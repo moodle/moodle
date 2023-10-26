@@ -64,8 +64,6 @@ class assign_grading_table extends table_sql implements renderable {
     private $plugincache = array();
     /** @var array $scale - A list of the keys and descriptions for the custom scale */
     private $scale = null;
-    /** @var bool true if the user has this capability. Otherwise false. */
-    private $hasviewblind;
 
     /**
      * overridden constructor keeps a reference to the assignment class that is displaying this table

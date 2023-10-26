@@ -96,7 +96,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $options = new \question_display_options();
 
         provider::export_question_usage($testuser->id, $context, [], $quba->get_id(), $options, false);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertFalse($writer->has_any_data_in_any_context());
@@ -138,7 +137,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Export all questions for this attempt.
         $options = new \question_display_options();
         provider::export_question_usage($testuser->id, $context, [], $quba->get_id(), $options, true);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data_in_any_context());
@@ -163,7 +161,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $options->marks = \question_display_options::HIDDEN;
 
         provider::export_question_usage($testuser->id, $context, [], $quba->get_id(), $options, true);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $this->assertTrue($writer->has_any_data_in_any_context());

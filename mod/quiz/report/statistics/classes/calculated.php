@@ -127,7 +127,7 @@ class calculated {
     public function get_formatted_quiz_info_data($course, $cm, $quiz) {
 
         // You can edit this array to control which statistics are displayed.
-        $todisplay = ['firstattemptscount' => 'number',
+        $todisplay = array('firstattemptscount' => 'number',
                            'allattemptscount' => 'number',
                            'firstattemptsavg' => 'summarks_as_percentage',
                            'allattemptsavg' => 'summarks_as_percentage',
@@ -139,10 +139,10 @@ class calculated {
                            'kurtosis' => 'number_format',
                            'cic' => 'number_format_percent',
                            'errorratio' => 'number_format_percent',
-                           'standarderror' => 'summarks_as_percentage'];
+                           'standarderror' => 'summarks_as_percentage');
 
         // General information about the quiz.
-        $quizinfo = [];
+        $quizinfo = array();
         $quizinfo[get_string('quizname', 'quiz_statistics')] = format_string($quiz->name);
         $quizinfo[get_string('coursename', 'quiz_statistics')] = format_string($course->fullname);
         if ($cm->idnumber) {
@@ -195,10 +195,10 @@ class calculated {
     /**
      * @var array of names of properties of this class that are cached in db record.
      */
-    protected $fieldsindb = ['whichattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
+    protected $fieldsindb = array('whichattempts', 'firstattemptscount', 'allattemptscount', 'firstattemptsavg', 'allattemptsavg',
                                     'lastattemptscount', 'highestattemptscount', 'lastattemptsavg', 'highestattemptsavg',
                                     'median', 'standarddeviation', 'skewness',
-                                    'kurtosis', 'cic', 'errorratio', 'standarderror'];
+                                    'kurtosis', 'cic', 'errorratio', 'standarderror');
 
     /**
      * Cache the stats contained in this class.

@@ -16,7 +16,6 @@
 
 namespace core_question;
 
-use core_external\restricted_context_exception;
 use core_question_external;
 use externallib_advanced_testcase;
 
@@ -38,15 +37,6 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @since      Moodle 3.1
  */
 class externallib_test extends externallib_advanced_testcase {
-
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \stdClass user record. */
-    protected $student;
-
-    /** @var \stdClass user role record. */
-    protected $studentrole;
 
     /**
      * Set up for every test
@@ -323,7 +313,7 @@ class externallib_test extends externallib_advanced_testcase {
             // to be reset afterwards.
             core_question_external::get_random_question_summaries(1, false, [], $systemcontext->id);
         } catch (\Exception $e) {
-            $this->assertInstanceOf(restricted_context_exception::class, $e);
+            $this->assertInstanceOf('restricted_context_exception', $e);
         }
         // Reset the restriction so that other tests don't fail aftwards.
         core_question_external::set_context_restriction($systemcontext);

@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Database;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig;
 
 class DSum extends DatabaseAbstract
@@ -32,11 +31,11 @@ class DSum extends DatabaseAbstract
      *
      * @return null|float|string
      */
-    public static function evaluate($database, $field, $criteria, bool $returnNull = false)
+    public static function evaluate($database, $field, $criteria)
     {
         $field = self::fieldExtract($database, $field);
         if ($field === null) {
-            return $returnNull ? null : ExcelError::VALUE();
+            return null;
         }
 
         return MathTrig\Sum::sumIgnoringStrings(

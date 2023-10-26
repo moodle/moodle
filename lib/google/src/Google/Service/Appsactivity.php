@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity extends Google_Service
 {
   /** View the activity history of your Google Apps. */
@@ -118,7 +117,6 @@ class Google_Service_Appsactivity extends Google_Service
  *   $activities = $appsactivityService->activities;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Activities_Resource extends Google_Service_Resource
 {
 
@@ -158,7 +156,6 @@ class Google_Service_Appsactivity_Activities_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Activity extends Google_Collection
 {
   protected $collection_key = 'singleEvents';
@@ -188,7 +185,6 @@ class Google_Service_Appsactivity_Activity extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Event extends Google_Collection
 {
   protected $collection_key = 'permissionChanges';
@@ -284,7 +280,6 @@ class Google_Service_Appsactivity_Event extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_ListActivitiesResponse extends Google_Collection
 {
   protected $collection_key = 'activities';
@@ -313,7 +308,6 @@ class Google_Service_Appsactivity_ListActivitiesResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Move extends Google_Collection
 {
   protected $collection_key = 'removedParents';
@@ -343,7 +337,6 @@ class Google_Service_Appsactivity_Move extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Parent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -379,7 +372,6 @@ class Google_Service_Appsactivity_Parent extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Permission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -443,7 +435,6 @@ class Google_Service_Appsactivity_Permission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_PermissionChange extends Google_Collection
 {
   protected $collection_key = 'removedPermissions';
@@ -473,7 +464,6 @@ class Google_Service_Appsactivity_PermissionChange extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Photo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -491,7 +481,6 @@ class Google_Service_Appsactivity_Photo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Rename extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -518,7 +507,6 @@ class Google_Service_Appsactivity_Rename extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_Target extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -554,7 +542,6 @@ class Google_Service_Appsactivity_Target extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Appsactivity_User extends Google_Model
 {
   protected $internal_gapi_mappings = array(

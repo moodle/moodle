@@ -302,7 +302,7 @@ class gradebookservices_test extends \advanced_testcase {
         $this->assertEquals(!empty($subreviewurl), isset($lineitem->submissionReview));
         if ($subreviewurl) {
             if ($subreviewurl == 'DEFAULT') {
-                $this->assertFalse(isset($lineitem->submissionReview->url));
+                $this->assertFalse(isset($this->submissionReview->url));
             } else {
                 $this->assertEquals($subreviewurl, $lineitem->submissionReview->url);
             }
@@ -310,7 +310,7 @@ class gradebookservices_test extends \advanced_testcase {
                 $custom = $lineitem->submissionReview->custom;
                 $this->assertEquals($subreviewparams, join("\n", array_map(fn($k) => $k.'='.$custom[$k], array_keys($custom))));
             } else {
-                $this->assertFalse(isset($lineitem->submissionReview->custom));
+                $this->assertFalse(isset($this->submissionReview->custom));
             }
         }
 

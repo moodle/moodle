@@ -63,7 +63,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the new block.
         $result = core_block_external::get_course_blocks($course->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
         // Expect the new block.
         $this->assertCount(1, $result['blocks']);
@@ -92,7 +92,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the new block.
         $result = core_block_external::get_course_blocks(SITEID);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
         // Expect the new block.
         $this->assertCount(1, $result['blocks']);
@@ -119,7 +119,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Try default blocks.
         $result = core_block_external::get_course_blocks($course->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
         // Expect 4 default blocks.
         $this->assertCount(4, $result['blocks']);
@@ -202,7 +202,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the new block.
         $result = core_block_external::get_course_blocks($course->id, true);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
         // Expect the new block.
         $this->assertCount(1, $result['blocks']);
@@ -235,6 +235,8 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function test_get_course_blocks_contents_with_mathjax() {
         global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/lib/externallib.php');
 
         $this->resetAfterTest(true);
 
@@ -290,12 +292,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Check for the new block.
         $result = core_block_external::get_course_blocks($course->id, true);
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_course_blocks_returns(), $result);
 
         // Format the original data.
         $sitecontext = \context_system::instance();
-        $title = \core_external\util::format_string($title, $coursecontext->id);
-        list($body, $bodyformat) = \core_external\util::format_text($body, $bodyformat, $coursecontext, 'block_html', 'content');
+        $title = external_format_string($title, $coursecontext->id);
+        list($body, $bodyformat) = external_format_text($body, $bodyformat, $coursecontext->id, 'block_html', 'content');
 
         // Check that the block data is formatted.
         $this->assertCount(1, $result['blocks']);
@@ -334,7 +336,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the default blocks.
         $result = core_block_external::get_dashboard_blocks($user->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
         // Expect all default blocks defined in blocks_add_default_system_blocks().
         $this->assertCount(count($alldefaultblocksordered), $result['blocks']);
         $returnedblocks = array();
@@ -388,7 +390,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the default blocks plus the sticky.
         $result = core_block_external::get_dashboard_blocks($user->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
         // Expect all default blocks defined in blocks_add_default_system_blocks() plus sticky one.
         $this->assertCount(count($alldefaultblocks) + 1, $result['blocks']);
         $found = false;
@@ -439,7 +441,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the new block as admin for a user.
         $result = core_block_external::get_dashboard_blocks($user->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
         // Expect all default blocks defined in blocks_add_default_system_blocks() plus the one we added.
         $this->assertCount(count($alldefaultblocks) + 1, $result['blocks']);
         $found = false;
@@ -497,7 +499,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Check for the default blocks.
         $result = core_block_external::get_dashboard_blocks($user->id, false, MY_PAGE_COURSES);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $result = \core_external\external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_block_external::get_dashboard_blocks_returns(), $result);
         // Expect all default blocks defined in blocks_add_default_system_blocks().
         $this->assertCount(count($alldefaultblocksordered), $result['blocks']);
         $returnedblocks = [];

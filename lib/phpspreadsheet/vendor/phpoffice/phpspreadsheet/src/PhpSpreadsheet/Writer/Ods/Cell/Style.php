@@ -19,7 +19,6 @@ class Style
     public const ROW_STYLE_PREFIX = 'ro';
     public const TABLE_STYLE_PREFIX = 'ta';
 
-    /** @var XMLWriter */
     private $writer;
 
     public function __construct(XMLWriter $writer)
@@ -98,7 +97,9 @@ class Style
         $this->writer->writeAttribute('style:rotation-align', 'none');
 
         // Fill
-        $this->writeFillStyle($style->getFill());
+        if ($fill = $style->getFill()) {
+            $this->writeFillStyle($fill);
+        }
 
         $this->writer->endElement();
 
@@ -141,7 +142,9 @@ class Style
             $this->writer->writeAttribute('fo:font-style', 'italic');
         }
 
-        $this->writer->writeAttribute('fo:color', sprintf('#%s', $font->getColor()->getRGB()));
+        if ($color = $font->getColor()) {
+            $this->writer->writeAttribute('fo:color', sprintf('#%s', $color->getRGB()));
+        }
 
         if ($family = $font->getName()) {
             $this->writer->writeAttribute('fo:font-family', $family);

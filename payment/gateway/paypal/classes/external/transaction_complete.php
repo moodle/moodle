@@ -26,12 +26,16 @@ declare(strict_types=1);
 
 namespace paygw_paypal\external;
 
-use core_external\external_api;
-use core_external\external_value;
-use core_external\external_function_parameters;
 use core_payment\helper;
+use external_api;
+use external_function_parameters;
+use external_value;
 use core_payment\helper as payment_helper;
 use paygw_paypal\paypal_helper;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/externallib.php');
 
 class transaction_complete extends external_api {
 

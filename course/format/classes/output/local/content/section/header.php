@@ -106,11 +106,6 @@ class header implements named_templatable, renderable {
             }
         }
         $data->name = get_section_name($course, $section);
-        $data->selecttext = $format->get_format_string('selectsection', $data->name);
-
-        if (!$format->get_section_number()) {
-            $data->sectionbulk = true;
-        }
 
         return $data;
     }

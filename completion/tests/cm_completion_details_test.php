@@ -41,7 +41,6 @@ require_once($CFG->libdir . '/completionlib.php');
  * @package   core_completion
  * @copyright 2021 Jun Pataleta <jun@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \core_completion\cm_completion_details
  */
 class cm_completion_details_test extends advanced_testcase {
 
@@ -122,7 +121,6 @@ class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for has_completion().
      *
-     * @covers ::has_completion
      * @dataProvider has_completion_provider
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
@@ -155,7 +153,6 @@ class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for is_available().
      *
-     * @covers ::is_automatic
      * @dataProvider is_automatic_provider
      * @param int $completion The completion tracking mode.
      * @param bool $expectedresult Expected result.
@@ -164,39 +161,6 @@ class cm_completion_details_test extends advanced_testcase {
         $cmcompletion = $this->setup_data($completion);
 
         $this->assertEquals($expectedresult, $cmcompletion->is_automatic());
-    }
-
-    /**
-     * Provides data for test_is_manual().
-     *
-     * @return array[]
-     */
-    public function is_manual_provider(): array {
-        return [
-            'Automatic' => [
-                COMPLETION_TRACKING_AUTOMATIC, false
-            ],
-            'Manual' => [
-                COMPLETION_TRACKING_MANUAL, true
-            ],
-            'None' => [
-                COMPLETION_TRACKING_NONE, false
-            ],
-        ];
-    }
-
-    /**
-     * Test for is_manual().
-     *
-     * @covers ::is_manual
-     * @dataProvider is_manual_provider
-     * @param int $completion The completion tracking mode.
-     * @param bool $expectedresult Expected result.
-     */
-    public function test_is_manual(int $completion, bool $expectedresult) {
-        $cmcompletion = $this->setup_data($completion);
-
-        $this->assertEquals($expectedresult, $cmcompletion->is_manual());
     }
 
     /**
@@ -213,7 +177,6 @@ class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for get_overall_completion().
      *
-     * @covers ::get_overall_completion
      * @dataProvider overall_completion_provider
      * @param int $state
      */
@@ -353,7 +316,6 @@ class cm_completion_details_test extends advanced_testcase {
     /**
      * Test for \core_completion\cm_completion_details::get_details().
      *
-     * @covers ::get_details
      * @dataProvider get_details_provider
      * @param int $completion The completion tracking mode.
      * @param int|null $completionview Completion status of the "view" completion condition.
@@ -453,7 +415,6 @@ class cm_completion_details_test extends advanced_testcase {
     /**
      * Test custom sort order is functioning in \core_completion\cm_completion_details::get_details().
      *
-     * @covers ::get_details
      * @dataProvider get_details_custom_order_provider
      * @param bool $completionview Completion status of the "view" completion condition.
      * @param bool $completiongrade Completion status of the "must receive grade" completion condition.

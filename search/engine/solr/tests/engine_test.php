@@ -1287,6 +1287,9 @@ class engine_test extends \advanced_testcase {
 
     /**
      * Tries out deleting data for a context or a course.
+     *
+     * @throws coding_exception
+     * @throws moodle_exception
      */
     public function test_deleted_contexts_and_courses() {
         // Create some courses and activities.

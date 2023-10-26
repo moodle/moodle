@@ -82,6 +82,28 @@ class repository_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that malformed favourites cannot be saved.
+     */
+    public function test_add_malformed_favourite() {
+        list($user1context, $user2context, $course1context, $course2context) = $this->setup_users_and_courses();
+
+        // Create a favourites repository and favourite a course.
+        $favouritesrepo = new favourite_repository($user1context);
+
+        $favcourse = new favourite(
+            'core_course',
+            'course',
+            $course1context->instanceid,
+            $course1context->id,
+            $user1context->instanceid
+        );
+        $favcourse->something = 'something';
+
+        $this->expectException('moodle_exception');
+        $favouritesrepo->add($favcourse);
+    }
+
+    /**
      * Tests that incomplete favourites cannot be saved.
      */
     public function test_add_incomplete_favourite() {

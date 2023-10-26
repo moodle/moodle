@@ -335,16 +335,12 @@ class data_field_picture extends data_field_base {
         // If thumbnail width and height are BOTH not specified then no thumbnail is generated, and
         // additionally an attempted delete of the existing thumbnail takes place.
         $fs = get_file_storage();
-        $filerecord = [
-            'contextid' => $file->get_contextid(), 'component' => $file->get_component(), 'filearea' => $file->get_filearea(),
-            'itemid' => $file->get_itemid(), 'filepath' => $file->get_filepath(),
-            'filename' => 'thumb_' . $file->get_filename(), 'userid' => $file->get_userid()
-        ];
+        $file_record = array('contextid'=>$file->get_contextid(), 'component'=>$file->get_component(), 'filearea'=>$file->get_filearea(),
+                             'itemid'=>$file->get_itemid(), 'filepath'=>$file->get_filepath(),
+                             'filename'=>'thumb_'.$file->get_filename(), 'userid'=>$file->get_userid());
         try {
-            // This may fail for various reasons.
-            $newwidth = isset($this->field->param4) ? (int) $this->field->param4 : null;
-            $newheight = isset($this->field->param5) ? (int) $this->field->param5 : null;
-            $fs->convert_image($filerecord, $file, $newwidth, $newheight, true);
+            // this may fail for various reasons
+            $fs->convert_image($file_record, $file, (int) $this->field->param4, (int) $this->field->param5, true);
             return true;
         } catch (Exception $e) {
             debugging($e->getMessage());
@@ -352,65 +348,8 @@ class data_field_picture extends data_field_base {
         }
     }
 
-    /**
-     * Here we export the text value of a picture field which is the filename of the exported picture.
-     *
-     * @param stdClass $record the record which is being exported
-     * @return string the value which will be stored in the exported file for this field
-     */
-    public function export_text_value(stdClass $record): string {
-        return !empty($record->content) ? $record->content : '';
-    }
-
-    /**
-     * Specifies that this field type supports the export of files.
-     *
-     * @return bool true which means that file export is being supported by this field type
-     */
-    public function file_export_supported(): bool {
-        return true;
-    }
-
-    /**
-     * Exports the file content for file export.
-     *
-     * @param stdClass $record the data content record the file belongs to
-     * @return null|string The file content of the stored file or null if no file should be exported for this record
-     */
-    public function export_file_value(stdClass $record): null|string {
-        $file = $this->get_file($record->id);
-        return $file ? $file->get_content() : null;
-    }
-
-    /**
-     * Specifies that this field type supports the import of files.
-     *
-     * @return bool true which means that file import is being supported by this field type
-     */
-    public function file_import_supported(): bool {
-        return true;
-    }
-
-    /**
-     * Provides the necessary code for importing a file when importing the content of a mod_data instance.
-     *
-     * @param int $contentid the id of the mod_data content record
-     * @param string $filecontent the content of the file to import as string
-     * @param string $filename the filename the imported file should get
-     * @return void
-     */
-    public function import_file_value(int $contentid, string $filecontent, string $filename): void {
-        $filerecord = [
-            'contextid' => $this->context->id,
-            'component' => 'mod_data',
-            'filearea' => 'content',
-            'itemid' => $contentid,
-            'filepath' => '/',
-            'filename' => $filename,
-        ];
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_string($filerecord, $filecontent);
-        $this->update_thumbnail(null, $file);
+    function text_export_supported() {
+        return false;
     }
 
     function file_ok($path) {

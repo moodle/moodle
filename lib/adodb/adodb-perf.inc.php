@@ -237,9 +237,6 @@ class adodb_perf {
 	var $createTableSQL = false;
 	var $maxLength = 2000;
 
-	/** @var array Settings data. */
-	var $settings = [];
-
     // Sets the tablename to be used
     static function table($newtable = false)
     {

@@ -71,6 +71,15 @@ class tag_flagged extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'tag', 'flag', 'index.php?id='. $this->objectid, $this->objectid, '', $this->userid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

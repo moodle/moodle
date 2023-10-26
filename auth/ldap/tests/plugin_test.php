@@ -379,6 +379,9 @@ class plugin_test extends \advanced_testcase {
         $this->assertEquals('user', $event->objecttable);
         $this->assertEquals('2', $event->objectid);
         $this->assertEquals(\context_system::instance()->id, $event->contextid);
+        $expectedlog = array(SITEID, 'user', 'login', 'view.php?id=' . $USER->id . '&course=' . SITEID, $user->id,
+            0, $user->id);
+        $this->assertEventLegacyLogData($expectedlog, $event);
     }
 
     /**
@@ -505,7 +508,10 @@ class plugin_test extends \advanced_testcase {
         $event = array_pop($events);
         $this->assertInstanceOf('\core\event\user_created', $event);
         $this->assertEquals($user['id'], $event->objectid);
+        $this->assertEquals('user_created', $event->get_legacy_eventname());
         $this->assertEquals(\context_user::instance($user['id']), $event->get_context());
+        $expectedlogdata = array(SITEID, 'user', 'add', '/view.php?id='.$event->objectid, fullname($dbuser));
+        $this->assertEventLegacyLogData($expectedlogdata, $event);
 
         // First event is user_password_updated.
         $event = array_pop($events);

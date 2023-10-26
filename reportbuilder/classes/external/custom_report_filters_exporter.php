@@ -111,9 +111,7 @@ class custom_report_filters_exporter extends exporter {
 
         // Populate available filters.
         foreach ($report->get_filters() as $filter) {
-
-            // Filters can only be added once per report, skip if it already exists.
-            if (in_array($filter->get_unique_identifier(), $filteridentifiers) || $filter->get_is_deprecated()) {
+            if (in_array($filter->get_unique_identifier(), $filteridentifiers)) {
                 continue;
             }
 

@@ -58,14 +58,6 @@ $finder = new \tool_httpsreplace\url_finder();
 $PAGE->set_cacheable(false);
 $progressbar = new progress_bar();
 
-// Preemptively reset the navcache before closing, so it remains the same on shutdown.
-navigation_cache::destroy_volatile_caches();
-\core\session\manager::write_close();
-
-// Prepare for streamed output.
-echo $OUTPUT->footer();
-echo $OUTPUT->select_element_for_append();
-
 if (!$data = $form->get_data()) {
 
     echo $progressbar->create();
@@ -111,3 +103,4 @@ if (!$data = $form->get_data()) {
 
     echo $OUTPUT->continue_button(new moodle_url('/admin/settings.php', ['section' => 'httpsecurity']));
 }
+echo $OUTPUT->footer();

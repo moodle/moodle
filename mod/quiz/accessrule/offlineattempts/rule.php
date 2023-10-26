@@ -14,21 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\form\preflight_check_form;
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
-
 /**
- * A rule implementing the offlineattempts check.
+ * Implementaton of the quizaccess_offlineattempts plugin.
  *
  * @package    quizaccess_offlineattempts
  * @copyright  2016 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
+/**
+ * A rule implementing the offlineattempts check.
+ *
+ * @copyright  2016 Juan Leyva
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 3.2
  */
-class quizaccess_offlineattempts extends access_rule_base {
+class quizaccess_offlineattempts extends quiz_access_rule_base {
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         global $CFG;
 
         // If mobile services are off, the user won't be able to use any external app.
@@ -44,7 +52,7 @@ class quizaccess_offlineattempts extends access_rule_base {
 
         // First, check if the user did something offline.
         if (!empty($attemptid)) {
-            $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', ['id' => $attemptid]);
+            $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', array('id' => $attemptid));
             if (empty($timemodifiedoffline)) {
                 return false;
             }
@@ -55,11 +63,11 @@ class quizaccess_offlineattempts extends access_rule_base {
         }
     }
 
-    public function add_preflight_check_form_fields(preflight_check_form $quizform,
+    public function add_preflight_check_form_fields(mod_quiz_preflight_check_form $quizform,
             MoodleQuickForm $mform, $attemptid) {
         global $DB;
 
-        $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', ['id' => $attemptid]);
+        $timemodifiedoffline = $DB->get_field('quiz_attempts', 'timemodifiedoffline', array('id' => $attemptid));
         $lasttime = format_time(time() - $timemodifiedoffline);
 
         $mform->addElement('header', 'offlineattemptsheader', get_string('mobileapp', 'quizaccess_offlineattempts'));

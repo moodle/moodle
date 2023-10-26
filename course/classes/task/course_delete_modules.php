@@ -53,11 +53,11 @@ class course_delete_modules extends \core\task\adhoc_task {
         // Set the proper user.
         if ($this->get_custom_data()->userid !== $this->get_custom_data()->realuserid) {
             $realuser = \core_user::get_user($this->get_custom_data()->realuserid, '*', MUST_EXIST);
-            \core\cron::setup_user($realuser);
+            cron_setup_user($realuser);
             \core\session\manager::loginas($this->get_custom_data()->userid, \context_system::instance(), false);
         } else {
             $user = \core_user::get_user($this->get_custom_data()->userid, '*', MUST_EXIST);
-            \core\cron::setup_user($user);
+            cron_setup_user($user);
         }
 
         $cms = $this->get_custom_data()->cms;

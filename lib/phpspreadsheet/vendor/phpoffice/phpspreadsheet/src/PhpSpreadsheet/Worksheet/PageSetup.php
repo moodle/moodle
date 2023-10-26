@@ -475,7 +475,7 @@ class PageSetup
      */
     public function isColumnsToRepeatAtLeftSet()
     {
-        if (!empty($this->columnsToRepeatAtLeft)) {
+        if (is_array($this->columnsToRepeatAtLeft)) {
             if ($this->columnsToRepeatAtLeft[0] != '' && $this->columnsToRepeatAtLeft[1] != '') {
                 return true;
             }
@@ -530,7 +530,7 @@ class PageSetup
      */
     public function isRowsToRepeatAtTopSet()
     {
-        if (!empty($this->rowsToRepeatAtTop)) {
+        if (is_array($this->rowsToRepeatAtTop)) {
             if ($this->rowsToRepeatAtTop[0] != 0 && $this->rowsToRepeatAtTop[1] != 0) {
                 return true;
             }
@@ -639,9 +639,10 @@ class PageSetup
     public function getPrintArea($index = 0)
     {
         if ($index == 0) {
-            return (string) $this->printArea;
+            return $this->printArea;
         }
-        $printAreas = explode(',', (string) $this->printArea);
+        /** @phpstan-ignore-next-line */
+        $printAreas = explode(',', $this->printArea);
         if (isset($printAreas[$index - 1])) {
             return $printAreas[$index - 1];
         }
@@ -664,7 +665,8 @@ class PageSetup
         if ($index == 0) {
             return $this->printArea !== null;
         }
-        $printAreas = explode(',', (string) $this->printArea);
+        /** @phpstan-ignore-next-line */
+        $printAreas = explode(',', $this->printArea);
 
         return isset($printAreas[$index - 1]);
     }
@@ -684,7 +686,8 @@ class PageSetup
         if ($index == 0) {
             $this->printArea = null;
         } else {
-            $printAreas = explode(',', (string) $this->printArea);
+            /** @phpstan-ignore-next-line */
+            $printAreas = explode(',', $this->printArea);
             if (isset($printAreas[$index - 1])) {
                 unset($printAreas[$index - 1]);
                 $this->printArea = implode(',', $printAreas);
@@ -732,7 +735,8 @@ class PageSetup
             if ($index == 0) {
                 $this->printArea = $value;
             } else {
-                $printAreas = explode(',', (string) $this->printArea);
+                /** @phpstan-ignore-next-line */
+                $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
                     $index = count($printAreas) - abs($index) + 1;
                 }
@@ -746,9 +750,10 @@ class PageSetup
             if ($index == 0) {
                 $this->printArea = $this->printArea ? ($this->printArea . ',' . $value) : $value;
             } else {
-                $printAreas = explode(',', (string) $this->printArea);
+                /** @phpstan-ignore-next-line */
+                $printAreas = explode(',', $this->printArea);
                 if ($index < 0) {
-                    $index = (int) abs($index) - 1;
+                    $index = abs($index) - 1;
                 }
                 if ($index > count($printAreas)) {
                     throw new PhpSpreadsheetException('Invalid index for setting print range.');
@@ -884,5 +889,20 @@ class PageSetup
         }
 
         return $this;
+    }
+
+    /**
+     * Implement PHP __clone to create a deep clone, not just a shallow copy.
+     */
+    public function __clone()
+    {
+        $vars = get_object_vars($this);
+        foreach ($vars as $key => $value) {
+            if (is_object($value)) {
+                $this->$key = clone $value;
+            } else {
+                $this->$key = $value;
+            }
+        }
     }
 }

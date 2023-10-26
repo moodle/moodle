@@ -27,7 +27,6 @@ if (!class_exists('Google_Client')) {
  * @author Chirag Shah <chirags@google.com>
  *
  */
-#[AllowDynamicProperties]
 class Google_Http_Request
 {
   const GZIP_UA = " (gzip)";

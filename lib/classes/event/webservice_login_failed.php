@@ -60,6 +60,15 @@ class webservice_login_failed extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return $this->legacylogdata;
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string
@@ -77,6 +86,16 @@ class webservice_login_failed extends base {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
         $this->context = \context_system::instance();
+    }
+
+    /**
+     * Set the legacy event log data.
+     *
+     * @param array $logdata The log data.
+     * @return void
+     */
+    public function set_legacy_logdata($logdata) {
+        $this->legacylogdata = $logdata;
     }
 
     /**

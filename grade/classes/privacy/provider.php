@@ -33,7 +33,6 @@ use grade_item;
 use grade_grade;
 use grade_scale;
 use stdClass;
-use core_grades\privacy\grade_grade_with_history;
 use core_privacy\local\metadata\collection;
 use core_privacy\local\request\approved_contextlist;
 use core_privacy\local\request\transform;
@@ -544,7 +543,6 @@ class provider implements
                 get_string('feedbackhistoryfiles', 'core_grades')
             ];
             foreach ($data as $key => $grades) {
-                /** @var grade_grade_with_history */
                 $gg = $grades['gradeobject'];
                 writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
                     GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
@@ -678,7 +676,6 @@ class provider implements
                 get_string('feedbackhistoryfiles', 'core_grades')
             ];
             foreach ($data as $key => $grades) {
-                /** @var grade_grade_with_history */
                 $gg = $grades['gradeobject'];
                 writer::with_context($gg->get_context())->export_area_files($pathtofiles, GRADE_FILE_COMPONENT,
                     GRADE_HISTORY_FEEDBACK_FILEAREA, $gg->historyid);
@@ -1040,10 +1037,11 @@ class provider implements
         $prefix = $ishistory ? 'ggh_' : 'gg_';
         $ggrecord = static::extract_record($record, $prefix);
         if ($ishistory) {
-            $gg = new grade_grade_with_history($ggrecord, false);
-        } else {
-            $gg = new grade_grade($ggrecord, false);
+            // The grade history is not a real grade_grade so we remove the ID.
+            $historyid = $ggrecord->id;
+            unset($ggrecord->id);
         }
+        $gg = new grade_grade($ggrecord, false);
 
         // There is a grade item in the record.
         if (!empty($record->gi_id)) {
@@ -1056,6 +1054,10 @@ class provider implements
             $scalerec = static::extract_record($record, 'sc_');
             $gi->scale = new grade_scale($scalerec, false);
             $gi->scale->load_items();
+        }
+
+        if ($ishistory) {
+            $gg->historyid = $historyid;
         }
 
         return $gg;
@@ -1195,15 +1197,9 @@ class provider implements
         $timemodified = $gg->timemodified ? transform::datetime($gg->timemodified) : null;
         $timecreated = $gg->timecreated ? transform::datetime($gg->timecreated) : $timemodified; // When null we use timemodified.
 
-        if ($gg instanceof grade_grade_with_history) {
-            $filearea = GRADE_HISTORY_FEEDBACK_FILEAREA;
-            $itemid = $gg->historyid;
-            $subpath = get_string('feedbackhistoryfiles', 'core_grades');
-        } else {
-            $filearea = GRADE_FEEDBACK_FILEAREA;
-            $itemid = $gg->id;
-            $subpath = get_string('feedbackfiles', 'core_grades');
-        }
+        $filearea = $ishistory ? GRADE_HISTORY_FEEDBACK_FILEAREA : GRADE_FEEDBACK_FILEAREA;
+        $itemid = $ishistory ? $gg->historyid : $gg->id;
+        $subpath = $ishistory ? get_string('feedbackhistoryfiles', 'core_grades') : get_string('feedbackfiles', 'core_grades');
 
         $pathtofiles = [
             get_string('grades', 'core_grades'),
@@ -1276,11 +1272,7 @@ class provider implements
         $grades = $DB->get_recordset_sql($sql, $params);
         foreach ($grades as $grade) {
             $gg = static::extract_grade_grade_from_record($grade, $ishistory);
-            if ($gg instanceof grade_grade_with_history) {
-                $fileitemid = $gg->historyid;
-            } else {
-                $fileitemid = $gg->id;
-            }
+            $fileitemid = ($ishistory) ? $gg->historyid : $gg->id;
             $fs->delete_area_files($gg->get_context()->id, GRADE_FILE_COMPONENT, $filearea, $fileitemid);
         }
         $grades->close();

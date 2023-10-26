@@ -1,8 +1,8 @@
 @block @block_glossary_random @javascript
 Feature: Add the glossary random block when main feature is disabled
-    In order to add the glossary random block to my course
-    As a teacher
-    It should be added to courses only if the glossary module is enabled.
+  In order to add the glossary random block to my course
+  As a teacher
+  It should be added to courses only if the glossary module is enabled.
 
   Background:
     Given the following "courses" exist:
@@ -15,7 +15,7 @@ Feature: Add the glossary random block when main feature is disabled
   Scenario: The glossary random block is displayed even when glossary module is disabled
     When I log in as "admin"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And I click on "Disable Glossary" "icon" in the "Glossary" "table_row"
+    And I click on "Hide" "icon" in the "Glossary" "table_row"
     And I am on "Course 1" course homepage with editing mode on
     Then "Random glossary entry" "block" should exist
 
@@ -28,7 +28,7 @@ Feature: Add the glossary random block when main feature is disabled
     And I click on "Cancel" "button" in the "Delete block?" "dialogue"
     And "Random glossary entry" "block" should exist
     When I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And I click on "Disable Glossary" "icon" in the "Glossary" "table_row"
+    And I click on "Hide" "icon" in the "Glossary" "table_row"
     And I am on "Course 1" course homepage with editing mode on
     And I open the "Random glossary entry" blocks action menu
     And I click on "Delete Random glossary entry block" "link" in the "Random glossary entry" "block"

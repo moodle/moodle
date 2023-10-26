@@ -18,7 +18,6 @@ namespace core_backup;
 
 use backup;
 use backup_controller;
-use backup_setting;
 use restore_controller;
 use restore_dbops;
 
@@ -464,10 +463,9 @@ class moodle2_test extends \advanced_testcase {
      * @param \stdClass $course Course object to backup
      * @param int $newdate If non-zero, specifies custom date for new course
      * @param callable|null $inbetween If specified, function that is called before restore
-     * @param bool $userdata Whether the backup/restory must be with user data or not.
      * @return int ID of newly restored course
      */
-    protected function backup_and_restore($course, $newdate = 0, $inbetween = null, bool $userdata = false) {
+    protected function backup_and_restore($course, $newdate = 0, $inbetween = null) {
         global $USER, $CFG;
 
         // Turn off file logging, otherwise it can't delete the file (Windows).
@@ -478,9 +476,6 @@ class moodle2_test extends \advanced_testcase {
         $bc = new backup_controller(backup::TYPE_1COURSE, $course->id,
                 backup::FORMAT_MOODLE, backup::INTERACTIVE_NO, backup::MODE_IMPORT,
                 $USER->id);
-        $bc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
-        $bc->get_plan()->get_setting('users')->set_value($userdata);
-
         $backupid = $bc->get_backupid();
         $bc->execute_plan();
         $bc->destroy();
@@ -498,13 +493,6 @@ class moodle2_test extends \advanced_testcase {
         if ($newdate) {
             $rc->get_plan()->get_setting('course_startdate')->set_value($newdate);
         }
-
-        $rc->get_plan()->get_setting('users')->set_status(backup_setting::NOT_LOCKED);
-        $rc->get_plan()->get_setting('users')->set_value($userdata);
-        if ($userdata) {
-            $rc->get_plan()->get_setting('xapistate')->set_value(true);
-        }
-
         $this->assertTrue($rc->execute_precheck());
         $rc->execute_plan();
         $rc->destroy();
@@ -1101,76 +1089,5 @@ class moodle2_test extends \advanced_testcase {
 
         $this->assertEquals(4, $DB->count_records('contentbank_content'));
         $this->assertEquals(2, $DB->count_records('contentbank_content', ['contextid' => $newcontext->id]));
-    }
-
-    /**
-     * Test the xAPI state through a backup and restore.
-     *
-     * @covers \backup_xapistate_structure_step
-     * @covers \restore_xapistate_structure_step
-     */
-    public function test_xapistate_backup() {
-        global $DB;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
-        $course = $this->getDataGenerator()->create_course();
-        $user = $this->getDataGenerator()->create_and_enrol($course, 'student');
-        $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
-        $this->setUser($user);
-
-        /** @var \mod_h5pactivity_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('mod_h5pactivity');
-
-        /** @var \core_h5p_generator $h5pgenerator */
-        $h5pgenerator = $this->getDataGenerator()->get_plugin_generator('core_h5p');
-
-        // Add an attempt to the H5P activity.
-        $attemptinfo = [
-            'userid' => $user->id,
-            'h5pactivityid' => $activity->id,
-            'attempt' => 1,
-            'interactiontype' => 'compound',
-            'rawscore' => 2,
-            'maxscore' => 2,
-            'duration' => 1,
-            'completion' => 1,
-            'success' => 0,
-        ];
-        $generator->create_attempt($attemptinfo);
-
-        // Add also a xAPI state to the H5P activity.
-        $filerecord = [
-            'contextid' => \context_module::instance($activity->cmid)->id,
-            'component' => 'mod_h5pactivity',
-            'filearea' => 'package',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filepath' => '/',
-            'filename' => 'dummy.h5p',
-            'addxapistate' => true,
-        ];
-        $h5pgenerator->generate_h5p_data(false, $filerecord);
-
-        // Check the H5P activity exists and the attempt has been created.
-        $this->assertEquals(1, $DB->count_records('h5pactivity'));
-        $this->assertEquals(2, $DB->count_records('grade_items'));
-        $this->assertEquals(2, $DB->count_records('grade_grades'));
-        $this->assertEquals(1, $DB->count_records('xapi_states'));
-
-        // Do backup and restore.
-        $this->setAdminUser();
-        $newcourseid = $this->backup_and_restore($course, 0, null, true);
-
-        // Confirm that values were transferred correctly into H5P activity on new course.
-        $this->assertEquals(2, $DB->count_records('h5pactivity'));
-        $this->assertEquals(4, $DB->count_records('grade_items'));
-        $this->assertEquals(4, $DB->count_records('grade_grades'));
-        $this->assertEquals(2, $DB->count_records('xapi_states'));
-
-        $newactivity = $DB->get_record('h5pactivity', ['course' => $newcourseid]);
-        $cm = get_coursemodule_from_instance('h5pactivity', $newactivity->id);
-        $context = \context_module::instance($cm->id);
-        $this->assertEquals(1, $DB->count_records('xapi_states', ['itemid' => $context->id]));
     }
 }

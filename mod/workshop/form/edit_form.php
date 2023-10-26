@@ -40,9 +40,6 @@ class workshop_edit_strategy_form extends moodleform {
     /** strategy logic instance that this class is editor of */
     protected $strategy;
 
-    /** @var workshop workshop. */
-    protected $workshop;
-
     /**
      * Add the fields that are common for all grading strategies.
      *

@@ -142,7 +142,7 @@ EOF;
         }
 
         if ($results->exception !== null) {
-            throw new ExpectationException($results->exception, $this->getSession());
+            throw new ExpectationException($results->exception, $this->session);
         }
 
         $violations = $results->violations;

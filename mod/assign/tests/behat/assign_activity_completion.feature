@@ -43,7 +43,8 @@ Feature: View activity completion in the assignment activity
   Scenario: The manual completion button will be shown on the course page if the Show activity completion conditions is set to Yes
     Given I am on the "Course 1" course page logged in as teacher1
     # Teacher view.
-    And "Music history" should have the "Mark as done" completion condition
+    And the manual completion button for "Music history" should exist
+    And the manual completion button for "Music history" should be disabled
     And I log out
     # Student view.
     When I log in as "student1"
@@ -61,7 +62,10 @@ Feature: View activity completion in the assignment activity
     And I set the field "Show activity completion conditions" to "No"
     And I press "Save and display"
     # Teacher view.
-    And "Completion" "button" should not exist in the "Music history" "activity"
+    And the manual completion button for "Music history" should not exist
+    And I am on the "Music history" "assign activity" page
+    And the manual completion button for "Music history" should exist
+    And the manual completion button for "Music history" should be disabled
     And I log out
     # Student view.
     When I am on the "Course 1" course page logged in as "student1"
@@ -85,8 +89,8 @@ Feature: View activity completion in the assignment activity
     Given I am on the "Music history" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Add requirements         | 1                  |
-      | View the activity   | 1                                                 |
+      | Completion tracking | Show activity as complete when conditions are met |
+      | Require view        | 1                                                 |
       | completionusegrade  | 1                                                 |
       | completionsubmit    | 1                                                 |
     And I press "Save and display"
@@ -100,8 +104,8 @@ Feature: View activity completion in the assignment activity
     And I expand all fieldsets
     And I set the following fields to these values:
       | assignsubmission_onlinetext_enabled | 1                                                 |
-      | Add requirements         | 1                  |
-      | View the activity                   | 1                                                 |
+      | Completion tracking                 | Show activity as complete when conditions are met |
+      | Require view                        | 1                                                 |
       | completionusegrade                  | 1                                                 |
       | completionsubmit                    | 1                                                 |
     And I press "Save and display"

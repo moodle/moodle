@@ -23,8 +23,6 @@
  */
 namespace tool_dataprivacy;
 
-use core_privacy\local\metadata\types\type;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -116,7 +114,7 @@ class metadata_registry {
     /**
      * Formats the metadata for use with a template.
      *
-     * @param  type[] $collection The collection associated with the component that we want to expand and format.
+     * @param  array $collection The collection associated with the component that we want to expand and format.
      * @param  string $component The component that we are dealing in
      * @param  array $internaldata The array to add the formatted metadata to.
      * @return array The internal data array with the formatted metadata.

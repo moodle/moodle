@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use mod_quiz\quiz_attempt;
-
 defined('MOODLE_INTERNAL') || die;
 
 /**
@@ -43,7 +41,7 @@ function quiz_statistics_attempts_sql($quizid, \core\dml\sql_join $groupstudents
         $whichattempts = QUIZ_GRADEAVERAGE, $includeungraded = false) {
     $fromqa = "{quiz_attempts} quiza ";
     $whereqa = 'quiza.quiz = :quizid AND quiza.preview = 0 AND quiza.state = :quizstatefinished';
-    $qaparams = ['quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED];
+    $qaparams = array('quizid' => (int)$quizid, 'quizstatefinished' => quiz_attempt::FINISHED);
 
     if (!empty($groupstudentsjoins->joins)) {
         $fromqa .= "\nJOIN {user} u ON u.id = quiza.userid
@@ -61,7 +59,7 @@ function quiz_statistics_attempts_sql($quizid, \core\dml\sql_join $groupstudents
         $whereqa .= ' AND quiza.sumgrades IS NOT NULL';
     }
 
-    return [$fromqa, $whereqa, $qaparams];
+    return array($fromqa, $whereqa, $qaparams);
 }
 
 /**
@@ -81,4 +79,24 @@ function quiz_statistics_qubaids_condition($quizid, \core\dml\sql_join $groupstu
     list($fromqa, $whereqa, $qaparams) = quiz_statistics_attempts_sql(
             $quizid, $groupstudentsjoins, $whichattempts, $includeungraded);
     return new qubaid_join($fromqa, 'quiza.uniqueid', $whereqa, $qaparams);
+}
+
+/**
+ * This helper function returns a sequence of colours each time it is called.
+ * Used for choosing colours for graph data series.
+ * @return string colour name.
+ * @deprecated since Moodle 3.2
+ */
+function quiz_statistics_graph_get_new_colour() {
+    debugging('The function quiz_statistics_graph_get_new_colour() is deprecated, please do not use it any more. '
+        . 'Colours will be handled by the charting library directly.', DEBUG_DEVELOPER);
+
+    static $colourindex = -1;
+    $colours = array('red', 'green', 'yellow', 'orange', 'purple', 'black',
+        'maroon', 'blue', 'ltgreen', 'navy', 'ltred', 'ltltgreen', 'ltltorange',
+        'olive', 'gray', 'ltltred', 'ltorange', 'lime', 'ltblue', 'ltltblue');
+
+    $colourindex = ($colourindex + 1) % count($colours);
+
+    return $colours[$colourindex];
 }

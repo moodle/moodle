@@ -16,8 +16,6 @@
 
 namespace qbank_history;
 
-use core_question\local\bank\view;
-
 /**
  * Class plugin_feature is the entrypoint for the columns.
  *
@@ -30,13 +28,8 @@ class plugin_feature extends \core_question\local\bank\plugin_features_base {
 
     public function get_question_columns($qbank): array {
         return [
-            new version_number_column($qbank),
-        ];
-    }
-
-    public function get_question_actions(view $qbank): array {
-        return [
-            new history_action($qbank),
+            new history_action_column($qbank),
+            new version_number_column($qbank)
         ];
     }
 

@@ -21,7 +21,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 import {get_string} from 'core/str';
-import ModalSaveCancel from 'core/modal_save_cancel';
+import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
 import ModalEvents from 'core/modal_events';
 import Ajax from 'core/ajax';
@@ -47,15 +47,14 @@ export const showModal = (users, callback = null) => {
         titlePromise = get_string('sendbulkmessage', 'core_message', users.length);
     }
 
-    return ModalSaveCancel.create({
+    return ModalFactory.create({
+        type: ModalFactory.types.SAVE_CANCEL,
         body: Templates.render('core_message/send_bulk_message', {}),
         title: titlePromise,
-        show: true,
-        buttons: {
-            save: titlePromise,
-        },
     })
     .then(function(modal) {
+        modal.setSaveButtonText(titlePromise);
+
         // When the dialog is closed, perform the callback (if provided).
         modal.getRoot().on(ModalEvents.hidden, function() {
             if (callback) {
@@ -68,6 +67,8 @@ export const showModal = (users, callback = null) => {
             let messageText = modal.getRoot().find('form textarea').val();
             sendMessage(messageText, users);
         });
+
+        modal.show();
 
         return modal;
     });

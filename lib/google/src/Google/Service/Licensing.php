@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Licensing extends Google_Service
 {
   /** View and manage Google Apps licenses for your domain. */
@@ -219,7 +218,6 @@ class Google_Service_Licensing extends Google_Service
  *   $licenseAssignments = $licensingService->licenseAssignments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Licensing_LicenseAssignments_Resource extends Google_Service_Resource
 {
 
@@ -355,7 +353,6 @@ class Google_Service_Licensing_LicenseAssignments_Resource extends Google_Servic
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Licensing_LicenseAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -418,7 +415,6 @@ class Google_Service_Licensing_LicenseAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Licensing_LicenseAssignmentInsert extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -436,7 +432,6 @@ class Google_Service_Licensing_LicenseAssignmentInsert extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Licensing_LicenseAssignmentList extends Google_Collection
 {
   protected $collection_key = 'items';

@@ -51,7 +51,7 @@ class restorable_models implements \renderable, \templatable {
     /**
      * Export the list of models to be rendered.
      *
-     * @param \renderer_base $output
+     * @param renderer_base $output
      * @return string
      */
     public function export_for_template(\renderer_base $output) {

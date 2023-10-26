@@ -28,11 +28,10 @@ return new class extends phpunit_coverage_info {
         'bank.php',
         'datalib.php',
         'lib.php',
-        'phpunit.xml',
         'questionattempt.php',
         'questionattemptstep.php',
         'questionusage.php',
         'renderer.php',
-
+        'states.php',
     ];
 };

@@ -26,15 +26,12 @@
  */
 
 import {BaseComponent} from 'core/reactive';
-import Modal from 'core/modal';
-import ModalSaveCancel from 'core/modal_save_cancel';
-import ModalDeleteCancel from 'core/modal_delete_cancel';
+import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
 import Templates from 'core/templates';
 import {prefetchStrings} from 'core/prefetch';
-import {getString} from 'core/str';
-import {getFirst} from 'core/normalise';
-import {toggleBulkSelectionAction} from 'core_courseformat/local/content/actions/bulkselection';
+import {get_string as getString} from 'core/str';
+import {getList} from 'core/normalise';
 import * as CourseEvents from 'core_course/events';
 import Pending from 'core/pending';
 import ContentTree from 'core_courseformat/local/courseeditor/contenttree';
@@ -55,9 +52,6 @@ const directMutations = {
     cmStealth: 'cmStealth',
     cmMoveRight: 'cmMoveRight',
     cmMoveLeft: 'cmMoveLeft',
-    cmNoGroups: 'cmNoGroups',
-    cmSeparateGroups: 'cmSeparateGroups',
-    cmVisibleGroups: 'cmVisibleGroups',
 };
 
 export default class extends BaseComponent {
@@ -80,8 +74,6 @@ export default class extends BaseComponent {
             CONTENTTREE: `#destination-selector`,
             ACTIONMENU: `.action-menu`,
             ACTIONMENUTOGGLER: `[data-toggle="dropdown"]`,
-            // Availability modal selectors.
-            OPTIONSRADIO: `[type='radio']`,
         };
         // Component css classes.
         this.classes = {
@@ -186,31 +178,6 @@ export default class extends BaseComponent {
     }
 
     /**
-     * Return the ids represented by this element.
-     *
-     * Depending on the dataset attributes the action could represent a single id
-     * or a bulk actions with all the current selected ids.
-     *
-     * @param {HTMLElement} target
-     * @returns {Number[]} array of Ids
-     */
-    _getTargetIds(target) {
-        let ids = [];
-        if (target?.dataset?.id) {
-            ids.push(target.dataset.id);
-        }
-        const bulkType = target?.dataset?.bulk;
-        if (!bulkType) {
-            return ids;
-        }
-        const bulk = this.reactive.get('bulk');
-        if (bulk.enabled && bulk.selectedType === bulkType) {
-            ids = [...ids, ...bulk.selection];
-        }
-        return ids;
-    }
-
-    /**
      * Handle a move section request.
      *
      * @param {Element} target the dispatch action element
@@ -218,10 +185,11 @@ export default class extends BaseComponent {
      */
     async _requestMoveSection(target, event) {
         // Check we have an id.
-        const sectionIds = this._getTargetIds(target);
-        if (sectionIds.length == 0) {
+        const sectionId = target.dataset.id;
+        if (!sectionId) {
             return;
         }
+        const sectionInfo = this.reactive.get('section', sectionId);
 
         event.preventDefault();
 
@@ -233,36 +201,27 @@ export default class extends BaseComponent {
         // Collect section information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(this.reactive.state);
-        let titleText = null;
 
         // Add the target section id and title.
-        let sectionInfo = null;
-        if (sectionIds.length == 1) {
-            sectionInfo = this.reactive.get('section', sectionIds[0]);
-            data.sectionid = sectionInfo.id;
-            data.sectiontitle = sectionInfo.title;
-            data.information = await this.reactive.getFormatString('sectionmove_info', data.sectiontitle);
-            titleText = this.reactive.getFormatString('sectionmove_title');
-        } else {
-            data.information = await this.reactive.getFormatString('sectionsmove_info', sectionIds.length);
-            titleText = this.reactive.getFormatString('sectionsmove_title');
-        }
+        data.sectionid = sectionInfo.id;
+        data.sectiontitle = sectionInfo.title;
 
+        // Build the modal parameters from the event data.
+        const modalParams = {
+            title: getString('movecoursesection', 'core'),
+            body: Templates.render('core_courseformat/local/content/movesection', data),
+        };
 
         // Create the modal.
-        // Build the modal parameters from the event data.
-        const modal = await this._modalBodyRenderedPromise(Modal, {
-            title: titleText,
-            body: Templates.render('core_courseformat/local/content/movesection', data),
-        });
+        const modal = await this._modalBodyRenderedPromise(modalParams);
 
-        const modalBody = getFirst(modal.getBody());
+        const modalBody = getList(modal.getBody())[0];
 
-        // Disable current selected section ids.
-        sectionIds.forEach(sectionId => {
-            const currentElement = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-id='${sectionId}']`);
-            this._disableLink(currentElement);
-        });
+        // Disable current element and section zero.
+        const currentElement = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-id='${sectionId}']`);
+        this._disableLink(currentElement);
+        const generalSection = modalBody.querySelector(`${this.selectors.SECTIONLINK}[data-number='0']`);
+        this._disableLink(generalSection);
 
         // Setup keyboard navigation.
         new ContentTree(
@@ -285,7 +244,7 @@ export default class extends BaseComponent {
                 return;
             }
             event.preventDefault();
-            this.reactive.dispatch('sectionMoveAfter', sectionIds, target.dataset.id);
+            this.reactive.dispatch('sectionMove', [sectionId], target.dataset.id);
             this._destroyModal(modal, editTools);
         });
 
@@ -300,10 +259,11 @@ export default class extends BaseComponent {
      */
     async _requestMoveCm(target, event) {
         // Check we have an id.
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
+        const cmId = target.dataset.id;
+        if (!cmId) {
             return;
         }
+        const cmInfo = this.reactive.get('cm', cmId);
 
         event.preventDefault();
 
@@ -312,36 +272,28 @@ export default class extends BaseComponent {
         // The section edit menu to refocus on end.
         const editTools = this._getClosestActionMenuToogler(target);
 
-        // Collect information from the state.
+        // Collect section information from the state.
         const exporter = this.reactive.getExporter();
         const data = exporter.course(this.reactive.state);
 
-        let titleText = null;
-        if (cmIds.length == 1) {
-            const cmInfo = this.reactive.get('cm', cmIds[0]);
-            data.cmid = cmInfo.id;
-            data.cmname = cmInfo.name;
-            data.information = await this.reactive.getFormatString('cmmove_info', data.cmname);
-            titleText = this.reactive.getFormatString('cmmove_title');
-        } else {
-            data.information = await this.reactive.getFormatString('cmsmove_info', cmIds.length);
-            titleText = this.reactive.getFormatString('cmsmove_title');
-        }
+        // Add the target cm info.
+        data.cmid = cmInfo.id;
+        data.cmname = cmInfo.name;
+
+        // Build the modal parameters from the event data.
+        const modalParams = {
+            title: getString('movecoursemodule', 'core'),
+            body: Templates.render('core_courseformat/local/content/movecm', data),
+        };
 
         // Create the modal.
-        // Build the modal parameters from the event data.
-        const modal = await this._modalBodyRenderedPromise(Modal, {
-            title: titleText,
-            body: Templates.render('core_courseformat/local/content/movecm', data),
-        });
+        const modal = await this._modalBodyRenderedPromise(modalParams);
 
-        const modalBody = getFirst(modal.getBody());
+        const modalBody = getList(modal.getBody())[0];
 
-        // Disable current selected section ids.
-        cmIds.forEach(cmId => {
-            const currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
-            this._disableLink(currentElement);
-        });
+        // Disable current element.
+        let currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
+        this._disableLink(currentElement);
 
         // Setup keyboard navigation.
         new ContentTree(
@@ -355,20 +307,17 @@ export default class extends BaseComponent {
         );
 
         // Open the cm section node if possible (Bootstrap 4 uses jQuery to interact with collapsibles).
-        // All jQuery in this code can be replaced when MDL-71979 is integrated.
-        cmIds.forEach(cmId => {
-            const currentElement = modalBody.querySelector(`${this.selectors.CMLINK}[data-id='${cmId}']`);
-            const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
-            const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
-            let collapsibleId = toggler.data('target') ?? toggler.attr('href');
-            if (collapsibleId) {
-                // We cannot be sure we have # in the id element name.
-                collapsibleId = collapsibleId.replace('#', '');
-                const expandNode = modalBody.querySelector(`#${collapsibleId}`);
-                jQuery(expandNode).collapse('show');
-            }
-        });
+        // All jQuery int this code can be replaced when MDL-71979 is integrated.
+        const sectionnode = currentElement.closest(this.selectors.SECTIONNODE);
+        const toggler = jQuery(sectionnode).find(this.selectors.MODALTOGGLER);
+        let collapsibleId = toggler.data('target') ?? toggler.attr('href');
+        if (collapsibleId) {
+            // We cannot be sure we have # in the id element name.
+            collapsibleId = collapsibleId.replace('#', '');
+            jQuery(`#${collapsibleId}`).collapse('toggle');
+        }
 
+        // Capture click.
         modalBody.addEventListener('click', (event) => {
             const target = event.target;
             if (!target.matches('a') || target.dataset.for === undefined || target.dataset.id === undefined) {
@@ -379,6 +328,7 @@ export default class extends BaseComponent {
             }
             event.preventDefault();
 
+            // Get draggable data from cm or section to dispatch.
             let targetSectionId;
             let targetCmId;
             if (target.dataset.for == 'cm') {
@@ -390,7 +340,8 @@ export default class extends BaseComponent {
                 targetSectionId = target.dataset.id;
                 targetCmId = section?.cmlist[0];
             }
-            this.reactive.dispatch('cmMove', cmIds, targetSectionId, targetCmId);
+
+            this.reactive.dispatch('cmMove', [cmId], targetSectionId, targetCmId);
             this._destroyModal(modal, editTools);
         });
 
@@ -415,69 +366,42 @@ export default class extends BaseComponent {
      * @param {Event} event the triggered event
      */
     async _requestDeleteSection(target, event) {
-        const sectionIds = this._getTargetIds(target);
-        if (sectionIds.length == 0) {
+        // Check we have an id.
+        const sectionId = target.dataset.id;
+
+        if (!sectionId) {
             return;
         }
+        const sectionInfo = this.reactive.get('section', sectionId);
 
         event.preventDefault();
 
-        // We don't need confirmation to delete empty sections.
-        let needsConfirmation = sectionIds.some(sectionId => {
-            const sectionInfo = this.reactive.get('section', sectionId);
-            const cmList = sectionInfo.cmlist ?? [];
-            return (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle);
-        });
-        if (!needsConfirmation) {
-            this.reactive.dispatch('sectionDelete', sectionIds);
+        const cmList = sectionInfo.cmlist ?? [];
+        if (cmList.length || sectionInfo.hassummary || sectionInfo.rawtitle) {
+            // We need confirmation if the section has something.
+            const modalParams = {
+                title: getString('confirm', 'core'),
+                body: getString('confirmdeletesection', 'moodle', sectionInfo.title),
+                saveButtonText: getString('delete', 'core'),
+                type: ModalFactory.types.SAVE_CANCEL,
+            };
+
+            const modal = await this._modalBodyRenderedPromise(modalParams);
+
+            modal.getRoot().on(
+                ModalEvents.save,
+                e => {
+                    // Stop the default save button behaviour which is to close the modal.
+                    e.preventDefault();
+                    modal.destroy();
+                    this.reactive.dispatch('sectionDelete', [sectionId]);
+                }
+            );
             return;
-        }
-
-        let bodyText = null;
-        let titleText = null;
-        if (sectionIds.length == 1) {
-            titleText = this.reactive.getFormatString('sectiondelete_title');
-            const sectionInfo = this.reactive.get('section', sectionIds[0]);
-            bodyText = this.reactive.getFormatString('sectiondelete_info', {name: sectionInfo.title});
         } else {
-            titleText = this.reactive.getFormatString('sectionsdelete_title');
-            bodyText = this.reactive.getFormatString('sectionsdelete_info', {count: sectionIds.length});
+            // We don't need confirmation to delete empty sections.
+            this.reactive.dispatch('sectionDelete', [sectionId]);
         }
-
-        const modal = await this._modalBodyRenderedPromise(ModalDeleteCancel, {
-            title: titleText,
-            body: bodyText,
-        });
-
-        modal.getRoot().on(
-            ModalEvents.delete,
-            e => {
-                // Stop the default save button behaviour which is to close the modal.
-                e.preventDefault();
-                modal.destroy();
-                this.reactive.dispatch('sectionDelete', sectionIds);
-            }
-        );
-    }
-
-    /**
-     * Handle a toggle cm selection.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestToggleSelectionCm(target, event) {
-        toggleBulkSelectionAction(this.reactive, target, event, 'cm');
-    }
-
-    /**
-     * Handle a toggle section selection.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestToggleSelectionSection(target, event) {
-        toggleBulkSelectionAction(this.reactive, target, event, 'section');
     }
 
     /**
@@ -488,174 +412,11 @@ export default class extends BaseComponent {
      * @param {string} mutationName the mutation name
      */
     async _requestMutationAction(target, event, mutationName) {
-        if (!target.dataset.id && target.dataset.for !== 'bulkaction') {
+        if (!target.dataset.id) {
             return;
         }
         event.preventDefault();
-        if (target.dataset.for === 'bulkaction') {
-            // If the mutation is a bulk action we use the current selection.
-            this.reactive.dispatch(mutationName, this.reactive.get('bulk').selection);
-        } else {
-            this.reactive.dispatch(mutationName, [target.dataset.id]);
-        }
-    }
-
-    /**
-     * Handle a course module duplicate request.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestCmDuplicate(target, event) {
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
-            return;
-        }
-        const sectionId = target.dataset.sectionid ?? null;
-        event.preventDefault();
-        this.reactive.dispatch('cmDuplicate', cmIds, sectionId);
-    }
-
-    /**
-     * Handle a delete cm request.
-     *
-     * @param {Element} target the dispatch action element
-     * @param {Event} event the triggered event
-     */
-    async _requestCmDelete(target, event) {
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
-            return;
-        }
-
-        event.preventDefault();
-
-        let bodyText = null;
-        let titleText = null;
-        if (cmIds.length == 1) {
-            const cmInfo = this.reactive.get('cm', cmIds[0]);
-            titleText = getString('cmdelete_title', 'core_courseformat');
-            bodyText = getString(
-                'cmdelete_info',
-                'core_courseformat',
-                {
-                    type: cmInfo.modname,
-                    name: cmInfo.name,
-                }
-            );
-        } else {
-            titleText = getString('cmsdelete_title', 'core_courseformat');
-            bodyText = getString(
-                'cmsdelete_info',
-                'core_courseformat',
-                {count: cmIds.length}
-            );
-        }
-
-        const modal = await this._modalBodyRenderedPromise(ModalDeleteCancel, {
-            title: titleText,
-            body: bodyText,
-        });
-
-        modal.getRoot().on(
-            ModalEvents.delete,
-            e => {
-                // Stop the default save button behaviour which is to close the modal.
-                e.preventDefault();
-                modal.destroy();
-                this.reactive.dispatch('cmDelete', cmIds);
-            }
-        );
-    }
-
-    /**
-     * Handle a cm availability change request.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestCmAvailability(target) {
-        const cmIds = this._getTargetIds(target);
-        if (cmIds.length == 0) {
-            return;
-        }
-        // Show the availability modal to decide which action to trigger.
-        const exporter = this.reactive.getExporter();
-        const data = {
-            allowstealth: exporter.canUseStealth(this.reactive.state, cmIds),
-        };
-        const modal = await this._modalBodyRenderedPromise(ModalSaveCancel, {
-            title: getString('availability', 'core'),
-            body: Templates.render('core_courseformat/local/content/cm/availabilitymodal', data),
-            saveButtonText: getString('apply', 'core'),
-        });
-
-        this._setupMutationRadioButtonModal(modal, cmIds);
-    }
-
-    /**
-     * Handle a section availability change request.
-     *
-     * @param {Element} target the dispatch action element
-     */
-    async _requestSectionAvailability(target) {
-        const sectionIds = this._getTargetIds(target);
-        if (sectionIds.length == 0) {
-            return;
-        }
-        const title = (sectionIds.length == 1) ? 'sectionavailability_title' : 'sectionsavailability_title';
-        // Show the availability modal to decide which action to trigger.
-        const modal = await this._modalBodyRenderedPromise(ModalSaveCancel, {
-            title: this.reactive.getFormatString(title),
-            body: Templates.render('core_courseformat/local/content/section/availabilitymodal', []),
-            saveButtonText: getString('apply', 'core'),
-        });
-
-        this._setupMutationRadioButtonModal(modal, sectionIds);
-    }
-
-    /**
-     * Add events to a mutation selector radio buttons modal.
-     * @param {Modal} modal
-     * @param {Number[]} ids the section or cm ids to apply the mutation
-     */
-    _setupMutationRadioButtonModal(modal, ids) {
-        // The save button is not enabled until the user selects an option.
-        modal.setButtonDisabled('save', true);
-
-        const submitFunction = (radio) => {
-            const mutation = radio?.value;
-            if (!mutation) {
-                return false;
-            }
-            this.reactive.dispatch(mutation, ids);
-            return true;
-        };
-
-        const modalBody = getFirst(modal.getBody());
-        const radioOptions = modalBody.querySelectorAll(this.selectors.OPTIONSRADIO);
-        radioOptions.forEach(radio => {
-            radio.addEventListener('change', () => {
-                modal.setButtonDisabled('save', false);
-            });
-            radio.parentNode.addEventListener('click', () => {
-                radio.checked = true;
-                modal.setButtonDisabled('save', false);
-            });
-            radio.parentNode.addEventListener('dblclick', dbClickEvent => {
-                if (submitFunction(radio)) {
-                    dbClickEvent.preventDefault();
-                    modal.destroy();
-                }
-            });
-        });
-
-        modal.getRoot().on(
-            ModalEvents.save,
-            () => {
-                const radio = modalBody.querySelector(`${this.selectors.OPTIONSRADIO}:checked`);
-                submitFunction(radio);
-            }
-        );
+        this.reactive.dispatch(mutationName, [target.dataset.id]);
     }
 
     /**
@@ -691,13 +452,12 @@ export default class extends BaseComponent {
     /**
      * Render a modal and return a body ready promise.
      *
-     * @param {Modal} ModalClass the modal class
      * @param {object} modalParams the modal params
      * @return {Promise} the modal body ready promise
      */
-    _modalBodyRenderedPromise(ModalClass, modalParams) {
+    _modalBodyRenderedPromise(modalParams) {
         return new Promise((resolve, reject) => {
-            ModalClass.create(modalParams).then((modal) => {
+            ModalFactory.create(modalParams).then((modal) => {
                 modal.setRemoveOnClose(true);
                 // Handle body loading event.
                 modal.getRoot().on(ModalEvents.bodyRendered, () => {
@@ -706,9 +466,6 @@ export default class extends BaseComponent {
                 // Configure some extra modal params.
                 if (modalParams.saveButtonText !== undefined) {
                     modal.setSaveButtonText(modalParams.saveButtonText);
-                }
-                if (modalParams.deleteButtonText !== undefined) {
-                    modal.setDeleteButtonText(modalParams.saveButtonText);
                 }
                 modal.show();
                 return;

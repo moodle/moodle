@@ -119,7 +119,7 @@ class roles {
      */
     public static function has_capability_in_course(int $courseid, string $capability) {
         global $DB;
-        if (empty($courseid) || !$DB->record_exists('course', ['id' => $courseid])) {
+        if (empty($courseid) || $DB->record_exists('course', ['id' => $courseid])) {
             return has_capability('moodle/site:config', \context_system::instance());
         }
 

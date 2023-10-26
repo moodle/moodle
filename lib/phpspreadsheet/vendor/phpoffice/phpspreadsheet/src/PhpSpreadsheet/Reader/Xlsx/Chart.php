@@ -4,7 +4,6 @@ namespace PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Chart\Axis;
-use PhpOffice\PhpSpreadsheet\Chart\AxisText;
 use PhpOffice\PhpSpreadsheet\Chart\ChartColor;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeries;
 use PhpOffice\PhpSpreadsheet\Chart\DataSeriesValues;
@@ -77,27 +76,15 @@ class Chart
         $yAxis = new Axis();
         $autoTitleDeleted = null;
         $chartNoFill = false;
-        $chartBorderLines = null;
-        $chartFillColor = null;
         $gradientArray = [];
         $gradientLin = null;
         $roundedCorners = false;
-        $gapWidth = null;
-        $useUpBars = null;
-        $useDownBars = null;
         foreach ($chartElementsC as $chartElementKey => $chartElement) {
             switch ($chartElementKey) {
                 case 'spPr':
-                    $children = $chartElementsC->spPr->children($this->aNamespace);
-                    if (isset($children->noFill)) {
+                    $possibleNoFill = $chartElementsC->spPr->children($this->aNamespace);
+                    if (isset($possibleNoFill->noFill)) {
                         $chartNoFill = true;
-                    }
-                    if (isset($children->solidFill)) {
-                        $chartFillColor = $this->readColor($children->solidFill);
-                    }
-                    if (isset($children->ln)) {
-                        $chartBorderLines = new GridLines();
-                        $this->readLineStyle($chartElementsC, $chartBorderLines);
                     }
 
                     break;
@@ -163,15 +150,11 @@ class Chart
                                             }
                                             $xAxis->setAxisType($chartDetailKey);
                                             $this->readEffects($chartDetail, $xAxis);
-                                            $this->readLineStyle($chartDetail, $xAxis);
                                             if (isset($chartDetail->spPr)) {
                                                 $sppr = $chartDetail->spPr->children($this->aNamespace);
                                                 if (isset($sppr->solidFill)) {
                                                     $axisColorArray = $this->readColor($sppr->solidFill);
                                                     $xAxis->setFillParameters($axisColorArray['value'], $axisColorArray['alpha'], $axisColorArray['type']);
-                                                }
-                                                if (isset($chartDetail->spPr->ln->noFill)) {
-                                                    $xAxis->setNoFill(true);
                                                 }
                                             }
                                             if (isset($chartDetail->majorGridlines)) {
@@ -236,15 +219,11 @@ class Chart
                                                 }
                                             }
                                             $this->readEffects($chartDetail, $whichAxis);
-                                            $this->readLineStyle($chartDetail, $whichAxis);
                                             if ($whichAxis !== null && isset($chartDetail->spPr)) {
                                                 $sppr = $chartDetail->spPr->children($this->aNamespace);
                                                 if (isset($sppr->solidFill)) {
                                                     $axisColorArray = $this->readColor($sppr->solidFill);
                                                     $whichAxis->setFillParameters($axisColorArray['value'], $axisColorArray['alpha'], $axisColorArray['type']);
-                                                }
-                                                if (isset($sppr->ln->noFill)) {
-                                                    $whichAxis->setNoFill(true);
                                                 }
                                             }
                                             if ($whichAxis !== null && isset($chartDetail->majorGridlines)) {
@@ -335,15 +314,6 @@ class Chart
                                             break;
                                         case 'stockChart':
                                             $plotSeries[] = $this->chartDataSeries($chartDetail, $chartDetailKey);
-                                            if (isset($chartDetail->upDownBars->gapWidth)) {
-                                                $gapWidth = self::getAttribute($chartDetail->upDownBars->gapWidth, 'val', 'integer');
-                                            }
-                                            if (isset($chartDetail->upDownBars->upBars)) {
-                                                $useUpBars = true;
-                                            }
-                                            if (isset($chartDetail->upDownBars->downBars)) {
-                                                $useDownBars = true;
-                                            }
                                             $plotAttributes = $this->readChartAttributes($chartDetail);
 
                                             break;
@@ -359,15 +329,6 @@ class Chart
                                 }
                                 if (!empty($gradientArray)) {
                                     $plotArea->setGradientFillProperties($gradientArray, $gradientLin);
-                                }
-                                if (is_int($gapWidth)) {
-                                    $plotArea->setGapWidth($gapWidth);
-                                }
-                                if ($useUpBars === true) {
-                                    $plotArea->setUseUpBars(true);
-                                }
-                                if ($useDownBars === true) {
-                                    $plotArea->setUseDownBars(true);
                                 }
 
                                 break;
@@ -387,10 +348,6 @@ class Chart
                                 $legendPos = 'r';
                                 $legendLayout = null;
                                 $legendOverlay = false;
-                                $legendBorderLines = null;
-                                $legendFillColor = null;
-                                $legendText = null;
-                                $addLegendText = false;
                                 foreach ($chartDetails as $chartDetailKey => $chartDetail) {
                                     $chartDetail = Xlsx::testSimpleXml($chartDetail);
                                     switch ($chartDetailKey) {
@@ -406,44 +363,9 @@ class Chart
                                             $legendLayout = $this->chartLayoutDetails($chartDetail);
 
                                             break;
-                                        case 'spPr':
-                                            $children = $chartDetails->spPr->children($this->aNamespace);
-                                            if (isset($children->solidFill)) {
-                                                $legendFillColor = $this->readColor($children->solidFill);
-                                            }
-                                            if (isset($children->ln)) {
-                                                $legendBorderLines = new GridLines();
-                                                $this->readLineStyle($chartDetails, $legendBorderLines);
-                                            }
-
-                                            break;
-                                        case 'txPr':
-                                            $children = $chartDetails->txPr->children($this->aNamespace);
-                                            $addLegendText = false;
-                                            $legendText = new AxisText();
-                                            if (isset($children->p->pPr->defRPr->solidFill)) {
-                                                $colorArray = $this->readColor($children->p->pPr->defRPr->solidFill);
-                                                $legendText->getFillColorObject()->setColorPropertiesArray($colorArray);
-                                                $addLegendText = true;
-                                            }
-                                            if (isset($children->p->pPr->defRPr->effectLst)) {
-                                                $this->readEffects($children->p->pPr->defRPr, $legendText, false);
-                                                $addLegendText = true;
-                                            }
-
-                                            break;
                                     }
                                 }
                                 $legend = new Legend("$legendPos", $legendLayout, (bool) $legendOverlay);
-                                if ($legendFillColor !== null) {
-                                    $legend->getFillColor()->setColorPropertiesArray($legendFillColor);
-                                }
-                                if ($legendBorderLines !== null) {
-                                    $legend->setBorderLines($legendBorderLines);
-                                }
-                                if ($addLegendText) {
-                                    $legend->setLegendText($legendText);
-                                }
 
                                 break;
                         }
@@ -453,12 +375,6 @@ class Chart
         $chart = new \PhpOffice\PhpSpreadsheet\Chart\Chart($chartName, $title, $legend, $plotArea, $plotVisOnly, (string) $dispBlanksAs, $XaxisLabel, $YaxisLabel, $xAxis, $yAxis);
         if ($chartNoFill) {
             $chart->setNoFill(true);
-        }
-        if ($chartFillColor !== null) {
-            $chart->getFillColor()->setColorPropertiesArray($chartFillColor);
-        }
-        if ($chartBorderLines !== null) {
-            $chart->setBorderLines($chartBorderLines);
         }
         $chart->setRoundedCorners($roundedCorners);
         if (is_bool($autoTitleDeleted)) {
@@ -484,7 +400,6 @@ class Chart
     {
         $caption = [];
         $titleLayout = null;
-        $titleOverlay = false;
         foreach ($titleDetails as $titleDetailKey => $chartDetail) {
             $chartDetail = Xlsx::testSimpleXml($chartDetail);
             switch ($titleDetailKey) {
@@ -508,10 +423,6 @@ class Chart
                     }
 
                     break;
-                case 'overlay':
-                    $titleOverlay = self::getAttribute($chartDetail, 'val', 'boolean');
-
-                    break;
                 case 'layout':
                     $titleLayout = $this->chartLayoutDetails($chartDetail);
 
@@ -519,7 +430,7 @@ class Chart
             }
         }
 
-        return new Title($caption, $titleLayout, (bool) $titleOverlay);
+        return new Title($caption, $titleLayout);
     }
 
     private function chartLayoutDetails(SimpleXMLElement $chartDetail): ?Layout
@@ -919,7 +830,6 @@ class Chart
 
         foreach ($seriesValueSet->lvl as $seriesLevelIdx => $seriesLevel) {
             foreach ($seriesLevel as $seriesValueIdx => $seriesValue) {
-                $seriesValue = Xlsx::testSimpleXml($seriesValue);
                 switch ($seriesValueIdx) {
                     case 'ptCount':
                         $pointCount = self::getAttribute($seriesValue, 'val', 'integer');
@@ -1164,37 +1074,6 @@ class Chart
         return $value;
     }
 
-    private function parseFont(SimpleXMLElement $titleDetailPart): ?Font
-    {
-        if (!isset($titleDetailPart->pPr->defRPr)) {
-            return null;
-        }
-        $fontArray = [];
-        $fontArray['size'] = self::getAttribute($titleDetailPart->pPr->defRPr, 'sz', 'integer');
-        $fontArray['bold'] = self::getAttribute($titleDetailPart->pPr->defRPr, 'b', 'boolean');
-        $fontArray['italic'] = self::getAttribute($titleDetailPart->pPr->defRPr, 'i', 'boolean');
-        $fontArray['underscore'] = self::getAttribute($titleDetailPart->pPr->defRPr, 'u', 'string');
-        $fontArray['strikethrough'] = self::getAttribute($titleDetailPart->pPr->defRPr, 'strike', 'string');
-
-        if (isset($titleDetailPart->pPr->defRPr->latin)) {
-            $fontArray['latin'] = self::getAttribute($titleDetailPart->pPr->defRPr->latin, 'typeface', 'string');
-        }
-        if (isset($titleDetailPart->pPr->defRPr->ea)) {
-            $fontArray['eastAsian'] = self::getAttribute($titleDetailPart->pPr->defRPr->ea, 'typeface', 'string');
-        }
-        if (isset($titleDetailPart->pPr->defRPr->cs)) {
-            $fontArray['complexScript'] = self::getAttribute($titleDetailPart->pPr->defRPr->cs, 'typeface', 'string');
-        }
-        if (isset($titleDetailPart->pPr->defRPr->solidFill)) {
-            $fontArray['chartColor'] = new ChartColor($this->readColor($titleDetailPart->pPr->defRPr->solidFill));
-        }
-        $font = new Font();
-        $font->setSize(null, true);
-        $font->applyFromArray($fontArray);
-
-        return $font;
-    }
-
     /**
      * @param ?SimpleXMLElement $chartDetail
      */
@@ -1241,13 +1120,8 @@ class Chart
             }
             if (isset($chartDetail->dLbls->txPr)) {
                 $txpr = $chartDetail->dLbls->txPr->children($this->aNamespace);
-                if (isset($txpr->p)) {
-                    $plotAttributes['labelFont'] = $this->parseFont($txpr->p);
-                    if (isset($txpr->p->pPr->defRPr->effectLst)) {
-                        $labelEffects = new GridLines();
-                        $this->readEffects($txpr->p->pPr->defRPr, $labelEffects, false);
-                        $plotAttributes['labelEffects'] = $labelEffects;
-                    }
+                if (isset($txpr->p->pPr->defRPr->solidFill)) {
+                    $plotAttributes['labelFontColor'] = new ChartColor($this->readColor($txpr->p->pPr->defRPr->solidFill));
                 }
             }
         }
@@ -1294,19 +1168,13 @@ class Chart
         }
     }
 
-    private function readEffects(SimpleXMLElement $chartDetail, ?ChartProperties $chartObject, bool $getSppr = true): void
+    private function readEffects(SimpleXMLElement $chartDetail, ?ChartProperties $chartObject): void
     {
-        if (!isset($chartObject)) {
+        if (!isset($chartObject, $chartDetail->spPr)) {
             return;
         }
-        if ($getSppr) {
-            if (!isset($chartDetail->spPr)) {
-                return;
-            }
-            $sppr = $chartDetail->spPr->children($this->aNamespace);
-        } else {
-            $sppr = $chartDetail;
-        }
+        $sppr = $chartDetail->spPr->children($this->aNamespace);
+
         if (isset($sppr->effectLst->glow)) {
             $axisGlowSize = (float) self::getAttribute($sppr->effectLst->glow, 'rad', 'integer') / ChartProperties::POINTS_WIDTH_MULTIPLIER;
             if ($axisGlowSize != 0.0) {
@@ -1536,29 +1404,12 @@ class Chart
         }
         if (isset($chartDetail->txPr)) {
             $children = $chartDetail->txPr->children($this->aNamespace);
-            $addAxisText = false;
-            $axisText = new AxisText();
             if (isset($children->bodyPr)) {
                 /** @var string */
                 $textRotation = self::getAttribute($children->bodyPr, 'rot', 'string');
                 if (is_numeric($textRotation)) {
-                    $axisText->setRotation((int) ChartProperties::xmlToAngle($textRotation));
-                    $addAxisText = true;
+                    $whichAxis->setAxisOption('textRotation', (string) ChartProperties::xmlToAngle($textRotation));
                 }
-            }
-            if (isset($children->p->pPr->defRPr)) {
-                $font = $this->parseFont($children->p);
-                if ($font !== null) {
-                    $axisText->setFont($font);
-                    $addAxisText = true;
-                }
-            }
-            if (isset($children->p->pPr->defRPr->effectLst)) {
-                $this->readEffects($children->p->pPr->defRPr, $axisText, false);
-                $addAxisText = true;
-            }
-            if ($addAxisText) {
-                $whichAxis->setAxisText($axisText);
             }
         }
     }

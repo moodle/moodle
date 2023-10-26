@@ -3,7 +3,6 @@
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Document\Properties;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -30,8 +29,8 @@ class DocProps extends WriterPart
 
         // Properties
         $objWriter->startElement('Properties');
-        $objWriter->writeAttribute('xmlns', Namespaces::EXTENDED_PROPERTIES);
-        $objWriter->writeAttribute('xmlns:vt', Namespaces::PROPERTIES_VTYPES);
+        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/officeDocument/2006/extended-properties');
+        $objWriter->writeAttribute('xmlns:vt', 'http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes');
 
         // Application
         $objWriter->writeElement('Application', 'Microsoft Excel');
@@ -93,9 +92,6 @@ class DocProps extends WriterPart
         // SharedDoc
         $objWriter->writeElement('SharedDoc', 'false');
 
-        // HyperlinkBase
-        $objWriter->writeElement('HyperlinkBase', $spreadsheet->getProperties()->getHyperlinkBase());
-
         // HyperlinksChanged
         $objWriter->writeElement('HyperlinksChanged', 'false');
 
@@ -128,11 +124,11 @@ class DocProps extends WriterPart
 
         // cp:coreProperties
         $objWriter->startElement('cp:coreProperties');
-        $objWriter->writeAttribute('xmlns:cp', Namespaces::CORE_PROPERTIES2);
-        $objWriter->writeAttribute('xmlns:dc', Namespaces::DC_ELEMENTS);
-        $objWriter->writeAttribute('xmlns:dcterms', Namespaces::DC_TERMS);
-        $objWriter->writeAttribute('xmlns:dcmitype', Namespaces::DC_DCMITYPE);
-        $objWriter->writeAttribute('xmlns:xsi', Namespaces::SCHEMA_INSTANCE);
+        $objWriter->writeAttribute('xmlns:cp', 'http://schemas.openxmlformats.org/package/2006/metadata/core-properties');
+        $objWriter->writeAttribute('xmlns:dc', 'http://purl.org/dc/elements/1.1/');
+        $objWriter->writeAttribute('xmlns:dcterms', 'http://purl.org/dc/terms/');
+        $objWriter->writeAttribute('xmlns:dcmitype', 'http://purl.org/dc/dcmitype/');
+        $objWriter->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
 
         // dc:creator
         $objWriter->writeElement('dc:creator', $spreadsheet->getProperties()->getCreator());
@@ -202,8 +198,8 @@ class DocProps extends WriterPart
 
         // cp:coreProperties
         $objWriter->startElement('Properties');
-        $objWriter->writeAttribute('xmlns', Namespaces::CUSTOM_PROPERTIES);
-        $objWriter->writeAttribute('xmlns:vt', Namespaces::PROPERTIES_VTYPES);
+        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/officeDocument/2006/custom-properties');
+        $objWriter->writeAttribute('xmlns:vt', 'http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes');
 
         foreach ($customPropertyList as $key => $customProperty) {
             $propertyValue = $spreadsheet->getProperties()->getCustomPropertyValue($customProperty);
@@ -220,7 +216,7 @@ class DocProps extends WriterPart
 
                     break;
                 case Properties::PROPERTY_TYPE_FLOAT:
-                    $objWriter->writeElement('vt:r8', sprintf('%F', $propertyValue));
+                    $objWriter->writeElement('vt:r8', $propertyValue);
 
                     break;
                 case Properties::PROPERTY_TYPE_BOOLEAN:

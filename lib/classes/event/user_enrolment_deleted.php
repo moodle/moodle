@@ -80,6 +80,33 @@ class user_enrolment_deleted extends base {
     }
 
     /**
+     * Return name of the legacy event, which is replaced by this event.
+     *
+     * @return string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'user_unenrolled';
+    }
+
+    /**
+     * Return user_unenrolled legacy event data.
+     *
+     * @return \stdClass
+     */
+    protected function get_legacy_eventdata() {
+        return (object)$this->other['userenrolment'];
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'course', 'unenrol', '../enrol/users.php?id=' . $this->courseid, $this->courseid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

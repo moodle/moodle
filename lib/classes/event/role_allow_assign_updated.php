@@ -73,4 +73,13 @@ class role_allow_assign_updated extends base {
     public function get_url() {
         return new \moodle_url('/admin/roles/allow.php', array('mode' => 'assign'));
     }
+
+    /**
+     * Returns array of parameters to be passed to legacy add_to_log() function.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return array(SITEID, 'role', 'edit allow assign', 'admin/roles/allow.php?mode=assign');
+    }
 }

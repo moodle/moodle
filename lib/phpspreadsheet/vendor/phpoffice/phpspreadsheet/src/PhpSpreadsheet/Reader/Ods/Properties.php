@@ -8,7 +8,6 @@ use SimpleXMLElement;
 
 class Properties
 {
-    /** @var Spreadsheet */
     private $spreadsheet;
 
     public function __construct(Spreadsheet $spreadsheet)
@@ -16,20 +15,19 @@ class Properties
         $this->spreadsheet = $spreadsheet;
     }
 
-    public function load(SimpleXMLElement $xml, array $namespacesMeta): void
+    public function load(SimpleXMLElement $xml, $namespacesMeta): void
     {
         $docProps = $this->spreadsheet->getProperties();
         $officeProperty = $xml->children($namespacesMeta['office']);
         foreach ($officeProperty as $officePropertyData) {
+            // @var \SimpleXMLElement $officePropertyData
             if (isset($namespacesMeta['dc'])) {
-                /** @scrutinizer ignore-call */
                 $officePropertiesDC = $officePropertyData->children($namespacesMeta['dc']);
                 $this->setCoreProperties($docProps, $officePropertiesDC);
             }
 
             $officePropertyMeta = null;
             if (isset($namespacesMeta['dc'])) {
-                /** @scrutinizer ignore-call */
                 $officePropertyMeta = $officePropertyData->children($namespacesMeta['meta']);
             }
             $officePropertyMeta = $officePropertyMeta ?? [];
@@ -70,9 +68,9 @@ class Properties
     }
 
     private function setMetaProperties(
-        array $namespacesMeta,
+        $namespacesMeta,
         SimpleXMLElement $propertyValue,
-        string $propertyName,
+        $propertyName,
         DocumentProperties $docProps
     ): void {
         $propertyValueAttributes = $propertyValue->attributes($namespacesMeta['meta']);
@@ -97,10 +95,6 @@ class Properties
         }
     }
 
-    /**
-     * @param mixed $propertyValueAttributes
-     * @param mixed $propertyValue
-     */
     private function setUserDefinedProperty($propertyValueAttributes, $propertyValue, DocumentProperties $docProps): void
     {
         $propertyValueName = '';

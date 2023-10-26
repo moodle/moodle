@@ -35,12 +35,6 @@ require_once(__DIR__ . '/../../lib/enrollib.php');
  */
 class time_splittings_test extends \advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var course Moodle course analysable. */
-    protected $analysable;
-
     /**
      * setUp
      *

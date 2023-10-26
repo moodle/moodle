@@ -124,11 +124,9 @@ class mnet_xmlrpc_client {
      *
      * @param  object   $mnet_peer      A mnet_peer object with details of the
      *                                  remote host we're connecting to
-     * @param  bool     $rekey         The rekey attribute stops us from
-     *                                  getting into a loop.
      * @return mixed                    A PHP variable, as returned by the
      */
-    public function send($mnet_peer, bool $rekey = false) {
+    public function send($mnet_peer) {
         global $CFG, $DB;
 
         if (!$this->permission_to_call($mnet_peer)) {
@@ -137,16 +135,16 @@ class mnet_xmlrpc_client {
         }
 
         $request = new \PhpXmlRpc\Request($this->method, $this->params);
-        $requesttext = $request->serialize('utf-8');
+        $this->requesttext = $request->serialize('utf-8');
 
-        $signedrequest = mnet_sign_message($requesttext);
-        $encryptedrequest = mnet_encrypt_message($signedrequest, $mnet_peer->public_key);
+        $this->signedrequest = mnet_sign_message($this->requesttext);
+        $this->encryptedrequest = mnet_encrypt_message($this->signedrequest, $mnet_peer->public_key);
 
         $client = $this->prepare_http_request($mnet_peer);
 
         $timestamp_send    = time();
         mnet_debug("about to send the xmlrpc request");
-        $response = $client->send($encryptedrequest, $this->timeout);
+        $response = $client->send($this->encryptedrequest, $this->timeout);
         mnet_debug("managed to complete a xmlrpc request");
         $timestamp_receive = time();
 
@@ -155,12 +153,13 @@ class mnet_xmlrpc_client {
             return false;
         }
 
-        $rawresponse = trim($response->value()); // Because MNet responses ARE NOT valid xmlrpc, don't try any PhpXmlRpc facility.
+        $this->rawresponse = $response->value(); // Because MNet responses ARE NOT valid xmlrpc, don't try any PhpXmlRpc facility.
+        $this->rawresponse = trim($this->rawresponse);
 
         $mnet_peer->touch();
 
         $crypt_parser = new mnet_encxml_parser();
-        $crypt_parser->parse($rawresponse);
+        $crypt_parser->parse($this->rawresponse);
 
         // If we couldn't parse the message, or it doesn't seem to have encrypted contents,
         // give the most specific error msg available & return
@@ -255,11 +254,11 @@ class mnet_xmlrpc_client {
             }
         }
 
-        $xmlrpcresponse = base64_decode($sig_parser->data_object);
+        $this->xmlrpcresponse = base64_decode($sig_parser->data_object);
         // Let's convert the xmlrpc back to PHP structure.
         $response = null;
         $encoder = new \PhpXmlRpc\Encoder();
-        $oresponse = $encoder->decodeXML($xmlrpcresponse); // First, to internal PhpXmlRpc\Response structure.
+        $oresponse = $encoder->decodeXML($this->xmlrpcresponse); // First, to internal PhpXmlRpc\Response structure.
         if ($oresponse instanceof \PhpXmlRpc\Response) {
             // Special handling of fault responses (because value() doesn't handle them properly).
             if ($oresponse->faultCode()) {
@@ -277,8 +276,8 @@ class mnet_xmlrpc_client {
         if (is_array($this->response) && array_key_exists('faultCode', $this->response)) {
             // The faultCode 7025 means we tried to connect with an old SSL key
             // The faultString is the new key - let's save it and try again
-            // The rekey attribute stops us from getting into a loop
-            if($this->response['faultCode'] == 7025 && empty($rekey)) {
+            // The re_key attribute stops us from getting into a loop
+            if($this->response['faultCode'] == 7025 && empty($mnet_peer->re_key)) {
                 mnet_debug('recieved an old-key fault, so trying to get the new key and update our records');
                 // If the new certificate doesn't come thru clean_param() unmolested, error out
                 if($this->response['faultString'] != clean_param($this->response['faultString'], PARAM_PEM)) {
@@ -297,7 +296,8 @@ class mnet_xmlrpc_client {
                 // Create a new peer object populated with the new info & try re-sending the request
                 $rekeyed_mnet_peer = new mnet_peer();
                 $rekeyed_mnet_peer->set_id($record->id);
-                return $this->send($rekeyed_mnet_peer, true); // Re-send mnet_peer with the new key.
+                $rekeyed_mnet_peer->re_key = true;
+                return $this->send($rekeyed_mnet_peer);
             }
             if (!empty($CFG->mnet_rpcdebug)) {
                 if (get_string_manager()->string_exists('error'.$this->response['faultCode'], 'mnet')) {
@@ -313,7 +313,7 @@ class mnet_xmlrpc_client {
 
         // ok, it's signed, but is it signed with the right certificate ?
         // do this *after* we check for an out of date key
-        $verified = openssl_verify($xmlrpcresponse, base64_decode($sig_parser->signature), $mnet_peer->public_key);
+        $verified = openssl_verify($this->xmlrpcresponse, base64_decode($sig_parser->signature), $mnet_peer->public_key);
         if ($verified != 1) {
             $this->error[] = 'Invalid signature';
         }
@@ -376,11 +376,11 @@ class mnet_xmlrpc_client {
      * @return \PhpXmlRpc\Client handle - the almost-ready-to-send http request
      */
     public function prepare_http_request ($mnet_peer) {
-        $uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
+        $this->uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
 
         // Instantiate the xmlrpc client to be used for the client request
         // and configure it the way we want.
-        $client = new \PhpXmlRpc\Client($uri);
+        $client = new \PhpXmlRpc\Client($this->uri);
         $client->setUseCurl(\PhpXmlRpc\Client::USE_CURL_ALWAYS);
         $client->setUserAgent('Moodle');
         $client->return_type = 'xml'; // Because MNet responses ARE NOT valid xmlrpc, don't try any validation.

@@ -8,12 +8,12 @@ To upgrade this library:
 3. Extract the contents of the release archive into a directory.
 4. Move the following files/directories from the extracted directory into lib/simplepie:
     - library/
-    - src/
     - autoloader.php
     - LICENSE.txt
     - README.markdown
 5. That should leave you with just the following. Do not move them. If there is any difference, check if they also need to be moved and update this doc:
     - idn (This is a third-party library that SimplePie can optionally use. We don't use this in Moodle)
+    - src
     - CHANGELOG.md
     - composer.json
     - db.sql

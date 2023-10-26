@@ -57,9 +57,9 @@ define(
                 showmoreLink.classList.add('d-none');
 
                 const hiddenItems = document.querySelector('[data-region="items-list"]').children;
-                for (const hiddenItem of hiddenItems) {
+                hiddenItems.forEach(function(hiddenItem) {
                     hiddenItem.style = "display: block";
-                }
+                });
             });
         };
 

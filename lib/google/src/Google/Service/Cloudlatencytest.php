@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest extends Google_Service
 {
   /** View monitoring data for all of your Google Cloud and API projects. */
@@ -81,7 +80,6 @@ class Google_Service_Cloudlatencytest extends Google_Service
  *   $statscollection = $cloudlatencytestService->statscollection;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_Statscollection_Resource extends Google_Service_Resource
 {
 
@@ -117,7 +115,6 @@ class Google_Service_Cloudlatencytest_Statscollection_Resource extends Google_Se
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_AggregatedStats extends Google_Collection
 {
   protected $collection_key = 'stats';
@@ -137,7 +134,6 @@ class Google_Service_Cloudlatencytest_AggregatedStats extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_AggregatedStatsReply extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -155,7 +151,6 @@ class Google_Service_Cloudlatencytest_AggregatedStatsReply extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_DoubleValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -182,7 +177,6 @@ class Google_Service_Cloudlatencytest_DoubleValue extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_IntValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -209,7 +203,6 @@ class Google_Service_Cloudlatencytest_IntValue extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_Stats extends Google_Collection
 {
   protected $collection_key = 'stringValues';
@@ -258,7 +251,6 @@ class Google_Service_Cloudlatencytest_Stats extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_StatsReply extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -276,7 +268,6 @@ class Google_Service_Cloudlatencytest_StatsReply extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Cloudlatencytest_StringValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(

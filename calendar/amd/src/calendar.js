@@ -25,27 +25,41 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 define([
-    'jquery',
-    'core/templates',
-    'core/notification',
-    'core_calendar/repository',
-    'core_calendar/events',
-    'core_calendar/view_manager',
-    'core_calendar/crud',
-    'core_calendar/selectors',
-    'core/config',
-],
-function(
-    $,
-    Templates,
-    Notification,
-    CalendarRepository,
-    CalendarEvents,
-    CalendarViewManager,
-    CalendarCrud,
-    CalendarSelectors,
-    Config,
-) {
+            'jquery',
+            'core/ajax',
+            'core/str',
+            'core/templates',
+            'core/notification',
+            'core/custom_interaction_events',
+            'core/modal_events',
+            'core/modal_factory',
+            'core_calendar/modal_event_form',
+            'core_calendar/summary_modal',
+            'core_calendar/repository',
+            'core_calendar/events',
+            'core_calendar/view_manager',
+            'core_calendar/crud',
+            'core_calendar/selectors',
+            'core/config',
+        ],
+        function(
+            $,
+            Ajax,
+            Str,
+            Templates,
+            Notification,
+            CustomEvents,
+            ModalEvents,
+            ModalFactory,
+            ModalEventForm,
+            SummaryModal,
+            CalendarRepository,
+            CalendarEvents,
+            CalendarViewManager,
+            CalendarCrud,
+            CalendarSelectors,
+            Config,
+        ) {
 
     var SELECTORS = {
         ROOT: "[data-region='calendar']",
@@ -118,7 +132,7 @@ function(
                     }
                     return;
                 })
-                .catch(Notification.exception);
+                .fail(Notification.exception);
         }
     };
 
@@ -176,7 +190,7 @@ function(
                     'core_calendar/calendar_day').then(function() {
                     e.preventDefault();
                     return CalendarViewManager.updateUrl(url);
-                }).catch(Notification.exception);
+                }).fail(Notification.exception);
             } else {
                 window.location.assign(Config.wwwroot + '/calendar/view.php' + url);
             }
@@ -190,7 +204,7 @@ function(
                     // We need to get the selector again because the content has changed.
                     return root.find(CalendarSelectors.elements.courseSelector).val(courseId);
                 })
-                .catch(Notification.exception);
+                .fail(Notification.exception);
         });
 
         var eventFormPromise = CalendarCrud.registerEventFormModal(root),
@@ -225,7 +239,7 @@ function(
                             modal.setStartTime(startTime);
                             modal.show();
                             return;
-                        }).catch(Notification.exception);
+                        }).fail(Notification.exception);
                     }
                 }
                 e.preventDefault();

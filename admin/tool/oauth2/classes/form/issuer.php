@@ -179,8 +179,7 @@ class issuer extends persistent {
         $mform->hideIf('acceptrisk', 'requireconfirmation', 'checked');
 
 
-        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1'
-                || $this->type == 'moodlenet' || $issuer->get('servicetype') == 'moodlenet') {
+        if ($this->type == 'imsobv2p1' || $issuer->get('servicetype') == 'imsobv2p1') {
             $mform->addRule('baseurl', null, 'required', null, 'client');
         } else {
             $mform->addRule('clientid', null, 'required', null, 'client');

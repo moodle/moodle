@@ -39,7 +39,6 @@ class mod_assign_grading_batch_operations_form extends moodleform {
      * Define this form - called by the parent constructor.
      */
     public function definition() {
-        global $CFG;
         $mform = $this->_form;
         $instance = $this->_customdata;
 
@@ -47,11 +46,6 @@ class mod_assign_grading_batch_operations_form extends moodleform {
         $options = array();
         $options['lock'] = get_string('locksubmissions', 'assign');
         $options['unlock'] = get_string('unlocksubmissions', 'assign');
-        if (!empty($CFG->messaging) &&
-            has_all_capabilities(['moodle/site:sendmessage', 'moodle/course:bulkmessaging'], $instance['context'])
-        ) {
-            $options['message'] = get_string('messageselectadd');
-        }
         $options['downloadselected'] = get_string('downloadselectedsubmissions', 'assign');
         if ($instance['submissiondrafts']) {
             $options['reverttodraft'] = get_string('reverttodraft', 'assign');

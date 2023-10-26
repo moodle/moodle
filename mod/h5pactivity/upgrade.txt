@@ -1,10 +1,6 @@
 This files describes API changes in /mod/h5pactivity/*,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* The WebService mod_h5pactivity_get_h5pactivities_by_courses now returns a `h5pglobalsettings` property that includes the global settings for H5P activities.
-
 === 4.1 ===
 
 * The following methods now accept an optional `$currentgroup` parameter in order to better support groups:

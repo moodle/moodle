@@ -105,6 +105,30 @@ class course_viewed extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        if ($this->courseid == SITEID and !isloggedin()) {
+            // We did not log frontpage access in older Moodle versions.
+            return null;
+        }
+
+        // We keep compatibility with 2.7 and 2.8 other['coursesectionid'].
+        if (isset($this->other['coursesectionnumber']) || isset($this->other['coursesectionid'])) {
+            if (isset($this->other['coursesectionnumber'])) {
+                $sectionnumber = $this->other['coursesectionnumber'];
+            } else {
+                $sectionnumber = $this->other['coursesectionid'];
+            }
+            return array($this->courseid, 'course', 'view section', 'view.php?id=' . $this->courseid . '&amp;section='
+                    . $sectionnumber, $sectionnumber);
+        }
+        return array($this->courseid, 'course', 'view', 'view.php?id=' . $this->courseid, $this->courseid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

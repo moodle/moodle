@@ -110,7 +110,7 @@ class Percentiles
             $pos += (($value - $valueSet[$pos]) / ($testValue - $valueSet[$pos]));
         }
 
-        return round(((float) $pos) / $valueAdjustor, $significance);
+        return round($pos / $valueAdjustor, $significance);
     }
 
     /**
@@ -184,7 +184,7 @@ class Percentiles
         return ++$pos;
     }
 
-    protected static function percentileFilterValues(array $dataSet): array
+    protected static function percentileFilterValues(array $dataSet)
     {
         return array_filter(
             $dataSet,
@@ -194,7 +194,7 @@ class Percentiles
         );
     }
 
-    protected static function rankFilterValues(array $dataSet): array
+    protected static function rankFilterValues(array $dataSet)
     {
         return array_filter(
             $dataSet,

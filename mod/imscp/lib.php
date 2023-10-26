@@ -248,7 +248,7 @@ function imscp_get_file_areas($course, $cm, $context) {
  *
  * @package  mod_imscp
  * @category files
- * @param file_browser $browser file browser
+ * @param stdClass $browser file browser
  * @param stdClass $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object

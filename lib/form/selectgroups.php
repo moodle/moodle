@@ -50,7 +50,7 @@ class MoodleQuickForm_selectgroups extends HTML_QuickForm_element implements tem
     /** @var array Contains the select optgroups */
     var $_optGroups = array();
 
-    /** @var array Default values of the SELECT */
+    /** @var string Default values of the SELECT */
     var $_values = null;
 
     /** @var string html for help button, if empty then no help */

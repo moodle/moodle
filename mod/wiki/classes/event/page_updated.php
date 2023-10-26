@@ -71,6 +71,16 @@ class page_updated extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return(array($this->courseid, 'wiki', 'edit', 'view.php?pageid=' . $this->objectid, $this->objectid,
+            $this->contextinstanceid));
+    }
+
+    /**
      * Get URL related to the action.
      *
      * @return \moodle_url

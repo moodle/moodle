@@ -315,7 +315,7 @@ class page_editor {
      * being procssed when using applytoall.
      *
      * @param int|\assign $assignment
-     * @param \stdClass $grade
+     * @param stdClass $grade
      * @param int $sourceuserid
      * @return bool
      */

@@ -61,9 +61,9 @@ class paypal_test extends \advanced_testcase {
         global $DB;
         $this->resetAfterTest();
 
-        /** @var \enrol_paypal_plugin $paypalplugin  */
+        /** @var enrol_paypal_plugin $paypalplugin  */
         $paypalplugin = enrol_get_plugin('paypal');
-        /** @var \enrol_manual_plugin $manualplugin  */
+        /** @var enrol_manual_plugin $manualplugin  */
         $manualplugin = enrol_get_plugin('manual');
         $this->assertNotEmpty($manualplugin);
 

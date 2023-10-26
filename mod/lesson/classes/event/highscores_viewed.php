@@ -76,6 +76,18 @@ class highscores_viewed extends \core\event\base {
             "id '$this->contextinstanceid'.";
     }
 
+    /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        $lesson = $this->get_record_snapshot('lesson', $this->objectid);
+
+        return array($this->courseid, 'lesson', 'view highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $lesson->name, $this->contextinstanceid);
+    }
+
     public static function get_objectid_mapping() {
         // The 'highscore' functionality was removed from core.
         return false;

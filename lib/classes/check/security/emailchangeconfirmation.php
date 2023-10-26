@@ -52,7 +52,7 @@ class emailchangeconfirmation extends check {
     /**
      * A link to a place to action this
      *
-     * @return \action_link|null
+     * @return action_link|null
      */
     public function get_action_link(): ?\action_link {
         return new \action_link(

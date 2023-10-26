@@ -103,7 +103,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I should not see "Cloudberries"
 
   @javascript
-  Scenario: Enable/disable H5P options tiny
+  Scenario: Enable/disable H5P options
     Given I log in as "admin"
     And I follow "Manage private files..."
     And I upload "h5p/tests/fixtures/guess-the-answer.h5p" file to "Files" filemanager
@@ -118,7 +118,9 @@ Feature: Use the TinyMCE editor to upload an h5p package
     When I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    Then ".h5p-actions" "css_element" should not exist
+    Then I should not see "Reuse"
+    And I should not see "Embed"
+    And I should not see "Rights of use"
     And I switch to the main frame
     And I navigate to "Settings" in current page administration
     And I select the ".h5p-placeholder" "css_element" in the "Page content" TinyMCE editor
@@ -130,7 +132,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And "Reuse" "text" should exist in the ".h5p-actions" "css_element"
+    And I should see "Reuse"
     And I should not see "Embed"
     And I should not see "Rights of use"
     And I switch to the main frame
@@ -145,7 +147,7 @@ Feature: Use the TinyMCE editor to upload an h5p package
     And I click on "Save and display" "button"
     And I switch to "h5pcontent" iframe
     And I switch to "h5p-iframe" class iframe
-    And "Reuse" "text" should not exist in the ".h5p-actions" "css_element"
+    And I should not see "Reuse"
     And I should see "Embed"
     And I should see "Rights of use"
 

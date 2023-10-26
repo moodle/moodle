@@ -151,7 +151,11 @@ module.exports = grunt => {
                             //
                             // It also adds the Moodle plugin name to the AMD module definition
                             // so that it can be imported as expected in other modules.
-                            path.resolve('.grunt/babel-plugin-add-module-to-define.js')
+                            path.resolve('.grunt/babel-plugin-add-module-to-define.js'),
+                            '@babel/plugin-syntax-dynamic-import',
+                            '@babel/plugin-syntax-import-meta',
+                            ['@babel/plugin-proposal-class-properties', {'loose': false}],
+                            '@babel/plugin-proposal-json-strings'
                         ],
                         presets: [
                             ['@babel/preset-env', {

@@ -23,19 +23,15 @@
  */
 namespace core\plugininfo;
 
-use admin_settingpage;
-use moodle_url;
-use part_of_admin_tree;
+use moodle_url, part_of_admin_tree, admin_settingpage;
+
+defined('MOODLE_INTERNAL') || die();
+
 
 /**
  * Class for HTML editors
  */
 class editor extends base {
-
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
-
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
@@ -97,7 +93,6 @@ class editor extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $editor = $this;     // Also can be used inside settings.php.
@@ -137,77 +132,5 @@ class editor extends base {
      */
     public static function get_manage_url() {
         return new moodle_url('/admin/settings.php', array('section'=>'manageeditors'));
-    }
-
-    public static function plugintype_supports_ordering(): bool {
-        return true;
-    }
-
-    public static function get_sorted_plugins(bool $enabledonly = false): ?array {
-        global $CFG;
-
-        $pluginmanager = \core_plugin_manager::instance();
-        $plugins = $pluginmanager->get_plugins_of_type('editor');
-
-        // The Editor list is stored in an ordered string.
-        $activeeditors = explode(',', $CFG->texteditors);
-
-        $sortedplugins = [];
-        foreach ($activeeditors as $editor) {
-            if (isset($plugins[$editor])) {
-                $sortedplugins[$editor] = $plugins[$editor];
-                unset($plugins[$editor]);
-            }
-        }
-
-        if ($enabledonly) {
-            return $sortedplugins;
-        }
-
-        // Sort the rest of the plugins lexically.
-        uasort($plugins, function ($a, $b) {
-            return strnatcasecmp($a->name, $b->name);
-        });
-
-        return array_merge(
-            $sortedplugins,
-            $plugins,
-        );
-    }
-
-    public static function change_plugin_order(string $pluginname, int $direction): bool {
-        $activeeditors = array_keys(self::get_sorted_plugins(true));
-        $key = array_search($pluginname, $activeeditors);
-
-        if ($key === false) {
-            return false;
-        }
-
-        if ($direction === self::MOVE_DOWN) {
-            // Move down the list.
-            if ($key < (count($activeeditors) - 1)) {
-                $fsave = $activeeditors[$key];
-                $activeeditors[$key] = $activeeditors[$key + 1];
-                $activeeditors[$key + 1] = $fsave;
-                add_to_config_log('editor_position', $key, $key + 1, $pluginname);
-                set_config('texteditors', implode(',', $activeeditors));
-                \core_plugin_manager::reset_caches();
-
-                return true;
-            }
-        } else if ($direction === self::MOVE_UP) {
-            if ($key >= 1) {
-                $fsave = $activeeditors[$key];
-                $activeeditors[$key] = $activeeditors[$key - 1];
-                $activeeditors[$key - 1] = $fsave;
-                add_to_config_log('editor_position', $key, $key - 1, $pluginname);
-                set_config('texteditors', implode(',', $activeeditors));
-                \core_plugin_manager::reset_caches();
-
-                return true;
-            }
-        }
-
-        return false;
     }
 }

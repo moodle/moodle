@@ -46,6 +46,27 @@ class group_member_removed extends base {
     }
 
     /**
+     * Legacy event data if get_legacy_eventname() is not empty.
+     *
+     * @return \stdClass
+     */
+    protected function get_legacy_eventdata() {
+        $eventdata = new \stdClass();
+        $eventdata->groupid = $this->objectid;
+        $eventdata->userid  = $this->relateduserid;
+        return $eventdata;
+    }
+
+    /**
+     * Return the legacy event name.
+     *
+     * @return string
+     */
+    public static function get_legacy_eventname() {
+        return 'groups_member_removed';
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

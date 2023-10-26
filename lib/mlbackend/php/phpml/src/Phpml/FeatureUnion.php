@@ -14,7 +14,7 @@ final class FeatureUnion implements Transformer
     private $pipelines = [];
 
     /**
-     * @param Pipeline[] $pipelines
+     * @var Pipeline[]
      */
     public function __construct(array $pipelines)
     {

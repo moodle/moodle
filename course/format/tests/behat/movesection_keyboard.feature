@@ -27,7 +27,8 @@ Feature: Move a section using keyboard
     # Focus on the modal content tree.
     When I press the tab key
     And I press the tab key
-    # Select the section 1.
+    # Select the section 2.
+    And I press the down key
     And I press the down key
     And I press enter
     Then I should see "Activity sample 3" in the "Topic 2" "section"
@@ -58,5 +59,7 @@ Feature: Move a section using keyboard
     And I press the down key
     # Go to the first section.
     And I press the home key
+    # Move down to Topic 1
+    And I press the down key
     And I press enter
     Then I should see "Activity sample 3" in the "Topic 1" "section"

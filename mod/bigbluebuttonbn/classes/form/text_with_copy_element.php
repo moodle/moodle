@@ -32,10 +32,6 @@ require_once("$CFG->libdir/form/text.php");
  * @author     Laurent David  (laurent [at] call-learning [dt] fr)
  */
 class text_with_copy_element extends MoodleQuickForm_text {
-
-    /** @var string an element template. */
-    public $_groupElementTemplate;
-
     /**
      * Accepts a renderer
      *

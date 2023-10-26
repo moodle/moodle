@@ -517,12 +517,6 @@ class ADODB_firebird extends ADOConnection {
 		}
 		$ret = call_user_func_array($fn, $args);
 
-		// fbird_query() and fbird_execute() return number of affected rows
-		// ADOConnection::_Execute() expects true for INSERT/UPDATE/DELETE
-		if (is_numeric($ret)) {
-			$ret = true;
-		}
-
 		if ($docommit && $ret === true) {
 			fbird_commit($this->_connectionID);
 		}

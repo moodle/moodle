@@ -38,6 +38,7 @@ class core_role_admins_potential_selector extends user_selector_base {
         if (is_null($name)) {
             $name = 'addselect';
         }
+        $options['multiselect'] = false;
         $options['includecustomfields'] = true;
         $options['exclude'] = explode(',', $CFG->siteadmins);
         parent::__construct($name, $options);

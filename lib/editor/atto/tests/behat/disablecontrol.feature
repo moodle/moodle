@@ -14,7 +14,7 @@ Feature: Atto with enable/disable function.
       | label    | L1   | <a href="../lib/editor/tests/fixtures/disable_control_example.php">Control Enable/Disable Atto</a> | C1     | label1   |
     And I log in as "admin"
     And I am on "Course 1" course homepage
-    And I click on "Control Enable/Disable Atto" "link" in the "region-main" "region"
+    And I follow "Control Enable/Disable Atto"
 
   @javascript
   Scenario: Check disable Atto editor.

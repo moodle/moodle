@@ -16,7 +16,7 @@
 /**
  * Handle selection changes on the competency tree.
  *
- * @module     tool_lp/competencytree
+ * @module     tool_lp/competencyselect
  * @copyright  2015 Damyon Wiese <damyon@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

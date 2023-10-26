@@ -23,10 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 require_once("$CFG->dirroot/webservice/lib.php");
 
 /**
@@ -116,10 +112,7 @@ class webservice_rest_server extends webservice_base_server {
         //Check that the returned values are valid
         try {
             if ($this->function->returns_desc != null) {
-                $validatedvalues = \core_external\external_api::clean_returnvalue(
-                    $this->function->returns_desc,
-                    $this->returns
-                );
+                $validatedvalues = external_api::clean_returnvalue($this->function->returns_desc, $this->returns);
             } else {
                 $validatedvalues = null;
             }

@@ -1072,17 +1072,88 @@ class api {
     }
 
     /**
+     * Returns the an array of the users the given user is in a conversation
+     * with who are a contact and the number of unread messages.
+     *
      * @deprecated since 3.10
+     * TODO: MDL-69643
+     * @param int $userid The user id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
      */
-    public static function get_contacts_with_unread_message_count() {
-        throw new \coding_exception('\core_message\api::get_contacts_with_unread_message_count has been removed.');
+    public static function get_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        debugging('\core_message\api::get_contacts_with_unread_message_count is deprecated and no longer used',
+            DEBUG_DEVELOPER);
+
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
+                              FROM {message_contacts} mc
+                        INNER JOIN {user} u
+                                ON (u.id = mc.contactid OR u.id = mc.userid)
+                         LEFT JOIN {messages} m
+                                ON ((m.useridfrom = mc.contactid OR m.useridfrom = mc.userid) AND m.useridfrom != ?)
+                         LEFT JOIN {message_conversation_members} mcm
+                                ON mcm.conversationid = m.conversationid AND mcm.userid = ? AND mcm.userid != m.useridfrom
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                         LEFT JOIN {message_users_blocked} mub
+                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                             WHERE mua.id is NULL
+                               AND mub.id is NULL
+                               AND (mc.userid = ? OR mc.contactid = ?)
+                               AND u.id != ?
+                               AND u.deleted = 0
+                          GROUP BY $userfields";
+
+        return $DB->get_records_sql($unreadcountssql, [$userid, $userid, $userid, self::MESSAGE_ACTION_READ,
+            $userid, $userid, $userid, $userid], $limitfrom, $limitnum);
     }
 
     /**
+     * Returns the an array of the users the given user is in a conversation
+     * with who are not a contact and the number of unread messages.
+     *
      * @deprecated since 3.10
+     * TODO: MDL-69643
+     * @param int $userid The user id
+     * @param int $limitfrom
+     * @param int $limitnum
+     * @return array
      */
-    public static function get_non_contacts_with_unread_message_count() {
-        throw new \coding_exception('\core_message\api::get_non_contacts_with_unread_message_count has been removed.');
+    public static function get_non_contacts_with_unread_message_count($userid, $limitfrom = 0, $limitnum = 0) {
+        global $DB;
+
+        debugging('\core_message\api::get_non_contacts_with_unread_message_count is deprecated and no longer used',
+            DEBUG_DEVELOPER);
+
+        $userfieldsapi = \core_user\fields::for_userpic()->including('lastaccess');
+        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+        $unreadcountssql = "SELECT $userfields, count(m.id) as messagecount
+                              FROM {user} u
+                        INNER JOIN {messages} m
+                                ON m.useridfrom = u.id
+                        INNER JOIN {message_conversation_members} mcm
+                                ON mcm.conversationid = m.conversationid
+                         LEFT JOIN {message_user_actions} mua
+                                ON (mua.messageid = m.id AND mua.userid = ? AND mua.action = ?)
+                         LEFT JOIN {message_contacts} mc
+                                ON (mc.userid = ? AND mc.contactid = u.id)
+                         LEFT JOIN {message_users_blocked} mub
+                                ON (mub.userid = ? AND mub.blockeduserid = u.id)
+                             WHERE mcm.userid = ?
+                               AND mcm.userid != m.useridfrom
+                               AND mua.id is NULL
+                               AND mub.id is NULL
+                               AND mc.id is NULL
+                               AND u.deleted = 0
+                          GROUP BY $userfields";
+
+        return $DB->get_records_sql($unreadcountssql, [$userid, self::MESSAGE_ACTION_READ, $userid, $userid, $userid],
+            $limitfrom, $limitnum);
     }
 
     /**

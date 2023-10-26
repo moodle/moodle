@@ -16,10 +16,7 @@
 
 namespace qbank_viewquestiontext;
 
-use core\context;
 use core_question\local\bank\plugin_features_base;
-use core_question\local\bank\view;
-use qbank_viewquestiontext\output\question_text_format;
 
 /**
  * Class columns is the entrypoint for the columns.
@@ -31,27 +28,9 @@ use qbank_viewquestiontext\output\question_text_format;
  */
 class plugin_feature extends plugin_features_base {
 
-    /**
-     * Return an additional row for displaying the question text, if user has a preference set to display it.
-     *
-     * @param view $qbank
-     * @return array
-     */
-    public function get_question_columns(view $qbank): array {
-        $row = new question_text_row($qbank);
-        $preference = (int)question_get_display_preference($row->get_preference_key(), '0', PARAM_INT, new \moodle_url('/'));
-        if ($preference != question_text_format::OFF) {
-            return [
-                $row,
-            ];
-        }
-        return [];
-
-    }
-
-    public function get_question_bank_controls(view $qbank, context $context, int $categoryid): array {
+    public function get_question_columns($qbank): array {
         return [
-            400 => new question_text_format($qbank),
+            new question_text_row($qbank)
         ];
     }
 }

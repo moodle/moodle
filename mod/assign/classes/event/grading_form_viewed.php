@@ -99,6 +99,19 @@ class grading_form_viewed extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $msg = get_string('viewgradingformforstudent', 'assign',
+            array('id' => $user->id, 'fullname' => fullname($user)));
+        $this->set_legacy_logdata('view grading form', $msg);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

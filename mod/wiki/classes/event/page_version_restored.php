@@ -71,6 +71,16 @@ class page_version_restored extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        return(array($this->courseid, 'wiki', 'restore',
+            'view.php?pageid=' . $this->other['pageid'], $this->other['pageid'], $this->contextinstanceid));
+    }
+
+    /**
      * Get URL related to the action.
      *
      * @return \moodle_url

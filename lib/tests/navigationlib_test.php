@@ -711,6 +711,7 @@ class exposed_global_navigation extends global_navigation {
             $page = $PAGE;
         }
         parent::__construct($page);
+        $this->cache = new navigation_cache('unittest_nav');
     }
     public function __call($method, $arguments) {
         if (strpos($method, $this->exposedkey) !== false) {
@@ -762,9 +763,9 @@ class mock_initialise_global_navigation extends global_navigation {
  */
 class exposed_navbar extends navbar {
     protected $exposedkey = 'exposed_';
-
     public function __construct(\moodle_page $page) {
         parent::__construct($page);
+        $this->cache = new navigation_cache('unittest_nav');
     }
     public function __call($method, $arguments) {
         if (strpos($method, $this->exposedkey) !== false) {
@@ -792,6 +793,7 @@ class exposed_settings_navigation extends settings_navigation {
     public function __construct() {
         global $PAGE;
         parent::__construct($PAGE);
+        $this->cache = new navigation_cache('unittest_nav');
     }
     public function __call($method, $arguments) {
         if (strpos($method, $this->exposedkey) !== false) {

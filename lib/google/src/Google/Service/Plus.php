@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Plus extends Google_Service
 {
   /** Know your basic profile info and list of people in your circles.. */
@@ -338,7 +337,6 @@ class Google_Service_Plus extends Google_Service
  *   $activities = $plusService->activities;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Plus_Activities_Resource extends Google_Service_Resource
 {
 
@@ -414,7 +412,6 @@ class Google_Service_Plus_Activities_Resource extends Google_Service_Resource
  *   $comments = $plusService->comments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Plus_Comments_Resource extends Google_Service_Resource
 {
 
@@ -463,7 +460,6 @@ class Google_Service_Plus_Comments_Resource extends Google_Service_Resource
  *   $moments = $plusService->moments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Plus_Moments_Resource extends Google_Service_Resource
 {
 
@@ -523,7 +519,6 @@ class Google_Service_Plus_Moments_Resource extends Google_Service_Resource
  *   $people = $plusService->people;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Plus_People_Resource extends Google_Service_Resource
 {
 
@@ -621,7 +616,6 @@ class Google_Service_Plus_People_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Acl extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -659,7 +653,6 @@ class Google_Service_Plus_Acl extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Activity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -853,7 +846,6 @@ class Google_Service_Plus_Activity extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -929,7 +921,6 @@ class Google_Service_Plus_ActivityActor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActorClientSpecificActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -948,7 +939,6 @@ class Google_Service_Plus_ActivityActorClientSpecificActorInfo extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActorClientSpecificActorInfoYoutubeActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -966,7 +956,6 @@ class Google_Service_Plus_ActivityActorClientSpecificActorInfoYoutubeActorInfo e
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -984,7 +973,6 @@ class Google_Service_Plus_ActivityActorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActorName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1011,7 +999,6 @@ class Google_Service_Plus_ActivityActorName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityActorVerification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1029,7 +1016,6 @@ class Google_Service_Plus_ActivityActorVerification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityFeed extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1121,7 +1107,6 @@ class Google_Service_Plus_ActivityFeed extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObject extends Google_Collection
 {
   protected $collection_key = 'attachments';
@@ -1226,7 +1211,6 @@ class Google_Service_Plus_ActivityObject extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectActor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1292,7 +1276,6 @@ class Google_Service_Plus_ActivityObjectActor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectActorClientSpecificActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1311,7 +1294,6 @@ class Google_Service_Plus_ActivityObjectActorClientSpecificActorInfo extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectActorClientSpecificActorInfoYoutubeActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1329,7 +1311,6 @@ class Google_Service_Plus_ActivityObjectActorClientSpecificActorInfoYoutubeActor
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectActorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1347,7 +1328,6 @@ class Google_Service_Plus_ActivityObjectActorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectActorVerification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1365,7 +1345,6 @@ class Google_Service_Plus_ActivityObjectActorVerification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachments extends Google_Collection
 {
   protected $collection_key = 'thumbnails';
@@ -1460,7 +1439,6 @@ class Google_Service_Plus_ActivityObjectAttachments extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachmentsEmbed extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1487,7 +1465,6 @@ class Google_Service_Plus_ActivityObjectAttachmentsEmbed extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachmentsFullImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1532,7 +1509,6 @@ class Google_Service_Plus_ActivityObjectAttachmentsFullImage extends Google_Mode
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachmentsImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1577,7 +1553,6 @@ class Google_Service_Plus_ActivityObjectAttachmentsImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachmentsThumbnails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1614,7 +1589,6 @@ class Google_Service_Plus_ActivityObjectAttachmentsThumbnails extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectAttachmentsThumbnailsImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1659,7 +1633,6 @@ class Google_Service_Plus_ActivityObjectAttachmentsThumbnailsImage extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectPlusoners extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1686,7 +1659,6 @@ class Google_Service_Plus_ActivityObjectPlusoners extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectReplies extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1713,7 +1685,6 @@ class Google_Service_Plus_ActivityObjectReplies extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityObjectResharers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1740,7 +1711,6 @@ class Google_Service_Plus_ActivityObjectResharers extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ActivityProvider extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1758,7 +1728,6 @@ class Google_Service_Plus_ActivityProvider extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Comment extends Google_Collection
 {
   protected $collection_key = 'inReplyTo';
@@ -1871,7 +1840,6 @@ class Google_Service_Plus_Comment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentActor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1937,7 +1905,6 @@ class Google_Service_Plus_CommentActor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentActorClientSpecificActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1956,7 +1923,6 @@ class Google_Service_Plus_CommentActorClientSpecificActorInfo extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentActorClientSpecificActorInfoYoutubeActorInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1974,7 +1940,6 @@ class Google_Service_Plus_CommentActorClientSpecificActorInfoYoutubeActorInfo ex
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentActorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1992,7 +1957,6 @@ class Google_Service_Plus_CommentActorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentActorVerification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2010,7 +1974,6 @@ class Google_Service_Plus_CommentActorVerification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentFeed extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2093,7 +2056,6 @@ class Google_Service_Plus_CommentFeed extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentInReplyTo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2120,7 +2082,6 @@ class Google_Service_Plus_CommentInReplyTo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentObject extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2156,7 +2117,6 @@ class Google_Service_Plus_CommentObject extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_CommentPlusoners extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2174,7 +2134,6 @@ class Google_Service_Plus_CommentPlusoners extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_ItemScope extends Google_Collection
 {
   protected $collection_key = 'performers';
@@ -2695,7 +2654,6 @@ class Google_Service_Plus_ItemScope extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Moment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2770,7 +2728,6 @@ class Google_Service_Plus_Moment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_MomentsFeed extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2853,7 +2810,6 @@ class Google_Service_Plus_MomentsFeed extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PeopleFeed extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2927,7 +2883,6 @@ class Google_Service_Plus_PeopleFeed extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Person extends Google_Collection
 {
   protected $collection_key = 'urls';
@@ -3215,7 +3170,6 @@ class Google_Service_Plus_Person extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonAgeRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3242,7 +3196,6 @@ class Google_Service_Plus_PersonAgeRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonCover extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3280,7 +3233,6 @@ class Google_Service_Plus_PersonCover extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonCoverCoverInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3307,7 +3259,6 @@ class Google_Service_Plus_PersonCoverCoverInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonCoverCoverPhoto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3343,7 +3294,6 @@ class Google_Service_Plus_PersonCoverCoverPhoto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonEmails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3370,7 +3320,6 @@ class Google_Service_Plus_PersonEmails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3397,7 +3346,6 @@ class Google_Service_Plus_PersonImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3460,7 +3408,6 @@ class Google_Service_Plus_PersonName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonOrganizations extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3550,7 +3497,6 @@ class Google_Service_Plus_PersonOrganizations extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonPlacesLived extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3577,7 +3523,6 @@ class Google_Service_Plus_PersonPlacesLived extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PersonUrls extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3613,7 +3558,6 @@ class Google_Service_Plus_PersonUrls extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_Place extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3669,7 +3613,6 @@ class Google_Service_Plus_Place extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PlaceAddress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3687,7 +3630,6 @@ class Google_Service_Plus_PlaceAddress extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PlacePosition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3714,7 +3656,6 @@ class Google_Service_Plus_PlacePosition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Plus_PlusAclentryResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(

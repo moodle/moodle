@@ -11,8 +11,6 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
       | student1 | Student | 1 | student1@example.com |
       | student2 | Student | 2 | student2@example.com |
       | student3 | Student | 3 | student3@example.com |
-      | student4 | Student | 4 | student4@example.com |
-      | student5 | Student | 5 | student5@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
@@ -23,14 +21,11 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
       | student1 | C1 | student |
       | student2 | C1 | student |
       | student3 | C1 | student |
-      | student4 | C1 | student |
-      | student5 | C1 | student |
     And the following "groups" exist:
-      | name    | course | idnumber | participation |
-      | Group A | C1     | G1       | 1             |
-      | Group B | C1     | G2       | 1             |
-      | Group C | C1     | G3       | 1             |
-      | Group D | C1     | G4       | 0             |
+      | name | course | idnumber |
+      | Group A | C1 | G1 |
+      | Group B | C1 | G2 |
+      | Group C | C1 | G3 |
     And the following "group members" exist:
       | user | group |
       | teacher1 | G1 |
@@ -38,7 +33,6 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
       | student1 | G1 |
       | student2 | G2 |
       | student3 | G3 |
-      | student4 | G4 |
     And the following "activities" exist:
       | activity | name             | course | idnumber |
       | lesson   | Test lesson name | C1     | lesson1  |
@@ -59,19 +53,11 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I am on the "Test lesson name" "lesson activity" page logged in as student2
     And I set the field "Your answer" to "<p>Once upon a time there were two little green frogs."
     And I press "Submit"
-    And I am on the "Test lesson name" "lesson activity" page logged in as student4
-    And I set the field "Your answer" to "<p>Once upon a time there were four little green frogs."
-    And I press "Submit"
-    And I am on the "Test lesson name" "lesson activity" page logged in as student5
-    And I set the field "Your answer" to "<p>Once upon a time there were five little green frogs."
-    And I press "Submit"
     When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     Then I should see "Grade essays"
     And I grade lesson essays
     And I should see "Student 1"
     And I should see "Student 2"
-    And I should see "Student 4"
-    And I should see "Student 5"
     And I should see "Essay question"
     And I click on "Essay question" "link" in the "Student 1" "table_row"
     And I should see "Student 1's response"
@@ -84,20 +70,13 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And I select "Group A" from the "Separate groups" singleselect
     And I should see "Student 1"
     And I should not see "Student 2"
-    And I should not see "Student 4"
-    And I should not see "Student 5"
     And I select "Group B" from the "Separate groups" singleselect
     And I should see "Student 2"
     And I should not see "Student 1"
-    And I should not see "Student 4"
-    And I should not see "Student 5"
     And I select "Group C" from the "Separate groups" singleselect
     And I should see "No one in Group C has answered an essay question yet."
-    And I should not see "Group D" in the "Separate groups" "select"
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher2
     Then I should see "Grade essays"
     And I grade lesson essays
     And I should not see "Student 1"
     And I should see "Student 2"
-    And I should not see "Student 4"
-    And I should not see "Student 5"

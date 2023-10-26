@@ -104,10 +104,9 @@ function recaptcha_lang($lang = null) {
  * @param string $apiurl URL for reCAPTCHA API
  * @param string $pubkey The public key for reCAPTCHA
  * @param string $lang Language to use. If not provided, get current language.
- * @param bool $compactmode If true, use the compact widget.
  * @return string - The HTML to be embedded in the user's form.
  */
-function recaptcha_get_challenge_html($apiurl, $pubkey, $lang = null, bool $compactmode = false) {
+function recaptcha_get_challenge_html($apiurl, $pubkey, $lang = null) {
     global $CFG, $PAGE;
 
     // To use reCAPTCHA you must have an API key.
@@ -128,10 +127,7 @@ function recaptcha_get_challenge_html($apiurl, $pubkey, $lang = null, bool $comp
     $apicode .= "</script>\n";
 
     $return = html_writer::script($jscode, '');
-    $return .= html_writer::div('', 'recaptcha_element', [
-        'id' => 'recaptcha_element',
-        'data-size' => ($compactmode ? 'compact' : 'normal'),
-    ]);
+    $return .= html_writer::div('', 'recaptcha_element', array('id' => 'recaptcha_element'));
     $return .= $apicode;
 
     return $return;
@@ -186,7 +182,7 @@ function recaptcha_check_response($verifyurl, $privkey, $remoteip, $response) {
             $checkresponse['error'] = '';
         } else {
             $checkresponse['isvalid'] = false;
-            $checkresponse['error'] = $curldata->{'error-codes'};
+            $checkresponse['error'] = $curldata->{error-codes};
         }
     } else {
         $checkresponse['isvalid'] = false;

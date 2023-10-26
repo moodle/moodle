@@ -16,14 +16,11 @@
 
 namespace core_grades\external;
 
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\restricted_context_exception;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_multiple_structure;
 use moodle_url;
 use core_user;
 
@@ -38,7 +35,6 @@ require_once($CFG->dirroot.'/grade/lib.php');
  * @copyright  2022 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 4.1
- * @deprecated
  */
 class get_enrolled_users_for_search_widget extends external_api {
 
@@ -46,7 +42,6 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters
-     * @deprecated since 4.2
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
@@ -69,7 +64,6 @@ class get_enrolled_users_for_search_widget extends external_api {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      * @throws restricted_context_exception
-     * @deprecated since 4.2
      */
     public static function execute(int $courseid, string $actionbaseurl, ?int $groupid = 0): array {
         global $DB, $PAGE;
@@ -111,7 +105,7 @@ class get_enrolled_users_for_search_widget extends external_api {
             $userpicture->size = 1;
             $user->profileimage = $userpicture->get_url($PAGE)->out(false);
             $user->email = $guiuser->email;
-            $user->active = false;
+            $user->active = false; // @TODO MDL-76246
 
             $users[] = $user;
         }
@@ -127,21 +121,20 @@ class get_enrolled_users_for_search_widget extends external_api {
      * Returns description of method result value.
      *
      * @return external_single_structure
-     * @deprecated since 4.2
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
             'users' => new external_multiple_structure(self::user_description()),
-            'warnings' => new external_warnings(),
+            'warnings' => new \external_warnings(),
         ]);
     }
 
     /**
      * Create user return value description.
      *
-     * @return external_description
+     * @return \external_description
      */
-    public static function user_description(): external_description {
+    public static function user_description(): \external_description {
         $userfields = [
             'id'    => new external_value(core_user::get_property_type('id'), 'ID of the user'),
             'profileimage' => new external_value(
@@ -162,13 +155,5 @@ class get_enrolled_users_for_search_widget extends external_api {
             'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
         ];
         return new external_single_structure($userfields);
-    }
-
-    /**
-     * Mark the function as deprecated.
-     * @return bool
-     */
-    public static function execute_is_deprecated() {
-        return true;
     }
 }

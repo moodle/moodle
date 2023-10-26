@@ -24,16 +24,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_value;
-use core_external\external_single_structure;
-use core_external\external_multiple_structure;
-use core_external\external_function_parameters;
-use core_external\external_warnings;
-
 defined('MOODLE_INTERNAL') || die();
 
+require_once("$CFG->libdir/externallib.php");
 require_once($CFG->dirroot . '/question/engine/lib.php');
 require_once($CFG->dirroot . '/question/engine/datalib.php');
 require_once($CFG->libdir . '/questionlib.php');
@@ -314,22 +307,8 @@ class core_question_external extends external_api {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
         // Only load the properties we require from the DB.
         $properties = \core_question\external\question_summary_exporter::get_mandatory_properties();
-
-        // Transform to filters.
-        $filters = [
-            'category' => [
-                'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
-                'values' => [$categoryid],
-                'filteroptions' => ['includesubcategories' => $includesubcategories],
-            ],
-            'qtagids' => [
-                'jointype' => \qbank_tagquestion\tag_condition::JOINTYPE_DEFAULT,
-                'values' => $tagids,
-            ],
-        ];
-
-        $questions = $loader->get_filtered_questions($filters, $limit, $offset, $properties);
-        $totalcount = $loader->count_filtered_questions($filters);
+        $questions = $loader->get_questions($categoryid, $includesubcategories, $tagids, $limit, $offset, $properties);
+        $totalcount = $loader->count_questions($categoryid, $includesubcategories, $tagids);
         $renderer = $PAGE->get_renderer('core');
 
         $formattedquestions = array_map(function($question) use ($context, $renderer) {

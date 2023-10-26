@@ -99,9 +99,6 @@ abstract class BaseWriter implements IWriter
         if (((bool) ($flags & self::SAVE_WITH_CHARTS)) === true) {
             $this->setIncludeCharts(true);
         }
-        if (((bool) ($flags & self::DISABLE_PRECALCULATE_FORMULAE)) === true) {
-            $this->setPreCalculateFormulas(false);
-        }
     }
 
     /**

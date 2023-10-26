@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo extends Google_Service
 {
 
@@ -171,7 +170,6 @@ class Google_Service_CivicInfo extends Google_Service
  *   $divisions = $civicinfoService->divisions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Divisions_Resource extends Google_Service_Resource
 {
 
@@ -204,7 +202,6 @@ class Google_Service_CivicInfo_Divisions_Resource extends Google_Service_Resourc
  *   $elections = $civicinfoService->elections;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Elections_Resource extends Google_Service_Resource
 {
 
@@ -251,7 +248,6 @@ class Google_Service_CivicInfo_Elections_Resource extends Google_Service_Resourc
  *   $representatives = $civicinfoService->representatives;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Representatives_Resource extends Google_Service_Resource
 {
 
@@ -312,7 +308,6 @@ class Google_Service_CivicInfo_Representatives_Resource extends Google_Service_R
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_AdministrationRegion extends Google_Collection
 {
   protected $collection_key = 'sources';
@@ -371,7 +366,6 @@ class Google_Service_CivicInfo_AdministrationRegion extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_AdministrativeBody extends Google_Collection
 {
   protected $collection_key = 'voter_services';
@@ -502,7 +496,6 @@ class Google_Service_CivicInfo_AdministrativeBody extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Candidate extends Google_Collection
 {
   protected $collection_key = 'channels';
@@ -585,7 +578,6 @@ class Google_Service_CivicInfo_Candidate extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -612,7 +604,6 @@ class Google_Service_CivicInfo_Channel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Contest extends Google_Collection
 {
   protected $collection_key = 'sources';
@@ -841,7 +832,6 @@ class Google_Service_CivicInfo_Contest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_DivisionSearchResponse extends Google_Collection
 {
   protected $collection_key = 'results';
@@ -870,7 +860,6 @@ class Google_Service_CivicInfo_DivisionSearchResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_DivisionSearchResult extends Google_Collection
 {
   protected $collection_key = 'aliases';
@@ -907,7 +896,6 @@ class Google_Service_CivicInfo_DivisionSearchResult extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Election extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -952,7 +940,6 @@ class Google_Service_CivicInfo_Election extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_ElectionOfficial extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1006,7 +993,6 @@ class Google_Service_CivicInfo_ElectionOfficial extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_ElectionsQueryResponse extends Google_Collection
 {
   protected $collection_key = 'elections';
@@ -1035,7 +1021,6 @@ class Google_Service_CivicInfo_ElectionsQueryResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_ElectoralDistrict extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1071,7 +1056,6 @@ class Google_Service_CivicInfo_ElectoralDistrict extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_GeographicDivision extends Google_Collection
 {
   protected $collection_key = 'officeIndices';
@@ -1108,7 +1092,6 @@ class Google_Service_CivicInfo_GeographicDivision extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Office extends Google_Collection
 {
   protected $collection_key = 'sources';
@@ -1173,7 +1156,6 @@ class Google_Service_CivicInfo_Office extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Official extends Google_Collection
 {
   protected $collection_key = 'urls';
@@ -1257,7 +1239,6 @@ class Google_Service_CivicInfo_Official extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_PollingLocation extends Google_Collection
 {
   protected $collection_key = 'sources';
@@ -1350,7 +1331,6 @@ class Google_Service_CivicInfo_PollingLocation extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_RepresentativeInfoData extends Google_Collection
 {
   protected $collection_key = 'officials';
@@ -1390,12 +1370,10 @@ class Google_Service_CivicInfo_RepresentativeInfoData extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_RepresentativeInfoDataDivisions extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_RepresentativeInfoResponse extends Google_Collection
 {
   protected $collection_key = 'officials';
@@ -1454,12 +1432,10 @@ class Google_Service_CivicInfo_RepresentativeInfoResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_RepresentativeInfoResponseDivisions extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_SimpleAddressType extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1531,7 +1507,6 @@ class Google_Service_CivicInfo_SimpleAddressType extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_Source extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1558,7 +1533,6 @@ class Google_Service_CivicInfo_Source extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CivicInfo_VoterInfoResponse extends Google_Collection
 {
   protected $collection_key = 'state';

@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace ZipStream;
@@ -24,6 +23,22 @@ class Bigint
     }
 
     /**
+     * Fill the bytes field with int
+     *
+     * @param int $value
+     * @param int $start
+     * @param int $count
+     * @return void
+     */
+    protected function fillBytes(int $value, int $start, int $count): void
+    {
+        for ($i = 0; $i < $count; $i++) {
+            $this->bytes[$start + $i] = $i >= PHP_INT_SIZE ? 0 : $value & 0xFF;
+            $value >>= 8;
+        }
+    }
+
+    /**
      * Get an instance
      *
      * @param int $value
@@ -43,7 +58,7 @@ class Bigint
      */
     public static function fromLowHigh(int $low, int $high): self
     {
-        $bigint = new self();
+        $bigint = new Bigint();
         $bigint->fillBytes($low, 0, 4);
         $bigint->fillBytes($high, 4, 4);
         return $bigint;
@@ -135,7 +150,7 @@ class Bigint
      * @param Bigint $other
      * @return Bigint
      */
-    public function add(self $other): self
+    public function add(Bigint $other): Bigint
     {
         $result = clone $this;
         $overflow = false;
@@ -151,24 +166,8 @@ class Bigint
             }
         }
         if ($overflow) {
-            throw new OverflowException();
+            throw new OverflowException;
         }
         return $result;
-    }
-
-    /**
-     * Fill the bytes field with int
-     *
-     * @param int $value
-     * @param int $start
-     * @param int $count
-     * @return void
-     */
-    protected function fillBytes(int $value, int $start, int $count): void
-    {
-        for ($i = 0; $i < $count; $i++) {
-            $this->bytes[$start + $i] = $i >= PHP_INT_SIZE ? 0 : $value & 0xFF;
-            $value >>= 8;
-        }
     }
 }

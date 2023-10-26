@@ -44,11 +44,11 @@ class check_test extends \advanced_testcase {
 
         $CFG->passwordpolicy = false;
         $result = $check->get_result();
-        $this->assertEquals($result->get_status(), result::WARNING);
+        $this->assertEquals($result->status, result::WARNING);
 
         $CFG->passwordpolicy = true;
         $result = $check->get_result();
-        $this->assertEquals($result->get_status(), result::OK);
+        $this->assertEquals($result->status, result::OK);
 
         $CFG->passwordpolicy = $prior;
     }

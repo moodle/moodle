@@ -56,15 +56,6 @@ export default class extends BaseComponent {
         }
     }
 
-    /**
-     * Enable or disable the draggable property.
-     *
-     * @param {bool} value the new draggable value
-     */
-    setDraggable(value) {
-        this.dragdrop?.setDraggable(value);
-    }
-
     // Drag and drop methods.
 
     /**
@@ -129,13 +120,11 @@ export default class extends BaseComponent {
      * Drop event handler.
      *
      * @param {Object} dropdata the accepted drop data
-     * @param {Event} event the drop event
      */
-    drop(dropdata, event) {
+    drop(dropdata) {
         // Call the move mutation if necessary.
         if (dropdata.id != this.id && dropdata.nextcmid != this.id) {
-            const mutation = (event.altKey) ? 'cmDuplicate' : 'cmMove';
-            this.reactive.dispatch(mutation, [dropdata.id], null, this.id);
+            this.reactive.dispatch('cmMove', [dropdata.id], null, this.id);
         }
     }
 

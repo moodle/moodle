@@ -40,6 +40,10 @@ class presets_listed extends base {
         return new \moodle_url('/admin/tool/admin_presets/index.php');
     }
 
+    public function get_legacy_logdata(): array {
+        return [$this->courseid, 'tool_admin_presets', 'base', '', $this->objectid, $this->contextinstanceid];
+    }
+
     protected function init(): void {
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;

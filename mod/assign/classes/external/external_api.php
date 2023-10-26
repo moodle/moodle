@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
+require_once("$CFG->libdir/externallib.php");
 require_once("$CFG->dirroot/mod/assign/locallib.php");
 
 /**
@@ -30,7 +31,7 @@ require_once("$CFG->dirroot/mod/assign/locallib.php");
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external_api extends \core_external\external_api {
+class external_api extends \external_api {
 
     /**
      * Generate a warning in a standard structure for a known failure.

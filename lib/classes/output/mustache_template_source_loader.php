@@ -88,7 +88,6 @@ class mustache_template_source_loader {
         string $themename,
         bool $includecomments = false
     ) : string {
-        global $CFG;
         // Get the template source from the callback.
         $source = ($this->gettemplatesource)($component, $name, $themename);
 
@@ -96,9 +95,7 @@ class mustache_template_source_loader {
         if (!$includecomments) {
             $source = $this->strip_template_comments($source);
         }
-        if (!empty($CFG->debugtemplateinfo)) {
-            return "<!-- template(JS): $name -->" . $source . "<!-- /template(JS): $name -->";
-        }
+
         return $source;
     }
 

@@ -106,7 +106,6 @@ class provider_test extends provider_testcase {
 
         $usercontext = \context_user::instance($user->id);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($usercontext);
         $this->assertFalse($writer->has_any_data());
         $approvedlist = new approved_contextlist($user, 'auth_mnet', [$usercontext->id]);

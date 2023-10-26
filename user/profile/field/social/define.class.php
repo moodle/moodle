@@ -33,7 +33,7 @@ class profile_define_social extends profile_define_base {
     /**
      * Prints out the form snippet for the part of creating or editing a profile field common to all data types.
      *
-     * @param MoodleQuickForm $form instance of the moodleform class
+     * @param moodleform $form instance of the moodleform class
      */
     public function define_form_common(&$form) {
         $availablenetworks = profilefield_social\helper::get_networks();
@@ -53,7 +53,7 @@ class profile_define_social extends profile_define_base {
     /**
      * Alter form based on submitted or existing data.
      *
-     * @param MoodleQuickForm $form
+     * @param moodleform $form
      */
     public function define_after_data(&$form) {
         if (isset($form->_defaultValues['name'])) {

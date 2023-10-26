@@ -514,7 +514,7 @@ class accesslib_has_capability_test extends \advanced_testcase {
      *
      * @dataProvider    login_as_provider
      * @param   string $loginascontext
-     * @param   array  $testcontexts
+     * @param   string $testcontexts
      */
     public function test_login_as_admin(string $loginascontext, array $testcontexts): void {
         $this->resetAfterTest();
@@ -538,7 +538,7 @@ class accesslib_has_capability_test extends \advanced_testcase {
      *
      * @dataProvider    login_as_provider
      * @param   string $loginascontext
-     * @param   array  $testcontexts
+     * @param   string $testcontexts
      */
     public function test_login_as_user(string $loginascontext, array $testcontexts): void {
         $this->resetAfterTest();

@@ -65,7 +65,6 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'block' => 'block',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
-        'dropdown_item' => 'dropdown_item',
         'fieldset' => 'fieldset',
         'icon' => 'icon',
         'list_item' => 'list_item',
@@ -92,11 +91,8 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'block' => 'block',
         'button' => 'button',
         'checkbox' => 'checkbox',
-        'combobox' => 'combobox',
         'css_element' => 'css_element',
         'dialogue' => 'dialogue',
-        'dropdown' => 'dropdown',
-        'dropdown_item' => 'dropdown_item',
         'field' => 'field',
         'fieldset' => 'fieldset',
         'file' => 'file',
@@ -116,7 +112,6 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'menuitem' => 'menuitem',
         'optgroup' => 'optgroup',
         'option' => 'option',
-        'option_role' => 'option_role',
         'question' => 'question',
         'radio' => 'radio',
         'region' => 'region',
@@ -157,15 +152,12 @@ XPATH
 ]
 XPATH
         , 'badge' => <<<XPATH
-.//*[self::span or self::button][(contains(@class, 'badge')) and text()[contains(., %locator%)]]
+.//span[(contains(@class, 'badge')) and text()[contains(., %locator%)]]
 XPATH
         , 'block' => <<<XPATH
 .//*[@data-block][contains(concat(' ', normalize-space(@class), ' '), concat(' ', %locator%, ' ')) or
      descendant::*[self::h2|self::h3|self::h4|self::h5][normalize-space(.) = %locator%]  or
      @aria-label = %locator%]
-XPATH
-        , 'combobox' => <<<XPATH
-.//*[@role='combobox'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
 XPATH
         , 'dialogue' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' moodle-dialogue ') and
@@ -189,25 +181,6 @@ XPATH
             and
         normalize-space(descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' modal-header ')]) = %locator%
     ]
-XPATH
-    , 'dropdown' => <<<XPATH
-        .//*[
-            contains(concat(' ', normalize-space(@class), ' '), ' dropdown-menu ')
-                and
-            @aria-labelledby =
-                (//*[
-                        contains(concat(' ', normalize-space(@class), ' '), ' dropdown-toggle ')
-                            and
-                        (contains(normalize-space(.), %locator%) or descendant::*[%titleMatch%])
-                ]/@id)
-        ]
-XPATH
-    , 'dropdown_item' => <<<XPATH
-        .//*[
-            @role = 'listitem'
-                and
-            (contains(normalize-space(.), %locator%) or descendant::*[%titleMatch%])
-        ]
 XPATH
         , 'group_message' => <<<XPATH
         .//*[@data-conversation-id]//img[contains(@alt, %locator%)]/..
@@ -244,10 +217,6 @@ XPATH
 XPATH
         , 'menuitem' => <<<XPATH
 .//*[@role='menuitem'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]]
-XPATH
-    , 'option_role' => <<<XPATH
-.//*[@role='option'][%titleMatch% or %ariaLabelMatch% or text()[contains(., %locator%)]] |
-.//*[@role='option']/following-sibling::label[contains(., %locator%)]/preceding-sibling::input
 XPATH
         , 'question' => <<<XPATH
 .//div[contains(concat(' ', normalize-space(@class), ' '), ' que ')]

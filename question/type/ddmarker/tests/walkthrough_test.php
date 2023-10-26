@@ -18,7 +18,6 @@ namespace qtype_ddmarker;
 
 use question_display_options;
 use question_hint_ddmarker;
-use question_pattern_expectation;
 use question_state;
 
 defined('MOODLE_INTERNAL') || die();
@@ -34,17 +33,13 @@ require_once($CFG->dirroot . '/question/type/ddmarker/tests/helper.php');
  * @package   qtype_ddmarker
  * @copyright 2012 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \qtype_ddmarker_question
- * @covers \qtype_ddmarker_renderer
- * @covers \question_hint_ddmarker
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
     /**
      * Get an expectation that the output contains a marker.
-     *
-     * @param int $choice which choice.
-     * @param bool $infinite whether there are infinitely many of that choice.
+     * @param unknown $choice which choice.
+     * @param unknown $infinite whether there are infinitely many of that choice.
      * @return \question_contains_tag_with_attributes the expectation.
      */
     protected function get_contains_draggable_marker_home_expectation($choice, $infinite) {
@@ -60,13 +55,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     }
 
     /**
-     * Get an expectation that the output contains a hidden input with certain name and optionally value.
-     *
-     * Like the parent method, but make it more specific to this question type.
-     *
-     * @param string $choiceno hidden field name.
-     * @param string|null $value if passed, this value will also be asserted.
-     * @return \question_contains_tag_with_attributes the expectation.
+     * (non-PHPdoc)
+     * @see qbehaviour_walkthrough_test_base::get_contains_hidden_expectation()
      */
     protected function get_contains_hidden_expectation($choiceno, $value = null) {
         $name = $this->quba->get_field_prefix($this->slot) .'c'. $choiceno;
@@ -725,54 +715,5 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                             $dd->get_right_answer_summary());
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(3);
-    }
-
-    public function test_interactive_state_which_incorrect() {
-
-        // Create a drag-and-drop question.
-        $dd = \test_question_maker::make_question('ddmarker');
-        $dd->hints = [
-            new question_hint_ddmarker(23, 'This is the first hint.',
-                    FORMAT_MOODLE, false, true, true),
-        ];
-        $dd->shufflechoices = false;
-        $this->start_attempt_at_question($dd, 'interactive', 2);
-
-        // Check the initial state.
-        $this->check_current_state(question_state::$todo);
-        $this->check_current_mark(null);
-
-        $this->check_current_output(
-                $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_draggable_marker_home_expectation(1, false),
-                $this->get_contains_draggable_marker_home_expectation(2, false),
-                $this->get_contains_draggable_marker_home_expectation(3, false),
-                $this->get_contains_hidden_expectation(1),
-                $this->get_contains_hidden_expectation(2),
-                $this->get_contains_hidden_expectation(3),
-                $this->get_contains_submit_button_expectation(true),
-                $this->get_does_not_contain_feedback_expectation(),
-                $this->get_tries_remaining_expectation(2),
-                $this->get_no_hint_visible_expectation());
-
-        // Save the a completely wrong answer.
-        $this->process_submission(
-                ['c1' => '100,150', 'c2' => '100,150', 'c3' => '50,50', '-submit' => 1]);
-
-        // Verify.
-        $this->check_current_state(question_state::$todo);
-        $this->check_current_mark(null);
-        $this->check_current_output(
-                $this->get_contains_marked_out_of_summary(),
-                $this->get_contains_draggable_marker_home_expectation(1, false),
-                $this->get_contains_draggable_marker_home_expectation(2, false),
-                $this->get_contains_draggable_marker_home_expectation(3, false),
-                $this->get_does_not_contain_submit_button_expectation(),
-                new question_pattern_expectation('~' . preg_quote(
-                        '<div class="wrongparts">Markers placed in the wrong area: ' .
-                        '<span class="wrongpart">quick</span>, <span class="wrongpart">fox</span>, ' .
-                        '<span class="wrongpart">lazy</span>',
-                    '~') . '~'),
-                $this->get_contains_hint_expectation('This is the first hint'));
     }
 }

@@ -37,7 +37,7 @@ class content_export_link {
      * Prepare and return the various attributes required for a link/button to populate/trigger the download course content modal.
      *
      * @param \context $context The context of the content being exported.
-     * @return \stdClass
+     * @return stdClass
      */
     public static function get_attributes(\context $context): \stdClass {
         global $CFG;

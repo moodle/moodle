@@ -39,15 +39,12 @@ const dropdownFix = () => {
     };
 
     // Special handling for navigation keys when menu is open.
-    const shiftFocus = (element, focusCheck = null) => {
-        const pendingPromise = new Pending('core/aria:delayed-focus');
-        setTimeout(() => {
-            if (!focusCheck || focusCheck()) {
-                element.focus();
-            }
-
+    const shiftFocus = element => {
+        const delayedFocus = pendingPromise => {
+            element.focus();
             pendingPromise.resolve();
-        }, 50);
+        };
+        setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
     };
 
     // Event handling for the dropdown menu button.
@@ -78,13 +75,10 @@ const dropdownFix = () => {
         const menu = e.target.parentElement.querySelector('[role="menu"]');
         let menuItems = false;
         let foundMenuItem = false;
-        let textInput = false;
 
         if (menu) {
             menuItems = menu.querySelectorAll('[role="menuitem"]');
-            textInput = e.target.parentElement.querySelector('[data-action="search"]');
         }
-
         if (menuItems && menuItems.length > 0) {
             // Up key opens the menu at the end.
             if (trigger === 'ArrowUp') {
@@ -101,10 +95,7 @@ const dropdownFix = () => {
             }
         }
 
-        if (textInput) {
-            shiftFocus(textInput);
-        }
-        if (foundMenuItem && textInput === null) {
+        if (foundMenuItem) {
             shiftFocus(foundMenuItem);
         }
     };
@@ -203,15 +194,7 @@ const dropdownFix = () => {
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
         const focused = document.activeElement != document.body ? document.activeElement : null;
         if (trigger && focused && e.target.contains(focused)) {
-            shiftFocus(trigger, () => {
-                if (document.activeElement === document.body) {
-                    // If the focus is currently on the body, then we can safely assume that the focus needs to be updated.
-                    return true;
-                }
-
-                // If the focus is on a child of the clicked element still, then update the focus.
-                return e.target.contains(document.activeElement);
-            });
+            shiftFocus(trigger);
         }
     });
 };
@@ -223,69 +206,59 @@ const comboboxFix = () => {
     $(document).on('show.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
-            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
+            const listbox = combobox.parentElement.querySelector('[role="listbox"]');
+            const selectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
 
-            if (listbox) {
-                const selectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
-
-                // To make sure ArrowDown doesn't move the active option afterwards.
-                setTimeout(() => {
-                    if (selectedOption) {
-                        selectedOption.classList.add('active');
-                        combobox.setAttribute('aria-activedescendant', selectedOption.id);
-                    } else {
-                        const firstOption = listbox.querySelector('[role="option"]');
-                        firstOption.setAttribute('aria-selected', 'true');
-                        firstOption.classList.add('active');
-                        combobox.setAttribute('aria-activedescendant', firstOption.id);
-                    }
-                }, 0);
-            }
+            // To make sure ArrowDown doesn't move the active option afterwards.
+            setTimeout(() => {
+                if (selectedOption) {
+                    selectedOption.classList.add('active');
+                    combobox.setAttribute('aria-activedescendant', selectedOption.id);
+                } else {
+                    const firstOption = listbox.querySelector('[role="option"]');
+                    firstOption.setAttribute('aria-selected', 'true');
+                    firstOption.classList.add('active');
+                    combobox.setAttribute('aria-activedescendant', firstOption.id);
+                }
+            }, 0);
         }
     });
 
     $(document).on('hidden.bs.dropdown', e => {
         if (e.relatedTarget.matches('[role="combobox"]')) {
             const combobox = e.relatedTarget;
-            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
+            const listbox = combobox.parentElement.querySelector('[role="listbox"]');
 
             combobox.removeAttribute('aria-activedescendant');
 
-            if (listbox) {
-                setTimeout(() => {
-                    // Undo all previously highlighted options.
-                    listbox.querySelectorAll('.active[role="option"]').forEach(option => {
-                        option.classList.remove('active');
-                    });
-                }, 0);
-            }
+            setTimeout(() => {
+                // Undo all previously highlighted options.
+                listbox.querySelectorAll('.active[role="option"]').forEach(option => {
+                    option.classList.remove('active');
+                });
+            }, 0);
         }
     });
 
     // Handling keyboard events for both navigating through and selecting options.
     document.addEventListener('keydown', e => {
-        if (e.target.matches('[role="combobox"][aria-controls]:not([aria-haspopup=dialog])')) {
+        if (e.target.matches('.select-menu [role="combobox"]')) {
             const combobox = e.target;
             const trigger = e.key;
             let next = null;
-            const listbox = document.querySelector(`#${combobox.getAttribute('aria-controls')}[role="listbox"]`);
-            const options = listbox.querySelectorAll('[role="option"]');
-            const activeOption = listbox.querySelector('.active[role="option"]');
-            const editable = combobox.hasAttribute('aria-autocomplete');
+            const options = combobox.parentElement.querySelectorAll('[role="listbox"] [role="option"]');
+            const activeOption = combobox.parentElement.querySelector('[role="listbox"] .active[role="option"]');
 
-            // Under the special case that the dropdown menu is being shown as a result of the key press (like when the user
+            // Under the special case that the dropdown menu is being shown as a result of they key press (like when the user
             // presses ArrowDown or Enter or ... to open the dropdown menu), activeOption is not set yet.
             // It's because of a race condition with show.bs.dropdown event handler.
-            if (options && (activeOption || editable)) {
+            if (options && activeOption) {
                 if (trigger == 'ArrowDown') {
                     for (let i = 0; i < options.length - 1; i++) {
                         if (options[i] == activeOption) {
                             next = options[i + 1];
                             break;
                         }
-                    }
-                    if (editable && !next) {
-                        next = options[0];
                     }
                 } if (trigger == 'ArrowUp') {
                     for (let i = 1; i < options.length; i++) {
@@ -294,17 +267,13 @@ const comboboxFix = () => {
                             break;
                         }
                     }
-                    if (editable && !next) {
-                        next = options[options.length - 1];
-                    }
                 } else if (trigger == 'Home') {
                     next = options[0];
                 } else if (trigger == 'End') {
                     next = options[options.length - 1];
-                } else if ((trigger == ' ' && !editable) || trigger == 'Enter') {
-                    e.preventDefault();
+                } else if (trigger == ' ' || trigger == 'Enter') {
                     selectOption(combobox, activeOption);
-                } else if (!editable) {
+                } else {
                     // Search for options by finding the first option that has
                     // text starting with the typed character (case insensitive).
                     for (let i = 0; i < options.length; i++) {
@@ -321,33 +290,27 @@ const comboboxFix = () => {
                 // Variable next is set if we do want to act on the keypress.
                 if (next) {
                     e.preventDefault();
-                    if (activeOption) {
-                        activeOption.classList.remove('active');
-                    }
+                    activeOption.classList.remove('active');
                     next.classList.add('active');
                     combobox.setAttribute('aria-activedescendant', next.id);
-                    next.scrollIntoView({block: 'nearest'});
                 }
             }
         }
     });
 
     document.addEventListener('click', e => {
-        const option = e.target.closest('[role="listbox"] [role="option"]');
-        if (option) {
-            const listbox = option.closest('[role="listbox"]');
-            const combobox = document.querySelector(`[role="combobox"][aria-controls="${listbox.id}"]`);
-            if (combobox) {
-                combobox.focus();
-                selectOption(combobox, option);
-            }
+        if (e.target.matches('.select-menu [role="option"]')) {
+            const option = e.target;
+            const combobox = option.closest('.select-menu').querySelector('[role="combobox"]');
+            combobox.focus();
+            selectOption(combobox, option);
         }
     });
 
     // In case some code somewhere else changes the value of the combobox.
     document.addEventListener('change', e => {
-        if (e.target.matches('input[type="hidden"][id]')) {
-            const combobox = document.querySelector(`[role="combobox"][data-input-element="${e.target.id}"]`);
+        if (e.target.matches('.select-menu input[type="hidden"]')) {
+            const combobox = e.target.parentElement.querySelector('[role="combobox"]');
             const option = e.target.parentElement.querySelector(`[role="option"][data-value="${e.target.value}"]`);
 
             if (combobox && option) {
@@ -357,8 +320,8 @@ const comboboxFix = () => {
     });
 
     const selectOption = (combobox, option) => {
-        const listbox = option.closest('[role="listbox"]');
-        const oldSelectedOption = listbox.querySelector('[role="option"][aria-selected="true"]');
+        const oldSelectedOption = combobox.parentElement.querySelector('[role="listbox"] [role="option"][aria-selected="true"]');
+        const inputElement = combobox.parentElement.querySelector('input[type="hidden"]');
 
         if (oldSelectedOption != option) {
             if (oldSelectedOption) {
@@ -366,19 +329,10 @@ const comboboxFix = () => {
             }
             option.setAttribute('aria-selected', 'true');
         }
-
-        if (combobox.hasAttribute('value')) {
-            combobox.value = option.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
-        } else {
-            combobox.textContent = option.textContent;
-        }
-
-        if (combobox.dataset.inputElement) {
-            const inputElement = document.getElementById(combobox.dataset.inputElement);
-            if (inputElement && (inputElement.value != option.dataset.value)) {
-                inputElement.value = option.dataset.value;
-                inputElement.dispatchEvent(new Event('change', {bubbles: true}));
-            }
+        combobox.textContent = option.textContent;
+        if (inputElement.value != option.dataset.value) {
+            inputElement.value = option.dataset.value;
+            inputElement.dispatchEvent(new Event('change', {bubbles: true}));
         }
     };
 };

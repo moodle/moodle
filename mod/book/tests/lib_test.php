@@ -24,8 +24,6 @@
  */
 namespace mod_book;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -92,7 +90,7 @@ class lib_test extends \advanced_testcase {
 
         // Now, test the function via the external API.
         $contents = \core_course_external::get_course_contents($course->id, array());
-        $contents = external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
+        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(4, $contents[0]['modules'][0]['contents']);
 
@@ -147,7 +145,7 @@ class lib_test extends \advanced_testcase {
 
         // Now, test the function via the external API.
         $contents = \core_course_external::get_course_contents($course->id, array());
-        $contents = external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
+        $contents = \external_api::clean_returnvalue(\core_course_external::get_course_contents_returns(), $contents);
 
         $this->assertCount(5, $contents[0]['modules'][0]['contents']);
 

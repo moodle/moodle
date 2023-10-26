@@ -31,7 +31,7 @@ class conversion_test extends \advanced_testcase {
      * @param   string $filecontent The content of the mocked file
      * @param   string $filename The file name to use in the stored_file
      * @param   string $filerecord Any overrides to the filerecord
-     * @return  \stored_file
+     * @return  stored_file
      */
     protected function create_stored_file($filecontent = 'content', $filename = 'testfile.txt', $filerecord = []) {
         $filerecord = array_merge([

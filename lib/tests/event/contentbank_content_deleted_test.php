@@ -61,7 +61,6 @@ class contentbank_content_deleted_test extends \advanced_testcase {
         $systemcontext = \context_system::instance();
 
         // Create a content bank content.
-        /** @var \core_contentbank_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_contentbank');
         $contents = $generator->generate_contentbank_data('contenttype_testable', 3);
         $content = array_shift($contents);

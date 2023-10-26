@@ -24,11 +24,11 @@
 
 import * as CalendarSelectors from 'core_calendar/selectors';
 import * as CalendarRepository from 'core_calendar/repository';
-import ModalSaveCancel from 'core/modal_save_cancel';
+import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
 import {exception as displayException, addNotification, fetchNotifications} from 'core/notification';
 import Prefetch from 'core/prefetch';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {eventTypes} from 'core/local/inplace_editable/events';
 
 /**
@@ -70,7 +70,8 @@ const getSubscriptionRow = subscriptionId => {
  */
 const createModal = (element, messageCode) => {
     const subscriptionName = getSubscriptionName(element);
-    return ModalSaveCancel.create({
+    return Modal.create({
+        type: Modal.types.SAVE_CANCEL,
         title: getString('confirmation', 'admin'),
         body: getString(messageCode, 'calendar', subscriptionName),
         buttons: {

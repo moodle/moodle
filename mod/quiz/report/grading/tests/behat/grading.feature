@@ -166,7 +166,7 @@ Feature: Basic use of the Manual grading report
     And I should see "Separate groups: All participants"
     Then I should see "Sorry, but you need to be part of a group to see this page."
 
-  @javascript @editor_atto
+  @javascript
   Scenario: Manual grading report with attempts to be graded
     Given the following "questions" exist:
       | questioncategory | qtype | name     | user  | questiontext    |

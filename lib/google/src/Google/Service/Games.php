@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Games extends Google_Service
 {
   /** View and manage its own configuration data in your Google Drive. */
@@ -1061,7 +1060,6 @@ class Google_Service_Games extends Google_Service
  *   $achievementDefinitions = $gamesService->achievementDefinitions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementDefinitions_Resource extends Google_Service_Resource
 {
 
@@ -1095,7 +1093,6 @@ class Google_Service_Games_AchievementDefinitions_Resource extends Google_Servic
  *   $achievements = $gamesService->achievements;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Achievements_Resource extends Google_Service_Resource
 {
 
@@ -1217,7 +1214,6 @@ class Google_Service_Games_Achievements_Resource extends Google_Service_Resource
  *   $applications = $gamesService->applications;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Applications_Resource extends Google_Service_Resource
 {
 
@@ -1265,7 +1261,6 @@ class Google_Service_Games_Applications_Resource extends Google_Service_Resource
  *   $events = $gamesService->events;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Events_Resource extends Google_Service_Resource
 {
 
@@ -1338,7 +1333,6 @@ class Google_Service_Games_Events_Resource extends Google_Service_Resource
  *   $leaderboards = $gamesService->leaderboards;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Leaderboards_Resource extends Google_Service_Resource
 {
 
@@ -1390,7 +1384,6 @@ class Google_Service_Games_Leaderboards_Resource extends Google_Service_Resource
  *   $metagame = $gamesService->metagame;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Metagame_Resource extends Google_Service_Resource
 {
 
@@ -1442,7 +1435,6 @@ class Google_Service_Games_Metagame_Resource extends Google_Service_Resource
  *   $players = $gamesService->players;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Players_Resource extends Google_Service_Resource
 {
 
@@ -1496,7 +1488,6 @@ class Google_Service_Games_Players_Resource extends Google_Service_Resource
  *   $pushtokens = $gamesService->pushtokens;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Pushtokens_Resource extends Google_Service_Resource
 {
 
@@ -1537,7 +1528,6 @@ class Google_Service_Games_Pushtokens_Resource extends Google_Service_Resource
  *   $questMilestones = $gamesService->questMilestones;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_QuestMilestones_Resource extends Google_Service_Resource
 {
 
@@ -1569,7 +1559,6 @@ class Google_Service_Games_QuestMilestones_Resource extends Google_Service_Resou
  *   $quests = $gamesService->quests;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Quests_Resource extends Google_Service_Resource
 {
 
@@ -1624,7 +1613,6 @@ class Google_Service_Games_Quests_Resource extends Google_Service_Resource
  *   $revisions = $gamesService->revisions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Revisions_Resource extends Google_Service_Resource
 {
 
@@ -1655,7 +1643,6 @@ class Google_Service_Games_Revisions_Resource extends Google_Service_Resource
  *   $rooms = $gamesService->rooms;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Rooms_Resource extends Google_Service_Resource
 {
 
@@ -1813,7 +1800,6 @@ class Google_Service_Games_Rooms_Resource extends Google_Service_Resource
  *   $scores = $gamesService->scores;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Scores_Resource extends Google_Service_Resource
 {
 
@@ -1956,7 +1942,6 @@ class Google_Service_Games_Scores_Resource extends Google_Service_Resource
  *   $snapshots = $gamesService->snapshots;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_Snapshots_Resource extends Google_Service_Resource
 {
 
@@ -2009,7 +1994,6 @@ class Google_Service_Games_Snapshots_Resource extends Google_Service_Resource
  *   $turnBasedMatches = $gamesService->turnBasedMatches;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatches_Resource extends Google_Service_Resource
 {
 
@@ -2276,7 +2260,6 @@ class Google_Service_Games_TurnBasedMatches_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementDefinition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2402,7 +2385,6 @@ class Google_Service_Games_AchievementDefinition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementDefinitionsListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2440,7 +2422,6 @@ class Google_Service_Games_AchievementDefinitionsListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementIncrementResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2476,7 +2457,6 @@ class Google_Service_Games_AchievementIncrementResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementRevealResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2503,7 +2483,6 @@ class Google_Service_Games_AchievementRevealResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementSetStepsAtLeastResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2539,7 +2518,6 @@ class Google_Service_Games_AchievementSetStepsAtLeastResponse extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementUnlockResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2566,7 +2544,6 @@ class Google_Service_Games_AchievementUnlockResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementUpdateMultipleRequest extends Google_Collection
 {
   protected $collection_key = 'updates';
@@ -2595,7 +2572,6 @@ class Google_Service_Games_AchievementUpdateMultipleRequest extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementUpdateMultipleResponse extends Google_Collection
 {
   protected $collection_key = 'updatedAchievements';
@@ -2624,7 +2600,6 @@ class Google_Service_Games_AchievementUpdateMultipleResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementUpdateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2680,7 +2655,6 @@ class Google_Service_Games_AchievementUpdateRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AchievementUpdateResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2743,7 +2717,6 @@ class Google_Service_Games_AchievementUpdateResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AggregateStats extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2797,7 +2770,6 @@ class Google_Service_Games_AggregateStats extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_AnonymousPlayer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2833,7 +2805,6 @@ class Google_Service_Games_AnonymousPlayer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Application extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -2965,7 +2936,6 @@ class Google_Service_Games_Application extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_ApplicationCategory extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3001,7 +2971,6 @@ class Google_Service_Games_ApplicationCategory extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Category extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3037,7 +3006,6 @@ class Google_Service_Games_Category extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_CategoryListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3075,7 +3043,6 @@ class Google_Service_Games_CategoryListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventBatchRecordFailure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3112,7 +3079,6 @@ class Google_Service_Games_EventBatchRecordFailure extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventChild extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3139,7 +3105,6 @@ class Google_Service_Games_EventChild extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventDefinition extends Google_Collection
 {
   protected $collection_key = 'childEvents';
@@ -3222,7 +3187,6 @@ class Google_Service_Games_EventDefinition extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventDefinitionListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3260,7 +3224,6 @@ class Google_Service_Games_EventDefinitionListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventPeriodRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3296,7 +3259,6 @@ class Google_Service_Games_EventPeriodRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventPeriodUpdate extends Google_Collection
 {
   protected $collection_key = 'updates';
@@ -3335,7 +3297,6 @@ class Google_Service_Games_EventPeriodUpdate extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventRecordFailure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3371,7 +3332,6 @@ class Google_Service_Games_EventRecordFailure extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventRecordRequest extends Google_Collection
 {
   protected $collection_key = 'timePeriods';
@@ -3418,7 +3378,6 @@ class Google_Service_Games_EventRecordRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventUpdateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3454,7 +3413,6 @@ class Google_Service_Games_EventUpdateRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_EventUpdateResponse extends Google_Collection
 {
   protected $collection_key = 'playerEvents';
@@ -3503,7 +3461,6 @@ class Google_Service_Games_EventUpdateResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_GamesAchievementIncrement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3539,7 +3496,6 @@ class Google_Service_Games_GamesAchievementIncrement extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_GamesAchievementSetStepsAtLeast extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3566,7 +3522,6 @@ class Google_Service_Games_GamesAchievementSetStepsAtLeast extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_ImageAsset extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3620,7 +3575,6 @@ class Google_Service_Games_ImageAsset extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Instance extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3713,7 +3667,6 @@ class Google_Service_Games_Instance extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_InstanceAndroidDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3758,7 +3711,6 @@ class Google_Service_Games_InstanceAndroidDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_InstanceIosDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3830,7 +3782,6 @@ class Google_Service_Games_InstanceIosDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_InstanceWebDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3866,7 +3817,6 @@ class Google_Service_Games_InstanceWebDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Leaderboard extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3929,7 +3879,6 @@ class Google_Service_Games_Leaderboard extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_LeaderboardEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4020,7 +3969,6 @@ class Google_Service_Games_LeaderboardEntry extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_LeaderboardListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4058,7 +4006,6 @@ class Google_Service_Games_LeaderboardListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_LeaderboardScoreRank extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4112,7 +4059,6 @@ class Google_Service_Games_LeaderboardScoreRank extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_LeaderboardScores extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4178,7 +4124,6 @@ class Google_Service_Games_LeaderboardScores extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_MetagameConfig extends Google_Collection
 {
   protected $collection_key = 'playerLevels';
@@ -4216,7 +4161,6 @@ class Google_Service_Games_MetagameConfig extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_NetworkDiagnostics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4288,7 +4232,6 @@ class Google_Service_Games_NetworkDiagnostics extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_ParticipantResult extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4333,7 +4276,6 @@ class Google_Service_Games_ParticipantResult extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PeerChannelDiagnostics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4417,7 +4359,6 @@ class Google_Service_Games_PeerChannelDiagnostics extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PeerSessionDiagnostics extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4473,7 +4414,6 @@ class Google_Service_Games_PeerSessionDiagnostics extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Played extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4509,7 +4449,6 @@ class Google_Service_Games_Played extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Player extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4611,7 +4550,6 @@ class Google_Service_Games_Player extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerAchievement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4683,7 +4621,6 @@ class Google_Service_Games_PlayerAchievement extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerAchievementListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4721,7 +4658,6 @@ class Google_Service_Games_PlayerAchievementListResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerEvent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4775,7 +4711,6 @@ class Google_Service_Games_PlayerEvent extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerEventListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4813,7 +4748,6 @@ class Google_Service_Games_PlayerEventListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerExperienceInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4869,7 +4803,6 @@ class Google_Service_Games_PlayerExperienceInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerLeaderboardScore extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4962,7 +4895,6 @@ class Google_Service_Games_PlayerLeaderboardScore extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerLeaderboardScoreListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5010,7 +4942,6 @@ class Google_Service_Games_PlayerLeaderboardScoreListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerLevel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5055,7 +4986,6 @@ class Google_Service_Games_PlayerLevel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5093,7 +5023,6 @@ class Google_Service_Games_PlayerListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5120,7 +5049,6 @@ class Google_Service_Games_PlayerName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerScore extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5174,7 +5102,6 @@ class Google_Service_Games_PlayerScore extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerScoreListResponse extends Google_Collection
 {
   protected $collection_key = 'submittedScores';
@@ -5203,7 +5130,6 @@ class Google_Service_Games_PlayerScoreListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerScoreResponse extends Google_Collection
 {
   protected $collection_key = 'unbeatenScores';
@@ -5268,7 +5194,6 @@ class Google_Service_Games_PlayerScoreResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PlayerScoreSubmissionList extends Google_Collection
 {
   protected $collection_key = 'scores';
@@ -5297,7 +5222,6 @@ class Google_Service_Games_PlayerScoreSubmissionList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PushToken extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5343,7 +5267,6 @@ class Google_Service_Games_PushToken extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PushTokenId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5371,7 +5294,6 @@ class Google_Service_Games_PushTokenId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_PushTokenIdIos extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5400,7 +5322,6 @@ class Google_Service_Games_PushTokenIdIos extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Quest extends Google_Collection
 {
   protected $collection_key = 'milestones';
@@ -5555,7 +5476,6 @@ class Google_Service_Games_Quest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_QuestContribution extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5591,7 +5511,6 @@ class Google_Service_Games_QuestContribution extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_QuestCriterion extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5648,7 +5567,6 @@ class Google_Service_Games_QuestCriterion extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_QuestListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5686,7 +5604,6 @@ class Google_Service_Games_QuestListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_QuestMilestone extends Google_Collection
 {
   protected $collection_key = 'criteria';
@@ -5742,7 +5659,6 @@ class Google_Service_Games_QuestMilestone extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RevisionCheckResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5778,7 +5694,6 @@ class Google_Service_Games_RevisionCheckResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Room extends Google_Collection
 {
   protected $collection_key = 'participants';
@@ -5910,7 +5825,6 @@ class Google_Service_Games_Room extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomAutoMatchStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5937,7 +5851,6 @@ class Google_Service_Games_RoomAutoMatchStatus extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomAutoMatchingCriteria extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5982,7 +5895,6 @@ class Google_Service_Games_RoomAutoMatchingCriteria extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomClientAddress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6009,7 +5921,6 @@ class Google_Service_Games_RoomClientAddress extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomCreateRequest extends Google_Collection
 {
   protected $collection_key = 'invitedPlayerIds';
@@ -6094,7 +6005,6 @@ class Google_Service_Games_RoomCreateRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomJoinRequest extends Google_Collection
 {
   protected $collection_key = 'capabilities';
@@ -6142,7 +6052,6 @@ class Google_Service_Games_RoomJoinRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomLeaveDiagnostics extends Google_Collection
 {
   protected $collection_key = 'peerSession';
@@ -6225,7 +6134,6 @@ class Google_Service_Games_RoomLeaveDiagnostics extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomLeaveRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6262,7 +6170,6 @@ class Google_Service_Games_RoomLeaveRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6300,7 +6207,6 @@ class Google_Service_Games_RoomList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomModification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6336,7 +6242,6 @@ class Google_Service_Games_RoomModification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomP2PStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6409,7 +6314,6 @@ class Google_Service_Games_RoomP2PStatus extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomP2PStatuses extends Google_Collection
 {
   protected $collection_key = 'updates';
@@ -6438,7 +6342,6 @@ class Google_Service_Games_RoomP2PStatuses extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomParticipant extends Google_Collection
 {
   protected $collection_key = 'capabilities';
@@ -6541,7 +6444,6 @@ class Google_Service_Games_RoomParticipant extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_RoomStatus extends Google_Collection
 {
   protected $collection_key = 'participants';
@@ -6607,7 +6509,6 @@ class Google_Service_Games_RoomStatus extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_ScoreSubmission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6661,7 +6562,6 @@ class Google_Service_Games_ScoreSubmission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_Snapshot extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6770,7 +6670,6 @@ class Google_Service_Games_Snapshot extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_SnapshotImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6825,7 +6724,6 @@ class Google_Service_Games_SnapshotImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_SnapshotListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6863,7 +6761,6 @@ class Google_Service_Games_SnapshotListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedAutoMatchingCriteria extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6908,7 +6805,6 @@ class Google_Service_Games_TurnBasedAutoMatchingCriteria extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatch extends Google_Collection
 {
   protected $collection_key = 'results';
@@ -7105,7 +7001,6 @@ class Google_Service_Games_TurnBasedMatch extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchCreateRequest extends Google_Collection
 {
   protected $collection_key = 'invitedPlayerIds';
@@ -7161,7 +7056,6 @@ class Google_Service_Games_TurnBasedMatchCreateRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7197,7 +7091,6 @@ class Google_Service_Games_TurnBasedMatchData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchDataRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7224,7 +7117,6 @@ class Google_Service_Games_TurnBasedMatchDataRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7262,7 +7154,6 @@ class Google_Service_Games_TurnBasedMatchList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchModification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7298,7 +7189,6 @@ class Google_Service_Games_TurnBasedMatchModification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchParticipant extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7363,7 +7253,6 @@ class Google_Service_Games_TurnBasedMatchParticipant extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchRematch extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7401,7 +7290,6 @@ class Google_Service_Games_TurnBasedMatchRematch extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchResults extends Google_Collection
 {
   protected $collection_key = 'results';
@@ -7449,7 +7337,6 @@ class Google_Service_Games_TurnBasedMatchResults extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchSync extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7496,7 +7383,6 @@ class Google_Service_Games_TurnBasedMatchSync extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Games_TurnBasedMatchTurn extends Google_Collection
 {
   protected $collection_key = 'results';

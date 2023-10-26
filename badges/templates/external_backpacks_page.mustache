@@ -71,16 +71,7 @@
             <td>
                 <a href="{{baseurl}}?id={{id}}&action=edit">{{#pix}}t/edit, core,{{#str}}editsettings{{/str}}{{/pix}}</a>
             {{^sitebackpack}}
-                <a {{!
-                    }} href="{{baseurl}}?id={{id}}&action=delete" {{!
-                    }} role="button" {{!
-                    }} data-modal="confirmation" {{!
-                    }} data-modal-type="delete" {{!
-                    }} data-modal-content-str='["delexternalbackpackconfirm", "core_badges", {{#quote}}{{backpackweburl}}{{/quote}}]' {{!
-                    }} data-modal-title-str='["delexternalbackpack", "core_badges"]' {{!
-                    }} data-modal-yes-button-str='["delete", "core"]' {{!
-                    }} data-modal-destination="{{baseurl}}?id={{id}}&action=delete&sesskey={{sesskey}}&confirm=1" {{!
-                }}>
+                <a href="{{baseurl}}?id={{id}}&action=delete" role="button" data-action="deletebackpack">
                     {{#pix}}t/delete, core,{{#str}}delete{{/str}}{{/pix}}
                 </a>
             {{/sitebackpack}}

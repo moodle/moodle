@@ -90,7 +90,6 @@ class provider_test extends provider_testcase {
 
         // Retrieve groups for user1.
         $this->setUser($user1);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         provider::export_groups($context, '');
 
@@ -135,7 +134,6 @@ class provider_test extends provider_testcase {
 
         // Retrieve groups for user1.
         $this->setUser($user1);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         provider::export_groups($context, 'enrol_self');
 
@@ -794,7 +792,6 @@ class provider_test extends provider_testcase {
         // Export all of the data for the context.
         $this->export_context_data_for_user($user1->id, $context, 'core_group');
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 

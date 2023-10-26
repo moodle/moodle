@@ -64,7 +64,6 @@ if ($courseid) {
         require_sesskey();
 
         completion_criteria::factory(array('id'=>$rolec, 'criteriatype'=>COMPLETION_CRITERIA_TYPE_ROLE)); //TODO: this is dumb, because it does not fetch the data?!?!
-        /** @var completion_criteria_role $criteria */
         $criteria = completion_criteria_role::fetch(array('id'=>$rolec));
 
         if ($criteria and user_has_role_assignment($USER->id, $criteria->role, $context->id)) {

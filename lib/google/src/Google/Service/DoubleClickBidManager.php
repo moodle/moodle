@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager extends Google_Service
 {
 
@@ -150,7 +149,6 @@ class Google_Service_DoubleClickBidManager extends Google_Service
  *   $lineitems = $doubleclickbidmanagerService->lineitems;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Lineitems_Resource extends Google_Service_Resource
 {
 
@@ -191,7 +189,6 @@ class Google_Service_DoubleClickBidManager_Lineitems_Resource extends Google_Ser
  *   $queries = $doubleclickbidmanagerService->queries;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Queries_Resource extends Google_Service_Resource
 {
 
@@ -273,7 +270,6 @@ class Google_Service_DoubleClickBidManager_Queries_Resource extends Google_Servi
  *   $reports = $doubleclickbidmanagerService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Reports_Resource extends Google_Service_Resource
 {
 
@@ -295,7 +291,6 @@ class Google_Service_DoubleClickBidManager_Reports_Resource extends Google_Servi
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_DownloadLineItemsRequest extends Google_Collection
 {
   protected $collection_key = 'filterIds';
@@ -341,7 +336,6 @@ class Google_Service_DoubleClickBidManager_DownloadLineItemsRequest extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_DownloadLineItemsResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -359,7 +353,6 @@ class Google_Service_DoubleClickBidManager_DownloadLineItemsResponse extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_FilterPair extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -386,7 +379,6 @@ class Google_Service_DoubleClickBidManager_FilterPair extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ListQueriesResponse extends Google_Collection
 {
   protected $collection_key = 'queries';
@@ -415,7 +407,6 @@ class Google_Service_DoubleClickBidManager_ListQueriesResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ListReportsResponse extends Google_Collection
 {
   protected $collection_key = 'reports';
@@ -444,7 +435,6 @@ class Google_Service_DoubleClickBidManager_ListReportsResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Parameters extends Google_Collection
 {
   protected $collection_key = 'metrics';
@@ -500,7 +490,6 @@ class Google_Service_DoubleClickBidManager_Parameters extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Query extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -584,7 +573,6 @@ class Google_Service_DoubleClickBidManager_Query extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_QueryMetadata extends Google_Collection
 {
   protected $collection_key = 'shareEmailAddress';
@@ -693,7 +681,6 @@ class Google_Service_DoubleClickBidManager_QueryMetadata extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_QuerySchedule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -738,7 +725,6 @@ class Google_Service_DoubleClickBidManager_QuerySchedule extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_Report extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -777,7 +763,6 @@ class Google_Service_DoubleClickBidManager_Report extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ReportFailure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -795,7 +780,6 @@ class Google_Service_DoubleClickBidManager_ReportFailure extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ReportKey extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -822,7 +806,6 @@ class Google_Service_DoubleClickBidManager_ReportKey extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ReportMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -868,7 +851,6 @@ class Google_Service_DoubleClickBidManager_ReportMetadata extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_ReportStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -914,7 +896,6 @@ class Google_Service_DoubleClickBidManager_ReportStatus extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_RowStatus extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -978,7 +959,6 @@ class Google_Service_DoubleClickBidManager_RowStatus extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_RunQueryRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1023,7 +1003,6 @@ class Google_Service_DoubleClickBidManager_RunQueryRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_UploadLineItemsRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1059,7 +1038,6 @@ class Google_Service_DoubleClickBidManager_UploadLineItemsRequest extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_UploadLineItemsResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1078,7 +1056,6 @@ class Google_Service_DoubleClickBidManager_UploadLineItemsResponse extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DoubleClickBidManager_UploadStatus extends Google_Collection
 {
   protected $collection_key = 'rowStatus';

@@ -99,12 +99,7 @@ class tool_dataprivacy_data_request_form extends \core\form\persistent {
         // Subject access request type.
         $options = [];
         if ($this->manage || api::can_create_data_download_request_for_self()) {
-            $allowfiltering = get_config('tool_dataprivacy', 'allowfiltering');
-            if ($allowfiltering) {
-                $options[api::DATAREQUEST_TYPE_EXPORT] = get_string('requesttypeexportallowfiltering', 'tool_dataprivacy');
-            } else {
-                $options[api::DATAREQUEST_TYPE_EXPORT] = get_string('requesttypeexport', 'tool_dataprivacy');
-            }
+            $options[api::DATAREQUEST_TYPE_EXPORT] = get_string('requesttypeexport', 'tool_dataprivacy');
         }
         $options[api::DATAREQUEST_TYPE_DELETE] = get_string('requesttypedelete', 'tool_dataprivacy');
 

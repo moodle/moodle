@@ -31,8 +31,6 @@ class Country extends AbstractPlaceRecord
 {
     /**
      * @ignore
-     *
-     * @var array<string>
      */
     protected $validAttributes = [
         'confidence',

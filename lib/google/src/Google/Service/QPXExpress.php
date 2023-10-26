@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress extends Google_Service
 {
 
@@ -76,7 +75,6 @@ class Google_Service_QPXExpress extends Google_Service
  *   $trips = $qpxExpressService->trips;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_Trips_Resource extends Google_Service_Resource
 {
 
@@ -98,7 +96,6 @@ class Google_Service_QPXExpress_Trips_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_AircraftData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -134,7 +131,6 @@ class Google_Service_QPXExpress_AircraftData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_AirportData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -179,7 +175,6 @@ class Google_Service_QPXExpress_AirportData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_BagDescriptor extends Google_Collection
 {
   protected $collection_key = 'description';
@@ -234,7 +229,6 @@ class Google_Service_QPXExpress_BagDescriptor extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_CarrierData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -270,7 +264,6 @@ class Google_Service_QPXExpress_CarrierData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_CityData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -315,7 +308,6 @@ class Google_Service_QPXExpress_CityData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_Data extends Google_Collection
 {
   protected $collection_key = 'tax';
@@ -384,7 +376,6 @@ class Google_Service_QPXExpress_Data extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_FareInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -456,7 +447,6 @@ class Google_Service_QPXExpress_FareInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_FlightInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -483,7 +473,6 @@ class Google_Service_QPXExpress_FlightInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_FreeBaggageAllowance extends Google_Collection
 {
   protected $collection_key = 'bagDescriptor';
@@ -548,7 +537,6 @@ class Google_Service_QPXExpress_FreeBaggageAllowance extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_LegInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -710,7 +698,6 @@ class Google_Service_QPXExpress_LegInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_PassengerCounts extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -773,7 +760,6 @@ class Google_Service_QPXExpress_PassengerCounts extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_PricingInfo extends Google_Collection
 {
   protected $collection_key = 'tax';
@@ -904,7 +890,6 @@ class Google_Service_QPXExpress_PricingInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_SegmentInfo extends Google_Collection
 {
   protected $collection_key = 'leg';
@@ -1015,7 +1000,6 @@ class Google_Service_QPXExpress_SegmentInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_SegmentPricing extends Google_Collection
 {
   protected $collection_key = 'freeBaggageOption';
@@ -1062,7 +1046,6 @@ class Google_Service_QPXExpress_SegmentPricing extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_SliceInfo extends Google_Collection
 {
   protected $collection_key = 'segment';
@@ -1100,7 +1083,6 @@ class Google_Service_QPXExpress_SliceInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_SliceInput extends Google_Collection
 {
   protected $collection_key = 'prohibitedCarrier';
@@ -1210,7 +1192,6 @@ class Google_Service_QPXExpress_SliceInput extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TaxData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1246,7 +1227,6 @@ class Google_Service_QPXExpress_TaxData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TaxInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1309,7 +1289,6 @@ class Google_Service_QPXExpress_TaxInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TimeOfDayRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1345,7 +1324,6 @@ class Google_Service_QPXExpress_TimeOfDayRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TripOption extends Google_Collection
 {
   protected $collection_key = 'slice';
@@ -1402,7 +1380,6 @@ class Google_Service_QPXExpress_TripOption extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TripOptionsRequest extends Google_Collection
 {
   protected $collection_key = 'slice';
@@ -1468,7 +1445,6 @@ class Google_Service_QPXExpress_TripOptionsRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TripOptionsResponse extends Google_Collection
 {
   protected $collection_key = 'tripOption';
@@ -1516,7 +1492,6 @@ class Google_Service_QPXExpress_TripOptionsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TripsSearchRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1535,7 +1510,6 @@ class Google_Service_QPXExpress_TripsSearchRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_QPXExpress_TripsSearchResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(

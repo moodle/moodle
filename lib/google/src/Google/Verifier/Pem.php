@@ -24,7 +24,6 @@ if (!class_exists('Google_Client')) {
  *
  * @author Brian Eaton <beaton@google.com>
  */
-#[AllowDynamicProperties]
 class Google_Verifier_Pem extends Google_Verifier_Abstract
 {
   private $publicKey;

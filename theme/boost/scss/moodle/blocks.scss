@@ -309,26 +309,25 @@ $card-gutter : $card-deck-margin * 2;
 }
 .block_settings .block_tree [aria-expanded="true"] > p:before,
 .block_navigation .block_tree [aria-expanded="true"] > p:before {
-    @extend .fa-solid;
-    content: fa-content($fa-var-angle-down);
+    content: $fa-var-angle-down;
     margin-right: 0;
+    @include fa-icon();
     font-size: 16px;
     width: 16px;
 }
 
 .block_settings .block_tree [aria-expanded="false"] > p:before,
 .block_navigation .block_tree [aria-expanded="false"] > p:before {
-    @extend .fa-solid;
-    content: fa-content($fa-var-angle-right);
+    content: $fa-var-angle-right;
     margin-right: 0;
+    @include fa-icon();
     font-size: 16px;
     width: 16px;
 }
 .dir-rtl {
     .block_settings .block_tree [aria-expanded="false"] > p:before,
     .block_navigation .block_tree [aria-expanded="false"] > p:before {
-        @extend .fa-solid;
-        content: fa-content($fa-var-angle-left);
+        content: $fa-var-angle-left;
     }
 }
 

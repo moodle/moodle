@@ -20,23 +20,52 @@
  * @copyright  2017 Simey Lameze <simey@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+define([
+    'jquery',
+    'core/str',
+    'core/notification',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/modal_factory',
+    'core/modal_events',
+    'core_calendar/repository',
+    'core_calendar/events',
+    'core_calendar/crud',
+],
+function(
+    $,
+    Str,
+    Notification,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    ModalFactory,
+    ModalEvents,
+    CalendarRepository,
+    CalendarEvents,
+    CalendarCrud
+) {
 
-import $ from 'jquery';
-import * as CustomEvents from 'core/custom_interaction_events';
-import Modal from 'core/modal';
-import CalendarEvents from './events';
-import * as CalendarCrud from 'core_calendar/crud';
-import * as ModalEvents from 'core/modal_events';
+    var registered = false;
+    var SELECTORS = {
+        ROOT: "[data-region='summary-modal-container']",
+        EDIT_BUTTON: '[data-action="edit"]',
+        DELETE_BUTTON: '[data-action="delete"]',
+    };
 
-const SELECTORS = {
-    ROOT: "[data-region='summary-modal-container']",
-    EDIT_BUTTON: '[data-action="edit"]',
-    DELETE_BUTTON: '[data-action="delete"]',
-};
+    /**
+     * Constructor for the Modal.
+     *
+     * @param {object} root The root jQuery element for the modal
+     */
+    var ModalEventSummary = function(root) {
+        Modal.call(this, root);
+    };
 
-export default class ModalEventSummary extends Modal {
-    static TEMPLATE = 'core_calendar/event_summary_modal';
-    static TYPE = 'core_calendar-event_summary';
+    ModalEventSummary.TYPE = 'core_calendar-event_summary';
+    ModalEventSummary.prototype = Object.create(Modal.prototype);
+    ModalEventSummary.prototype.constructor = ModalEventSummary;
 
     /**
      * Get the edit button element from the footer. The button is cached
@@ -45,13 +74,13 @@ export default class ModalEventSummary extends Modal {
      * @method getEditButton
      * @return {object} button element
      */
-    getEditButton() {
+    ModalEventSummary.prototype.getEditButton = function() {
         if (typeof this.editButton == 'undefined') {
             this.editButton = this.getFooter().find(SELECTORS.EDIT_BUTTON);
         }
 
         return this.editButton;
-    }
+    };
 
     /**
      * Get the delete button element from the footer. The button is cached
@@ -60,13 +89,13 @@ export default class ModalEventSummary extends Modal {
      * @method getDeleteButton
      * @return {object} button element
      */
-    getDeleteButton() {
+    ModalEventSummary.prototype.getDeleteButton = function() {
         if (typeof this.deleteButton == 'undefined') {
             this.deleteButton = this.getFooter().find(SELECTORS.DELETE_BUTTON);
         }
 
         return this.deleteButton;
-    }
+    };
 
     /**
      * Get the id for the event being shown in this modal. This value is
@@ -76,9 +105,9 @@ export default class ModalEventSummary extends Modal {
      * @method getEventId
      * @return {int}
      */
-    getEventId() {
+    ModalEventSummary.prototype.getEventId = function() {
         return this.getBody().find(SELECTORS.ROOT).attr('data-event-id');
-    }
+    };
 
     /**
      * Get the title for the event being shown in this modal. This value is
@@ -88,9 +117,9 @@ export default class ModalEventSummary extends Modal {
      * @method getEventTitle
      * @return {String}
      */
-    getEventTitle() {
+    ModalEventSummary.prototype.getEventTitle = function() {
         return this.getBody().find(SELECTORS.ROOT).attr('data-event-title');
-    }
+    };
 
     /**
      * Get the number of events in the series for the event being shown in
@@ -100,9 +129,9 @@ export default class ModalEventSummary extends Modal {
      * @method getEventCount
      * @return {int}
      */
-    getEventCount() {
+    ModalEventSummary.prototype.getEventCount = function() {
         return this.getBody().find(SELECTORS.ROOT).attr('data-event-count');
-    }
+    };
 
     /**
      * Get the url for the event being shown in this modal.
@@ -110,9 +139,9 @@ export default class ModalEventSummary extends Modal {
      * @method getEventUrl
      * @return {String}
      */
-    getEditUrl() {
+    ModalEventSummary.prototype.getEditUrl = function() {
         return this.getBody().find(SELECTORS.ROOT).attr('data-edit-url');
-    }
+    };
 
     /**
      * Is this an action event.
@@ -120,18 +149,18 @@ export default class ModalEventSummary extends Modal {
      * @method getEventUrl
      * @return {String}
      */
-    isActionEvent() {
+    ModalEventSummary.prototype.isActionEvent = function() {
         return (this.getBody().find(SELECTORS.ROOT).attr('data-action-event') == 'true');
-    }
+    };
 
     /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
      */
-    registerEventListeners() {
+    ModalEventSummary.prototype.registerEventListeners = function() {
         // Apply parent event listeners.
-        super.registerEventListeners(this);
+        Modal.prototype.registerEventListeners.call(this);
 
         // We have to wait for the modal to finish rendering in order to ensure that
         // the data-event-title property is available to use as the modal title.
@@ -175,7 +204,14 @@ export default class ModalEventSummary extends Modal {
             data.originalEvent.preventDefault();
             data.originalEvent.stopPropagation();
         }.bind(this));
-    }
-}
+    };
 
-ModalEventSummary.registerModalType();
+    // Automatically register with the modal registry the first time this module is imported so that you can create modals
+    // of this type using the modal factory.
+    if (!registered) {
+        ModalRegistry.register(ModalEventSummary.TYPE, ModalEventSummary, 'core_calendar/event_summary_modal');
+        registered = true;
+    }
+
+    return ModalEventSummary;
+});

@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit extends Google_Service
 {
 
@@ -119,7 +118,6 @@ class Google_Service_IdentityToolkit extends Google_Service
  *   $relyingparty = $identitytoolkitService->relyingparty;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_Relyingparty_Resource extends Google_Service_Resource
 {
 
@@ -295,7 +293,6 @@ class Google_Service_IdentityToolkit_Relyingparty_Resource extends Google_Servic
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_CreateAuthUriResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -358,7 +355,6 @@ class Google_Service_IdentityToolkit_CreateAuthUriResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_DeleteAccountResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -376,7 +372,6 @@ class Google_Service_IdentityToolkit_DeleteAccountResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_DownloadAccountResponse extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -414,7 +409,6 @@ class Google_Service_IdentityToolkit_DownloadAccountResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_GetAccountInfoResponse extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -443,7 +437,6 @@ class Google_Service_IdentityToolkit_GetAccountInfoResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_GetOobConfirmationCodeResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -470,7 +463,6 @@ class Google_Service_IdentityToolkit_GetOobConfirmationCodeResponse extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_GetRecaptchaParamResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -506,7 +498,6 @@ class Google_Service_IdentityToolkit_GetRecaptchaParamResponse extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyCreateAuthUriRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -605,7 +596,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyCreateAuthUriReq
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyDeleteAccountRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -623,7 +613,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyDeleteAccountReq
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyDownloadAccountRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -650,7 +639,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyDownloadAccountR
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyGetAccountInfoRequest extends Google_Collection
 {
   protected $collection_key = 'localId';
@@ -687,12 +675,10 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyGetAccountInfoRe
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyGetPublicKeysResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyResetPasswordRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -737,7 +723,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyResetPasswordReq
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartySetAccountInfoRequest extends Google_Collection
 {
   protected $collection_key = 'provider';
@@ -864,7 +849,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartySetAccountInfoRe
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyUploadAccountRequest extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -929,7 +913,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyUploadAccountReq
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyVerifyAssertionRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -974,7 +957,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyVerifyAssertionR
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyVerifyPasswordRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1028,7 +1010,6 @@ class Google_Service_IdentityToolkit_IdentitytoolkitRelyingpartyVerifyPasswordRe
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_Relyingparty extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1109,7 +1090,6 @@ class Google_Service_IdentityToolkit_Relyingparty extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_ResetPasswordResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1136,7 +1116,6 @@ class Google_Service_IdentityToolkit_ResetPasswordResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_SetAccountInfoResponse extends Google_Collection
 {
   protected $collection_key = 'providerUserInfo';
@@ -1201,7 +1180,6 @@ class Google_Service_IdentityToolkit_SetAccountInfoResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_SetAccountInfoResponseProviderUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1237,7 +1215,6 @@ class Google_Service_IdentityToolkit_SetAccountInfoResponseProviderUserInfo exte
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_UploadAccountResponse extends Google_Collection
 {
   protected $collection_key = 'error';
@@ -1266,7 +1243,6 @@ class Google_Service_IdentityToolkit_UploadAccountResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_UploadAccountResponseError extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1293,7 +1269,6 @@ class Google_Service_IdentityToolkit_UploadAccountResponseError extends Google_M
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_UserInfo extends Google_Collection
 {
   protected $collection_key = 'providerUserInfo';
@@ -1412,7 +1387,6 @@ class Google_Service_IdentityToolkit_UserInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_UserInfoProviderUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1457,7 +1431,6 @@ class Google_Service_IdentityToolkit_UserInfoProviderUserInfo extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_VerifyAssertionResponse extends Google_Collection
 {
   protected $collection_key = 'verifiedProvider';
@@ -1746,7 +1719,6 @@ class Google_Service_IdentityToolkit_VerifyAssertionResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_IdentityToolkit_VerifyPasswordResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(

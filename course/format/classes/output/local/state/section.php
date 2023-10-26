@@ -52,7 +52,7 @@ class section implements renderable {
     /**
      * Export this data so it can be used as state object in the course editor.
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
@@ -88,7 +88,6 @@ class section implements renderable {
             'indexcollapsed' => $indexcollapsed,
             'contentcollapsed' => $contentcollapsed,
             'hasrestrictions' => $this->get_has_restrictions(),
-            'bulkeditable' => $this->is_bulk_editable(),
         ];
 
         if (empty($modinfo->sections[$section->section])) {
@@ -103,15 +102,6 @@ class section implements renderable {
         }
 
         return $data;
-    }
-
-    /**
-     * Return if the section can be selected for bulk editing.
-     * @return bool if the section can be edited in bulk
-     */
-    protected function is_bulk_editable(): bool {
-        $section = $this->section;
-        return ($section->section != 0);
     }
 
     /**

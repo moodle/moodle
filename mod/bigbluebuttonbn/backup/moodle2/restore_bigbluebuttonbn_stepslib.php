@@ -39,11 +39,9 @@ class restore_bigbluebuttonbn_activity_structure_step extends restore_activity_s
      */
     protected function define_structure() {
         $paths = [];
-        $bbb = new restore_path_element('bigbluebuttonbn', '/activity/bigbluebuttonbn');
-        $paths[] = $bbb;
+        $paths[] = new restore_path_element('bigbluebuttonbn', '/activity/bigbluebuttonbn');
         $paths[] = new restore_path_element('bigbluebuttonbn_logs', '/activity/bigbluebuttonbn/logs/log');
         $paths[] = new restore_path_element('bigbluebuttonbn_recordings', '/activity/bigbluebuttonbn/recordings/recording');
-        $this->add_subplugin_structure('bbbext', $bbb);
         // Return the paths wrapped into standard activity structure.
         return $this->prepare_activity_structure($paths);
     }

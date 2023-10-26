@@ -1,13 +1,11 @@
 <?php
-
-declare(strict_types=1);
 /**
  * SimplePie
  *
  * A PHP-Based RSS and Atom Feed Framework.
  * Takes the hard work out of managing a complete RSS/Atom solution.
  *
- * Copyright (c) 2004-2022, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
+ * Copyright (c) 2004-2016, Ryan Parman, Sam Sneddon, Ryan McCue, and contributors
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification, are
@@ -43,15 +41,110 @@ declare(strict_types=1);
  * @license http://www.opensource.org/licenses/bsd-license.php BSD License
  */
 
-use SimplePie\Restriction;
+/**
+ * Handles `<media:restriction>` as defined in Media RSS
+ *
+ * Used by {@see SimplePie_Enclosure::get_restriction()} and {@see SimplePie_Enclosure::get_restrictions()}
+ *
+ * This class can be overloaded with {@see SimplePie::set_restriction_class()}
+ *
+ * @package SimplePie
+ * @subpackage API
+ */
+class SimplePie_Restriction
+{
+	/**
+	 * Relationship ('allow'/'deny')
+	 *
+	 * @var string
+	 * @see get_relationship()
+	 */
+	var $relationship;
 
-class_exists('SimplePie\Restriction');
+	/**
+	 * Type of restriction
+	 *
+	 * @var string
+	 * @see get_type()
+	 */
+	var $type;
 
-// @trigger_error(sprintf('Using the "SimplePie_Restriction" class is deprecated since SimplePie 1.7.0, use "SimplePie\Restriction" instead.'), \E_USER_DEPRECATED);
+	/**
+	 * Restricted values
+	 *
+	 * @var string
+	 * @see get_value()
+	 */
+	var $value;
 
-if (\false) {
-    /** @deprecated since SimplePie 1.7.0, use "SimplePie\Restriction" instead */
-    class SimplePie_Restriction extends Restriction
-    {
-    }
+	/**
+	 * Constructor, used to input the data
+	 *
+	 * For documentation on all the parameters, see the corresponding
+	 * properties and their accessors
+	 */
+	public function __construct($relationship = null, $type = null, $value = null)
+	{
+		$this->relationship = $relationship;
+		$this->type = $type;
+		$this->value = $value;
+	}
+
+	/**
+	 * String-ified version
+	 *
+	 * @return string
+	 */
+	public function __toString()
+	{
+		// There is no $this->data here
+		return md5(serialize($this));
+	}
+
+	/**
+	 * Get the relationship
+	 *
+	 * @return string|null Either 'allow' or 'deny'
+	 */
+	public function get_relationship()
+	{
+		if ($this->relationship !== null)
+		{
+			return $this->relationship;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the type
+	 *
+	 * @return string|null
+	 */
+	public function get_type()
+	{
+		if ($this->type !== null)
+		{
+			return $this->type;
+		}
+
+		return null;
+	}
+
+	/**
+	 * Get the list of restricted things
+	 *
+	 * @return string|null
+	 */
+	public function get_value()
+	{
+		if ($this->value !== null)
+		{
+			return $this->value;
+		}
+
+		return null;
+	}
 }
+
+class_alias('SimplePie_Restriction', 'SimplePie\Restriction', false);

@@ -17,7 +17,7 @@
 namespace core_grades\external;
 
 use core_grades\external\create_gradecategories;
-use core_external\external_api;
+use external_api;
 
 defined('MOODLE_INTERNAL') || die;
 

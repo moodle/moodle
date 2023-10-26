@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Reports extends Google_Service
 {
   /** View audit reports of Google Apps for your domain. */
@@ -265,7 +264,6 @@ class Google_Service_Reports extends Google_Service
  *   $activities = $adminService->activities;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Reports_Activities_Resource extends Google_Service_Resource
 {
 
@@ -346,7 +344,6 @@ class Google_Service_Reports_Activities_Resource extends Google_Service_Resource
  *   $channels = $adminService->channels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Reports_Channels_Resource extends Google_Service_Resource
 {
 
@@ -372,7 +369,6 @@ class Google_Service_Reports_Channels_Resource extends Google_Service_Resource
  *   $customerUsageReports = $adminService->customerUsageReports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Reports_CustomerUsageReports_Resource extends Google_Service_Resource
 {
 
@@ -407,7 +403,6 @@ class Google_Service_Reports_CustomerUsageReports_Resource extends Google_Servic
  *   $userUsageReport = $adminService->userUsageReport;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Reports_UserUsageReport_Resource extends Google_Service_Resource
 {
 
@@ -443,7 +438,6 @@ class Google_Service_Reports_UserUsageReport_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_Activities extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -490,7 +484,6 @@ class Google_Service_Reports_Activities extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_Activity extends Google_Collection
 {
   protected $collection_key = 'events';
@@ -566,7 +559,6 @@ class Google_Service_Reports_Activity extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_ActivityActor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -611,7 +603,6 @@ class Google_Service_Reports_ActivityActor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_ActivityEvents extends Google_Collection
 {
   protected $collection_key = 'parameters';
@@ -649,7 +640,6 @@ class Google_Service_Reports_ActivityEvents extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_ActivityEventsParameters extends Google_Collection
 {
   protected $collection_key = 'multiValue';
@@ -713,7 +703,6 @@ class Google_Service_Reports_ActivityEventsParameters extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_ActivityId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -758,7 +747,6 @@ class Google_Service_Reports_ActivityId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -857,12 +845,10 @@ class Google_Service_Reports_Channel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_ChannelParams extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReport extends Google_Collection
 {
   protected $collection_key = 'parameters';
@@ -919,7 +905,6 @@ class Google_Service_Reports_UsageReport extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReportEntity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -964,7 +949,6 @@ class Google_Service_Reports_UsageReportEntity extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReportParameters extends Google_Collection
 {
   protected $collection_key = 'msgValue';
@@ -1028,12 +1012,10 @@ class Google_Service_Reports_UsageReportParameters extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReportParametersMsgValue extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReports extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -1090,7 +1072,6 @@ class Google_Service_Reports_UsageReports extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReportsWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1128,7 +1109,6 @@ class Google_Service_Reports_UsageReportsWarnings extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Reports_UsageReportsWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(

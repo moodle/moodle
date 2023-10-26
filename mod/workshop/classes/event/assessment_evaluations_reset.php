@@ -63,6 +63,16 @@ class assessment_evaluations_reset extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'workshop', 'update clear aggregated grade', 'view.php?id=' . $this->contextinstanceid,
+                $this->other['workshopid'], $this->contextinstanceid);
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

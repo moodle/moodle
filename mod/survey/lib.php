@@ -395,7 +395,7 @@ function survey_get_user_answers($surveyid, $questionid, $groupid, $sort="sa.ans
  * @param int $surveyid
  * @param int $questionid
  * @param int $userid
- * @return stdClass|false
+ * @return array
  */
 function survey_get_user_answer($surveyid, $questionid, $userid) {
     global $DB;
@@ -722,7 +722,7 @@ function survey_get_post_actions() {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the survey.
  *
- * @param MoodleQuickForm $mform form passed by reference
+ * @param object $mform form passed by reference
  */
 function survey_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'surveyheader', get_string('modulenameplural', 'survey'));

@@ -86,18 +86,6 @@ require_once($CFG->dirroot.'/auth/ldap/locallib.php');
  */
 class auth_plugin_ldap extends auth_plugin_base {
 
-    /** @var string */
-    protected $roleauth;
-
-    /** @var string */
-    public $pluginconfig;
-
-    /** @var LDAP\Connection LDAP connection. */
-    protected $ldapconnection;
-
-    /** @var int */
-    protected $ldapconns = 0;
-
     /**
      * Init plugin config from database settings depending on the plugin auth type.
      */

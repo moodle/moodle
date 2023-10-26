@@ -43,6 +43,7 @@
         </label>
         <input
            type="text"
+           role="searchbox"
            data-region="input"
            data-action="search"
            id="searchinput-{{uniqid}}"
@@ -51,7 +52,6 @@
            name="search"
            value="{{$value}}{{/value}}"
            autocomplete="off"
-           {{$additionalattributes}}{{/additionalattributes}}
         >
         <button
             class="btn btn-clear d-none"

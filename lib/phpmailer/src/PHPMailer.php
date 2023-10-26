@@ -750,7 +750,7 @@ class PHPMailer
      *
      * @var string
      */
-    const VERSION = '6.8.0';
+    const VERSION = '6.6.5';
 
     /**
      * Error severity: message only, continue processing.
@@ -858,7 +858,7 @@ class PHPMailer
     private function mailPassthru($to, $subject, $body, $header, $params)
     {
         //Check overloading of mail function to avoid double-encoding
-        if ((int)ini_get('mbstring.func_overload') & 1) {
+        if (ini_get('mbstring.func_overload') & 1) {
             $subject = $this->secureHeader($subject);
         } else {
             $subject = $this->encodeHeader($this->secureHeader($subject));
@@ -1122,22 +1122,6 @@ class PHPMailer
 
         //Immediately add standard addresses without IDN.
         return call_user_func_array([$this, 'addAnAddress'], $params);
-    }
-
-    /**
-     * Set the boundaries to use for delimiting MIME parts.
-     * If you override this, ensure you set all 3 boundaries to unique values.
-     * The default boundaries include a "=_" sequence which cannot occur in quoted-printable bodies,
-     * as suggested by https://www.rfc-editor.org/rfc/rfc2045#section-6.7
-     *
-     * @return void
-     */
-    public function setBoundaries()
-    {
-        $this->uniqueid = $this->generateId();
-        $this->boundary[1] = 'b1=_' . $this->uniqueid;
-        $this->boundary[2] = 'b2=_' . $this->uniqueid;
-        $this->boundary[3] = 'b3=_' . $this->uniqueid;
     }
 
     /**
@@ -1687,11 +1671,11 @@ class PHPMailer
                     return $this->mailSend($this->MIMEHeader, $this->MIMEBody);
             }
         } catch (Exception $exc) {
-            $this->setError($exc->getMessage());
-            $this->edebug($exc->getMessage());
             if ($this->Mailer === 'smtp' && $this->SMTPKeepAlive == true && $this->smtp->connected()) {
                 $this->smtp->reset();
             }
+            $this->setError($exc->getMessage());
+            $this->edebug($exc->getMessage());
             if ($this->exceptions) {
                 throw $exc;
             }
@@ -2423,7 +2407,7 @@ class PHPMailer
      */
     public function addrFormat($addr)
     {
-        if (!isset($addr[1]) || ($addr[1] === '')) { //No name provided
+        if (empty($addr[1])) { //No name provided
             return $this->secureHeader($addr[0]);
         }
 
@@ -2810,7 +2794,10 @@ class PHPMailer
     {
         $body = '';
         //Create unique IDs and preset boundaries
-        $this->setBoundaries();
+        $this->uniqueid = $this->generateId();
+        $this->boundary[1] = 'b1_' . $this->uniqueid;
+        $this->boundary[2] = 'b2_' . $this->uniqueid;
+        $this->boundary[3] = 'b3_' . $this->uniqueid;
 
         if ($this->sign_key_file) {
             $body .= $this->getMailMIME() . static::$LE;
@@ -2846,7 +2833,7 @@ class PHPMailer
             $altBodyEncoding = static::ENCODING_QUOTED_PRINTABLE;
         }
         //Use this as a preamble in all multipart message types
-        $mimepre = '';
+        $mimepre = 'This is a multi-part message in MIME format.' . static::$LE . static::$LE;
         switch ($this->message_type) {
             case 'inline':
                 $body .= $mimepre;
@@ -3080,18 +3067,6 @@ class PHPMailer
         }
 
         return $body;
-    }
-
-    /**
-     * Get the boundaries that this message will use
-     * @return array
-     */
-    public function getBoundaries()
-    {
-        if (empty($this->boundary)) {
-            $this->setBoundaries();
-        }
-        return $this->boundary;
     }
 
     /**
@@ -4211,7 +4186,6 @@ class PHPMailer
      * @param string      $name  Custom header name
      * @param string|null $value Header value
      *
-     * @return bool True if a header was set successfully
      * @throws Exception
      */
     public function addCustomHeader($name, $value = null)
@@ -4661,27 +4635,15 @@ class PHPMailer
     }
 
     /**
-     * Remove trailing whitespace from a string.
-     *
-     * @param string $text
-     *
-     * @return string The text to remove whitespace from
-     */
-    public static function stripTrailingWSP($text)
-    {
-        return rtrim($text, " \r\n\t");
-    }
-
-    /**
-     * Strip trailing line breaks from a string.
+     * Remove trailing breaks from a string.
      *
      * @param string $text
      *
      * @return string The text to remove breaks from
      */
-    public static function stripTrailingBreaks($text)
+    public static function stripTrailingWSP($text)
     {
-        return rtrim($text, "\r\n");
+        return rtrim($text, " \r\n\t");
     }
 
     /**
@@ -4847,7 +4809,7 @@ class PHPMailer
         $body = static::normalizeBreaks($body, self::CRLF);
 
         //Reduce multiple trailing line breaks to a single one
-        return static::stripTrailingBreaks($body) . self::CRLF;
+        return static::stripTrailingWSP($body) . self::CRLF;
     }
 
     /**

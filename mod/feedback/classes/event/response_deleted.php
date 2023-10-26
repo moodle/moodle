@@ -100,6 +100,16 @@ class response_deleted extends \core\event\base {
     }
 
     /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'feedback', 'delete', 'view.php?id=' . $this->other['cmid'], $this->other['instanceid'],
+                $this->other['instanceid']);
+    }
+
+    /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
      * @deprecated since 2.7

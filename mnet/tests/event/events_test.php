@@ -66,6 +66,9 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\mnet_access_control_created', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'admin/mnet', 'add', 'admin/mnet/access_control.php',
+            'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/admin/mnet/access_control.php');
         $this->assertEquals($url, $event->get_url());
@@ -93,6 +96,9 @@ class events_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\mnet_access_control_updated', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
+        $expected = array(SITEID, 'admin/mnet', 'update', 'admin/mnet/access_control.php',
+            'SSO ACL: enabled user \'username\' from ' . $this->mnethost->name);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/admin/mnet/access_control.php');
         $this->assertEquals($url, $event->get_url());

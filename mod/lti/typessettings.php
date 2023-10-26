@@ -79,11 +79,6 @@ if (!empty($id)) {
         $redirect = new moodle_url('/mod/lti/toolssettings.php', $params);
         redirect($redirect);
     }
-    $type->lti_coursecategories = '';
-    if ($records = $DB->get_fieldset_select('lti_types_categories', 'categoryid', 'typeid = :typeid',
-            ['typeid' => $id])) {
-        $type->lti_coursecategories = implode(',', $records);
-    }
 } else {
     $type = new stdClass();
     // Assign a default empty value for the lti_icon.
@@ -91,7 +86,6 @@ if (!empty($id)) {
     $type->lti_secureicon = '';
 
     $type->lti_clientid = null;
-    $type->lti_coursecategories = '';
 }
 
 $pageurl = new moodle_url('/mod/lti/typessettings.php');
@@ -127,17 +121,8 @@ if (lti_request_is_using_ssl() && !empty($type->lti_secureicon)) {
     $type->oldicon = $type->lti_icon;
 }
 
-$form = new mod_lti_edit_types_form(
-    $pageurl,
-    (object) [
-        'isadmin' => true,
-        'istool' => false,
-        'id' => $id,
-        'clientid' => $type->lti_clientid,
-        'coursecategories' => $type->lti_coursecategories,
-        'iscoursetool' => !empty($id) && $type->course !== get_site()->id
-    ]
-);
+$form = new mod_lti_edit_types_form($pageurl,
+    (object)array('isadmin' => true, 'istool' => false, 'id' => $id, 'clientid' => $type->lti_clientid));
 
 if ($data = $form->get_data()) {
     $type = new stdClass();
@@ -163,7 +148,6 @@ $PAGE->set_primary_active_tab('siteadminnode');
 $PAGE->set_secondary_active_tab('ltitoolconfigure');
 $PAGE->navbar->add(get_string('manage_external_tools', 'lti'), new moodle_url('/mod/lti/toolconfigure.php'));
 $PAGE->navbar->add(get_string('toolsetup', 'lti'), $PAGE->url);
-$PAGE->requires->js_call_amd('mod_lti/coursecategory', 'init', [$type->lti_coursecategories]);
 
 echo $OUTPUT->header();
 echo $OUTPUT->heading(get_string('toolsetup', 'lti'));

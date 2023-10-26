@@ -1,11 +1,6 @@
 This files describes API changes in /search/*,
 information provided here is intended especially for developers.
 
-=== 4.2 ===
-
-* Support for optional final element returned by engine `add_documents()` implementations is now removed, all
-  six expected returned array elements must be present
-
 === 3.10 ===
 
 * Search indexing now supports sending multiple documents to the server in a batch. This is implemented

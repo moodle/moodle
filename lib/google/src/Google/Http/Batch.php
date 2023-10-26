@@ -22,7 +22,6 @@ if (!class_exists('Google_Client')) {
 /**
  * Class to handle batched requests to the Google API service.
  */
-#[AllowDynamicProperties]
 class Google_Http_Batch
 {
   /** @var string Multipart Boundary. */

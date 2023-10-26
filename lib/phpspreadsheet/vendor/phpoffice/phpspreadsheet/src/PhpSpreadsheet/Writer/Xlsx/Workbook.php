@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx\Namespaces;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Shared\XMLWriter;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -33,8 +32,8 @@ class Workbook extends WriterPart
         // workbook
         $objWriter->startElement('workbook');
         $objWriter->writeAttribute('xml:space', 'preserve');
-        $objWriter->writeAttribute('xmlns', Namespaces::MAIN);
-        $objWriter->writeAttribute('xmlns:r', Namespaces::SCHEMA_OFFICE_DOCUMENT);
+        $objWriter->writeAttribute('xmlns', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+        $objWriter->writeAttribute('xmlns:r', 'http://schemas.openxmlformats.org/officeDocument/2006/relationships');
 
         // fileVersion
         $this->writeFileVersion($objWriter);

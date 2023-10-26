@@ -815,7 +815,7 @@ class repository_nextcloud extends repository {
 
                 $folders[strtoupper($title)] = array(
                     'title' => rtrim($title, '/'),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
                     'children' => array(),
                     'datemodified' => $item['lastmodified'],
                     'path' => $item['href']
@@ -825,7 +825,7 @@ class repository_nextcloud extends repository {
                 $size = !empty($item['getcontentlength']) ? $item['getcontentlength'] : '';
                 $files[strtoupper($title)] = array(
                     'title' => $title,
-                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 90))->out(false),
                     'size' => $size,
                     'datemodified' => $item['lastmodified'],
                     'source' => $item['href']
@@ -857,7 +857,7 @@ class repository_nextcloud extends repository {
         echo $OUTPUT->header();
 
         $button = new single_button($url, get_string('logintoaccount', 'repository', $this->get_name()),
-            'post', single_button::BUTTON_PRIMARY);
+            'post', true);
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';
         $button = $OUTPUT->render($button);

@@ -41,17 +41,17 @@ class manager {
         array $fpoptions = [],
         ?editor $editor = null
     ): array {
+        $disabledplugins = $this->get_disabled_plugins();
+
         // Get the list of plugins.
         // Note: Disabled plugins are already removed from this list.
         $plugins = $this->get_shipped_plugins();
 
         // Fetch configuration for Moodle plugins.
         $moodleplugins = \core_component::get_plugin_list_with_class('tiny', 'plugininfo');
-        $enabledplugins = \editor_tiny\plugininfo\tiny::get_enabled_plugins();
         foreach ($moodleplugins as $plugin => $classname) {
-            [, $pluginname] = explode('_', $plugin, 2);
-            if (!in_array($pluginname, $enabledplugins)) {
-                // This plugin has been disabled.
+            if (in_array($plugin, $disabledplugins) || in_array("{$plugin}/plugin", $disabledplugins)) {
+                // Skip getting data for disabled plugins.
                 continue;
             }
 
@@ -74,6 +74,10 @@ class manager {
                 $fpoptions,
                 $editor
             );
+
+            if (!empty($config)) {
+                $plugininfo['config'] = $config;
+            }
 
             // We suffix the plugin name for Moodle plugins with /plugin to avoid conflicts with Tiny plugins.
             $plugins["{$plugin}/plugin"] = $plugininfo;
@@ -186,7 +190,7 @@ class manager {
         $plugins = $this->get_shipped_plugins();
         $plugins += $this->get_moodle_plugins();
 
-        $disabledplugins = $this->get_disabled_tinymce_plugins();
+        $disabledplugins = $this->get_disabled_plugins();
         $plugins = array_filter($plugins, function ($plugin) use ($disabledplugins) {
             return !in_array($plugin, $disabledplugins);
         }, ARRAY_FILTER_USE_KEY);
@@ -212,8 +216,8 @@ class manager {
             $plugins += $this->get_premium_plugins();
         }
 
-        $disabledplugins = $this->get_disabled_tinymce_plugins();
-        return array_filter($plugins, function ($plugin) use ($disabledplugins) {
+        $disabledplugins = $this->get_disabled_plugins();
+        return array_filter($plugins, function($plugin) use ($disabledplugins) {
             return !in_array($plugin, $disabledplugins);
         }, ARRAY_FILTER_USE_KEY);
     }
@@ -476,13 +480,11 @@ class manager {
     }
 
     /**
-     * Get a list of the built-in TinyMCE plugins which we want to disable.
-     *
-     * These are usually disabled because we have replaced them, or they are not compatible with Moodle in some way.
+     * Get a list of the disabled plugins.
      *
      * @return string[]
      */
-    protected function get_disabled_tinymce_plugins(): array {
+    protected function get_disabled_plugins(): array {
         return [
             // Disable the image and media plugins.
             // These are not generally compatible with Moodle.

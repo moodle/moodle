@@ -163,57 +163,43 @@ class mod_glossary_mod_form extends moodleform_mod {
         }
     }
 
-    public function data_preprocessing(&$defaultvalues) {
-        parent::data_preprocessing($defaultvalues);
+    function data_preprocessing(&$default_values){
+        parent::data_preprocessing($default_values);
 
         // Fallsback on the default setting if 'Entries shown per page' has been left blank.
         // This prevents the field from being required and expand its section which should not
         // be the case if there is a default value defined.
-        if (empty($defaultvalues['entbypage']) || $defaultvalues['entbypage'] < 0) {
-            $defaultvalues['entbypage'] = $this->get_default_entbypage();
+        if (empty($default_values['entbypage']) || $default_values['entbypage'] < 0) {
+            $default_values['entbypage'] = $this->get_default_entbypage();
         }
-
-        $suffix = $this->get_suffix();
-        $completionentriesel = 'completionentries' . $suffix;
-        $completionentriesenabledel = 'completionentriesenabled' . $suffix;
 
         // Set up the completion checkboxes which aren't part of standard data.
         // Tick by default if Add mode or if completion entries settings is set to 1 or more.
-        if (empty($this->_instance) || !empty($defaultvalues[$completionentriesel])) {
-            $defaultvalues[$completionentriesenabledel] = 1;
+        if (empty($this->_instance) || !empty($default_values['completionentries'])) {
+            $default_values['completionentriesenabled'] = 1;
         } else {
-            $defaultvalues[$completionentriesenabledel] = 0;
+            $default_values['completionentriesenabled'] = 0;
         }
-        if (empty($defaultvalues[$completionentriesel])) {
-            $defaultvalues[$completionentriesel] = 1;
+        if (empty($default_values['completionentries'])) {
+            $default_values['completionentries']=1;
         }
     }
 
-    public function add_completion_rules() {
-        $mform = $this->_form;
-        $suffix = $this->get_suffix();
+    function add_completion_rules() {
+        $mform =& $this->_form;
 
-        $group = [];
-        $completionentriesenabledel = 'completionentriesenabled' . $suffix;
-        $group[] =& $mform->createElement(
-            'checkbox',
-            $completionentriesenabledel,
-            '',
-            get_string('completionentries', 'glossary')
-        );
-        $completionentriesel = 'completionentries' . $suffix;
-        $group[] =& $mform->createElement('text', $completionentriesel, '', ['size' => 3]);
-        $mform->setType($completionentriesel, PARAM_INT);
-        $completionentriesgroupel = 'completionentriesgroup' . $suffix;
-        $mform->addGroup($group, $completionentriesgroupel, '', ' ', false);
-        $mform->hideIf($completionentriesel, $completionentriesenabledel, 'notchecked');
+        $group=array();
+        $group[] =& $mform->createElement('checkbox', 'completionentriesenabled', '', get_string('completionentries','glossary'));
+        $group[] =& $mform->createElement('text', 'completionentries', '', array('size'=>3));
+        $mform->setType('completionentries', PARAM_INT);
+        $mform->addGroup($group, 'completionentriesgroup', get_string('completionentriesgroup','glossary'), array(' '), false);
+        $mform->disabledIf('completionentries','completionentriesenabled','notchecked');
 
-        return [$completionentriesgroupel];
+        return array('completionentriesgroup');
     }
 
-    public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
-        return (!empty($data['completionentriesenabled' . $suffix]) && $data['completionentries' . $suffix] != 0);
+    function completion_rule_enabled($data) {
+        return (!empty($data['completionentriesenabled']) && $data['completionentries']!=0);
     }
 
     /**
@@ -227,12 +213,10 @@ class mod_glossary_mod_form extends moodleform_mod {
     public function data_postprocessing($data) {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
-            // Turn off completion settings if the checkboxes aren't ticked.
-            $suffix = $this->get_suffix();
-            $completion = $data->{'completion' . $suffix};
-            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->{'completionentriesenabled' . $suffix}) || !$autocompletion) {
-                $data->{'completionentries' . $suffix} = 0;
+            // Turn off completion settings if the checkboxes aren't ticked
+            $autocompletion = !empty($data->completion) && $data->completion==COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completionentriesenabled) || !$autocompletion) {
+                $data->completionentries = 0;
             }
         }
     }
@@ -248,3 +232,4 @@ class mod_glossary_mod_form extends moodleform_mod {
     }
 
 }
+

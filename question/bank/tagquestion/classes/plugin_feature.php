@@ -17,7 +17,7 @@
 namespace qbank_tagquestion;
 
 use core_question\local\bank\plugin_features_base;
-use core_question\local\bank\view;
+
 /**
  * Class columns is the entrypoint for the columns.
  *
@@ -28,20 +28,9 @@ use core_question\local\bank\view;
  */
 class plugin_feature extends plugin_features_base{
 
-    public function get_question_actions($qbank): array {
+    public function get_question_columns($qbank): array {
         return [
-            new tags_action($qbank),
+            new tags_action_column($qbank),
         ];
-    }
-
-    public function get_question_filters(view $qbank = null): array {
-        global $CFG;
-        if ($CFG->usetags) {
-            return [
-                new tag_condition($qbank),
-            ];
-        }
-
-        return [];
     }
 }

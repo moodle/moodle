@@ -72,6 +72,16 @@ class lesson_started extends \core\event\base {
         return "The user with id '$this->userid' started the lesson with course module id '$this->contextinstanceid'.";
     }
 
+    /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'lesson', 'start', 'view.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
+    }
+
     public static function get_objectid_mapping() {
         return array('db' => 'lesson', 'restore' => 'lesson');
     }

@@ -24,6 +24,10 @@ define([
     'jquery',
     'core/str',
     'core/notification',
+    'core/custom_interaction_events',
+    'core/modal',
+    'core/modal_registry',
+    'core/modal_factory',
     'core/modal_events',
     'core_calendar/modal_event_form',
     'core_calendar/repository',
@@ -31,20 +35,22 @@ define([
     'core_calendar/modal_delete',
     'core_calendar/selectors',
     'core/pending',
-    'core/modal_save_cancel',
 ],
 function(
     $,
     Str,
     Notification,
+    CustomEvents,
+    Modal,
+    ModalRegistry,
+    ModalFactory,
     ModalEvents,
     ModalEventForm,
     CalendarRepository,
     CalendarEvents,
-    CalendarModalDelete,
+    ModalDelete,
     CalendarSelectors,
-    Pending,
-    ModalSaveCancel,
+    Pending
 ) {
 
     /**
@@ -77,7 +83,11 @@ function(
                 },
             });
 
-            deletePromise = CalendarModalDelete.create();
+            deletePromise = ModalFactory.create(
+                {
+                    type: ModalDelete.TYPE
+                }
+            );
         } else {
             deleteStrings.push({
                 key: 'confirmeventdelete',
@@ -86,7 +96,9 @@ function(
             });
 
 
-            deletePromise = ModalSaveCancel.create();
+            deletePromise = ModalFactory.create({
+                type: ModalFactory.types.SAVE_CANCEL,
+            });
         }
 
         var stringsPromise = Str.get_strings(deleteStrings);
@@ -145,7 +157,10 @@ function(
      * @return {object} The create modal promise
      */
     var registerEventFormModal = function(root) {
-        var eventFormPromise = ModalEventForm.create();
+        var eventFormPromise = ModalFactory.create({
+            type: ModalEventForm.TYPE,
+            large: true
+        });
 
         // Bind click event on the new event button.
         root.on('click', CalendarSelectors.actions.create, function(e) {
@@ -170,7 +185,7 @@ function(
                 modal.show();
                 return;
             })
-            .catch(Notification.exception);
+            .fail(Notification.exception);
 
             e.preventDefault();
         });
@@ -192,7 +207,7 @@ function(
 
                 e.stopImmediatePropagation();
                 return;
-            }).catch(Notification.exception);
+            }).fail(Notification.exception);
         });
 
 

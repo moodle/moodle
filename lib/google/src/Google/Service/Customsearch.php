@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Customsearch extends Google_Service
 {
 
@@ -205,7 +204,6 @@ class Google_Service_Customsearch extends Google_Service
  *   $cse = $customsearchService->cse;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Cse_Resource extends Google_Service_Resource
 {
 
@@ -280,7 +278,6 @@ class Google_Service_Customsearch_Cse_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Context extends Google_Collection
 {
   protected $collection_key = 'facets';
@@ -309,7 +306,6 @@ class Google_Service_Customsearch_Context extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_ContextFacets extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -346,7 +342,6 @@ class Google_Service_Customsearch_ContextFacets extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Promotion extends Google_Collection
 {
   protected $collection_key = 'bodyLines';
@@ -412,7 +407,6 @@ class Google_Service_Customsearch_Promotion extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_PromotionBodyLines extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -457,7 +451,6 @@ class Google_Service_Customsearch_PromotionBodyLines extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_PromotionImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -493,7 +486,6 @@ class Google_Service_Customsearch_PromotionImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Query extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -835,7 +827,6 @@ class Google_Service_Customsearch_Query extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Result extends Google_Collection
 {
   protected $collection_key = 'labels';
@@ -982,7 +973,6 @@ class Google_Service_Customsearch_Result extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_ResultImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1054,7 +1044,6 @@ class Google_Service_Customsearch_ResultImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_ResultLabels extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1091,17 +1080,14 @@ class Google_Service_Customsearch_ResultLabels extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_ResultPagemap extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_ResultPagemapItemElement extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_Search extends Google_Collection
 {
   protected $collection_key = 'promotions';
@@ -1190,12 +1176,10 @@ class Google_Service_Customsearch_Search extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_SearchQueries extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_SearchSearchInformation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1240,7 +1224,6 @@ class Google_Service_Customsearch_SearchSearchInformation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_SearchSpelling extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1267,7 +1250,6 @@ class Google_Service_Customsearch_SearchSpelling extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Customsearch_SearchUrl extends Google_Model
 {
   protected $internal_gapi_mappings = array(

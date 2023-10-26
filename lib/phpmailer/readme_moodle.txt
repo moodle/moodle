@@ -1,9 +1,9 @@
-Description of PHPMailer 6.7.1 library import into Moodle
+Description of PHPMailer 6.6.5 library import into Moodle
 
 We now use a vanilla version of phpmailer and do our customisations in a
 subclass.
 
-For more information on this version of PHPMailer, check out https://github.com/PHPMailer/PHPMailer/releases/tag/v6.7.1
+For more information on this version of PHPMailer, check out https://github.com/PHPMailer/PHPMailer/releases/tag/v6.6.5
 
 To upgrade this library:
 1. Download the latest release of PHPMailer in https://github.com/PHPMailer/PHPMailer/releases.

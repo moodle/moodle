@@ -26,6 +26,8 @@ define('NO_OUTPUT_BUFFERING', true);
 
 require('../../../config.php');
 
+require_once($CFG->libdir.'/cronlib.php');
+
 // Basic security checks.
 require_admin();
 $context = context_system::instance();

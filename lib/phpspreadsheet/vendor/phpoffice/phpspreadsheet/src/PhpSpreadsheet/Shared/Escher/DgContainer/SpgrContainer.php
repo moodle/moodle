@@ -48,7 +48,7 @@ class SpgrContainer
     /**
      * Get collection of Shape Containers.
      */
-    public function getChildren(): array
+    public function getChildren()
     {
         return $this->children;
     }

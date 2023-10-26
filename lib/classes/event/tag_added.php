@@ -78,7 +78,7 @@ class tag_added extends base {
      * Creates an event from taginstance object
      *
      * @since Moodle 3.1
-     * @param \stdClass $taginstance
+     * @param stdClass $taginstance
      * @param string $tagname
      * @param string $tagrawname
      * @param bool $addsnapshot trust that $taginstance has all necessary fields and add it as a record snapshot
@@ -100,6 +100,20 @@ class tag_added extends base {
             $event->add_record_snapshot('tag_instance', $taginstance);
         }
         return $event;
+    }
+
+    /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        if ($this->other['itemtype'] === 'course') {
+            $url = 'tag/search.php?query=' . urlencode($this->other['tagrawname']);
+            return array($this->courseid, 'coursetags', 'add', $url, 'Course tagged');
+        }
+
+        return null;
     }
 
     /**

@@ -25,8 +25,6 @@
 
 namespace core;
 
-use Exception;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once(__DIR__.'/../../moodle_database.php');
@@ -170,7 +168,7 @@ abstract class test_moodle_database extends \moodle_database {
 
     /**
      * Default implementation
-     * @param \stdClass $column metadata
+     * @param StdClass $column metadata
      * @param mixed $value
      * @return mixed $value
      */

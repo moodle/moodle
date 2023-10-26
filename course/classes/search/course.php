@@ -68,7 +68,7 @@ class course extends \core_search\base {
     /**
      * Returns the document associated with this course.
      *
-     * @param \stdClass $record
+     * @param stdClass $record
      * @param array    $options
      * @return \core_search\document
      */

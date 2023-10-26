@@ -40,8 +40,8 @@ interface url_rewriter {
     /**
      * Rewrite moodle_urls into another form.
      *
-     * @param \moodle_url $url a url to potentially rewrite
-     * @return \moodle_url Returns a new, or the original, moodle_url;
+     * @param moodle_url $url a url to potentially rewrite
+     * @return moodle_url Returns a new, or the original, moodle_url;
      */
     public static function url_rewrite(\moodle_url $url);
 

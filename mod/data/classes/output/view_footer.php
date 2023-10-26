@@ -124,12 +124,12 @@ class view_footer extends sticky_footer {
                 'name' => $selectallid,
                 'value' => 1,
                 'label' => get_string('selectall'),
-                'classes' => 'btn-secondary mx-1',
+                'classes' => 'btn-secondary mr-1',
             ], true);
             $data['selectall'] = $output->render($mastercheckbox);
 
             $data['deleteselected'] = html_writer::empty_tag('input', [
-                'class' => 'btn btn-secondary mx-1',
+                'class' => 'btn btn-secondary',
                 'type' => 'submit',
                 'value' => get_string('deleteselected'),
                 'disabled' => true,
@@ -147,7 +147,7 @@ class view_footer extends sticky_footer {
                 $addentrylink,
                 get_string('add', 'mod_data'),
                 null,
-                ['class' => 'btn btn-primary mx-1', 'role' => 'button']
+                ['class' => 'btn btn-primary', 'role' => 'button']
             );
             $data['addentrybutton'] = $addentrybutton->export_for_template($output);
         }

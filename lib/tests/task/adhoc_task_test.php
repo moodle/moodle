@@ -53,8 +53,6 @@ class adhoc_task_test extends \advanced_testcase {
 
     /**
      * Test basic adhoc task execution.
-     *
-     * @covers ::get_next_adhoc_task
      */
     public function test_get_next_adhoc_task_now() {
         $this->resetAfterTest(true);
@@ -74,37 +72,9 @@ class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
-     * Test basic adhoc task execution.
-     *
-     * @covers ::get_next_adhoc_task
-     */
-    public function test_get_next_adhoc_task_class() {
-        $this->resetAfterTest(true);
-
-        // Create an adhoc task.
-        $task = new \core\task\adhoc_test_task();
-
-        // Queue it.
-        manager::queue_adhoc_task($task);
-
-        $now = time();
-        $classname = get_class($task);
-
-        // The task will not be returned.
-        $this->assertNull(manager::get_next_adhoc_task($now, true, "{$classname}notexists"));
-
-        // Get it from the scheduler.
-        $task = manager::get_next_adhoc_task($now, true, $classname);
-        $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
-        $task->execute();
-        manager::adhoc_task_complete($task);
-    }
-
-    /**
      * Test adhoc task failure retry backoff.
      *
      * @covers ::get_next_adhoc_task
-     * @covers ::get_adhoc_task
      */
     public function test_get_next_adhoc_task_fail_retry() {
         $this->resetAfterTest(true);
@@ -117,25 +87,17 @@ class adhoc_task_test extends \advanced_testcase {
 
         // Get it from the scheduler, execute it, and mark it as failed.
         $task = manager::get_next_adhoc_task($now);
-        $taskid = $task->get_id();
         $task->execute();
         manager::adhoc_task_failed($task);
 
         // The task will not be returned immediately.
         $this->assertNull(manager::get_next_adhoc_task($now));
 
-        // Should get the adhoc task (retry after delay). Fail it again.
+        // Should get the adhoc task (retry after delay).
         $task = manager::get_next_adhoc_task($now + 120);
         $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
-        $this->assertEquals($taskid, $task->get_id());
         $task->execute();
-        manager::adhoc_task_failed($task);
 
-        // Should get the adhoc task immediately.
-        $task = manager::get_adhoc_task($taskid);
-        $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
-        $this->assertEquals($taskid, $task->get_id());
-        $task->execute();
         manager::adhoc_task_complete($task);
 
         // Should not get any task.
@@ -556,53 +518,5 @@ class adhoc_task_test extends \advanced_testcase {
         $task = manager::get_next_adhoc_task(time());
         $this->assertEquals('Task 1', $task->get_custom_data_as_string());
         manager::adhoc_task_complete($task);
-    }
-
-    /**
-     * Test adhoc task run from CLI.
-     * @covers ::run_adhoc_from_cli
-     */
-    public function test_run_adhoc_from_cli() {
-        $this->resetAfterTest(true);
-
-        $taskid = 1;
-
-        if (!manager::is_runnable()) {
-            $this->markTestSkipped("Cannot run tasks");
-        }
-
-        ob_start();
-        manager::run_adhoc_from_cli($taskid);
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertMatchesRegularExpression(
-            sprintf('!admin/cli/adhoc_task.php\W+--id=%d\W+--force!', $taskid),
-            $output
-        );
-    }
-
-    /**
-     * Test adhoc class run from CLI.
-     * @covers ::run_all_adhoc_from_cli
-     */
-    public function test_run_all_adhoc_from_cli() {
-        $this->resetAfterTest(true);
-
-        $classname = 'fake';
-
-        if (!manager::is_runnable()) {
-            $this->markTestSkipped("Cannot run tasks");
-        }
-
-        ob_start();
-        manager::run_all_adhoc_from_cli(false, $classname);
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        $this->assertMatchesRegularExpression(
-            sprintf('!admin/cli/adhoc_task.php\W+--classname=%s\W+--force!', $classname),
-            $output
-        );
     }
 }

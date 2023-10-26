@@ -32,8 +32,6 @@ require_once($CFG->libdir.'/ddl/sql_generator.php');
  * It extends XMLDBgenerator so everything can be
  * overridden as needed to generate correct SQL.
  *
- * @property mysqli_native_moodle_database $mdb
- *
  * @package    core_ddl
  * @copyright  1999 onwards Martin Dougiamas     http://dougiamas.com
  *             2001-3001 Eloy Lafuente (stronk7) http://contiento.com

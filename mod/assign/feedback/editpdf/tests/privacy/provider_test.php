@@ -53,9 +53,9 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Convenience function for creating feedback data.
      *
-     * @param  object    $assign         assign object
-     * @param  \stdClass $student        user object
-     * @param  \stdClass $teacher        user object
+     * @param  object   $assign         assign object
+     * @param  stdClass $student        user object
+     * @param  stdClass $teacher        user object
      * @return array   Feedback plugin object and the grade object.
      */
     protected function create_feedback($assign, $student, $teacher) {

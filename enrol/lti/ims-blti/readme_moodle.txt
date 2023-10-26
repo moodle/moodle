@@ -7,4 +7,3 @@ In future releases we should look into using a supported library.
 2022-01-20 - MDL-73523 - Conditional openssl_free_key() use, deprecated by PHP 8.0
 2022-03-05 - MDL-73520 - replace deprecated php_errormsg with error_get_last(), deprecated by PHP 8.0
 2023-05-03 - MDL-77840 - Throw exception on openssl_sign to avoid null reaching base64_encode, deprecated by PHP 8.1
-2023-05-17 - MDL-77350 - Added $callback_url property to class OAuthConsumer to comply with PHP 8.2

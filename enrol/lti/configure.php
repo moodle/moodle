@@ -22,7 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\http_client;
+use enrol_lti\local\ltiadvantage\lib\http_client;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
@@ -48,7 +48,7 @@ $grades = optional_param_array('grades', [], PARAM_INT);
 $sesscache = new launch_cache_session();
 $issdb = new issuer_database(new application_registration_repository(), new deployment_repository());
 $cookie = new ImsCookie();
-$serviceconnector = new LtiServiceConnector($sesscache, new http_client());
+$serviceconnector = new LtiServiceConnector($sesscache, new http_client(new curl()));
 $messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $serviceconnector);
 
 if (!$messagelaunch->isDeepLinkLaunch()) {

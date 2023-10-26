@@ -17,7 +17,6 @@
 namespace core;
 
 use core_grading_external;
-use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -146,7 +145,7 @@ class grading_external_test extends \externallib_advanced_testcase {
         $cmids = array ($cm->cmid);
         $areaname = 'submissions';
         $result = core_grading_external::get_definitions($cmids, $areaname);
-        $result = external_api::clean_returnvalue(core_grading_external::get_definitions_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grading_external::get_definitions_returns(), $result);
 
         $this->assertEquals(1, count($result['areas']));
         $this->assertEquals(1, count($result['areas'][0]['definitions']));
@@ -291,7 +290,7 @@ class grading_external_test extends \externallib_advanced_testcase {
 
         // Call the external function.
         $result = core_grading_external::get_gradingform_instances($definitionid, 0);
-        $result = external_api::clean_returnvalue(core_grading_external::get_gradingform_instances_returns(), $result);
+        $result = \external_api::clean_returnvalue(core_grading_external::get_gradingform_instances_returns(), $result);
 
         $this->assertEquals(1, count($result['instances']));
         $this->assertEquals($USER->id, $result['instances'][0]['raterid']);

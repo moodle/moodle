@@ -41,6 +41,9 @@ class writer extends \core\dataformat\spout_base {
     /** @var $extension */
     protected $extension = ".ods";
 
+    /** @var $spouttype */
+    protected $spouttype = \Box\Spout\Common\Type::ODS;
+
     /**
      * Set the title of the worksheet inside a spreadsheet
      *

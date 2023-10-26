@@ -104,7 +104,7 @@ class tablelog extends \table_sql implements \renderable {
         $this->context = $context;
         $this->courseid = $this->context->instanceid;
         $this->pagesize = $perpage;
-        $this->currpage = $page;
+        $this->page = $page;
         $this->gradeitems = \grade_item::fetch_all(array('courseid' => $this->courseid));
         $this->cms = get_fast_modinfo($this->courseid);
         $this->useridfield = 'userid';
@@ -544,7 +544,7 @@ class tablelog extends \table_sql implements \renderable {
         if ($this->is_downloading()) {
             $histories = $DB->get_records_sql($sql, $params);
         } else {
-            $histories = $DB->get_records_sql($sql, $params, $this->pagesize * $this->currpage, $this->pagesize);
+            $histories = $DB->get_records_sql($sql, $params, $this->pagesize * $this->page, $this->pagesize);
         }
         foreach ($histories as $history) {
             $this->rawdata[] = $history;

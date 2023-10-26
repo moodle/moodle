@@ -49,9 +49,9 @@ class activity extends \core_search\base_activity {
      *
      * Overwrites base_activity to add the provided URL as description.
      *
-     * @param \stdClass $record
+     * @param stdClass $record
      * @param array    $options
-     * @return \core_search\document|false
+     * @return \core_search\document
      */
     public function get_document($record, $options = array()) {
         $doc = parent::get_document($record, $options);

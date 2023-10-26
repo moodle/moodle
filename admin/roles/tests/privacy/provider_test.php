@@ -53,7 +53,6 @@ class provider_test extends provider_testcase {
         $showadvanced = 1;
         set_user_preference('definerole_showadvanced', $showadvanced);
         provider::export_user_preferences($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context(\context_system::instance());
         $prefs = $writer->get_user_preferences('core_role');
         $this->assertEquals(transform::yesno($showadvanced), transform::yesno($prefs->definerole_showadvanced->value));
@@ -185,7 +184,6 @@ class provider_test extends provider_testcase {
         // Retrieve role capabilities and role assignments.
         provider::export_user_data($approvedcontextlist);
         foreach ($contextlist as $context) {
-            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $this->assertTrue($writer->has_any_data());
             if ($context->contextlevel == CONTEXT_MODULE) {
@@ -415,7 +413,6 @@ class provider_test extends provider_testcase {
         ];
         // Test User is assigned role teacher to cohort.
         provider::export_user_role_to_cohort($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($contextuserassignover);
         $this->assertTrue($writer->has_any_data());
         $exported = (array)$writer->get_related_data($subcontextteacher, 'cohortroles');
@@ -433,7 +430,6 @@ class provider_test extends provider_testcase {
         api::create_cohort_role_assignment($params);
         api::sync_all_cohort_roles();
         provider::export_user_role_to_cohort($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($contextuser);
         $this->assertTrue($writer->has_any_data());
         $exported = (array)$writer->get_related_data($subcontextteacher, 'cohortroles');

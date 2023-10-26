@@ -429,7 +429,7 @@ abstract class pdo_moodle_database extends moodle_database {
     /**
      * Update record in database, as fast as possible, no safety checks, lobs not supported.
      * @param string $table name
-     * @param stdClass|array $params data record as object or array
+     * @param mixed $params data record as object or array
      * @param bool true means repeated updates expected
      * @return bool success
      */

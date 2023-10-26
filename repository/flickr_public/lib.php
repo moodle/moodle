@@ -38,33 +38,8 @@ require_once(__DIR__ . '/image.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class repository_flickr_public extends repository {
-
-    /** @var phpFlickr Flickr class. */
     private $flickr;
-
-    /** @var string Flick photos. */
     public $photos;
-
-    /** @var string API key. */
-    protected $api_key;
-
-    /** @var string email address account. */
-    protected $flickr_account;
-
-    /** @var string watermarks usage status. */
-    protected $usewatermarks;
-
-    /** @var string session account. */
-    protected $sess_account;
-
-    /** @var string session tag. */
-    protected $sess_tag;
-
-    /** @var string session text. */
-    protected $sess_text;
-
-    /** @var string Flickr user identifier. */
-    protected $nsid;
 
     /**
      * Stores sizes of images to prevent multiple API call
@@ -407,7 +382,7 @@ class repository_flickr_public extends repository {
                 if (!@getimagesize($thumbnailsource)) {
                     // Use the file extension icon as a thumbnail if the original thumbnail does not exist to avoid
                     // displaying broken thumbnails in the repository.
-                    $thumbnailsource = $OUTPUT->image_url(file_extension_icon($p['title']))->out(false);
+                    $thumbnailsource = $OUTPUT->image_url(file_extension_icon($p['title'], 90))->out(false);
                 }
 
                 // Perform a HEAD request to the image to obtain it's Content-Length.

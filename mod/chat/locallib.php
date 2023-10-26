@@ -35,11 +35,6 @@ class chat_portfolio_caller extends portfolio_module_caller_base {
     protected $start;
     /** @var int Timestamp */
     protected $end;
-    /** @var array Chat messages */
-    protected $messages = [];
-    /** @var bool True if participated, otherwise false. */
-    protected $participated;
-
     /**
      * @return array
      */

@@ -32,7 +32,6 @@ import SELECTORS from 'block_myoverview/selectors';
 import * as PagedContentEvents from 'core/paged_content_events';
 import * as Aria from 'core/aria';
 import {debounce} from 'core/utils';
-import {setUserPreference} from 'core_user/repository';
 
 const TEMPLATES = {
     COURSES_CARDS: 'block_myoverview/view-cards',
@@ -344,9 +343,14 @@ const setCourseHiddenState = (courseId, status) => {
     if (status === false) {
         status = null;
     }
-
-    return setUserPreference(`block_myoverview_hidden_course_${courseId}`, status)
-        .catch(Notification.exception);
+    return Repository.updateUserPreferences({
+        preferences: [
+            {
+                type: 'block_myoverview_hidden_course_' + courseId,
+                value: status
+            }
+        ]
+    });
 };
 
 /**

@@ -43,7 +43,7 @@ class Csv extends BaseWriter
     private $sheetIndex = 0;
 
     /**
-     * Whether to write a UTF8 BOM.
+     * Whether to write a BOM (for UTF8).
      *
      * @var bool
      */
@@ -73,6 +73,8 @@ class Csv extends BaseWriter
 
     /**
      * Create a new CSV.
+     *
+     * @param Spreadsheet $spreadsheet Spreadsheet object
      */
     public function __construct(Spreadsheet $spreadsheet)
     {
@@ -134,36 +136,72 @@ class Csv extends BaseWriter
         Calculation::getInstance($this->spreadsheet)->getDebugLog()->setWriteDebugLog($saveDebugLog);
     }
 
-    public function getDelimiter(): string
+    /**
+     * Get delimiter.
+     *
+     * @return string
+     */
+    public function getDelimiter()
     {
         return $this->delimiter;
     }
 
-    public function setDelimiter(string $delimiter): self
+    /**
+     * Set delimiter.
+     *
+     * @param string $delimiter Delimiter, defaults to ','
+     *
+     * @return $this
+     */
+    public function setDelimiter($delimiter)
     {
         $this->delimiter = $delimiter;
 
         return $this;
     }
 
-    public function getEnclosure(): string
+    /**
+     * Get enclosure.
+     *
+     * @return string
+     */
+    public function getEnclosure()
     {
         return $this->enclosure;
     }
 
-    public function setEnclosure(string $enclosure = '"'): self
+    /**
+     * Set enclosure.
+     *
+     * @param string $enclosure Enclosure, defaults to "
+     *
+     * @return $this
+     */
+    public function setEnclosure($enclosure = '"')
     {
         $this->enclosure = $enclosure;
 
         return $this;
     }
 
-    public function getLineEnding(): string
+    /**
+     * Get line ending.
+     *
+     * @return string
+     */
+    public function getLineEnding()
     {
         return $this->lineEnding;
     }
 
-    public function setLineEnding(string $lineEnding): self
+    /**
+     * Set line ending.
+     *
+     * @param string $lineEnding Line ending, defaults to OS line ending (PHP_EOL)
+     *
+     * @return $this
+     */
+    public function setLineEnding($lineEnding)
     {
         $this->lineEnding = $lineEnding;
 
@@ -172,16 +210,22 @@ class Csv extends BaseWriter
 
     /**
      * Get whether BOM should be used.
+     *
+     * @return bool
      */
-    public function getUseBOM(): bool
+    public function getUseBOM()
     {
         return $this->useBOM;
     }
 
     /**
-     * Set whether BOM should be used, typically when non-ASCII characters are used.
+     * Set whether BOM should be used.
+     *
+     * @param bool $useBOM Use UTF-8 byte-order mark? Defaults to false
+     *
+     * @return $this
      */
-    public function setUseBOM(bool $useBOM): self
+    public function setUseBOM($useBOM)
     {
         $this->useBOM = $useBOM;
 
@@ -190,16 +234,22 @@ class Csv extends BaseWriter
 
     /**
      * Get whether a separator line should be included.
+     *
+     * @return bool
      */
-    public function getIncludeSeparatorLine(): bool
+    public function getIncludeSeparatorLine()
     {
         return $this->includeSeparatorLine;
     }
 
     /**
      * Set whether a separator line should be included as the first line of the file.
+     *
+     * @param bool $includeSeparatorLine Use separator line? Defaults to false
+     *
+     * @return $this
      */
-    public function setIncludeSeparatorLine(bool $includeSeparatorLine): self
+    public function setIncludeSeparatorLine($includeSeparatorLine)
     {
         $this->includeSeparatorLine = $includeSeparatorLine;
 
@@ -208,8 +258,10 @@ class Csv extends BaseWriter
 
     /**
      * Get whether the file should be saved with full Excel Compatibility.
+     *
+     * @return bool
      */
-    public function getExcelCompatibility(): bool
+    public function getExcelCompatibility()
     {
         return $this->excelCompatibility;
     }
@@ -219,32 +271,58 @@ class Csv extends BaseWriter
      *
      * @param bool $excelCompatibility Set the file to be written as a fully Excel compatible csv file
      *                                Note that this overrides other settings such as useBOM, enclosure and delimiter
+     *
+     * @return $this
      */
-    public function setExcelCompatibility(bool $excelCompatibility): self
+    public function setExcelCompatibility($excelCompatibility)
     {
         $this->excelCompatibility = $excelCompatibility;
 
         return $this;
     }
 
-    public function getSheetIndex(): int
+    /**
+     * Get sheet index.
+     *
+     * @return int
+     */
+    public function getSheetIndex()
     {
         return $this->sheetIndex;
     }
 
-    public function setSheetIndex(int $sheetIndex): self
+    /**
+     * Set sheet index.
+     *
+     * @param int $sheetIndex Sheet index
+     *
+     * @return $this
+     */
+    public function setSheetIndex($sheetIndex)
     {
         $this->sheetIndex = $sheetIndex;
 
         return $this;
     }
 
-    public function getOutputEncoding(): string
+    /**
+     * Get output encoding.
+     *
+     * @return string
+     */
+    public function getOutputEncoding()
     {
         return $this->outputEncoding;
     }
 
-    public function setOutputEncoding(string $outputEnconding): self
+    /**
+     * Set output encoding.
+     *
+     * @param string $outputEnconding Output encoding
+     *
+     * @return $this
+     */
+    public function setOutputEncoding($outputEnconding)
     {
         $this->outputEncoding = $outputEnconding;
 
@@ -321,6 +399,6 @@ class Csv extends BaseWriter
         if ($this->outputEncoding != '') {
             $line = mb_convert_encoding($line, $this->outputEncoding);
         }
-        fwrite($fileHandle, /** @scrutinizer ignore-type */ $line);
+        fwrite($fileHandle, $line);
     }
 }

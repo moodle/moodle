@@ -29,18 +29,11 @@
  */
 abstract class backup_structure_step extends backup_step {
 
-    /**
-     * Name of the file to be generated
-     * @var string
-     */
-    protected $filename;
-
-    /**
-     * xml content transformer being used (need it here, apart from xml_writer,
-     * thanks to serialized data to process - say thanks to blocks!)
-     * @var backup_xml_transformer|null
-     */
-    protected $contenttransformer;
+    protected $filename; // Name of the file to be generated
+    protected $contenttransformer; // xml content transformer being used
+                                   // (need it here, apart from xml_writer,
+                                   // thanks to serialized data to process -
+                                   // say thanks to blocks!)
 
     /**
      * Constructor - instantiates one object of this class

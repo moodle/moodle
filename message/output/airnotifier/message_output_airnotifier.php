@@ -24,7 +24,6 @@
  * @since Moodle 2.7
  */
 
-
 require_once($CFG->dirroot . '/message/output/lib.php');
 
 /**
@@ -109,6 +108,8 @@ class message_output_airnotifier extends message_output {
         // We are sending to message to all devices.
         $airnotifiermanager = new message_airnotifier_manager();
         $devicetokens = $airnotifiermanager->get_user_devices($CFG->airnotifiermobileappname, $eventdata->userto->id);
+        $skipsend = $encryptnotifications && $encryptprocessing == message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND;
+        $encryptionavailable = \core\encryption::is_sodium_installed();
 
         foreach ($devicetokens as $devicetoken) {
             if (!$devicetoken->enable) {
@@ -116,10 +117,11 @@ class message_output_airnotifier extends message_output {
             }
 
             // Check if we should skip sending the notification.
-            if ($encryptnotifications && empty($devicetoken->publickey) &&
-                    $encryptprocessing == message_airnotifier_manager::ENCRYPT_UNSUPPORTED_NOT_SEND) {
-
-                continue;   // Avoid sending notifications to devices not supporting encryption.
+            if ($skipsend) {
+                // If encryption is not available, do not send notifications.
+                if (!$encryptionavailable || ($encryptnotifications && empty($devicetoken->publickey))) {
+                    continue;
+                }
             }
 
             // Sending the message to the device.
@@ -176,7 +178,7 @@ class message_output_airnotifier extends message_output {
             return $payload;
         }
 
-        if (empty($devicetoken->publickey)) {
+        if (empty($devicetoken->publickey) || !\core\encryption::is_sodium_installed()) {
             $payload->encrypted = false;
             return $payload;
         }

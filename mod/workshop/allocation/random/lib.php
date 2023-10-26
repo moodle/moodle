@@ -731,8 +731,6 @@ class workshop_random_allocator_setting {
     public $assesswosubmission;
     /** @var bool add self-assessments */
     public $addselfassessment;
-    /** @var bool scheduled allocation status */
-    public $enablescheduled;
 
     /**
      * Use the factory method {@link self::instance_from_object()}

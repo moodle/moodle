@@ -602,7 +602,7 @@ class grade_item_test extends \grade_base_testcase {
     }
 
     protected function sub_test_refresh_grades() {
-        // Testing with the grade item for a mod_assign instance.
+        // Testing with the grade item for a mod_assignment instance.
         $grade_item = new \grade_item($this->grade_items[0], false);
         $this->assertTrue(method_exists($grade_item, 'refresh_grades'));
         $this->assertTrue($grade_item->refresh_grades());
@@ -796,7 +796,7 @@ class grade_item_test extends \grade_base_testcase {
      *
      * @param int $courseid id of course
      * @param int $sortorder numeric sorting order of item
-     * @return \stdClass grade item object from the database.
+     * @return stdClass grade item object from the database.
      */
     private function insert_fake_grade_item_sortorder($courseid, $sortorder) {
         global $DB, $CFG;

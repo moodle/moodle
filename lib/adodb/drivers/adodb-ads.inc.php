@@ -97,7 +97,7 @@ class ADODB_ads extends ADOConnection
 			$this->_connectionID = ads_connect($argDSN, $argUsername, $argPassword, $this->curmode);
 		}
 		$this->_errorMsg = $this->getChangedErrorMsg($last_php_error);
-		if ($this->connectStmt) {
+		if (isset($this->connectStmt)) {
 			$this->Execute($this->connectStmt);
 		}
 
@@ -127,7 +127,7 @@ class ADODB_ads extends ADOConnection
 		if ($this->_connectionID && $this->autoRollback) {
 			@ads_rollback($this->_connectionID);
 		}
-		if ($this->connectStmt) {
+		if (isset($this->connectStmt)) {
 			$this->Execute($this->connectStmt);
 		}
 

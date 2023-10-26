@@ -16,8 +16,6 @@
 
 namespace mod_lti\external;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -52,7 +50,7 @@ class get_tool_types_and_proxies_count_test extends \mod_lti_testcase {
         }
 
         $data = \mod_lti\external\get_tool_types_and_proxies_count::execute(0, false);
-        $data = external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
 
         $this->assertEquals(20, $data['count']);
     }
@@ -62,7 +60,7 @@ class get_tool_types_and_proxies_count_test extends \mod_lti_testcase {
      */
     public function test_mod_lti_get_tool_types_and_proxies_count_with_no_tools_configured() {
         $data = \mod_lti\external\get_tool_types_and_proxies_count::execute(0, false);
-        $data = external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
+        $data = \external_api::clean_returnvalue(\mod_lti\external\get_tool_types_and_proxies_count::execute_returns(), $data);
 
         $this->assertEquals(0, $data['count']);
     }

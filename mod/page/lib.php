@@ -259,7 +259,7 @@ function page_get_file_areas($course, $cm, $context) {
  *
  * @package  mod_page
  * @category files
- * @param file_browser $browser file browser instance
+ * @param stdClass $browser file browser instance
  * @param stdClass $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object

@@ -285,7 +285,7 @@ class media_videojs_plugin extends core_media_player_native {
             $url = reset($urls);
 
             // Check against regex.
-            if (preg_match($this->get_regex_youtube(), $url->out(false), $matches)) {
+            if (preg_match($this->get_regex_youtube(), $url->out(false), $this->matches)) {
                 $this->youtube = true;
                 return array($url);
             }

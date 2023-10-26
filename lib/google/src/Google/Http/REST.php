@@ -22,7 +22,6 @@ if (!class_exists('Google_Client')) {
 /**
  * This class implements the RESTful transport of apiServiceRequest()'s
  */
-#[AllowDynamicProperties]
 class Google_Http_REST
 {
   /**

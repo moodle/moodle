@@ -46,6 +46,17 @@ class webservice_service_user_removed extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        global $CFG;
+        return array(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id=' . $this->objectid, 'remove', '',
+            $this->relateduserid);
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

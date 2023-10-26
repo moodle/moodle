@@ -154,7 +154,7 @@ class api {
      * Object validated by this method is guaranteed to contain all the data
      * provided by the pluginfo.php version this client works with (self::APIVER).
      *
-     * @param \stdClass $data
+     * @param stdClass $data
      * @return \core\update\remote_info|bool false if data are not valid, original data otherwise
      */
     public function validate_pluginfo_format($data) {
@@ -253,7 +253,7 @@ class api {
      *
      * @param string $serviceurl
      * @param array $params
-     * @return \stdClass|bool
+     * @return stdClass|bool
      */
     protected function call_service($serviceurl, array $params=array()) {
 

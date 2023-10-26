@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet;
 
-use JsonSerializable;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx as XlsxReader;
 use PhpOffice\PhpSpreadsheet\Shared\File;
@@ -12,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Iterator;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx as XlsxWriter;
 
-class Spreadsheet implements JsonSerializable
+class Spreadsheet
 {
     // Allowable values for workbook window visilbity
     const VISIBILITY_VISIBLE = 'visible';
@@ -22,7 +21,7 @@ class Spreadsheet implements JsonSerializable
     private const DEFINED_NAME_IS_RANGE = false;
     private const DEFINED_NAME_IS_FORMULA = true;
 
-    private const WORKBOOK_VIEW_VISIBILITY_VALUES = [
+    private static $workbookViewVisibilityValues = [
         self::VISIBILITY_VISIBLE,
         self::VISIBILITY_HIDDEN,
         self::VISIBILITY_VERY_HIDDEN,
@@ -203,14 +202,6 @@ class Spreadsheet implements JsonSerializable
      */
     private $tabRatio = 600;
 
-    /** @var Theme */
-    private $theme;
-
-    public function getTheme(): Theme
-    {
-        return $this->theme;
-    }
-
     /**
      * The workbook has macros ?
      *
@@ -385,7 +376,7 @@ class Spreadsheet implements JsonSerializable
     {
         $extension = pathinfo($path, PATHINFO_EXTENSION);
 
-        return substr(/** @scrutinizer ignore-type */$extension, 0);
+        return is_array($extension) ? '' : $extension;
     }
 
     /**
@@ -402,6 +393,8 @@ class Spreadsheet implements JsonSerializable
         switch ($what) {
             case 'all':
                 return $this->ribbonBinObjects;
+
+                break;
             case 'names':
             case 'data':
                 if (is_array($this->ribbonBinObjects) && isset($this->ribbonBinObjects[$what])) {
@@ -484,7 +477,6 @@ class Spreadsheet implements JsonSerializable
     {
         $this->uniqueID = uniqid('', true);
         $this->calculationEngine = new Calculation($this);
-        $this->theme = new Theme();
 
         // Initialise worksheet collection and add one worksheet
         $this->workSheetCollection = [];
@@ -771,7 +763,7 @@ class Spreadsheet implements JsonSerializable
      */
     public function setIndexByName($worksheetName, $newIndexPosition)
     {
-        $oldIndex = $this->getIndex($this->getSheetByNameOrThrow($worksheetName));
+        $oldIndex = $this->getIndex($this->getSheetByName($worksheetName));
         $worksheet = array_splice(
             $this->workSheetCollection,
             $oldIndex,
@@ -880,7 +872,7 @@ class Spreadsheet implements JsonSerializable
         $countCellXfs = count($this->cellXfCollection);
 
         // copy all the shared cellXfs from the external workbook and append them to the current
-        foreach ($worksheet->getParentOrThrow()->getCellXfCollection() as $cellXf) {
+        foreach ($worksheet->getParent()->getCellXfCollection() as $cellXf) {
             $this->addCellXf(clone $cellXf);
         }
 
@@ -1590,7 +1582,7 @@ class Spreadsheet implements JsonSerializable
             $visibility = self::VISIBILITY_VISIBLE;
         }
 
-        if (in_array($visibility, self::WORKBOOK_VIEW_VISIBILITY_VALUES)) {
+        if (in_array($visibility, self::$workbookViewVisibilityValues)) {
             $this->visibility = $visibility;
         } else {
             throw new Exception('Invalid visibility value.');
@@ -1644,45 +1636,5 @@ class Spreadsheet implements JsonSerializable
     public function getSharedComponent(): Style
     {
         return new Style();
-    }
-
-    /**
-     * @throws Exception
-     *
-     * @return mixed
-     */
-    public function __serialize()
-    {
-        throw new Exception('Spreadsheet objects cannot be serialized');
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function jsonSerialize(): mixed
-    {
-        throw new Exception('Spreadsheet objects cannot be json encoded');
-    }
-
-    public function resetThemeFonts(): void
-    {
-        $majorFontLatin = $this->theme->getMajorFontLatin();
-        $minorFontLatin = $this->theme->getMinorFontLatin();
-        foreach ($this->cellXfCollection as $cellStyleXf) {
-            $scheme = $cellStyleXf->getFont()->getScheme();
-            if ($scheme === 'major') {
-                $cellStyleXf->getFont()->setName($majorFontLatin)->setScheme($scheme);
-            } elseif ($scheme === 'minor') {
-                $cellStyleXf->getFont()->setName($minorFontLatin)->setScheme($scheme);
-            }
-        }
-        foreach ($this->cellStyleXfCollection as $cellStyleXf) {
-            $scheme = $cellStyleXf->getFont()->getScheme();
-            if ($scheme === 'major') {
-                $cellStyleXf->getFont()->setName($majorFontLatin)->setScheme($scheme);
-            } elseif ($scheme === 'minor') {
-                $cellStyleXf->getFont()->setName($minorFontLatin)->setScheme($scheme);
-            }
-        }
     }
 }

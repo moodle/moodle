@@ -73,9 +73,6 @@ class Properties
             if (isset($xmlCore->Manager)) {
                 $this->docProps->setManager((string) $xmlCore->Manager);
             }
-            if (isset($xmlCore->HyperlinkBase)) {
-                $this->docProps->setHyperlinkBase((string) $xmlCore->HyperlinkBase);
-            }
         }
     }
 

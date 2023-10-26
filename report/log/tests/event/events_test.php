@@ -66,6 +66,8 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\report_log\event\report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $expected = array($course->id, "course", "report log", "report/log/index.php?id=$course->id", $course->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/report/log/index.php', array('id' => $event->courseid));
         $this->assertEquals($url, $event->get_url());
@@ -94,6 +96,9 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\report_log\event\user_report_viewed', $event);
         $this->assertEquals($context, $event->get_context());
+        $url = 'report/log/user.php?id=' . $user->id . '&course=' . $course->id . '&mode=today';
+        $expected = array($course->id, "course", "report log", $url, $course->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/report/log/user.php', array('course' => $course->id, 'id' => $user->id, 'mode' => 'today'));
         $this->assertEquals($url, $event->get_url());

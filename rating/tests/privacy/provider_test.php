@@ -283,7 +283,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = [];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course1->id, true);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $rating = $writer->get_related_data($subcontext, 'rating');
@@ -294,7 +293,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course2->id, true);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -306,7 +304,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'course', $course3->id, true);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -318,7 +315,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['foo', 'files'];
         provider::export_area_ratings($u1->id, $context, $subcontext, 'core_course', 'files', $course3->id, true);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');
@@ -331,7 +327,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $subcontext = ['user'];
         provider::export_area_ratings($u3->id, $context, $subcontext, 'user', 'user', $u3->id, false);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $result = $writer->get_related_data($subcontext, 'rating');

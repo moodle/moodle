@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -349,7 +348,6 @@ class Google_Service_Resourceviews extends Google_Service
  *   $zoneOperations = $resourceviewsService->zoneOperations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneOperations_Resource extends Google_Service_Resource
 {
 
@@ -402,7 +400,6 @@ class Google_Service_Resourceviews_ZoneOperations_Resource extends Google_Servic
  *   $zoneViews = $resourceviewsService->zoneViews;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViews_Resource extends Google_Service_Resource
 {
 
@@ -581,7 +578,6 @@ class Google_Service_Resourceviews_ZoneViews_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_Label extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -608,7 +604,6 @@ class Google_Service_Resourceviews_Label extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ListResourceResponseItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -635,12 +630,10 @@ class Google_Service_Resourceviews_ListResourceResponseItem extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ListResourceResponseItemEndpoints extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -850,7 +843,6 @@ class Google_Service_Resourceviews_Operation extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -870,7 +862,6 @@ class Google_Service_Resourceviews_OperationError extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -906,7 +897,6 @@ class Google_Service_Resourceviews_OperationErrorErrors extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -962,7 +952,6 @@ class Google_Service_Resourceviews_OperationList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -1000,7 +989,6 @@ class Google_Service_Resourceviews_OperationWarnings extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1027,7 +1015,6 @@ class Google_Service_Resourceviews_OperationWarningsData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ResourceView extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -1147,7 +1134,6 @@ class Google_Service_Resourceviews_ResourceView extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ServiceEndpoint extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1174,7 +1160,6 @@ class Google_Service_Resourceviews_ServiceEndpoint extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsAddResourcesRequest extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -1193,7 +1178,6 @@ class Google_Service_Resourceviews_ZoneViewsAddResourcesRequest extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsGetServiceResponse extends Google_Collection
 {
   protected $collection_key = 'endpoints';
@@ -1222,7 +1206,6 @@ class Google_Service_Resourceviews_ZoneViewsGetServiceResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1269,7 +1252,6 @@ class Google_Service_Resourceviews_ZoneViewsList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsListResourcesResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1307,7 +1289,6 @@ class Google_Service_Resourceviews_ZoneViewsListResourcesResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsRemoveResourcesRequest extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -1326,7 +1307,6 @@ class Google_Service_Resourceviews_ZoneViewsRemoveResourcesRequest extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Resourceviews_ZoneViewsSetServiceRequest extends Google_Collection
 {
   protected $collection_key = 'endpoints';

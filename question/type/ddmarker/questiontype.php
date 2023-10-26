@@ -65,6 +65,11 @@ class question_hint_ddmarker extends question_hint_with_parts {
         return new question_hint_ddmarker($row->id, $row->hint, $row->hintformat,
                 $row->shownumcorrect, $row->clearwrong, $row->options);
     }
+
+    public function adjust_display_options(question_display_options $options) {
+        parent::adjust_display_options($options);
+        $options->statewhichincorrect = $this->statewhichincorrect;
+    }
 }
 
 

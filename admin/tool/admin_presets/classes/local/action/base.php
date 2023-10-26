@@ -56,7 +56,7 @@ class base {
     /** @var int The output content to display in the page. **/
     protected $outputs;
 
-    /** @var \moodleform The moodle form to display in the page. **/
+    /** @var int The moodle form to display in the page. **/
     protected $moodleform;
 
     /** @var manager The manager helper class instance. **/

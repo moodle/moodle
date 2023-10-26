@@ -89,8 +89,8 @@ class feed implements \renderable, \templatable {
      * Export this for use in a mustache template context.
      *
      * @see templatable::export_for_template()
-     * @param \renderer_base $output
-     * @return array
+     * @param renderer_base $output
+     * @return stdClass
      */
     public function export_for_template(\renderer_base $output) {
         $data = array(

@@ -241,8 +241,7 @@ function groups_remove_member($grouporid, $userorid) {
  * @param stdClass $data group properties
  * @param stdClass $editform
  * @param array $editoroptions
- * @return int id of group or throws an exception on error
- * @throws moodle_exception
+ * @return id of group or false if error
  */
 function groups_create_group($data, $editform = false, $editoroptions = false) {
     global $CFG, $DB, $USER;
@@ -261,22 +260,12 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
         }
     }
 
-    $data->visibility ??= GROUPS_VISIBILITY_ALL;
-
-    if (!in_array($data->visibility, [GROUPS_VISIBILITY_ALL, GROUPS_VISIBILITY_MEMBERS])) {
-        $data->participation = false;
-        $data->enablemessaging = false;
-    }
-
     if ($editform and $editoroptions) {
         $data->description = $data->description_editor['text'];
         $data->descriptionformat = $data->description_editor['format'];
     }
 
     $data->id = $DB->insert_record('groups', $data);
-
-    $handler = \core_group\customfield\group_handler::create();
-    $handler->instance_form_save($data, true);
 
     if ($editform and $editoroptions) {
         // Update description from editor with fixed files
@@ -296,8 +285,6 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
 
     // Invalidate the grouping cache for the course
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($course->id));
-    // Rebuild the coursehiddengroups cache for the course.
-    \core_group\visibility::update_hiddengroups_cache($course->id);
 
     // Group conversation messaging.
     if (\core_message\api::can_create_group_conversation($USER->id, $context)) {
@@ -331,8 +318,7 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
  *
  * @param stdClass $data grouping properties
  * @param array $editoroptions
- * @return int id of grouping or throws an exception on error
- * @throws moodle_exception
+ * @return id of grouping or false if error
  */
 function groups_create_grouping($data, $editoroptions=null) {
     global $DB;
@@ -354,9 +340,6 @@ function groups_create_grouping($data, $editoroptions=null) {
 
     $id = $DB->insert_record('groupings', $data);
     $data->id = $id;
-
-    $handler = \core_group\customfield\grouping_handler::create();
-    $handler->instance_form_save($data, true);
 
     if ($editoroptions !== null) {
         $description = new stdClass;
@@ -440,10 +423,6 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
             throw new moodle_exception('idnumbertaken');
         }
     }
-    if (isset($data->visibility) && !in_array($data->visibility, [GROUPS_VISIBILITY_ALL, GROUPS_VISIBILITY_MEMBERS])) {
-        $data->participation = false;
-        $data->enablemessaging = false;
-    }
 
     if ($editform and $editoroptions) {
         $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'group', 'description', $data->id);
@@ -451,13 +430,8 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
 
     $DB->update_record('groups', $data);
 
-    $handler = \core_group\customfield\group_handler::create();
-    $handler->instance_form_save($data);
-
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
-    // Rebuild the coursehiddengroups cache for the course.
-    \core_group\visibility::update_hiddengroups_cache($data->courseid);
 
     $group = $DB->get_record('groups', array('id'=>$data->id));
 
@@ -538,9 +512,6 @@ function groups_update_grouping($data, $editoroptions=null) {
     }
     $DB->update_record('groupings', $data);
 
-    $handler = \core_group\customfield\grouping_handler::create();
-    $handler->instance_form_save($data);
-
     // Invalidate the group data.
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
 
@@ -604,8 +575,6 @@ function groups_delete_group($grouporid) {
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($group->courseid));
     // Purge the group and grouping cache for users.
     cache_helper::purge_by_definition('core', 'user_group_groupings');
-    // Rebuild the coursehiddengroups cache for the course.
-    \core_group\visibility::update_hiddengroups_cache($group->courseid);
 
     // Trigger group event.
     $params = array(
@@ -754,8 +723,6 @@ function groups_delete_groups($courseid, $showfeedback=false) {
     cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($courseid));
     // Purge the group and grouping cache for users.
     cache_helper::purge_by_definition('core', 'user_group_groupings');
-    // Rebuild the coursehiddengroups cache for the course.
-    \core_group\visibility::update_hiddengroups_cache($courseid);
 
     if ($showfeedback) {
         echo $OUTPUT->notification(get_string('deleted').' - '.get_string('groups', 'group'), 'notifysuccess');
@@ -1219,76 +1186,4 @@ function core_group_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'user_groups') {
         return \core_group\output\user_groups_editable::update($itemid, $newvalue);
     }
-}
-
-/**
- * Updates group messaging to enable/disable in bulk.
- *
- * @param array $groupids array of group id numbers.
- * @param bool $enabled if true, enables messaging else disables messaging
- */
-function set_groups_messaging(array $groupids, bool $enabled): void {
-    foreach ($groupids as $groupid) {
-        $data = groups_get_group($groupid, '*', MUST_EXIST);
-        $data->enablemessaging = $enabled;
-        groups_update_group($data);
-    }
-}
-
-/**
- * Returns custom fields data for provided groups.
- *
- * @param array $groupids a list of group IDs to provide data for.
- * @return \core_customfield\data_controller[]
- */
-function get_group_custom_fields_data(array $groupids): array {
-    $result = [];
-
-    if (!empty($groupids)) {
-        $handler = \core_group\customfield\group_handler::create();
-        $customfieldsdata = $handler->get_instances_data($groupids, true);
-
-        foreach ($customfieldsdata as $groupid => $fieldcontrollers) {
-            foreach ($fieldcontrollers as $fieldcontroller) {
-                $result[$groupid][] = [
-                    'type' => $fieldcontroller->get_field()->get('type'),
-                    'value' => $fieldcontroller->export_value(),
-                    'valueraw' => $fieldcontroller->get_value(),
-                    'name' => $fieldcontroller->get_field()->get('name'),
-                    'shortname' => $fieldcontroller->get_field()->get('shortname'),
-                ];
-            }
-        }
-    }
-
-    return $result;
-}
-
-/**
- * Returns custom fields data for provided groupings.
- *
- * @param array $groupingids a list of group IDs to provide data for.
- * @return \core_customfield\data_controller[]
- */
-function get_grouping_custom_fields_data(array $groupingids): array {
-    $result = [];
-
-    if (!empty($groupingids)) {
-        $handler = \core_group\customfield\grouping_handler::create();
-        $customfieldsdata = $handler->get_instances_data($groupingids, true);
-
-        foreach ($customfieldsdata as $groupingid => $fieldcontrollers) {
-            foreach ($fieldcontrollers as $fieldcontroller) {
-                $result[$groupingid][] = [
-                    'type' => $fieldcontroller->get_field()->get('type'),
-                    'value' => $fieldcontroller->export_value(),
-                    'valueraw' => $fieldcontroller->get_value(),
-                    'name' => $fieldcontroller->get_field()->get('name'),
-                    'shortname' => $fieldcontroller->get_field()->get('shortname'),
-                ];
-            }
-        }
-    }
-
-    return $result;
 }

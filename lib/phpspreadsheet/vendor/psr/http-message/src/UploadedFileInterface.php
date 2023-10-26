@@ -28,7 +28,7 @@ interface UploadedFileInterface
      * @throws \RuntimeException in cases when no stream is available or can be
      *     created.
      */
-    public function getStream(): StreamInterface;
+    public function getStream();
 
     /**
      * Move the uploaded file to a new location.
@@ -62,7 +62,7 @@ interface UploadedFileInterface
      * @throws \RuntimeException on any error during the move operation, or on
      *     the second or subsequent call to the method.
      */
-    public function moveTo(string $targetPath): void;
+    public function moveTo($targetPath);
     
     /**
      * Retrieve the file size.
@@ -73,7 +73,7 @@ interface UploadedFileInterface
      *
      * @return int|null The file size in bytes or null if unknown.
      */
-    public function getSize(): ?int;
+    public function getSize();
     
     /**
      * Retrieve the error associated with the uploaded file.
@@ -89,7 +89,7 @@ interface UploadedFileInterface
      * @see http://php.net/manual/en/features.file-upload.errors.php
      * @return int One of PHP's UPLOAD_ERR_XXX constants.
      */
-    public function getError(): int;
+    public function getError();
     
     /**
      * Retrieve the filename sent by the client.
@@ -104,7 +104,7 @@ interface UploadedFileInterface
      * @return string|null The filename sent by the client or null if none
      *     was provided.
      */
-    public function getClientFilename(): ?string;
+    public function getClientFilename();
     
     /**
      * Retrieve the media type sent by the client.
@@ -119,5 +119,5 @@ interface UploadedFileInterface
      * @return string|null The media type sent by the client or null if none
      *     was provided.
      */
-    public function getClientMediaType(): ?string;
+    public function getClientMediaType();
 }

@@ -38,7 +38,7 @@ abstract class restore_plugin {
     protected $plugintype;
     /** @var string */
     protected $pluginname;
-    /** @var restore_path_element */
+    /** @var string */
     protected $connectionpoint;
     /** @var restore_structure_step */
     protected $step;

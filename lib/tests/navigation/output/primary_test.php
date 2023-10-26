@@ -153,17 +153,6 @@ class primary_test extends \advanced_testcase {
      * @param array $expected
      */
     public function test_get_custom_menu(string $config, array $expected) {
-        $actual = $this->get_custom_menu($config);
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * Helper method to get the template data for the custommenuitem that is set here via parameter.
-     * @param string $config
-     * @return array
-     * @throws \ReflectionException
-     */
-    protected function get_custom_menu(string $config): array {
         global $CFG, $PAGE;
         $CFG->custommenuitems = $config;
         $output = new primary($PAGE);
@@ -182,7 +171,8 @@ class primary_test extends \advanced_testcase {
 
         $actual = $method->invoke($output, $renderer);
         $custommenufilter($actual);
-        return $actual;
+
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -310,127 +300,5 @@ class primary_test extends \advanced_testcase {
                 ]
             ]
         ];
-    }
-
-    /**
-     * Test the merge_primary_and_custom and the eval_is_active method. Merge  primary and custom menu with different
-     * page urls and check that the correct nodes are active and open, depending on the data for each menu.
-     *
-     * @covers \core\navigation\output\primary::merge_primary_and_custom
-     * @covers \core\navigation\output\primary::flag_active_nodes
-     * @return void
-     * @throws \ReflectionException
-     * @throws \moodle_exception
-     */
-    public function test_merge_primary_and_custom() {
-        global $PAGE;
-
-        $menu = $this->merge_and_render_menus();
-
-        $this->assertEquals(4, count(\array_keys($menu)));
-        $msg = 'No active nodes for page ' . $PAGE->url;
-        $this->assertEmpty($this->get_menu_item_names_by_type($menu, 'isactive'), $msg);
-        $this->assertEmpty($this->get_menu_item_names_by_type($menu, 'isopen'), str_replace('active', 'open', $msg));
-
-        $msg = 'Active nodes desktop for /course/search.php';
-        $menu = $this->merge_and_render_menus('/course/search.php');
-        $isactive = $this->get_menu_item_names_by_type($menu, 'isactive');
-        $this->assertEquals(['Courses', 'Course search'], $isactive, $msg);
-        $this->assertEmpty($this->get_menu_item_names_by_type($menu, 'isopem'), str_replace('Active', 'Open', $msg));
-
-        $msg = 'Active nodes mobile for /course/search.php';
-        $menu = $this->merge_and_render_menus('/course/search.php', true);
-        $isactive = $this->get_menu_item_names_by_type($menu, 'isactive');
-        $this->assertEquals(['Course search'], $isactive, $msg);
-        $isopen = $this->get_menu_item_names_by_type($menu, 'isopen');
-        $this->assertEquals(['Courses'], $isopen, str_replace('Active', 'Open', $msg));
-
-        $msg = 'Active nodes desktop for /course/search.php?areaids=core_course-course&q=test';
-        $menu = $this->merge_and_render_menus('/course/search.php?areaids=core_course-course&q=test');
-        $isactive = $this->get_menu_item_names_by_type($menu, 'isactive');
-        $this->assertEquals(['Courses', 'Course search'], $isactive, $msg);
-
-        $msg = 'Active nodes desktop for /?theme=boost';
-        $menu = $this->merge_and_render_menus('/?theme=boost');
-        $isactive = $this->get_menu_item_names_by_type($menu, 'isactive');
-        $this->assertEquals(['Theme', 'Boost'], $isactive, $msg);
-    }
-
-    /**
-     * Internal function to get an array of top menu items from the primary and the custom menu. The latter is defined
-     * in this function.
-     * @param string|null $url
-     * @param bool|null $ismobile
-     * @return array
-     * @throws \ReflectionException
-     * @throws \coding_exception
-     */
-    protected function merge_and_render_menus(?string $url = null, ?bool $ismobile = false): array {
-        global $PAGE, $FULLME;
-
-        if ($url !== null) {
-            $PAGE->set_url($url);
-            $FULLME = $PAGE->url->out();
-        }
-        $primary = new primary($PAGE);
-
-        $method = new ReflectionMethod('core\navigation\output\primary', 'get_primary_nav');
-        $method->setAccessible(true);
-        $dataprimary = $method->invoke($primary);
-
-        // Take this custom menu that would come from the  setting custommenitems.
-        $custommenuitems = <<< ENDMENU
-        Theme
-        -Boost|/?theme=boost
-        -Classic|/?theme=classic
-        -Purge Cache|/admin/purgecaches.php
-        Courses
-        -All courses|/course/
-        -Course search|/course/search.php
-        -###
-        -FAQ|https://example.org/faq
-        -My Important Course|/course/view.php?id=4
-        Mobile app|https://example.org/app|Download our app
-        ENDMENU;
-
-        $datacustom = $this->get_custom_menu($custommenuitems);
-        $method = new ReflectionMethod('core\navigation\output\primary', 'merge_primary_and_custom');
-        $method->setAccessible(true);
-        $menucomplete = $method->invoke($primary, $dataprimary, $datacustom, $ismobile);
-        return $menucomplete;
-    }
-
-    /**
-     * Traverse the menu array structure (all nodes recursively) and fetch the node texts from the menu nodes that are
-     * active/open (determined via param $nodetype that can be "inactive" or "isopen"). The returned array contains a
-     * list of nade names that match this criterion.
-     * @param array $menu
-     * @param string $nodetype
-     * @return array
-     */
-    protected function get_menu_item_names_by_type(array $menu, string $nodetype): array {
-        $matchednodes = [];
-        foreach ($menu as $menuitem) {
-            // Either the node is an array.
-            if (is_array($menuitem)) {
-                if ($menuitem[$nodetype] ?? false) {
-                    $matchednodes[] = $menuitem['text'];
-                }
-                // Recursively move through child items.
-                if (array_key_exists('children', $menuitem) && count($menuitem['children'])) {
-                    $matchednodes = array_merge($matchednodes, $this->get_menu_item_names_by_type($menuitem['children'], $nodetype));
-                }
-            } else {
-                // Otherwise the node is a standard object.
-                if (isset($menuitem->{$nodetype}) && $menuitem->{$nodetype} === true) {
-                    $matchednodes[] = $menuitem->text;
-                }
-                // Recursively move through child items.
-                if (isset($menuitem->children) && is_array($menuitem->children) && !empty($menuitem->children)) {
-                    $matchednodes = array_merge($matchednodes, $this->get_menu_item_names_by_type($menuitem->children, $nodetype));
-                }
-            }
-        }
-        return $matchednodes;
     }
 }

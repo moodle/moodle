@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer extends Google_Service
 {
   /** View and manage data transfers between users in your organization. */
@@ -157,7 +156,6 @@ class Google_Service_DataTransfer extends Google_Service
  *   $applications = $adminService->applications;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_Applications_Resource extends Google_Service_Resource
 {
 
@@ -204,7 +202,6 @@ class Google_Service_DataTransfer_Applications_Resource extends Google_Service_R
  *   $transfers = $adminService->transfers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_Transfers_Resource extends Google_Service_Resource
 {
 
@@ -263,7 +260,6 @@ class Google_Service_DataTransfer_Transfers_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_Application extends Google_Collection
 {
   protected $collection_key = 'transferParams';
@@ -319,7 +315,6 @@ class Google_Service_DataTransfer_Application extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_ApplicationDataTransfer extends Google_Collection
 {
   protected $collection_key = 'applicationTransferParams';
@@ -357,7 +352,6 @@ class Google_Service_DataTransfer_ApplicationDataTransfer extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_ApplicationTransferParam extends Google_Collection
 {
   protected $collection_key = 'value';
@@ -385,7 +379,6 @@ class Google_Service_DataTransfer_ApplicationTransferParam extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_ApplicationsListResponse extends Google_Collection
 {
   protected $collection_key = 'applications';
@@ -432,7 +425,6 @@ class Google_Service_DataTransfer_ApplicationsListResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_DataTransfer extends Google_Collection
 {
   protected $collection_key = 'applicationDataTransfers';
@@ -515,7 +507,6 @@ class Google_Service_DataTransfer_DataTransfer extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_DataTransfer_DataTransfersListResponse extends Google_Collection
 {
   protected $collection_key = 'dataTransfers';

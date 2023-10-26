@@ -42,9 +42,6 @@ class brickfield_accessibility_report_item {
     /** @var object For issues with more than two possible states, this contains information about the state */
     public $state;
 
-    /** @var int the line number of the report item */
-    public $line;
-
     /**
      * Returns the line number of the report item. Unfortunately we can't use getLineNo
      * if we are before PHP 5.3, so if not we try to get the line number through a more

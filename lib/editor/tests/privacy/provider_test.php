@@ -47,9 +47,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setAdminUser();
 
         provider::export_user_preferences($USER->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
-        $writer = writer::with_context(\context_system::instance());
-        $this->assertFalse($writer->has_any_data());
+        $this->assertFalse(writer::with_context(\context_system::instance())->has_any_data());
     }
 
     /**
@@ -69,9 +67,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Export test users preferences.
         provider::export_user_preferences($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
-        $writer = writer::with_context(\context_system::instance());
-        $this->assertFalse($writer->has_any_data());
+        $this->assertFalse(writer::with_context(\context_system::instance())->has_any_data());
     }
 
     /**
@@ -91,11 +87,9 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Export test users preferences.
         provider::export_user_preferences($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
-        $writer = writer::with_context(\context_system::instance());
-        $this->assertTrue($writer->has_any_data());
+        $this->assertTrue(writer::with_context(\context_system::instance())->has_any_data());
 
-        $prefs = $writer->get_user_preferences('core_editor');
+        $prefs = writer::with_context(\context_system::instance())->get_user_preferences('core_editor');
         $this->assertNotEmpty($prefs->htmleditor);
         $this->assertNotEmpty($prefs->htmleditor->value);
         $this->assertNotEmpty($prefs->htmleditor->description);

@@ -180,7 +180,6 @@ class provider_test extends provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         foreach ($contextlist as $context) {
-            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $this->assertTrue($writer->has_any_data());
 

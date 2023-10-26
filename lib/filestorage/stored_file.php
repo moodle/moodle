@@ -23,8 +23,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use Psr\Http\Message\StreamInterface;
-
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/lib/filestorage/file_progress.php');
@@ -437,18 +435,6 @@ class stored_file {
      */
     public function get_content_file_handle($type = self::FILE_HANDLE_FOPEN) {
         return $this->filesystem->get_content_file_handle($this, $type);
-    }
-
-    /**
-     * Get a read-only PSR-7 stream for this file.
-     *
-     * Note: This stream is read-only. If you want to modify the file, create a new file and delete the old one.
-     * The File API creates immutable files.
-     *
-     * @return StreamInterface
-     */
-    public function get_psr_stream(): StreamInterface {
-        return $this->filesystem->get_psr_stream($this);
     }
 
     /**

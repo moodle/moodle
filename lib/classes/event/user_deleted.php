@@ -73,6 +73,41 @@ class user_deleted extends base {
     }
 
     /**
+     * Return name of the legacy event, which is replaced by this event.
+     *
+     * @return string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'user_deleted';
+    }
+
+    /**
+     * Return user_deleted legacy event data.
+     *
+     * @return \stdClass user data.
+     */
+    protected function get_legacy_eventdata() {
+        $user = $this->get_record_snapshot('user', $this->objectid);
+        $user->deleted = 0;
+        $user->username = $this->other['username'];
+        $user->email = $this->other['email'];
+        $user->idnumber = $this->other['idnumber'];
+        $user->picture = $this->other['picture'];
+
+        return $user;
+    }
+
+    /**
+     * Returns array of parameters to be passed to legacy add_to_log() function.
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $user = $this->get_record_snapshot('user', $this->objectid);
+        return array(SITEID, 'user', 'delete', 'view.php?id=' . $user->id, $user->firstname . ' ' . $user->lastname);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

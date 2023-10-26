@@ -114,6 +114,21 @@ class response_submitted extends \core\event\base {
     }
 
     /**
+     * Replace add_to_log() statement. Do this only for the case when anonymous mode is off,
+     * since this is what was happening before.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        if ($this->anonymous) {
+            return null;
+        } else {
+            return array($this->courseid, 'feedback', 'submit', 'view.php?id=' . $this->other['cmid'],
+                    $this->other['instanceid'], $this->other['cmid'], $this->relateduserid);
+        }
+    }
+
+    /**
      * Define whether a user can view the event or not. Make sure no one except admin can see details of an anonymous response.
      *
      * @deprecated since 2.7

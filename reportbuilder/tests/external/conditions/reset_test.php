@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\conditions;
 
 use core_reportbuilder_generator;
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\manager;
 use core_reportbuilder\report_access_exception;
@@ -49,7 +49,7 @@ class reset_test extends externallib_advanced_testcase {
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
         $generator->create_condition(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
 
         $instance = manager::get_report_from_persistent($report);

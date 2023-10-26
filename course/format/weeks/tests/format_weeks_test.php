@@ -16,8 +16,6 @@
 
 namespace format_weeks;
 
-use core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -151,7 +149,7 @@ class format_weeks_test extends \advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, $teacherrole->id);
 
         $res = \core_external::update_inplace_editable('format_weeks', 'sectionname', $section->id, 'New section name');
-        $res = external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
+        $res = \external_api::clean_returnvalue(\core_external::update_inplace_editable_returns(), $res);
         $this->assertEquals('New section name', $res['value']);
         $this->assertEquals('New section name', $DB->get_field('course_sections', 'name', array('id' => $section->id)));
     }

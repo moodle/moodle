@@ -120,7 +120,7 @@ class mod_lesson_generator extends testing_module_generator {
      * Create True/false question pages.
      * @param object $lesson
      * @param array $record
-     * @return \stdClass
+     * @return int
      */
     public function create_question_truefalse($lesson, $record = array()) {
         global $DB, $CFG;

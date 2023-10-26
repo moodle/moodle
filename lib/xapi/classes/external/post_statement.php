@@ -14,22 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_xapi\external;
-
-use core_xapi\local\statement;
-use core_xapi\handler;
-use core_xapi\xapi_exception;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
-use core_component;
-
 /**
  * This is the external API for generic xAPI handling.
  *
  * @package    core_xapi
  * @since      Moodle 3.9
+ * @copyright  2020 Ferran Recio
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+namespace core_xapi\external;
+
+use core_xapi\local\statement;
+use core_xapi\handler;
+use core_xapi\xapi_exception;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_single_structure;
+use external_multiple_structure;
+use external_warnings;
+use core_component;
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir .'/externallib.php');
+
+/**
+ * This is the external API for generic xAPI handling.
+ *
  * @copyright  2020 Ferran Recio
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

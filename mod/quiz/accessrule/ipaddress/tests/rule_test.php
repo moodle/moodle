@@ -16,7 +16,7 @@
 
 namespace quizaccess_ipaddress;
 
-use mod_quiz\quiz_settings;
+use quiz;
 use quizaccess_ipaddress;
 
 defined('MOODLE_INTERNAL') || die();
@@ -44,7 +44,7 @@ class rule_test extends \basic_testcase {
         // does not always work, for example using the mac install package on my laptop.
         $quiz->subnet = getremoteaddr(null);
         if (!empty($quiz->subnet)) {
-            $quizobj = new quiz_settings($quiz, $cm, null);
+            $quizobj = new quiz($quiz, $cm, null);
             $rule = new quizaccess_ipaddress($quizobj, 0);
 
             $this->assertFalse($rule->prevent_access());
@@ -56,7 +56,7 @@ class rule_test extends \basic_testcase {
         }
 
         $quiz->subnet = '0.0.0.0';
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_ipaddress($quizobj, 0);
 
         $this->assertNotEmpty($rule->prevent_access());

@@ -16,11 +16,9 @@
 
 namespace mod_quiz;
 
-use core_question_generator;
-use mod_quiz\task\update_overdue_attempts;
-use mod_quiz_generator;
+use mod_quiz_overdue_attempt_updater;
 use question_engine;
-use mod_quiz\quiz_settings;
+use quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -42,8 +40,12 @@ class attempts_test extends \advanced_testcase {
      * update_overdue_attempts().
      */
     public function test_bulk_update_functions() {
-        global $DB;
+        global $DB,$CFG;
+
+        require_once($CFG->dirroot.'/mod/quiz/cronlib.php');
+
         $this->resetAfterTest();
+
         $this->setAdminUser();
 
         // Setup course, user and groups
@@ -388,7 +390,7 @@ class attempts_test extends \advanced_testcase {
         // Test get_list_of_overdue_attempts().
         //
 
-        $overduehander = new update_overdue_attempts();
+        $overduehander = new mod_quiz_overdue_attempt_updater();
 
         $attempts = $overduehander->get_list_of_overdue_attempts(100000); // way in the future
         $count = 0;
@@ -415,7 +417,7 @@ class attempts_test extends \advanced_testcase {
         // Test update_overdue_attempts().
         //
 
-        [$count, $quizcount] = $overduehander->update_all_overdue_attempts(1000, 940);
+        [$count, $quizcount] = $overduehander->update_overdue_attempts(1000, 940);
 
         $attempts = $DB->get_records('quiz_attempts', null, 'quiz, userid, attempt',
                 'id, quiz, userid, attempt, state, timestart, timefinish, timecheckstate');
@@ -560,7 +562,7 @@ class attempts_test extends \advanced_testcase {
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
         quiz_add_quiz_question($numq->id, $quiz);
-        $quizobj = quiz_settings::create($quiz->id, $user1->id);
+        $quizobj = quiz::create($quiz->id, $user1->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();

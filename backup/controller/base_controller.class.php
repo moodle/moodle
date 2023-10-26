@@ -43,9 +43,6 @@ abstract class base_controller extends backup implements loggable {
      */
     protected $copy;
 
-    /** @var int Backup mode. */
-    protected $mode;
-
     /**
      * Gets the progress reporter, which can be used to report progress within
      * the backup or restore process.

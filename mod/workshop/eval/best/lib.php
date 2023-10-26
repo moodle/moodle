@@ -35,6 +35,9 @@ require_once($CFG->libdir . '/gradelib.php');
  */
 class workshop_best_evaluation extends workshop_evaluation {
 
+    /** @var workshop the parent workshop instance */
+    protected $workshop;
+
     /** @var the recently used settings in this workshop */
     protected $settings;
 

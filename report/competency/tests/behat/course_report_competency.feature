@@ -22,5 +22,6 @@ Feature: In a course administration page, navigate through report page, test for
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
     And I click on "Competency breakdown" "link"
-    Then "Report" "field" should exist in the "tertiary-navigation" "region"
-    And I should see "Competency breakdown" in the "tertiary-navigation" "region"
+    Then "Report" "field" should exist
+    And the "Report" select box should contain "Competency breakdown"
+    And the field "Report" matches value "Competency breakdown"

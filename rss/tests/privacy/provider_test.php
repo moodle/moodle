@@ -72,7 +72,6 @@ class provider_test extends provider_testcase {
 
         // Validate exported data.
         $this->setUser($user);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'core_rss');

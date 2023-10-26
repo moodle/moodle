@@ -28,7 +28,7 @@ import Templates from 'core/templates';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import DynamicForm from 'core_form/dynamicform';
 import {add as addToast} from 'core/toast';
 import {deleteAudience} from 'core_reportbuilder/local/repository/audiences';
@@ -86,7 +86,7 @@ const editAudienceCard = audienceCard => {
 
     // Load audience form with data for editing, then toggle visible controls in the card.
     const audienceForm = initAudienceCardForm(audienceCard);
-    audienceForm.load({id: audienceCard.dataset.audienceId})
+    audienceForm.load({id: audienceCard.dataset.instanceid})
         .then(() => {
             const audienceFormContainer = audienceCard.querySelector(reportSelectors.regions.audienceFormContainer);
             const audienceDescription = audienceCard.querySelector(reportSelectors.regions.audienceDescription);
@@ -116,7 +116,7 @@ const initAudienceCardForm = audienceCard => {
         const audienceHeading = audienceCard.querySelector(reportSelectors.regions.audienceHeading);
         const audienceDescription = audienceCard.querySelector(reportSelectors.regions.audienceDescription);
 
-        audienceCard.dataset.audienceId = data.detail.instanceid;
+        audienceCard.dataset.instanceid = data.detail.instanceid;
 
         audienceHeading.innerHTML = data.detail.heading;
         audienceDescription.innerHTML = data.detail.description;
@@ -129,7 +129,7 @@ const initAudienceCardForm = audienceCard => {
 
     // If cancelling the form, close the card or remove it if it was never created.
     audienceForm.addEventListener(audienceForm.events.FORM_CANCELLED, () => {
-        if (audienceCard.dataset.audienceId > 0) {
+        if (audienceCard.dataset.instanceid > 0) {
             closeAudienceCardForm(audienceCard);
         } else {
             removeAudienceCard(audienceCard);
@@ -146,20 +146,17 @@ const initAudienceCardForm = audienceCard => {
  */
 const deleteAudienceCard = audienceDelete => {
     const audienceCard = audienceDelete.closest(reportSelectors.regions.audienceCard);
-    const {audienceId, audienceTitle, audienceEditWarning = false} = audienceCard.dataset;
-
-    // The edit warning indicates the audience is in use in a report schedule.
-    const audienceDeleteConfirmation = audienceEditWarning ? 'audienceusedbyschedule' : 'deleteaudienceconfirm';
+    const audienceTitle = audienceCard.dataset.title;
 
     Notification.saveCancelPromise(
         getString('deleteaudience', 'core_reportbuilder', audienceTitle),
-        getString(audienceDeleteConfirmation, 'core_reportbuilder', audienceTitle),
+        getString('deleteaudienceconfirm', 'core_reportbuilder', audienceTitle),
         getString('delete', 'core'),
         {triggerElement: audienceDelete}
     ).then(() => {
         const pendingPromise = new Pending('core_reportbuilder/audience:delete');
 
-        return deleteAudience(reportId, audienceId)
+        return deleteAudience(reportId, audienceCard.dataset.instanceid)
             .then(() => addToast(getString('audiencedeleted', 'core_reportbuilder', audienceTitle)))
             .then(() => {
                 removeAudienceCard(audienceCard);
@@ -221,7 +218,6 @@ export const init = (id, contextid) => {
         'audienceadded',
         'audiencedeleted',
         'audiencesaved',
-        'audienceusedbyschedule',
         'deleteaudience',
         'deleteaudienceconfirm',
     ]);

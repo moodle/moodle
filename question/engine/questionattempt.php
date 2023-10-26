@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_question\local\bank\question_edit_contexts;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -623,8 +622,7 @@ class question_attempt {
 
         // No files yet.
         $draftid = 0; // Will be filled in by file_prepare_draft_area.
-        $filearea = question_file_saver::clean_file_area_name('response_' . $name);
-        file_prepare_draft_area($draftid, $contextid, 'question', $filearea, null);
+        file_prepare_draft_area($draftid, $contextid, 'question', 'response_' . $name, null);
         return $draftid;
     }
 
@@ -903,9 +901,6 @@ class question_attempt {
         if (is_null($page)) {
             global $PAGE;
             $page = $PAGE;
-        }
-        if (is_null($options->versioninfo)) {
-            $options->versioninfo = (new question_edit_contexts($page->context))->have_one_edit_tab_cap('questions');
         }
         $qoutput = $page->get_renderer('core', 'question');
         $qtoutput = $this->question->get_renderer($page);

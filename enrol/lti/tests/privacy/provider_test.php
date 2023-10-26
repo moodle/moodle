@@ -24,7 +24,6 @@
 namespace enrol_lti\privacy;
 
 use enrol_lti\privacy\provider;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -177,7 +176,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Creates a LTI user given the provided context
      *
-     * @param \context $context
+     * @param context $context
      * @param int $userid
      */
     private function create_lti_users(\context $context, int $userid) {

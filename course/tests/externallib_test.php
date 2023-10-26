@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use \core_external\external_api;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -785,18 +783,13 @@ class externallib_test extends externallib_advanced_testcase {
             $coursecontext = context_course::instance($course['id']);
             $dbcourse = $generatedcourses[$course['id']];
             $this->assertEquals($course['idnumber'], $dbcourse->idnumber);
-            $this->assertEquals(
-                $course['fullname'],
-                \core_external\util::format_string($dbcourse->fullname, $coursecontext->id)
-            );
-            $this->assertEquals(
-                $course['displayname'],
-                \core_external\util::format_string(get_course_display_name_for_list($dbcourse), $coursecontext->id)
-            );
+            $this->assertEquals($course['fullname'], external_format_string($dbcourse->fullname, $coursecontext->id));
+            $this->assertEquals($course['displayname'], external_format_string(get_course_display_name_for_list($dbcourse),
+                $coursecontext->id));
             // Summary was converted to the HTML format.
             $this->assertEquals($course['summary'], format_text($dbcourse->summary, FORMAT_MOODLE, array('para' => false)));
             $this->assertEquals($course['summaryformat'], FORMAT_HTML);
-            $this->assertEquals($course['shortname'], \core_external\util::format_string($dbcourse->shortname, $coursecontext->id));
+            $this->assertEquals($course['shortname'], external_format_string($dbcourse->shortname, $coursecontext->id));
             $this->assertEquals($course['categoryid'], $dbcourse->category);
             $this->assertEquals($course['format'], $dbcourse->format);
             $this->assertEquals($course['showgrades'], $dbcourse->showgrades);
@@ -1148,15 +1141,6 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->forum_allowforcedreadtracking = 1;
         list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
 
-        // Create a resource with all the appearance options enabled. By default it's a text file and will be added to section 1.
-        $record = (object) [
-            'course' => $course->id,
-            'showsize' => 1,
-            'showtype' => 1,
-            'showdate' => 1,
-        ];
-        $resource = self::getDataGenerator()->create_module('resource', $record);
-
         // We first run the test as admin.
         $this->setAdminUser();
         $sections = core_course_external::get_course_contents($course->id, array());
@@ -1173,13 +1157,9 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals($formattedtext, $module['description']);
                 $this->assertEquals($forumcm->instance, $module['instance']);
                 $this->assertEquals(context_module::instance($forumcm->id)->id, $module['contextid']);
+                $this->assertStringContainsString('1 unread post', $module['afterlink']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertNotEmpty($module['description']);  // Module showdescription is on.
-                // Afterlink for forums has been removed; it has been moved to the new activity badge content.
-                $this->assertEmpty($module['afterlink']);
-                $this->assertEquals('1 unread post', $module['activitybadge']['badgecontent']);
-                $this->assertEquals('badge-dark', $module['activitybadge']['badgestyle']);
-
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
@@ -1196,12 +1176,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertFalse($module['noviewlink']);
                 $this->assertArrayNotHasKey('description', $module);
                 $testexecuted = $testexecuted + 1;
-            } else if ($module['instance'] == $resource->id && $module['modname'] == 'resource') {
-                // Resources have both, afterlink for the size and the update date and activitybadge for the file type.
-                $this->assertStringContainsString('32 bytes', $module['afterlink']);
-                $this->assertEquals('TXT', $module['activitybadge']['badgecontent']);
-                $this->assertEquals('badge-none', $module['activitybadge']['badgestyle']);
-                $testexecuted = $testexecuted + 1;
             }
         }
         foreach ($sections[2]['modules'] as $module) {
@@ -1214,10 +1188,10 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->forum_allowforcedreadtracking = 0;    // Recover original value.
         forum_tp_count_forum_unread_posts($forumcm, $course, true);    // Reset static cache for further tests.
 
-        $this->assertEquals(6, $testexecuted);
+        $this->assertEquals(5, $testexecuted);
         $this->assertEquals(0, $sections[0]['section']);
 
-        $this->assertCount(7, $sections[0]['modules']);
+        $this->assertCount(6, $sections[0]['modules']);
         $this->assertCount(1, $sections[1]['modules']);
         $this->assertCount(1, $sections[2]['modules']);
         $this->assertCount(1, $sections[3]['modules']); // One module for the section with availability restrictions.
@@ -1770,23 +1744,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals($course->startdate, $module['dates'][0]['relativeto']);
             }
         }
-    }
-
-    /**
-     * Test get_course_contents for courses with invalid course format.
-     */
-    public function test_get_course_contents_invalid_format() {
-        global $DB;
-        $this->resetAfterTest();
-
-        list($course, $forumcm, $datacm, $pagecm, $labelcm, $urlcm) = $this->prepare_get_course_contents_test();
-
-        $DB->set_field('course', 'format', 'fakeformat', ['id' => $course->id]);
-
-        // WS should falback to default course format (topics) and avoid exceptions (but debugging will happen).
-        $result = core_course_external::get_course_contents($course->id);
-        $this->assertDebuggingCalled();
-        $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
     }
 
     /**
@@ -2674,7 +2631,7 @@ class externallib_test extends externallib_advanced_testcase {
             foreach ($course['options'] as $option) {
                 $navoptions->{$option['name']} = $option['available'];
             }
-            $this->assertCount(9, $course['options']);
+            $this->assertCount(8, $course['options']);
             if ($course['id'] == SITEID) {
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
@@ -2684,7 +2641,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertFalse($navoptions->grades);
                 $this->assertFalse($navoptions->search);
                 $this->assertTrue($navoptions->competencies);
-                $this->assertFalse($navoptions->communication);
             } else {
                 $this->assertTrue($navoptions->blogs);
                 $this->assertFalse($navoptions->notes);
@@ -2694,7 +2650,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($navoptions->grades);
                 $this->assertFalse($navoptions->search);
                 $this->assertTrue($navoptions->competencies);
-                $this->assertFalse($navoptions->communication);
             }
         }
     }
@@ -2770,10 +2725,8 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_courses_by_fields
      */
     public function test_get_courses_by_field() {
-        global $DB, $USER;
+        global $DB;
         $this->resetAfterTest(true);
-
-        $this->setAdminUser();
 
         $category1 = self::getDataGenerator()->create_category(array('name' => 'Cat 1'));
         $category2 = self::getDataGenerator()->create_category(array('parent' => $category1->id));
@@ -2785,25 +2738,7 @@ class externallib_test extends externallib_advanced_testcase {
             'categoryid' => $fieldcategory->get('id')];
         $field = self::getDataGenerator()->create_custom_field($customfield);
         $customfieldvalue = ['shortname' => 'test', 'value' => 'Test value'];
-        // Create course image.
-        $draftid = file_get_unused_draft_itemid();
-        $filerecord = [
-            'component' => 'user',
-            'filearea' => 'draft',
-            'contextid' => context_user::instance($USER->id)->id,
-            'itemid' => $draftid,
-            'filename' => 'image.jpg',
-            'filepath' => '/',
-        ];
-        $fs = get_file_storage();
-        $fs->create_file_from_pathname($filerecord, __DIR__ . '/fixtures/image.jpg');
-        $course2 = self::getDataGenerator()->create_course([
-            'visible' => 0,
-            'category' => $category2->id,
-            'idnumber' => 'i2',
-            'customfields' => [$customfieldvalue],
-            'overviewfiles_filemanager' => $draftid
-        ]);
+        $course2 = self::getDataGenerator()->create_course(array('visible' => 0, 'category' => $category2->id, 'idnumber' => 'i2', 'customfields' => [$customfieldvalue]));
 
         $student1 = self::getDataGenerator()->create_user();
         $user1 = self::getDataGenerator()->create_user();
@@ -2817,16 +2752,16 @@ class externallib_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(3, $result['courses']);
         // Expect to receive all the fields.
-        $this->assertCount(41, $result['courses'][0]);
-        $this->assertCount(42, $result['courses'][1]);  // One more field because is not the site course.
-        $this->assertCount(42, $result['courses'][2]);  // One more field because is not the site course.
+        $this->assertCount(40, $result['courses'][0]);
+        $this->assertCount(41, $result['courses'][1]);  // One more field because is not the site course.
+        $this->assertCount(41, $result['courses'][2]);  // One more field because is not the site course.
 
         $result = core_course_external::get_courses_by_field('id', $course1->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
         // Expect to receive all the fields.
-        $this->assertCount(42, $result['courses'][0]);
+        $this->assertCount(41, $result['courses'][0]);
         // Check default values for course format topics.
         $this->assertCount(3, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
@@ -2843,7 +2778,6 @@ class externallib_test extends externallib_advanced_testcase {
                 default:
             }
         }
-        $this->assertStringContainsString('/course/generated', $result['courses'][0]['courseimage']);
 
         $result = core_course_external::get_courses_by_field('id', $course2->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
@@ -2857,7 +2791,6 @@ class externallib_test extends externallib_advanced_testcase {
             'value' => $customfieldvalue['value'],
             'valueraw' => $customfieldvalue['value'],
         ], $result['courses'][0]['customfields'][0]);
-        $this->assertStringContainsString('/course/overviewfiles', $result['courses'][0]['courseimage']);
 
         $result = core_course_external::get_courses_by_field('ids', "$course1->id,$course2->id");
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
@@ -2895,15 +2828,15 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_course_external::get_courses_by_field();
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(2, $result['courses']);
-        $this->assertCount(34, $result['courses'][0]);
-        $this->assertCount(35, $result['courses'][1]);  // One field more (course format options), not present in site course.
+        $this->assertCount(33, $result['courses'][0]);
+        $this->assertCount(34, $result['courses'][1]);  // One field more (course format options), not present in site course.
 
         $result = core_course_external::get_courses_by_field('id', $course1->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
         // Expect to receive all the files that a student can see.
-        $this->assertCount(35, $result['courses'][0]);
+        $this->assertCount(34, $result['courses'][0]);
 
         // Check default filters.
         $filters = $result['courses'][0]['filters'];
@@ -2948,15 +2881,15 @@ class externallib_test extends externallib_advanced_testcase {
         $result = core_course_external::get_courses_by_field();
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(2, $result['courses']);
-        $this->assertCount(34, $result['courses'][0]);  // Site course.
-        $this->assertCount(17, $result['courses'][1]);  // Only public information, not enrolled.
+        $this->assertCount(33, $result['courses'][0]);  // Site course.
+        $this->assertCount(16, $result['courses'][1]);  // Only public information, not enrolled.
 
         $result = core_course_external::get_courses_by_field('id', $course1->id);
         $result = external_api::clean_returnvalue(core_course_external::get_courses_by_field_returns(), $result);
         $this->assertCount(1, $result['courses']);
         $this->assertEquals($course1->id, $result['courses'][0]['id']);
         // Expect to receive all the files that a authenticated can see.
-        $this->assertCount(17, $result['courses'][0]);
+        $this->assertCount(16, $result['courses'][0]);
 
         // Course 2 is not visible.
         $result = core_course_external::get_courses_by_field('id', $course2->id);
@@ -3980,5 +3913,4 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse($favouritefactory->favourite_exists($component, $areaname, $areaid, $context));
         $this->assertFalse($result['status']);
     }
-
 }

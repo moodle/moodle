@@ -85,18 +85,9 @@ class customcontext_test extends \advanced_testcase {
  */
 class context_bogus1 extends context {
     /**
-     * Returns context shortname.
-     *
-     * @return string
-     */
-    public static function get_short_name(): string {
-        return 'bogus1';
-    }
-
-    /**
      * Returns the most relevant URL for this context.
      *
-     * @return \moodle_url
+     * @return moodle_url
      */
     public function get_url() {
         global $ME;
@@ -118,18 +109,9 @@ class context_bogus1 extends context {
  */
 class context_bogus2 extends context {
     /**
-     * Returns context shortname.
-     *
-     * @return string
-     */
-    public static function get_short_name(): string {
-        return 'bogus2';
-    }
-
-    /**
      * Returns the most relevant URL for this context.
      *
-     * @return \moodle_url
+     * @return moodle_url
      */
     public function get_url() {
         global $ME;
@@ -151,18 +133,9 @@ class context_bogus2 extends context {
  */
 class context_bogus3 extends context {
     /**
-     * Returns context shortname.
-     *
-     * @return string
-     */
-    public static function get_short_name(): string {
-        return 'bogus3';
-    }
-
-    /**
      * Returns the most relevant URL for this context.
      *
-     * @return \moodle_url
+     * @return moodle_url
      */
     public function get_url() {
         global $ME;

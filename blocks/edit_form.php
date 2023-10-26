@@ -17,7 +17,7 @@
 /**
  * Defines the base class form used by blocks/edit.php to edit block instance configuration.
  *
- * It works with the {@see block_edit_form} class, or rather the particular
+ * It works with the {@link block_edit_form} class, or rather the particular
  * subclass defined by this block, to do the editing.
  *
  * @package    core_block
@@ -25,27 +25,30 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+if (!defined('MOODLE_INTERNAL')) {
+    die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
+}
+
+require_once($CFG->libdir . '/formslib.php');
 require_once($CFG->libdir . '/blocklib.php');
 
 /**
  * The base class form used by blocks/edit.php to edit block instance configuration.
  *
- * @property-read block_base $block
- * @property-read moodle_page $page
  * @copyright 2009 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class block_edit_form extends \core_form\dynamic_form {
+class block_edit_form extends moodleform {
     /**
      * The block instance we are editing.
      * @var block_base
      */
-    private $_block;
+    public $block;
     /**
      * The page we are editing this block in association with.
      * @var moodle_page
      */
-    private $_page;
+    public $page;
 
     /**
      * Defaults set in set_data() that need to be returned in get_data() if form elements were not created
@@ -53,94 +56,18 @@ class block_edit_form extends \core_form\dynamic_form {
      */
     protected $defaults = [];
 
-    /**
-     * Magic getter for backward compatibility
-     *
-     * @param string $name
-     * @return block_base|moodle_page
-     */
-    public function __get(string $name) {
-        if ($name === 'page') {
-            return $this->get_page();
-        } else if ($name === 'block') {
-            return $this->get_block();
-        } else {
-            throw new coding_exception('Property '.$name.' does not exist');
-        }
+    function __construct($actionurl, $block, $page) {
+        global $CFG;
+        $this->block = $block;
+        $this->page = $page;
+        parent::__construct($actionurl);
     }
 
-    /**
-     * Page where we are adding or editing the block
-     *
-     * To access you can also use magic property $this->page
-     *
-     * @return moodle_page
-     * @throws moodle_exception
-     */
-    protected function get_page(): moodle_page {
-        if (!$this->_page && !empty($this->_customdata['page'])) {
-            $this->_page = $this->_customdata['page'];
-        } else if (!$this->_page) {
-            if (!$pagehash = $this->optional_param('pagehash', '', PARAM_ALPHANUMEXT)) {
-                throw new \moodle_exception('missingparam', '', '', 'pagehash');
-            }
-            $this->_page = moodle_page::retrieve_edited_page($pagehash, MUST_EXIST);
-            $this->_page->blocks->load_blocks();
-        }
-        return $this->_page;
-    }
-
-    /**
-     * Instance of the block that is being added or edited
-     *
-     * To access you can also use magic property $this->block
-     *
-     * If {{@see self::display_form_when_adding()}} returns true and the configuration
-     * form is displayed when adding block, the $this->block->id will be null.
-     *
-     * @return block_base
-     * @throws block_not_on_page_exception
-     * @throws moodle_exception
-     */
-    protected function get_block(): block_base {
-        if (!$this->_block && !empty($this->_customdata['block'])) {
-            $this->_block = $this->_customdata['block'];
-        } else if (!$this->_block) {
-            $blockid = $this->optional_param('blockid', null, PARAM_INT);
-            $blockname = $this->optional_param('blockname', null, PARAM_PLUGIN);
-            if ($blockname && !$blockid) {
-                $this->_block = block_instance($blockname);
-                $this->_block->page = $this->page;
-                $this->_block->context = $this->page->context;
-                $this->_block->instance = (object)['parentcontextid' => $this->page->context->id, 'id' => null];
-            } else {
-                $this->_block = $this->page->blocks->find_instance($blockid);
-            }
-        }
-        return $this->_block;
-    }
-
-    /**
-     * Form definition
-     */
     function definition() {
         $mform =& $this->_form;
 
-        $mform->addElement('hidden', 'blockid', $this->block->instance->id);
-        $mform->setType('blockid', PARAM_INT);
-        $mform->addElement('hidden', 'blockname', $this->optional_param('blockname', null, PARAM_PLUGIN));
-        $mform->setType('blockname', PARAM_PLUGIN);
-        $mform->addElement('hidden', 'blockregion', $this->optional_param('blockregion', null, PARAM_TEXT));
-        $mform->setType('blockregion', PARAM_TEXT);
-        $mform->addElement('hidden', 'pagehash', $this->optional_param('pagehash', null, PARAM_ALPHANUMEXT));
-        $mform->setType('pagehash', PARAM_ALPHANUMEXT);
-
         // First show fields specific to this type of block.
         $this->specific_definition($mform);
-
-        if (!$this->block->instance->id) {
-            return;
-        }
 
         // Then show the fields about where this block appears.
         $mform->addElement('header', 'whereheader', get_string('wherethisblockappears', 'block'));
@@ -183,10 +110,10 @@ class block_edit_form extends \core_form\dynamic_form {
         // First of all, check if we are editing blocks @ front-page or no and
         // make some dark magic if so (MDL-30340) because each page context
         // implies one (and only one) harcoded page-type that will be set later
-        // when processing the form data at {@see block_manager::process_url_edit()}.
+        // when processing the form data at {@link block_manager::process_url_edit()}
 
         // Front page, show the page-contexts element and set $pagetypelist to 'any page' (*)
-        // as unique option. Processign the form will do any change if needed.
+        // as unique option. Processign the form will do any change if needed
         if ($this->is_editing_the_frontpage()) {
             $contextoptions = array();
             $contextoptions[BUI_CONTEXTS_FRONTPAGE_ONLY] = get_string('showonfrontpageonly', 'block');
@@ -305,9 +232,7 @@ class block_edit_form extends \core_form\dynamic_form {
             $mform->hardFreeze($pagefields);
         }
 
-        if (!empty($this->_customdata['actionbuttons'])) {
-            $this->add_action_buttons();
-        }
+        $this->add_action_buttons();
     }
 
     /**
@@ -323,19 +248,13 @@ class block_edit_form extends \core_form\dynamic_form {
         return ($ctxconditions && $issiteindex);
     }
 
-    /**
-     * Prepare block configuration data and add default values when needed
-     *
-     * @param stdClass $defaults
-     * @return stdClass
-     */
-    protected function prepare_defaults(stdClass $defaults): stdClass {
+    function set_data($defaults) {
         // Prefix bui_ on all the core field names.
         $blockfields = array('showinsubcontexts', 'pagetypepattern', 'subpagepattern', 'parentcontextid',
                 'defaultregion', 'defaultweight', 'visible', 'region', 'weight');
         foreach ($blockfields as $field) {
             $newname = 'bui_' . $field;
-            $defaults->$newname = $defaults->$field ?? null;
+            $defaults->$newname = $defaults->$field;
         }
 
         // Copy block config into config_ fields.
@@ -365,22 +284,12 @@ class block_edit_form extends \core_form\dynamic_form {
             'bui_pagetypepattern' => $defaults->bui_pagetypepattern,
             'bui_subpagepattern' => $defaults->bui_subpagepattern,
         ];
-        return $defaults;
-    }
-
-    /**
-     * Load in existing data as form defaults
-     *
-     * @param stdClass $defaults
-     * @return void
-     */
-    public function set_data($defaults) {
-        parent::set_data($this->prepare_defaults($defaults));
+        parent::set_data($defaults);
     }
 
     /**
      * Override this to create any form fields specific to this type of block.
-     * @param \MoodleQuickForm $mform the form being built.
+     * @param object $mform the form being built.
      */
     protected function specific_definition($mform) {
         // By default, do nothing.
@@ -390,7 +299,7 @@ class block_edit_form extends \core_form\dynamic_form {
      * Return submitted data if properly submitted or returns NULL if validation fails or
      * if there is no submitted data.
      *
-     * @return stdClass submitted data; NULL if not valid or not submitted or cancelled
+     * @return object submitted data; NULL if not valid or not submitted or cancelled
      */
     public function get_data() {
         if ($data = parent::get_data()) {
@@ -400,86 +309,5 @@ class block_edit_form extends \core_form\dynamic_form {
             return (object)((array)$data + $this->defaults);
         }
         return $data;
-    }
-
-    /**
-     * Returns context where this form is used
-     *
-     * @return context
-     */
-    protected function get_context_for_dynamic_submission(): context {
-        return $this->page->context;
-    }
-
-    /**
-     * Checks if current user has access to this form, otherwise throws exception
-     */
-    protected function check_access_for_dynamic_submission(): void {
-        if ($this->block->instance->id) {
-            if (!$this->page->user_can_edit_blocks() && !$this->block->user_can_edit()) {
-                throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('editblock'));
-            }
-        } else {
-            if (!$this->page->user_can_edit_blocks()) {
-                throw new moodle_exception('nopermissions', '', $this->page->url->out(), get_string('addblock'));
-            }
-            $addableblocks = $this->page->blocks->get_addable_blocks();
-            $blocktype = $this->block->name();
-            if (!array_key_exists($blocktype, $addableblocks)) {
-                throw new moodle_exception('cannotaddthisblocktype', '', $this->page->url->out(), $blocktype);
-            }
-        }
-    }
-
-    /**
-     * Process the form submission, used if form was submitted via AJAX
-     */
-    public function process_dynamic_submission() {
-        if ($this->block->instance->id) {
-            $this->page->blocks->save_block_data($this->block, $this->get_data());
-        } else {
-            $blockregion = $this->optional_param('blockregion', null, PARAM_TEXT);
-            $newblock = $this->page->blocks->add_block_at_end_of_default_region($this->block->name(),
-                empty($blockregion) ? null : $blockregion);
-            $this->page->blocks->load_blocks();
-            $newblock = $this->page->blocks->find_instance($newblock->instance->id);
-            $newdata = $this->prepare_defaults($newblock->instance);
-            foreach ($this->get_data() as $key => $value) {
-                $newdata->$key = $value;
-            }
-            $this->page->blocks->save_block_data($newblock, $newdata);
-        }
-    }
-
-    /**
-     * Load in existing data as form defaults
-     */
-    public function set_data_for_dynamic_submission(): void {
-        $this->set_data($this->block->instance);
-    }
-
-    /**
-     * Returns url to set in $PAGE->set_url() when form is being rendered or submitted via AJAX
-     *
-     * @return moodle_url
-     */
-    protected function get_page_url_for_dynamic_submission(): moodle_url {
-        return $this->page->url;
-    }
-
-    /**
-     * Display the configuration form when block is being added to the page
-     *
-     * By default when block is added to the page it is added with the default configuration.
-     * Some block may require configuration, for example, "glossary random entry" block
-     * needs a glossary to be selected, "RSS feed" block needs an RSS feed to be selected, etc.
-     *
-     * Such blocks can override this function and return true. These blocks must
-     * ensure that the function specific_definition() will work if there is no current block id.
-     *
-     * @return bool
-     */
-    public static function display_form_when_adding(): bool {
-        return false;
     }
 }

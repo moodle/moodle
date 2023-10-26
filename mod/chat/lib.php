@@ -1191,7 +1191,7 @@ function chat_print_overview() {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the chat.
  *
- * @param MoodleQuickForm $mform form passed by reference
+ * @param object $mform form passed by reference
  */
 function chat_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));

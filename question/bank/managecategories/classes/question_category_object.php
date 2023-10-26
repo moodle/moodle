@@ -306,14 +306,8 @@ class question_category_object {
      * @param int $questionsincategory
      * @param object $category
      * @throws \coding_exception
-     *
-     * @deprecated No longer used by internal code and not recommended since Moodle 4.2 MDL-77299.
      */
     public function display_move_form($questionsincategory, $category): void {
-        debugging(
-            'display_move_form() is deprecated and no longer used by internal code.',
-            DEBUG_DEVELOPER
-        );
         global $OUTPUT;
         $vars = new stdClass();
         $vars->name = $category->name;

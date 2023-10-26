@@ -432,22 +432,6 @@ class column_test extends advanced_testcase {
     }
 
     /**
-     * Test that column value with callback (where aggregation is not set) is returned
-     */
-    public function test_format_value_callback_aggregation(): void {
-        $column = $this->create_column('test')
-            ->set_index(1)
-            ->add_field('t.foo')
-            ->set_type(column::TYPE_INTEGER)
-            ->add_callback(static function(int $value, stdClass $values, $argument, ?string $aggregation): string {
-                // Simple callback to return the given value, and append type of aggregation parameter.
-                return "{$value} " . gettype($aggregation);
-            });
-
-        $this->assertEquals("42 NULL", $column->format_value(['c1_foo' => 42]));
-    }
-
-    /**
      * Test adding multiple callbacks to a column
      */
     public function test_add_multiple_callback(): void {

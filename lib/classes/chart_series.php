@@ -78,7 +78,7 @@ class chart_series implements JsonSerializable {
      * @return string|null
      */
     public function get_color() {
-        return isset($this->colors[0]) ? $this->colors[0] : null;
+        return isset($this->color[0]) ? $this->color[0] : null;
     }
 
     /**

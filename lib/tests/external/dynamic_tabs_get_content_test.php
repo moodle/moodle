@@ -18,7 +18,7 @@ declare(strict_types=1);
 
 namespace core\external;
 
-use core_external\external_api;
+use external_api;
 
 defined('MOODLE_INTERNAL') || die();
 

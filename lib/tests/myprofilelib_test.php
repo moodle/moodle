@@ -44,12 +44,14 @@ class myprofilelib_test extends \advanced_testcase {
      * @var \core_user\output\myprofile\tree The navigation tree.
      */
     private $tree;
+
     public function setUp(): void {
         // Set the $PAGE->url value so core_myprofile_navigation() doesn't complain.
         global $PAGE;
         $PAGE->set_url('/test');
 
         $this->user = $this->getDataGenerator()->create_user();
+        $this->user2 = $this->getDataGenerator()->create_user();
         $this->course = $this->getDataGenerator()->create_course();
         $this->tree = new \core_user\output\myprofile\tree();
         $this->resetAfterTest();
@@ -85,8 +87,7 @@ class myprofilelib_test extends \advanced_testcase {
      * profile of another another user.
      */
     public function test_core_myprofile_navigation_course_without_permission() {
-        // User without permission.
-        $this->setUser($this->getDataGenerator()->create_user());
+        $this->setUser($this->user2);
         $iscurrentuser = false;
 
         core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
@@ -145,7 +146,7 @@ class myprofilelib_test extends \advanced_testcase {
      */
     public function test_core_myprofile_navigation_preference_without_permission() {
         // Login as link for a user who doesn't have the capability to login as.
-        $this->setUser($this->getDataGenerator()->create_user());
+        $this->setUser($this->user2);
         $iscurrentuser = false;
 
         core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
@@ -210,7 +211,7 @@ class myprofilelib_test extends \advanced_testcase {
         $identityfields = explode(',', $CFG->showuseridentity);
 
         // User without permission.
-        $this->setUser($this->getDataGenerator()->create_user());
+        $this->setUser($this->user2);
         core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
@@ -299,7 +300,7 @@ class myprofilelib_test extends \advanced_testcase {
     public function test_core_myprofile_navigationn_login_activity_without_permission() {
         // User without permission.
         set_config("hiddenuserfields", "firstaccess,lastaccess,lastip");
-        $this->setUser($this->getDataGenerator()->create_user());
+        $this->setUser($this->user2);
         $iscurrentuser = false;
 
         core_myprofile_navigation($this->tree, $this->user, $iscurrentuser, null);

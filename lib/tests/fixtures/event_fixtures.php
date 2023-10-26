@@ -47,6 +47,18 @@ class unittest_executed extends \core\event\base {
     public function get_url() {
         return new \moodle_url('/somepath/somefile.php', array('id'=>$this->data['other']['sample']));
     }
+
+    public static function get_legacy_eventname() {
+        return 'test_legacy';
+    }
+
+    protected function get_legacy_eventdata() {
+        return array($this->data['courseid'], $this->data['other']['sample']);
+    }
+
+    protected function get_legacy_logdata() {
+        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id='.$this->data['other']['sample']);
+    }
 }
 
 
@@ -260,6 +272,14 @@ class context_used_in_event extends \core\event\base {
 
     public function get_url() {
         return new \moodle_url('/somepath/somefile.php', array('id' => $this->context->instanceid));
+    }
+
+    protected function get_legacy_eventdata() {
+        return array($this->data['courseid'], $this->context->instanceid);
+    }
+
+    protected function get_legacy_logdata() {
+        return array($this->data['courseid'], 'core_unittest', 'view', 'unittest.php?id=' . $this->context->instanceid);
     }
 }
 

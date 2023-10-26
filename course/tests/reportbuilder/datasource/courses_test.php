@@ -18,11 +18,9 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
-use context_course;
 use core_reportbuilder_testcase;
 use core_reportbuilder_generator;
 use core_reportbuilder\local\filters\boolean_select;
-use core_reportbuilder\local\filters\category;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\tags;
@@ -51,13 +49,7 @@ class courses_test extends core_reportbuilder_testcase {
 
         // Test subject.
         $category = $this->getDataGenerator()->create_category(['name' => 'My cats']);
-        $courseone = $this->getDataGenerator()->create_course([
-            'category' => $category->id,
-            'fullname' => 'Feline fine',
-            'shortname' => 'C102',
-            'idnumber' => 'CAT102'
-        ]);
-        $coursetwo = $this->getDataGenerator()->create_course([
+        $course = $this->getDataGenerator()->create_course([
             'category' => $category->id,
             'fullname' => 'All about cats',
             'shortname' => 'C101',
@@ -69,12 +61,16 @@ class courses_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
 
-        // Default columns are category, shortname, fullname, idnumber. Sorted by category, shortname, fullname.
+        $contentrow = array_values($content[0]);
+
         $this->assertEquals([
-            [$category->name, $coursetwo->shortname, $coursetwo->fullname, $coursetwo->idnumber],
-            [$category->name, $courseone->shortname, $courseone->fullname, $courseone->idnumber],
-        ], array_map('array_values', $content));
+            $category->get_formatted_name(),
+            $course->shortname,
+            $course->fullname,
+            $course->idnumber,
+        ], $contentrow);
     }
 
     /**
@@ -94,16 +90,6 @@ class courses_test extends core_reportbuilder_testcase {
             'summary' => 'Course description',
             'tags' => ['Horses'],
         ]);
-
-        // Add a course image.
-        get_file_storage()->create_file_from_string([
-            'contextid' => context_course::instance($course->id)->id,
-            'component' => 'course',
-            'filearea' => 'overviewfiles',
-            'itemid' => 0,
-            'filepath' => '/',
-            'filename' => 'HelloWorld.jpg',
-        ], 'HelloWorld');
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -136,9 +122,6 @@ class courses_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
 
-        // File entity.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'file:name']);
-
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(1, $content);
 
@@ -170,9 +153,6 @@ class courses_test extends core_reportbuilder_testcase {
         // Tags.
         $this->assertEquals('Horses', $courserow[19]);
         $this->assertStringContainsString('Horses', $courserow[20]);
-
-        // File.
-        $this->assertEquals('HelloWorld.jpg', $courserow[21]);
     }
 
     /**
@@ -222,11 +202,6 @@ class courses_test extends core_reportbuilder_testcase {
         return [
             // Category.
             'Filter category' => ['course_category:name', [
-                'course_category:name_operator' => category::NOT_EQUAL_TO,
-                'course_category:name_value' => -1,
-            ], true],
-            'Filter category (no match)' => ['course_category:name', [
-                'course_category:name_operator' => category::EQUAL_TO,
                 'course_category:name_value' => -1,
             ], false],
             'Filter category name' => ['course_category:text', [
@@ -368,11 +343,6 @@ class courses_test extends core_reportbuilder_testcase {
             ], false],
             'Filter tag name not empty' => ['tag:name', [
                 'tag:name_operator' => tags::NOT_EMPTY,
-            ], true],
-
-            // File.
-            'Filter file name empty' => ['file:name', [
-                'file:name_operator' => text::IS_EMPTY,
             ], true],
         ];
     }

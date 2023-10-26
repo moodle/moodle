@@ -386,9 +386,9 @@ class DecisionTree implements Classifier
                 $median = Mean::median($values);
                 foreach ($values as &$value) {
                     if ($value <= $median) {
-                        $value = "<= {$median}";
+                        $value = "<= ${median}";
                     } else {
-                        $value = "> {$median}";
+                        $value = "> ${median}";
                     }
                 }
             }

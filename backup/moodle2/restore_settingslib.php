@@ -248,9 +248,3 @@ class restore_activity_userinfo_setting extends restore_activity_generic_setting
  */
 class restore_contentbankcontent_setting extends restore_generic_setting {
 }
-
-/**
- * Root setting to control if restore will create xAPI states or not.
- */
-class restore_xapistate_setting extends restore_generic_setting {
-}

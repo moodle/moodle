@@ -88,13 +88,4 @@ class block_html_edit_form extends block_edit_form {
             $this->block->config->title = $title;
         }
     }
-
-    /**
-     * Display the configuration form when block is being added to the page
-     *
-     * @return bool
-     */
-    public static function display_form_when_adding(): bool {
-        return true;
-    }
 }

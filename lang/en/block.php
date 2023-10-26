@@ -22,7 +22,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addblock'] = 'Add {$a} block';
 $string['anypagematchingtheabove'] = 'Any page matching the above';
 $string['appearsinsubcontexts'] = 'Appears in sub-contexts';
 $string['assignrolesinblock'] = 'Assign roles in {$a} block';

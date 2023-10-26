@@ -2,7 +2,6 @@
 
 namespace PhpOffice\PhpSpreadsheet\Calculation\Database;
 
-use PhpOffice\PhpSpreadsheet\Calculation\Information\ExcelError;
 use PhpOffice\PhpSpreadsheet\Calculation\Statistical\Counts;
 
 class DCount extends DatabaseAbstract
@@ -31,14 +30,11 @@ class DCount extends DatabaseAbstract
      *                                        the column label in which you specify a condition for the
      *                                        column.
      *
-     * @return int|string
+     * @return int
      */
-    public static function evaluate($database, $field, $criteria, bool $returnError = true)
+    public static function evaluate($database, $field, $criteria)
     {
         $field = self::fieldExtract($database, $field);
-        if ($returnError && $field === null) {
-            return ExcelError::VALUE();
-        }
 
         return Counts::COUNT(
             self::getFilteredColumn($database, $field, $criteria)

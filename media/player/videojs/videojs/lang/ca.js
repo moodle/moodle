@@ -9,7 +9,7 @@ videojs.addLanguage('ca', {
   "Loaded": "Carregat",
   "Progress": "Progrés",
   "Fullscreen": "Pantalla completa",
-  "Exit Fullscreen": "Pantalla no completa",
+  "Non-Fullscreen": "Pantalla no completa",
   "Mute": "Silencia",
   "Unmute": "Amb so",
   "Playback Rate": "Velocitat de reproducció",

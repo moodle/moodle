@@ -21,7 +21,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
-use core_external\external_api;
+use external_api;
 
 /**
  * Tests for the get_state class.

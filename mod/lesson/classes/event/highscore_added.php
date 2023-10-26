@@ -85,6 +85,16 @@ class highscore_added extends \core\event\base {
     }
 
     /**
+     * Replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'lesson', 'update highscores', 'highscores.php?id=' . $this->contextinstanceid,
+            $this->other['nickname'], $this->contextinstanceid);
+    }
+
+    /**
      * Custom validations.
      *
      * @throws \coding_exception when validation fails.

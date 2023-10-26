@@ -1977,8 +1977,8 @@ class taglib_test extends \advanced_testcase {
      * @param string $component
      * @param string $itemtype
      * @param int $itemid
-     * @param \context $context
-     * @return \stdClass
+     * @param context $context
+     * @return stdClass
      */
     protected function add_tag_instance(core_tag_tag $tag, $component, $itemtype, $itemid, $context) {
         global $DB;

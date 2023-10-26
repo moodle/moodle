@@ -91,34 +91,4 @@ class stored_file_test extends advanced_testcase {
         $this->assertEquals(1200, $size['width']);
         $this->assertEquals(297, $size['height']);
     }
-
-    /**
-     * Ensure that get_content_file_handle returns a valid file handle.
-     *
-     * @covers ::get_psr_stream
-     */
-    public function test_get_psr_stream(): void {
-        global $CFG;
-        $this->resetAfterTest();
-
-        $filename = 'testimage.jpg';
-        $filepath = $CFG->dirroot . '/lib/filestorage/tests/fixtures/' . $filename;
-        $filerecord = [
-            'contextid' => context_system::instance()->id,
-            'component' => 'core',
-            'filearea'  => 'unittest',
-            'itemid'    => 0,
-            'filepath'  => '/',
-            'filename'  => $filename,
-        ];
-        $fs = get_file_storage();
-        $file = $fs->create_file_from_pathname($filerecord, $filepath);
-
-        $stream = $file->get_psr_stream();
-        $this->assertInstanceOf(\Psr\Http\Message\StreamInterface::class, $stream);
-        $this->assertEquals(file_get_contents($filepath), $stream->getContents());
-        $this->assertFalse($stream->isWritable());
-        $stream->close();
-    }
-
 }

@@ -25,15 +25,9 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/choice/lib.php');
 
 /**
@@ -121,7 +115,7 @@ class mod_choice_external extends external_api {
             }
 
             $options[] = array('id'               => $optionid,
-                               'text'             => \core_external\util::format_string($option->text, $context->id),
+                               'text'             => external_format_string($option->text, $context->id),
                                'maxanswer'        => $option->maxanswer,
                                'userresponses'    => $userresponses,
                                'numberofuser'     => $numberofuser,
@@ -234,7 +228,7 @@ class mod_choice_external extends external_api {
             foreach ($options['options'] as $option) {
                 $optionarr = array();
                 $optionarr['id']            = $option->attributes->value;
-                $optionarr['text']          = \core_external\util::format_string($option->text, $context->id);
+                $optionarr['text']          = external_format_string($option->text, $context->id);
                 $optionarr['maxanswers']    = $option->maxanswers;
                 $optionarr['displaylayout'] = $option->displaylayout;
                 $optionarr['countanswers']  = $option->countanswers;
@@ -442,7 +436,7 @@ class mod_choice_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function view_choice_returns() {
@@ -493,7 +487,7 @@ class mod_choice_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $courses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $courses);
 
             // Get the choices in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.

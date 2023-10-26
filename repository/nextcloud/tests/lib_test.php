@@ -703,7 +703,7 @@ JSON;
             array('success' => 201)));
         $this->repo->expects($this->once())->method('delete_share_dataowner_sysaccount')->willReturn(
             array('statuscode' => array('success' => 100)));
-        $filereturn = new \stdClass();
+        $filereturn = array();
         $filereturn->link = 'some/fullpath' . 'some/target/path';
         $filereturn->name = 'mysource';
         $filereturn->usesystem = true;

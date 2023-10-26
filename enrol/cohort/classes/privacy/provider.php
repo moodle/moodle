@@ -109,7 +109,7 @@ class provider implements
     /**
      * Delete all use data which matches the specified deletion_criteria.
      *
-     * @param \context $context A user context.
+     * @param context $context A user context.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         if (empty($context)) {

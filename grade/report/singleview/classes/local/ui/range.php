@@ -37,9 +37,6 @@ defined('MOODLE_INTERNAL') || die;
  */
 class range extends attribute_format {
 
-    /** @var grade_item To store the grade item. */
-    private grade_item $item;
-
     /**
      * Constructor
      * @param grade_item $item The grade item

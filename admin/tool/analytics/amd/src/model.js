@@ -20,10 +20,8 @@
  * @copyright  2017 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([
-    'jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_save_cancel',
-    'core/modal_cancel', 'core/modal_events', 'core/templates'],
-    function($, Str, log, Notification, ModalSaveCancel, ModalCancel, ModalEvents, Templates) {
+define(['jquery', 'core/str', 'core/log', 'core/notification', 'core/modal_factory', 'core/modal_events', 'core/templates'],
+    function($, Str, log, Notification, ModalFactory, ModalEvents, Templates) {
 
     /**
      * List of actions that require confirmation and confirmation message.
@@ -95,7 +93,7 @@ define([
                 reqStrings[1].param = getModelName(a);
 
                 var stringsPromise = Str.get_strings(reqStrings);
-                var modalPromise = ModalSaveCancel.create({});
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
 
                 $.when(stringsPromise, modalPromise).then(function(strings, modal) {
                     modal.setTitle(strings[0]);
@@ -124,20 +122,32 @@ define([
 
                 var timeSplittingMethods = $(this).attr('data-timesplitting-methods');
 
-                ModalSaveCancel.create({
-                    title: Str.get_string('evaluatemodel', 'tool_analytics'),
-                    body: Templates.render('tool_analytics/evaluation_options', {
-                        trainedexternally: trainedOnlyExternally,
-                        timesplittingmethods: JSON.parse(timeSplittingMethods)
-                    }),
-                    removeOnClose: true,
-                    buttons: {
-                        save: Str.get_string('evaluate', 'tool_analytics'),
-                    },
-                    show: true,
-                })
-                .then((modal) => {
+                var stringsPromise = Str.get_strings([
+                    {
+                        key: 'evaluatemodel',
+                        component: 'tool_analytics'
+                    }, {
+                        key: 'evaluate',
+                        component: 'tool_analytics'
+                    }
+                ]);
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+                var bodyPromise = Templates.render('tool_analytics/evaluation_options', {
+                    trainedexternally: trainedOnlyExternally,
+                    timesplittingmethods: JSON.parse(timeSplittingMethods)
+                });
+
+                $.when(stringsPromise, modalPromise).then(function(strings, modal) {
+
+
+                    modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
+
+                    modal.setTitle(strings[0]);
+                    modal.setSaveButtonText(strings[1]);
+                    modal.setBody(bodyPromise);
+
                     modal.getRoot().on(ModalEvents.save, function() {
+
                         // Evaluation mode.
                         var evaluationMode = $("input[name='evaluationmode']:checked").val();
                         if (evaluationMode == 'trainedmodel') {
@@ -152,8 +162,9 @@ define([
                         return;
                     });
 
+                    modal.show();
                     return modal;
-                }).catch(Notification.exception);
+                }).fail(Notification.exception);
             });
         },
 
@@ -185,14 +196,16 @@ define([
                         component: 'tool_analytics'
                     }
                 ]);
-                var modalPromise = ModalSaveCancel.create({
-                    body: Templates.render('tool_analytics/export_options', {}),
-                    removeOnClose: true,
-                });
+                var modalPromise = ModalFactory.create({type: ModalFactory.types.SAVE_CANCEL});
+                var bodyPromise = Templates.render('tool_analytics/export_options', {});
 
                 $.when(stringsPromise, modalPromise).then(function(strings, modal) {
+
+                    modal.getRoot().on(ModalEvents.hidden, modal.destroy.bind(modal));
+
                     modal.setTitle(strings[0]);
                     modal.setSaveButtonText(strings[0]);
+                    modal.setBody(bodyPromise);
 
                     modal.getRoot().on(ModalEvents.save, function() {
 

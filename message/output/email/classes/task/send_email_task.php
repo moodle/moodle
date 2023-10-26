@@ -73,7 +73,7 @@ class send_email_task extends scheduled_task {
         // Keep track of which emails failed to send.
         $users = $this->get_unique_users();
         foreach ($users as $user) {
-            \core\cron::setup_user($user);
+            cron_setup_user($user);
 
             $hascontent = false;
             $renderable = new \message_email\output\email_digest($user);
@@ -99,7 +99,7 @@ class send_email_task extends scheduled_task {
                 }
             }
         }
-        \core\cron::setup_user();
+        cron_setup_user();
         $users->close();
     }
 

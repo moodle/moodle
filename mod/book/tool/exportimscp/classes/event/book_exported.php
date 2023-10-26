@@ -64,6 +64,16 @@ class book_exported extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'book', 'exportimscp', 'tool/exportimscp/index.php?id=' . $this->contextinstanceid,
+            $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

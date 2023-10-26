@@ -47,12 +47,6 @@ class data_registry {
      * @return string[]
      */
     public static function var_names_from_context($classname, $pluginname = '') {
-        // Unfortunately authors of privacy API did not expect that we would be
-        // on day fixing auto-loading of context classes.
-        // The best way would have been probably level numbers at the end of vars,
-        // but it is probably too late to fix it.
-        $classname = preg_replace('/^[a-z0-9_]+\\\\context\\\\/', 'context_', $classname);
-
         $pluginname = trim($pluginname ?? '');
         if (!empty($pluginname)) {
             $categoryvar = $classname . '_' . $pluginname . '_category';

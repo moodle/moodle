@@ -73,6 +73,24 @@ class cohort_deleted extends base {
         return new \moodle_url('/cohort/index.php', array('contextid' => $this->contextid));
     }
 
+    /**
+     * Return legacy event name.
+     *
+     * @return null|string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'cohort_deleted';
+    }
+
+    /**
+     * Return legacy event data.
+     *
+     * @return \stdClass
+     */
+    protected function get_legacy_eventdata() {
+        return $this->get_record_snapshot('cohort', $this->objectid);
+    }
+
     public static function get_objectid_mapping() {
         // Cohorts are not included in backups, so no mapping is needed for restore.
         return array('db' => 'cohort', 'restore' => base::NOT_MAPPED);

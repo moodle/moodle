@@ -62,8 +62,7 @@ class qtype_numerical_renderer extends qtype_renderer {
                     $currentanswer, $selectedunit);
             $answer = $question->get_matching_answer($value, $multiplier);
             if ($answer) {
-                $unitisright = $question->is_unit_right($answer, $value, $multiplier);
-                $fraction = $question->apply_unit_penalty($answer->fraction, $unitisright);
+                $fraction = $question->apply_unit_penalty($answer->fraction, $answer->unitisright);
             } else {
                 $fraction = 0;
             }

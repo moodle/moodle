@@ -83,6 +83,48 @@ define('MESSAGE_GET_READ', 1);
 define('MESSAGE_GET_READ_AND_UNREAD', 2);
 
 /**
+ * Returns the count of unread messages for user. Either from a specific user or from all users.
+ *
+ * @deprecated since 3.10
+ * TODO: MDL-69643
+ * @param object $user1 the first user. Defaults to $USER
+ * @param object $user2 the second user. If null this function will count all of user 1's unread messages.
+ * @return int the count of $user1's unread messages
+ */
+function message_count_unread_messages($user1=null, $user2=null) {
+    global $USER, $DB;
+
+    debugging('message_count_unread_messages is deprecated and no longer used',
+        DEBUG_DEVELOPER);
+
+    if (empty($user1)) {
+        $user1 = $USER;
+    }
+
+    $sql = "SELECT COUNT(m.id)
+              FROM {messages} m
+        INNER JOIN {message_conversations} mc
+                ON mc.id = m.conversationid
+        INNER JOIN {message_conversation_members} mcm
+                ON mcm.conversationid = mc.id
+         LEFT JOIN {message_user_actions} mua
+                ON (mua.messageid = m.id AND mua.userid = ? AND (mua.action = ? OR mua.action = ?))
+             WHERE mua.id is NULL
+               AND mcm.userid = ?";
+    $params = [$user1->id, \core_message\api::MESSAGE_ACTION_DELETED, \core_message\api::MESSAGE_ACTION_READ, $user1->id];
+
+    if (!empty($user2)) {
+        $sql .= " AND m.useridfrom = ?";
+        $params[] = $user2->id;
+    } else {
+        $sql .= " AND m.useridfrom <> ?";
+        $params[] = $user1->id;
+    }
+
+    return $DB->count_records_sql($sql, $params);
+}
+
+/**
  * Try to guess how to convert the message to html.
  *
  * @access private

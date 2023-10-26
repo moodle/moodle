@@ -17,7 +17,6 @@ abstract class GammaBase
 
     private const MAX_ITERATIONS = 256;
 
-    /** @return float|string */
     protected static function calculateDistribution(float $value, float $a, float $b, bool $cumulative)
     {
         if ($cumulative) {
@@ -27,7 +26,6 @@ abstract class GammaBase
         return (1 / ($b ** $a * self::gammaValue($a))) * $value ** ($a - 1) * exp(0 - ($value / $b));
     }
 
-    /** @return float|string */
     protected static function calculateInverse(float $probability, float $alpha, float $beta)
     {
         $xLo = 0;
@@ -40,9 +38,6 @@ abstract class GammaBase
         while ((abs($dx) > Functions::PRECISION) && (++$i <= self::MAX_ITERATIONS)) {
             // Apply Newton-Raphson step
             $result = self::calculateDistribution($x, $alpha, $beta, true);
-            if (!is_float($result)) {
-                return ExcelError::NA();
-            }
             $error = $result - $probability;
 
             if ($error == 0.0) {
@@ -55,9 +50,6 @@ abstract class GammaBase
 
             $pdf = self::calculateDistribution($x, $alpha, $beta, false);
             // Avoid division by zero
-            if (!is_float($pdf)) {
-                return ExcelError::NA();
-            }
             if ($pdf !== 0.0) {
                 $dx = $error / $pdf;
                 $xNew = $x - $dx;
@@ -129,6 +121,52 @@ abstract class GammaBase
         return exp(0 - $tmp + log(self::SQRT2PI * $summer / $x));
     }
 
+    /**
+     * logGamma function.
+     *
+     * @version 1.1
+     *
+     * @author Jaco van Kooten
+     *
+     * Original author was Jaco van Kooten. Ported to PHP by Paul Meagher.
+     *
+     * The natural logarithm of the gamma function. <br />
+     * Based on public domain NETLIB (Fortran) code by W. J. Cody and L. Stoltz <br />
+     * Applied Mathematics Division <br />
+     * Argonne National Laboratory <br />
+     * Argonne, IL 60439 <br />
+     * <p>
+     * References:
+     * <ol>
+     * <li>W. J. Cody and K. E. Hillstrom, 'Chebyshev Approximations for the Natural
+     *     Logarithm of the Gamma Function,' Math. Comp. 21, 1967, pp. 198-203.</li>
+     * <li>K. E. Hillstrom, ANL/AMD Program ANLC366S, DGAMMA/DLGAMA, May, 1969.</li>
+     * <li>Hart, Et. Al., Computer Approximations, Wiley and sons, New York, 1968.</li>
+     * </ol>
+     * </p>
+     * <p>
+     * From the original documentation:
+     * </p>
+     * <p>
+     * This routine calculates the LOG(GAMMA) function for a positive real argument X.
+     * Computation is based on an algorithm outlined in references 1 and 2.
+     * The program uses rational functions that theoretically approximate LOG(GAMMA)
+     * to at least 18 significant decimal digits. The approximation for X > 12 is from
+     * reference 3, while approximations for X < 12.0 are similar to those in reference
+     * 1, but are unpublished. The accuracy achieved depends on the arithmetic system,
+     * the compiler, the intrinsic functions, and proper selection of the
+     * machine-dependent constants.
+     * </p>
+     * <p>
+     * Error returns: <br />
+     * The program returns the value XINF for X .LE. 0.0 or when overflow would occur.
+     * The computation is believed to be free of underflow and overflow.
+     * </p>
+     *
+     * @return float MAX_VALUE for x < 0.0 or when overflow would occur, i.e. x > 2.55E305
+     */
+
+    // Log Gamma related constants
     private const  LG_D1 = -0.5772156649015328605195174;
 
     private const LG_D2 = 0.4227843350984671393993777;
@@ -217,56 +255,10 @@ abstract class GammaBase
     private const PNT68 = 0.6796875;
 
     // Function cache for logGamma
-    /** @var float */
     private static $logGammaCacheResult = 0.0;
 
-    /** @var float */
     private static $logGammaCacheX = 0.0;
 
-    /**
-     * logGamma function.
-     *
-     * Original author was Jaco van Kooten. Ported to PHP by Paul Meagher.
-     *
-     * The natural logarithm of the gamma function. <br />
-     * Based on public domain NETLIB (Fortran) code by W. J. Cody and L. Stoltz <br />
-     * Applied Mathematics Division <br />
-     * Argonne National Laboratory <br />
-     * Argonne, IL 60439 <br />
-     * <p>
-     * References:
-     * <ol>
-     * <li>W. J. Cody and K. E. Hillstrom, 'Chebyshev Approximations for the Natural
-     *     Logarithm of the Gamma Function,' Math. Comp. 21, 1967, pp. 198-203.</li>
-     * <li>K. E. Hillstrom, ANL/AMD Program ANLC366S, DGAMMA/DLGAMA, May, 1969.</li>
-     * <li>Hart, Et. Al., Computer Approximations, Wiley and sons, New York, 1968.</li>
-     * </ol>
-     * </p>
-     * <p>
-     * From the original documentation:
-     * </p>
-     * <p>
-     * This routine calculates the LOG(GAMMA) function for a positive real argument X.
-     * Computation is based on an algorithm outlined in references 1 and 2.
-     * The program uses rational functions that theoretically approximate LOG(GAMMA)
-     * to at least 18 significant decimal digits. The approximation for X > 12 is from
-     * reference 3, while approximations for X < 12.0 are similar to those in reference
-     * 1, but are unpublished. The accuracy achieved depends on the arithmetic system,
-     * the compiler, the intrinsic functions, and proper selection of the
-     * machine-dependent constants.
-     * </p>
-     * <p>
-     * Error returns: <br />
-     * The program returns the value XINF for X .LE. 0.0 or when overflow would occur.
-     * The computation is believed to be free of underflow and overflow.
-     * </p>
-     *
-     * @version 1.1
-     *
-     * @author Jaco van Kooten
-     *
-     * @return float MAX_VALUE for x < 0.0 or when overflow would occur, i.e. x > 2.55E305
-     */
     public static function logGamma(float $x): float
     {
         if ($x == self::$logGammaCacheX) {
@@ -302,7 +294,7 @@ abstract class GammaBase
         return $res;
     }
 
-    private static function logGamma1(float $y): float
+    private static function logGamma1(float $y)
     {
         // ---------------------
         //    EPS .LT. X .LE. 1.5
@@ -335,7 +327,7 @@ abstract class GammaBase
         return $corr + $xm2 * (self::LG_D2 + $xm2 * ($xnum / $xden));
     }
 
-    private static function logGamma2(float $y): float
+    private static function logGamma2(float $y)
     {
         // ---------------------
         //    1.5 .LT. X .LE. 4.0
@@ -351,7 +343,7 @@ abstract class GammaBase
         return $xm2 * (self::LG_D2 + $xm2 * ($xnum / $xden));
     }
 
-    protected static function logGamma3(float $y): float
+    protected static function logGamma3(float $y)
     {
         // ----------------------
         //    4.0 .LT. X .LE. 12.0
@@ -367,7 +359,7 @@ abstract class GammaBase
         return self::LG_D4 + $xm4 * ($xnum / $xden);
     }
 
-    protected static function logGamma4(float $y): float
+    protected static function logGamma4(float $y)
     {
         // ---------------------------------
         //    Evaluate for argument .GE. 12.0

@@ -26,10 +26,11 @@
 
 namespace mod_workshop\external;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
-use mod_workshop_external;
 use workshop;
+use mod_workshop_external;
+use mod_workshop\external\workshop_summary_exporter;
+use mod_workshop\external\submission_exporter;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -65,14 +66,6 @@ class external_test extends externallib_advanced_testcase {
     private $studentrole;
     /** @var stdClass teacher role object */
     private $teacherrole;
-    /** @var \stdClass student object. */
-    private $anotherstudentg1;
-    /** @var \stdClass student object. */
-    private $anotherstudentg2;
-    /** @var \stdClass group object. */
-    private $group1;
-    /** @var \stdClass group object. */
-    private $group2;
 
     /**
      * Set up for every test
@@ -204,14 +197,14 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_workshop_external::get_workshops_by_courses(array($course2->id, $this->course->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedworkshops, $result['workshops']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_workshop_external::get_workshops_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedworkshops, $result['workshops']);
         $this->assertCount(0, $result['warnings']);
 
@@ -221,7 +214,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_workshop_external::get_workshops_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedworkshops, $result['workshops']);
 
         // Call for the second course we unenrolled the user from, expected warning.
@@ -238,7 +231,7 @@ class external_test extends externallib_advanced_testcase {
 
         self::setUser($this->student);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
         // Check default values for capabilities.
         $enabledcaps = array('canpeerassess', 'cansubmit', 'canview', 'canviewauthornames', 'canviewauthorpublished',
             'canviewpublishedsubmissions', 'canexportsubmissions');
@@ -261,7 +254,7 @@ class external_test extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
         foreach ($result as $capname => $capvalue) {
             if (strpos($capname, 'can') !== 0) {
                 continue;
@@ -285,7 +278,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
 
         $this->assertTrue($result['creatingsubmissionallowed']);
         $this->assertTrue($result['modifyingsubmissionallowed']);
@@ -297,7 +290,7 @@ class external_test extends externallib_advanced_testcase {
         // Switch to next (to assessment).
         $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
 
         $this->assertFalse($result['creatingsubmissionallowed']);
         $this->assertFalse($result['modifyingsubmissionallowed']);
@@ -314,7 +307,7 @@ class external_test extends externallib_advanced_testcase {
 
         self::setUser($this->teacher);
         $result = mod_workshop_external::get_workshop_access_information($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_workshop_access_information_returns(), $result);
         // Check default values.
         $disabledcaps = array('canpeerassess', 'cansubmit');
 
@@ -343,7 +336,7 @@ class external_test extends externallib_advanced_testcase {
 
         self::setUser($this->student);
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
 
         $this->assertCount(0, $result['userplan']['examples']);  // No examples given.
         $this->assertCount(5, $result['userplan']['phases']);  // Always 5 phases.
@@ -355,7 +348,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
 
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
 
         $this->assertEquals(workshop::PHASE_SUBMISSION, $result['userplan']['phases'][1]['code']);
         $this->assertTrue($result['userplan']['phases'][1]['active']); // We are now in submission phase.
@@ -368,7 +361,7 @@ class external_test extends externallib_advanced_testcase {
 
         self::setUser($this->teacher);
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
 
         $this->assertCount(0, $result['userplan']['examples']);  // No examples given.
         $this->assertCount(5, $result['userplan']['phases']);  // Always 5 phases.
@@ -389,7 +382,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
 
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
         foreach ($result['userplan']['phases'][0]['tasks'] as $task) {
             if ($task['code'] == 'intro' || $task['code'] == 'instructauthors' || $task['code'] == 'editform' ||
                     $task['code'] == 'switchtonextphase') {
@@ -400,7 +393,7 @@ class external_test extends externallib_advanced_testcase {
         }
 
         $result = mod_workshop_external::get_user_plan($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_user_plan_returns(), $result);
 
         $this->assertEquals(workshop::PHASE_SUBMISSION, $result['userplan']['phases'][1]['code']);
         $this->assertTrue($result['userplan']['phases'][1]['active']); // We are now in submission phase.
@@ -436,7 +429,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_workshop_external::view_workshop($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::view_workshop_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::view_workshop_returns(), $result);
         $this->assertTrue($result['status']);
 
         $events = $sink->get_events();
@@ -508,7 +501,7 @@ class external_test extends externallib_advanced_testcase {
 
         $result = mod_workshop_external::add_submission($this->workshop->id, $title, $content, FORMAT_MOODLE, $draftidinlineattach,
             $draftidattach);
-        $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
         $this->assertEmpty($result['warnings']);
 
         // Check submission created.
@@ -588,11 +581,11 @@ class external_test extends externallib_advanced_testcase {
 
         // Create the submission.
         $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission', '', FORMAT_MOODLE, 0, $draftidattach);
-        $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
 
         // Try to create it again.
         $result = mod_workshop_external::add_submission($this->workshop->id, 'My submission', '', FORMAT_MOODLE, 0, $draftidattach);
-        $result = external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::add_submission_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertArrayNotHasKey('submissionid', $result);
         $this->assertCount(1, $result['warnings']);
@@ -684,7 +677,7 @@ class external_test extends externallib_advanced_testcase {
 
         $result = mod_workshop_external::update_submission($submissionid, $title, $content, FORMAT_MOODLE, $draftidinlineattach,
             $draftidattach);
-        $result = external_api::clean_returnvalue(mod_workshop_external::update_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::update_submission_returns(), $result);
         $this->assertEmpty($result['warnings']);
 
         // Check submission updated.
@@ -772,7 +765,7 @@ class external_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_workshop_external::delete_submission($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertTrue($result['status']);
         $workshop = new workshop($this->workshop, $this->cm, $this->course);
@@ -834,7 +827,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::delete_submission($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::delete_submission_returns(), $result);
         $this->assertEmpty($result['warnings']);
         $this->assertTrue($result['status']);
     }
@@ -865,7 +858,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submissions($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         // We should get just our submission.
         $this->assertCount(1, $result['submissions']);
         $this->assertEquals(1, $result['totalcount']);
@@ -898,7 +891,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submissions($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         // We should get just our submission.
         $this->assertCount(1, $result['submissions']);
         $this->assertEquals(1, $result['totalcount']);
@@ -907,7 +900,7 @@ class external_test extends externallib_advanced_testcase {
         // Check with group restrictions.
         $this->setUser($this->anotherstudentg2);
         $result = mod_workshop_external::get_submissions($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         $this->assertCount(0, $result['submissions']);  // I can't see other users in separated groups.
         $this->assertEquals(0, $result['totalcount']);
     }
@@ -939,7 +932,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_submissions($this->workshop->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         // We should get just our submission.
         $this->assertEquals(1, $result['totalcount']);
         $this->assertEquals($submissionid, $result['submissions'][0]['id']);
@@ -958,23 +951,23 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_submissions($this->workshop->id); // Get all.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         $this->assertEquals(3, $result['totalcount']);
         $this->assertCount(3, $result['submissions']);
 
         $result = mod_workshop_external::get_submissions($this->workshop->id, 0, 0, 0, 2); // Check pagination.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         $this->assertEquals(3, $result['totalcount']);
         $this->assertCount(2, $result['submissions']);
 
         $result = mod_workshop_external::get_submissions($this->workshop->id, 0, $this->group2->id); // Get group 2.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         $this->assertEquals(1, $result['totalcount']);
         $this->assertCount(1, $result['submissions']);
         $this->assertEquals($submissionid3, $result['submissions'][0]['id']);
 
         $result = mod_workshop_external::get_submissions($this->workshop->id, $this->anotherstudentg1->id); // Get one.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submissions_returns(), $result);
         $this->assertEquals(1, $result['totalcount']);
         $this->assertEquals($submissionid2, $result['submissions'][0]['id']);
     }
@@ -991,7 +984,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submission($firstsubmissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($firstsubmissionid, $result['submission']['id']);
         $this->assertCount(1, $result['submission']['contentfiles']); // Check we retrieve submission text files.
         $this->assertCount(1, $result['submission']['attachmentfiles']); // Check we retrieve attachment files.
@@ -1004,7 +997,7 @@ class external_test extends externallib_advanced_testcase {
         // Switch to a different phase (where feedback won't be available).
         $workshop->switch_phase(workshop::PHASE_EVALUATION);
         $result = mod_workshop_external::get_submission($firstsubmissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($firstsubmissionid, $result['submission']['id']);
         $this->assertCount(1, $result['submission']['contentfiles']); // Check we retrieve submission text files.
         $this->assertCount(1, $result['submission']['attachmentfiles']); // Check we retrieve attachment files.
@@ -1030,7 +1023,7 @@ class external_test extends externallib_advanced_testcase {
         // Now try to get the submission I just reviewed.
         $this->setUser($this->anotherstudentg1);
         $result = mod_workshop_external::get_submission($firstsubmissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($firstsubmissionid, $result['submission']['id']);
         $this->assertCount(1, $result['submission']['contentfiles']); // Check we retrieve submission text files.
         $this->assertCount(1, $result['submission']['attachmentfiles']); // Check we retrieve attachment files.
@@ -1068,7 +1061,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submission($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($submissionid, $result['submission']['id']);
         // Check that the student don't see the other student grade/feedback data even if is published.
         // We should not see the grade or feedback information.
@@ -1109,7 +1102,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_submission($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($submissionid, $result['submission']['id']);
         $this->assertEquals($record->feedbackauthor, $result['submission']['feedbackauthor']);
         $this->assertEquals($record->gradeover, $result['submission']['gradeover']);
@@ -1119,7 +1112,7 @@ class external_test extends externallib_advanced_testcase {
         // Go to phase where feedback and grades are not yet available.
         $workshop->switch_phase(workshop::PHASE_SUBMISSION);
         $result = mod_workshop_external::get_submission($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertArrayNotHasKey('feedbackauthor', $result['submission']);
         $this->assertArrayNotHasKey('grade', $result['submission']);
         $this->assertArrayNotHasKey('gradeover', $result['submission']);
@@ -1148,11 +1141,11 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_submission($submissionid1); // Get all.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($submissionid1, $result['submission']['id']);
 
         $result = mod_workshop_external::get_submission($submissionid3); // Get group 2.
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_returns(), $result);
         $this->assertEquals($submissionid3, $result['submission']['id']);
     }
 
@@ -1179,7 +1172,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->student);
         $result = mod_workshop_external::get_submission_assessments($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
         $this->assertCount(2, $result['assessments']);  // I received my two assessments.
         foreach ($result['assessments'] as $assessment) {
             if ($assessment['grade'] == 90) {
@@ -1226,7 +1219,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_submission_assessments($submissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_submission_assessments_returns(), $result);
         $this->assertCount(1, $result['assessments']);
         $this->assertEquals(50, $result['assessments'][0]['grade']);
         $this->assertEquals($assessmentid, $result['assessments'][0]['id']);
@@ -1251,7 +1244,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->anotherstudentg1);
         $result = mod_workshop_external::get_assessment($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
         $this->assertEquals($assessmentid, $result['assessment']['id']);
         $this->assertEquals(90, $result['assessment']['grade']);
         // I can't see the reviewer review.
@@ -1277,7 +1270,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->student);
         $result = mod_workshop_external::get_assessment($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
         $this->assertEquals($assessmentid, $result['assessment']['id']);
         $this->assertEquals(90, $result['assessment']['grade']);
         // I can see the reviewer review.
@@ -1303,7 +1296,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_assessment($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
         $this->assertEquals($assessmentid, $result['assessment']['id']);
         $this->assertEquals(90, $result['assessment']['grade']);
     }
@@ -1368,7 +1361,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_ASSESSMENT);
         $this->setUser($this->student);
         $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
         $this->assertEquals(4, $result['dimenssionscount']);    // We receive the expected 4 dimensions.
         $this->assertEmpty($result['current']); // Assessment not yet done.
         foreach ($result['fields'] as $field) {
@@ -1402,7 +1395,7 @@ class external_test extends externallib_advanced_testcase {
         // Teachers need to be able to view assessments.
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
         $this->assertEquals(4, $result['dimenssionscount']);
     }
 
@@ -1450,7 +1443,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
         // Get my assessments.
         $result = mod_workshop_external::get_reviewer_assessments($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
         $this->assertCount(2, $result['assessments']);
         foreach ($result['assessments'] as $assessment) {
             if ($assessment['id'] == $assessmentid1) {
@@ -1463,7 +1456,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, as teacher try to get the same student assessments.
         $result = mod_workshop_external::get_reviewer_assessments($this->workshop->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_reviewer_assessments_returns(), $result);
         $this->assertCount(2, $result['assessments']);
         $this->assertArrayNotHasKey('feedbackreviewer', $result['assessments'][0]);
     }
@@ -1511,7 +1504,7 @@ class external_test extends externallib_advanced_testcase {
         $this->setUser($this->student);
         // Get the form definition.
         $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
 
         // Prepare the data to be sent.
         $data = $result['fields'];
@@ -1573,13 +1566,13 @@ class external_test extends externallib_advanced_testcase {
 
         // Update the assessment.
         $result = mod_workshop_external::update_assessment($assessmentid, $data);
-        $result = external_api::clean_returnvalue(mod_workshop_external::update_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::update_assessment_returns(), $result);
         $this->assertEquals(100, $result['rawgrade']);
         $this->assertTrue($result['status']);
 
         // Get the assessment and check it was updated properly.
         $result = mod_workshop_external::get_assessment($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
         $this->assertEquals(100, $result['assessment']['grade']);
         $this->assertEquals($this->student->id, $result['assessment']['reviewerid']);
         $this->assertEquals('Feedback for the author', $result['assessment']['feedbackauthor']);
@@ -1588,7 +1581,7 @@ class external_test extends externallib_advanced_testcase {
 
         // Now, get again the form and check we received the data we already sent.
         $result = mod_workshop_external::get_assessment_form_definition($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_form_definition_returns(), $result);
         foreach ($result['current'] as $currentdata) {
             if (strpos($currentdata['name'], 'peercomment__idx_') === 0) {
                 $this->assertEquals('Some content', $currentdata['value']);
@@ -1626,7 +1619,7 @@ class external_test extends externallib_advanced_testcase {
         // First retrieve my grades.
         $this->setUser($this->student);
         $result = mod_workshop_external::get_grades($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($assessmentgrade['rawgrade'], $result['assessmentrawgrade']);
         $this->assertEquals($submissiongrade['rawgrade'], $result['submissionrawgrade']);
@@ -1638,7 +1631,7 @@ class external_test extends externallib_advanced_testcase {
         // Second, teacher retrieve user grades.
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_grades($this->workshop->id, $this->student->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_grades_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($assessmentgrade['rawgrade'], $result['assessmentrawgrade']);
         $this->assertEquals($submissiongrade['rawgrade'], $result['submissionrawgrade']);
@@ -1683,7 +1676,7 @@ class external_test extends externallib_advanced_testcase {
         $gradinggradeover = 10;
         $result = mod_workshop_external::evaluate_assessment($assessmentid, $feedbacktext, $feedbackformat, $weight,
             $gradinggradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
         $this->assertTrue($result['status']);
 
         $assessment = $DB->get_record('workshop_assessments', array('id' => $assessmentid));
@@ -1695,7 +1688,7 @@ class external_test extends externallib_advanced_testcase {
         $gradinggradeover = 100;
         $result = mod_workshop_external::evaluate_assessment($assessmentid, $feedbacktext, $feedbackformat, $weight,
             $gradinggradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
         $this->assertFalse($result['status']);
         $this->assertCount(2, $result['warnings']);
         $found = 0;
@@ -1729,11 +1722,11 @@ class external_test extends externallib_advanced_testcase {
         $gradinggradeover = 19;
         $result = mod_workshop_external::evaluate_assessment($assessmentid, $feedbacktext, $feedbackformat, $weight,
             $gradinggradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_assessment_returns(), $result);
         $this->assertTrue($result['status']);
 
         $result = mod_workshop_external::get_assessment($assessmentid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_assessment_returns(), $result);
         $this->assertNotEquals(10, $result['assessment']['weight']);
     }
 
@@ -1779,7 +1772,7 @@ class external_test extends externallib_advanced_testcase {
         $workshop->switch_phase(workshop::PHASE_CLOSED);
         $this->setUser($this->teacher);
         $result = mod_workshop_external::get_grades_report($this->workshop->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
         $this->assertEquals(3, $result['report']['totalcount']); // Expect 3 potential submissions.
 
         foreach ($result['report']['grades'] as $grade) {
@@ -1797,13 +1790,13 @@ class external_test extends externallib_advanced_testcase {
         }
         // Now check pagination.
         $result = mod_workshop_external::get_grades_report($this->workshop->id, 0, 'lastname', 'ASC', 0, 1);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
         $this->assertEquals(3, $result['report']['totalcount']); // Expect the total count.
         $this->assertCount(1, $result['report']['grades']);
 
         // Groups filtering.
         $result = mod_workshop_external::get_grades_report($this->workshop->id, $this->group1->id);
-        $result = external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::get_grades_report_returns(), $result);
         $this->assertEquals(2, $result['report']['totalcount']); // Expect the group count.
     }
 
@@ -1839,7 +1832,7 @@ class external_test extends externallib_advanced_testcase {
 
         $this->setUser($this->student);
         $result = mod_workshop_external::view_submission($firstsubmissionid);
-        $result = external_api::clean_returnvalue(mod_workshop_external::view_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::view_submission_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -1875,7 +1868,7 @@ class external_test extends externallib_advanced_testcase {
         $gradeover = 10;
         $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published,
             $gradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
         $this->assertTrue($result['status']);
 
         $submission = $DB->get_record('workshop_submissions', array('id' => $submissionid));
@@ -1900,7 +1893,7 @@ class external_test extends externallib_advanced_testcase {
         $gradeover = 10;
         $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published,
             $gradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
         $this->assertTrue($result['status']);
 
         $submission = $DB->get_record('workshop_submissions', array('id' => $submissionid));
@@ -1944,7 +1937,7 @@ class external_test extends externallib_advanced_testcase {
         $published = 1;
         $gradeover = 150;
         $result = mod_workshop_external::evaluate_submission($submissionid, $feedbacktext, $feedbackformat, $published, $gradeover);
-        $result = external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_workshop_external::evaluate_submission_returns(), $result);
         $this->assertCount(1, $result['warnings']);
         $this->assertFalse($result['status']);
         $this->assertEquals('gradeover', $result['warnings'][0]['item']);

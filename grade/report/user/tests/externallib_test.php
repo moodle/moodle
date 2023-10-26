@@ -16,7 +16,6 @@
 
 namespace gradereport_user;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use gradereport_user\external\user as user_external;
 
@@ -102,7 +101,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($teacher);
 
         $studentgrades = user_external::get_grades_table($course->id);
-        $studentgrades = external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrades);
+        $studentgrades = \external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrades);
 
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
@@ -135,7 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
         // A user can see his own grades.
         $this->setUser($student1);
         $studentgrade = user_external::get_grades_table($course->id, $student1->id);
-        $studentgrade = external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrade);
+        $studentgrade = \external_api::clean_returnvalue(user_external::get_grades_table_returns(), $studentgrade);
 
         // No warnings returned.
         $this->assertTrue(count($studentgrade['warnings']) == 0);
@@ -186,7 +185,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($student1);
         $result = user_external::view_grade_report($course->id);
-        $result = external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
+        $result = \external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $this->assertCount(1, $events);
         $event = reset($events);
@@ -198,7 +197,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($teacher);
         $result = user_external::view_grade_report($course->id, $student1->id);
-        $result = external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
+        $result = \external_api::clean_returnvalue(user_external::view_grade_report_returns(), $result);
         $events = $sink->get_events();
         $event = reset($events);
         $sink->close();
@@ -243,7 +242,7 @@ class externallib_test extends externallib_advanced_testcase {
         grade_set_setting($course->id, 'report_user_showaverage', 1);
 
         $studentgrades = user_external::get_grade_items($course->id);
-        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = \external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -307,7 +306,7 @@ class externallib_test extends externallib_advanced_testcase {
         $gradegrade->set_locked(1);
 
         $studentgrades = user_external::get_grade_items($course->id);
-        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = \external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -340,7 +339,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student1);
 
         $studentgrades = user_external::get_grade_items($course->id, $student1->id);
-        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = \external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
         // No warnings returned.
         $this->assertCount(0, $studentgrades['warnings']);
 
@@ -388,7 +387,7 @@ class externallib_test extends externallib_advanced_testcase {
         ], true);
         $gradegrade->set_hidden(1);
         $studentgrades = user_external::get_grade_items($course->id, $student1->id);
-        $studentgrades = external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
+        $studentgrades = \external_api::clean_returnvalue(user_external::get_grade_items_returns(), $studentgrades);
 
         // Check we get only the course final grade.
         $this->assertCount(1, $studentgrades['usergrades']);

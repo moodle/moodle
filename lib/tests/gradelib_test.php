@@ -302,48 +302,4 @@ class gradelib_test extends \advanced_testcase {
 
         $this->assertEquals($expected, $actual);
     }
-
-    /**
-     * When getting a calculated grade containing an error, we mark grading finished and don't keep trying to regrade.
-     *
-     * @covers \grade_get_grades()
-     * @return void
-     */
-    public function test_grade_get_grades_errors() {
-        $this->resetAfterTest();
-
-        // Setup some basics.
-        $course = $this->getDataGenerator()->create_course();
-        $user1 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user1->id, $course->id, 'student');
-        $user2 = $this->getDataGenerator()->create_user();
-        $this->getDataGenerator()->enrol_user($user2->id, $course->id, 'editingteacher');
-        // Set up 2 gradeable activities.
-        $assign = $this->getDataGenerator()->create_module('assign', ['idnumber' => 'a1', 'course' => $course->id]);
-        $quiz = $this->getDataGenerator()->create_module('quiz', ['idnumber' => 'q1', 'course' => $course->id]);
-
-        // Create a calculated grade item using the activities.
-        $params = ['courseid' => $course->id];
-        $g1 = new \grade_item($this->getDataGenerator()->create_grade_item($params));
-        $g1->set_calculation('=[[a1]] + [[q1]]');
-
-        // Now delete one of the activities to break the calculation.
-        course_delete_module($assign->cmid);
-
-        // Course grade item has needsupdate.
-        $this->assertEquals(1, \grade_item::fetch_course_item($course->id)->needsupdate);
-
-        // Get grades for the quiz, to trigger a regrade.
-        $this->setUser($user2);
-        $grades1 = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id);
-        // We should get an error for the broken calculation.
-        $this->assertNotEmpty($grades1->errors);
-        $this->assertEquals(get_string('errorcalculationbroken', 'grades', $g1->itemname), reset($grades1->errors));
-        // Course grade item should not have needsupdate so that we don't try to regrade again.
-        $this->assertEquals(0, \grade_item::fetch_course_item($course->id)->needsupdate);
-
-        // Get grades for the quiz again. This should not trigger the regrade and resulting error this time.
-        $grades2 = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id);
-        $this->assertEmpty($grades2->errors);
-    }
 }

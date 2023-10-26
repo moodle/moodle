@@ -42,6 +42,8 @@ class lib_test extends \advanced_testcase {
         $allstores = \core_component::get_plugin_list_with_class('logstore', 'log\store');
 
         $supportedstores = array(
+            'logstore_database' => '\logstore_legacy\log\database',
+            'logstore_legacy' => '\logstore_legacy\log\store',
             'logstore_standard' => '\logstore_standard\log\store'
         );
 

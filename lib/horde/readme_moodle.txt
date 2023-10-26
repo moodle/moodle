@@ -40,11 +40,3 @@ do
     cp -Rf $locale/* $target/locale
   fi
 done
-
-Local modifications:
-- lib/Horde/Imap/Client/Exception/ServerResponse.php has been minimally modified for php80 compatibility
-  The fix applied is already upstream, see https://github.com/horde/Imap_Client/pull/13 and it's available
-  in Imap_Client 2.30.4 and up. See MDL-73405 for more details.
-
-Notes:
-* 2023-01-30 Applied patch https://github.com/horde/Util/pull/11. See MDL-76412 for more details.

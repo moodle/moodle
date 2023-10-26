@@ -393,10 +393,10 @@ class provider_test extends provider_testcase {
      * Get the block manager.
      *
      * @param array $regions The regions.
-     * @param \context $context The context.
+     * @param context $context The context.
      * @param string $pagetype The page type.
      * @param string $subpage The sub page.
-     * @return \block_manager
+     * @return block_manager
      */
     protected function get_block_manager($regions, $context, $pagetype = 'page-type', $subpage = '') {
         $page = new \moodle_page();
@@ -415,7 +415,7 @@ class provider_test extends provider_testcase {
     /**
      * Set a docked preference.
      *
-     * @param \block_base $block The block.
+     * @param block_base $block The block.
      * @param bool $value The value.
      * @param int $userid The user ID.
      */
@@ -426,7 +426,7 @@ class provider_test extends provider_testcase {
     /**
      * Set a hidden preference.
      *
-     * @param \block_base $block The block.
+     * @param block_base $block The block.
      * @param bool $value The value.
      * @param int $userid The user ID.
      */

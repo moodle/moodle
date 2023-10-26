@@ -14,10 +14,20 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
+
+/**
+ * external API for mobile web services
+ *
+ * @package    core_webservice
+ * @category   external
+ * @copyright  2011 Jerome Mouneyrac <jerome@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
+
 /**
  * Web service related functions
  *
@@ -27,7 +37,7 @@ use core_external\external_value;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since Moodle 2.2
  */
-class core_webservice_external extends \core_external\external_api {
+class core_webservice_external extends external_api {
 
     /**
      * Returns description of method parameters
@@ -75,7 +85,7 @@ class core_webservice_external extends \core_external\external_api {
 
         // Site information.
         $siteinfo =  array(
-            'sitename' => \core_external\util::format_string($SITE->fullname, $systemcontext),
+            'sitename' => external_format_string($SITE->fullname, $systemcontext),
             'siteurl' => $CFG->wwwroot,
             'username' => $USER->username,
             'firstname' => $USER->firstname,
@@ -142,8 +152,9 @@ class core_webservice_external extends \core_external\external_api {
                         $version = $componentversions[$function->component];
                     }
                 } else {
-                    // Ignore this component or plugin, it was probably incorrectly uninstalled.
-                    continue;
+                    // Function component should always have a version.php,
+                    // otherwise the function should have been described with component => 'moodle'.
+                    throw new moodle_exception('missingversionfile', 'webservice', '', $function->component);
                 }
             }
             $functioninfo['version'] = $version;
@@ -156,9 +167,8 @@ class core_webservice_external extends \core_external\external_api {
         $siteinfo['mobilecssurl'] = !empty($CFG->mobilecssurl) ? $CFG->mobilecssurl : '';
 
         // Retrieve some advanced features. Only enable/disable ones (bool).
-        $advancedfeatures = ["usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
-            "enablecompletion", "enablebadges", "messagingallusers", "enablecustomreports", "enableglobalsearch"];
-
+        $advancedfeatures = array("usecomments", "usetags", "enablenotes", "messaging", "enableblogs",
+                                    "enablecompletion", "enablebadges", "messagingallusers", "enablecustomreports");
         foreach ($advancedfeatures as $feature) {
             if (isset($CFG->{$feature})) {
                 $siteinfo['advancedfeatures'][] = array(

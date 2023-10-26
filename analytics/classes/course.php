@@ -126,9 +126,6 @@ class course implements \core_analytics\analysable {
      */
     protected $ntotallogs = null;
 
-    /** @var int Store current Unix timestamp. */
-    protected int $now = 0;
-
     /**
      * Course manager constructor.
      *

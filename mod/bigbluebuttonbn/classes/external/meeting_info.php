@@ -16,15 +16,19 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\restricted_context_exception;
+use external_api;
+use external_function_parameters;
+use external_single_structure;
+use external_value;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 use mod_bigbluebuttonbn\meeting;
+use restricted_context_exception;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to fetch meeting information.
@@ -128,7 +132,7 @@ class meeting_info extends external_api {
                 'participantplural' => new external_value(PARAM_BOOL, 'Several participants ?', VALUE_OPTIONAL),
                 'canjoin' => new external_value(PARAM_BOOL, 'Can join'),
                 'ismoderator' => new external_value(PARAM_BOOL, 'Is moderator'),
-                'presentations' => new external_multiple_structure(
+                'presentations' => new \external_multiple_structure(
                     new external_single_structure([
                         'url' => new external_value(PARAM_URL, 'presentation URL'),
                         'iconname' => new external_value(PARAM_RAW, 'icon name'),
@@ -140,7 +144,7 @@ class meeting_info extends external_api {
                 'guestaccessenabled' => new external_value(PARAM_BOOL, 'Guest access enabled', VALUE_OPTIONAL),
                 'guestjoinurl' => new external_value(PARAM_URL, 'Guest URL', VALUE_OPTIONAL),
                 'guestpassword' => new external_value(PARAM_RAW, 'Guest join password', VALUE_OPTIONAL),
-                'features' => new external_multiple_structure(
+                'features' => new \external_multiple_structure(
                     new external_single_structure([
                         'name' => new external_value(PARAM_ALPHA, 'Feature name.'),
                         'isenabled' => new external_value(PARAM_BOOL, 'Whether the feature is enabled.'),

@@ -1,6 +1,6 @@
 This files describes API changes for the core question engine.
 
-=== 4.2 ===
+=== 4.1.2 ===
 
 * A `$questionidentifier` property has been added to `\question_display_options` to enable question type plugins to associate the
 question number to the question that is being rendered. This can be used to improve the accessibility of rendered

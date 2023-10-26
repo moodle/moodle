@@ -107,9 +107,7 @@ class custom_report_conditions_exporter extends exporter {
 
         // Populate available conditions.
         foreach ($report->get_conditions() as $condition) {
-
-            // Conditions can only be added once per report, skip if it already exists.
-            if (in_array($condition->get_unique_identifier(), $conditionidentifiers) || $condition->get_is_deprecated()) {
+            if (in_array($condition->get_unique_identifier(), $conditionidentifiers)) {
                 continue;
             }
 

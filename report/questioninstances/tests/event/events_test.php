@@ -56,6 +56,8 @@ class events_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\report_questioninstances\event\report_viewed', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
+        $expected = array(SITEID, "admin", "report questioninstances", "report/questioninstances/index.php?qtype=$requestedqtype", $requestedqtype);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
         $url = new \moodle_url('/report/questioninstances/index.php', array('qtype' => $requestedqtype));
         $this->assertEquals($url, $event->get_url());

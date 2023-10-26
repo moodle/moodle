@@ -103,7 +103,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $approvedcontextlist = new approved_contextlist($user1, 'enrol_meta', $contextlist->get_contextids());
         provider::export_user_data($approvedcontextlist);
         foreach ($contextlist as $context) {
-            /** @var \core_privacy\tests\request\content_writer $writer */
             $writer = writer::with_context($context);
             $data = $writer->get_data([
                 get_string('pluginname', 'enrol_meta'),

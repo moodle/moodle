@@ -96,7 +96,6 @@
         aria-haspopup="listbox"
         aria-expanded="false"
         aria-controls="{{baseid}}-listbox"
-        data-input-element="{{baseid}}-input"
         tabindex="0"
     >
         {{selectedoption}}
@@ -122,7 +121,7 @@
             {{/isgroup}}
         {{/options}}
     </ul>
-    <input type="hidden" name="{{name}}" value="{{value}}" id="{{baseid}}-input">
+    <input type="hidden" name="{{name}}" value="{{value}}" />
 </div>
 {{#js}}
     var label = document.getElementById('{{baseid}}-label');

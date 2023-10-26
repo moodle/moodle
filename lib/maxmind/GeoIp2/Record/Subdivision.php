@@ -32,8 +32,6 @@ class Subdivision extends AbstractPlaceRecord
 {
     /**
      * @ignore
-     *
-     * @var array<string>
      */
     protected $validAttributes = [
         'confidence',

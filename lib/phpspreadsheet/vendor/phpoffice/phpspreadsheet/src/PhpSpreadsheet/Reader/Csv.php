@@ -294,9 +294,8 @@ class Csv extends BaseReader
         if ($this->inputEncoding !== 'UTF-8') {
             fclose($this->fileHandle);
             $entireFile = file_get_contents($filename);
-            $fileHandle = fopen('php://memory', 'r+b');
-            if ($fileHandle !== false && $entireFile !== false) {
-                $this->fileHandle = $fileHandle;
+            $this->fileHandle = fopen('php://memory', 'r+b');
+            if ($this->fileHandle !== false && $entireFile !== false) {
                 $data = StringHelper::convertEncoding($entireFile, 'UTF-8', $this->inputEncoding);
                 fwrite($this->fileHandle, $data);
                 $this->skipBOM();
@@ -556,7 +555,7 @@ class Csv extends BaseReader
         fclose($this->fileHandle);
 
         // Trust file extension if any
-        $extension = strtolower(/** @scrutinizer ignore-type */ pathinfo($filename, PATHINFO_EXTENSION));
+        $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
         if (in_array($extension, ['csv', 'tsv'])) {
             return true;
         }

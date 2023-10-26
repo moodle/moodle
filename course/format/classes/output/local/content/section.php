@@ -79,8 +79,6 @@ class section implements named_templatable, renderable {
     /** @var bool if the section is considered stealth */
     protected $isstealth = false;
 
-    /** @var string control menu class. */
-    protected $controlmenuclass;
 
     /**
      * Constructor.
@@ -320,7 +318,14 @@ class section implements named_templatable, renderable {
             $data->collapsemenu = true;
         }
 
-        $data->contentcollapsed = $this->is_section_collapsed();
+        $data->contentcollapsed = false;
+        $preferences = $format->get_sections_preferences();
+        if (isset($preferences[$section->id])) {
+            $sectionpreferences = $preferences[$section->id];
+            if (!empty($sectionpreferences->contentcollapsed)) {
+                $data->contentcollapsed = true;
+            }
+        }
 
         if ($format->is_section_current($section)) {
             $data->iscurrent = true;
@@ -329,31 +334,5 @@ class section implements named_templatable, renderable {
             );
         }
         return true;
-    }
-
-    /**
-     * Returns true if the current section should be shown collapsed.
-     *
-     * @return bool
-     */
-    protected function is_section_collapsed(): bool {
-        global $PAGE;
-
-        $contentcollapsed = false;
-        $preferences = $this->format->get_sections_preferences();
-        if (isset($preferences[$this->section->id])) {
-            $sectionpreferences = $preferences[$this->section->id];
-            if (!empty($sectionpreferences->contentcollapsed)) {
-                $contentcollapsed = true;
-            }
-        }
-
-        // No matter if the user's preference was to collapse the section or not: If the
-        // 'expandsection' parameter has been specified, it will be shown uncollapsed.
-        $expandsection = $PAGE->url->get_param('expandsection');
-        if ($expandsection !== null && $this->section->section == $expandsection) {
-            $contentcollapsed = false;
-        }
-        return $contentcollapsed;
     }
 }

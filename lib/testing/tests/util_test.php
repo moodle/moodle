@@ -38,6 +38,11 @@ class util_test extends \advanced_testcase {
             case 'mssql':
                 $this->markTestSkipped('MSSQL does not support sequences');
                 return;
+            case 'mysql':
+                $version = $DB->get_server_info();
+                if (version_compare($version['version'], '5.7.4', '<')) {
+                    return;
+                }
         }
 
         $this->resetAfterTest();

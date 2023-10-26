@@ -19,11 +19,16 @@ declare(strict_types=1);
 namespace core_reportbuilder\external\audiences;
 
 use core_reportbuilder\local\audiences\base;
-use core_external\external_api;
-use core_external\external_value;
-use core_external\external_function_parameters;
+use external_api;
+use external_function_parameters;
+use external_value;
 use core_reportbuilder\manager;
 use core_reportbuilder\permission;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once("{$CFG->libdir}/externallib.php");
 
 /**
  * External method for deleting a report audience

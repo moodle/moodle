@@ -33,15 +33,17 @@
         "hasavailability": true
     }
 }}
-<div class="section_availability">
+<div class="section_availability course-description-item">
 {{#hasavailability}}
     {{#info}}
-        <div class="availabilityinfo {{classes}}" data-region="availabilityinfo">
+        <div class="availabilityinfo {{classes}}">
         {{^isrestricted}}
             <span class="badge badge-pill badge-warning">{{{text}}}</span>
         {{/isrestricted}}
         {{#isrestricted}}
-            {{> core_courseformat/local/content/availability }}
+            <div class="description-inner">
+                {{#pix}}t/unlock, core{{/pix}} {{{text}}}
+            </div>
         {{/isrestricted}}
         </div>
     {{/info}}

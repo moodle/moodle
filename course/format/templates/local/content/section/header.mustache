@@ -26,15 +26,10 @@
         "title": "<a href=\"http://moodle/course/view.php?id=5#section-0\">Section title</a>",
         "url": "#",
         "headerdisplaymultipage": true,
-        "sectionbulk": true,
         "editing": 0
     }
 }}
-{{#sectionbulk}}
-{{$ core_courseformat/local/content/section/bulkselect }}
-    {{> core_courseformat/local/content/section/bulkselect }}
-{{/ core_courseformat/local/content/section/bulkselect }}
-{{/sectionbulk}}
+
 {{#headerdisplaymultipage}}
     <h3 id="sectionid-{{id}}-title" class="sectionname">
         {{{title}}}
@@ -48,17 +43,15 @@
     {{/sitehome}}
     {{^sitehome}}
         <div class="d-flex align-items-start position-relative">
-            <a role="button"
-                data-toggle="collapse"
-                data-for="sectiontoggler"
-                href="#coursecontentcollapse{{num}}"
-                id="collapssesection{{num}}"
-                aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
-                aria-controls="coursecontentcollapse{{num}}"
-                class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
-                    {{^editing}} stretched-link {{/editing}}
-                    {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
-                aria-label="{{name}}">
+            <a role="button" data-toggle="collapse"
+               href="#coursecontentcollapse{{num}}"
+               id="collapssesection{{num}}"
+               aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
+               aria-controls="coursecontentcollapse{{num}}"
+               class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
+                   {{^editing}} stretched-link {{/editing}}
+                   {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
+               aria-label="{{name}}">
             <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
                 {{#pix}} t/expandedchevron, core {{/pix}}
             </span>

@@ -91,6 +91,22 @@ class blog_entries_viewed extends base {
         return new \moodle_url('/blog/index.php', $params);
     }
 
+    /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        $params = array();
+        foreach ($this->validparams as $param) {
+            if (!empty($this->other[$param])) {
+                $params[$param] = $this->other[$param];
+            }
+        }
+        $url = new \moodle_url('index.php', $params);
+        return array (SITEID, 'blog', 'view', $url->out(), 'view blog entry');
+    }
+
     public static function get_other_mapping() {
         $othermapped = array();
         $othermapped['entryid'] = array('db' => 'post', 'restore' => base::NOT_MAPPED);

@@ -18,8 +18,6 @@ if ($hassiteconfig) {
     $temp->add(new admin_setting_configcheckbox('langstringcache', new lang_string('langstringcache', 'admin'), new lang_string('configlangstringcache', 'admin'), 1));
     $temp->add(new admin_setting_configtext('locale', new lang_string('localetext', 'admin'), new lang_string('configlocale', 'admin'), '', PARAM_FILE));
     $temp->add(new admin_setting_configselect('latinexcelexport', new lang_string('latinexcelexport', 'admin'), new lang_string('configlatinexcelexport', 'admin'), '0', array('0'=>'Unicode','1'=>'Latin')));
-    $temp->add(new admin_setting_configcheckbox('enablepdfexportfont', new lang_string('enablepdfexportfont', 'admin'),
-        new lang_string('enablepdfexportfont_desc', 'admin'), 0));
     $temp->add(new setting_scheduled_task_status('langimporttaskstatus', '\tool_langimport\task\update_langpacks_task'));
 
     $ADMIN->add('language', $temp);

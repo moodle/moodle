@@ -52,9 +52,6 @@ class mail_test extends \advanced_testcase {
      */
     protected $mailsink;
 
-    /** @var \phpunit_event_sink */
-    protected $eventsink;
-
     public function setUp(): void {
         global $CFG;
 

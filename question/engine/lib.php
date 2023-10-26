@@ -654,11 +654,6 @@ class question_display_options {
     public $questionidentifier = null;
 
     /**
-     * @var ?bool $versioninfo Should we display the version in the question info?
-     */
-    public ?bool $versioninfo = null;
-
-    /**
      * Set all the feedback-related fields {@link $feedback}, {@link generalfeedback},
      * {@link rightanswer} and {@link manualcomment} to
      * {@link question_display_options::HIDDEN}.

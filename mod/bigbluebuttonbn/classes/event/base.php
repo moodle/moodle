@@ -94,6 +94,35 @@ abstract class base extends \core\event\base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        if (isset($this->legacylogdata)) {
+            return $this->legacylogdata;
+        }
+
+        return null;
+    }
+
+    /**
+     * Sets the legacy event log data.
+     *
+     * @param string $action The current action
+     * @param string $info A detailed description of the change. But no more than 255 characters.
+     * @param string $url The url to the assign module instance.
+     */
+    public function set_legacy_logdata($action = '', $info = '', $url = '') {
+        $fullurl = 'view.php?id=' . $this->contextinstanceid;
+        if ($url != '') {
+            $fullurl .= '&' . $url;
+        }
+
+        $this->legacylogdata = [$this->courseid, 'bigbluebuttonbn', $action, $fullurl, $info, $this->contextinstanceid];
+    }
+
+    /**
      * Custom validation.
      *
      * @throws coding_exception

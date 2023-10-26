@@ -35,9 +35,7 @@ if ($hassiteconfig) {
 
     // Create a MoodleNet category.
     if (get_config('tool_moodlenet', 'enablemoodlenet')) {
-        if (!$ADMIN->locate('moodlenet')) {
-            $ADMIN->add('root', new admin_category('moodlenet', get_string('pluginname', 'tool_moodlenet')));
-        }
+        $ADMIN->add('root', new admin_category('moodlenet', get_string('pluginname', 'tool_moodlenet')));
         // Our settings page.
         $settings = new admin_settingpage('tool_moodlenet', get_string('moodlenetsettings', 'tool_moodlenet'));
         $ADMIN->add('moodlenet', $settings);

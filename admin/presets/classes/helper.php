@@ -190,8 +190,8 @@ class helper {
         static::add_item($presetid, 'showdataretentionsummary', '0', 'tool_dataprivacy');
         static::add_item($presetid, 'forum_maxattachments', '3');
         static::add_item($presetid, 'guestloginbutton', '0');
-        // Set Activity chooser tabs to "Starred, Recommended, All".
-        static::add_item($presetid, 'activitychoosertabmode', '4');
+        // Set Activity chooser tabs to "Starred, All, Recommended".
+        static::add_item($presetid, 'activitychoosertabmode', '1');
 
         // Modules: Hide chat, database, external tool (lti), IMS content package (imscp), lesson, SCORM, survey, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'chat', false);
@@ -278,6 +278,9 @@ class helper {
         static::add_plugin($presetid, 'repository', 'url', false);
         static::add_plugin($presetid, 'repository', 'wikimedia', false);
 
+        // Text editors: Disable TinyMCE HTML editor.
+        static::add_plugin($presetid, 'editor', 'tinymce', false);
+
         // Create the "Full" site admin preset.
         $data = [
             'name' => get_string('fullpreset', 'core_adminpresets'),
@@ -298,8 +301,8 @@ class helper {
         static::add_item($presetid, 'showdataretentionsummary', '1', 'tool_dataprivacy');
         static::add_item($presetid, 'forum_maxattachments', '9');
         static::add_item($presetid, 'guestloginbutton', '1');
-        // Set Activity chooser tabs to the default value ("Starred, Recommended, All, Activities, Resources").
-        static::add_item($presetid, 'activitychoosertabmode', '3');
+        // Set Activity chooser tabs to the default value ("Starred, All, Activities, Resources, Recommended").
+        static::add_item($presetid, 'activitychoosertabmode', '0');
 
         // Modules: Enable chat, database, external tool (lti), IMS content package (imscp), lesson, SCORM, survey, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'chat', true);
@@ -380,5 +383,8 @@ class helper {
         static::add_plugin($presetid, 'repository', 'local', true);
         static::add_plugin($presetid, 'repository', 'url', true);
         static::add_plugin($presetid, 'repository', 'wikimedia', true);
+
+        // Text editors: Enable TinyMCE HTML editor.
+        static::add_plugin($presetid, 'editor', 'tinymce', true);
     }
 }

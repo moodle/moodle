@@ -54,9 +54,6 @@ abstract class base_activity extends base_mod {
      */
     protected static $levels = [CONTEXT_MODULE];
 
-    /** @var array activity data instance. */
-    public $activitiesdata = [];
-
     /**
      * Returns recordset containing all activities within the given context.
      *
@@ -84,7 +81,7 @@ abstract class base_activity extends base_mod {
      * content. Any activity can overwrite this function if it is interested in setting other fields than the
      * default ones, or to fill description optional fields with extra stuff.
      *
-     * @param \stdClass $record
+     * @param stdClass $record
      * @param array    $options
      * @return \core_search\document
      */

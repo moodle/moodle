@@ -24,7 +24,7 @@ import * as ForumSelectors from './grader/selectors';
 import Repository from 'mod_forum/repository';
 import {exception as showException} from "core/notification";
 import Templates from 'core/templates';
-import Modal from 'core/modal_cancel';
+import * as Modal from 'core/modal_factory';
 import * as ModalEvents from 'core/modal_events';
 
 /**
@@ -58,8 +58,7 @@ const showPostInContext = async(rootNode, {
         Modal.create({
             title: discussionName,
             large: true,
-            removeOnClose: true,
-            returnElement: focusOnClose,
+            type: Modal.types.CANCEL
         }),
     ]);
 
@@ -83,6 +82,17 @@ const showPostInContext = async(rootNode, {
             }
         } else {
             posts.push(post);
+        }
+    });
+
+    // Handle hidden event.
+    modal.getRoot().on(ModalEvents.hidden, function() {
+        // Destroy when hidden.
+        modal.destroy();
+        try {
+            focusOnClose.focus();
+        } catch (e) {
+            // eslint-disable-line
         }
     });
 

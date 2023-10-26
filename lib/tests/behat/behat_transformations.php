@@ -107,7 +107,6 @@ class behat_transformations extends behat_base {
      * @return TableNode The transformed table
      */
     public function tablenode_transformations(TableNode $tablenode) {
-        global $CFG;
         // Walk through all values including the optional headers.
         $rows = $tablenode->getRows();
         foreach ($rows as $rowkey => $row) {
@@ -124,11 +123,6 @@ class behat_transformations extends behat_base {
                         $rows[$rowkey][$colkey] = $this->get_transformed_timestamp($match[1]);
                     }
                 }
-
-                // Transform wwwroot.
-                if (preg_match('/#wwwroot#/', $rows[$rowkey][$colkey])) {
-                    $rows[$rowkey][$colkey] = $this->replace_wwwroot($rows[$rowkey][$colkey]);
-                }
             }
         }
 
@@ -137,18 +131,6 @@ class behat_transformations extends behat_base {
         $tablenode = new TableNode($rows);
 
         return $tablenode;
-    }
-
-    /**
-     * Convert #wwwroot# to the wwwroot config value, so it is
-     * possible to reference fully qualified URLs within the site.
-     *
-     * @Transform /^((.*)#wwwroot#(.*))$/
-     * @param string $string
-     * @return string
-     */
-    public function arg_insert_wwwroot(string $string): string {
-        return $this->replace_wwwroot($string);
     }
 
     /**
@@ -193,16 +175,5 @@ class behat_transformations extends behat_base {
             // If not a valid time string, then just return what was passed.
             return $time;
         }
-    }
-
-    /**
-     * Replace #wwwroot# with the actual wwwroot config value.
-     *
-     * @param string $string String to attempt the replacement in.
-     * @return string
-     */
-    protected function replace_wwwroot(string $string): string {
-        global $CFG;
-        return str_replace('#wwwroot#', $CFG->wwwroot, $string);
     }
 }

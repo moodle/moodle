@@ -30,7 +30,6 @@ abstract class IOFactory
     public const WRITER_CSV = 'Csv';
     public const WRITER_HTML = 'Html';
 
-    /** @var string[] */
     private static $readers = [
         self::READER_XLSX => Reader\Xlsx::class,
         self::READER_XLS => Reader\Xls::class,
@@ -42,7 +41,6 @@ abstract class IOFactory
         self::READER_CSV => Reader\Csv::class,
     ];
 
-    /** @var string[] */
     private static $writers = [
         self::WRITER_XLS => Writer\Xls::class,
         self::WRITER_XLSX => Writer\Xlsx::class,
@@ -64,7 +62,6 @@ abstract class IOFactory
         }
 
         // Instantiate writer
-        /** @var IWriter */
         $className = self::$writers[$writerType];
 
         return new $className($spreadsheet);
@@ -80,7 +77,6 @@ abstract class IOFactory
         }
 
         // Instantiate reader
-        /** @var IReader */
         $className = self::$readers[$readerType];
 
         return new $className();
@@ -92,9 +88,7 @@ abstract class IOFactory
      * @param string $filename The name of the spreadsheet file
      * @param int $flags the optional second parameter flags may be used to identify specific elements
      *                       that should be loaded, but which won't be loaded by default, using these values:
-     *                            IReader::LOAD_WITH_CHARTS - Include any charts that are defined in the loaded file.
-     *                            IReader::READ_DATA_ONLY - Read cell values only, not formatting or merge structure.
-     *                            IReader::IGNORE_EMPTY_CELLS - Don't load empty cells into the model.
+     *                            IReader::LOAD_WITH_CHARTS - Include any charts that are defined in the loaded file
      * @param string[] $readers An array of Readers to use to identify the file type. By default, load() will try
      *                             all possible Readers until it finds a match; but this allows you to pass in a
      *                             list of Readers so it will only try the subset that you specify here.

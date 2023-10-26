@@ -63,6 +63,22 @@ class answer_updated extends \core\event\base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $legacylogdata = array($this->courseid,
+            'choice',
+            'choose again',
+            'view.php?id=' . $this->contextinstanceid,
+            $this->other['choiceid'],
+            $this->contextinstanceid);
+
+        return $legacylogdata;
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

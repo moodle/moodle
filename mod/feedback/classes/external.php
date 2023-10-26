@@ -14,19 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Feedback external API
+ *
+ * @package    mod_feedback
+ * @category   external
+ * @copyright  2017 Juan Leyva <juan@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since      Moodle 3.3
+ */
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once("$CFG->libdir/externallib.php");
+
 use mod_feedback\external\feedback_summary_exporter;
 use mod_feedback\external\feedback_completedtmp_exporter;
 use mod_feedback\external\feedback_item_exporter;
 use mod_feedback\external\feedback_valuetmp_exporter;
 use mod_feedback\external\feedback_value_exporter;
 use mod_feedback\external\feedback_completed_exporter;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util;
 
 /**
  * Feedback external functions
@@ -83,7 +90,7 @@ class mod_feedback_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = util::validate_courses($params['courseids'], $mycourses);
+            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $mycourses);
             $output = $PAGE->get_renderer('core');
 
             // Get the feedbacks in this course, this function checks users visibility permissions.

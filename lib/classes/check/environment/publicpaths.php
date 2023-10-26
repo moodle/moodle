@@ -295,7 +295,7 @@ class publicpaths extends check {
     /**
      * Link to the dev docs for more info.
      *
-     * @return \action_link|null
+     * @return action_link|null
      */
     public function get_action_link(): ?\action_link {
         return new \action_link(

@@ -34,7 +34,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\context\system;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\context_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
@@ -114,7 +113,7 @@ $regrequest = (object) [
         $CFG->wwwroot . '/enrol/lti/launch_deeplink.php',
     ],
      // TODO: Consider whether to support client_name#ja syntax for multi language support - see MDL-73109.
-    'client_name' => format_string($SITE->fullname, true, ['context' => system::instance()]),
+    'client_name' => format_string($SITE->fullname, true, ['context' => context_system::instance()]),
     'jwks_uri' => $CFG->wwwroot . '/enrol/lti/jwks.php',
     'logo_uri' => $OUTPUT->get_compact_logo_url() ? $OUTPUT->get_compact_logo_url()->out(false) : '',
     'token_endpoint_auth_method' => 'private_key_jwt',

@@ -26,7 +26,7 @@
 namespace quizaccess_seb\event;
 
 use core\event\base;
-use quizaccess_seb\seb_access_manager;
+use quizaccess_seb\access_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -44,13 +44,13 @@ class access_prevented extends base {
      * Define strict parameters to create event with instead of relying on internal validation of array. Better code practice.
      * Easier for consumers of this class to know what data must be supplied and observers can have more trust in event data.
      *
-     * @param seb_access_manager $accessmanager Access manager.
+     * @param access_manager $accessmanager Access manager.
      * @param string $reason Reason that access was prevented.
      * @param string|null $configkey A Safe Exam Browser config key.
      * @param string|null $browserexamkey A Safe Exam Browser browser exam key.
      * @return base
      */
-    public static function create_strict(seb_access_manager $accessmanager, string $reason,
+    public static function create_strict(access_manager $accessmanager, string $reason,
             ?string $configkey = null, ?string $browserexamkey = null) : base {
         global $USER;
 
@@ -110,7 +110,7 @@ class access_prevented extends base {
      * @return array Mapping of object id.
      */
     public static function get_objectid_mapping() : array {
-        return ['db' => 'quiz', 'restore' => 'quiz'];
+        return array('db' => 'quiz', 'restore' => 'quiz');
     }
 
     /**

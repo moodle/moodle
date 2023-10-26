@@ -38,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @param array $options additional options affecting the file serving
  * @return bool false if the file not found, just send the file otherwise and do not return anything
  */
-function quizaccess_seb_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options= []) {
+function quizaccess_seb_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
     if ($context->contextlevel != CONTEXT_MODULE) {
         return false;
     }

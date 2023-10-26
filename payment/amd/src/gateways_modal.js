@@ -21,8 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+import ModalFactory from 'core/modal_factory';
 import Templates from 'core/templates';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {getAvailableGateways} from './repository';
 import Selectors from './selectors';
 import ModalEvents from 'core/modal_events';
@@ -55,26 +56,28 @@ const registerEventListeners = () => {
 const show = async(rootNode, {
     focusOnClose = null,
 } = {}) => {
-
-    // Load upfront, so we don't try to inject the internal content into a possibly-not-yet-resolved promise.
-    const body = await Templates.render('core_payment/gateways_modal', {});
-
-    const modal = await ModalGateways.create({
-        title: getString('selectpaymenttype', 'core_payment'),
-        body: body,
-        show: true,
-        removeOnClose: true,
+    const modal = await ModalFactory.create({
+        type: ModalGateways.TYPE,
+        title: await getString('selectpaymenttype', 'core_payment'),
+        body: await Templates.render('core_payment/gateways_modal', {}),
     });
 
     const rootElement = modal.getRoot()[0];
     addToastRegion(rootElement);
 
+    modal.show();
+
     modal.getRoot().on(ModalEvents.hidden, () => {
-        focusOnClose?.focus();
+        // Destroy when hidden.
+        modal.destroy();
+        try {
+            focusOnClose.focus();
+        } catch (e) {
+            // eslint-disable-line
+        }
     });
 
-    modal.getRoot().on(PaymentEvents.proceed, async(e) => {
-        e.preventDefault();
+    modal.getRoot().on(PaymentEvents.proceed, (e) => {
         const gateway = (rootElement.querySelector(Selectors.values.gateway) || {value: ''}).value;
 
         if (gateway) {
@@ -84,24 +87,27 @@ const show = async(rootNode, {
                 rootNode.dataset.paymentarea,
                 rootNode.dataset.itemid,
                 rootNode.dataset.description
-            ).then((message) => {
+            )
+            .then(message => {
                 modal.hide();
                 Notification.addNotification({
-                    message,
+                    message: message,
                     type: 'success',
                 });
                 location.href = rootNode.dataset.successurl;
 
-                return;
-            }).catch(message => Notification.alert('', message));
+                // The following return statement is never reached. It is put here just to make eslint happy.
+                return message;
+            })
+            .catch(message => Notification.alert('', message));
         } else {
             // We cannot use await in the following line.
             // The reason is that we are preventing the default action of the save event being triggered,
             // therefore we cannot define the event handler function asynchronous.
-            addToast(getString('nogatewayselected', 'core_payment'), {
-                type: 'warning',
-            });
+            getString('nogatewayselected', 'core_payment').then(message => addToast(message, {type: 'warning'})).catch();
         }
+
+        e.preventDefault();
     });
 
     // Re-calculate the cost when gateway is changed.
@@ -146,16 +152,8 @@ const updateCostRegion = async(root, defaultCost = '') => {
     const gatewayElement = root.querySelector(Selectors.values.gateway);
     const surcharge = parseInt((gatewayElement || {dataset: {surcharge: 0}}).dataset.surcharge);
     const cost = (gatewayElement || {dataset: {cost: defaultCost}}).dataset.cost;
-    const valueStr = surcharge ? await getString('feeincludesurcharge', 'core_payment', {fee: cost, surcharge: surcharge}) : cost;
 
-    const surchargeStr = await getString('labelvalue', 'core',
-        {
-            label: await getString('cost', 'core'),
-            value: valueStr
-        }
-    );
-
-    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {surchargestr: surchargeStr});
+    const {html, js} = await Templates.renderForPromise('core_payment/fee_breakdown', {fee: cost, surcharge});
     Templates.replaceNodeContents(root.querySelector(Selectors.regions.costContainer), html, js);
 };
 

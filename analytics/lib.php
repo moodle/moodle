@@ -22,7 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Implements the inplace editable feature.
@@ -33,8 +33,9 @@ use core_external\external_api;
  * @return \core\output\inplace_editable
  */
 function core_analytics_inplace_editable($itemtype, $itemid, $newvalue) {
+
     if ($itemtype === 'modelname') {
-        external_api::validate_context(context_system::instance());
+        \external_api::validate_context(context_system::instance());
         require_capability('moodle/analytics:managemodels', \context_system::instance());
 
         $model = new \core_analytics\model($itemid);

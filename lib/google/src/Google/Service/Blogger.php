@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger extends Google_Service
 {
   /** Manage your Blogger account. */
@@ -940,7 +939,6 @@ class Google_Service_Blogger extends Google_Service
  *   $blogUserInfos = $bloggerService->blogUserInfos;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogUserInfos_Resource extends Google_Service_Resource
 {
 
@@ -972,7 +970,6 @@ class Google_Service_Blogger_BlogUserInfos_Resource extends Google_Service_Resou
  *   $blogs = $bloggerService->blogs;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Blogs_Resource extends Google_Service_Resource
 {
 
@@ -1046,7 +1043,6 @@ class Google_Service_Blogger_Blogs_Resource extends Google_Service_Resource
  *   $comments = $bloggerService->comments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Comments_Resource extends Google_Service_Resource
 {
 
@@ -1197,7 +1193,6 @@ class Google_Service_Blogger_Comments_Resource extends Google_Service_Resource
  *   $pageViews = $bloggerService->pageViews;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageViews_Resource extends Google_Service_Resource
 {
 
@@ -1226,7 +1221,6 @@ class Google_Service_Blogger_PageViews_Resource extends Google_Service_Resource
  *   $pages = $bloggerService->pages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Pages_Resource extends Google_Service_Resource
 {
 
@@ -1382,7 +1376,6 @@ class Google_Service_Blogger_Pages_Resource extends Google_Service_Resource
  *   $postUserInfos = $bloggerService->postUserInfos;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostUserInfos_Resource extends Google_Service_Resource
 {
 
@@ -1452,7 +1445,6 @@ class Google_Service_Blogger_PostUserInfos_Resource extends Google_Service_Resou
  *   $posts = $bloggerService->posts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Posts_Resource extends Google_Service_Resource
 {
 
@@ -1688,7 +1680,6 @@ class Google_Service_Blogger_Posts_Resource extends Google_Service_Resource
  *   $users = $bloggerService->users;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Users_Resource extends Google_Service_Resource
 {
 
@@ -1710,7 +1701,6 @@ class Google_Service_Blogger_Users_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Blog extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1839,7 +1829,6 @@ class Google_Service_Blogger_Blog extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1878,7 +1867,6 @@ class Google_Service_Blogger_BlogList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogLocale extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1914,7 +1902,6 @@ class Google_Service_Blogger_BlogLocale extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogPages extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1941,7 +1928,6 @@ class Google_Service_Blogger_BlogPages extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogPerUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2004,7 +1990,6 @@ class Google_Service_Blogger_BlogPerUserInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogPosts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2042,7 +2027,6 @@ class Google_Service_Blogger_BlogPosts extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_BlogUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2081,7 +2065,6 @@ class Google_Service_Blogger_BlogUserInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Comment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2193,7 +2176,6 @@ class Google_Service_Blogger_Comment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentAuthor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2239,7 +2221,6 @@ class Google_Service_Blogger_CommentAuthor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentAuthorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2257,7 +2238,6 @@ class Google_Service_Blogger_CommentAuthorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentBlog extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2275,7 +2255,6 @@ class Google_Service_Blogger_CommentBlog extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentInReplyTo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2293,7 +2272,6 @@ class Google_Service_Blogger_CommentInReplyTo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2349,7 +2327,6 @@ class Google_Service_Blogger_CommentList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_CommentPost extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2367,7 +2344,6 @@ class Google_Service_Blogger_CommentPost extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Page extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2486,7 +2462,6 @@ class Google_Service_Blogger_Page extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageAuthor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2532,7 +2507,6 @@ class Google_Service_Blogger_PageAuthor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageAuthorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2550,7 +2524,6 @@ class Google_Service_Blogger_PageAuthorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageBlog extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2568,7 +2541,6 @@ class Google_Service_Blogger_PageBlog extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2615,7 +2587,6 @@ class Google_Service_Blogger_PageList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Pageviews extends Google_Collection
 {
   protected $collection_key = 'counts';
@@ -2653,7 +2624,6 @@ class Google_Service_Blogger_Pageviews extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PageviewsCounts extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2680,7 +2650,6 @@ class Google_Service_Blogger_PageviewsCounts extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_Post extends Google_Collection
 {
   protected $collection_key = 'labels';
@@ -2866,7 +2835,6 @@ class Google_Service_Blogger_Post extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostAuthor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2912,7 +2880,6 @@ class Google_Service_Blogger_PostAuthor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostAuthorImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2930,7 +2897,6 @@ class Google_Service_Blogger_PostAuthorImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostBlog extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2948,7 +2914,6 @@ class Google_Service_Blogger_PostBlog extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostImages extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2966,7 +2931,6 @@ class Google_Service_Blogger_PostImages extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3013,7 +2977,6 @@ class Google_Service_Blogger_PostList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3058,7 +3021,6 @@ class Google_Service_Blogger_PostLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostPerUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3112,7 +3074,6 @@ class Google_Service_Blogger_PostPerUserInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostReplies extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3150,7 +3111,6 @@ class Google_Service_Blogger_PostReplies extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostUserInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3189,7 +3149,6 @@ class Google_Service_Blogger_PostUserInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_PostUserInfosList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3227,7 +3186,6 @@ class Google_Service_Blogger_PostUserInfosList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_User extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3319,7 +3277,6 @@ class Google_Service_Blogger_User extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_UserBlogs extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3337,7 +3294,6 @@ class Google_Service_Blogger_UserBlogs extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Blogger_UserLocale extends Google_Model
 {
   protected $internal_gapi_mappings = array(

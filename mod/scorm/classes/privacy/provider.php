@@ -53,10 +53,13 @@ class provider implements
      * @return  collection A listing of user data stored through this system.
      */
     public static function get_metadata(collection $collection) : collection {
-        $collection->add_database_table('scorm_attempt', [
+        $collection->add_database_table('scorm_scoes_track', [
                 'userid' => 'privacy:metadata:userid',
                 'attempt' => 'privacy:metadata:attempt',
-            ], 'privacy:metadata:scorm_attempt');
+                'element' => 'privacy:metadata:scoes_track:element',
+                'value' => 'privacy:metadata:scoes_track:value',
+                'timemodified' => 'privacy:metadata:timemodified'
+            ], 'privacy:metadata:scorm_scoes_track');
 
         $collection->add_database_table('scorm_aicc_session', [
                 'userid' => 'privacy:metadata:userid',
@@ -97,7 +100,7 @@ class provider implements
 
         $params = ['modlevel' => CONTEXT_MODULE, 'userid' => $userid];
         $contextlist = new contextlist();
-        $contextlist->add_from_sql(sprintf($sql, 'scorm_attempt'), $params);
+        $contextlist->add_from_sql(sprintf($sql, 'scorm_scoes_track'), $params);
         $contextlist->add_from_sql(sprintf($sql, 'scorm_aicc_session'), $params);
 
         return $contextlist;
@@ -129,7 +132,7 @@ class provider implements
 
         $params = ['modlevel' => CONTEXT_MODULE, 'contextid' => $context->id];
 
-        $userlist->add_from_sql('userid', sprintf($sql, 'scorm_attempt'), $params);
+        $userlist->add_from_sql('userid', sprintf($sql, 'scorm_scoes_track'), $params);
         $userlist->add_from_sql('userid', sprintf($sql, 'scorm_aicc_session'), $params);
     }
 
@@ -165,21 +168,19 @@ class provider implements
 
         // Get scoes_track data.
         list($insql, $inparams) = $DB->get_in_or_equal($contexts, SQL_PARAMS_NAMED);
-        $sql = "SELECT v.id,
-                       a.attempt,
-                       e.element,
-                       v.value,
-                       v.timemodified,
+        $sql = "SELECT ss.id,
+                       ss.attempt,
+                       ss.element,
+                       ss.value,
+                       ss.timemodified,
                        ctx.id as contextid
-                  FROM {scorm_attempt} a
-                  JOIN {scorm_scoes_value} v ON a.id = v.attemptid
-                  JOIN {scorm_element} e on e.id = v.elementid
+                  FROM {scorm_scoes_track} ss
                   JOIN {course_modules} cm
-                    ON cm.instance = a.scormid
+                    ON cm.instance = ss.scormid
                   JOIN {context} ctx
                     ON ctx.instanceid = cm.id
                  WHERE ctx.id $insql
-                   AND a.userid = :userid";
+                   AND ss.userid = :userid";
         $params = array_merge($inparams, ['userid' => $userid]);
 
         $alldata = [];
@@ -279,9 +280,8 @@ class provider implements
                  WHERE cm.id = :cmid";
         $params = ['cmid' => $context->instanceid];
 
+        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
-        $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
-        scorm_delete_tracks($coursemodule->instance);
     }
 
     /**
@@ -319,13 +319,8 @@ class provider implements
                    AND ctx.id $insql";
         $params = array_merge($inparams, ['userid' => $userid]);
 
+        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
-        foreach ($contextlist->get_contexts() as $context) {
-            if ($context->contextlevel == CONTEXT_MODULE) {
-                $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
-                scorm_delete_tracks($coursemodule->instance, null, $userid);
-            }
-        }
     }
 
     /**
@@ -358,11 +353,8 @@ class provider implements
                    AND ss.userid $insql";
         $params = array_merge($inparams, ['contextid' => $context->id]);
 
+        static::delete_data('scorm_scoes_track', $sql, $params);
         static::delete_data('scorm_aicc_session', $sql, $params);
-        $coursemodule = get_coursemodule_from_id('scorm', $context->instanceid);
-        foreach ($userlist->get_userids() as $userid) {
-            scorm_delete_tracks($coursemodule->instance, null, $userid);
-        }
     }
 
     /**

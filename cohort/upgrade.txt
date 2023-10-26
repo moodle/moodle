@@ -1,9 +1,6 @@
 This files describes API changes in /cohort/ information provided here is intended
 especially for developers.
 
-=== 4.2 ===
-* Added cohort custom fields.
-
 === 3.1 ===
 * The Webservice core_cohort_get_cohorts now has the added functionality of getting all cohorts
   by not passing any parameters

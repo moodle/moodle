@@ -165,16 +165,6 @@ $capabilities = [
         ]
     ],
 
-    // Re-open attempts after they are closed.
-    'mod/quiz:reopenattempts' => [
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => [
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ]
-    ],
-
     // Do not have the time limit imposed. Used for accessibility legislation compliance.
     'mod/quiz:ignoretimelimits' => [
         'captype' => 'read',

@@ -49,10 +49,15 @@ class summary implements renderable, templatable {
     /**
      * Constructor.
      *
+     * @todo MDL-71494 Final deprecation of the $extradetails parameter in Moodle 4.3
      * @param mod_feedback_structure $feedbackstructure
      * @param int $mygroupid currently selected group
+     * @param bool|null $extradetails Deprecated
      */
-    public function __construct($feedbackstructure, $mygroupid = false) {
+    public function __construct($feedbackstructure, $mygroupid = false, $extradetails = null) {
+        if (isset($extradetails)) {
+            debugging('The $extradetails parameter is deprecated.', DEBUG_DEVELOPER);
+        }
         $this->feedbackstructure = $feedbackstructure;
         $this->mygroupid = $mygroupid;
     }

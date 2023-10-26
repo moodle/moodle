@@ -96,6 +96,18 @@ class submission_unlocked extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $logmessage = get_string('unlocksubmissionforstudent', 'assign', array('id' => $user->id, 'fullname' => fullname($user)));
+        $this->set_legacy_logdata('unlock submission', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

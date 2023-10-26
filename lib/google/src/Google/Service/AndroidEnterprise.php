@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise extends Google_Service
 {
   /** Manage corporate Android devices. */
@@ -983,7 +982,6 @@ class Google_Service_AndroidEnterprise extends Google_Service
  *   $collections = $androidenterpriseService->collections;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Collections_Resource extends Google_Service_Resource
 {
 
@@ -1088,7 +1086,6 @@ class Google_Service_AndroidEnterprise_Collections_Resource extends Google_Servi
  *   $collectionviewers = $androidenterpriseService->collectionviewers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Collectionviewers_Resource extends Google_Service_Resource
 {
 
@@ -1193,7 +1190,6 @@ class Google_Service_AndroidEnterprise_Collectionviewers_Resource extends Google
  *   $devices = $androidenterpriseService->devices;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Devices_Resource extends Google_Service_Resource
 {
 
@@ -1278,7 +1274,6 @@ class Google_Service_AndroidEnterprise_Devices_Resource extends Google_Service_R
  *   $enterprises = $androidenterpriseService->enterprises;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Enterprises_Resource extends Google_Service_Resource
 {
 
@@ -1414,7 +1409,6 @@ class Google_Service_AndroidEnterprise_Enterprises_Resource extends Google_Servi
  *   $entitlements = $androidenterpriseService->entitlements;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Entitlements_Resource extends Google_Service_Resource
 {
 
@@ -1524,7 +1518,6 @@ class Google_Service_AndroidEnterprise_Entitlements_Resource extends Google_Serv
  *   $grouplicenses = $androidenterpriseService->grouplicenses;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Grouplicenses_Resource extends Google_Service_Resource
 {
 
@@ -1569,7 +1562,6 @@ class Google_Service_AndroidEnterprise_Grouplicenses_Resource extends Google_Ser
  *   $grouplicenseusers = $androidenterpriseService->grouplicenseusers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Grouplicenseusers_Resource extends Google_Service_Resource
 {
 
@@ -1599,7 +1591,6 @@ class Google_Service_AndroidEnterprise_Grouplicenseusers_Resource extends Google
  *   $installs = $androidenterpriseService->installs;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Installs_Resource extends Google_Service_Resource
 {
 
@@ -1708,7 +1699,6 @@ class Google_Service_AndroidEnterprise_Installs_Resource extends Google_Service_
  *   $permissions = $androidenterpriseService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Permissions_Resource extends Google_Service_Resource
 {
 
@@ -1739,7 +1729,6 @@ class Google_Service_AndroidEnterprise_Permissions_Resource extends Google_Servi
  *   $products = $androidenterpriseService->products;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Products_Resource extends Google_Service_Resource
 {
 
@@ -1867,7 +1856,6 @@ class Google_Service_AndroidEnterprise_Products_Resource extends Google_Service_
  *   $users = $androidenterpriseService->users;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Users_Resource extends Google_Service_Resource
 {
 
@@ -1970,7 +1958,6 @@ class Google_Service_AndroidEnterprise_Users_Resource extends Google_Service_Res
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_AppRestrictionsSchema extends Google_Collection
 {
   protected $collection_key = 'restrictions';
@@ -1999,7 +1986,6 @@ class Google_Service_AndroidEnterprise_AppRestrictionsSchema extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_AppRestrictionsSchemaRestriction extends Google_Collection
 {
   protected $collection_key = 'entryValue';
@@ -2073,7 +2059,6 @@ class Google_Service_AndroidEnterprise_AppRestrictionsSchemaRestriction extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_AppRestrictionsSchemaRestrictionRestrictionValue extends Google_Collection
 {
   protected $collection_key = 'valueMultiselect';
@@ -2128,7 +2113,6 @@ class Google_Service_AndroidEnterprise_AppRestrictionsSchemaRestrictionRestricti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_AppVersion extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2155,7 +2139,6 @@ class Google_Service_AndroidEnterprise_AppVersion extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ApprovalUrlInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2182,7 +2165,6 @@ class Google_Service_AndroidEnterprise_ApprovalUrlInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Collection extends Google_Collection
 {
   protected $collection_key = 'productId';
@@ -2237,7 +2219,6 @@ class Google_Service_AndroidEnterprise_Collection extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_CollectionViewersListResponse extends Google_Collection
 {
   protected $collection_key = 'user';
@@ -2266,7 +2247,6 @@ class Google_Service_AndroidEnterprise_CollectionViewersListResponse extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_CollectionsListResponse extends Google_Collection
 {
   protected $collection_key = 'collection';
@@ -2295,7 +2275,6 @@ class Google_Service_AndroidEnterprise_CollectionsListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Device extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2331,7 +2310,6 @@ class Google_Service_AndroidEnterprise_Device extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_DeviceState extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2358,7 +2336,6 @@ class Google_Service_AndroidEnterprise_DeviceState extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_DevicesListResponse extends Google_Collection
 {
   protected $collection_key = 'device';
@@ -2387,7 +2364,6 @@ class Google_Service_AndroidEnterprise_DevicesListResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Enterprise extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2432,7 +2408,6 @@ class Google_Service_AndroidEnterprise_Enterprise extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_EnterpriseAccount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2459,7 +2434,6 @@ class Google_Service_AndroidEnterprise_EnterpriseAccount extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_EnterprisesListResponse extends Google_Collection
 {
   protected $collection_key = 'enterprise';
@@ -2488,7 +2462,6 @@ class Google_Service_AndroidEnterprise_EnterprisesListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_EnterprisesSendTestPushNotificationResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2515,7 +2488,6 @@ class Google_Service_AndroidEnterprise_EnterprisesSendTestPushNotificationRespon
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Entitlement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2551,7 +2523,6 @@ class Google_Service_AndroidEnterprise_Entitlement extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_EntitlementsListResponse extends Google_Collection
 {
   protected $collection_key = 'entitlement';
@@ -2580,7 +2551,6 @@ class Google_Service_AndroidEnterprise_EntitlementsListResponse extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_GroupLicense extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2643,7 +2613,6 @@ class Google_Service_AndroidEnterprise_GroupLicense extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_GroupLicenseUsersListResponse extends Google_Collection
 {
   protected $collection_key = 'user';
@@ -2672,7 +2641,6 @@ class Google_Service_AndroidEnterprise_GroupLicenseUsersListResponse extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_GroupLicensesListResponse extends Google_Collection
 {
   protected $collection_key = 'groupLicense';
@@ -2701,7 +2669,6 @@ class Google_Service_AndroidEnterprise_GroupLicensesListResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Install extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2746,7 +2713,6 @@ class Google_Service_AndroidEnterprise_Install extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_InstallsListResponse extends Google_Collection
 {
   protected $collection_key = 'install';
@@ -2775,7 +2741,6 @@ class Google_Service_AndroidEnterprise_InstallsListResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Permission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2820,7 +2785,6 @@ class Google_Service_AndroidEnterprise_Permission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_Product extends Google_Collection
 {
   protected $collection_key = 'appVersion';
@@ -2921,7 +2885,6 @@ class Google_Service_AndroidEnterprise_Product extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ProductPermission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2948,7 +2911,6 @@ class Google_Service_AndroidEnterprise_ProductPermission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ProductPermissions extends Google_Collection
 {
   protected $collection_key = 'permission';
@@ -2986,7 +2948,6 @@ class Google_Service_AndroidEnterprise_ProductPermissions extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ProductSet extends Google_Collection
 {
   protected $collection_key = 'productId';
@@ -3014,7 +2975,6 @@ class Google_Service_AndroidEnterprise_ProductSet extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ProductsApproveRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3033,7 +2993,6 @@ class Google_Service_AndroidEnterprise_ProductsApproveRequest extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_ProductsGenerateApprovalUrlResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3051,7 +3010,6 @@ class Google_Service_AndroidEnterprise_ProductsGenerateApprovalUrlResponse exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_User extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3087,7 +3045,6 @@ class Google_Service_AndroidEnterprise_User extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_UserToken extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3123,7 +3080,6 @@ class Google_Service_AndroidEnterprise_UserToken extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidEnterprise_UsersListResponse extends Google_Collection
 {
   protected $collection_key = 'user';

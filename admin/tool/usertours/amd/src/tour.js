@@ -34,9 +34,8 @@ import * as Aria from 'core/aria';
 import Popper from 'core/popper';
 import {dispatchEvent} from 'core/event_dispatcher';
 import {eventTypes} from './events';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
-import {notifyFilterContentUpdated} from 'core/event';
 
 /**
  * The minimum spacing for tour step to display.
@@ -785,8 +784,6 @@ const Tour = class {
         let currentStepNode = $('<span data-flexitour="container"></span>')
             .html(stepConfig.template)
             .hide();
-        // Trigger the Moodle filters.
-        notifyFilterContentUpdated(currentStepNode);
 
         // The scroll animation occurs on the body or html.
         let animationTarget = $('body, html')
@@ -1132,7 +1129,7 @@ const Tour = class {
                 if (!previousTarget.attr('tabindex')) {
                     previousTarget.attr('tabindex', '-1');
                 }
-                previousTarget.first().focus();
+                previousTarget.focus();
             }
         }
 
@@ -1642,18 +1639,21 @@ const Tour = class {
                 });
                 fader.attr('data-flexitour', 'step-background-fader');
 
-                if (!stepConfig.zIndex) {
+                if (targetNode.parents('[data-region="fixed-drawer"]').length) {
                     let targetClone = targetNode.clone();
-                    background.append(targetClone.first());
-                    $('body').append(fader);
-                    $('body').append(background);
-                } else {
+                    background.append(targetClone);
+                }
+
+                if (stepConfig.zIndex) {
                     if (stepConfig.attachPoint === 'append') {
                         stepConfig.attachTo.append(background);
                     } else {
                         fader.insertAfter(stepConfig.attachTo);
                         background.insertAfter(stepConfig.attachTo);
                     }
+                } else {
+                    $('body').append(fader);
+                    $('body').append(background);
                 }
 
                 // Add the backdrop data to the actual target.
@@ -1683,15 +1683,12 @@ const Tour = class {
      */
     calculateZIndex(elem) {
         elem = $(elem);
-        if (this.requireDefaultTourZindex(elem)) {
-            return 0;
-        }
         while (elem.length && elem[0] !== document) {
             // Ignore z-index if position is set to a value where z-index is ignored by the browser
             // This makes behavior of this function consistent across browsers
             // WebKit always returns auto if the element is positioned.
             let position = elem.css("position");
-            if (position === "absolute" || position === "fixed") {
+            if (position === "absolute" || position === "relative" || position === "fixed") {
                 // IE returns 0 when zIndex is not specified
                 // other browsers return a string
                 // we ignore the case of nested elements with an explicit value of 0
@@ -1705,23 +1702,6 @@ const Tour = class {
         }
 
         return 0;
-    }
-
-    /**
-     * Check if the element require the default tour z-index.
-     *
-     * Some page elements have fixed z-index. However, their weight is not enough to cover
-     * other page elements like the top navbar or a sticky footer so they use the default
-     * tour z-index instead.
-     *
-     * @param {jQuery} elem the page element to highlight
-     * @return {Boolean} true if the element requires the default tour z-index instead of the calculated one
-     */
-    requireDefaultTourZindex(elem) {
-        if (elem.parents('[data-region="fixed-drawer"]').length !== 0) {
-            return true;
-        }
-        return false;
     }
 
     /**

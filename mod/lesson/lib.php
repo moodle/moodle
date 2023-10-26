@@ -832,7 +832,7 @@ function lesson_process_post_save(&$lesson) {
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the lesson.
  *
- * @param MoodleQuickForm $mform form passed by reference
+ * @param $mform form passed by reference
  */
 function lesson_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'lessonheader', get_string('modulenameplural', 'lesson'));
@@ -1181,7 +1181,7 @@ function lesson_get_file_areas() {
  * @package  mod_lesson
  * @category files
  * @global stdClass $CFG
- * @param file_browser $browser file browser instance
+ * @param file_browse $browser file browser instance
  * @param array $areas file areas
  * @param stdClass $course course object
  * @param stdClass $cm course module object

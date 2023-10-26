@@ -26,25 +26,20 @@ import * as Repository from 'core_course/local/activitychooser/repository';
 import selectors from 'core_course/local/activitychooser/selectors';
 import CustomEvents from 'core/custom_interaction_events';
 import * as Templates from 'core/templates';
-import {getString} from 'core/str';
-import Modal from 'core/modal';
+import * as ModalFactory from 'core/modal_factory';
+import {get_string as getString} from 'core/str';
 import Pending from 'core/pending';
 
 // Set up some JS module wide constants that can be added to in the future.
 
 // Tab config options.
 const ALLACTIVITIESRESOURCES = 0;
+const ONLYALL = 1;
 const ACTIVITIESRESOURCES = 2;
-const ALLACTIVITIESRESOURCESREC = 3;
-const ONLYALLREC = 4;
-const ACTIVITIESRESOURCESREC = 5;
-
 
 // Module types.
 const ACTIVITY = 0;
 const RESOURCE = 1;
-
-let initialized = false;
 
 /**
  * Set up the activity chooser.
@@ -69,12 +64,6 @@ export const init = (courseId, chooserConfig) => {
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
  */
 const registerListenerEvents = (courseId, chooserConfig) => {
-
-    // Ensure we only add our listeners once.
-    if (initialized) {
-        return;
-    }
-
     const events = [
         'click',
         CustomEvents.events.activate,
@@ -157,12 +146,7 @@ const registerListenerEvents = (courseId, chooserConfig) => {
                 }
 
                 // Apply the section id to all the module instance links.
-                const builtModuleData = sectionIdMapper(
-                    data,
-                    caller.dataset.sectionid,
-                    caller.dataset.sectionreturnid,
-                    caller.dataset.beforemod
-                );
+                const builtModuleData = sectionIdMapper(data, caller.dataset.sectionid, caller.dataset.sectionreturnid);
 
                 ChooserDialogue.displayChooser(
                     sectionModal,
@@ -178,8 +162,6 @@ const registerListenerEvents = (courseId, chooserConfig) => {
             }
         });
     });
-
-    initialized = true;
 };
 
 /**
@@ -190,14 +172,13 @@ const registerListenerEvents = (courseId, chooserConfig) => {
  * @param {Object} webServiceData Our original data from the Web service call
  * @param {Number} id The ID of the section we need to append to the links
  * @param {Number|null} sectionreturnid The ID of the section return we need to append to the links
- * @param {Number|null} beforemod The ID of the cm we need to append to the links
  * @return {Array} [modules] with URL's built
  */
-const sectionIdMapper = (webServiceData, id, sectionreturnid, beforemod) => {
+const sectionIdMapper = (webServiceData, id, sectionreturnid) => {
     // We need to take a fresh deep copy of the original data as an object is a reference type.
     const newData = JSON.parse(JSON.stringify(webServiceData));
     newData.content_items.forEach((module) => {
-        module.link += '&section=' + id + '&sr=' + (sectionreturnid ?? 0) + '&beforemod=' + (beforemod ?? 0);
+        module.link += '&section=' + id + '&sr=' + (sectionreturnid ?? 0);
     });
     return newData.content_items;
 };
@@ -225,20 +206,8 @@ const templateDataBuilder = (data, chooserConfig) => {
     const favourites = data.filter(mod => mod.favourite === true);
     const recommended = data.filter(mod => mod.recommended === true);
 
-    // Whether the activities and resources tabs should be displayed or not.
-    const showActivitiesAndResources = (tabMode) => {
-        const acceptableModes = [
-            ALLACTIVITIESRESOURCES,
-            ALLACTIVITIESRESOURCESREC,
-            ACTIVITIESRESOURCES,
-            ACTIVITIESRESOURCESREC,
-        ];
-
-        return acceptableModes.indexOf(tabMode) !== -1;
-    };
-
-    // These modes need Activity & Resource tabs.
-    if (showActivitiesAndResources(tabMode)) {
+    // Both of these modes need Activity & Resource tabs.
+    if ((tabMode === ALLACTIVITIESRESOURCES || tabMode === ACTIVITIESRESOURCES) && tabMode !== ONLYALL) {
         // Filter the incoming data to find activities then resources.
         activities = data.filter(mod => mod.archetype === ACTIVITY);
         resources = data.filter(mod => mod.archetype === RESOURCE);
@@ -246,27 +215,18 @@ const templateDataBuilder = (data, chooserConfig) => {
         showResources = true;
 
         // We want all of the previous information but no 'All' tab.
-        if (tabMode === ACTIVITIESRESOURCES || tabMode === ACTIVITIESRESOURCESREC) {
+        if (tabMode === ACTIVITIESRESOURCES) {
             showAll = false;
         }
     }
 
-    const recommendedBeforeTabs = [
-        ALLACTIVITIESRESOURCESREC,
-        ONLYALLREC,
-        ACTIVITIESRESOURCESREC,
-    ];
-    // Whether the recommended tab should be displayed before the All/Activities/Resources tabs.
-    const recommendedBeginning = recommendedBeforeTabs.indexOf(tabMode) !== -1;
-
     // Given the results of the above filters lets figure out what tab to set active.
     // We have some favourites.
     const favouritesFirst = !!favourites.length;
-    const recommendedFirst = favouritesFirst === false && recommendedBeginning === true && !!recommended.length;
     // We are in tabMode 2 without any favourites.
-    const activitiesFirst = showAll === false && favouritesFirst === false && recommendedFirst === false;
+    const activitiesFirst = showAll === false && favouritesFirst === false;
     // We have nothing fallback to show all modules.
-    const fallback = showAll === true && favouritesFirst === false && recommendedFirst === false;
+    const fallback = showAll === true && favouritesFirst === false;
 
     return {
         'default': data,
@@ -278,8 +238,6 @@ const templateDataBuilder = (data, chooserConfig) => {
         showResources: showResources,
         favourites: favourites,
         recommended: recommended,
-        recommendedFirst: recommendedFirst,
-        recommendedBeginning: recommendedBeginning,
         favouritesFirst: favouritesFirst,
         fallback: fallback,
     };
@@ -289,21 +247,27 @@ const templateDataBuilder = (data, chooserConfig) => {
  * Given an object we want to build a modal ready to show
  *
  * @method buildModal
- * @param {Promise} body
+ * @param {Promise} bodyPromise
  * @param {String|Boolean} footer Either a footer to add or nothing
  * @return {Object} The modal ready to display immediately and render body in later.
  */
-const buildModal = (body, footer) => Modal.create({
-    body,
-    title: getString('addresourceoractivity'),
-    footer: footer.customfootertemplate,
-    large: true,
-    scrollable: false,
-    templateContext: {
-        classes: 'modchooser'
-    },
-    show: true,
-});
+const buildModal = (bodyPromise, footer) => {
+    return ModalFactory.create({
+        type: ModalFactory.types.DEFAULT,
+        title: getString('addresourceoractivity'),
+        body: bodyPromise,
+        footer: footer.customfootertemplate,
+        large: true,
+        scrollable: false,
+        templateContext: {
+            classes: 'modchooser'
+        }
+    })
+    .then(modal => {
+        modal.show();
+        return modal;
+    });
+};
 
 /**
  * A small helper function to handle the case where there are no more favourites

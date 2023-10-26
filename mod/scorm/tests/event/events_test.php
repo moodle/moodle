@@ -83,6 +83,9 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_module::instance($this->eventcm->id), $event->get_context());
         $this->assertEquals(4, $event->other['attemptid']);
         $this->assertEquals(2, $event->relateduserid);
+        $expected = array($this->eventcourse->id, 'scorm', 'delete attempts', 'report.php?id=' . $this->eventcm->id,
+                4, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $events[0]);
         $this->assertEventContextNotUsed($event);
 
         // Test event validations.
@@ -91,6 +94,83 @@ class events_test extends \advanced_testcase {
             'contextid' => 5,
             'relateduserid' => 2
         ));
+    }
+
+    /**
+     * Tests for course module viewed event.
+     *
+     * There is no api involved so the best we can do is test legacy data by triggering event manually.
+     */
+    public function test_course_module_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\course_module_viewed::create(array(
+            'objectid' => $this->eventscorm->id,
+            'context' => \context_module::instance($this->eventcm->id),
+            'courseid' => $this->eventcourse->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'pre-view', 'view.php?id=' . $this->eventcm->id,
+                $this->eventscorm->id, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests for instance list viewed event.
+     *
+     * There is no api involved so the best we can do is test legacy data by triggering event manually.
+     */
+    public function test_course_module_instance_list_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\course_module_instance_list_viewed::create(array(
+            'context' => \context_course::instance($this->eventcourse->id),
+            'courseid' => $this->eventcourse->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'view all', 'index.php?id=' . $this->eventcourse->id, '');
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Tests for interactions viewed.
+     *
+     * There is no api involved so the best we can do is test legacy data by triggering event manually and test validations.
+     */
+    public function test_interactions_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\interactions_viewed::create(array(
+            'relateduserid' => 5,
+            'context' => \context_module::instance($this->eventcm->id),
+            'courseid' => $this->eventcourse->id,
+            'other' => array('attemptid' => 2, 'instanceid' => $this->eventscorm->id)
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'userreportinteractions', 'report/userreportinteractions.php?id=' .
+                $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -120,6 +200,96 @@ class events_test extends \advanced_testcase {
         } catch (\Exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
+    }
+
+    /** Tests for report viewed.
+     *
+     * There is no api involved so the best we can do is test legacy data and validations by triggering event manually.
+     */
+    public function test_report_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\report_viewed::create(array(
+             'context' => \context_module::instance($this->eventcm->id),
+             'courseid' => $this->eventcourse->id,
+             'other' => array(
+                 'scormid' => $this->eventscorm->id,
+                 'mode' => 'basic'
+             )
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'report', 'report.php?id=' . $this->eventcm->id . '&mode=basic',
+                $this->eventscorm->id, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /** Tests for sco launched event.
+     *
+     * There is no api involved so the best we can do is test legacy data and validations by triggering event manually.
+     */
+    public function test_sco_launched_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\sco_launched::create(array(
+             'objectid' => 2,
+             'context' => \context_module::instance($this->eventcm->id),
+             'courseid' => $this->eventcourse->id,
+             'other' => array('loadedcontent' => 'url_to_content_that_was_laoded.php')
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'launch', 'view.php?id=' . $this->eventcm->id,
+                          'url_to_content_that_was_laoded.php', $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        // Test validations.
+        $this->expectException(\coding_exception::class);
+        \mod_scorm\event\sco_launched::create(array(
+             'objectid' => $this->eventscorm->id,
+             'context' => \context_module::instance($this->eventcm->id),
+             'courseid' => $this->eventcourse->id,
+        ));
+    }
+
+    /**
+     * Tests for tracks viewed event.
+     *
+     * There is no api involved so the best we can do is test validations by triggering event manually.
+     */
+    public function test_tracks_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\tracks_viewed::create(array(
+            'relateduserid' => 5,
+            'context' => \context_module::instance($this->eventcm->id),
+            'courseid' => $this->eventcourse->id,
+            'other' => array('attemptid' => 2, 'instanceid' => $this->eventscorm->id, 'scoid' => 3, 'mode' => 'interactions')
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'userreporttracks', 'report/userreporttracks.php?id=' .
+                $this->eventcm->id . '&user=5&attempt=' . 2 . '&scoid=3' . '&mode=interactions',
+                $this->eventscorm->id, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -161,6 +331,33 @@ class events_test extends \advanced_testcase {
         } catch (\Exception $e) {
             $this->assertInstanceOf('coding_exception', $e);
         }
+    }
+
+    /**
+     * Tests for userreport viewed event.
+     *
+     * There is no api involved so the best we can do is test validations and legacy log by triggering event manually.
+     */
+    public function test_user_report_viewed_event() {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\user_report_viewed::create(array(
+            'relateduserid' => 5,
+            'context' => \context_module::instance($this->eventcm->id),
+            'courseid' => $this->eventcourse->id,
+            'other' => array('attemptid' => 2, 'instanceid' => $this->eventscorm->id)
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->eventcourse->id, 'scorm', 'userreport', 'report/userreport.php?id=' .
+                $this->eventcm->id . '&user=5&attempt=' . 2, $this->eventscorm->id, $this->eventcm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -214,6 +411,40 @@ class events_test extends \advanced_testcase {
             // Check an edge case (PHP empty() vs isset()): score value equals to '0'.
             'cmi.score.raw => 0' => array('cmi.score.raw', '0'),
         );
+    }
+
+    /**
+     * Tests for score submitted event.
+     *
+     * There is no api involved so the best we can do is test data by triggering event manually.
+     *
+     * @dataProvider get_scoreraw_submitted_event_provider
+     *
+     * @param string $cmielement a valid CMI raw score element
+     * @param string $cmivalue a valid CMI raw score value
+     */
+    public function test_scoreraw_submitted_event($cmielement, $cmivalue) {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\scoreraw_submitted::create(array(
+            'other' => array('attemptid' => '2', 'cmielement' => $cmielement, 'cmivalue' => $cmivalue),
+            'objectid' => $this->eventscorm->id,
+            'context' => \context_module::instance($this->eventcm->id),
+            'relateduserid' => $this->eventuser->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = reset($events);
+        $this->assertEquals(2, $event->other['attemptid']);
+        $this->assertEquals($cmielement, $event->other['cmielement']);
+        $this->assertEquals($cmivalue, $event->other['cmivalue']);
+
+        // Check that no legacy log data is provided.
+        $this->assertEventLegacyLogData(null, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**
@@ -301,6 +532,40 @@ class events_test extends \advanced_testcase {
             'cmi.success_status => failed' => array('cmi.success_status', 'failed'),
             'cmi.success_status => unknown' => array('cmi.success_status', 'unknown')
         );
+    }
+
+    /**
+     * Tests for status submitted event.
+     *
+     * There is no api involved so the best we can do is test data by triggering event manually.
+     *
+     * @dataProvider get_status_submitted_event_provider
+     *
+     * @param string $cmielement a valid CMI status element
+     * @param string $cmivalue a valid CMI status value
+     */
+    public function test_status_submitted_event($cmielement, $cmivalue) {
+        $this->resetAfterTest();
+        $event = \mod_scorm\event\status_submitted::create(array(
+            'other' => array('attemptid' => '2', 'cmielement' => $cmielement, 'cmivalue' => $cmivalue),
+            'objectid' => $this->eventscorm->id,
+            'context' => \context_module::instance($this->eventcm->id),
+            'relateduserid' => $this->eventuser->id
+        ));
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $sink->close();
+        $event = reset($events);
+        $this->assertEquals(2, $event->other['attemptid']);
+        $this->assertEquals($cmielement, $event->other['cmielement']);
+        $this->assertEquals($cmivalue, $event->other['cmivalue']);
+
+        // Check that no legacy log data is provided.
+        $this->assertEventLegacyLogData(null, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**

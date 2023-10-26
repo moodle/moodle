@@ -68,69 +68,6 @@ class blog_entry implements renderable {
     /** @var StdClass Data needed to render the entry */
     public $renderable;
 
-    /** @var string summary format. */
-    public string $summaryformat;
-
-    /** @var array summary editor. */
-    public array $summary_editor;
-
-    /** @var string */
-    public $summarytrust;
-
-    /** @var int course associated with the blog post. */
-    public $courseassoc;
-
-    /** @var string module associated with the blog post. */
-    public $modassoc;
-
-    /** @var mixed attachment. */
-    public $attachment_filemanager;
-
-    /** @var string blog post body. */
-    public $body;
-
-    /** @var int attachment entry id. */
-    public $entryid;
-
-    /** @var string|null submit button. */
-    public $submitbutton;
-
-    /** @var string|null user alias. */
-    public $useridalias;
-
-    /** @var string|null user picture. */
-    public $picture;
-
-    /** @var string|null user first name. */
-    public $firstname;
-
-    /** @var string|null user middle name. */
-    public $middlename;
-
-    /** @var string|null user last name. */
-    public $lastname;
-
-    /** @var string|null user first name phonetic. */
-    public $firstnamephonetic;
-
-    /** @var string|null user last name phonetic. */
-    public $lastnamephonetic;
-
-    /** @var string|null user alternate name. */
-    public $alternatename;
-
-    /** @var string|null user email address. */
-    public $email;
-
-    /** @var string */
-    public $action;
-
-    /** @var string|null user picture description. */
-    public $imagealt;
-
-    /** @var int module instance id. */
-    public $modid;
-
     /**
      * Constructor. If given an id, will fetch the corresponding record from the DB.
      *

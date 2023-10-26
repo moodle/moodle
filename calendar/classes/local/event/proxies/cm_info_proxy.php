@@ -72,7 +72,7 @@ class cm_info_proxy implements proxy_interface {
     /**
      * Get the full instance of the proxied class.
      *
-     * @return \cm_info
+     * @return \stdClass
      */
     public function get_proxied_instance() {
         if (!$this->cm) {

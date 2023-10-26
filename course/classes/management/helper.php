@@ -1010,7 +1010,7 @@ class helper {
      * @return array
      */
     public static function get_course_copy_capabilities(): array {
-        return array('moodle/backup:backupcourse', 'moodle/restore:restorecourse', 'moodle/course:create');
+        return array('moodle/backup:backupcourse', 'moodle/restore:restorecourse', 'moodle/course:view', 'moodle/course:create');
     }
 
     /**

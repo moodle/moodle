@@ -98,6 +98,24 @@ class course_completed extends base {
     }
 
     /**
+     * Return name of the legacy event, which is replaced by this event.
+     *
+     * @return string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'course_completed';
+    }
+
+    /**
+     * Return course_completed legacy event data.
+     *
+     * @return \stdClass completion data.
+     */
+    protected function get_legacy_eventdata() {
+        return $this->get_record_snapshot('course_completions', $this->objectid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -36,7 +36,7 @@ trait mod_forum_tests_cron_trait {
 
         // Note, we cannot use expectOutputRegex because it only allows for a single RegExp.
         ob_start();
-        \core\cron::setup_user();
+        cron_setup_user();
         $cron = new \mod_forum\task\cron_task();
         $cron->execute();
         $output = ob_get_contents();

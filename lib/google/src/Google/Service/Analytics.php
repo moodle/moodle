@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics extends Google_Service
 {
   /** View and manage your Google Analytics data. */
@@ -1971,7 +1970,6 @@ class Google_Service_Analytics extends Google_Service
  *   $data = $analyticsService->data;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Data_Resource extends Google_Service_Resource
 {
 }
@@ -1984,7 +1982,6 @@ class Google_Service_Analytics_Data_Resource extends Google_Service_Resource
  *   $ga = $analyticsService->ga;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_DataGa_Resource extends Google_Service_Resource
 {
 
@@ -2034,7 +2031,6 @@ class Google_Service_Analytics_DataGa_Resource extends Google_Service_Resource
  *   $mcf = $analyticsService->mcf;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_DataMcf_Resource extends Google_Service_Resource
 {
 
@@ -2082,7 +2078,6 @@ class Google_Service_Analytics_DataMcf_Resource extends Google_Service_Resource
  *   $realtime = $analyticsService->realtime;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_DataRealtime_Resource extends Google_Service_Resource
 {
 
@@ -2121,7 +2116,6 @@ class Google_Service_Analytics_DataRealtime_Resource extends Google_Service_Reso
  *   $management = $analyticsService->management;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Management_Resource extends Google_Service_Resource
 {
 }
@@ -2134,7 +2128,6 @@ class Google_Service_Analytics_Management_Resource extends Google_Service_Resour
  *   $accountSummaries = $analyticsService->accountSummaries;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementAccountSummaries_Resource extends Google_Service_Resource
 {
 
@@ -2166,7 +2159,6 @@ class Google_Service_Analytics_ManagementAccountSummaries_Resource extends Googl
  *   $accountUserLinks = $analyticsService->accountUserLinks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementAccountUserLinks_Resource extends Google_Service_Resource
 {
 
@@ -2245,7 +2237,6 @@ class Google_Service_Analytics_ManagementAccountUserLinks_Resource extends Googl
  *   $accounts = $analyticsService->accounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementAccounts_Resource extends Google_Service_Resource
 {
 
@@ -2277,7 +2268,6 @@ class Google_Service_Analytics_ManagementAccounts_Resource extends Google_Servic
  *   $customDataSources = $analyticsService->customDataSources;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementCustomDataSources_Resource extends Google_Service_Resource
 {
 
@@ -2312,7 +2302,6 @@ class Google_Service_Analytics_ManagementCustomDataSources_Resource extends Goog
  *   $customDimensions = $analyticsService->customDimensions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementCustomDimensions_Resource extends Google_Service_Resource
 {
 
@@ -2427,7 +2416,6 @@ class Google_Service_Analytics_ManagementCustomDimensions_Resource extends Googl
  *   $customMetrics = $analyticsService->customMetrics;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementCustomMetrics_Resource extends Google_Service_Resource
 {
 
@@ -2540,7 +2528,6 @@ class Google_Service_Analytics_ManagementCustomMetrics_Resource extends Google_S
  *   $experiments = $analyticsService->experiments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementExperiments_Resource extends Google_Service_Resource
 {
 
@@ -2662,7 +2649,6 @@ class Google_Service_Analytics_ManagementExperiments_Resource extends Google_Ser
  *   $filters = $analyticsService->filters;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementFilters_Resource extends Google_Service_Resource
 {
 
@@ -2771,7 +2757,6 @@ class Google_Service_Analytics_ManagementFilters_Resource extends Google_Service
  *   $goals = $analyticsService->goals;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementGoals_Resource extends Google_Service_Resource
 {
 
@@ -2881,7 +2866,6 @@ class Google_Service_Analytics_ManagementGoals_Resource extends Google_Service_R
  *   $profileFilterLinks = $analyticsService->profileFilterLinks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementProfileFilterLinks_Resource extends Google_Service_Resource
 {
 
@@ -3011,7 +2995,6 @@ class Google_Service_Analytics_ManagementProfileFilterLinks_Resource extends Goo
  *   $profileUserLinks = $analyticsService->profileUserLinks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementProfileUserLinks_Resource extends Google_Service_Resource
 {
 
@@ -3103,7 +3086,6 @@ class Google_Service_Analytics_ManagementProfileUserLinks_Resource extends Googl
  *   $profiles = $analyticsService->profiles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementProfiles_Resource extends Google_Service_Resource
 {
 
@@ -3226,7 +3208,6 @@ class Google_Service_Analytics_ManagementProfiles_Resource extends Google_Servic
  *   $segments = $analyticsService->segments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementSegments_Resource extends Google_Service_Resource
 {
 
@@ -3258,7 +3239,6 @@ class Google_Service_Analytics_ManagementSegments_Resource extends Google_Servic
  *   $unsampledReports = $analyticsService->unsampledReports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementUnsampledReports_Resource extends Google_Service_Resource
 {
 
@@ -3333,7 +3313,6 @@ class Google_Service_Analytics_ManagementUnsampledReports_Resource extends Googl
  *   $uploads = $analyticsService->uploads;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementUploads_Resource extends Google_Service_Resource
 {
 
@@ -3421,7 +3400,6 @@ class Google_Service_Analytics_ManagementUploads_Resource extends Google_Service
  *   $webPropertyAdWordsLinks = $analyticsService->webPropertyAdWordsLinks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementWebPropertyAdWordsLinks_Resource extends Google_Service_Resource
 {
 
@@ -3549,7 +3527,6 @@ class Google_Service_Analytics_ManagementWebPropertyAdWordsLinks_Resource extend
  *   $webproperties = $analyticsService->webproperties;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementWebproperties_Resource extends Google_Service_Resource
 {
 
@@ -3648,7 +3625,6 @@ class Google_Service_Analytics_ManagementWebproperties_Resource extends Google_S
  *   $webpropertyUserLinks = $analyticsService->webpropertyUserLinks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ManagementWebpropertyUserLinks_Resource extends Google_Service_Resource
 {
 
@@ -3735,7 +3711,6 @@ class Google_Service_Analytics_ManagementWebpropertyUserLinks_Resource extends G
  *   $metadata = $analyticsService->metadata;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Metadata_Resource extends Google_Service_Resource
 {
 }
@@ -3748,7 +3723,6 @@ class Google_Service_Analytics_Metadata_Resource extends Google_Service_Resource
  *   $columns = $analyticsService->columns;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_MetadataColumns_Resource extends Google_Service_Resource
 {
 
@@ -3776,7 +3750,6 @@ class Google_Service_Analytics_MetadataColumns_Resource extends Google_Service_R
  *   $provisioning = $analyticsService->provisioning;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Provisioning_Resource extends Google_Service_Resource
 {
 
@@ -3798,7 +3771,6 @@ class Google_Service_Analytics_Provisioning_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Account extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3881,7 +3853,6 @@ class Google_Service_Analytics_Account extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountChildLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3908,7 +3879,6 @@ class Google_Service_Analytics_AccountChildLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountPermissions extends Google_Collection
 {
   protected $collection_key = 'effective';
@@ -3927,7 +3897,6 @@ class Google_Service_Analytics_AccountPermissions extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountRef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3972,7 +3941,6 @@ class Google_Service_Analytics_AccountRef extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountSummaries extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4055,7 +4023,6 @@ class Google_Service_Analytics_AccountSummaries extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountSummary extends Google_Collection
 {
   protected $collection_key = 'webProperties';
@@ -4102,7 +4069,6 @@ class Google_Service_Analytics_AccountSummary extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AccountTicket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4168,7 +4134,6 @@ class Google_Service_Analytics_AccountTicket extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Accounts extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4251,7 +4216,6 @@ class Google_Service_Analytics_Accounts extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AdWordsAccount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4287,7 +4251,6 @@ class Google_Service_Analytics_AdWordsAccount extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_AnalyticsDataimportDeleteUploadDataRequest extends Google_Collection
 {
   protected $collection_key = 'customDataImportUids';
@@ -4306,7 +4269,6 @@ class Google_Service_Analytics_AnalyticsDataimportDeleteUploadDataRequest extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Column extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4342,12 +4304,10 @@ class Google_Service_Analytics_Column extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ColumnAttributes extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Columns extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4403,7 +4363,6 @@ class Google_Service_Analytics_Columns extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDataSource extends Google_Collection
 {
   protected $collection_key = 'profilesLinked';
@@ -4550,7 +4509,6 @@ class Google_Service_Analytics_CustomDataSource extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDataSourceChildLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4577,7 +4535,6 @@ class Google_Service_Analytics_CustomDataSourceChildLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDataSourceParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4604,7 +4561,6 @@ class Google_Service_Analytics_CustomDataSourceParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDataSources extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4687,7 +4643,6 @@ class Google_Service_Analytics_CustomDataSources extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDimension extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4805,7 +4760,6 @@ class Google_Service_Analytics_CustomDimension extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDimensionParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4832,7 +4786,6 @@ class Google_Service_Analytics_CustomDimensionParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomDimensions extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4915,7 +4868,6 @@ class Google_Service_Analytics_CustomDimensions extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomMetric extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5062,7 +5014,6 @@ class Google_Service_Analytics_CustomMetric extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomMetricParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5089,7 +5040,6 @@ class Google_Service_Analytics_CustomMetricParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_CustomMetrics extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5172,7 +5122,6 @@ class Google_Service_Analytics_CustomMetrics extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityAdWordsLink extends Google_Collection
 {
   protected $collection_key = 'profileIds';
@@ -5247,7 +5196,6 @@ class Google_Service_Analytics_EntityAdWordsLink extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityAdWordsLinkEntity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5266,7 +5214,6 @@ class Google_Service_Analytics_EntityAdWordsLinkEntity extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityAdWordsLinks extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5340,7 +5287,6 @@ class Google_Service_Analytics_EntityAdWordsLinks extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityUserLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5406,7 +5352,6 @@ class Google_Service_Analytics_EntityUserLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityUserLinkEntity extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5445,7 +5390,6 @@ class Google_Service_Analytics_EntityUserLinkEntity extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityUserLinkPermissions extends Google_Collection
 {
   protected $collection_key = 'local';
@@ -5473,7 +5417,6 @@ class Google_Service_Analytics_EntityUserLinkPermissions extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_EntityUserLinks extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5547,7 +5490,6 @@ class Google_Service_Analytics_EntityUserLinks extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Experiment extends Google_Collection
 {
   protected $collection_key = 'variations';
@@ -5811,7 +5753,6 @@ class Google_Service_Analytics_Experiment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ExperimentParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5838,7 +5779,6 @@ class Google_Service_Analytics_ExperimentParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ExperimentVariations extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5892,7 +5832,6 @@ class Google_Service_Analytics_ExperimentVariations extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Experiments extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5975,7 +5914,6 @@ class Google_Service_Analytics_Experiments extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Filter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6126,7 +6064,6 @@ class Google_Service_Analytics_Filter extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6252,7 +6189,6 @@ class Google_Service_Analytics_FilterAdvancedDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterExpression extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6315,7 +6251,6 @@ class Google_Service_Analytics_FilterExpression extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterLowercaseDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6342,7 +6277,6 @@ class Google_Service_Analytics_FilterLowercaseDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6369,7 +6303,6 @@ class Google_Service_Analytics_FilterParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterRef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6423,7 +6356,6 @@ class Google_Service_Analytics_FilterRef extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterSearchAndReplaceDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6477,7 +6409,6 @@ class Google_Service_Analytics_FilterSearchAndReplaceDetails extends Google_Mode
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_FilterUppercaseDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6504,7 +6435,6 @@ class Google_Service_Analytics_FilterUppercaseDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Filters extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6587,7 +6517,6 @@ class Google_Service_Analytics_Filters extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaData extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -6745,7 +6674,6 @@ class Google_Service_Analytics_GaData extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataColumnHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6781,7 +6709,6 @@ class Google_Service_Analytics_GaDataColumnHeaders extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataDataTable extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -6811,7 +6738,6 @@ class Google_Service_Analytics_GaDataDataTable extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataDataTableCols extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6847,7 +6773,6 @@ class Google_Service_Analytics_GaDataDataTableCols extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataDataTableRows extends Google_Collection
 {
   protected $collection_key = 'c';
@@ -6867,7 +6792,6 @@ class Google_Service_Analytics_GaDataDataTableRows extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataDataTableRowsC extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6885,7 +6809,6 @@ class Google_Service_Analytics_GaDataDataTableRowsC extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataProfileInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6948,7 +6871,6 @@ class Google_Service_Analytics_GaDataProfileInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataQuery extends Google_Collection
 {
   protected $collection_key = 'sort';
@@ -7061,12 +6983,10 @@ class Google_Service_Analytics_GaDataQuery extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GaDataTotalsForAllResults extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Goal extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7242,7 +7162,6 @@ class Google_Service_Analytics_Goal extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalEventDetails extends Google_Collection
 {
   protected $collection_key = 'eventConditions';
@@ -7271,7 +7190,6 @@ class Google_Service_Analytics_GoalEventDetails extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalEventDetailsEventConditions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7325,7 +7243,6 @@ class Google_Service_Analytics_GoalEventDetailsEventConditions extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7352,7 +7269,6 @@ class Google_Service_Analytics_GoalParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalUrlDestinationDetails extends Google_Collection
 {
   protected $collection_key = 'steps';
@@ -7408,7 +7324,6 @@ class Google_Service_Analytics_GoalUrlDestinationDetails extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalUrlDestinationDetailsSteps extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7444,7 +7359,6 @@ class Google_Service_Analytics_GoalUrlDestinationDetailsSteps extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalVisitNumPagesDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7471,7 +7385,6 @@ class Google_Service_Analytics_GoalVisitNumPagesDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_GoalVisitTimeOnSiteDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7498,7 +7411,6 @@ class Google_Service_Analytics_GoalVisitTimeOnSiteDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Goals extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -7581,7 +7493,6 @@ class Google_Service_Analytics_Goals extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfData extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -7730,7 +7641,6 @@ class Google_Service_Analytics_McfData extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataColumnHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7766,7 +7676,6 @@ class Google_Service_Analytics_McfDataColumnHeaders extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataProfileInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7829,7 +7738,6 @@ class Google_Service_Analytics_McfDataProfileInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataQuery extends Google_Collection
 {
   protected $collection_key = 'sort';
@@ -7942,7 +7850,6 @@ class Google_Service_Analytics_McfDataQuery extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataRows extends Google_Collection
 {
   protected $collection_key = 'conversionPathValue';
@@ -7971,7 +7878,6 @@ class Google_Service_Analytics_McfDataRows extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataRowsConversionPathValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7998,12 +7904,10 @@ class Google_Service_Analytics_McfDataRowsConversionPathValue extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_McfDataTotalsForAllResults extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Profile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8231,7 +8135,6 @@ class Google_Service_Analytics_Profile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileChildLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8258,7 +8161,6 @@ class Google_Service_Analytics_ProfileChildLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileFilterLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8323,7 +8225,6 @@ class Google_Service_Analytics_ProfileFilterLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileFilterLinks extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8406,7 +8307,6 @@ class Google_Service_Analytics_ProfileFilterLinks extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8433,7 +8333,6 @@ class Google_Service_Analytics_ProfileParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfilePermissions extends Google_Collection
 {
   protected $collection_key = 'effective';
@@ -8452,7 +8351,6 @@ class Google_Service_Analytics_ProfilePermissions extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileRef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8524,7 +8422,6 @@ class Google_Service_Analytics_ProfileRef extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_ProfileSummary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8569,7 +8466,6 @@ class Google_Service_Analytics_ProfileSummary extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Profiles extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8652,7 +8548,6 @@ class Google_Service_Analytics_Profiles extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_RealtimeData extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -8746,7 +8641,6 @@ class Google_Service_Analytics_RealtimeData extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_RealtimeDataColumnHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8782,7 +8676,6 @@ class Google_Service_Analytics_RealtimeDataColumnHeaders extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_RealtimeDataProfileInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8845,7 +8738,6 @@ class Google_Service_Analytics_RealtimeDataProfileInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_RealtimeDataQuery extends Google_Collection
 {
   protected $collection_key = 'sort';
@@ -8910,12 +8802,10 @@ class Google_Service_Analytics_RealtimeDataQuery extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_RealtimeDataTotalsForAllResults extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Segment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9005,7 +8895,6 @@ class Google_Service_Analytics_Segment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Segments extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9088,7 +8977,6 @@ class Google_Service_Analytics_Segments extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_UnsampledReport extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9272,7 +9160,6 @@ class Google_Service_Analytics_UnsampledReport extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_UnsampledReportCloudStorageDownloadDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9299,7 +9186,6 @@ class Google_Service_Analytics_UnsampledReportCloudStorageDownloadDetails extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_UnsampledReportDriveDownloadDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9317,7 +9203,6 @@ class Google_Service_Analytics_UnsampledReportDriveDownloadDetails extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_UnsampledReports extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9400,7 +9285,6 @@ class Google_Service_Analytics_UnsampledReports extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Upload extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -9464,7 +9348,6 @@ class Google_Service_Analytics_Upload extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Uploads extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9538,7 +9421,6 @@ class Google_Service_Analytics_Uploads extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_UserRef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9574,7 +9456,6 @@ class Google_Service_Analytics_UserRef extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_WebPropertyRef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9637,7 +9518,6 @@ class Google_Service_Analytics_WebPropertyRef extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_WebPropertySummary extends Google_Collection
 {
   protected $collection_key = 'profiles';
@@ -9711,7 +9591,6 @@ class Google_Service_Analytics_WebPropertySummary extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Webproperties extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9794,7 +9673,6 @@ class Google_Service_Analytics_Webproperties extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_Webproperty extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9950,7 +9828,6 @@ class Google_Service_Analytics_Webproperty extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_WebpropertyChildLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9977,7 +9854,6 @@ class Google_Service_Analytics_WebpropertyChildLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_WebpropertyParentLink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10004,7 +9880,6 @@ class Google_Service_Analytics_WebpropertyParentLink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Analytics_WebpropertyPermissions extends Google_Collection
 {
   protected $collection_key = 'effective';

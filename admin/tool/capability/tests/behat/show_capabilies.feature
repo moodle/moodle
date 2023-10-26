@@ -86,18 +86,19 @@ Feature: show capabilities for selected roles
   Scenario: filter capability list using javascript
     Given I should see "moodle/site:config" in the "Capability" "field"
     And I should see "moodle/course:change" in the "Capability" "field"
-    And I set the field "Search" in the "#capability-overview-form" "css_element" to "moodle/course:change"
+    When I wait until the page is ready
+    And I set the field "capabilitysearch" to "moodle/course:change"
     Then I should see "moodle/course:change" in the "Capability" "field"
     And I should not see "moodle/site:config" in the "Capability" "field"
 
   @javascript
   Scenario: selecting capabilities using filters
     Given I should see "moodle/course:change" in the "Capability" "field"
-    And I set the field "Search" in the "#capability-overview-form" "css_element" to "moodle/course:change"
-    And I wait "1" seconds
+    When I wait until the page is ready
+    And I set the field "capabilitysearch" to "moodle/course:change"
     When I set the following fields to these values:
       | Capability: | moodle/course:changecategory |
       | Roles:      | Student                      |
+    And I set the field "capabilitysearch" to ""
     And I click on "Get the overview" "button"
     Then I should see "moodle/course:changecategory" in the "comparisontable" "table"
-    And the field "Capability:" matches value "moodle/course:changecategory"

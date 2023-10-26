@@ -16,11 +16,6 @@
 
 namespace mod_lti\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -35,18 +30,18 @@ require_once($CFG->dirroot . '/mod/lti/locallib.php');
  * @copyright  2021 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class get_tool_types_and_proxies_count extends external_api {
+class get_tool_types_and_proxies_count extends \external_api {
 
     /**
      * Get parameter definition for get_tool_types_and_proxies_count().
      *
-     * @return external_function_parameters
+     * @return \external_function_parameters
      */
-    public static function execute_parameters(): external_function_parameters {
-        return new external_function_parameters(
+    public static function execute_parameters(): \external_function_parameters {
+        return new \external_function_parameters(
             [
-                'toolproxyid' => new external_value(PARAM_INT, 'Tool proxy id', VALUE_DEFAULT, 0),
-                'orphanedonly' => new external_value(PARAM_BOOL, 'Orphaned tool types only', VALUE_DEFAULT, 0),
+                'toolproxyid' => new \external_value(PARAM_INT, 'Tool proxy id', VALUE_DEFAULT, 0),
+                'orphanedonly' => new \external_value(PARAM_BOOL, 'Orphaned tool types only', VALUE_DEFAULT, 0),
             ]
         );
     }
@@ -79,11 +74,11 @@ class get_tool_types_and_proxies_count extends external_api {
     /**
      * Get return definition for get_tool_types_and_proxies_count.
      *
-     * @return external_single_structure
+     * @return \external_single_structure
      */
-    public static function execute_returns(): external_single_structure {
-        return new external_single_structure([
-            'count' => new external_value(PARAM_INT, 'Total number of tool types and proxies', VALUE_REQUIRED),
+    public static function execute_returns(): \external_single_structure {
+        return new \external_single_structure([
+            'count' => new \external_value(PARAM_INT, 'Total number of tool types and proxies', VALUE_REQUIRED),
         ]);
     }
 }

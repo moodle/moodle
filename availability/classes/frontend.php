@@ -151,7 +151,7 @@ abstract class frontend {
                 'show_verb', 'shown_individual', 'hidden_all', 'shown_all',
                 'condition_group', 'condition_group_info', 'and', 'or',
                 'label_multi', 'label_sign', 'setheading', 'itemheading',
-                'missingplugin', 'disabled_verb'),
+                'missingplugin'),
                 'availability');
     }
 

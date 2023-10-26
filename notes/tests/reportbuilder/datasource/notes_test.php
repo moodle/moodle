@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_notes\reportbuilder\datasource;
 
+use core_collator;
 use core_notes_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
@@ -55,19 +56,17 @@ class notes_test extends core_reportbuilder_testcase {
         /** @var core_notes_generator $notesgenerator */
         $notesgenerator = $this->getDataGenerator()->get_plugin_generator('core_notes');
 
-        // Our first user will create a course note.
         $course = $this->getDataGenerator()->create_course();
-        $userone = $this->getDataGenerator()->create_and_enrol($course, 'student', ['firstname' => 'Zoe']);
-        $coursenote = $notesgenerator->create_instance(['courseid' => $course->id, 'userid' => $userone->id, 'content' => 'Course',
+        $usercoursenote = $this->getDataGenerator()->create_and_enrol($course);
+        $notesgenerator->create_instance(['courseid' => $course->id, 'userid' => $usercoursenote->id, 'content' => 'Course',
             'publishstate' => NOTES_STATE_PUBLIC]);
 
-        // Our second user will create a personal and site note.
-        $usertwo = $this->getDataGenerator()->create_user(['firstname' => 'Amy']);
-        $personalnote = $notesgenerator->create_instance(['courseid' => SITEID, 'userid' => $usertwo->id, 'content' => 'Personal',
+        $userpersonalnote = $this->getDataGenerator()->create_user();
+        $notesgenerator->create_instance(['courseid' => $course->id, 'userid' => $userpersonalnote->id, 'content' => 'Personal',
             'publishstate' => NOTES_STATE_DRAFT]);
 
-        $this->waitForSecond(); // For consistent ordering we need distinct time for second user notes.
-        $sitenote = $notesgenerator->create_instance(['courseid' => SITEID, 'userid' => $usertwo->id, 'content' => 'Site',
+        $usersitenote = $this->getDataGenerator()->create_user();
+        $notesgenerator->create_instance(['courseid' => $course->id, 'userid' => $usersitenote->id, 'content' => 'Site',
             'publishstate' => NOTES_STATE_SITE]);
 
         /** @var core_reportbuilder_generator $generator */
@@ -75,12 +74,17 @@ class notes_test extends core_reportbuilder_testcase {
         $report = $generator->create_report(['name' => 'Notes', 'source' => notes::class, 'default' => 1]);
 
         $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(3, $content);
 
-        // Default columns are recipient, publishstate, course, note, time created. Sorted by recipient and time created.
+        // Consistent order (course, personal, site), just in case.
+        core_collator::asort_array_of_arrays_by_key($content, 'c1_publishstate');
+        $content = array_values($content);
+
+        // Default columns are recipient, publishstate, course, note.
         $this->assertEquals([
-            [fullname($usertwo), 'Personal notes', '', 'Personal', userdate($personalnote->created)],
-            [fullname($usertwo), 'Site notes', '', 'Site', userdate($sitenote->created)],
-            [fullname($userone), 'Course notes', $course->fullname, 'Course', userdate($coursenote->created)],
+            [fullname($usercoursenote), 'Course notes', $course->fullname, 'Course'],
+            [fullname($userpersonalnote), 'Personal notes', '', 'Personal'],
+            [fullname($usersitenote), 'Site notes', '', 'Site'],
         ], array_map('array_values', $content));
     }
 

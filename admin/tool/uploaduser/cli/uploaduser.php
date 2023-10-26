@@ -36,7 +36,7 @@ core_php_time_limit::raise();
 raise_memory_limit(MEMORY_EXTRA);
 
 // Emulate normal session - we use admin account by default, set language to the site language.
-\core\cron::setup_user();
+cron_setup_user();
 $USER->lang = $CFG->lang;
 
 $clihelper = new \tool_uploaduser\cli_helper();

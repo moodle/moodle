@@ -51,18 +51,13 @@ class question_usage_table extends table_sql {
     public $question;
 
     /**
-     * @var bool $specificversion Are we displaying the usage for a specific version, rather than all versions of the question?
-     */
-    protected $specificversion;
-
-    /**
      * constructor.
      * Sets the SQL for the table and the pagination.
      *
      * @param string $uniqueid
      * @param \question_definition $question
      */
-    public function __construct(string $uniqueid, \question_definition $question, bool $specificversion = false) {
+    public function __construct(string $uniqueid, \question_definition $question) {
         global $PAGE;
         parent::__construct($uniqueid);
         $this->question = $question;
@@ -79,22 +74,17 @@ class question_usage_table extends table_sql {
         $this->define_columns($columns);
         $this->define_headers($headers);
         $this->define_baseurl($PAGE->url);
-        $this->specificversion = $specificversion;
-        $this->set_attribute('id', 'question_usage_table');
     }
 
     public function query_db($pagesize, $useinitialsbar = true) {
         global $DB;
         if (!$this->is_downloading()) {
-            $total = helper::get_question_entry_usage_count($this->question, $this->specificversion);
+            $total = helper::get_question_entry_usage_count($this->question);
             $this->pagesize($pagesize, $total);
         }
 
-        $sql = helper::question_usage_sql($this->specificversion);
+        $sql = helper::question_usage_sql();
         $params = [$this->question->id, $this->question->questionbankentryid, 'mod_quiz', 'slot'];
-        if ($this->specificversion) {
-            $params[] = $this->question->id;
-        }
 
         if (!$this->is_downloading()) {
             $this->rawdata = $DB->get_records_sql($sql, $params, $this->get_page_start(), $this->get_page_size());

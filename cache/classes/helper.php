@@ -176,7 +176,7 @@ class cache_helper {
      * This function explicitly does NOT use core functions as it will in some circumstances be called before Moodle has
      * finished initialising. This happens when loading configuration for instance.
      *
-     * @return array
+     * @return string
      */
     public static function early_get_cache_plugins() {
         global $CFG;
@@ -211,9 +211,8 @@ class cache_helper {
      * @param string $component
      * @param string $area
      * @param array $identifiers
-     * @param array|string|int $keys
+     * @param array $keys
      * @return boolean
-     * @throws coding_exception
      */
     public static function invalidate_by_definition($component, $area, array $identifiers = array(), $keys = array()) {
         $cache = cache::make($component, $area, $identifiers);

@@ -49,12 +49,6 @@ abstract class grade_base_testcase extends advanced_testcase {
     protected $courseid;
     protected $userid;
 
-    /** @var array user object collection. */
-    protected $user = [];
-
-    /** @var array module object collection. */
-    protected $course_module = [];
-
     protected function setUp(): void {
         global $CFG;
         parent::setup();

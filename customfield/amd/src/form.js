@@ -24,8 +24,8 @@
 import 'core/inplace_editable';
 import {call as fetchMany} from 'core/ajax';
 import {
-    getString,
-    getStrings,
+    get_string as getString,
+    get_strings as getStrings,
 } from 'core/str';
 import ModalForm from 'core_form/modalform';
 import Notification from 'core/notification';

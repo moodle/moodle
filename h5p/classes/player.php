@@ -27,11 +27,7 @@ namespace core_h5p;
 defined('MOODLE_INTERNAL') || die();
 
 use core_h5p\local\library\autoloader;
-use core_xapi\handler;
-use core_xapi\local\state;
 use core_xapi\local\statement\item_activity;
-use core_xapi\local\statement\item_agent;
-use core_xapi\xapi_exception;
 
 /**
  * H5P player class, for displaying any local H5P content.
@@ -106,7 +102,7 @@ class player {
      * Inits the H5P player for rendering the content.
      *
      * @param string $url Local URL of the H5P file to display.
-     * @param \stdClass $config Configuration for H5P buttons.
+     * @param stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
      * @param bool $skipcapcheck Whether capabilities should be checked or not to get the pluginfile URL because sometimes they
@@ -211,7 +207,7 @@ class player {
      * main H5P config variable.
      */
     public function add_assets_to_page() {
-        global $PAGE, $USER;
+        global $PAGE;
 
         $cid = $this->get_cid();
         $systemcontext = \context_system::instance();
@@ -223,7 +219,6 @@ class player {
             \core_h5p\file_storage::CONTENT_FILEAREA, $this->h5pid, null, null);
         $exporturl = $this->get_export_settings($displayoptions[ core::DISPLAY_OPTION_DOWNLOAD ]);
         $xapiobject = item_activity::create_from_id($this->context->id);
-
         $contentsettings = [
             'library'         => core::libraryToString($this->content['library']),
             'fullScreen'      => $this->content['library']['fullscreen'],
@@ -236,7 +231,7 @@ class player {
             'url'             => $xapiobject->get_data()->id,
             'contentUrl'      => $contenturl->out(),
             'metadata'        => $this->content['metadata'],
-            'contentUserData' => [0 => ['state' => $this->get_state_data($xapiobject)]],
+            'contentUserData' => [0 => ['state' => '{}']]
         ];
         // Get the core H5P assets, needed by the H5P classes to render the H5P content.
         $settings = $this->get_assets();
@@ -244,86 +239,6 @@ class player {
 
         // Print JavaScript settings to page.
         $PAGE->requires->data_for_js('H5PIntegration', $settings, true);
-    }
-
-    /**
-     * Get the stored xAPI state to use as user data.
-     *
-     * @param item_activity $xapiobject
-     * @return string The state data to pass to the player frontend
-     */
-    private function get_state_data(item_activity $xapiobject): string {
-        global $USER;
-
-        // Initialize the H5P content with the saved state (if it's enabled and the user has some stored state).
-        $emptystatedata = '{}';
-        $savestate = (bool) get_config($this->component, 'enablesavestate');
-        if (!$savestate) {
-            return $emptystatedata;
-        }
-
-        $xapihandler = handler::create($this->component);
-        if (!$xapihandler) {
-            return $emptystatedata;
-        }
-
-        // The component implements the xAPI handler, so the state can be loaded.
-        $state = new state(
-            item_agent::create_from_user($USER),
-            $xapiobject,
-            'state',
-            null,
-            null
-        );
-        try {
-            $state = $xapihandler->load_state($state);
-            if (!$state) {
-                // Check if the state has been restored from a backup for the current user.
-                $state = new state(
-                    item_agent::create_from_user($USER),
-                    $xapiobject,
-                    'restored',
-                    null,
-                    null
-                );
-                $state = $xapihandler->load_state($state);
-                if ($state && !is_null($state->get_state_data())) {
-                    // A restored state has been found. It will be replaced with one with the proper stateid and statedata.
-                    $xapihandler->delete_state($state);
-                    $state = new state(
-                        item_agent::create_from_user($USER),
-                        $xapiobject,
-                        'state',
-                        $state->jsonSerialize(),
-                        null
-                    );
-                    $xapihandler->save_state($state);
-                }
-            }
-
-            if (!$state) {
-                return $emptystatedata;
-            }
-
-            if (is_null($state->get_state_data())) {
-                // The state content should be reset because, for instance, the content has changed.
-                return 'RESET';
-            }
-
-            $statedata = $state->jsonSerialize();
-            if (is_null($statedata)) {
-                return $emptystatedata;
-            }
-
-            if (property_exists($statedata, 'h5p')) {
-                // As the H5P state doesn't always use JSON, we have added this h5p object to jsonize it.
-                return $statedata->h5p;
-            }
-        } catch (xapi_exception $exception) {
-            return $emptystatedata;
-        }
-
-        return $emptystatedata;
     }
 
     /**
@@ -456,7 +371,7 @@ class player {
      */
     private function get_assets(): array {
         // Get core assets.
-        $settings = helper::get_core_assets($this->component);
+        $settings = helper::get_core_assets();
         // Added here because in the helper we don't have the h5p content id.
         $settings['moodleLibraryPaths'] = $this->core->get_dependency_roots($this->h5pid);
         // Add also the Moodle component where the results will be tracked.

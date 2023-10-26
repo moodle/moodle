@@ -82,6 +82,16 @@ class course_section_updated extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $sectiondata = $this->get_record_snapshot('course_sections', $this->objectid);
+        return array($this->courseid, 'course', 'editsection', 'editsection.php?id=' . $this->objectid, $sectiondata->section);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

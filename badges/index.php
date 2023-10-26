@@ -24,19 +24,31 @@
  * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 
-use core_badges\reportbuilder\local\systemreports\badges;
-use core_reportbuilder\system_report_factory;
-
 require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $type       = required_param('type', PARAM_INT);
 $courseid   = optional_param('id', 0, PARAM_INT);
+$page       = optional_param('page', 0, PARAM_INT);
 $deactivate = optional_param('lock', 0, PARAM_INT);
+$sortby     = optional_param('sort', 'name', PARAM_ALPHA);
+$sorthow    = optional_param('dir', 'ASC', PARAM_ALPHA);
 $confirm    = optional_param('confirm', false, PARAM_BOOL);
 $delete     = optional_param('delete', 0, PARAM_INT);
 $archive    = optional_param('archive', 0, PARAM_INT);
 $msg        = optional_param('msg', '', PARAM_TEXT);
+
+if (!in_array($sortby, array('name', 'status'))) {
+    $sortby = 'name';
+}
+
+if ($sorthow != 'ASC' and $sorthow != 'DESC') {
+    $sorthow = 'ASC';
+}
+
+if ($page < 0) {
+    $page = 0;
+}
 
 require_login();
 
@@ -48,10 +60,14 @@ if (empty($CFG->badges_allowcoursebadges) && ($type == BADGE_TYPE_COURSE)) {
     throw new \moodle_exception('coursebadgesdisabled', 'badges');
 }
 
-$urlparams = ['type' => $type];
+$err = '';
+$urlparams = array('sort' => $sortby, 'dir' => $sorthow, 'page' => $page);
 
-if ($course = $DB->get_record('course', ['id' => $courseid])) {
+if ($course = $DB->get_record('course', array('id' => $courseid))) {
+    $urlparams['type'] = $type;
     $urlparams['id'] = $course->id;
+} else {
+    $urlparams['type'] = $type;
 }
 
 $hdr = get_string('managebadges', 'badges');
@@ -149,17 +165,32 @@ if ($type == BADGE_TYPE_SITE) {
 
 echo $OUTPUT->box('', 'notifyproblem hide', 'check_connection');
 
-if ($course && $course->startdate > time()) {
-    echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
+$totalcount = count(badges_get_badges($type, $courseid, '', '' , 0, 0));
+$records = badges_get_badges($type, $courseid, $sortby, $sorthow, $page, BADGE_PERPAGE);
+
+if ($totalcount) {
+    if ($course && $course->startdate > time()) {
+        echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
+    }
+
+    if ($err !== '') {
+        echo $OUTPUT->notification($err, 'notifyproblem');
+    }
+
+    if ($msg !== '') {
+        echo $OUTPUT->notification(get_string($msg, 'badges'), 'notifysuccess');
+    }
+
+    $badges             = new \core_badges\output\badge_management($records);
+    $badges->sort       = $sortby;
+    $badges->dir        = $sorthow;
+    $badges->page       = $page;
+    $badges->perpage    = BADGE_PERPAGE;
+    $badges->totalcount = $totalcount;
+
+    echo $output->render($badges);
+} else {
+    echo $output->notification(get_string('nobadges', 'badges'), 'info');
 }
-
-if ($msg !== '') {
-    echo $OUTPUT->notification(get_string($msg, 'badges'), 'notifysuccess');
-}
-
-$report = system_report_factory::create(badges::class, $PAGE->context);
-$report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
-
-echo $report->output();
 
 echo $OUTPUT->footer();

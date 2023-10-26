@@ -175,9 +175,18 @@ class mustache_helper_collection extends \Mustache_HelperCollection {
     }
 
     /**
-     * @deprecated Deprecated since Moodle 3.10 (MDL-69050) - use {@see strip_disallowed_helpers}
+     * Parse the given string and remove any reference to disallowed helpers.
+     *
+     * @deprecated Deprecated since Moodle 3.10 (MDL-69050) - use {@see self::strip_disallowed_helpers()}
+     * @param  string[] $disallowedlist List of helper names to strip
+     * @param  string $string String to parse
+     * @return string Parsed string
      */
-    public function strip_blacklisted_helpers() {
-        throw new \coding_exception('\core\output\mustache_helper_collection::strip_blacklisted_helpers() has been removed.');
+    public function strip_blacklisted_helpers($disallowedlist, $string) {
+
+        debugging('mustache_helper_collection::strip_blacklisted_helpers() is deprecated. ' .
+            'Please use mustache_helper_collection::strip_disallowed_helpers() instead.', DEBUG_DEVELOPER);
+
+        return $this->strip_disallowed_helpers($disallowedlist, $string);
     }
 }

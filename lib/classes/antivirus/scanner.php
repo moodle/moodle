@@ -43,7 +43,7 @@ abstract class scanner {
     /** Scanning result indicating the error. */
     const SCAN_RESULT_ERROR = 2;
 
-    /** @var \stdClass the config for antivirus */
+    /** @var stdClass the config for antivirus */
     protected $config;
     /** @var string scanning notice */
     protected $scanningnotice = '';

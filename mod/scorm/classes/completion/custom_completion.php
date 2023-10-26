@@ -48,18 +48,16 @@ class custom_completion extends activity_custom_completion {
         $this->validate_rule($rule);
 
         // Base query used when fetching user's tracks data.
-        $basequery = "SELECT v.id, v.scoid, e.element, v.value
-                        FROM {scorm_scoes_value} v
-                        JOIN {scorm_attempt} a ON a.id = v.attemptid
-                        JOIN {scorm_element} e ON e.id = v.elementid
-                       WHERE a.scormid = ?
-                         AND a.userid = ?";
+        $basequery = "SELECT id, scoid, element, value
+                        FROM {scorm_scoes_track}
+                       WHERE scormid = ?
+                         AND userid = ?";
 
         switch ($rule) {
             case 'completionstatusrequired':
                 $status = COMPLETION_INCOMPLETE;
                 $query = $basequery .
-                    " AND e.element IN (
+                    " AND element IN (
                           'cmi.core.lesson_status',
                           'cmi.completion_status',
                           'cmi.success_status'
@@ -87,7 +85,7 @@ class custom_completion extends activity_custom_completion {
             case 'completionscorerequired':
                 $status = COMPLETION_INCOMPLETE;
                 $query = $basequery .
-                    " AND e.element IN (
+                    " AND element IN (
                           'cmi.core.score.raw',
                           'cmi.score.raw'
                     )";
@@ -112,7 +110,7 @@ class custom_completion extends activity_custom_completion {
                 // Assume complete unless we find a sco that is not complete.
                 $status = COMPLETION_COMPLETE;
                 $query = $basequery .
-                    " AND e.element IN (
+                    " AND element IN (
                           'cmi.core.lesson_status',
                           'cmi.completion_status',
                           'cmi.success_status'

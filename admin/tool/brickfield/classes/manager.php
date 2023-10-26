@@ -788,7 +788,7 @@ class manager {
      * Get course module summary information for a course.
      *
      * @param   int $courseid
-     * @return  \stdClass[]
+     * @return  stdClass[]
      */
     public static function get_cm_summary_for_course(int $courseid): array {
         global $DB;

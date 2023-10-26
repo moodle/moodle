@@ -14,13 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * External API.
+ *
+ * @package    block_recentlyaccesseditems
+ * @copyright  2018 Victor Deniz <victor@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 namespace block_recentlyaccesseditems;
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/externallib.php");
 
 use block_recentlyaccesseditems\external\recentlyaccesseditems_item_exporter;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_value;
+use external_multiple_structure;
 use context_user;
 use context_module;
 
@@ -82,7 +92,7 @@ class external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.6
      */
     public static function get_recent_items_returns() {

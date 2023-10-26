@@ -14,11 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+/**
+ * Self enrol plugin external functions
+ *
+ * @package    enrol_self
+ * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once("$CFG->libdir/externallib.php");
 
 /**
  * Self enrolment external functions.
@@ -36,9 +42,9 @@ class enrol_self_external extends external_api {
      * @return external_function_parameters
      */
     public static function get_instance_info_parameters() {
-        return new external_function_parameters([
-            'instanceid' => new external_value(PARAM_INT, 'instance id of self enrolment plugin.'),
-        ]);
+        return new external_function_parameters(
+                array('instanceid' => new external_value(PARAM_INT, 'instance id of self enrolment plugin.'))
+            );
     }
 
     /**
@@ -81,7 +87,7 @@ class enrol_self_external extends external_api {
     /**
      * Returns description of get_instance_info() result value.
      *
-     * @return \core_external\external_description
+     * @return external_description
      */
     public static function get_instance_info_returns() {
         return new external_single_structure(
@@ -237,7 +243,7 @@ class enrol_self_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return \core_external\external_description
+     * @return external_description
      * @since Moodle 3.0
      */
     public static function enrol_user_returns() {

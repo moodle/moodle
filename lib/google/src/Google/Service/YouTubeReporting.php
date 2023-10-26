@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting extends Google_Service
 {
   /** View monetary and non-monetary YouTube Analytics reports for your YouTube content. */
@@ -232,7 +231,6 @@ class Google_Service_YouTubeReporting extends Google_Service
  *   $jobs = $youtubereportingService->jobs;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Jobs_Resource extends Google_Service_Resource
 {
 
@@ -322,7 +320,6 @@ class Google_Service_YouTubeReporting_Jobs_Resource extends Google_Service_Resou
  *   $reports = $youtubereportingService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_JobsReports_Resource extends Google_Service_Resource
 {
 
@@ -380,7 +377,6 @@ class Google_Service_YouTubeReporting_JobsReports_Resource extends Google_Servic
  *   $media = $youtubereportingService->media;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Media_Resource extends Google_Service_Resource
 {
 
@@ -409,7 +405,6 @@ class Google_Service_YouTubeReporting_Media_Resource extends Google_Service_Reso
  *   $reportTypes = $youtubereportingService->reportTypes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_ReportTypes_Resource extends Google_Service_Resource
 {
 
@@ -441,12 +436,10 @@ class Google_Service_YouTubeReporting_ReportTypes_Resource extends Google_Servic
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Empty extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Job extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -491,7 +484,6 @@ class Google_Service_YouTubeReporting_Job extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_ListJobsResponse extends Google_Collection
 {
   protected $collection_key = 'jobs';
@@ -520,7 +512,6 @@ class Google_Service_YouTubeReporting_ListJobsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_ListReportTypesResponse extends Google_Collection
 {
   protected $collection_key = 'reportTypes';
@@ -549,7 +540,6 @@ class Google_Service_YouTubeReporting_ListReportTypesResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_ListReportsResponse extends Google_Collection
 {
   protected $collection_key = 'reports';
@@ -578,7 +568,6 @@ class Google_Service_YouTubeReporting_ListReportsResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Media extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -596,7 +585,6 @@ class Google_Service_YouTubeReporting_Media extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_Report extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -659,7 +647,6 @@ class Google_Service_YouTubeReporting_Report extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeReporting_ReportType extends Google_Model
 {
   protected $internal_gapi_mappings = array(

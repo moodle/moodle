@@ -25,6 +25,8 @@
 
 namespace core\plugininfo;
 
+use qbank_columnsortorder\column_manager;
+
 /**
  * Base class for qbank plugins.
  *
@@ -34,10 +36,6 @@ namespace core\plugininfo;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbank extends base {
-
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
 
     public function is_uninstall_allowed(): bool {
         if (in_array($this->name, \core_plugin_manager::standard_plugins_list('qbank'))) {
@@ -139,7 +137,6 @@ class qbank extends base {
 
     public function load_settings(\part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig): void {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
-        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
 

@@ -38,10 +38,11 @@ Feature: My overview block searching
       | student1 | C12 | student |
       | student1 | C13 | student |
 
-  Scenario: There is no search if I am not enrolled in any course
+  Scenario: The search should return no courses if I am not enrolled in any
     When I am on the "My courses" page logged in as "student2"
-    Then I should see "You're not enrolled in any course" in the "Course overview" "block"
-    And "Search courses" "field" should not exist in the "Course overview" "block"
+    Then I should see "No courses" in the "Course overview" "block"
+    And I set the field "Search courses" in the "Course overview" "block" to "Fake example"
+    And I should see "No courses" in the "Course overview" "block"
     And I log out
 
   Scenario: Single page search

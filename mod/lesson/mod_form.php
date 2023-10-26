@@ -365,10 +365,8 @@ class mod_lesson_mod_form extends moodleform_mod {
         }
 
         // Set up the completion checkbox which is not part of standard data.
-        $suffix = $this->get_suffix();
-        $completiontimespentenabledel = 'completiontimespentenabled' . $suffix;
-        $completiontimespentel = 'completiontimespent' . $suffix;
-        $defaultvalues[$completiontimespentenabledel] = !empty($defaultvalues[$completiontimespentel]) ? 1 : 0;
+        $defaultvalues['completiontimespentenabled'] =
+            !empty($defaultvalues['completiontimespent']) ? 1 : 0;
 
         if ($this->current->instance) {
             // Editing existing instance - copy existing files into draft area.
@@ -408,32 +406,20 @@ class mod_lesson_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform = $this->_form;
 
-        $suffix = $this->get_suffix();
-        $completionendreachedel = 'completionendreached' . $suffix;
-        $mform->addElement(
-            'checkbox', $completionendreachedel,
-            '',
-            get_string('completionendreached', 'lesson')
-        );
+        $mform->addElement('checkbox', 'completionendreached', get_string('completionendreached', 'lesson'),
+                get_string('completionendreached_desc', 'lesson'));
         // Enable this completion rule by default.
-        $mform->setDefault($completionendreachedel, 1);
+        $mform->setDefault('completionendreached', 1);
 
-        $group = [];
-        $completiontimespentenabledel = 'completiontimespentenabled' . $suffix;
-        $group[] =& $mform->createElement(
-            'checkbox',
-            $completiontimespentenabledel,
-            '',
-            get_string('completiontimespentgroup', 'lesson')
-        );
-        $completiontimespentel = 'completiontimespent' . $suffix;
-        $group[] =& $mform->createElement('duration', $completiontimespentel, '', ['optional' => false]);
-        $completiontimespentgroupel = 'completiontimespentgroup' . $suffix;
-        $mform->addGroup($group, $completiontimespentgroupel, '', ' ', false);
-        $mform->hideIf($completiontimespentel . '[number]', $completiontimespentenabledel, 'notchecked');
-        $mform->hideIf($completiontimespentel . '[timeunit]', $completiontimespentenabledel, 'notchecked');
+        $group = array();
+        $group[] =& $mform->createElement('checkbox', 'completiontimespentenabled', '',
+                get_string('completiontimespent', 'lesson'));
+        $group[] =& $mform->createElement('duration', 'completiontimespent', '', array('optional' => false));
+        $mform->addGroup($group, 'completiontimespentgroup', get_string('completiontimespentgroup', 'lesson'), array(' '), false);
+        $mform->disabledIf('completiontimespent[number]', 'completiontimespentenabled', 'notchecked');
+        $mform->disabledIf('completiontimespent[timeunit]', 'completiontimespentenabled', 'notchecked');
 
-        return [$completionendreachedel, $completiontimespentgroupel];
+        return array('completionendreached', 'completiontimespentgroup');
     }
 
     /**
@@ -443,8 +429,7 @@ class mod_lesson_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
-        return !empty($data['completionendreached' . $suffix]) || $data['completiontimespent' . $suffix] > 0;
+        return !empty($data['completionendreached']) || $data['completiontimespent'] > 0;
     }
 
     /**
@@ -459,15 +444,14 @@ class mod_lesson_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         // Turn off completion setting if the checkbox is not ticked.
         if (!empty($data->completionunlocked)) {
-            $suffix = $this->get_suffix();
-            $completion = $data->{'completion' . $suffix};
-            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (empty($data->{'completiontimespentenabled' . $suffix}) || !$autocompletion) {
-                $data->{'completiontimespent' . $suffix} = 0;
+            $autocompletion = !empty($data->completion) && $data->completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (empty($data->completiontimespentenabled) || !$autocompletion) {
+                $data->completiontimespent = 0;
             }
-            if (empty($data->{'completionendreached' . $suffix}) || !$autocompletion) {
-                $data->{'completionendreached' . $suffix} = 0;
+            if (empty($data->completionendreached) || !$autocompletion) {
+                $data->completionendreached = 0;
             }
         }
     }
 }
+

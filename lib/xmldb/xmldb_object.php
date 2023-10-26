@@ -34,10 +34,10 @@ class xmldb_object {
     /** @var string comment on object */
     protected $comment;
 
-    /** @var string */
+    /** @var xmldb_object */
     protected $previous;
 
-    /** @var string */
+    /** @var xmldb_object */
     protected $next;
 
     /** @var string hash of object */
@@ -101,7 +101,7 @@ class xmldb_object {
 
     /**
      * This function will return the name of the previous xmldb_object
-     * @return string
+     * @return xmldb_object
      */
     public function getPrevious() {
         return $this->previous;
@@ -109,7 +109,7 @@ class xmldb_object {
 
     /**
      * This function will return the name of the next xmldb_object
-     * @return string
+     * @return xmldb_object
      */
     public function getNext() {
         return $this->next;
@@ -141,7 +141,7 @@ class xmldb_object {
 
     /**
      * This function will set the previous of the xmldb_object
-     * @param string $previous
+     * @param xmldb_object $previous
      */
     public function setPrevious($previous) {
         $this->previous = $previous;
@@ -149,7 +149,7 @@ class xmldb_object {
 
     /**
      * This function will set the next of the xmldb_object
-     * @param string $next
+     * @param xmldb_object $next
      */
     public function setNext($next) {
         $this->next = $next;

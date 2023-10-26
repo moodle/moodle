@@ -71,6 +71,17 @@ class discussion_pinned extends \core\event\base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        // The legacy log table expects a relative path to /mod/forum/.
+        $logurl = substr($this->get_url()->out_as_local_url(), strlen('/mod/forum/'));
+        return array($this->courseid, 'forum', 'pin discussion', $logurl, $this->objectid, $this->contextinstanceid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

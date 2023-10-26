@@ -1289,8 +1289,15 @@ class manager {
                 if ($batches !== $numdocs + $numdocsignored) {
                     $batchinfo = ' (' . $batches . ' batch' . ($batches === 1 ? '' : 'es') . ')';
                 }
+            } else if (count($result) === 5) {
+                // Backward compatibility for engines that don't return a batch count.
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
+                // Deprecated since Moodle 3.10 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.2.
+                debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
+                        DEBUG_DEVELOPER);
             } else {
-                throw new \coding_exception('engine::add_documents() should return 6 values');
+                throw new coding_exception('engine::add_documents() should return $partial (4-value return is deprecated)');
             }
 
             if ($numdocs > 0) {
@@ -1447,8 +1454,19 @@ class manager {
                 if ($batches !== $numdocs + $numdocsignored) {
                     $batchinfo = ' (' . $batches . ' batch' . ($batches === 1 ? '' : 'es') . ')';
                 }
+            } else if (count($result) === 5) {
+                // Backward compatibility for engines that don't return a batch count.
+                [$numrecords, $numdocs, $numdocsignored, $lastindexeddoc, $partial] = $result;
+                // Deprecated since Moodle 3.10 MDL-68690.
+                // TODO: MDL-68776 This will be deleted in Moodle 4.2 (as should the below bit).
+                debugging('engine::add_documents() should return $batches (5-value return is deprecated)',
+                        DEBUG_DEVELOPER);
             } else {
-                throw new \coding_exception('engine::add_documents() should return 6 values');
+                // Backward compatibility for engines that don't support partial adding.
+                list($numrecords, $numdocs, $numdocsignored, $lastindexeddoc) = $result;
+                debugging('engine::add_documents() should return $partial (4-value return is deprecated)',
+                        DEBUG_DEVELOPER);
+                $partial = false;
             }
 
             if ($numdocs > 0) {

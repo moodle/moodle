@@ -143,11 +143,6 @@ M.core_availability.form = {
             }
             this.updateRestrictByGroup();
         }
-
-        // Everything is ready. Make sure the div is visible and hide the loading indicator.
-        this.parent = Y.one('#fitem_id_availabilityconditionsjson');
-        this.parent.removeClass('d-none');
-        document.getElementById('availabilityconditions-loading').remove();
     },
 
     /**
@@ -403,17 +398,6 @@ M.core_availability.List = function(json, root, parentRoot) {
         this.eyeIcon = new M.core_availability.EyeIcon(false, shown);
         this.node.one('.availability-header').get('firstChild').insert(
                 this.eyeIcon.span, 'before');
-        this.node.one('.availability-header').get('firstChild').insert(
-            this.eyeIcon.disabledSpan, 'before');
-
-        this.on('availability:privateRuleSet', function(e) {
-            e.target.getDOMNode().dataset.private = true;
-            this.updatePrivateStatus();
-        });
-        this.on('availability:privateRuleUnset', function(e) {
-            delete e.target.getDOMNode().dataset.private;
-            this.updatePrivateStatus();
-        });
     } else if (parentRoot) {
         // When the parent is root, add an eye icon before the main list div.
         if (json && json.showc !== undefined) {
@@ -421,7 +405,6 @@ M.core_availability.List = function(json, root, parentRoot) {
         }
         this.eyeIcon = new M.core_availability.EyeIcon(false, shown);
         this.inner.insert(this.eyeIcon.span, 'before');
-        this.inner.insert(this.eyeIcon.disabledSpan, 'before');
     }
 
     if (!root) {
@@ -490,23 +473,18 @@ M.core_availability.List = function(json, root, parentRoot) {
     // Add update listeners to the dropdowns.
     this.node.one('.availability-neg').on('change', function() {
         // Update hidden field and HTML.
-        M.util.js_pending('availability-neg-change');
         M.core_availability.form.update();
         this.updateHtml();
-        M.util.js_complete('availability-neg-change');
     }, this);
     this.node.one('.availability-op').on('change', function() {
         // Update hidden field.
-        M.util.js_pending('availability-op-change');
         M.core_availability.form.update();
         this.updateHtml();
-        M.util.js_complete('availability-op-change');
     }, this);
 
     // Update HTML to hide unnecessary parts.
     this.updateHtml();
 };
-Y.augment(M.core_availability.List, Y.EventTarget, true, null, {emitFacade: true});
 
 /**
  * Adds a child to the end of the list (in HTML and stored data).
@@ -525,8 +503,6 @@ M.core_availability.List.prototype.addChild = function(newItem) {
     }
     // Add item to array and to HTML.
     this.children.push(newItem);
-    // Allow events from child Items and Lists to bubble up to this list.
-    newItem.addTarget(this);
     this.inner.one('.availability-children').appendChild(newItem.node);
 };
 
@@ -624,22 +600,17 @@ M.core_availability.List.prototype.updateHtml = function() {
             var child = this.children[i];
             if (showEyes) {
                 child.eyeIcon.span.removeAttribute('aria-hidden');
-                child.eyeIcon.disabledSpan.removeAttribute('aria-hidden');
             } else {
                 child.eyeIcon.span.setAttribute('aria-hidden', 'true');
-                child.eyeIcon.disabledSpan.setAttribute('aria-hidden', 'true');
             }
         }
 
         // Single icon is the inverse.
         if (showEyes) {
             this.eyeIcon.span.setAttribute('aria-hidden', 'true');
-            this.eyeIcon.disabledSpan.setAttribute('aria-hidden', 'true');
         } else {
             this.eyeIcon.span.removeAttribute('aria-hidden');
-            this.eyeIcon.disabledSpan.removeAttribute('aria-hidden');
         }
-        this.updatePrivateStatus();
     }
 
     // Update connector text.
@@ -819,11 +790,10 @@ M.core_availability.List.prototype.getValue = function() {
         if (this.isIndividualShowIcons()) {
             value.showc = [];
             for (i = 0; i < this.children.length; i++) {
-                var eyeIcon = this.children[i].eyeIcon;
-                value.showc.push(!eyeIcon.isHidden() && !eyeIcon.isDisabled());
+                value.showc.push(!this.children[i].eyeIcon.isHidden());
             }
         } else {
-            value.show = !this.eyeIcon.isHidden() && !this.eyeIcon.isDisabled();
+            value.show = !this.eyeIcon.isHidden();
         }
     }
     return value;
@@ -871,40 +841,6 @@ M.core_availability.List.prototype.hasItemOfType = function(pluginType) {
         }
     }
     return false;
-};
-
-M.core_availability.List.prototype.getEyeIcons = function() {
-    // Check each item.
-    var eyeIcons = [];
-    eyeIcons.push(this.eyeIcon);
-    for (var i = 0; i < this.children.length; i++) {
-        var child = this.children[i];
-        if (child.eyeIcon !== null) {
-            eyeIcons.push(child.eyeIcon);
-        }
-        if (child instanceof M.core_availability.List) {
-            eyeIcons.concat(child.getEyeIcons());
-        }
-    }
-    return eyeIcons;
-};
-
-/**
- * Find all eye icons in the list and children, and disable or enable them if needed.
- */
-M.core_availability.List.prototype.updatePrivateStatus = function() {
-    if (!this.root) {
-        throw new Error('Can only call this on root list');
-    }
-    var shouldDisable = !this.node.all('[data-private]').isEmpty();
-    var eyeIcons = this.getEyeIcons();
-    for (var i = 0, j = eyeIcons.length; i < j; i++) {
-        if (shouldDisable) {
-            eyeIcons[i].setDisabled();
-        } else {
-            eyeIcons[i].setEnabled();
-        }
-    }
 };
 
 /**
@@ -972,10 +908,6 @@ M.core_availability.Item = function(json, root) {
         this.pluginNode.addClass('availability_' + json.type);
     }
 
-    // Allow events from pluginNode to bubble up to the Item.
-    Y.augment(this.pluginNode, Y.EventTarget, true, null, {emitFacade: true});
-    this.pluginNode.addTarget(this);
-
     this.node = Y.Node.create('<div class="availability-item d-sm-flex align-items-center"><h3 class="accesshide"></h3></div>');
 
     // Add eye icon if required. This icon is added for root items, but may be
@@ -987,7 +919,6 @@ M.core_availability.Item = function(json, root) {
         }
         this.eyeIcon = new M.core_availability.EyeIcon(true, shown);
         this.node.appendChild(this.eyeIcon.span);
-        this.node.appendChild(this.eyeIcon.disabledSpan);
     }
 
     // Add plugin controls.
@@ -1002,7 +933,6 @@ M.core_availability.Item = function(json, root) {
     this.node.appendChild(document.createTextNode(' '));
     this.node.appendChild(Y.Node.create('<span class="badge badge-warning"/>'));
 };
-Y.augment(M.core_availability.Item, Y.EventTarget, true, null, {emitFacade: true});
 
 /**
  * Obtains the value of this condition, which will be serialized into JSON
@@ -1185,16 +1115,6 @@ M.core_availability.EyeIcon = function(individual, shown) {
     this.span.on('key', function(e) {
         e.preventDefault();
     }, 'down:32', this);
-
-    this.disabledSpan = Y.Node.create('<span class="availability-eye-disabled col-form-label" href="#">');
-    var disabledIcon = Y.Node.create('<img />');
-    var disabledStr = M.util.get_string('hidden' + suffix, 'availability');
-    disabledIcon.set('src', M.util.image_url('i/show', 'core'));
-    disabledIcon.set('alt', disabledStr);
-    this.disabledSpan.set('title', disabledStr + ' \u2022 ' +
-        M.util.get_string('disabled_verb', 'availability'));
-    this.disabledSpan.appendChild(disabledIcon);
-    this.disabledSpan.hide();
 };
 
 /**
@@ -1214,14 +1134,6 @@ M.core_availability.EyeIcon.prototype.individual = false;
 M.core_availability.EyeIcon.prototype.span = null;
 
 /**
- * YUI node for the span that contains the "disabled" state of the icon.
- *
- * @property span
- * @type Y.Node
- */
-M.core_availability.EyeIcon.prototype.disabledSpan = null;
-
-/**
  * Checks the current state of the icon.
  *
  * @method isHidden
@@ -1233,39 +1145,6 @@ M.core_availability.EyeIcon.prototype.isHidden = function() {
     return this.span.one('img').get('alt') === compare;
 };
 
-/**
- * Checks whether the eye icon is disabled, and a dummy "hidden" icon displayed instead.
- *
- * @method isDisabled
- * @return {Boolean} True if this icon is disabled
- */
-M.core_availability.EyeIcon.prototype.isDisabled = function() {
-    return this.span.hasAttribute('hidden');
-};
-
-/**
- * Locks the state of the icon.
- *
- * @method setLocked
- */
-M.core_availability.EyeIcon.prototype.setDisabled = function() {
-    if (!this.isDisabled()) {
-        this.span.hide();
-        this.disabledSpan.show();
-    }
-};
-
-/**
- * Unlocks the icon so it can be changed.
- *
- * @method setUnlocked
- */
-M.core_availability.EyeIcon.prototype.setEnabled = function() {
-    if (this.isDisabled()) {
-        this.span.show();
-        this.disabledSpan.hide();
-    }
-};
 
 /**
  * Delete icon (to delete an Item or List).

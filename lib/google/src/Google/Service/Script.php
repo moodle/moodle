@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Script extends Google_Service
 {
   /** View and manage your mail. */
@@ -110,7 +109,6 @@ class Google_Service_Script extends Google_Service
  *   $scripts = $scriptService->scripts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Script_Scripts_Resource extends Google_Service_Resource
 {
 
@@ -142,7 +140,6 @@ class Google_Service_Script_Scripts_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Script_ExecutionError extends Google_Collection
 {
   protected $collection_key = 'scriptStackTraceElements';
@@ -180,7 +177,6 @@ class Google_Service_Script_ExecutionError extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_ExecutionRequest extends Google_Collection
 {
   protected $collection_key = 'parameters';
@@ -226,7 +222,6 @@ class Google_Service_Script_ExecutionRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_ExecutionResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -244,7 +239,6 @@ class Google_Service_Script_ExecutionResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_Operation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -299,17 +293,14 @@ class Google_Service_Script_Operation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_OperationMetadata extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_OperationResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_ScriptStackTraceElement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -336,7 +327,6 @@ class Google_Service_Script_ScriptStackTraceElement extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_Status extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -373,7 +363,6 @@ class Google_Service_Script_Status extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Script_StatusDetails extends Google_Model
 {
 }

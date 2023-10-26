@@ -55,9 +55,6 @@ class comment {
     /** @var string colour - One of red, yellow, green, blue, white */
     public $colour = 'yellow';
 
-    /** @var int draft status, default 1 = true */
-    public $draft = 1;
-
     /**
      * Convert a compatible stdClass into an instance of a comment.
      * @param \stdClass $record

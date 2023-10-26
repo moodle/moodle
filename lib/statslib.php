@@ -164,7 +164,7 @@ function stats_cron_daily($maxdays=1) {
     $defaultfproleid = (int)$CFG->defaultfrontpageroleid;
 
     mtrace("Running daily statistics gathering, starting at $timestart:");
-    \core\cron::trace_time_and_memory();
+    cron_trace_time_and_memory();
 
     $days  = 0;
     $total = 0;
@@ -664,7 +664,7 @@ function stats_cron_weekly() {
     $DB->delete_records_select('stats_user_weekly', "timeend > $timestart");
 
     mtrace("Running weekly statistics gathering, starting at $timestart:");
-    \core\cron::trace_time_and_memory();
+    cron_trace_time_and_memory();
 
     $weeks = 0;
     while ($now > $nextstartweek) {
@@ -807,7 +807,7 @@ function stats_cron_monthly() {
 
 
     mtrace("Running monthly statistics gathering, starting at $timestart:");
-    \core\cron::trace_time_and_memory();
+    cron_trace_time_and_memory();
 
     $months = 0;
     while ($now > $nextstartmonth) {
@@ -1068,7 +1068,7 @@ function stats_get_next_month_start($time) {
 function stats_clean_old() {
     global $DB;
     mtrace("Running stats cleanup tasks...");
-    \core\cron::trace_time_and_memory();
+    cron_trace_time_and_memory();
     $deletebefore =  stats_get_base_monthly();
 
     // delete dailies older than 3 months (to be safe)

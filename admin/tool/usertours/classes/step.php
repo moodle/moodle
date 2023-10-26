@@ -388,7 +388,7 @@ class step {
     /**
      * Get the link to move this step up in the sortorder.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_moveup_link() {
         return helper::get_move_step_link($this->get_id(), helper::MOVE_UP);
@@ -397,7 +397,7 @@ class step {
     /**
      * Get the link to move this step down in the sortorder.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_movedown_link() {
         return helper::get_move_step_link($this->get_id(), helper::MOVE_DOWN);
@@ -464,7 +464,7 @@ class step {
     /**
      * Get the edit link for this step.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_edit_link() {
         return helper::get_edit_step_link($this->tourid, $this->id);
@@ -473,7 +473,7 @@ class step {
     /**
      * Get the delete link for this step.
      *
-     * @return  \moodle_url
+     * @return  moodle_url
      */
     public function get_delete_link() {
         return helper::get_delete_step_link($this->id);
@@ -674,7 +674,7 @@ class step {
     /**
      * Add the step configuration to the form.
      *
-     * @param   \MoodleQuickForm $mform     The form to add configuration to.
+     * @param   MoodleQuickForm $mform      The form to add configuration to.
      * @return  $this
      */
     public function add_config_to_form(\MoodleQuickForm $mform) {
@@ -694,7 +694,7 @@ class step {
     /**
      * Add the specified step field configuration to the form.
      *
-     * @param   \MoodleQuickForm $mform     The form to add configuration to.
+     * @param   MoodleQuickForm $mform      The form to add configuration to.
      * @param   string          $key        The key to add.
      * @return  $this
      */

@@ -11,6 +11,8 @@ class ChiSquared
 {
     use ArrayEnabled;
 
+    private const MAX_ITERATIONS = 256;
+
     private const EPS = 2.22e-16;
 
     /**
@@ -195,7 +197,7 @@ class ChiSquared
         $rows = count($actual);
         $actual = Functions::flattenArray($actual);
         $expected = Functions::flattenArray($expected);
-        $columns = intdiv(count($actual), $rows);
+        $columns = count($actual) / $rows;
 
         $countActuals = count($actual);
         $countExpected = count($expected);
@@ -259,12 +261,12 @@ class ChiSquared
         return $chi2;
     }
 
-    private static function pchisq(float $chi2, int $degrees): float
+    private static function pchisq($chi2, $degrees)
     {
         return self::gammp($degrees, 0.5 * $chi2);
     }
 
-    private static function gammp(int $n, float $x): float
+    private static function gammp($n, $x)
     {
         if ($x < 0.5 * $n + 1) {
             return self::gser($n, $x);
@@ -277,7 +279,7 @@ class ChiSquared
     // series representation. Algorithm from numerical recipe.
     // Assume that n is a positive integer and x>0, won't check arguments.
     // Relative error controlled by the eps parameter
-    private static function gser(int $n, float $x): float
+    private static function gser($n, $x)
     {
         /** @var float */
         $gln = Gamma::ln($n / 2);
@@ -301,7 +303,7 @@ class ChiSquared
     // its continued fraction representation. Algorithm from numerical recipe.
     // Assume that n is a postive integer and x>0, won't check arguments.
     // Relative error controlled by the eps parameter
-    private static function gcf(int $n, float $x): float
+    private static function gcf($n, $x)
     {
         /** @var float */
         $gln = Gamma::ln($n / 2);

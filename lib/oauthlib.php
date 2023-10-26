@@ -61,19 +61,6 @@ class oauth_helper {
     protected $http;
     /** @var array options to pass to the next curl request */
     protected $http_options;
-    /** @var moodle_url oauth callback URL. */
-    protected $oauth_callback;
-     /** @var string access token. */
-    protected $access_token;
-    /** @var  string access secret token. */
-    protected $access_token_secret;
-    /** @var  string sign secret. */
-    protected $sign_secret;
-    /** @var  string nonce. */
-    protected $nonce;
-    /** @var  int timestamp. */
-    protected $timestamp;
-
 
     /**
      * Contructor for oauth_helper.
@@ -739,11 +726,11 @@ abstract class oauth2_client extends curl {
     }
 
     /**
-     * Get access token object.
+     * Get access token.
      *
      * This is just a getter to read the private property.
      *
-     * @return stdClass
+     * @return string
      */
     public function get_accesstoken() {
         return $this->accesstoken;

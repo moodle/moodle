@@ -175,18 +175,11 @@ class activity_header implements \renderable, \templatable {
             return ['title' => ''];
         }
 
-        $activityinfo = null;
+        $completion = null;
         if (!$this->hidecompletion) {
             $completiondetails = \core_completion\cm_completion_details::get_instance($this->page->cm, $this->user->id);
             $activitydates = \core\activity_dates::get_dates_for_module($this->page->cm, $this->user->id);
-
-            $activitycompletion = new \core_course\output\activity_completion($this->page->cm, $completiondetails);
-            $activitycompletiondata = (array) $activitycompletion->export_for_template($output);
-            $activitydates = new \core_course\output\activity_dates($activitydates);
-            $activitydatesdata = (array) $activitydates->export_for_template($output);
-            $data = array_merge($activitycompletiondata, $activitydatesdata);
-
-            $activityinfo = $output->render_from_template('core_course/activity_info', $data);
+            $completion = $output->activity_information($this->page->cm, $completiondetails, $activitydates);
         }
 
         $format = course_get_format($this->page->course);
@@ -200,7 +193,7 @@ class activity_header implements \renderable, \templatable {
         return [
             'title' => $this->title,
             'description' => $this->description,
-            'completion' => $activityinfo,
+            'completion' => $completion,
             'additional_items' => $this->hideoverflow ? '' : $this->additionalnavitems,
         ];
     }

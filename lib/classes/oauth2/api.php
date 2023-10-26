@@ -76,8 +76,8 @@ class api {
     /**
      * Create one of the standard issuers.
      *
-     * @param string $type One of google, facebook, microsoft, MoodleNet, nextcloud or imsobv2p1
-     * @param string|false $baseurl Baseurl (only required for nextcloud, imsobv2p1 and moodlenet)
+     * @param string $type One of google, facebook, microsoft, nextcloud or imsobv2p1
+     * @param string|false $baseurl Baseurl (only required for nextcloud and imsobv2p1)
      * @return \core\oauth2\issuer
      */
     public static function create_standard_issuer($type, $baseurl = false) {
@@ -91,10 +91,6 @@ class api {
             case 'nextcloud':
                 if (!$baseurl) {
                     throw new moodle_exception('Nextcloud service type requires the baseurl parameter.');
-                }
-            case 'moodlenet':
-                if (!$baseurl) {
-                    throw new moodle_exception('MoodleNet service type requires the baseurl parameter.');
                 }
             case 'google':
             case 'facebook':

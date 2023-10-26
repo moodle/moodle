@@ -71,7 +71,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Validate exported data.
         provider::export_user_preferences($user->id);
         $context = \context_user::instance($user->id);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
         $prefs = $writer->get_user_preferences('scormreport_interactions');

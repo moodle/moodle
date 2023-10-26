@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 
-#[AllowDynamicProperties]
 class Google_Service
 {
   public $batchPath;

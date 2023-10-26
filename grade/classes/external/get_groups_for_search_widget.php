@@ -16,14 +16,22 @@
 
 namespace core_grades\external;
 
+use coding_exception;
 use context_course;
-use core_external\external_api;
-use core_external\external_description;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_description;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
+use invalid_parameter_exception;
+use moodle_exception;
+use restricted_context_exception;
+
+defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->libdir.'/externallib.php');
 
 /**
  * External group report API implementation
@@ -32,7 +40,6 @@ use core_external\external_warnings;
  * @copyright  2022 Mathew May <mathew.solutions>
  * @category   external
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated
  */
 class get_groups_for_search_widget extends external_api {
 
@@ -40,7 +47,6 @@ class get_groups_for_search_widget extends external_api {
      * Returns description of method parameters.
      *
      * @return external_function_parameters
-     * @deprecated since 4.2
      */
     public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
@@ -57,7 +63,6 @@ class get_groups_for_search_widget extends external_api {
      * @param int $courseid
      * @param string $actionbaseurl The base URL for the group action.
      * @return array Groups and warnings to pass back to the calling widget.
-     * @deprecated since 4.2
      */
     public static function execute(int $courseid, string $actionbaseurl): array {
         global $DB, $USER, $COURSE;
@@ -110,7 +115,7 @@ class get_groups_for_search_widget extends external_api {
                     'id' => $group->id,
                     'name' => format_string($group->name, true, ['context' => $context]),
                     'url' => $url->out(false),
-                    'active' => false
+                    'active' => false // @TODO MDL-76246
                 ];
             }, $groupsmenu);
         }
@@ -125,7 +130,6 @@ class get_groups_for_search_widget extends external_api {
      * Returns description of what the group search for the widget should return.
      *
      * @return external_single_structure
-     * @deprecated since 4.2
      */
     public static function execute_returns(): external_single_structure {
         return new external_single_structure([
@@ -147,13 +151,5 @@ class get_groups_for_search_widget extends external_api {
             'active' => new external_value(PARAM_BOOL, 'Are we currently on this item?', VALUE_REQUIRED)
         ];
         return new external_single_structure($groupfields);
-    }
-
-    /**
-     * Mark the function as deprecated.
-     * @return bool
-     */
-    public static function execute_is_deprecated() {
-        return true;
     }
 }

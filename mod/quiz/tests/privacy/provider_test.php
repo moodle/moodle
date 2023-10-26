@@ -28,7 +28,6 @@ use core_privacy\local\request\deletion_criteria;
 use core_privacy\local\request\writer;
 use mod_quiz\privacy\provider;
 use mod_quiz\privacy\helper;
-use mod_quiz\quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -170,7 +169,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         // Ensure that the quiz data was exported correctly.
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 
@@ -190,7 +188,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         $attempt = $attemptobj->get_attempt();
         $this->assertTrue(isset($attemptdata->state));
-        $this->assertEquals(quiz_attempt::state_name($attemptobj->get_state()), $attemptdata->state);
+        $this->assertEquals(\quiz_attempt::state_name($attemptobj->get_state()), $attemptdata->state);
         $this->assertTrue(isset($attemptdata->timestart));
         $this->assertTrue(isset($attemptdata->timefinish));
         $this->assertTrue(isset($attemptdata->timemodified));
@@ -214,7 +212,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser();
         provider::delete_data_for_user($approvedcontextlist);
         $this->expectException(\dml_missing_record_exception::class);
-        quiz_attempt::create($attemptobj->get_quizid());
+        \quiz_attempt::create($attemptobj->get_quizid());
     }
 
     /**
@@ -240,15 +238,15 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
-        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($numq->id, $quiz);
 
         // Run as the user and make an attempt on the quiz.
         $this->setUser($user);
         $starttime = time();
-        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -260,7 +258,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -270,7 +268,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $attemptobj->process_finish($starttime, false);
 
@@ -367,7 +365,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         provider::export_user_data($approvedcontextlist);
 
         // Ensure that nothing was exported.
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data_in_any_context());
 
@@ -395,7 +392,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Create a test quiz for the specified course.
      *
      * @param   \stdClass $course
-     * @return  \stdClass
+     * @return  array
      */
     protected function create_test_quiz($course) {
         global $DB;
@@ -413,9 +410,9 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
 
-        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         quiz_add_quiz_question($numq->id, $quiz);
 
         return $quiz;
@@ -432,7 +429,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = \mod_quiz\quiz_settings::create($quiz->id, $user->id);
+        $quizobj = \quiz::create($quiz->id, $user->id);
         $context = $quizobj->get_context();
 
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
@@ -444,7 +441,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
         // Answer the questions.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
 
         $tosubmit = [
             1 => ['answer' => 'frog'],
@@ -454,7 +451,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $attemptobj->process_submitted_actions($starttime, false, $tosubmit);
 
         // Finish the attempt.
-        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj = \quiz_attempt::create($attempt->id);
         $attemptobj->process_finish($starttime, false);
 
         $this->setUser();

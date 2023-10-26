@@ -118,7 +118,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Export the data for the system context.
         // There should be two.
         $this->export_context_data_for_user($user->id, $systemcontext, 'editor_atto');
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($systemcontext);
         $this->assertTrue($writer->has_any_data());
 
@@ -536,7 +535,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Should have the data.
         $this->export_context_data_for_user($user->id, $usercontext, 'editor_atto');
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($usercontext);
         $this->assertTrue($writer->has_any_data());
 
@@ -589,7 +587,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Should have the data.
         $this->export_context_data_for_user($user->id, $otherusercontext, 'editor_atto');
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = \core_privacy\local\request\writer::with_context($otherusercontext);
         $this->assertTrue($writer->has_any_data());
 

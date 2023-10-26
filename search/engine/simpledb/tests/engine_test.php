@@ -43,7 +43,7 @@ class engine_test extends \advanced_testcase {
     protected $engine = null;
 
     /**
-     * @var \core_search_generator
+     * @var core_search_generator
      */
     protected $generator = null;
 
@@ -337,6 +337,8 @@ class engine_test extends \advanced_testcase {
 
     /**
      * Tries out deleting data for a context or a course.
+     *
+     * @throws moodle_exception
      */
     public function test_deleted_contexts_and_courses() {
         // Create some courses and activities.
@@ -373,6 +375,7 @@ class engine_test extends \advanced_testcase {
      *
      * @param string $searchword Word to match within the content field
      * @param string[] $expected Array of expected result titles, in alphabetical order
+     * @throws dml_exception
      */
     protected function assert_raw_index_contents(string $searchword, array $expected) {
         global $DB;

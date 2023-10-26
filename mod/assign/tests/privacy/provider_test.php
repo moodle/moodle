@@ -299,7 +299,6 @@ class provider_test extends provider_testcase {
         // Give the submission a grade.
         $assign->save_grade($user->id, $data);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 
@@ -412,7 +411,6 @@ class provider_test extends provider_testcase {
         $flagdata->extensionduedate = $duedate;
         $assign->update_user_flags($flagdata);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
 

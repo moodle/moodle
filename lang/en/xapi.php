@@ -23,16 +23,4 @@
  */
 
 $string['eventxapipost'] = 'Post xAPI statement';
-$string['privacy:metadata:component'] = 'The component name in frankenstyle';
-$string['privacy:metadata:itemid'] = 'The item ID of the state';
-$string['privacy:metadata:registration'] = 'The xAPI registration UUID';
-$string['privacy:metadata:statedata'] = 'JSON object with the state data';
-$string['privacy:metadata:stateid'] = 'The xAPI state ID';
-$string['privacy:metadata:timecreated'] = 'The time when the state element was created';
-$string['privacy:metadata:timemodified'] = 'The last time state was updated';
-$string['privacy:metadata:userid'] = 'The ID of the user who belongs the state ';
-$string['privacy:metadata:xapi_states'] = 'The stored xAPI states';
-$string['privacy:xapistate'] = 'xAPI state';
-$string['xapicleanup'] = 'Stored xAPI states clean up';
-$string['xapicleanupperiod'] = 'Clean up xAPI states';
-$string['xapicleanupperiod_help'] = 'Remove any stored xAPI which is not updaded in the selected period';
+$string['privacy:metadata'] = 'The xAPI library does not store any personal data.';

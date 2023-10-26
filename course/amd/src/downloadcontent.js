@@ -23,7 +23,7 @@
 
 import Config from 'core/config';
 import CustomEvents from 'core/custom_interaction_events';
-import SaveCancelModal from 'core/modal_save_cancel';
+import * as ModalFactory from 'core/modal_factory';
 import jQuery from 'jquery';
 import Pending from 'core/pending';
 import {enter, space} from 'core/key_codes';
@@ -55,8 +55,9 @@ export const init = () => {
  * @return {void}
  */
 const displayDownloadConfirmation = (downloadModalTrigger) => {
-    return SaveCancelModal.create({
+    ModalFactory.create({
         title: downloadModalTrigger.dataset.downloadTitle,
+        type: ModalFactory.types.SAVE_CANCEL,
         body: `<p>${downloadModalTrigger.dataset.downloadBody}</p>`,
         buttons: {
             save: downloadModalTrigger.dataset.downloadButtonText
@@ -65,7 +66,7 @@ const displayDownloadConfirmation = (downloadModalTrigger) => {
             classes: 'downloadcoursecontentmodal'
         }
     })
-    .then((modal) => {
+    .then(modal => {
         // Display the modal.
         modal.show();
 
@@ -87,8 +88,6 @@ const displayDownloadConfirmation = (downloadModalTrigger) => {
                 modal.destroy();
             });
         }
-
-        return modal;
     });
 };
 

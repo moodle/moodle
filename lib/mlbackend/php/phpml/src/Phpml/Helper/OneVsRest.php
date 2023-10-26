@@ -157,7 +157,7 @@ trait OneVsRest
      */
     private function binarizeTargets(array $targets, $label): array
     {
-        $notLabel = "not_{$label}";
+        $notLabel = "not_${label}";
         foreach ($targets as $key => $target) {
             $targets[$key] = $target == $label ? $label : $notLabel;
         }

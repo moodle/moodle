@@ -62,20 +62,20 @@ function mnet_get_public_key($uri, $application=null) {
         new \PhpXmlRpc\Value($application->name),
     ];
     $request = new \PhpXmlRpc\Request('system/keyswap', $params);
+    $request->request_charset_encoding = 'utf-8';
 
     // Let's create a client to handle the request and the response easily.
     $client = new \PhpXmlRpc\Client($uri . $application->xmlrpc_server_url);
-    $client->setOption('use_curl', \PhpXmlRpc\Client::USE_CURL_ALWAYS);
-    $client->setOption('user_agent', 'Moodle');
+    $client->setUseCurl(\PhpXmlRpc\Client::USE_CURL_ALWAYS);
+    $client->setUserAgent('Moodle');
     $client->return_type = 'xmlrpcvals'; // This (keyswap) is not encrypted, so we can expect proper xmlrpc in this case.
-    $client->setOption('request_charset_encoding', 'utf-8');
-    $client->setOption('accepted_charset_encodings', ['utf-8']);
+    $client->request_charset_encoding = 'utf-8';
 
     // TODO: Link this to DEBUG DEVELOPER or with MNET debugging...
     // $client->setdebug(1); // See a good number of complete requests and responses.
 
-    $client->setOption('verifyhost', 0);
-    $client->setOption('verifypeer', false);
+    $client->setSSLVerifyHost(0);
+    $client->setSSLVerifyPeer(false);
 
     // TODO: It's curious that this service (keyswap) that needs
     // a custom client, different from mnet_xmlrpc_client, because

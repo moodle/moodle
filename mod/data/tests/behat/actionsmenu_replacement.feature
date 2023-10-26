@@ -37,7 +37,6 @@ Feature: Users can add the ##actionsmenu## replacement to the database templates
     And I am on the "Test database name" "data activity" page logged in as teacher1
     And I navigate to "Templates" in current page administration
     And I set the field "Templates tertiary navigation" to "List view template"
-    And I set the field "Enable code editor" to "0"
     And I set the following fields to these values:
       | Header         | <table>                                              |
       | Repeated entry | <tr><td>[[field1]]</td><td>##actionsmenu##</td><tr>  |

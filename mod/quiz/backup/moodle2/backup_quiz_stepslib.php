@@ -34,7 +34,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
             'name', 'intro', 'introformat', 'timeopen', 'timeclose', 'timelimit',
             'overduehandling', 'graceperiod', 'preferredbehaviour', 'canredoquestions', 'attempts_number',
             'attemptonlast', 'grademethod', 'decimalpoints', 'questiondecimalpoints',
-            'reviewattempt', 'reviewcorrectness', 'reviewmaxmarks', 'reviewmarks',
+            'reviewattempt', 'reviewcorrectness', 'reviewmarks',
             'reviewspecificfeedback', 'reviewgeneralfeedback',
             'reviewrightanswer', 'reviewoverallfeedback',
             'questionsperpage', 'navmethod', 'shuffleanswers',
@@ -49,7 +49,7 @@ class backup_quiz_activity_structure_step extends backup_questions_activity_stru
         $qinstances = new backup_nested_element('question_instances');
 
         $qinstance = new backup_nested_element('question_instance', ['id'],
-                ['quizid', 'slot', 'page', 'displaynumber', 'requireprevious', 'maxmark']);
+                ['quizid', 'slot', 'page', 'requireprevious', 'maxmark']);
 
         $this->add_question_references($qinstance, 'mod_quiz', 'slot');
 

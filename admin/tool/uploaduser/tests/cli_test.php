@@ -123,7 +123,7 @@ class cli_test extends \advanced_testcase {
         set_config('passwordpolicy', 0);
         $this->setAdminUser();
 
-        $this->getDataGenerator()->create_custom_profile_field([
+        $this->field1 = $this->getDataGenerator()->create_custom_profile_field([
             'shortname' => 'superfield', 'name' => 'Super field',
             'datatype' => 'text', 'signup' => 1, 'visible' => 1, 'required' => 1, 'sortorder' => 1]);
 

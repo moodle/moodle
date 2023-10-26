@@ -75,53 +75,6 @@ class core_user_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Construct a partial user search that'll require form handling implemented by the caller.
-     * This allows the developer to have an initials bar setup that does not automatically redirect.
-     *
-     * @param string $url the url to return to, complete with any parameters needed for the return
-     * @param string $firstinitial the first initial of the firstname
-     * @param string $lastinitial the first initial of the lastname
-     * @param bool $minirender Return a trimmed down view of the initials bar.
-     * @return string html output
-     * @throws coding_exception
-     */
-    public function partial_user_search(String $url, String $firstinitial, String $lastinitial, Bool $minirender = false): String {
-
-        $content = '';
-
-        if ($firstinitial !== 'all') {
-            set_user_preference('ifirst', $firstinitial);
-        }
-        if ($lastinitial !== 'all') {
-            set_user_preference('ilast', $lastinitial);
-        }
-
-        // Initials bar.
-        $prefixfirst = 'sifirst';
-        $prefixlast = 'silast';
-        $content .= $this->output->initials_bar(
-            $firstinitial,
-            'firstinitial',
-            get_string('firstname'),
-            $prefixfirst,
-            $url,
-            null,
-            $minirender
-        );
-        $content .= $this->output->initials_bar(
-            $lastinitial,
-            'lastinitial',
-            get_string('lastname'),
-            $prefixlast,
-            $url,
-            null,
-            $minirender
-        );
-
-        return $content;
-    }
-
-    /**
      * Displays the list of tagged users
      *
      * @param array $userlist

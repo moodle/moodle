@@ -25,7 +25,7 @@
 
 import DynamicForm from 'core_form/dynamicform';
 import {add as addToast} from 'core/toast';
-import {getString} from "core/str";
+import {get_string as getString} from "core/str";
 import {subscribe as subscribe} from 'core/pubsub';
 import Notification from 'core/notification';
 import * as reportEvents from 'core_reportbuilder/local/events';

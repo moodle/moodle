@@ -59,21 +59,18 @@ class manage_competencies_page implements renderable, templatable {
     /** @var moodle_url $pluginurlbase Base url to use constructing links. */
     protected $pluginbaseurl = null;
 
-    /** @var \context $pagecontext The page context. */
+    /** @var context $pagecontext The page context. */
     protected $pagecontext = null;
 
     /** @var \core_competency\competency $competency The competency to show when the page loads. */
     protected $competency = null;
-
-    /** @var array */
-    protected array $navigation = [];
 
     /**
      * Construct this renderable.
      *
      * @param \core_competency\competency_framework $framework Competency framework.
      * @param string $search Search string.
-     * @param \context $pagecontext The page context.
+     * @param context $pagecontext The page context.
      * @param \core_competency\competency $competency The core competency to show when the page loads.
      */
     public function __construct($framework, $search, $pagecontext, $competency) {

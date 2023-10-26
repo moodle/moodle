@@ -6,7 +6,7 @@ default:
   extensions:
     Behat\MinkExtension:
       base_url: 'http://localhost:8000'
-      browserkit_http: null
+      goutte: null
       webdriver: null
     Moodle\BehatExtension:
       moodledirroot: /Should/Change/To/Moodle/www/dir

@@ -76,4 +76,14 @@ class notes_viewed extends base {
     public function get_url() {
         return new \moodle_url('/notes/index.php', array('course' => $this->courseid, 'user' => $this->relateduserid));
     }
+
+    /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'notes', 'view', 'index.php?course=' . $this->courseid.'&amp;user=' . $this->relateduserid,
+            'view notes');
+    }
 }

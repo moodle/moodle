@@ -94,6 +94,11 @@ if (($edulevel != -1)) {
 if ($origin !== '') {
     $params['origin'] = $origin;
 }
+// Legacy store hack, as edulevel is not supported.
+if ($logreader == 'logstore_legacy') {
+    $params['edulevel'] = -1;
+    $edulevel = -1;
+}
 $url = new moodle_url("/report/log/index.php", $params);
 
 $PAGE->set_url('/report/log/index.php', array('id' => $id));

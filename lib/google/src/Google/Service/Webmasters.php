@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters extends Google_Service
 {
   /** View and modify Webmaster Tools data for your verified sites. */
@@ -315,7 +314,6 @@ class Google_Service_Webmasters extends Google_Service
  *   $searchanalytics = $webmastersService->searchanalytics;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_Searchanalytics_Resource extends Google_Service_Resource
 {
 
@@ -351,7 +349,6 @@ class Google_Service_Webmasters_Searchanalytics_Resource extends Google_Service_
  *   $sitemaps = $webmastersService->sitemaps;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_Sitemaps_Resource extends Google_Service_Resource
 {
 
@@ -433,7 +430,6 @@ class Google_Service_Webmasters_Sitemaps_Resource extends Google_Service_Resourc
  *   $sites = $webmastersService->sites;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_Sites_Resource extends Google_Service_Resource
 {
 
@@ -502,7 +498,6 @@ class Google_Service_Webmasters_Sites_Resource extends Google_Service_Resource
  *   $urlcrawlerrorscounts = $webmastersService->urlcrawlerrorscounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_Urlcrawlerrorscounts_Resource extends Google_Service_Resource
 {
 
@@ -539,7 +534,6 @@ class Google_Service_Webmasters_Urlcrawlerrorscounts_Resource extends Google_Ser
  *   $urlcrawlerrorssamples = $webmastersService->urlcrawlerrorssamples;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_Urlcrawlerrorssamples_Resource extends Google_Service_Resource
 {
 
@@ -614,7 +608,6 @@ class Google_Service_Webmasters_Urlcrawlerrorssamples_Resource extends Google_Se
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_ApiDataRow extends Google_Collection
 {
   protected $collection_key = 'keys';
@@ -669,7 +662,6 @@ class Google_Service_Webmasters_ApiDataRow extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_ApiDimensionFilter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -705,7 +697,6 @@ class Google_Service_Webmasters_ApiDimensionFilter extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_ApiDimensionFilterGroup extends Google_Collection
 {
   protected $collection_key = 'filters';
@@ -734,7 +725,6 @@ class Google_Service_Webmasters_ApiDimensionFilterGroup extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_SearchAnalyticsQueryRequest extends Google_Collection
 {
   protected $collection_key = 'dimensions';
@@ -808,7 +798,6 @@ class Google_Service_Webmasters_SearchAnalyticsQueryRequest extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_SearchAnalyticsQueryResponse extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -837,7 +826,6 @@ class Google_Service_Webmasters_SearchAnalyticsQueryResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_SitemapsListResponse extends Google_Collection
 {
   protected $collection_key = 'sitemap';
@@ -857,7 +845,6 @@ class Google_Service_Webmasters_SitemapsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_SitesListResponse extends Google_Collection
 {
   protected $collection_key = 'siteEntry';
@@ -877,7 +864,6 @@ class Google_Service_Webmasters_SitesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlCrawlErrorCount extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -904,7 +890,6 @@ class Google_Service_Webmasters_UrlCrawlErrorCount extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlCrawlErrorCountsPerType extends Google_Collection
 {
   protected $collection_key = 'entries';
@@ -942,7 +927,6 @@ class Google_Service_Webmasters_UrlCrawlErrorCountsPerType extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlCrawlErrorsCountsQueryResponse extends Google_Collection
 {
   protected $collection_key = 'countPerTypes';
@@ -962,7 +946,6 @@ class Google_Service_Webmasters_UrlCrawlErrorsCountsQueryResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlCrawlErrorsSample extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1019,7 +1002,6 @@ class Google_Service_Webmasters_UrlCrawlErrorsSample extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlCrawlErrorsSamplesListResponse extends Google_Collection
 {
   protected $collection_key = 'urlCrawlErrorSample';
@@ -1039,7 +1021,6 @@ class Google_Service_Webmasters_UrlCrawlErrorsSamplesListResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_UrlSampleDetails extends Google_Collection
 {
   protected $collection_key = 'linkedFromUrls';
@@ -1067,7 +1048,6 @@ class Google_Service_Webmasters_UrlSampleDetails extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_WmxSite extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1094,7 +1074,6 @@ class Google_Service_Webmasters_WmxSite extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_WmxSitemap extends Google_Collection
 {
   protected $collection_key = 'contents';
@@ -1186,7 +1165,6 @@ class Google_Service_Webmasters_WmxSitemap extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Webmasters_WmxSitemapContent extends Google_Model
 {
   protected $internal_gapi_mappings = array(

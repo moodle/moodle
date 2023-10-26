@@ -55,5 +55,7 @@ class preset_reverted_test extends \advanced_testcase {
         $this->assertInstanceOf('\tool_admin_presets\event\preset_reverted', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($presetid, $event->objectid);
+        $expected = [0, 'tool_admin_presets', 'rollback', '', $presetid, 0];
+        $this->assertEventLegacyLogData($expected, $event);
     }
 }

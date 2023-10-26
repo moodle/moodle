@@ -75,7 +75,7 @@ class writer {
      */
     public static function setup_real_writer_instance() {
         if (!PHPUNIT_TEST) {
-            throw new \coding_exception('setup_real_writer_instance() is only for use with PHPUnit tests.');
+            throw new coding_exception('setup_real_writer_instance() is only for use with PHPUnit tests.');
         }
 
         $instance = static::instance();

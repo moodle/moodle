@@ -21,7 +21,7 @@ namespace core_reportbuilder\external\audiences;
 use context_system;
 use core_reportbuilder\local\models\audience;
 use core_reportbuilder_generator;
-use core_external\external_api;
+use external_api;
 use externallib_advanced_testcase;
 use core_reportbuilder\report_access_exception;
 use core_user\reportbuilder\datasource\users;

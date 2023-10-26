@@ -100,19 +100,11 @@ class course_category extends base {
             $this->get_entity_name()
         ))
             ->add_joins($this->get_joins())
-            ->add_join($this->get_context_join())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.name, {$tablealias}.id")
-            ->add_fields(context_helper::get_preload_record_columns_sql($tablealiascontext))
             ->add_callback(static function(?string $name, stdClass $category): string {
-                if (empty($category->id)) {
-                    return '';
-                }
-
-                context_helper::preload_from_record($category);
-                $context = context_coursecat::instance($category->id);
-
-                return format_string($category->name, true, ['context' => $context]);
+                return empty($category->id) ? '' :
+                    core_course_category::get($category->id, MUST_EXIST, true)->get_formatted_name();
             })
             ->set_is_sortable(true);
 
@@ -199,17 +191,6 @@ class course_category extends base {
                 return format_text($description, $category->descriptionformat, ['context' => $context->id]);
             });
 
-        // Course count column.
-        $columns[] = (new column(
-            'coursecount',
-            new lang_string('coursecount', 'core_course'),
-            $this->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
-            ->add_fields("{$tablealias}.coursecount")
-            ->set_is_sortable(true);
-
         return $columns;
     }
 
@@ -262,7 +243,7 @@ class course_category extends base {
      *
      * @return string
      */
-    public function get_context_join(): string {
+    private function get_context_join(): string {
         $coursecategories = $this->get_table_alias('course_categories');
         $context = $this->get_table_alias('context');
         return "LEFT JOIN {context} {$context} ON {$context}.instanceid = {$coursecategories}.id

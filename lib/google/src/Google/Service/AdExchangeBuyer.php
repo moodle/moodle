@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer extends Google_Service
 {
   /** Manage your Ad Exchange buyer account configuration. */
@@ -754,7 +753,6 @@ class Google_Service_AdExchangeBuyer extends Google_Service
  *   $accounts = $adexchangebuyerService->accounts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Accounts_Resource extends Google_Service_Resource
 {
 
@@ -825,7 +823,6 @@ class Google_Service_AdExchangeBuyer_Accounts_Resource extends Google_Service_Re
  *   $billingInfo = $adexchangebuyerService->billingInfo;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_BillingInfo_Resource extends Google_Service_Resource
 {
 
@@ -867,7 +864,6 @@ class Google_Service_AdExchangeBuyer_BillingInfo_Resource extends Google_Service
  *   $budget = $adexchangebuyerService->budget;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Budget_Resource extends Google_Service_Resource
 {
 
@@ -936,7 +932,6 @@ class Google_Service_AdExchangeBuyer_Budget_Resource extends Google_Service_Reso
  *   $clientaccess = $adexchangebuyerService->clientaccess;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Clientaccess_Resource extends Google_Service_Resource
 {
 
@@ -1040,7 +1035,6 @@ class Google_Service_AdExchangeBuyer_Clientaccess_Resource extends Google_Servic
  *   $creatives = $adexchangebuyerService->creatives;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Creatives_Resource extends Google_Service_Resource
 {
 
@@ -1111,7 +1105,6 @@ class Google_Service_AdExchangeBuyer_Creatives_Resource extends Google_Service_R
  *   $deals = $adexchangebuyerService->deals;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Deals_Resource extends Google_Service_Resource
 {
 
@@ -1138,7 +1131,6 @@ class Google_Service_AdExchangeBuyer_Deals_Resource extends Google_Service_Resou
  *   $marketplacedeals = $adexchangebuyerService->marketplacedeals;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Marketplacedeals_Resource extends Google_Service_Resource
 {
 
@@ -1211,7 +1203,6 @@ class Google_Service_AdExchangeBuyer_Marketplacedeals_Resource extends Google_Se
  *   $marketplacenotes = $adexchangebuyerService->marketplacenotes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Marketplacenotes_Resource extends Google_Service_Resource
 {
 
@@ -1254,7 +1245,6 @@ class Google_Service_AdExchangeBuyer_Marketplacenotes_Resource extends Google_Se
  *   $marketplaceoffers = $adexchangebuyerService->marketplaceoffers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Marketplaceoffers_Resource extends Google_Service_Resource
 {
 
@@ -1297,7 +1287,6 @@ class Google_Service_AdExchangeBuyer_Marketplaceoffers_Resource extends Google_S
  *   $marketplaceorders = $adexchangebuyerService->marketplaceorders;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Marketplaceorders_Resource extends Google_Service_Resource
 {
 
@@ -1394,7 +1383,6 @@ class Google_Service_AdExchangeBuyer_Marketplaceorders_Resource extends Google_S
  *   $negotiationrounds = $adexchangebuyerService->negotiationrounds;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Negotiationrounds_Resource extends Google_Service_Resource
 {
 
@@ -1423,7 +1411,6 @@ class Google_Service_AdExchangeBuyer_Negotiationrounds_Resource extends Google_S
  *   $negotiations = $adexchangebuyerService->negotiations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Negotiations_Resource extends Google_Service_Resource
 {
 
@@ -1478,7 +1465,6 @@ class Google_Service_AdExchangeBuyer_Negotiations_Resource extends Google_Servic
  *   $offers = $adexchangebuyerService->offers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Offers_Resource extends Google_Service_Resource
 {
 
@@ -1532,7 +1518,6 @@ class Google_Service_AdExchangeBuyer_Offers_Resource extends Google_Service_Reso
  *   $performanceReport = $adexchangebuyerService->performanceReport;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PerformanceReport_Resource extends Google_Service_Resource
 {
 
@@ -1570,7 +1555,6 @@ class Google_Service_AdExchangeBuyer_PerformanceReport_Resource extends Google_S
  *   $pretargetingConfig = $adexchangebuyerService->pretargetingConfig;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfig_Resource extends Google_Service_Resource
 {
 
@@ -1674,7 +1658,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfig_Resource extends Google_
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Account extends Google_Collection
 {
   protected $collection_key = 'bidderLocation';
@@ -1757,7 +1740,6 @@ class Google_Service_AdExchangeBuyer_Account extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AccountBidderLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1793,7 +1775,6 @@ class Google_Service_AdExchangeBuyer_AccountBidderLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AccountsList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1822,7 +1803,6 @@ class Google_Service_AdExchangeBuyer_AccountsList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AdSize extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1849,7 +1829,6 @@ class Google_Service_AdExchangeBuyer_AdSize extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AdSlotDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1912,7 +1891,6 @@ class Google_Service_AdExchangeBuyer_AdSlotDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AddOrderDealsRequest extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -1950,7 +1928,6 @@ class Google_Service_AdExchangeBuyer_AddOrderDealsRequest extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AddOrderDealsResponse extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -1979,7 +1956,6 @@ class Google_Service_AdExchangeBuyer_AddOrderDealsResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AddOrderNotesRequest extends Google_Collection
 {
   protected $collection_key = 'notes';
@@ -1999,7 +1975,6 @@ class Google_Service_AdExchangeBuyer_AddOrderNotesRequest extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AddOrderNotesResponse extends Google_Collection
 {
   protected $collection_key = 'notes';
@@ -2019,7 +1994,6 @@ class Google_Service_AdExchangeBuyer_AddOrderNotesResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AdvertiserDto extends Google_Collection
 {
   protected $collection_key = 'brands';
@@ -2066,7 +2040,6 @@ class Google_Service_AdExchangeBuyer_AdvertiserDto extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_AudienceSegment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2111,7 +2084,6 @@ class Google_Service_AdExchangeBuyer_AudienceSegment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_BillingInfo extends Google_Collection
 {
   protected $collection_key = 'billingId';
@@ -2157,7 +2129,6 @@ class Google_Service_AdExchangeBuyer_BillingInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_BillingInfoList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -2186,7 +2157,6 @@ class Google_Service_AdExchangeBuyer_BillingInfoList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_BrandDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2222,7 +2192,6 @@ class Google_Service_AdExchangeBuyer_BrandDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Budget extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2285,7 +2254,6 @@ class Google_Service_AdExchangeBuyer_Budget extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Buyer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2303,7 +2271,6 @@ class Google_Service_AdExchangeBuyer_Buyer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_BuyerDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2375,7 +2342,6 @@ class Google_Service_AdExchangeBuyer_BuyerDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ClientAccessCapabilities extends Google_Collection
 {
   protected $collection_key = 'capabilities';
@@ -2403,7 +2369,6 @@ class Google_Service_AdExchangeBuyer_ClientAccessCapabilities extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ContactInformation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2430,7 +2395,6 @@ class Google_Service_AdExchangeBuyer_ContactInformation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreateOrdersRequest extends Google_Collection
 {
   protected $collection_key = 'orders';
@@ -2459,7 +2423,6 @@ class Google_Service_AdExchangeBuyer_CreateOrdersRequest extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreateOrdersResponse extends Google_Collection
 {
   protected $collection_key = 'orders';
@@ -2479,7 +2442,6 @@ class Google_Service_AdExchangeBuyer_CreateOrdersResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Creative extends Google_Collection
 {
   protected $collection_key = 'vendorType';
@@ -2720,7 +2682,6 @@ class Google_Service_AdExchangeBuyer_Creative extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeCorrections extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -2748,7 +2709,6 @@ class Google_Service_AdExchangeBuyer_CreativeCorrections extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeFilteringReasons extends Google_Collection
 {
   protected $collection_key = 'reasons';
@@ -2777,7 +2737,6 @@ class Google_Service_AdExchangeBuyer_CreativeFilteringReasons extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeFilteringReasonsReasons extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2804,7 +2763,6 @@ class Google_Service_AdExchangeBuyer_CreativeFilteringReasonsReasons extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeNativeAd extends Google_Collection
 {
   protected $collection_key = 'impressionTrackingUrl';
@@ -2925,7 +2883,6 @@ class Google_Service_AdExchangeBuyer_CreativeNativeAd extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeNativeAdAppIcon extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2961,7 +2918,6 @@ class Google_Service_AdExchangeBuyer_CreativeNativeAdAppIcon extends Google_Mode
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeNativeAdImage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2997,7 +2953,6 @@ class Google_Service_AdExchangeBuyer_CreativeNativeAdImage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeNativeAdLogo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3033,7 +2988,6 @@ class Google_Service_AdExchangeBuyer_CreativeNativeAdLogo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeServingRestrictions extends Google_Collection
 {
   protected $collection_key = 'disapprovalReasons';
@@ -3072,7 +3026,6 @@ class Google_Service_AdExchangeBuyer_CreativeServingRestrictions extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeServingRestrictionsContexts extends Google_Collection
 {
   protected $collection_key = 'platform';
@@ -3118,7 +3071,6 @@ class Google_Service_AdExchangeBuyer_CreativeServingRestrictionsContexts extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativeServingRestrictionsDisapprovalReasons extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -3146,7 +3098,6 @@ class Google_Service_AdExchangeBuyer_CreativeServingRestrictionsDisapprovalReaso
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_CreativesList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3184,7 +3135,6 @@ class Google_Service_AdExchangeBuyer_CreativesList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DateTime extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3256,7 +3206,6 @@ class Google_Service_AdExchangeBuyer_DateTime extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DealPartyDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3312,7 +3261,6 @@ class Google_Service_AdExchangeBuyer_DealPartyDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DealTerms extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3360,7 +3308,6 @@ class Google_Service_AdExchangeBuyer_DealTerms extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DealTermsGuaranteedFixedPriceTerms extends Google_Collection
 {
   protected $collection_key = 'fixedPrices';
@@ -3398,7 +3345,6 @@ class Google_Service_AdExchangeBuyer_DealTermsGuaranteedFixedPriceTerms extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DealTermsNonGuaranteedAuctionTerms extends Google_Collection
 {
   protected $collection_key = 'reservePricePerBuyers';
@@ -3427,7 +3373,6 @@ class Google_Service_AdExchangeBuyer_DealTermsNonGuaranteedAuctionTerms extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DealTermsNonGuaranteedFixedPriceTerms extends Google_Collection
 {
   protected $collection_key = 'fixedPrices';
@@ -3447,7 +3392,6 @@ class Google_Service_AdExchangeBuyer_DealTermsNonGuaranteedFixedPriceTerms exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DeleteOrderDealsRequest extends Google_Collection
 {
   protected $collection_key = 'dealIds';
@@ -3484,7 +3428,6 @@ class Google_Service_AdExchangeBuyer_DeleteOrderDealsRequest extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DeleteOrderDealsResponse extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -3513,7 +3456,6 @@ class Google_Service_AdExchangeBuyer_DeleteOrderDealsResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DeliveryControl extends Google_Collection
 {
   protected $collection_key = 'frequencyCaps';
@@ -3542,7 +3484,6 @@ class Google_Service_AdExchangeBuyer_DeliveryControl extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_DeliveryControlFrequencyCap extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3578,7 +3519,6 @@ class Google_Service_AdExchangeBuyer_DeliveryControlFrequencyCap extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_EditAllOrderDealsRequest extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -3626,7 +3566,6 @@ class Google_Service_AdExchangeBuyer_EditAllOrderDealsRequest extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_EditAllOrderDealsResponse extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -3646,7 +3585,6 @@ class Google_Service_AdExchangeBuyer_EditAllOrderDealsResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_EditHistoryDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3691,7 +3629,6 @@ class Google_Service_AdExchangeBuyer_EditHistoryDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetFinalizedNegotiationByExternalDealIdRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3709,7 +3646,6 @@ class Google_Service_AdExchangeBuyer_GetFinalizedNegotiationByExternalDealIdRequ
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetNegotiationByIdRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3727,7 +3663,6 @@ class Google_Service_AdExchangeBuyer_GetNegotiationByIdRequest extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetNegotiationsRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3763,7 +3698,6 @@ class Google_Service_AdExchangeBuyer_GetNegotiationsRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetNegotiationsResponse extends Google_Collection
 {
   protected $collection_key = 'negotiations';
@@ -3792,7 +3726,6 @@ class Google_Service_AdExchangeBuyer_GetNegotiationsResponse extends Google_Coll
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetOffersResponse extends Google_Collection
 {
   protected $collection_key = 'offers';
@@ -3812,7 +3745,6 @@ class Google_Service_AdExchangeBuyer_GetOffersResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetOrderDealsResponse extends Google_Collection
 {
   protected $collection_key = 'deals';
@@ -3832,7 +3764,6 @@ class Google_Service_AdExchangeBuyer_GetOrderDealsResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetOrderNotesResponse extends Google_Collection
 {
   protected $collection_key = 'notes';
@@ -3852,7 +3783,6 @@ class Google_Service_AdExchangeBuyer_GetOrderNotesResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_GetOrdersResponse extends Google_Collection
 {
   protected $collection_key = 'orders';
@@ -3872,7 +3802,6 @@ class Google_Service_AdExchangeBuyer_GetOrdersResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_InventorySegmentTargeting extends Google_Collection
 {
   protected $collection_key = 'positiveXfpPlacements';
@@ -4210,7 +4139,6 @@ class Google_Service_AdExchangeBuyer_InventorySegmentTargeting extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ListClientAccessCapabilitiesRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4228,7 +4156,6 @@ class Google_Service_AdExchangeBuyer_ListClientAccessCapabilitiesRequest extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ListClientAccessCapabilitiesResponse extends Google_Collection
 {
   protected $collection_key = 'clientAccessPermissions';
@@ -4248,7 +4175,6 @@ class Google_Service_AdExchangeBuyer_ListClientAccessCapabilitiesResponse extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ListOffersRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4266,7 +4192,6 @@ class Google_Service_AdExchangeBuyer_ListOffersRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_ListOffersResponse extends Google_Collection
 {
   protected $collection_key = 'offers';
@@ -4295,7 +4220,6 @@ class Google_Service_AdExchangeBuyer_ListOffersResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceDeal extends Google_Collection
 {
   protected $collection_key = 'sharedTargetings';
@@ -4481,7 +4405,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceDeal extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceDealParty extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4510,7 +4433,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceDealParty extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceLabel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4556,7 +4478,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceLabel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceNote extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4637,7 +4558,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceNote extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceOffer extends Google_Collection
 {
   protected $collection_key = 'sharedTargetings';
@@ -4805,7 +4725,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceOffer extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MarketplaceOrder extends Google_Collection
 {
   protected $collection_key = 'sellerContacts';
@@ -5002,7 +4921,6 @@ class Google_Service_AdExchangeBuyer_MarketplaceOrder extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_MoneyDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5029,7 +4947,6 @@ class Google_Service_AdExchangeBuyer_MoneyDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_NegotiationDto extends Google_Collection
 {
   protected $collection_key = 'sellerEmailContacts';
@@ -5179,7 +5096,6 @@ class Google_Service_AdExchangeBuyer_NegotiationDto extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_NegotiationRoundDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5271,7 +5187,6 @@ class Google_Service_AdExchangeBuyer_NegotiationRoundDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_OfferDto extends Google_Collection
 {
   protected $collection_key = 'openToDealParties';
@@ -5412,7 +5327,6 @@ class Google_Service_AdExchangeBuyer_OfferDto extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PerformanceReport extends Google_Collection
 {
   protected $collection_key = 'hostedMatchStatusRate';
@@ -5620,7 +5534,6 @@ class Google_Service_AdExchangeBuyer_PerformanceReport extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PerformanceReportList extends Google_Collection
 {
   protected $collection_key = 'performanceReport';
@@ -5649,7 +5562,6 @@ class Google_Service_AdExchangeBuyer_PerformanceReportList extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfig extends Google_Collection
 {
   protected $collection_key = 'verticals';
@@ -5869,7 +5781,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfig extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfigDimensions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5896,7 +5807,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfigDimensions extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfigExcludedPlacements extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5923,7 +5833,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfigExcludedPlacements extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfigList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5952,7 +5861,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfigList extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PretargetingConfigPlacements extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5979,7 +5887,6 @@ class Google_Service_AdExchangeBuyer_PretargetingConfigPlacements extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Price extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6006,7 +5913,6 @@ class Google_Service_AdExchangeBuyer_Price extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PricePerBuyer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6035,7 +5941,6 @@ class Google_Service_AdExchangeBuyer_PricePerBuyer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_PrivateData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6062,7 +5967,6 @@ class Google_Service_AdExchangeBuyer_PrivateData extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_RuleKeyValuePair extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6089,7 +5993,6 @@ class Google_Service_AdExchangeBuyer_RuleKeyValuePair extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_Seller extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6116,7 +6019,6 @@ class Google_Service_AdExchangeBuyer_Seller extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_SharedTargeting extends Google_Collection
 {
   protected $collection_key = 'inclusions';
@@ -6155,7 +6057,6 @@ class Google_Service_AdExchangeBuyer_SharedTargeting extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_StatsDto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6220,7 +6121,6 @@ class Google_Service_AdExchangeBuyer_StatsDto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TargetingValue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6267,7 +6167,6 @@ class Google_Service_AdExchangeBuyer_TargetingValue extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TargetingValueCreativeSize extends Google_Collection
 {
   protected $collection_key = 'companionSizes';
@@ -6306,7 +6205,6 @@ class Google_Service_AdExchangeBuyer_TargetingValueCreativeSize extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TargetingValueDayPartTargeting extends Google_Collection
 {
   protected $collection_key = 'dayParts';
@@ -6335,7 +6233,6 @@ class Google_Service_AdExchangeBuyer_TargetingValueDayPartTargeting extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TargetingValueDayPartTargetingDayPart extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6389,7 +6286,6 @@ class Google_Service_AdExchangeBuyer_TargetingValueDayPartTargetingDayPart exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TargetingValueSize extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6416,7 +6312,6 @@ class Google_Service_AdExchangeBuyer_TargetingValueSize extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_TermsDto extends Google_Collection
 {
   protected $collection_key = 'urls';
@@ -6678,7 +6573,6 @@ class Google_Service_AdExchangeBuyer_TermsDto extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AdExchangeBuyer_WebPropertyDto extends Google_Collection
 {
   protected $collection_key = 'siteUrls';

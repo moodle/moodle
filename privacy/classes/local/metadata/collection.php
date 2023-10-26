@@ -44,7 +44,7 @@ class collection {
     protected $component;
 
     /**
-     * @var type[] The collection of metadata items.
+     * @var array   The collection of metadata items.
      */
     protected $collection = [];
 
@@ -201,7 +201,7 @@ class collection {
     /**
      * The content of this collection.
      *
-     * @return type[]
+     * @return  types\type[]
      */
     public function get_collection() {
         return $this->collection;

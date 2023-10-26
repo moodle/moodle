@@ -183,9 +183,9 @@ class plugin_manager_test extends \advanced_testcase {
         global $CFG;
 
         // Any standard plugin with subplugins is suitable.
-        $this->assertFileExists("$CFG->dirroot/lib/editor/tiny", 'TinyMCE is not present.');
+        $this->assertFileExists("$CFG->dirroot/lib/editor/tinymce", 'TinyMCE is not present.');
 
-        $subplugins = core_plugin_manager::instance()->get_subplugins_of_plugin('editor_tiny');
+        $subplugins = core_plugin_manager::instance()->get_subplugins_of_plugin('editor_tinymce');
         foreach ($subplugins as $component => $info) {
             $this->assertInstanceOf('\core\plugininfo\base', $info);
         }
@@ -201,20 +201,20 @@ class plugin_manager_test extends \advanced_testcase {
         global $CFG;
 
         // Any standard plugin with subplugins is suitable.
-        $this->assertFileExists("$CFG->dirroot/lib/editor/tiny", 'TinyMCE is not present.');
+        $this->assertFileExists("$CFG->dirroot/lib/editor/tinymce", 'TinyMCE is not present.');
 
-        $parent = core_plugin_manager::instance()->get_parent_of_subplugin('tiny');
-        $this->assertSame('editor_tiny', $parent);
+        $parent = core_plugin_manager::instance()->get_parent_of_subplugin('tinymce');
+        $this->assertSame('editor_tinymce', $parent);
     }
 
     public function test_plugin_name() {
         global $CFG;
 
         // Any standard plugin is suitable.
-        $this->assertFileExists("$CFG->dirroot/lib/editor/tiny", 'TinyMCE is not present.');
+        $this->assertFileExists("$CFG->dirroot/lib/editor/tinymce", 'TinyMCE is not present.');
 
-        $name = core_plugin_manager::instance()->plugin_name('editor_tiny');
-        $this->assertSame(get_string('pluginname', 'editor_tiny'), $name);
+        $name = core_plugin_manager::instance()->plugin_name('editor_tinymce');
+        $this->assertSame(get_string('pluginname', 'editor_tinymce'), $name);
     }
 
     public function test_plugintype_name() {
@@ -231,9 +231,9 @@ class plugin_manager_test extends \advanced_testcase {
         global $CFG;
 
         // Any standard plugin is suitable.
-        $this->assertFileExists("$CFG->dirroot/lib/editor/tiny", 'TinyMCE is not present.');
+        $this->assertFileExists("$CFG->dirroot/lib/editor/tinymce", 'TinyMCE is not present.');
 
-        $info = core_plugin_manager::instance()->get_plugin_info('editor_tiny');
+        $info = core_plugin_manager::instance()->get_plugin_info('editor_tinymce');
         $this->assertInstanceOf('\core\plugininfo\editor', $info);
     }
 

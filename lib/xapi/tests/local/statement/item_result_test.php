@@ -56,7 +56,7 @@ class item_result_test extends advanced_testcase {
     /**
      * Return a generic data to create a valid item.
      *
-     * @return \stdClass the creation data
+     * @return sdtClass the creation data
      */
     private function get_generic_data(): \stdClass {
         return (object) [

@@ -14,19 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\access_rule_base;
-use mod_quiz\quiz_settings;
+/**
+ * Implementaton of the quizaccess_openclosedate plugin.
+ *
+ * @package    quizaccess
+ * @subpackage openclosedate
+ * @copyright  2011 The Open University
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/accessrule/accessrulebase.php');
+
 
 /**
  * A rule enforcing open and close dates.
  *
- * @package   quizaccess_openclosedate
- * @copyright 2009 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright  2009 Tim Hunt
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quizaccess_openclosedate extends access_rule_base {
+class quizaccess_openclosedate extends quiz_access_rule_base {
 
-    public static function make(quiz_settings $quizobj, $timenow, $canignoretimelimits) {
+    public static function make(quiz $quizobj, $timenow, $canignoretimelimits) {
         // This rule is always used, even if the quiz has no open or close date.
         return new self($quizobj, $timenow);
     }

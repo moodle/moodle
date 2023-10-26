@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -253,7 +252,6 @@ class Google_Service_CloudMonitoring extends Google_Service
  *   $metricDescriptors = $cloudmonitoringService->metricDescriptors;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_MetricDescriptors_Resource extends Google_Service_Resource
 {
 
@@ -327,7 +325,6 @@ class Google_Service_CloudMonitoring_MetricDescriptors_Resource extends Google_S
  *   $timeseries = $cloudmonitoringService->timeseries;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_Timeseries_Resource extends Google_Service_Resource
 {
 
@@ -418,7 +415,6 @@ class Google_Service_CloudMonitoring_Timeseries_Resource extends Google_Service_
  *   $timeseriesDescriptors = $cloudmonitoringService->timeseriesDescriptors;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_TimeseriesDescriptors_Resource extends Google_Service_Resource
 {
 
@@ -482,7 +478,6 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptors_Resource extends Goog
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_DeleteMetricDescriptorResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -500,7 +495,6 @@ class Google_Service_CloudMonitoring_DeleteMetricDescriptorResponse extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListMetricDescriptorsRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -518,7 +512,6 @@ class Google_Service_CloudMonitoring_ListMetricDescriptorsRequest extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListMetricDescriptorsResponse extends Google_Collection
 {
   protected $collection_key = 'metrics';
@@ -556,7 +549,6 @@ class Google_Service_CloudMonitoring_ListMetricDescriptorsResponse extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListTimeseriesDescriptorsRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -574,7 +566,6 @@ class Google_Service_CloudMonitoring_ListTimeseriesDescriptorsRequest extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListTimeseriesDescriptorsResponse extends Google_Collection
 {
   protected $collection_key = 'timeseries';
@@ -630,7 +621,6 @@ class Google_Service_CloudMonitoring_ListTimeseriesDescriptorsResponse extends G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListTimeseriesRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -648,7 +638,6 @@ class Google_Service_CloudMonitoring_ListTimeseriesRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_ListTimeseriesResponse extends Google_Collection
 {
   protected $collection_key = 'timeseries';
@@ -704,7 +693,6 @@ class Google_Service_CloudMonitoring_ListTimeseriesResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_MetricDescriptor extends Google_Collection
 {
   protected $collection_key = 'labels';
@@ -761,7 +749,6 @@ class Google_Service_CloudMonitoring_MetricDescriptor extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_MetricDescriptorLabelDescriptor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -788,7 +775,6 @@ class Google_Service_CloudMonitoring_MetricDescriptorLabelDescriptor extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_MetricDescriptorTypeDescriptor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -815,7 +801,6 @@ class Google_Service_CloudMonitoring_MetricDescriptorTypeDescriptor extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_Point extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -888,7 +873,6 @@ class Google_Service_CloudMonitoring_Point extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_PointDistribution extends Google_Collection
 {
   protected $collection_key = 'buckets';
@@ -928,7 +912,6 @@ class Google_Service_CloudMonitoring_PointDistribution extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_PointDistributionBucket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -964,7 +947,6 @@ class Google_Service_CloudMonitoring_PointDistributionBucket extends Google_Mode
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_PointDistributionOverflowBucket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -991,7 +973,6 @@ class Google_Service_CloudMonitoring_PointDistributionOverflowBucket extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_PointDistributionUnderflowBucket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1018,7 +999,6 @@ class Google_Service_CloudMonitoring_PointDistributionUnderflowBucket extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_Timeseries extends Google_Collection
 {
   protected $collection_key = 'points';
@@ -1048,7 +1028,6 @@ class Google_Service_CloudMonitoring_Timeseries extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_TimeseriesDescriptor extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1084,7 +1063,6 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptor extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_TimeseriesDescriptorLabel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1111,12 +1089,10 @@ class Google_Service_CloudMonitoring_TimeseriesDescriptorLabel extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_TimeseriesDescriptorLabels extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_TimeseriesPoint extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1145,7 +1121,6 @@ class Google_Service_CloudMonitoring_TimeseriesPoint extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_WriteTimeseriesRequest extends Google_Collection
 {
   protected $collection_key = 'timeseries';
@@ -1174,12 +1149,10 @@ class Google_Service_CloudMonitoring_WriteTimeseriesRequest extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_WriteTimeseriesRequestCommonLabels extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_CloudMonitoring_WriteTimeseriesResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(

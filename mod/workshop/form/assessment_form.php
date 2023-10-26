@@ -37,18 +37,6 @@ require_once($CFG->libdir . '/formslib.php'); // parent class definition
  */
 class workshop_assessment_form extends moodleform {
 
-    /** @var string Mode to open the form in: preview/assessment. */
-    public $mode;
-
-    /** @var workshop_strategy workshop strategy */
-    public $strategy;
-
-    /** @var workshop workshop. */
-    public $workshop;
-
-    /** @var array options. */
-    public $options;
-
     /**
      * Add the fields that are common for all grading strategies.
      *

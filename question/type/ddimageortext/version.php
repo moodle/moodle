@@ -24,12 +24,12 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023100900;
-$plugin->requires  = 2023100400;
+$plugin->version   = 2022112800;
+$plugin->requires  = 2022111800;
 
 $plugin->component = 'qtype_ddimageortext';
 $plugin->maturity  = MATURITY_STABLE;
 
-$plugin->dependencies = [
-    'qtype_gapselect' => 2023100400,
-];
+$plugin->dependencies = array(
+    'qtype_gapselect' => 2022111800,
+);

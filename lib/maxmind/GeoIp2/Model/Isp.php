@@ -16,12 +16,6 @@ use GeoIp2\Util;
  *     address.
  * @property-read string|null $isp The name of the ISP associated with the IP
  *     address.
- * @property-read string|null $mobileCountryCode The [mobile country code
- *     (MCC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
- *     the IP address and ISP.
- * @property-read string|null $mobileNetworkCode The [mobile network code
- *     (MNC)](https://en.wikipedia.org/wiki/Mobile_country_code) associated with
- *     the IP address and ISP.
  * @property-read string|null $organization The name of the organization associated
  *     with the IP address.
  * @property-read string $ipAddress The IP address that the data in the model is
@@ -32,44 +26,11 @@ use GeoIp2\Util;
  */
 class Isp extends AbstractModel
 {
-    /**
-     * @var int|null
-     */
     protected $autonomousSystemNumber;
-
-    /**
-     * @var string|null
-     */
     protected $autonomousSystemOrganization;
-
-    /**
-     * @var string|null
-     */
     protected $isp;
-
-    /**
-     * @var string|null
-     */
-    protected $mobileCountryCode;
-
-    /**
-     * @var string|null
-     */
-    protected $mobileNetworkCode;
-
-    /**
-     * @var string|null
-     */
     protected $organization;
-
-    /**
-     * @var string
-     */
     protected $ipAddress;
-
-    /**
-     * @var string
-     */
     protected $network;
 
     /**
@@ -82,8 +43,6 @@ class Isp extends AbstractModel
         $this->autonomousSystemOrganization =
             $this->get('autonomous_system_organization');
         $this->isp = $this->get('isp');
-        $this->mobileCountryCode = $this->get('mobile_country_code');
-        $this->mobileNetworkCode = $this->get('mobile_network_code');
         $this->organization = $this->get('organization');
 
         $ipAddress = $this->get('ip_address');

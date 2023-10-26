@@ -83,6 +83,16 @@ class course_user_report_viewed extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        return array($this->courseid, 'course', 'user report', 'user.php?id=' . $this->courseid . '&amp;user='
+                . $this->relateduserid . '&amp;mode=' . $this->other['mode'], $this->relateduserid);
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

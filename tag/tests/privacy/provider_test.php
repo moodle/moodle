@@ -77,7 +77,6 @@ class provider_test extends provider_testcase {
         // Retrieve tags only for this user.
         provider::export_item_tags($user->id, $context, $subcontext, 'core_course', 'course', $course->id, true);
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertTrue($writer->has_any_data());
 
@@ -262,7 +261,6 @@ class provider_test extends provider_testcase {
         }, \core_tag_tag::get_by_name_bulk(\core_tag_collection::get_default(), ['Birdwatching', 'Computers'])));
 
         provider::export_user_data(new \core_privacy\local\request\approved_contextlist($user1, 'core_tag', [$context->id]));
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         $data = $writer->get_data(['Tags', $tagids[0]]);

@@ -26,9 +26,6 @@ namespace core_adminpresets\local\setting;
  */
 class adminpresets_admin_setting_configtime extends adminpresets_setting {
 
-    /** @var \admin_setting_configtime $settingdata */
-    protected $settingdata;
-
     /**
      * To check that the value is one of the options
      *

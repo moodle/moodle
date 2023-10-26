@@ -16,8 +16,6 @@
 
 namespace core_h5p;
 
-use core_xapi\handler;
-use core_xapi\xapi_exception;
 use Moodle\H5PFrameworkInterface;
 use Moodle\H5PCore;
 
@@ -449,9 +447,6 @@ class framework implements H5PFrameworkInterface {
             'Keywords already exists!' => 'keywordsExits',
             'Some of these keywords already exist' => 'someKeywordsExits',
             'Assistive Technologies label' => 'a11yTitle:label',
-            'width' => 'width',
-            'height' => 'height',
-            'Missing main library @library' => 'missingmainlibrary',
         ];
 
         if (isset($translationsmap[$message])) {
@@ -888,6 +883,14 @@ class framework implements H5PFrameworkInterface {
     public function updateContent($content, $contentmainid = null) {
         global $DB;
 
+        if (!isset($content['pathnamehash'])) {
+            $content['pathnamehash'] = '';
+        }
+
+        if (!isset($content['contenthash'])) {
+            $content['contenthash'] = '';
+        }
+
         // If the libraryid declared in the package is empty, get the latest version.
         if (empty($content['library']['libraryId'])) {
             $mainlibrary = $this->get_latest_library_version($content['library']['machineName']);
@@ -913,19 +916,11 @@ class framework implements H5PFrameworkInterface {
             'mainlibraryid' => $content['library']['libraryId'],
             'timemodified' => time(),
             'filtered' => null,
+            'pathnamehash' => $content['pathnamehash'],
+            'contenthash' => $content['contenthash']
         ];
 
-        if (isset($content['pathnamehash'])) {
-            $data['pathnamehash'] = $content['pathnamehash'];
-        }
-
-        if (isset($content['contenthash'])) {
-            $data['contenthash'] = $content['contenthash'];
-        }
-
         if (!isset($content['id'])) {
-            $data['pathnamehash'] = $data['pathnamehash'] ?? '';
-            $data['contenthash'] = $data['contenthash'] ?? '';
             $data['timecreated'] = $data['timemodified'];
             $id = $DB->insert_record('h5p', $data);
         } else {
@@ -943,30 +938,7 @@ class framework implements H5PFrameworkInterface {
      * @param int $contentid The h5p content id
      */
     public function resetContentUserData($contentid) {
-        global $DB;
-
-        // Get the component associated to the H5P content to reset.
-        $h5p = $DB->get_record('h5p', ['id' => $contentid]);
-        if (!$h5p) {
-            return;
-        }
-
-        $fs = get_file_storage();
-        $file = $fs->get_file_by_hash($h5p->pathnamehash);
-        if (!$file) {
-            return;
-        }
-
-        // Reset user data.
-        try {
-            $xapihandler = handler::create($file->get_component());
-            // Reset only entries with 'state' as stateid (the ones restored shouldn't be restored, because the H5P
-            // content hasn't been created yet).
-            $xapihandler->reset_states($file->get_contextid(), null, 'state');
-        } catch (xapi_exception $exception) {
-            // This component doesn't support xAPI State, so no content needs to be reset.
-            return;
-        }
+        // Currently, we do not store user data for a content.
     }
 
     /**
@@ -1023,12 +995,8 @@ class framework implements H5PFrameworkInterface {
     public function deleteContentData($contentid) {
         global $DB;
 
-        // The user content should be reset (instead of removed), because this method is called when H5P content needs
-        // to be updated too (and the previous states must be kept, but reset).
-        $this->resetContentUserData($contentid);
-
         // Remove content.
-        $DB->delete_records('h5p', ['id' => $contentid]);
+        $DB->delete_records('h5p', array('id' => $contentid));
 
         // Remove content library dependencies.
         $this->deleteLibraryUsage($contentid);

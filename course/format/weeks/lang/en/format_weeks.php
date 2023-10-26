@@ -1,4 +1,5 @@
 <?php
+
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -23,32 +24,20 @@
  */
 
 $string['addsections'] = 'Add week';
-$string['automaticenddate'] = 'Calculate the end date from the number of sections';
-$string['automaticenddate_help'] = 'If enabled, the end date for the course will be automatically calculated from the number of sections and the course start date.';
 $string['currentsection'] = 'This week';
-$string['deletesection'] = 'Delete week';
 $string['editsection'] = 'Edit week';
 $string['editsectionname'] = 'Edit week name';
-$string['hidefromothers'] = 'Hide week';
+$string['deletesection'] = 'Delete week';
 $string['newsectionname'] = 'New name for week {$a}';
+$string['sectionname'] = 'Week';
+$string['pluginname'] = 'Weekly format';
+$string['section0name'] = 'General';
 $string['page-course-view-weeks'] = 'Any course main page in weeks format';
 $string['page-course-view-weeks-x'] = 'Any course page in weeks format';
-$string['pluginname'] = 'Weekly format';
+$string['hidefromothers'] = 'Hide week';
+$string['showfromothers'] = 'Show week';
+$string['automaticenddate'] = 'Calculate the end date from the number of sections';
+$string['automaticenddate_help'] = 'If enabled, the end date for the course will be automatically calculated from the number of sections and the course start date.';
 $string['privacy:metadata'] = 'The Weekly format plugin does not store any personal data.';
 $string['indentation'] = 'Allow indentation on course page';
 $string['indentation_help'] = 'Allow teachers, and other users with the manage activities capability, to indent items on the course page.';
-$string['section0name'] = 'General';
-$string['sectionavailability_title'] = 'Week availability';
-$string['sectiondelete_title'] = 'Delete week?';
-$string['sectionmove_title'] = 'Move week';
-$string['sectionname'] = 'Week';
-$string['sectionsavailability'] = 'Weeks availability';
-$string['sectionsavailability_title'] = 'Weeks availability';
-$string['sectionsdelete'] = 'Delete weeks';
-$string['sectionsdelete_info'] = 'This will delete {$a->count} weeks and all the activities they contain.';
-$string['sectionsdelete_title'] = 'Delete selected weeks?';
-$string['sectionsmove'] = 'Move weeks';
-$string['sectionsmove_info'] = 'Move {$a} weeks after';
-$string['sectionsmove_title'] = 'Move selected weeks';
-$string['selectsection'] = 'Select week {$a}';
-$string['showfromothers'] = 'Show week';

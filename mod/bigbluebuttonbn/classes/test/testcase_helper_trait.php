@@ -283,7 +283,7 @@ trait testcase_helper_trait {
      * @param bool $withremoterecordings create recording on the mock server ?
      * @return array
      */
-    protected function create_log_entries(
+    protected function create_legacy_log_entries(
         instance $instance,
         int $userid,
         int $count = 30,
@@ -304,10 +304,10 @@ trait testcase_helper_trait {
                 // Create a recording.
                 $starttime = time() - random_int(HOURSECS, WEEKSECS);
                 $recording = $plugingenerator->create_recording([
-                    'bigbluebuttonbnid' => $instance->get_instance_id(),
-                    'groupid' => $instance->get_group_id(),
-                    'starttime' => $starttime,
-                    'endtime' => $starttime + HOURSECS,
+                        'bigbluebuttonbnid' => $instance->get_instance_id(),
+                        'groupid' => $instance->get_group_id(),
+                        'starttime' => $starttime,
+                        'endtime' => $starttime + HOURSECS,
                 ], true); // Create them on the server only.
 
                 $baselogdata['meetingid'] = $instance->get_meeting_id();
@@ -323,7 +323,7 @@ trait testcase_helper_trait {
                         $data = [];
                     }
                     $baselogdata['meta'] = json_encode(array_merge([
-                        'recording' => array_diff_key($data, $metaonly),
+                            'recording' => array_diff_key($data, $metaonly),
                     ], $metaonly));
 
                 } else {

@@ -137,7 +137,7 @@ Feature: Users can auto-enrol themself in courses where self enrolment is allowe
     And I press "Enrol me"
     And I should see "You are enrolled in the course"
     And I am on the "C1" "course" page
-    And I navigate to "Unenrol me from this course" in current page administration
+    And I navigate to "Unenrol me from C1" in current page administration
     And I click on "Continue" "button" in the "Confirm" "dialogue"
     Then I should see "You are unenrolled from the course \"Course 1\""
 

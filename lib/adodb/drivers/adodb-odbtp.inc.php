@@ -46,15 +46,6 @@ class ADODB_odbtp extends ADOConnection{
 	var $_canPrepareSP = false;
 	var $_dontPoolDBC = true;
 
-	/** @var string DBMS name. */
-	var $odbc_name;
-
-	/** @var bool */
-	var $_canSelectDb = false;
-
-	/** @var mixed */
-	var $_lastAffectedRows;
-
 	function ServerInfo()
 	{
 		return array('description' => @odbtp_get_attr( ODB_ATTR_DBMSNAME, $this->_connectionID),
@@ -313,6 +304,7 @@ class ADODB_odbtp extends ADOConnection{
 			return false;
 		}
 		$this->database = $dbName;
+		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		return true;
 	}
 

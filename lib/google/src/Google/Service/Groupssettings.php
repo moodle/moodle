@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Groupssettings extends Google_Service
 {
   /** View and manage the settings of a Google Apps Group. */
@@ -103,7 +102,6 @@ class Google_Service_Groupssettings extends Google_Service
  *   $groups = $groupssettingsService->groups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Groupssettings_Groups_Resource extends Google_Service_Resource
 {
 
@@ -156,7 +154,6 @@ class Google_Service_Groupssettings_Groups_Resource extends Google_Service_Resou
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Groupssettings_Groups extends Google_Model
 {
   protected $internal_gapi_mappings = array(

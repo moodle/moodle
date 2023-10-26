@@ -16,7 +16,6 @@
 
 namespace mod_url;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_url_external;
 
@@ -77,7 +76,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_url_external::view_url($url->id);
-        $result = external_api::clean_returnvalue(mod_url_external::view_url_returns(), $result);
+        $result = \external_api::clean_returnvalue(mod_url_external::view_url_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -180,14 +179,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function passing course ids.
         $result = mod_url_external::get_urls_by_courses(array($course2->id, $course1->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertEquals($expectedurls, $result['urls']);
         $this->assertCount(0, $result['warnings']);
 
         // Call the external function without passing course id.
         $result = mod_url_external::get_urls_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedurls, $result['urls']);
         $this->assertCount(0, $result['warnings']);
 
@@ -206,7 +205,7 @@ class externallib_test extends externallib_advanced_testcase {
         $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
 
         $result = mod_url_external::get_urls_by_courses(array($course2->id, $course1->id));
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
 
         $this->assertCount(1, $result['urls'][0]['introfiles']);
         $this->assertEquals($filename, $result['urls'][0]['introfiles'][0]['filename']);
@@ -217,7 +216,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Call the external function without passing course id.
         $result = mod_url_external::get_urls_by_courses();
-        $result = external_api::clean_returnvalue($returndescription, $result);
+        $result = \external_api::clean_returnvalue($returndescription, $result);
         $this->assertEquals($expectedurls, $result['urls']);
 
         // Call for the second course we unenrolled the user from, expected warning.

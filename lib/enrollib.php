@@ -476,17 +476,6 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         if (!$url) {
             $instancesnode->trim_if_empty();
         }
-
-        if (has_capability('moodle/course:renameroles', $coursecontext)) {
-            $url = new moodle_url('/enrol/renameroles.php', array('id' => $course->id));
-            $instancesnode->add(
-                get_string('rolerenaming'),
-                $url,
-                navigation_node::TYPE_SETTING,
-                null,
-                'renameroles'
-            );
-        }
     }
 
     // Manage groups in this course or even frontpage
@@ -495,10 +484,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
         $usersnode->add(get_string('groups'), $url, navigation_node::TYPE_SETTING, null, 'groups', new pix_icon('i/group', ''));
     }
 
-    if (has_any_capability(
-        [ 'moodle/role:assign', 'moodle/role:safeoverride', 'moodle/role:override', 'moodle/role:review'],
-        $coursecontext
-    )) {
+     if (has_any_capability(array( 'moodle/role:assign', 'moodle/role:safeoverride','moodle/role:override', 'moodle/role:review'), $coursecontext)) {
         // Override roles
         if (has_capability('moodle/role:review', $coursecontext)) {
             $url = new moodle_url('/admin/roles/permissions.php', array('contextid'=>$coursecontext->id));
@@ -519,7 +505,7 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
             $url = new moodle_url('/admin/roles/check.php', array('contextid'=>$coursecontext->id));
             $permissionsnode->add(get_string('checkpermissions', 'role'), $url, navigation_node::TYPE_SETTING, null, 'permissions', new pix_icon('i/checkpermissions', ''));
         }
-    }
+     }
 
      // Deal somehow with users that are not enrolled but still got a role somehow
     if ($course->id != SITEID) {
@@ -544,8 +530,8 @@ function enrol_add_course_navigation(navigation_node $coursenode, $course) {
                 }
                 $plugin = $plugins[$instance->enrol];
                 if ($unenrollink = $plugin->get_unenrolself_link($instance)) {
-                    $coursenode->add(get_string('unenrolme', 'core_enrol'), $unenrollink,
-                        navigation_node::TYPE_SETTING, null, 'unenrolself', new pix_icon('i/user', ''));
+                    $shortname = format_string($course->shortname, true, array('context' => $coursecontext));
+                    $coursenode->add(get_string('unenrolme', 'core_enrol', $shortname), $unenrollink, navigation_node::TYPE_SETTING, null, 'unenrolself', new pix_icon('i/user', ''));
                     $coursenode->get('unenrolself')->set_force_into_more_menu(true);
                     break;
                     //TODO. deal with multiple unenrol links - not likely case, but still...
@@ -1476,13 +1462,13 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @param string|array $capability optional, may include a capability name, or array of names.
  *      If an array is provided then this is the equivalent of a logical 'OR',
  *      i.e. the user needs to have one of these capabilities.
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int $group optional, 0 indicates no current group and USERSWITHOUTGROUP users without any group; otherwise the group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
  * @return \core\dml\sql_join Contains joins, wheres, params and cannotmatchanyrows
  */
-function get_enrolled_with_capabilities_join(context $context, $prefix = '', $capability = '', $groupids = 0,
+function get_enrolled_with_capabilities_join(context $context, $prefix = '', $capability = '', $group = 0,
         $onlyactive = false, $onlysuspended = false, $enrolid = 0) {
     $uid = $prefix . 'u.id';
     $joins = array();
@@ -1503,8 +1489,8 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
         $cannotmatchanyrows = $cannotmatchanyrows || $capjoin->cannotmatchanyrows;
     }
 
-    if ($groupids) {
-        $groupjoin = groups_get_members_join($groupids, $uid, $context);
+    if ($group) {
+        $groupjoin = groups_get_members_join($group, $uid, $context);
         $joins[] = $groupjoin->joins;
         $params = array_merge($params, $groupjoin->params);
         if (!empty($groupjoin->wheres)) {
@@ -1528,13 +1514,13 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
  *
  * @param context $context
  * @param string $withcapability
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int $groupid 0 means ignore groups, USERSWITHOUTGROUP without any group and any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
  * @return array list($sql, $params)
  */
-function get_enrolled_sql(context $context, $withcapability = '', $groupids = 0, $onlyactive = false, $onlysuspended = false,
+function get_enrolled_sql(context $context, $withcapability = '', $groupid = 0, $onlyactive = false, $onlysuspended = false,
                           $enrolid = 0) {
 
     // Use unique prefix just in case somebody makes some SQL magic with the result.
@@ -1543,7 +1529,7 @@ function get_enrolled_sql(context $context, $withcapability = '', $groupids = 0,
     $prefix = 'eu' . $i . '_';
 
     $capjoin = get_enrolled_with_capabilities_join(
-            $context, $prefix, $withcapability, $groupids, $onlyactive, $onlysuspended, $enrolid);
+            $context, $prefix, $withcapability, $groupid, $onlyactive, $onlysuspended, $enrolid);
 
     $sql = "SELECT DISTINCT {$prefix}u.id
               FROM {user} {$prefix}u
@@ -1654,7 +1640,7 @@ function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false,
  *
  * @param context $context
  * @param string $withcapability
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int $groupid 0 means ignore groups, USERSWITHOUTGROUP without any group and any other value limits the result by group id
  * @param string $userfields requested user record fields
  * @param string $orderby
  * @param int $limitfrom return a subset of records, starting at this point (optional, required if $limitnum is set).
@@ -1662,11 +1648,11 @@ function get_enrolled_join(context $context, $useridcolumn, $onlyactive = false,
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return array of user records
  */
-function get_enrolled_users(context $context, $withcapability = '', $groupids = 0, $userfields = 'u.*', $orderby = null,
+function get_enrolled_users(context $context, $withcapability = '', $groupid = 0, $userfields = 'u.*', $orderby = null,
         $limitfrom = 0, $limitnum = 0, $onlyactive = false) {
     global $DB;
 
-    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupids, $onlyactive);
+    list($esql, $params) = get_enrolled_sql($context, $withcapability, $groupid, $onlyactive);
     $sql = "SELECT $userfields
               FROM {user} u
               JOIN ($esql) je ON je.id = u.id
@@ -1688,15 +1674,15 @@ function get_enrolled_users(context $context, $withcapability = '', $groupids = 
  *
  * @param context $context
  * @param string $withcapability
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int $groupid 0 means ignore groups, any other value limits the result by group id
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @return int number of users enrolled into course
  */
-function count_enrolled_users(context $context, $withcapability = '', $groupids = 0, $onlyactive = false) {
+function count_enrolled_users(context $context, $withcapability = '', $groupid = 0, $onlyactive = false) {
     global $DB;
 
     $capjoin = get_enrolled_with_capabilities_join(
-            $context, '', $withcapability, $groupids, $onlyactive);
+            $context, '', $withcapability, $groupid, $onlyactive);
 
     $sql = "SELECT COUNT(DISTINCT u.id)
               FROM {user} u
@@ -2159,17 +2145,6 @@ abstract class enrol_plugin {
             grade_recover_history_grades($userid, $courseid);
         }
 
-        // Add users to a communication room.
-        if (core_communication\api::is_available()) {
-            $communication = \core_communication\api::load_by_instance(
-                context: $context,
-                component: 'core_course',
-                instancetype: 'coursecommunication',
-                instanceid: $courseid,
-            );
-            $communication->add_members_to_room([$userid]);
-        }
-
         // reset current user enrolment caching
         if ($userid == $USER->id) {
             if (isset($USER->enrol['enrolled'][$courseid])) {
@@ -2207,12 +2182,9 @@ abstract class enrol_plugin {
         }
 
         $modified = false;
-        $statusmodified = false;
-        $timeendmodified = false;
         if (isset($status) and $ue->status != $status) {
             $ue->status = $status;
             $modified = true;
-            $statusmodified = true;
         }
         if (isset($timestart) and $ue->timestart != $timestart) {
             $ue->timestart = $timestart;
@@ -2221,30 +2193,11 @@ abstract class enrol_plugin {
         if (isset($timeend) and $ue->timeend != $timeend) {
             $ue->timeend = $timeend;
             $modified = true;
-            $timeendmodified = true;
         }
 
         if (!$modified) {
             // no change
             return;
-        }
-
-        // Add/remove users to/from communication room.
-        if (core_communication\api::is_available()) {
-            $course = enrol_get_course_by_user_enrolment_id($ue->id);
-            $context = \core\context\course::instance($course->id);
-            $communication = \core_communication\api::load_by_instance(
-                context: $context,
-                component: 'core_course',
-                instancetype: 'coursecommunication',
-                instanceid: $course->id,
-            );
-            if (($statusmodified && ((int) $ue->status === 1)) ||
-                    ($timeendmodified && $ue->timeend !== 0 && (time() > $ue->timeend))) {
-                $communication->remove_members_from_room([$userid]);
-            } else {
-                $communication->add_members_to_room([$userid]);
-            }
         }
 
         $ue->modifierid = $USER->id;
@@ -2349,17 +2302,6 @@ abstract class enrol_plugin {
                     )
                 );
         $event->trigger();
-
-        // Remove users from a communication room.
-        if (core_communication\api::is_available()) {
-            $communication = \core_communication\api::load_by_instance(
-                context: $context,
-                component: 'core_course',
-                instancetype: 'coursecommunication',
-                instanceid: $courseid,
-            );
-            $communication->remove_members_from_room([$userid]);
-        }
 
         // User enrolments have changed, so mark user as dirty.
         mark_user_dirty($userid);
@@ -2484,7 +2426,7 @@ abstract class enrol_plugin {
     /**
      * Returns list of unenrol links for all enrol instances in course.
      *
-     * @param stdClass $instance
+     * @param int $instance
      * @return moodle_url or NULL if self unenrolment not supported
      */
     public function get_unenrolself_link($instance) {
@@ -2678,30 +2620,6 @@ abstract class enrol_plugin {
     }
 
     /**
-     * Add new instance of enrol plugin with custom settings,
-     * called when adding new instance manually or when adding new course.
-     * Used for example on course upload.
-     *
-     * Not all plugins support this.
-     *
-     * @param stdClass $course Course object
-     * @param array|null $fields instance fields
-     * @return int|null id of new instance or null if not supported
-     */
-    public function add_custom_instance(stdClass $course, ?array $fields = null): ?int {
-        return null;
-    }
-
-    /**
-     * Check if enrolment plugin is supported in csv course upload.
-     *
-     * @return bool
-     */
-    public function is_csv_upload_supported(): bool {
-        return false;
-    }
-
-    /**
      * Update instance status
      *
      * Override when plugin needs to do some action when enabled or disabled.
@@ -2721,45 +2639,6 @@ abstract class enrol_plugin {
 
         // Invalidate all enrol caches.
         $context->mark_dirty();
-    }
-
-    /**
-     * Update instance members.
-     *
-     * Update communication room membership for an instance action being performed.
-     *
-     * @param int $instanceid ID of the enrolment instance
-     * @param string $action The update action being performed
-     * @param int $courseid The id of the course
-     * @return void
-     */
-    public function update_communication(int $instanceid, string $action, int $courseid): void {
-        global $DB;
-        // Get enrolled instance users.
-        $instanceusers = $DB->get_records('user_enrolments', ['enrolid' => $instanceid, 'status' => 0]);
-        $enrolledusers = [];
-
-        foreach ($instanceusers as $user) {
-            $enrolledusers[] = $user->userid;
-        }
-
-        $communication = \core_communication\api::load_by_instance(
-            'core_course',
-            'coursecommunication',
-            $courseid
-        );
-
-        switch ($action) {
-            case 'add':
-                $communication->add_members_to_room($enrolledusers);
-                break;
-
-            case 'remove':
-                $communication->remove_members_from_room($enrolledusers);
-                break;
-            default:
-                throw new \coding_exception('Invalid action');
-        }
     }
 
     /**
@@ -2829,7 +2708,7 @@ abstract class enrol_plugin {
      * for enrolment, name of enrolment plugin etc.
      *
      * @param stdClass $instance enrolment instance
-     * @return stdClass|null instance info.
+     * @return array instance info.
      */
     public function get_enrol_info(stdClass $instance) {
         return null;
@@ -3468,45 +3347,4 @@ abstract class enrol_plugin {
         }
         return $errors;
     }
-
-    /**
-     * Fill custom fields data for a given enrolment plugin.
-     *
-     * @param array $enrolmentdata enrolment data.
-     * @param int $courseid Course ID.
-     * @return array Updated enrolment data with custom fields info.
-     */
-    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid) : array {
-        return $enrolmentdata;
-    }
-
-    /**
-     * Check if data is valid for a given enrolment plugin
-     *
-     * @param array $enrolmentdata enrolment data to validate.
-     * @param int|null $courseid Course ID.
-     * @return array Errors
-     */
-    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null) : array {
-        $errors = [];
-        if (!$this->is_csv_upload_supported()) {
-            $errors['errorunsupportedmethod'] =
-                new lang_string('errorunsupportedmethod', 'tool_uploadcourse',
-                    get_class($this));
-
-        }
-        return $errors;
-    }
-
-    /**
-     * Check if plugin custom data is allowed in relevant context.
-     *
-     * @param array $enrolmentdata enrolment data to validate.
-     * @param int|null $courseid Course ID.
-     * @return lang_string|null Error
-     */
-    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
-        return null;
-    }
-
 }

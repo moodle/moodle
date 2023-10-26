@@ -18,23 +18,22 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "admin"
-    And I choose the "Add category" item in the "Add" action menu
+    And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test locked category |
-    And I click on "Save" "button" in the "New category" "dialogue"
-    And I wait until the page is ready
-    And I choose the "Add grade item" item in the "Add" action menu
+    And I press "Save changes"
+    And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Hidden item |
       | Hidden | 1 |
       | Grade category | Test locked category |
-    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I press "Save changes"
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Hidden item"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Test locked category" of type "category" on "setup" page:
+    And I set the following settings for grade item "Test locked category":
       | Locked | 1 |
 
   Scenario: Hidden grade items in locked category is hidden for teacher
@@ -56,16 +55,15 @@ Feature: Hidden grade items should be hidden when grade category is locked, but 
 
   Scenario: Hidden grade items in overridden category should show
     Given I am on the "Course 1" "grades > gradebook setup" page
-    And I choose the "Add category" item in the "Add" action menu
+    And I press "Add category"
     And I set the following fields to these values:
       | Category name | Test overridden category B|
-    And I click on "Save" "button" in the "New category" "dialogue"
-    And I wait until the page is ready
-    And I choose the "Add grade item" item in the "Add" action menu
+    And I press "Save changes"
+    And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Cat b item |
       | Grade category | Test overridden category B |
-    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I press "Save changes"
     When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
     And I give the grade "50.00" to the user "Student 1" for the grade item "Test overridden category B total"

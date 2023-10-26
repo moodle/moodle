@@ -14,12 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\reports\report_base;
-use mod_quiz\quiz_attempt;
+/**
+ * This file defines the quiz manual grading report class.
+ *
+ * @package   quiz_grading
+ * @copyright 2006 Gustav Delius
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php');
+
 
 /**
  * Quiz report to help teachers manually grade questions that need it.
@@ -31,7 +38,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/grading/gradingsettings_form.php'
  * @copyright 2006 Gustav Delius
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_grading_report extends report_base {
+class quiz_grading_report extends quiz_default_report {
     const DEFAULT_PAGE_SIZE = 5;
     const DEFAULT_ORDER = 'random';
 
@@ -80,7 +87,7 @@ class quiz_grading_report extends report_base {
         $grade = optional_param('grade', null, PARAM_ALPHA);
 
         $includeauto = optional_param('includeauto', false, PARAM_BOOL);
-        if (!in_array($grade, ['all', 'needsgrading', 'autograded', 'manuallygraded'])) {
+        if (!in_array($grade, array('all', 'needsgrading', 'autograded', 'manuallygraded'))) {
             $grade = null;
         }
         $pagesize = optional_param('pagesize',
@@ -92,7 +99,7 @@ class quiz_grading_report extends report_base {
                 PARAM_ALPHAEXT);
 
         // Assemble the options required to reload this page.
-        $optparams = ['includeauto', 'page'];
+        $optparams = array('includeauto', 'page');
         foreach ($optparams as $param) {
             if ($$param) {
                 $this->viewoptions[$param] = $$param;
@@ -156,10 +163,10 @@ class quiz_grading_report extends report_base {
         // Get the group, and the list of significant users.
         $this->currentgroup = $this->get_current_group($cm, $course, $this->context);
         if ($this->currentgroup == self::NO_GROUPS_ALLOWED) {
-            $this->userssql = [];
+            $this->userssql = array();
         } else {
             $this->userssql = get_enrolled_sql($this->context,
-                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $this->currentgroup);
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $this->currentgroup);
         }
 
         $hasquestions = quiz_has_questions($this->quiz->id);
@@ -206,15 +213,15 @@ class quiz_grading_report extends report_base {
         $where = "quiza.quiz = :mangrquizid AND
                 quiza.preview = 0 AND
                 quiza.state = :statefinished";
-        $params = ['mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED];
+        $params = array('mangrquizid' => $this->cm->instance, 'statefinished' => quiz_attempt::FINISHED);
 
         $usersjoin = '';
         $currentgroup = groups_get_activity_group($this->cm, true);
         $enrolleduserscount = count_enrolled_users($this->context,
-                ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
+                array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
         if ($currentgroup) {
             $userssql = get_enrolled_sql($this->context,
-                    ['mod/quiz:reviewmyattempts', 'mod/quiz:attempt'], $currentgroup);
+                    array('mod/quiz:reviewmyattempts', 'mod/quiz:attempt'), $currentgroup);
             if ($enrolleduserscount < 1) {
                 $where .= ' AND quiza.userid = 0';
             } else {
@@ -255,7 +262,7 @@ class quiz_grading_report extends report_base {
                 WHERE quiza.uniqueid $asql AND quiza.state = ? AND quiza.quiz = ?",
                 $params);
 
-        $attempts = [];
+        $attempts = array();
         foreach ($attemptsbyid as $attempt) {
             $attempts[$attempt->uniqueid] = $attempt;
         }
@@ -696,9 +703,9 @@ class quiz_grading_report extends report_base {
     /**
      * Initialise some parts of $PAGE and start output.
      *
-     * @param stdClass $cm the course_module information.
-     * @param stdClass $course the course settings.
-     * @param stdClass $quiz the quiz settings.
+     * @param object $cm the course_module information.
+     * @param object $course the course settings.
+     * @param object $quiz the quiz settings.
      * @param string $reportmode the report name.
      */
     public function print_header_and_tabs($cm, $course, $quiz, $reportmode = 'overview') {

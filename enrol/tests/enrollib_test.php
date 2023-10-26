@@ -656,6 +656,13 @@ class enrollib_test extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_enrolment_created', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
         $this->assertEquals(context_course::instance($course1->id), $event->get_context());
+        $this->assertEquals('user_enrolled', $event->get_legacy_eventname());
+        $expectedlegacyeventdata = $dbuserenrolled;
+        $expectedlegacyeventdata->enrol = $manual->get_name();
+        $expectedlegacyeventdata->courseid = $course1->id;
+        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+        $expected = array($course1->id, 'course', 'enrol', '../enrol/users.php?id=' . $course1->id, $course1->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -690,6 +697,14 @@ class enrollib_test extends advanced_testcase {
         // Validate the event.
         $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
+        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
+        $expectedlegacyeventdata = $dbuserenrolled;
+        $expectedlegacyeventdata->enrol = $manualplugin->get_name();
+        $expectedlegacyeventdata->courseid = $course->id;
+        $expectedlegacyeventdata->lastenrol = true;
+        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
+        $expected = array($course->id, 'course', 'unenrol', '../enrol/users.php?id=' . $course->id, $course->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 

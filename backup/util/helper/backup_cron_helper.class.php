@@ -123,7 +123,7 @@ abstract class backup_cron_automated_helper {
             mtrace("Skipping deleted courses", '...');
             mtrace(sprintf("%d courses", self::remove_deleted_courses_from_schedule()));
             mtrace('Running required automated backups...');
-            \core\cron::trace_time_and_memory();
+            cron_trace_time_and_memory();
 
             mtrace("Getting admin info");
             $admin = get_admin();

@@ -46,9 +46,6 @@ class access_controlled_link_manager_test extends \advanced_testcase {
     /** @var null|\core\oauth2\issuer which belongs to the repository_nextcloud object. */
     public $issuer = null;
 
-    /** @var string system account username. */
-    public $systemaccountusername;
-
     /**
      * SetUp to create an repository instance.
      */

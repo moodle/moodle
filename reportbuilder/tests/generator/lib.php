@@ -84,7 +84,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = column::properties_filter((object) $record)) {
+        if ($properties = array_intersect_key($record, column::properties_definition())) {
             $column->set_many($properties)->update();
         }
 
@@ -112,7 +112,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = filter::properties_filter((object) $record)) {
+        if ($properties = array_intersect_key($record, filter::properties_definition())) {
             $filter->set_many($properties)->update();
         }
 
@@ -140,7 +140,7 @@ class core_reportbuilder_generator extends component_generator_base {
 
         // Update additional record properties.
         unset($record['reportid'], $record['uniqueidentifier']);
-        if ($properties = filter::properties_filter((object) $record)) {
+        if ($properties = array_intersect_key($record, filter::properties_definition())) {
             $condition->set_many($properties)->update();
         }
 

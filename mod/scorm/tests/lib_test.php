@@ -45,30 +45,6 @@ require_once($CFG->dirroot . '/mod/scorm/lib.php');
  */
 class lib_test extends \advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected \stdClass $course;
-
-    /** @var \stdClass activity record. */
-    protected \stdClass $scorm;
-
-    /** @var \core\context\module context instance. */
-    protected \core\context\module $context;
-
-    /** @var \stdClass */
-    protected \stdClass $cm;
-
-    /** @var \stdClass user record. */
-    protected \stdClass $student;
-
-    /** @var \stdClass user record. */
-    protected \stdClass $teacher;
-
-    /** @var \stdClass a fieldset object, false or exception if error not found. */
-    protected \stdClass $studentrole;
-
-    /** @var \stdClass a fieldset object, false or exception if error not found. */
-    protected \stdClass $teacherrole;
-
     /**
      * Set up for every test
      */

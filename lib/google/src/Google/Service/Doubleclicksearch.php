@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch extends Google_Service
 {
   /** View and manage your advertising data in DoubleClick Search. */
@@ -252,7 +251,6 @@ class Google_Service_Doubleclicksearch extends Google_Service
  *   $conversion = $doubleclicksearchService->conversion;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_Conversion_Resource extends Google_Service_Resource
 {
 
@@ -363,7 +361,6 @@ class Google_Service_Doubleclicksearch_Conversion_Resource extends Google_Servic
  *   $reports = $doubleclicksearchService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_Reports_Resource extends Google_Service_Resource
 {
 
@@ -432,7 +429,6 @@ class Google_Service_Doubleclicksearch_Reports_Resource extends Google_Service_R
  *   $savedColumns = $doubleclicksearchService->savedColumns;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_SavedColumns_Resource extends Google_Service_Resource
 {
 
@@ -456,7 +452,6 @@ class Google_Service_Doubleclicksearch_SavedColumns_Resource extends Google_Serv
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_Availability extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -519,7 +514,6 @@ class Google_Service_Doubleclicksearch_Availability extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_Conversion extends Google_Collection
 {
   protected $collection_key = 'customMetric';
@@ -828,7 +822,6 @@ class Google_Service_Doubleclicksearch_Conversion extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ConversionList extends Google_Collection
 {
   protected $collection_key = 'conversion';
@@ -857,7 +850,6 @@ class Google_Service_Doubleclicksearch_ConversionList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_CustomDimension extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -884,7 +876,6 @@ class Google_Service_Doubleclicksearch_CustomDimension extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_CustomMetric extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -911,7 +902,6 @@ class Google_Service_Doubleclicksearch_CustomMetric extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_Report extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -1004,7 +994,6 @@ class Google_Service_Doubleclicksearch_Report extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportApiColumnSpec extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1103,7 +1092,6 @@ class Google_Service_Doubleclicksearch_ReportApiColumnSpec extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportFiles extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1130,7 +1118,6 @@ class Google_Service_Doubleclicksearch_ReportFiles extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRequest extends Google_Collection
 {
   protected $collection_key = 'orderBy';
@@ -1271,7 +1258,6 @@ class Google_Service_Doubleclicksearch_ReportRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRequestFilters extends Google_Collection
 {
   protected $collection_key = 'values';
@@ -1309,7 +1295,6 @@ class Google_Service_Doubleclicksearch_ReportRequestFilters extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRequestOrderBy extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1337,7 +1322,6 @@ class Google_Service_Doubleclicksearch_ReportRequestOrderBy extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRequestReportScope extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1409,7 +1393,6 @@ class Google_Service_Doubleclicksearch_ReportRequestReportScope extends Google_M
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRequestTimeRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1454,12 +1437,10 @@ class Google_Service_Doubleclicksearch_ReportRequestTimeRange extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_ReportRow extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_SavedColumn extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1495,7 +1476,6 @@ class Google_Service_Doubleclicksearch_SavedColumn extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_SavedColumnList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1524,7 +1504,6 @@ class Google_Service_Doubleclicksearch_SavedColumnList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_UpdateAvailabilityRequest extends Google_Collection
 {
   protected $collection_key = 'availabilities';
@@ -1544,7 +1523,6 @@ class Google_Service_Doubleclicksearch_UpdateAvailabilityRequest extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Doubleclicksearch_UpdateAvailabilityResponse extends Google_Collection
 {
   protected $collection_key = 'availabilities';

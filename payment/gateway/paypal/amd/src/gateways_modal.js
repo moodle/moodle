@@ -16,7 +16,7 @@
 /**
  * This module is responsible for PayPal content in the gateways modal.
  *
- * @module     paygw_paypal/gateways_modal
+ * @module     paygw_paypal/gateway_modal
  * @copyright  2020 Shamim Rezaie <shamim@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -24,20 +24,22 @@
 import * as Repository from './repository';
 import Templates from 'core/templates';
 import Truncate from 'core/truncate';
-import Modal from 'core/modal';
+import ModalFactory from 'core/modal_factory';
 import ModalEvents from 'core/modal_events';
-import {getString} from 'core/str';
+import {get_string as getString} from 'core/str';
 
 /**
  * Creates and shows a modal that contains a placeholder.
  *
  * @returns {Promise<Modal>}
  */
-const showModalWithPlaceholder = async() => await Modal.create({
-    body: await Templates.render('paygw_paypal/paypal_button_placeholder', {}),
-    show: true,
-    removeOnClose: true,
-});
+const showModalWithPlaceholder = async() => {
+    const modal = await ModalFactory.create({
+        body: await Templates.render('paygw_paypal/paypal_button_placeholder', {})
+    });
+    modal.show();
+    return modal;
+};
 
 /**
  * Process the payment.
@@ -54,6 +56,11 @@ export const process = (component, paymentArea, itemId, description) => {
         Repository.getConfigForJs(component, paymentArea, itemId),
     ])
     .then(([modal, paypalConfig]) => {
+        modal.getRoot().on(ModalEvents.hidden, () => {
+            // Destroy when hidden.
+            modal.destroy();
+        });
+
         return Promise.all([
             modal,
             paypalConfig,

@@ -1042,7 +1042,9 @@ class enrol_database_plugin extends enrol_plugin {
                 $rs->Close();
 
             } else {
-                $columns = array_keys($rs->fetchRow());
+                $fields_obj = $rs->FetchObj();
+                $columns = array_keys((array)$fields_obj);
+
                 echo $OUTPUT->notification('External enrolment table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
                 $rs->Close();
             }
@@ -1059,7 +1061,9 @@ class enrol_database_plugin extends enrol_plugin {
                 $rs->Close();
 
             } else {
-                $columns = array_keys($rs->fetchRow());
+                $fields_obj = $rs->FetchObj();
+                $columns = array_keys((array)$fields_obj);
+
                 echo $OUTPUT->notification('External course table contains following columns:<br />'.implode(', ', $columns), 'notifysuccess');
                 $rs->Close();
             }

@@ -62,8 +62,6 @@ class media_youtube_plugin extends core_media_player_external {
     }
 
     protected function embed_external(moodle_url $url, $name, $width, $height, $options) {
-        global $OUTPUT;
-        $nocookie = get_config('media_youtube', 'nocookie');
 
         $info = trim($name ?? '');
         if (empty($info) or strpos($info, 'http') === 0) {
@@ -73,60 +71,38 @@ class media_youtube_plugin extends core_media_player_external {
 
         self::pick_video_size($width, $height);
 
-        // Template context.
-        $context = [
-                'width' => $width,
-                'height' => $height,
-                'title' => $info
-        ];
-
         if ($this->isplaylist) {
+
             $site = $this->matches[1];
             $playlist = $this->matches[3];
 
-            $params = ['list' => $playlist];
-
-            // Handle no cookie option.
-            if (!$nocookie) {
-                $embedurl = new moodle_url("https://$site/embed/videoseries", $params);
-            } else {
-                $embedurl = new moodle_url('https://www.youtube-nocookie.com/embed/videoseries', $params );
-            }
-            $context['embedurl'] = $embedurl->out(false);
-
-            // Return the rendered template.
-            return $OUTPUT->render_from_template('media_youtube/embed', $context);
-
+            return <<<OET
+<span class="mediaplugin mediaplugin_youtube">
+<iframe width="$width" height="$height" src="https://$site/embed/videoseries?list=$playlist" frameborder="0" allowfullscreen="1"></iframe>
+</span>
+OET;
         } else {
+
             $videoid = end($this->matches);
-            $params = [];
+            $params = '';
             $start = self::get_start_time($url);
             if ($start > 0) {
-                $params['start'] = $start;
+                $params .= "start=$start&amp;";
             }
 
             $listid = $url->param('list');
             // Check for non-empty but valid playlist ID.
             if (!empty($listid) && !preg_match('/[^a-zA-Z0-9\-_]/', $listid)) {
                 // This video is part of a playlist, and we want to embed it as such.
-                $params['list'] = $listid;
+                $params .= "list=$listid&amp;";
             }
 
-            // Add parameters to object to be passed to the mustache template.
-            $params['rel'] = 0;
-            $params['wmode'] = 'transparent';
-
-            // Handle no cookie option.
-            if (!$nocookie) {
-                $embedurl = new moodle_url('https://www.youtube.com/embed/' . $videoid, $params );
-            } else {
-                $embedurl = new moodle_url('https://www.youtube-nocookie.com/embed/' . $videoid, $params );
-            }
-
-            $context['embedurl'] = $embedurl->out(false);
-
-            // Return the rendered template.
-            return $OUTPUT->render_from_template('media_youtube/embed', $context);
+            return <<<OET
+<span class="mediaplugin mediaplugin_youtube">
+<iframe title="$info" width="$width" height="$height"
+  src="https://www.youtube.com/embed/$videoid?{$params}rel=0&amp;wmode=transparent" frameborder="0" allowfullscreen="1"></iframe>
+</span>
+OET;
         }
 
     }

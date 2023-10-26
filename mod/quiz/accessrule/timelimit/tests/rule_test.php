@@ -16,7 +16,7 @@
 
 namespace quizaccess_timelimit;
 
-use mod_quiz\quiz_settings;
+use quiz;
 use quizaccess_timelimit;
 
 defined('MOODLE_INTERNAL') || die();
@@ -39,7 +39,7 @@ class rule_test extends \basic_testcase {
         $quiz->timelimit = 3600;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_timelimit($quizobj, 10000);
         $attempt = new \stdClass();
 
@@ -88,7 +88,7 @@ class rule_test extends \basic_testcase {
         $quiz->timelimit = $timelimit;
         $cm = new \stdClass();
         $cm->id = 0;
-        $quizobj = new quiz_settings($quiz, $cm, null);
+        $quizobj = new quiz($quiz, $cm, null);
         $rule = new quizaccess_timelimit($quizobj, $timenow);
         $attempt = new \stdClass();
 

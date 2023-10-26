@@ -44,7 +44,7 @@ $string['dataroot'] = 'Katalog danych';
 $string['datarootpermission'] = 'Prawa katalogōw danych';
 $string['dbprefix'] = 'Prefiks tabulōw';
 $string['dirroot'] = 'Katalog Moodle';
-$string['environmenthead'] = 'Wybadujã strzodowisko (sztalōnki) ...';
+$string['environmenthead'] = 'Wybadujã strzodowisko (ustawiyniŏ) ...';
 $string['environmentsub2'] = 'Kożde wydanie Moodle mŏ pewne minimalne wymŏganiŏ wersyje PHP i pewnõ liczbã musowych rozszyrzyń PHP. Połnŏ kōntrola strzodowiska ôdbywŏ sie przed kożdõ instalacyjōm i aktualizacyjōm. Proszymy ô kōntakt z administratorym serwera, jeźli niy wiysz jak zainstalować nowõ wersyjõ abo włōnczyć rozszyrzynie PHP.';
 $string['errorsinenvironment'] = 'Kōntrola strzodowiska zakōńczōnōm #niypowodzynie!';
 $string['installation'] = 'Instalacyjŏ';
@@ -84,6 +84,6 @@ $string['welcomep20'] = 'Widzisz tã strōnã, pōniywŏż z powodzyniym zainsta
 $string['welcomep30'] = 'Tyn instalatōr <strong>{$a->installername}</strong> zawiyrŏ aplikacyje, by stworzić strzodowisko, co w niymu bydzie fungować <strong>Moodle</strong>, to znaczy';
 $string['welcomep40'] = 'Paket zawiyrŏ <strong>Moodle {$a->moodlerelease} ({$a->moodleversion})</strong>.';
 $string['welcomep50'] = 'Wszyjske aplikacyje w tym pakecie mŏja włŏsne, ôsobne licyncyje. Kōmpletny paket <strong>{$a->installername}</strong> je <a href="http://www.opensource.org/docs/definition_plain.html">open source</a> i je dystrybuowany na <a href="http://www.gnu.org/copyleft/gpl.html">GPL</a> licyncyje.';
-$string['welcomep60'] = 'Nastepujące strōny przekludzōm cie bez instalacyjõ <strong>Moodle</strong> na twojim kōmputrze. Możesz zaakceptować sztalōnki wychodne, abo ôpcyjōnalnie, przipasować jy do swojich potrzeb.';
+$string['welcomep60'] = 'Nastepujące strōny przekludzōm cie bez instalacyjõ <strong>Moodle</strong> na twojim kōmputrze. Możesz zaakceptować ustawiyniŏ wychodne, abo ôpcyjōnalnie, przipasować jy do swojich potrzeb.';
 $string['welcomep70'] = 'Kliknij knefel "Dalij" coby kōntynuować instalacyjõ <strong>Moodle</strong>.';
 $string['wwwroot'] = 'Adresa w necu';

@@ -197,13 +197,13 @@
   </library>
   <library>
     <location>scss/fontawesome</location>
-    <name>Font Awesome - http://fontawesome.com</name>
+    <name>Font Awesome - http://fontawesome.io</name>
     <description>Font Awesome CSS, LESS, and Sass files. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>6.4.0</version>
+    <version>4.7.0</version>
     <license>(MIT)</license>
     <repository>https://github.com/FortAwesome/Font-Awesome</repository>
     <copyrights>
-      <copyright>2023 Fonticons, Inc</copyright>
+      <copyright>Dave Gandy</copyright>
     </copyrights>
   </library>
 </libraries>

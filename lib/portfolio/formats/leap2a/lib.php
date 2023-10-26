@@ -53,6 +53,9 @@ class portfolio_format_leap2a_writer {
     /** @var stdClass the user exporting data */
     private $user;
 
+    /** @var string the id of the feed - this is unique to the user and date and used for portfolio ns as well as feed id */
+    private $id;
+
     /** @var array the entries for the feed - keyed on id */
     private $entries = array();
 
@@ -65,7 +68,8 @@ class portfolio_format_leap2a_writer {
     public function __construct(stdclass $user) { // todo something else - exporter, format, etc
         global $CFG;
         $this->user = $user;
-        $id = $CFG->wwwroot . '/portfolio/export/leap2a/' . $this->user->id . '/' . time();
+        $this->exporttime = time();
+        $this->id = $CFG->wwwroot . '/portfolio/export/leap2a/' . $this->user->id . '/' . $this->exporttime;
 
         $this->dom = new DomDocument('1.0', 'utf-8');
 
@@ -74,11 +78,11 @@ class portfolio_format_leap2a_writer {
         $this->feed->setAttribute('xmlns:rdf', 'http://www.w3.org/1999/02/22-rdf-syntax-ns#');
         $this->feed->setAttribute('xmlns:leap2', 'http://terms.leapspecs.org/');
         $this->feed->setAttribute('xmlns:categories', 'http://wiki.leapspecs.org/2A/categories');
-        $this->feed->setAttribute('xmlns:portfolio', $id); // This is just a ns for ids of elements for convenience.
+        $this->feed->setAttribute('xmlns:portfolio', $this->id); // this is just a ns for ids of elements for convenience
 
         $this->dom->appendChild($this->feed);
 
-        $this->feed->appendChild($this->dom->createElement('id', $id));
+        $this->feed->appendChild($this->dom->createElement('id', $this->id));
         $this->feed->appendChild($this->dom->createElement('title', get_string('leap2a_feedtitle', 'portfolio', fullname($this->user))));
         $this->feed->appendChild($this->dom->createElement('leap2:version', 'http://www.leapspecs.org/2010-07/2A/'));
 

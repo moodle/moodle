@@ -102,7 +102,7 @@ class Periodic
     public static function modifiedRate($values, $financeRate, $reinvestmentRate)
     {
         if (!is_array($values)) {
-            return ExcelError::DIV0();
+            return ExcelError::VALUE();
         }
         $values = Functions::flattenArray($values);
         $financeRate = Functions::flattenSingleValue($financeRate);
@@ -112,7 +112,7 @@ class Periodic
         $rr = 1.0 + $reinvestmentRate;
         $fr = 1.0 + $financeRate;
 
-        $npvPos = $npvNeg = self::$zeroPointZero;
+        $npvPos = $npvNeg = 0.0;
         foreach ($values as $i => $v) {
             if ($v >= 0) {
                 $npvPos += $v / $rr ** $i;
@@ -121,22 +121,15 @@ class Periodic
             }
         }
 
-        if ($npvNeg === self::$zeroPointZero || $npvPos === self::$zeroPointZero) {
-            return ExcelError::DIV0();
+        if (($npvNeg === 0.0) || ($npvPos === 0.0) || ($reinvestmentRate <= -1.0)) {
+            return ExcelError::VALUE();
         }
 
         $mirr = ((-$npvPos * $rr ** $n)
                 / ($npvNeg * ($rr))) ** (1.0 / ($n - 1)) - 1.0;
 
-        return is_finite($mirr) ? $mirr : ExcelError::NAN();
+        return is_finite($mirr) ? $mirr : ExcelError::VALUE();
     }
-
-    /**
-     * Sop to Scrutinizer.
-     *
-     * @var float
-     */
-    private static $zeroPointZero = 0.0;
 
     /**
      * NPV.
@@ -144,7 +137,6 @@ class Periodic
      * Returns the Net Present Value of a cash flow series given a discount rate.
      *
      * @param mixed $rate
-     * @param array $args
      *
      * @return float
      */

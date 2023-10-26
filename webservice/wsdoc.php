@@ -64,7 +64,7 @@ $functions = $webservice->get_external_functions(array($token->externalserviceid
 // get all the function descriptions
 $functiondescs = array();
 foreach ($functions as $function) {
-    $functiondescs[$function->name] = \core_external\external_api::external_function_info($function);
+    $functiondescs[$function->name] = external_api::external_function_info($function);
 }
 
 // TODO: MDL-76078 - Incorrect inter-communication, core cannot have plugin dependencies like this.

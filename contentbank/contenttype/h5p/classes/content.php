@@ -24,9 +24,6 @@
 
 namespace contenttype_h5p;
 
-use core\notification;
-use core_h5p\factory;
-
 /**
  * H5P Content manager class
  *
@@ -83,7 +80,7 @@ class content extends \core_contentbank\content {
      * Before importing the file, this method will check if the file is a valid H5P package. If it's not valid, it will thrown
      * an exception.
      *
-     * @throws \moodle_exception If file operations fail
+     * @throws \file_exception If file operations fail
      * @param \stored_file $file File to store in the content file area.
      * @return \stored_file|null the stored content file or null if the file is discarted.
      */
@@ -93,15 +90,7 @@ class content extends \core_contentbank\content {
         $onlyupdatelibs = !\core_h5p\helper::can_update_library($file);
 
         if (!\core_h5p\api::is_valid_package($file, $onlyupdatelibs)) {
-            $factory = new factory();
-            $errors = $factory->get_framework()->getMessages('error');
-            foreach ($errors as $error) {
-                notification::error($error->message);
-            }
-            if (empty($errors) || count($errors) > 1) {
-                throw new \moodle_exception('notvalidpackage', 'h5p');
-            }
-            throw new \moodle_exception($errors[0]->code, 'h5p');
+            throw new \file_exception('invalidpackage');
         }
         return parent::import_file($file);
     }

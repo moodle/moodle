@@ -9,7 +9,6 @@ if (!class_exists('Google_Client')) {
  * exposes the items array for iteration, so you can just
  * iterate over the object rather than a reference inside.
  */
-#[AllowDynamicProperties]
 class Google_Collection extends Google_Model implements Iterator, Countable
 {
   protected $collection_key = 'items';

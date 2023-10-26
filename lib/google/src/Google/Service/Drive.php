@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive extends Google_Service
 {
   /** View and manage the files in your Google Drive. */
@@ -1328,7 +1327,6 @@ class Google_Service_Drive extends Google_Service
  *   $about = $driveService->about;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_About_Resource extends Google_Service_Resource
 {
 
@@ -1365,7 +1363,6 @@ class Google_Service_Drive_About_Resource extends Google_Service_Resource
  *   $apps = $driveService->apps;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Apps_Resource extends Google_Service_Resource
 {
 
@@ -1419,7 +1416,6 @@ class Google_Service_Drive_Apps_Resource extends Google_Service_Resource
  *   $changes = $driveService->changes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Changes_Resource extends Google_Service_Resource
 {
 
@@ -1495,7 +1491,6 @@ class Google_Service_Drive_Changes_Resource extends Google_Service_Resource
  *   $channels = $driveService->channels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Channels_Resource extends Google_Service_Resource
 {
 
@@ -1521,7 +1516,6 @@ class Google_Service_Drive_Channels_Resource extends Google_Service_Resource
  *   $children = $driveService->children;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Children_Resource extends Google_Service_Resource
 {
 
@@ -1603,7 +1597,6 @@ class Google_Service_Drive_Children_Resource extends Google_Service_Resource
  *   $comments = $driveService->comments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Comments_Resource extends Google_Service_Resource
 {
 
@@ -1720,7 +1713,6 @@ class Google_Service_Drive_Comments_Resource extends Google_Service_Resource
  *   $files = $driveService->files;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Files_Resource extends Google_Service_Resource
 {
 
@@ -2042,7 +2034,6 @@ class Google_Service_Drive_Files_Resource extends Google_Service_Resource
  *   $parents = $driveService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Parents_Resource extends Google_Service_Resource
 {
 
@@ -2113,7 +2104,6 @@ class Google_Service_Drive_Parents_Resource extends Google_Service_Resource
  *   $permissions = $driveService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Permissions_Resource extends Google_Service_Resource
 {
 
@@ -2244,7 +2234,6 @@ class Google_Service_Drive_Permissions_Resource extends Google_Service_Resource
  *   $properties = $driveService->properties;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Properties_Resource extends Google_Service_Resource
 {
 
@@ -2355,7 +2344,6 @@ class Google_Service_Drive_Properties_Resource extends Google_Service_Resource
  *   $realtime = $driveService->realtime;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Realtime_Resource extends Google_Service_Resource
 {
 
@@ -2409,7 +2397,6 @@ class Google_Service_Drive_Realtime_Resource extends Google_Service_Resource
  *   $replies = $driveService->replies;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Replies_Resource extends Google_Service_Resource
 {
 
@@ -2530,7 +2517,6 @@ class Google_Service_Drive_Replies_Resource extends Google_Service_Resource
  *   $revisions = $driveService->revisions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Drive_Revisions_Resource extends Google_Service_Resource
 {
 
@@ -2613,7 +2599,6 @@ class Google_Service_Drive_Revisions_Resource extends Google_Service_Resource
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_About extends Google_Collection
 {
   protected $collection_key = 'quotaBytesByService';
@@ -2846,7 +2831,6 @@ class Google_Service_Drive_About extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutAdditionalRoleInfo extends Google_Collection
 {
   protected $collection_key = 'roleSets';
@@ -2875,7 +2859,6 @@ class Google_Service_Drive_AboutAdditionalRoleInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutAdditionalRoleInfoRoleSets extends Google_Collection
 {
   protected $collection_key = 'additionalRoles';
@@ -2903,7 +2886,6 @@ class Google_Service_Drive_AboutAdditionalRoleInfoRoleSets extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutExportFormats extends Google_Collection
 {
   protected $collection_key = 'targets';
@@ -2931,7 +2913,6 @@ class Google_Service_Drive_AboutExportFormats extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutFeatures extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2958,7 +2939,6 @@ class Google_Service_Drive_AboutFeatures extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutImportFormats extends Google_Collection
 {
   protected $collection_key = 'targets';
@@ -2986,7 +2966,6 @@ class Google_Service_Drive_AboutImportFormats extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutMaxUploadSizes extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3013,7 +2992,6 @@ class Google_Service_Drive_AboutMaxUploadSizes extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AboutQuotaBytesByService extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3040,7 +3018,6 @@ class Google_Service_Drive_AboutQuotaBytesByService extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_App extends Google_Collection
 {
   protected $collection_key = 'secondaryMimeTypes';
@@ -3267,7 +3244,6 @@ class Google_Service_Drive_App extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AppIcons extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3303,7 +3279,6 @@ class Google_Service_Drive_AppIcons extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_AppList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3359,7 +3334,6 @@ class Google_Service_Drive_AppList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Change extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3432,7 +3406,6 @@ class Google_Service_Drive_Change extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ChangeList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3506,7 +3479,6 @@ class Google_Service_Drive_ChangeList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3605,12 +3577,10 @@ class Google_Service_Drive_Channel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ChannelParams extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ChildList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3675,7 +3645,6 @@ class Google_Service_Drive_ChildList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ChildReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3720,7 +3689,6 @@ class Google_Service_Drive_ChildReference extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Comment extends Google_Collection
 {
   protected $collection_key = 'replies';
@@ -3868,7 +3836,6 @@ class Google_Service_Drive_Comment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_CommentContext extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3895,7 +3862,6 @@ class Google_Service_Drive_CommentContext extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_CommentList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3951,7 +3917,6 @@ class Google_Service_Drive_CommentList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_CommentReply extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4042,7 +4007,6 @@ class Google_Service_Drive_CommentReply extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_CommentReplyList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -4098,7 +4062,6 @@ class Google_Service_Drive_CommentReplyList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFile extends Google_Collection
 {
   protected $collection_key = 'spaces';
@@ -4624,12 +4587,10 @@ class Google_Service_Drive_DriveFile extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileExportLinks extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileImageMediaMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4828,7 +4789,6 @@ class Google_Service_Drive_DriveFileImageMediaMetadata extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileImageMediaMetadataLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4864,7 +4824,6 @@ class Google_Service_Drive_DriveFileImageMediaMetadataLocation extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileIndexableText extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4882,7 +4841,6 @@ class Google_Service_Drive_DriveFileIndexableText extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileLabels extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4936,12 +4894,10 @@ class Google_Service_Drive_DriveFileLabels extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileOpenWithLinks extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileThumbnail extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4968,7 +4924,6 @@ class Google_Service_Drive_DriveFileThumbnail extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_DriveFileVideoMediaMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5004,7 +4959,6 @@ class Google_Service_Drive_DriveFileVideoMediaMetadata extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_FileList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5069,7 +5023,6 @@ class Google_Service_Drive_FileList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_GeneratedIds extends Google_Collection
 {
   protected $collection_key = 'ids';
@@ -5106,7 +5059,6 @@ class Google_Service_Drive_GeneratedIds extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ParentList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5153,7 +5105,6 @@ class Google_Service_Drive_ParentList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_ParentReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5207,7 +5158,6 @@ class Google_Service_Drive_ParentReference extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Permission extends Google_Collection
 {
   protected $collection_key = 'additionalRoles';
@@ -5343,7 +5293,6 @@ class Google_Service_Drive_Permission extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_PermissionId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5370,7 +5319,6 @@ class Google_Service_Drive_PermissionId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_PermissionList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5417,7 +5365,6 @@ class Google_Service_Drive_PermissionList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Property extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5480,7 +5427,6 @@ class Google_Service_Drive_Property extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_PropertyList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5527,7 +5473,6 @@ class Google_Service_Drive_PropertyList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_Revision extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5699,12 +5644,10 @@ class Google_Service_Drive_Revision extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_RevisionExportLinks extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_RevisionList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5751,7 +5694,6 @@ class Google_Service_Drive_RevisionList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_User extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5815,7 +5757,6 @@ class Google_Service_Drive_User extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Drive_UserPicture extends Google_Model
 {
   protected $internal_gapi_mappings = array(

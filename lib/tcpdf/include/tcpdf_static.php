@@ -55,7 +55,7 @@ class TCPDF_STATIC {
 	 * Current TCPDF version.
 	 * @private static
 	 */
-	private static $tcpdf_version = '6.6.2';
+	private static $tcpdf_version = '6.5.0';
 
 	/**
 	 * String alias for total number of pages.
@@ -126,6 +126,39 @@ class TCPDF_STATIC {
 	 */
 	public static function getTCPDFProducer() {
 		return "\x54\x43\x50\x44\x46\x20\x28\x68\x74\x74\x70\x3a\x2f\x2f\x77\x77\x77\x2e\x74\x63\x70\x64\x66\x2e\x6f\x72\x67\x29";
+	}
+
+	/**
+	 * Sets the current active configuration setting of magic_quotes_runtime (if the set_magic_quotes_runtime function exist)
+	 * @param boolean $mqr FALSE for off, TRUE for on.
+	 * @since 4.6.025 (2009-08-17)
+	 * @public static
+	 */
+	public static function set_mqr($mqr) {
+		if (!defined('PHP_VERSION_ID')) {
+			$version = PHP_VERSION;
+			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
+		}
+		if (PHP_VERSION_ID < 50300) {
+			@set_magic_quotes_runtime($mqr);
+		}
+	}
+
+	/**
+	 * Gets the current active configuration setting of magic_quotes_runtime (if the get_magic_quotes_runtime function exist)
+	 * @return int Returns 0 if magic quotes runtime is off or get_magic_quotes_runtime doesn't exist, 1 otherwise.
+	 * @since 4.6.025 (2009-08-17)
+	 * @public static
+	 */
+	public static function get_mqr() {
+		if (!defined('PHP_VERSION_ID')) {
+			$version = PHP_VERSION;
+			define('PHP_VERSION_ID', (($version[0] * 10000) + ($version[2] * 100) + $version[4]));
+		}
+		if (PHP_VERSION_ID < 50300) {
+			return @get_magic_quotes_runtime();
+		}
+		return 0;
 	}
 
 	/**
@@ -286,7 +319,7 @@ class TCPDF_STATIC {
 	 */
 	public static function _escapeXML($str) {
 		$replaceTable = array("\0" => '', '&' => '&amp;', '<' => '&lt;', '>' => '&gt;');
-		$str = strtr($str === null ? '' : $str, $replaceTable);
+		$str = strtr($str, $replaceTable);
 		return $str;
 	}
 
@@ -819,7 +852,9 @@ class TCPDF_STATIC {
 		if (isset($prop['charLimit'])) {
 			$opt['maxlen'] = intval($prop['charLimit']);
 		}
-		$ff = 0;
+		if (!isset($ff)) {
+			$ff = 0; // default value
+		}
 		// readonly: The read-only characteristic of a field. If a field is read-only, the user can see the field but cannot change it.
 		if (isset($prop['readonly']) AND ($prop['readonly'] == 'true')) {
 			$ff += 1 << 0;
@@ -1776,11 +1811,7 @@ class TCPDF_STATIC {
 		$flags = $flags === null ? 0 : $flags;
 		// the bug only happens on PHP 5.2 when using the u modifier
 		if ((strpos($modifiers, 'u') === FALSE) OR (count(preg_split('//u', "\n\t", -1, PREG_SPLIT_NO_EMPTY)) == 2)) {
-			$ret = preg_split($pattern.$modifiers, $subject, $limit, $flags);
-			if ($ret === false) {
-				return array();
-			}
-			return $ret;
+			return preg_split($pattern.$modifiers, $subject, $limit, $flags);
 		}
 		// preg_split is bugged - try alternative solution
 		$ret = array();
@@ -2124,7 +2155,7 @@ class TCPDF_STATIC {
 	 * Array of page formats
 	 * measures are calculated in this way: (inches * 72) or (millimeters * 72 / 25.4)
 	 * @public static
-	 *
+	 * 
      * @var array<string,float[]>
 	 */
 	public static $page_formats = array(

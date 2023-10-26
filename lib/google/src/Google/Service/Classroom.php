@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom extends Google_Service
 {
   /** Manage your Google Classroom classes. */
@@ -440,7 +439,6 @@ class Google_Service_Classroom extends Google_Service
  *   $courses = $classroomService->courses;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
 {
 
@@ -592,7 +590,6 @@ class Google_Service_Classroom_Courses_Resource extends Google_Service_Resource
  *   $aliases = $classroomService->aliases;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_CoursesAliases_Resource extends Google_Service_Resource
 {
 
@@ -670,7 +667,6 @@ class Google_Service_Classroom_CoursesAliases_Resource extends Google_Service_Re
  *   $students = $classroomService->students;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_Resource
 {
 
@@ -781,7 +777,6 @@ class Google_Service_Classroom_CoursesStudents_Resource extends Google_Service_R
  *   $teachers = $classroomService->teachers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_Resource
 {
 
@@ -889,7 +884,6 @@ class Google_Service_Classroom_CoursesTeachers_Resource extends Google_Service_R
  *   $invitations = $classroomService->invitations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resource
 {
 
@@ -1010,7 +1004,6 @@ class Google_Service_Classroom_Invitations_Resource extends Google_Service_Resou
  *   $userProfiles = $classroomService->userProfiles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Classroom_UserProfiles_Resource extends Google_Service_Resource
 {
 
@@ -1038,7 +1031,6 @@ class Google_Service_Classroom_UserProfiles_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Course extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1155,7 +1147,6 @@ class Google_Service_Classroom_Course extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_CourseAlias extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1173,12 +1164,10 @@ class Google_Service_Classroom_CourseAlias extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Empty extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_GlobalPermission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1196,7 +1185,6 @@ class Google_Service_Classroom_GlobalPermission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Invitation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1241,7 +1229,6 @@ class Google_Service_Classroom_Invitation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_ListCourseAliasesResponse extends Google_Collection
 {
   protected $collection_key = 'aliases';
@@ -1270,7 +1257,6 @@ class Google_Service_Classroom_ListCourseAliasesResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_ListCoursesResponse extends Google_Collection
 {
   protected $collection_key = 'courses';
@@ -1299,7 +1285,6 @@ class Google_Service_Classroom_ListCoursesResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_ListInvitationsResponse extends Google_Collection
 {
   protected $collection_key = 'invitations';
@@ -1328,7 +1313,6 @@ class Google_Service_Classroom_ListInvitationsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_ListStudentsResponse extends Google_Collection
 {
   protected $collection_key = 'students';
@@ -1357,7 +1341,6 @@ class Google_Service_Classroom_ListStudentsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_ListTeachersResponse extends Google_Collection
 {
   protected $collection_key = 'teachers';
@@ -1386,7 +1369,6 @@ class Google_Service_Classroom_ListTeachersResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Name extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1422,7 +1404,6 @@ class Google_Service_Classroom_Name extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Student extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1459,7 +1440,6 @@ class Google_Service_Classroom_Student extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_Teacher extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1496,7 +1476,6 @@ class Google_Service_Classroom_Teacher extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Classroom_UserProfile extends Google_Collection
 {
   protected $collection_key = 'permissions';

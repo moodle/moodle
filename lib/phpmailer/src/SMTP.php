@@ -35,7 +35,7 @@ class SMTP
      *
      * @var string
      */
-    const VERSION = '6.8.0';
+    const VERSION = '6.6.5';
 
     /**
      * SMTP line break constant.
@@ -50,13 +50,6 @@ class SMTP
      * @var int
      */
     const DEFAULT_PORT = 25;
-
-    /**
-     * The SMTPs port to use if one is not specified.
-     *
-     * @var int
-     */
-    const DEFAULT_SECURE_PORT = 465;
 
     /**
      * The maximum line length allowed by RFC 5321 section 4.5.3.1.6,
@@ -194,7 +187,6 @@ class SMTP
         'SendGrid' => '/[\d]{3} Ok: queued as (.*)/',
         'CampaignMonitor' => '/[\d]{3} 2.0.0 OK:([a-zA-Z\d]{48})/',
         'Haraka' => '/[\d]{3} Message Queued \((.*)\)/',
-        'ZoneMTA' => '/[\d]{3} Message queued as (.*)/',
         'Mailjet' => '/[\d]{3} OK queued as (.*)/',
     ];
 

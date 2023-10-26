@@ -612,7 +612,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
         // The archive contains a single encrypted "hello.txt" file.
         $archive = __DIR__ . '/fixtures/passwordis1.zip';
 
-        /** @var \zip_packer $packer */
+        /** @var zip_packer $packer */
         $packer = get_file_packer('application/zip');
         $result = $packer->extract_to_pathname($archive, make_temp_directory('zip'));
 

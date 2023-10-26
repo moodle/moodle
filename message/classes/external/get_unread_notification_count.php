@@ -19,11 +19,12 @@ namespace core_message\external;
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/message/lib.php');
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_value;
 use context_system;
 use core_user;
 use moodle_exception;

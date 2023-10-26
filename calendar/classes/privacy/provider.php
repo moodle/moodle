@@ -252,7 +252,7 @@ class provider implements
     /**
      * Delete all Calendar Event and Calendar Subscription data for all users in the specified context.
      *
-     * @param \context $context Transform the specific context to delete data for.
+     * @param   context $context Transform the specific context to delete data for.
      */
     public static function delete_data_for_all_users_in_context(\context $context) {
         // Delete all Calendar Events in the specified context in batches.
@@ -575,7 +575,7 @@ class provider implements
      * Helper function to return the Calendar Events for a given user and context list.
      *
      * @param approved_contextlist $contextlist
-     * @return \moodle_recordset
+     * @return array
      * @throws \coding_exception
      * @throws \dml_exception
      */
@@ -642,7 +642,7 @@ class provider implements
      * Helper function to return the Calendar Subscriptions for a given user and context list.
      *
      * @param approved_contextlist $contextlist
-     * @return \moodle_recordset
+     * @return array
      * @throws \coding_exception
      * @throws \dml_exception
      */

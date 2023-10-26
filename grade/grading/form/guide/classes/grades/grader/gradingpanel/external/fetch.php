@@ -33,12 +33,13 @@ use context;
 use core_user;
 use core_grades\component_gradeitem as gradeitem;
 use core_grades\component_gradeitems;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_format_value;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
 use moodle_exception;
 use stdClass;
 require_once($CFG->dirroot.'/grade/grading/form/guide/lib.php');
@@ -306,15 +307,7 @@ class fetch extends external_api {
             'filter' => true,
         ];
 
-        [$newtext] = \core_external\util::format_text(
-            $text,
-            $format,
-            $context,
-            'grading',
-            $filearea,
-            $definitionid,
-            $formatoptions
-        );
+        [$newtext, ] = external_format_text($text, $format, $context, 'grading', $filearea, $definitionid, $formatoptions);
 
         return $newtext;
     }

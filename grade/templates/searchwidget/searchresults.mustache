@@ -25,6 +25,7 @@
             {
                 "id": "1",
                 "name": "Quiz 1",
+                "url": "http://foo.bar/gradereport/?userid=25",
                 "fullname": "Cameron Greeve",
                 "sendmessage": "http://foo.bar/message/index.php?id=25",
                 "addcontact": "http://foo.bar/message/index.php?user1=2&user2=14&addcontact=14&sesskey=XXXXX",
@@ -34,7 +35,7 @@
     }
 }}
 <div class="searchresultitemscontainer-wrapper dropdown">
-    <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group rounded-0" role="none" data-region="search-result-items-container">
+    <ul class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group" role="menu" data-region="search-result-items-container" tabindex="0">
         {{#searchresults}}
             {{>core_grades/searchwidget/searchitem}}
         {{/searchresults}}

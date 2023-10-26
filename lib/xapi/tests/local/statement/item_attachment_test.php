@@ -52,7 +52,7 @@ class item_attachment_test extends advanced_testcase {
     /**
      * return a generic data to create a valid item.
      *
-     * @return \stdClass the creation data
+     * @return sdtClass the creation data
      */
     private function get_generic_data(): \stdClass {
         return (object) [

@@ -41,8 +41,8 @@ class restore_override_test extends \restore_date_testcase {
         $quizgen = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgen->create_instance(['course' => $course->id]);
 
-        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
-        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group1 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
+        $group2 = $this->getDataGenerator()->create_group(array('courseid' => $course->id));
 
         $now = 100;
 

@@ -3,10 +3,6 @@ information provided here is intended especially for developers.
 
 This information is intended for authors of webservices, not people writing webservice clients.
 
-=== 4.2 ===
-
-* External function core_webservice_external::get_site_info() does not throw exceptions for missing components anymore.
-
 === 4.1 ===
 
 * The XMLRPC webservice (protocol) has been completely removed. It's now available in the plugins directory.

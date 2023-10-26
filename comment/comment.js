@@ -451,5 +451,74 @@ M.core_comment = {
         });
 
         new CommentHelper(options);
+    },
+    init_admin: function(Y) {
+        var select_all = Y.one('#comment_select_all');
+        if (select_all) {
+            select_all.on('click', function(e) {
+                var comments = document.getElementsByName('comments');
+                var checked = false;
+                for (var i in comments) {
+                    if (comments[i].checked) {
+                        checked=true;
+                    }
+                }
+                for (i in comments) {
+                    comments[i].checked = !checked;
+                }
+                this.set('checked', !checked);
+            });
+        }
+
+        var comments_delete = Y.one('#comments_delete');
+        if (comments_delete) {
+            comments_delete.on('click', function(e) {
+                e.preventDefault();
+                var list = '';
+                var comments = document.getElementsByName('comments');
+                for (var i in comments) {
+                    if (typeof comments[i] == 'object' && comments[i].checked) {
+                        list += (comments[i].value + '-');
+                    }
+                }
+                if (!list) {
+                    return;
+                }
+                var args = {};
+                args.message = M.util.get_string('confirmdeletecomments', 'admin');
+                args.callback = function() {
+                    var url = M.cfg.wwwroot + '/comment/index.php';
+
+                    var data = {
+                        'commentids': list,
+                        'sesskey': M.cfg.sesskey,
+                        'action': 'delete'
+                    };
+                    var cfg = {
+                        method: 'POST',
+                        on: {
+                            complete: function(id,o,p) {
+                                if (!o) {
+                                    alert('IO FATAL');
+                                    return;
+                                }
+                                if (o.responseText == 'yes') {
+                                    location.reload();
+                                }
+                            }
+                        },
+                        arguments: {
+                            scope: this
+                        },
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        data: build_querystring(data)
+                    };
+                    Y.io(url, cfg);
+                };
+                M.util.show_confirm_dialog(e, args);
+            });
+        }
     }
 };

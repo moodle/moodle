@@ -68,9 +68,6 @@ class adminpresets_setting {
      */
     protected $attributesvalues;
 
-    /** @var array To store the behaviors. */
-    protected array $behaviors = [];
-
     /**
      * Stores the setting data and the selected value
      *
@@ -170,7 +167,7 @@ class adminpresets_setting {
     /**
      * Saves the setting attributes values
      *
-     * @return array|false Array of inserted ids (in config_log) or false if nothing was inserted
+     * @return     array        Array of inserted ids (in config_log)
      */
     public function save_attributes_values() {
         // Plugin name or null.
@@ -209,6 +206,8 @@ class adminpresets_setting {
      * @param bool $name Setting name to store.
      * @param mixed $value Setting value to store.
      * @return int|false config_log inserted id or false whenever the new value is the same as old value.
+     * @throws dml_exception
+     * @throws moodle_exception
      */
     public function save_value($name = false, $value = null) {
         // Object values if no arguments.

@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Prediction extends Google_Service
 {
   /** Manage your data and permissions in Google Cloud Storage. */
@@ -212,7 +211,6 @@ class Google_Service_Prediction extends Google_Service
  *   $hostedmodels = $predictionService->hostedmodels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Hostedmodels_Resource extends Google_Service_Resource
 {
 
@@ -242,7 +240,6 @@ class Google_Service_Prediction_Hostedmodels_Resource extends Google_Service_Res
  *   $trainedmodels = $predictionService->trainedmodels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Trainedmodels_Resource extends Google_Service_Resource
 {
 
@@ -359,7 +356,6 @@ class Google_Service_Prediction_Trainedmodels_Resource extends Google_Service_Re
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Analyze extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -425,7 +421,6 @@ class Google_Service_Prediction_Analyze extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescription extends Google_Collection
 {
   protected $collection_key = 'features';
@@ -455,7 +450,6 @@ class Google_Service_Prediction_AnalyzeDataDescription extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionFeatures extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -503,7 +497,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionFeatures extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesCategorical extends Google_Collection
 {
   protected $collection_key = 'values';
@@ -532,7 +525,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesCategorical extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesCategoricalValues extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -559,7 +551,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesCategoricalValues 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesNumeric extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -595,7 +586,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesNumeric extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesText extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -613,7 +603,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionFeaturesText extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeature extends Google_Collection
 {
   protected $collection_key = 'text';
@@ -643,7 +632,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeature extends Goog
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeatureNumeric extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -679,7 +667,6 @@ class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeatureNumeric exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeatureText extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -706,12 +693,10 @@ class Google_Service_Prediction_AnalyzeDataDescriptionOutputFeatureText extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeErrors extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeModelDescription extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -748,22 +733,18 @@ class Google_Service_Prediction_AnalyzeModelDescription extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeModelDescriptionConfusionMatrix extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeModelDescriptionConfusionMatrixElement extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_AnalyzeModelDescriptionConfusionMatrixRowTotals extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Input extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -782,7 +763,6 @@ class Google_Service_Prediction_Input extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_InputInput extends Google_Collection
 {
   protected $collection_key = 'csvInstance';
@@ -801,7 +781,6 @@ class Google_Service_Prediction_InputInput extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Insert extends Google_Collection
 {
   protected $collection_key = 'utility';
@@ -884,7 +863,6 @@ class Google_Service_Prediction_Insert extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Insert2 extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -993,7 +971,6 @@ class Google_Service_Prediction_Insert2 extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Insert2ModelInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1056,7 +1033,6 @@ class Google_Service_Prediction_Insert2ModelInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_InsertTrainingInstances extends Google_Collection
 {
   protected $collection_key = 'csvInstance';
@@ -1084,12 +1060,10 @@ class Google_Service_Prediction_InsertTrainingInstances extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_InsertUtility extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Output extends Google_Collection
 {
   protected $collection_key = 'outputMulti';
@@ -1154,7 +1128,6 @@ class Google_Service_Prediction_Output extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_OutputOutputMulti extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1181,7 +1154,6 @@ class Google_Service_Prediction_OutputOutputMulti extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_PredictionList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1228,7 +1200,6 @@ class Google_Service_Prediction_PredictionList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Prediction_Update extends Google_Collection
 {
   protected $collection_key = 'csvInstance';

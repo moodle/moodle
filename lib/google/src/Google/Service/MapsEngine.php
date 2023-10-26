@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine extends Google_Service
 {
   /** View and manage your Google My Maps data. */
@@ -1525,7 +1524,6 @@ class Google_Service_MapsEngine extends Google_Service
  *   $assets = $mapsengineService->assets;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Assets_Resource extends Google_Service_Resource
 {
 
@@ -1601,7 +1599,6 @@ class Google_Service_MapsEngine_Assets_Resource extends Google_Service_Resource
  *   $parents = $mapsengineService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_AssetsParents_Resource extends Google_Service_Resource
 {
 
@@ -1633,7 +1630,6 @@ class Google_Service_MapsEngine_AssetsParents_Resource extends Google_Service_Re
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_AssetsPermissions_Resource extends Google_Service_Resource
 {
 
@@ -1661,7 +1657,6 @@ class Google_Service_MapsEngine_AssetsPermissions_Resource extends Google_Servic
  *   $layers = $mapsengineService->layers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Layers_Resource extends Google_Service_Resource
 {
 
@@ -1884,7 +1879,6 @@ class Google_Service_MapsEngine_Layers_Resource extends Google_Service_Resource
  *   $parents = $mapsengineService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LayersParents_Resource extends Google_Service_Resource
 {
 
@@ -1916,7 +1910,6 @@ class Google_Service_MapsEngine_LayersParents_Resource extends Google_Service_Re
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LayersPermissions_Resource extends Google_Service_Resource
 {
 
@@ -1978,7 +1971,6 @@ class Google_Service_MapsEngine_LayersPermissions_Resource extends Google_Servic
  *   $maps = $mapsengineService->maps;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Maps_Resource extends Google_Service_Resource
 {
 
@@ -2169,7 +2161,6 @@ class Google_Service_MapsEngine_Maps_Resource extends Google_Service_Resource
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapsPermissions_Resource extends Google_Service_Resource
 {
 
@@ -2231,7 +2222,6 @@ class Google_Service_MapsEngine_MapsPermissions_Resource extends Google_Service_
  *   $projects = $mapsengineService->projects;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Projects_Resource extends Google_Service_Resource
 {
 
@@ -2257,7 +2247,6 @@ class Google_Service_MapsEngine_Projects_Resource extends Google_Service_Resourc
  *   $icons = $mapsengineService->icons;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ProjectsIcons_Resource extends Google_Service_Resource
 {
 
@@ -2320,7 +2309,6 @@ class Google_Service_MapsEngine_ProjectsIcons_Resource extends Google_Service_Re
  *   $rasterCollections = $mapsengineService->rasterCollections;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollections_Resource extends Google_Service_Resource
 {
 
@@ -2468,7 +2456,6 @@ class Google_Service_MapsEngine_RasterCollections_Resource extends Google_Servic
  *   $parents = $mapsengineService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsParents_Resource extends Google_Service_Resource
 {
 
@@ -2502,7 +2489,6 @@ class Google_Service_MapsEngine_RasterCollectionsParents_Resource extends Google
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsPermissions_Resource extends Google_Service_Resource
 {
 
@@ -2563,7 +2549,6 @@ class Google_Service_MapsEngine_RasterCollectionsPermissions_Resource extends Go
  *   $rasters = $mapsengineService->rasters;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRasters_Resource extends Google_Service_Resource
 {
 
@@ -2660,7 +2645,6 @@ class Google_Service_MapsEngine_RasterCollectionsRasters_Resource extends Google
  *   $rasters = $mapsengineService->rasters;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Rasters_Resource extends Google_Service_Resource
 {
 
@@ -2791,7 +2775,6 @@ class Google_Service_MapsEngine_Rasters_Resource extends Google_Service_Resource
  *   $files = $mapsengineService->files;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RastersFiles_Resource extends Google_Service_Resource
 {
 
@@ -2817,7 +2800,6 @@ class Google_Service_MapsEngine_RastersFiles_Resource extends Google_Service_Res
  *   $parents = $mapsengineService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RastersParents_Resource extends Google_Service_Resource
 {
 
@@ -2849,7 +2831,6 @@ class Google_Service_MapsEngine_RastersParents_Resource extends Google_Service_R
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RastersPermissions_Resource extends Google_Service_Resource
 {
 
@@ -2911,7 +2892,6 @@ class Google_Service_MapsEngine_RastersPermissions_Resource extends Google_Servi
  *   $tables = $mapsengineService->tables;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Tables_Resource extends Google_Service_Resource
 {
 
@@ -3062,7 +3042,6 @@ class Google_Service_MapsEngine_Tables_Resource extends Google_Service_Resource
  *   $features = $mapsengineService->features;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TablesFeatures_Resource extends Google_Service_Resource
 {
 
@@ -3200,7 +3179,6 @@ class Google_Service_MapsEngine_TablesFeatures_Resource extends Google_Service_R
  *   $files = $mapsengineService->files;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TablesFiles_Resource extends Google_Service_Resource
 {
 
@@ -3229,7 +3207,6 @@ class Google_Service_MapsEngine_TablesFiles_Resource extends Google_Service_Reso
  *   $parents = $mapsengineService->parents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TablesParents_Resource extends Google_Service_Resource
 {
 
@@ -3261,7 +3238,6 @@ class Google_Service_MapsEngine_TablesParents_Resource extends Google_Service_Re
  *   $permissions = $mapsengineService->permissions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TablesPermissions_Resource extends Google_Service_Resource
 {
 
@@ -3318,7 +3294,6 @@ class Google_Service_MapsEngine_TablesPermissions_Resource extends Google_Servic
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_AcquisitionTime extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3354,7 +3329,6 @@ class Google_Service_MapsEngine_AcquisitionTime extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Asset extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -3490,7 +3464,6 @@ class Google_Service_MapsEngine_Asset extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_AssetsListResponse extends Google_Collection
 {
   protected $collection_key = 'assets';
@@ -3519,7 +3492,6 @@ class Google_Service_MapsEngine_AssetsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Border extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3555,7 +3527,6 @@ class Google_Service_MapsEngine_Border extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Color extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3582,7 +3553,6 @@ class Google_Service_MapsEngine_Color extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Datasource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3600,7 +3570,6 @@ class Google_Service_MapsEngine_Datasource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_DisplayRule extends Google_Collection
 {
   protected $collection_key = 'filters';
@@ -3669,7 +3638,6 @@ class Google_Service_MapsEngine_DisplayRule extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Feature extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3706,7 +3674,6 @@ class Google_Service_MapsEngine_Feature extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_FeatureInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3724,7 +3691,6 @@ class Google_Service_MapsEngine_FeatureInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_FeaturesBatchDeleteRequest extends Google_Collection
 {
   protected $collection_key = 'primaryKeys';
@@ -3753,7 +3719,6 @@ class Google_Service_MapsEngine_FeaturesBatchDeleteRequest extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_FeaturesBatchInsertRequest extends Google_Collection
 {
   protected $collection_key = 'features';
@@ -3782,7 +3747,6 @@ class Google_Service_MapsEngine_FeaturesBatchInsertRequest extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_FeaturesBatchPatchRequest extends Google_Collection
 {
   protected $collection_key = 'features';
@@ -3811,7 +3775,6 @@ class Google_Service_MapsEngine_FeaturesBatchPatchRequest extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_FeaturesListResponse extends Google_Collection
 {
   protected $collection_key = 'features';
@@ -3868,7 +3831,6 @@ class Google_Service_MapsEngine_FeaturesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Filter extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3904,7 +3866,6 @@ class Google_Service_MapsEngine_Filter extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonGeometry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3922,7 +3883,6 @@ class Google_Service_MapsEngine_GeoJsonGeometry extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonGeometryCollection extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'geometries';
@@ -3945,7 +3905,6 @@ class Google_Service_MapsEngine_GeoJsonGeometryCollection extends Google_Service
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonLineString extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -3967,7 +3926,6 @@ class Google_Service_MapsEngine_GeoJsonLineString extends Google_Service_MapsEng
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonMultiLineString extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -3989,7 +3947,6 @@ class Google_Service_MapsEngine_GeoJsonMultiLineString extends Google_Service_Ma
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonMultiPoint extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -4011,7 +3968,6 @@ class Google_Service_MapsEngine_GeoJsonMultiPoint extends Google_Service_MapsEng
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonMultiPolygon extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -4033,7 +3989,6 @@ class Google_Service_MapsEngine_GeoJsonMultiPolygon extends Google_Service_MapsE
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonPoint extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -4055,7 +4010,6 @@ class Google_Service_MapsEngine_GeoJsonPoint extends Google_Service_MapsEngine_G
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonPolygon extends Google_Service_MapsEngine_GeoJsonGeometry
 {
   protected $collection_key = 'coordinates';
@@ -4077,12 +4031,10 @@ class Google_Service_MapsEngine_GeoJsonPolygon extends Google_Service_MapsEngine
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_GeoJsonProperties extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Icon extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4118,7 +4070,6 @@ class Google_Service_MapsEngine_Icon extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_IconStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4165,7 +4116,6 @@ class Google_Service_MapsEngine_IconStyle extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_IconsListResponse extends Google_Collection
 {
   protected $collection_key = 'icons';
@@ -4194,7 +4144,6 @@ class Google_Service_MapsEngine_IconsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LabelStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4267,7 +4216,6 @@ class Google_Service_MapsEngine_LabelStyle extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Layer extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -4459,7 +4407,6 @@ class Google_Service_MapsEngine_Layer extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LayersListResponse extends Google_Collection
 {
   protected $collection_key = 'layers';
@@ -4488,7 +4435,6 @@ class Google_Service_MapsEngine_LayersListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LineStyle extends Google_Collection
 {
   protected $collection_key = 'dash';
@@ -4537,7 +4483,6 @@ class Google_Service_MapsEngine_LineStyle extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_LineStyleStroke extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4573,7 +4518,6 @@ class Google_Service_MapsEngine_LineStyleStroke extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Map extends Google_Collection
 {
   protected $collection_key = 'versions';
@@ -4755,7 +4699,6 @@ class Google_Service_MapsEngine_Map extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapFolder extends Google_Service_MapsEngine_MapItem
 {
   protected $collection_key = 'defaultViewport';
@@ -4823,7 +4766,6 @@ class Google_Service_MapsEngine_MapFolder extends Google_Service_MapsEngine_MapI
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4841,7 +4783,6 @@ class Google_Service_MapsEngine_MapItem extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapKmlLink extends Google_Service_MapsEngine_MapItem
 {
   protected $collection_key = 'defaultViewport';
@@ -4890,7 +4831,6 @@ class Google_Service_MapsEngine_MapKmlLink extends Google_Service_MapsEngine_Map
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapLayer extends Google_Service_MapsEngine_MapItem
 {
   protected $collection_key = 'defaultViewport';
@@ -4948,7 +4888,6 @@ class Google_Service_MapsEngine_MapLayer extends Google_Service_MapsEngine_MapIt
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapsListResponse extends Google_Collection
 {
   protected $collection_key = 'maps';
@@ -4977,7 +4916,6 @@ class Google_Service_MapsEngine_MapsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_MapsengineFile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5013,7 +4951,6 @@ class Google_Service_MapsEngine_MapsengineFile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Parent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5031,7 +4968,6 @@ class Google_Service_MapsEngine_Parent extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ParentsListResponse extends Google_Collection
 {
   protected $collection_key = 'parents';
@@ -5060,7 +4996,6 @@ class Google_Service_MapsEngine_ParentsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Permission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5105,7 +5040,6 @@ class Google_Service_MapsEngine_Permission extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PermissionsBatchDeleteRequest extends Google_Collection
 {
   protected $collection_key = 'ids';
@@ -5124,12 +5058,10 @@ class Google_Service_MapsEngine_PermissionsBatchDeleteRequest extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PermissionsBatchDeleteResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PermissionsBatchUpdateRequest extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -5149,12 +5081,10 @@ class Google_Service_MapsEngine_PermissionsBatchUpdateRequest extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PermissionsBatchUpdateResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PermissionsListResponse extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -5174,7 +5104,6 @@ class Google_Service_MapsEngine_PermissionsListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PointStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5203,7 +5132,6 @@ class Google_Service_MapsEngine_PointStyle extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PolygonStyle extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5242,12 +5170,10 @@ class Google_Service_MapsEngine_PolygonStyle extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ProcessResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Project extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5274,7 +5200,6 @@ class Google_Service_MapsEngine_Project extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ProjectsListResponse extends Google_Collection
 {
   protected $collection_key = 'projects';
@@ -5294,12 +5219,10 @@ class Google_Service_MapsEngine_ProjectsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PublishResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PublishedLayer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5353,7 +5276,6 @@ class Google_Service_MapsEngine_PublishedLayer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PublishedLayersListResponse extends Google_Collection
 {
   protected $collection_key = 'layers';
@@ -5382,7 +5304,6 @@ class Google_Service_MapsEngine_PublishedLayersListResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PublishedMap extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5446,7 +5367,6 @@ class Google_Service_MapsEngine_PublishedMap extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_PublishedMapsListResponse extends Google_Collection
 {
   protected $collection_key = 'maps';
@@ -5475,7 +5395,6 @@ class Google_Service_MapsEngine_PublishedMapsListResponse extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Raster extends Google_Collection
 {
   protected $collection_key = 'files';
@@ -5658,7 +5577,6 @@ class Google_Service_MapsEngine_Raster extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollection extends Google_Collection
 {
   protected $collection_key = 'bbox';
@@ -5821,7 +5739,6 @@ class Google_Service_MapsEngine_RasterCollection extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsListResponse extends Google_Collection
 {
   protected $collection_key = 'rasterCollections';
@@ -5850,7 +5767,6 @@ class Google_Service_MapsEngine_RasterCollectionsListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRaster extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -5941,7 +5857,6 @@ class Google_Service_MapsEngine_RasterCollectionsRaster extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRasterBatchDeleteRequest extends Google_Collection
 {
   protected $collection_key = 'ids';
@@ -5960,12 +5875,10 @@ class Google_Service_MapsEngine_RasterCollectionsRasterBatchDeleteRequest extend
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRastersBatchDeleteResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRastersBatchInsertRequest extends Google_Collection
 {
   protected $collection_key = 'ids';
@@ -5984,12 +5897,10 @@ class Google_Service_MapsEngine_RasterCollectionsRastersBatchInsertRequest exten
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRastersBatchInsertResponse extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RasterCollectionsRastersListResponse extends Google_Collection
 {
   protected $collection_key = 'rasters';
@@ -6018,7 +5929,6 @@ class Google_Service_MapsEngine_RasterCollectionsRastersListResponse extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_RastersListResponse extends Google_Collection
 {
   protected $collection_key = 'rasters';
@@ -6047,7 +5957,6 @@ class Google_Service_MapsEngine_RastersListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ScaledShape extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6085,7 +5994,6 @@ class Google_Service_MapsEngine_ScaledShape extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ScalingFunction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6132,7 +6040,6 @@ class Google_Service_MapsEngine_ScalingFunction extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Schema extends Google_Collection
 {
   protected $collection_key = 'columns';
@@ -6170,7 +6077,6 @@ class Google_Service_MapsEngine_Schema extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_SizeRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6197,7 +6103,6 @@ class Google_Service_MapsEngine_SizeRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_Table extends Google_Collection
 {
   protected $collection_key = 'tags';
@@ -6371,7 +6276,6 @@ class Google_Service_MapsEngine_Table extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TableColumn extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6398,7 +6302,6 @@ class Google_Service_MapsEngine_TableColumn extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_TablesListResponse extends Google_Collection
 {
   protected $collection_key = 'tables';
@@ -6427,7 +6330,6 @@ class Google_Service_MapsEngine_TablesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ValueRange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6454,7 +6356,6 @@ class Google_Service_MapsEngine_ValueRange extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_VectorStyle extends Google_Collection
 {
   protected $collection_key = 'displayRules';
@@ -6493,7 +6394,6 @@ class Google_Service_MapsEngine_VectorStyle extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_MapsEngine_ZoomLevels extends Google_Model
 {
   protected $internal_gapi_mappings = array(

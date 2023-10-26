@@ -16,7 +16,12 @@
 
 namespace core_user\external;
 
-use core_external\external_api;
+global $CFG;
+
+defined('MOODLE_INTERNAL') || die();
+require_once("{$CFG->libdir}/externallib.php");
+
+use external_api;
 use stdClass;
 
 /**
@@ -24,6 +29,7 @@ use stdClass;
  *
  * @package core_user
  * @covers \core_user\external\update_user_device_public_key
+ * @requires extension sodium
  */
 class update_user_device_public_key_test extends \advanced_testcase {
     /**

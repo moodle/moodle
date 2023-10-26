@@ -932,7 +932,7 @@ class ADODB_mysqli extends ADOConnection {
 
 		$SQL = "SELECT column_name, column_type
 				  FROM information_schema.columns
-				 WHERE table_schema='{$this->database}'
+				 WHERE table_schema='{$this->databaseName}'
 				   AND table_name='$table'";
 
 		$schemaArray = $this->getAssoc($SQL);
@@ -1017,6 +1017,7 @@ class ADODB_mysqli extends ADOConnection {
 	{
 //		$this->_connectionID = $this->mysqli_resolve_link($this->_connectionID);
 		$this->database = $dbName;
+		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 
 		if ($this->_connectionID) {
 			$result = @mysqli_select_db($this->_connectionID, $dbName);
@@ -1118,10 +1119,6 @@ class ADODB_mysqli extends ADOConnection {
 		if (!is_array($inputarr)) {
 			$inputarr = array($inputarr);
 		}
-		else {
-			//remove alphanumeric placeholders
-			$inputarr = array_values($inputarr);
-		}
 
 		if (!is_array($sql)) {
 			// Check if we are bulkbinding. If so, $inputarr is a 2d array,
@@ -1205,14 +1202,6 @@ class ADODB_mysqli extends ADOConnection {
 		// return value of the stored proc (ie the number of rows affected).
 		// Commented out for reasons of performance. You should retrieve every recordset yourself.
 		//	if (!mysqli_next_result($this->connection->_connectionID))	return false;
-
-		// When SQL is empty, mysqli_query() throws exception on PHP 8 (#945)
-		if (!$sql) {
-			if ($this->debug) {
-				ADOConnection::outp("Empty query");
-			}
-			return false;
-		}
 
 		if (is_array($sql)) {
 
@@ -1318,10 +1307,6 @@ class ADODB_mysqli extends ADOConnection {
 
 				$ret = mysqli_stmt_execute($stmt);
 
-				// Store error code and message
-				$this->_errorCode = $stmt->errno;
-				$this->_errorMsg = $stmt->error;
-
 				/*
 				* Did we throw an error?
 				*/
@@ -1347,10 +1332,6 @@ class ADODB_mysqli extends ADOConnection {
 			*/
 			$this->usePreparedStatement   = false;
 			$this->useLastInsertStatement = false;
-
-			// Reset error code and message
-			$this->_errorCode = 0;
-			$this->_errorMsg = '';
 		}
 
 		/*
@@ -1392,13 +1373,10 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorMsg()
 	{
-		if (!$this->_errorMsg) {
-			if (empty($this->_connectionID)) {
-				$this->_errorMsg = mysqli_connect_error();
-			} else {
-				$this->_errorMsg = $this->_connectionID->error ?? $this->_connectionID->connect_error;
-			}
-		}
+		if (empty($this->_connectionID))
+			$this->_errorMsg = @mysqli_connect_error();
+		else
+			$this->_errorMsg = @mysqli_error($this->_connectionID);
 		return $this->_errorMsg;
 	}
 
@@ -1409,14 +1387,10 @@ class ADODB_mysqli extends ADOConnection {
 	 */
 	function ErrorNo()
 	{
-		if (!$this->_errorCode) {
-			if (empty($this->_connectionID)) {
-				$this->_errorCode = mysqli_connect_errno();
-			} else {
-				$this->_errorCode = $this->_connectionID->errno ?? $this->_connectionID->connect_errno;
-			}
-		}
-		return $this->_errorCode;
+		if (empty($this->_connectionID))
+			return @mysqli_connect_errno();
+		else
+			return @mysqli_errno($this->_connectionID);
 	}
 
 	/**

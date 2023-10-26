@@ -50,9 +50,6 @@ class role_filter_test extends \advanced_testcase {
      */
     protected $roles;
 
-    /** @var array Roles. */
-    protected array $testroles = [];
-
     public function setUp(): void {
         global $DB;
 

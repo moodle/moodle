@@ -88,7 +88,7 @@ if ($options['lang']) {
 }
 
 foreach ($langs as $lang) {
-    $filename = $options['target'] . "customlang_{$lang}.zip";
+    $filename = $options['target'] . get_string('exportzipfilename', 'tool_customlang', ['lang' => $lang]);
     // If the file exists and we are not using the temp folder it requires an ovewrite.
     if ($options['target'] != $dafaulttarget && file_exists($filename) && !$options['overwrite']) {
         cli_problem(get_string('cliexportfileexists', 'tool_customlang', ['lang' => $lang]));

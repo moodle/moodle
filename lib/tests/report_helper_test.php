@@ -75,4 +75,42 @@ class report_helper_test extends \advanced_testcase {
 
         $this->assertEquals($USER->course_last_report[$courseid2], $url2);
     }
+
+    /**
+     * Testing the report selector dropdown shown.
+     *
+     * Verify that the dropdowns have the pages to be displayed.
+     *
+     * @return void
+     */
+    public function test_print_report_selector():void {
+        global $PAGE;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $PAGE->set_url('/');
+
+        $course = $this->getDataGenerator()->create_course();
+        $PAGE->set_course($course);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'teacher');
+
+        $this->setUser($user);
+
+        ob_start();
+        report_helper::print_report_selector('Logs');
+        $output = $this->getActualOutput();
+        ob_end_clean();
+
+        $log = '<option value="/report/log/index.php?id=' . $course->id .'" selected>Logs</option>';
+        $competency = '<option value="/report/competency/index.php?id=' . $course->id . '" >Competency breakdown</option>';
+        $loglive = '<option value="/report/loglive/index.php?id=' . $course->id . '" >Live logs</option>';
+        $participation = '<option value="/report/participation/index.php?id=' . $course->id . '" >Course participation</option>';
+        $this->assertStringContainsString($log, $output);
+        $this->assertStringContainsString($competency, $output);
+        $this->assertStringContainsString($loglive, $output);
+        $this->assertStringContainsString($participation, $output);
+    }
 }

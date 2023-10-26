@@ -93,7 +93,6 @@ trait core_question_privacy_helper {
             [get_string('questions', 'core_question')]
         );
 
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
 
         foreach ($quba->get_slots() as $slotno) {

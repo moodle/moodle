@@ -34,15 +34,6 @@ defined('MOODLE_INTERNAL') || die();
  */
 class template_plans_page implements \renderable {
 
-    /** @var \core_competency\template|null */
-    protected $template = null;
-
-    /** @var \moodle_url|null */
-    protected $url = null;
-
-    /** @var template_plans_table|null */
-    public $table = null;
-
     /**
      * Constructor.
      * @param \core_competency\template $template

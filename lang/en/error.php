@@ -228,10 +228,6 @@ $string['dmlparseexception'] = 'Error parsing SQL query';
 $string['dmlreadexception'] = 'Error reading from database';
 $string['dmltransactionexception'] = 'Database transaction error';
 $string['dmlwriteexception'] = 'Error writing to database';
-$string['dndmaxbytes'] = 'The file is too large. The maximum size allowed is {$a->size}.';
-$string['dndread'] = 'Error reading the file';
-$string['dndupload'] = 'An unknown error ocurred while uploading the file';
-$string['dndunkownfile'] = 'This file type is not supported';
 $string['downgradedcore'] = 'ERROR!!!  The code you are using is OLDER than the version that made these databases!';
 $string['downloadedfilecheckfailed'] = 'Downloaded file check failed';
 $string['duplicatefieldname'] = 'Duplicate field name "{$a}" detected';
@@ -240,7 +236,6 @@ $string['duplicateparaminsql'] = 'ERROR: duplicate parameter name in query';
 $string['duplicaterolename'] = 'There is already a role with this name!';
 $string['duplicateroleshortname'] = 'There is already a role with this short name!';
 $string['duplicateusername'] = 'Duplicate username - skipping record';
-$string['editedpagenotfound'] = 'The system couldn\'t determine the page you are on. Please refresh the page and try again.';
 $string['emailfail'] = 'Emailing failed';
 $string['encryption_encryptfailed'] = 'Encryption failed';
 $string['encryption_decryptfailed'] = 'Decryption failed';
@@ -426,10 +421,6 @@ $string['moduledisable'] = 'This module ({$a}) has been disabled for this partic
 $string['moduledoesnotexist'] = 'This module does not exist';
 $string['moduleinstancedoesnotexist'] = 'The instance of this module does not exist';
 $string['modulemissingcode'] = 'Module {$a} is missing the code needed to perform this function';
-$string['moodlenet:invalidshareformat'] = 'Incorrect MoodleNet share format';
-$string['moodlenet:invalidsharestatus'] = 'Incorrect MoodleNet share status';
-$string['moodlenet:invalidsharetype'] = 'Invalid MoodleNet share type';
-$string['moodlenet:usernotconfigured'] = 'You do not have permission to share content to MoodleNet, or your account is incorrectly configured.';
 $string['movecatcontentstoroot'] = 'Moving the category content to root is not allowed. You must move the contents to an existing category!';
 $string['movecatcontentstoselected'] = 'Some category content cannot be moved into the selected category.';
 $string['movecategorynotpossible'] = 'You cannot move category \'{$a}\' into the selected category.';
@@ -501,13 +492,14 @@ $string['opensslsignerror'] = 'OpenSSL unable to sign data';
 $string['opensslsealerror'] = 'OpenSSL unable to seal data';
 $string['pagenotexisttitle'] = '404 Error: File not found';
 $string['pagenotexist'] = '<p>An unusual error occurred trying to view a page that does not exist:</p>{$a}';
-$string['passwordexceeded'] = 'The password can\'t be more than {$a} characters.';
 $string['pathdoesnotstartslash'] = 'No valid arguments supplied, path does not start with slash!';
 $string['pleasereport'] = 'If you have time, please let us know what you were trying to do when the error occurred:';
 $string['pluginrequirementsnotmet'] = 'Plugin "{$a->pluginname}" ({$a->pluginversion}) could not be installed.  It requires a newer version of Moodle (currently you are using {$a->currentmoodle}, you need {$a->requiremoodle}).';
 $string['pluginunsupported'] = 'Plugin "{$a->pluginname}" {$a->pluginversion} does not support this version of Moodle {$a->moodleversion}. Seek plugin information to find supported versions.';
 $string['prefixcannotbeempty'] = '<p>Error: database table prefix cannot be empty ({$a})</p>
 <p>The site administrator must fix this problem.</p>';
+$string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
+<p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';
 $string['privatefilesupload'] = 'Uploading directly to user private files area is no longer supported. Upload to a draft area and then move the files with core_user::add_user_private_files';
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
@@ -650,7 +642,3 @@ $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
 
 // Deprecated since Moodle 4.1.
 $string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';
-
-// Deprecated since Moodle 4.3.
-$string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
-<p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';

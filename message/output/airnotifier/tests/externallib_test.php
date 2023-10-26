@@ -16,7 +16,6 @@
 
 namespace message_airnotifier;
 
-use core_external\external_api;
 use externallib_advanced_testcase;
 use message_airnotifier_external;
 
@@ -57,7 +56,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // In a clean installation, it should be not configured.
         $configured = message_airnotifier_external::is_system_configured();
-        $configured = external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
+        $configured = \external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
         $this->assertEquals(0, $configured);
 
         // Fake configuration.
@@ -66,7 +65,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->set_field('message_processors', 'enabled', 1, array('name' => 'airnotifier'));
 
         $configured = message_airnotifier_external::is_system_configured();
-        $configured = external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
+        $configured = \external_api::clean_returnvalue(message_airnotifier_external::is_system_configured_returns(), $configured);
         $this->assertEquals(1, $configured);
     }
 
@@ -90,7 +89,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
         $returnsdescription = message_airnotifier_external::are_notification_preferences_configured_returns();
-        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
+        $preferences = \external_api::clean_returnvalue($returnsdescription, $preferences);
 
         $expected = array(
             array(
@@ -106,7 +105,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, remove one user.
         delete_user($user2);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
-        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
+        $preferences = \external_api::clean_returnvalue($returnsdescription, $preferences);
         $this->assertEquals(1, count($preferences['users']));
         $this->assertEquals($expected, $preferences['users']);
         $this->assertEquals(2, count($preferences['warnings']));
@@ -114,7 +113,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now, remove one user1 preference (the user still has one preference for airnotifier).
         unset_user_preference('message_provider_moodle_instantmessage_enabled', $user1);
         $preferences = message_airnotifier_external::are_notification_preferences_configured($params);
-        $preferences = external_api::clean_returnvalue($returnsdescription, $preferences);
+        $preferences = \external_api::clean_returnvalue($returnsdescription, $preferences);
         $this->assertEquals($expected, $preferences['users']);
     }
 
@@ -130,7 +129,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // System not configured.
         $devices = message_airnotifier_external::get_user_devices('');
-        $devices = external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
+        $devices = \external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
         $this->assertCount(1, $devices['warnings']);
         $this->assertEquals('systemnotconfigured', $devices['warnings'][0]['warningcode']);
 
@@ -141,7 +140,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Get devices.
         $devices = message_airnotifier_external::get_user_devices('');
-        $devices = external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
+        $devices = \external_api::clean_returnvalue(message_airnotifier_external::get_user_devices_returns(), $devices);
         $this->assertCount(0, $devices['warnings']);
         // No devices, unfortunatelly we cannot create devices (we can't mock airnotifier server).
         $this->assertCount(0, $devices['devices']);
@@ -196,13 +195,13 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Disable and enable.
         $result = message_airnotifier_external::enable_device($airnotifierdevid, false);
-        $result = external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
+        $result = \external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertTrue($result['success']);
         $this->assertEquals(0, $DB->get_field('message_airnotifier_devices', 'enable', array('id' => $airnotifierdevid)));
 
         $result = message_airnotifier_external::enable_device($airnotifierdevid, true);
-        $result = external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
+        $result = \external_api::clean_returnvalue(message_airnotifier_external::enable_device_returns(), $result);
         $this->assertCount(0, $result['warnings']);
         $this->assertTrue($result['success']);
         $this->assertEquals(1, $DB->get_field('message_airnotifier_devices', 'enable', array('id' => $airnotifierdevid)));

@@ -107,7 +107,6 @@ class cmitem implements named_templatable, renderable {
             'cmformat' => $item->export_for_template($output),
             'hasinfo' => $hasinfo,
             'indent' => ($format->uses_indentation()) ? $mod->indent : 0,
-            'groupmode' => $mod->groupmode,
         ];
     }
 }

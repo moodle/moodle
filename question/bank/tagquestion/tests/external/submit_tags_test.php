@@ -31,15 +31,6 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  */
 class submit_tags_test extends \externallib_advanced_testcase {
 
-    /** @var \stdClass course record. */
-    protected $course;
-
-    /** @var \stdClass user record. */
-    protected $student;
-
-    /** @var \stdClass user role record. */
-    protected $studentrole;
-
     /**
      * Set up for every test
      */

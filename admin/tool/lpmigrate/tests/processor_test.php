@@ -28,33 +28,6 @@ use core_competency\course_module_competency;
  */
 class processor_test extends \advanced_testcase {
 
-    /** @var \core_competency\competency_framework|null $f1  */
-    protected $f1 = null;
-
-    /** @var \core_competency\competency_framework|null $f2 */
-    protected $f2 = null;
-
-    /** @var object|null $c1 course instance. */
-    protected ?object $c1 = null;
-
-    /** @var object|null $c2 course instance. */
-    protected ?object $c2 = null;
-
-    /** @var array $f1comps */
-    protected array $f1comps = [];
-
-    /** @var array $f2comps */
-    protected array $f2comps = [];
-
-    /** @var array $cms */
-    protected array $cms = [];
-
-    /** @var array $ccs */
-    protected array $ccs = [];
-
-    /** @var array $cmcs */
-    protected array $cmcs = [];
-
     /**
      * This sets up a few things, and assign class variables.
      *

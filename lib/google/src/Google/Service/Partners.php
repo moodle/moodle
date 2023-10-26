@@ -29,7 +29,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners extends Google_Service
 {
 
@@ -329,7 +328,6 @@ class Google_Service_Partners extends Google_Service
  *   $clientMessages = $partnersService->clientMessages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners_ClientMessages_Resource extends Google_Service_Resource
 {
 
@@ -358,7 +356,6 @@ class Google_Service_Partners_ClientMessages_Resource extends Google_Service_Res
  *   $companies = $partnersService->companies;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners_Companies_Resource extends Google_Service_Resource
 {
 
@@ -489,7 +486,6 @@ class Google_Service_Partners_Companies_Resource extends Google_Service_Resource
  *   $leads = $partnersService->leads;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners_CompaniesLeads_Resource extends Google_Service_Resource
 {
 
@@ -517,7 +513,6 @@ class Google_Service_Partners_CompaniesLeads_Resource extends Google_Service_Res
  *   $userEvents = $partnersService->userEvents;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners_UserEvents_Resource extends Google_Service_Resource
 {
 
@@ -544,7 +539,6 @@ class Google_Service_Partners_UserEvents_Resource extends Google_Service_Resourc
  *   $userStates = $partnersService->userStates;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Partners_UserStates_Resource extends Google_Service_Resource
 {
 
@@ -582,7 +576,6 @@ class Google_Service_Partners_UserStates_Resource extends Google_Service_Resourc
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_CertificationExamStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -609,7 +602,6 @@ class Google_Service_Partners_CertificationExamStatus extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_CertificationStatus extends Google_Collection
 {
   protected $collection_key = 'examStatuses';
@@ -647,7 +639,6 @@ class Google_Service_Partners_CertificationStatus extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_Company extends Google_Collection
 {
   protected $collection_key = 'services';
@@ -772,7 +763,6 @@ class Google_Service_Partners_Company extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_CreateLeadRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -811,7 +801,6 @@ class Google_Service_Partners_CreateLeadRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_CreateLeadResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -849,7 +838,6 @@ class Google_Service_Partners_CreateLeadResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_DebugInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -885,7 +873,6 @@ class Google_Service_Partners_DebugInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_EventData extends Google_Collection
 {
   protected $collection_key = 'values';
@@ -913,7 +900,6 @@ class Google_Service_Partners_EventData extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_GetCompanyResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -942,7 +928,6 @@ class Google_Service_Partners_GetCompanyResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LatLng extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -969,7 +954,6 @@ class Google_Service_Partners_LatLng extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_Lead extends Google_Collection
 {
   protected $collection_key = 'gpsMotivations';
@@ -1070,7 +1054,6 @@ class Google_Service_Partners_Lead extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_ListCompaniesResponse extends Google_Collection
 {
   protected $collection_key = 'companies';
@@ -1109,7 +1092,6 @@ class Google_Service_Partners_ListCompaniesResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_ListUserStatesResponse extends Google_Collection
 {
   protected $collection_key = 'userStates';
@@ -1138,7 +1120,6 @@ class Google_Service_Partners_ListUserStatesResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LocalizedCompanyInfo extends Google_Collection
 {
   protected $collection_key = 'countryCodes';
@@ -1184,7 +1165,6 @@ class Google_Service_Partners_LocalizedCompanyInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_Location extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1212,7 +1192,6 @@ class Google_Service_Partners_Location extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LogMessageRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1258,12 +1237,10 @@ class Google_Service_Partners_LogMessageRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LogMessageRequestClientInfo extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LogMessageResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1282,7 +1259,6 @@ class Google_Service_Partners_LogMessageResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LogUserEventRequest extends Google_Collection
 {
   protected $collection_key = 'eventDatas';
@@ -1358,7 +1334,6 @@ class Google_Service_Partners_LogUserEventRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_LogUserEventResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1377,7 +1352,6 @@ class Google_Service_Partners_LogUserEventResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_Money extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1413,7 +1387,6 @@ class Google_Service_Partners_Money extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_PublicProfile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1458,7 +1431,6 @@ class Google_Service_Partners_PublicProfile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_Rank extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1485,7 +1457,6 @@ class Google_Service_Partners_Rank extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_RecaptchaChallenge extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1512,7 +1483,6 @@ class Google_Service_Partners_RecaptchaChallenge extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_RequestMetadata extends Google_Collection
 {
   protected $collection_key = 'experimentIds';
@@ -1569,7 +1539,6 @@ class Google_Service_Partners_RequestMetadata extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_ResponseMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1588,7 +1557,6 @@ class Google_Service_Partners_ResponseMetadata extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_TrafficSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1615,7 +1583,6 @@ class Google_Service_Partners_TrafficSource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Partners_UserOverrides extends Google_Model
 {
   protected $internal_gapi_mappings = array(

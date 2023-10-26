@@ -405,8 +405,8 @@ class provider_test extends provider_testcase {
     /**
      * Create user data for a user.
      *
-     * @param  \stdClass $user A user object.
-     * @param  \stdClass $course A course.
+     * @param  stdClass $user A user object.
+     * @param  stdClass $course A course.
      */
     protected function create_data_for_user($user, $course) {
         global $DB;

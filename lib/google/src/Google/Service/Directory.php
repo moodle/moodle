@@ -30,7 +30,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory extends Google_Service
 {
   /** View and manage customer related information. */
@@ -1678,7 +1677,6 @@ class Google_Service_Directory extends Google_Service
  *   $asps = $adminService->asps;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Asps_Resource extends Google_Service_Resource
 {
 
@@ -1737,7 +1735,6 @@ class Google_Service_Directory_Asps_Resource extends Google_Service_Resource
  *   $channels = $adminService->channels;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Channels_Resource extends Google_Service_Resource
 {
 
@@ -1763,7 +1760,6 @@ class Google_Service_Directory_Channels_Resource extends Google_Service_Resource
  *   $chromeosdevices = $adminService->chromeosdevices;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Chromeosdevices_Resource extends Google_Service_Resource
 {
 
@@ -1858,7 +1854,6 @@ class Google_Service_Directory_Chromeosdevices_Resource extends Google_Service_R
  *   $customers = $adminService->customers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Customers_Resource extends Google_Service_Resource
 {
 
@@ -1915,7 +1910,6 @@ class Google_Service_Directory_Customers_Resource extends Google_Service_Resourc
  *   $domainAliases = $adminService->domainAliases;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_DomainAliases_Resource extends Google_Service_Resource
 {
 
@@ -1989,7 +1983,6 @@ class Google_Service_Directory_DomainAliases_Resource extends Google_Service_Res
  *   $domains = $adminService->domains;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Domains_Resource extends Google_Service_Resource
 {
 
@@ -2060,7 +2053,6 @@ class Google_Service_Directory_Domains_Resource extends Google_Service_Resource
  *   $groups = $adminService->groups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Groups_Resource extends Google_Service_Resource
 {
 
@@ -2171,7 +2163,6 @@ class Google_Service_Directory_Groups_Resource extends Google_Service_Resource
  *   $aliases = $adminService->aliases;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_GroupsAliases_Resource extends Google_Service_Resource
 {
 
@@ -2227,7 +2218,6 @@ class Google_Service_Directory_GroupsAliases_Resource extends Google_Service_Res
  *   $members = $adminService->members;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Members_Resource extends Google_Service_Resource
 {
 
@@ -2340,7 +2330,6 @@ class Google_Service_Directory_Members_Resource extends Google_Service_Resource
  *   $mobiledevices = $adminService->mobiledevices;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Mobiledevices_Resource extends Google_Service_Resource
 {
 
@@ -2425,7 +2414,6 @@ class Google_Service_Directory_Mobiledevices_Resource extends Google_Service_Res
  *   $notifications = $adminService->notifications;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Notifications_Resource extends Google_Service_Resource
 {
 
@@ -2523,7 +2511,6 @@ class Google_Service_Directory_Notifications_Resource extends Google_Service_Res
  *   $orgunits = $adminService->orgunits;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
 {
 
@@ -2632,7 +2619,6 @@ class Google_Service_Directory_Orgunits_Resource extends Google_Service_Resource
  *   $privileges = $adminService->privileges;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Privileges_Resource extends Google_Service_Resource
 {
 
@@ -2660,7 +2646,6 @@ class Google_Service_Directory_Privileges_Resource extends Google_Service_Resour
  *   $roleAssignments = $adminService->roleAssignments;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_RoleAssignments_Resource extends Google_Service_Resource
 {
 
@@ -2740,7 +2725,6 @@ class Google_Service_Directory_RoleAssignments_Resource extends Google_Service_R
  *   $roles = $adminService->roles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Roles_Resource extends Google_Service_Resource
 {
 
@@ -2846,7 +2830,6 @@ class Google_Service_Directory_Roles_Resource extends Google_Service_Resource
  *   $schemas = $adminService->schemas;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Schemas_Resource extends Google_Service_Resource
 {
 
@@ -2949,7 +2932,6 @@ class Google_Service_Directory_Schemas_Resource extends Google_Service_Resource
  *   $tokens = $adminService->tokens;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Tokens_Resource extends Google_Service_Resource
 {
 
@@ -3011,7 +2993,6 @@ class Google_Service_Directory_Tokens_Resource extends Google_Service_Resource
  *   $users = $adminService->users;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_Users_Resource extends Google_Service_Resource
 {
 
@@ -3212,7 +3193,6 @@ class Google_Service_Directory_Users_Resource extends Google_Service_Resource
  *   $aliases = $adminService->aliases;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_UsersAliases_Resource extends Google_Service_Resource
 {
 
@@ -3288,7 +3268,6 @@ class Google_Service_Directory_UsersAliases_Resource extends Google_Service_Reso
  *   $photos = $adminService->photos;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_UsersPhotos_Resource extends Google_Service_Resource
 {
 
@@ -3359,7 +3338,6 @@ class Google_Service_Directory_UsersPhotos_Resource extends Google_Service_Resou
  *   $verificationCodes = $adminService->verificationCodes;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Directory_VerificationCodes_Resource extends Google_Service_Resource
 {
 
@@ -3411,7 +3389,6 @@ class Google_Service_Directory_VerificationCodes_Resource extends Google_Service
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Alias extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3465,7 +3442,6 @@ class Google_Service_Directory_Alias extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Aliases extends Google_Collection
 {
   protected $collection_key = 'aliases';
@@ -3503,7 +3479,6 @@ class Google_Service_Directory_Aliases extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Asp extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3575,7 +3550,6 @@ class Google_Service_Directory_Asp extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Asps extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -3613,7 +3587,6 @@ class Google_Service_Directory_Asps extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Channel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3712,12 +3685,10 @@ class Google_Service_Directory_Channel extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_ChannelParams extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_ChromeOsDevice extends Google_Collection
 {
   protected $collection_key = 'recentUsers';
@@ -3954,7 +3925,6 @@ class Google_Service_Directory_ChromeOsDevice extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_ChromeOsDeviceActiveTimeRanges extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3981,7 +3951,6 @@ class Google_Service_Directory_ChromeOsDeviceActiveTimeRanges extends Google_Mod
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_ChromeOsDeviceRecentUsers extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4008,7 +3977,6 @@ class Google_Service_Directory_ChromeOsDeviceRecentUsers extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_ChromeOsDevices extends Google_Collection
 {
   protected $collection_key = 'chromeosdevices';
@@ -4055,7 +4023,6 @@ class Google_Service_Directory_ChromeOsDevices extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Customer extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4146,7 +4113,6 @@ class Google_Service_Directory_Customer extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_CustomerPostalAddress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4236,7 +4202,6 @@ class Google_Service_Directory_CustomerPostalAddress extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_DomainAlias extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4299,7 +4264,6 @@ class Google_Service_Directory_DomainAlias extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_DomainAliases extends Google_Collection
 {
   protected $collection_key = 'domainAliases';
@@ -4337,7 +4301,6 @@ class Google_Service_Directory_DomainAliases extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Domains extends Google_Collection
 {
   protected $collection_key = 'domainAliases';
@@ -4411,7 +4374,6 @@ class Google_Service_Directory_Domains extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Domains2 extends Google_Collection
 {
   protected $collection_key = 'domains';
@@ -4449,7 +4411,6 @@ class Google_Service_Directory_Domains2 extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Group extends Google_Collection
 {
   protected $collection_key = 'nonEditableAliases';
@@ -4549,7 +4510,6 @@ class Google_Service_Directory_Group extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Groups extends Google_Collection
 {
   protected $collection_key = 'groups';
@@ -4596,7 +4556,6 @@ class Google_Service_Directory_Groups extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Member extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -4659,7 +4618,6 @@ class Google_Service_Directory_Member extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Members extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -4706,7 +4664,6 @@ class Google_Service_Directory_Members extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_MobileDevice extends Google_Collection
 {
   protected $collection_key = 'otherAccountsInfo';
@@ -4996,7 +4953,6 @@ class Google_Service_Directory_MobileDevice extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_MobileDeviceAction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5014,7 +4970,6 @@ class Google_Service_Directory_MobileDeviceAction extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_MobileDeviceApplications extends Google_Collection
 {
   protected $collection_key = 'permission';
@@ -5069,7 +5024,6 @@ class Google_Service_Directory_MobileDeviceApplications extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_MobileDevices extends Google_Collection
 {
   protected $collection_key = 'mobiledevices';
@@ -5116,7 +5070,6 @@ class Google_Service_Directory_MobileDevices extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Notification extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5197,7 +5150,6 @@ class Google_Service_Directory_Notification extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Notifications extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5253,7 +5205,6 @@ class Google_Service_Directory_Notifications extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_OrgUnit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5343,7 +5294,6 @@ class Google_Service_Directory_OrgUnit extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_OrgUnits extends Google_Collection
 {
   protected $collection_key = 'organizationUnits';
@@ -5381,7 +5331,6 @@ class Google_Service_Directory_OrgUnits extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Privilege extends Google_Collection
 {
   protected $collection_key = 'childPrivileges';
@@ -5455,7 +5404,6 @@ class Google_Service_Directory_Privilege extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Privileges extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5493,7 +5441,6 @@ class Google_Service_Directory_Privileges extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Role extends Google_Collection
 {
   protected $collection_key = 'rolePrivileges';
@@ -5576,7 +5523,6 @@ class Google_Service_Directory_Role extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_RoleAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5648,7 +5594,6 @@ class Google_Service_Directory_RoleAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_RoleAssignments extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5695,7 +5640,6 @@ class Google_Service_Directory_RoleAssignments extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_RoleRolePrivileges extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5722,7 +5666,6 @@ class Google_Service_Directory_RoleRolePrivileges extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Roles extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -5769,7 +5712,6 @@ class Google_Service_Directory_Roles extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Schema extends Google_Collection
 {
   protected $collection_key = 'fields';
@@ -5825,7 +5767,6 @@ class Google_Service_Directory_Schema extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_SchemaFieldSpec extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5916,7 +5857,6 @@ class Google_Service_Directory_SchemaFieldSpec extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_SchemaFieldSpecNumericIndexingSpec extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -5943,7 +5883,6 @@ class Google_Service_Directory_SchemaFieldSpecNumericIndexingSpec extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Schemas extends Google_Collection
 {
   protected $collection_key = 'schemas';
@@ -5981,7 +5920,6 @@ class Google_Service_Directory_Schemas extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Token extends Google_Collection
 {
   protected $collection_key = 'scopes';
@@ -6063,7 +6001,6 @@ class Google_Service_Directory_Token extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Tokens extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -6101,7 +6038,6 @@ class Google_Service_Directory_Tokens extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_User extends Google_Collection
 {
   protected $collection_key = 'nonEditableAliases';
@@ -6427,7 +6363,6 @@ class Google_Service_Directory_User extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserAbout extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6454,7 +6389,6 @@ class Google_Service_Directory_UserAbout extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserAddress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6580,17 +6514,14 @@ class Google_Service_Directory_UserAddress extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserCustomProperties extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserCustomSchemas extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserEmail extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6635,7 +6566,6 @@ class Google_Service_Directory_UserEmail extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserExternalId extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6671,7 +6601,6 @@ class Google_Service_Directory_UserExternalId extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserIm extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6734,7 +6663,6 @@ class Google_Service_Directory_UserIm extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserMakeAdmin extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6752,7 +6680,6 @@ class Google_Service_Directory_UserMakeAdmin extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6788,7 +6715,6 @@ class Google_Service_Directory_UserName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserOrganization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6896,7 +6822,6 @@ class Google_Service_Directory_UserOrganization extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserPhone extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -6941,7 +6866,6 @@ class Google_Service_Directory_UserPhone extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserPhoto extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7022,7 +6946,6 @@ class Google_Service_Directory_UserPhoto extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserRelation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7058,7 +6981,6 @@ class Google_Service_Directory_UserRelation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserUndelete extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7076,7 +6998,6 @@ class Google_Service_Directory_UserUndelete extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_UserWebsite extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7121,7 +7042,6 @@ class Google_Service_Directory_UserWebsite extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_Users extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -7178,7 +7098,6 @@ class Google_Service_Directory_Users extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_VerificationCode extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -7223,7 +7142,6 @@ class Google_Service_Directory_VerificationCode extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Directory_VerificationCodes extends Google_Collection
 {
   protected $collection_key = 'items';

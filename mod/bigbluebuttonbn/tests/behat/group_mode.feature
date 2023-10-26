@@ -11,42 +11,35 @@ Feature: Test the module in group mode.
       | Test Course 1 | C1        | 0        | 1         | 1              |
       | Test Course 2 | C2        | 0        | 2         | 1              |
     And the following "groups" exist:
-      | name    | course | idnumber | participation |
-      | Group 1 | C1     | G1       | 1             |
-      | Group 2 | C1     | G2       | 1             |
-      | Group 3 | C1     | G3       | 0             |
-      | Group 1 | C2     | G1b      | 1             |
-      | Group 2 | C2     | G2b      | 1             |
-      | Group 3 | C2     | G3b      | 0             |
+      | name    | course | idnumber |
+      | Group 1 | C1     | G1       |
+      | Group 2 | C1     | G2       |
+      | Group 1 | C2     | G1b      |
+      | Group 2 | C2     | G2b      |
     And the following "users" exist:
       | username | firstname     | lastname | email                |
       | teacher1 | TeacherG1     | 1        | teacher1@example.com |
       | user1    | User1G1       | 1        | user1@example.com    |
       | user2    | User2G2       | 2        | user2@example.com    |
       | user3    | User3NoGgroup | 3        | user3@example.com    |
-      | user4    | User4NPGgroup | 4        | user4@example.com    |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | user1    | C1     | student        |
       | user2    | C1     | student        |
       | user3    | C1     | student        |
-      | user4    | C1     | student        |
       | teacher1 | C2     | editingteacher |
       | user1    | C2     | student        |
       | user2    | C2     | student        |
       | user3    | C2     | student        |
-      | user4    | C2     | student        |
     And the following "group members" exist:
       | user     | group |
       | teacher1 | G1    |
       | user1    | G1    |
       | user2    | G2    |
-      | user4    | G3    |
       | teacher1 | G1b   |
       | user1    | G1b   |
       | user2    | G2b   |
-      | user4    | G3b   |
     And the following "activities" exist:
       | activity        | name                        | intro                                   | course | idnumber         | type | recordings_imported |
       | bigbluebuttonbn | RoomRecordings              | Test Room Recording description         | C1     | bigbluebuttonbn1 | 0    | 0                   |
@@ -58,18 +51,14 @@ Feature: Test the module in group mode.
       | activity                    | group |
       | RoomRecordings              | G1    |
       | RoomRecordings              | G2    |
-      | RoomRecordings              | G3    |
       | RoomRecordingsVisibleGroups | G1b   |
       | RoomRecordingsVisibleGroups | G2b   |
-      | RoomRecordings              | G3b   |
     And the following "mod_bigbluebuttonbn > recordings" exist:
       | bigbluebuttonbn             | name          | group |
       | RoomRecordings              | Recording G1  | G1    |
       | RoomRecordings              | Recording G2  | G2    |
-      | RoomRecordings              | Recording G3  | G3    |
       | RoomRecordingsVisibleGroups | Recording G1b | G1b   |
       | RoomRecordingsVisibleGroups | Recording G2b | G2b   |
-      | RoomRecordings              | Recording G3b | G3b   |
     And the following "mod_bigbluebuttonbn > recordings" exist:
       | bigbluebuttonbn             | name                  |
       | RoomRecordings              | Recording No group    |
@@ -89,14 +78,12 @@ Feature: Test the module in group mode.
     When I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as "teacher1"
     Then I should see "Group 1" in the "select[name='group']" "css_element"
     And I should see "Group 2" in the "select[name='group']" "css_element"
-    And I should not see "Group 3" in the "select[name='group']" "css_element"
 
   @javascript
   Scenario Outline: When I view a BBB activity as a student in a course with separate groups, I should only be able to see Recordings from my group
     When I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as "<user>"
     Then I <G1> "Recording G1"
     And I <G2> "Recording G2"
-    And I should not see "Recording G3"
     And I <NO> "Recording No group"
 
     Examples:
@@ -104,7 +91,6 @@ Feature: Test the module in group mode.
       | user1 | should see     | should not see | should not see |
       | user2 | should not see | should see     | should not see |
       | user3 | should not see | should not see | should not see |
-      | user4 | should not see | should not see | should not see |
 
   @javascript
   Scenario Outline: When I view a BBB activity as a student in a course with visible group set, I should be able to see Recordings from my group or
@@ -113,7 +99,6 @@ Feature: Test the module in group mode.
     And I select "<groupname>" from the "group" singleselect
     Then I <G1> "Recording G1b"
     And I <G2> "Recording G2b"
-    And I should not see "Recording G3b"
     And I <NO> "Recording No group C2"
 
     Examples:
@@ -132,9 +117,6 @@ Feature: Test the module in group mode.
       | user1 | RoomRecordings              | Join session                                                |
       | user2 | RoomRecordings              | Join session                                                |
       | user3 | RoomRecordings              | You do not have a role that is allowed to join this session |
-      | user4 | RoomRecordings              | You do not have a role that is allowed to join this session |
       | user1 | RoomRecordingsVisibleGroups | Join session                                                |
       | user2 | RoomRecordingsVisibleGroups | Join session                                                |
       | user3 | RoomRecordingsVisibleGroups | Join session                                                |
-      | user3 | RoomRecordingsVisibleGroups | Join session                                                |
-      | user4 | RoomRecordings              | You do not have a role that is allowed to join this session |

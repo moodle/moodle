@@ -67,12 +67,6 @@ class brickfield_accessibility_css {
     /** @var array A list of all the elements which support deprecated styles such as 'background' or 'bgcolor' */
     public $deprecatedstyleelements = ['body', 'table', 'tr', 'td', 'th'];
 
-    /** @var array */
-    public array $path = [];
-
-    /** @var array To store additional CSS files to load. */
-    public array $css_files = [];
-
     /**
      * Class constructor. We are just building and importing variables here and then loading the CSS
      * @param \DOMDocument $dom The DOMDocument object

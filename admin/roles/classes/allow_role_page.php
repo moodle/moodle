@@ -141,6 +141,7 @@ abstract class core_role_allow_role_page {
         $table->cellspacing = 0;
         $table->width = '90%';
         $table->align = array('left');
+        $table->rotateheaders = true;
         $table->head = array('&#xa0;');
         $table->colclasses = array('');
 

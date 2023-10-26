@@ -43,23 +43,7 @@ export const init = () => {
         html: true,
         placement: 'top',
         customClass: 'footer',
-        trigger: 'click',
-        boundary: 'viewport',
-        popperConfig: {
-            modifiers: {
-                preventOverflow: {
-                    boundariesElement: 'viewport',
-                    padding: 48
-                },
-                offset: {},
-                flip: {
-                    behavior: 'flip'
-                },
-                arrow: {
-                    element: '.arrow'
-                },
-            }
-        }
+        trigger: 'click'
     });
 
     document.addEventListener('click', e => {

@@ -111,7 +111,6 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $key = $DB->get_record('user_private_key', ['value' => $keyvalue]);
         // Validate exported data.
         $this->setUser($user);
-        /** @var \core_privacy\tests\request\content_writer $writer */
         $writer = writer::with_context($context);
         $this->assertFalse($writer->has_any_data());
         $this->export_context_data_for_user($user->id, $context, 'tool_mobile');

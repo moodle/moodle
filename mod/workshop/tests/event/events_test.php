@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 global $CFG;
 require_once($CFG->dirroot . '/mod/workshop/lib.php'); // Include the code to test.
 require_once($CFG->dirroot . '/mod/workshop/locallib.php'); // Include the code to test.
+require_once($CFG->dirroot . '/lib/cronlib.php'); // Include the code to test.
 require_once(__DIR__ . '/../fixtures/testable.php');
 
 
@@ -94,6 +95,10 @@ class events_test extends \advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'update switch phase', 'view.php?id=' . $this->cm->id,
+            $newphase, $this->cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $sink->close();
@@ -146,6 +151,9 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_workshop\event\assessment_reevaluated', $event);
         $this->assertEquals('workshop_aggregations', $event->objecttable);
         $this->assertEquals(\context_module::instance($cm->id), $event->get_context());
+        $expected = array($this->course->id, 'workshop', 'update aggregate grade',
+            'view.php?id=' . $event->get_context()->instanceid, $event->objectid, $event->get_context()->instanceid);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $sink->close();
@@ -170,6 +178,11 @@ class events_test extends \advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'update clear aggregated grade', 'view.php?id=' . $this->cm->id,
+            $this->workshop->id, $this->cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+
         $sink->close();
     }
 
@@ -190,6 +203,9 @@ class events_test extends \advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'view all', 'index.php?id=' . $this->course->id, '');
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $sink->close();
@@ -222,6 +238,82 @@ class events_test extends \advanced_testcase {
         $events = $sink->get_events();
         $event = reset($events);
 
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'add submission',
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        $sink->close();
+    }
+
+    /**
+     * There is no api involved so the best we can do is test legacy data by triggering event manually.
+     */
+    public function test_submission_updated_event() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $submissionid = 48;
+
+        $event = \mod_workshop\event\submission_updated::create(array(
+                'objectid'      => $submissionid,
+                'context'       => $this->context,
+                'courseid'      => $this->course->id,
+                'relateduserid' => $user->id,
+                'other'         => array(
+                    'submissiontitle' => 'The submission title'
+                )
+            )
+        );
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'update submission',
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
+
+        $sink->close();
+    }
+
+    /**
+     * There is no api involved so the best we can do is test legacy data by triggering event manually.
+     */
+    public function test_submission_viewed_event() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+        $submissionid = 48;
+
+        $event = \mod_workshop\event\submission_viewed::create(array(
+                'objectid'      => $submissionid,
+                'context'       => $this->context,
+                'courseid'      => $this->course->id,
+                'relateduserid' => $user->id,
+                'other'         => array(
+                    'workshopid' => $this->workshop->id
+                )
+            )
+        );
+
+        // Trigger and capture the event.
+        $sink = $this->redirectEvents();
+        $event->trigger();
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the legacy log data is valid.
+        $expected = array($this->course->id, 'workshop', 'view submission',
+            'submission.php?cmid=' . $this->cm->id . '&id=' . $submissionid, $submissionid, $this->cm->id);
+        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
 
         $sink->close();

@@ -87,7 +87,7 @@ class DecisionStump extends WeightedClassifier
 
     public function __toString(): string
     {
-        return "IF {$this->column} {$this->operator} {$this->value} ".
+        return "IF ${this}->column ${this}->operator ${this}->value ".
             'THEN '.$this->binaryLabels[0].' '.
             'ELSE '.$this->binaryLabels[1];
     }

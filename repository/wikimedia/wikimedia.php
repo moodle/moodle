@@ -32,18 +32,6 @@ class wikimedia {
     private $_conn  = null;
     private $_param = array();
 
-    /** @var string API URL. */
-    protected $api;
-
-    /** @var string user ID. */
-    protected $userid;
-
-    /** @var string username. */
-    protected $username;
-
-    /** @var string token key. */
-    protected $token;
-
     public function __construct($url = '') {
         if (empty($url)) {
             $this->api = 'https://commons.wikimedia.org/w/api.php';
@@ -134,7 +122,7 @@ class wikimedia {
                 $short_path = str_replace($commons_main_dir, '', $image_url);
                 $extension = strtolower(pathinfo($short_path, PATHINFO_EXTENSION));
                 if (strcmp($extension, 'gif') == 0) {  //no thumb for gifs
-                    return $OUTPUT->image_url(file_extension_icon('.gif'))->out(false);
+                    return $OUTPUT->image_url(file_extension_icon('.gif', $thumb_width))->out(false);
                 }
                 $dir_parts = explode('/', $short_path);
                 $file_name = end($dir_parts);
@@ -233,7 +221,7 @@ class wikimedia {
                 }
                 $files_array[] = array(
                     'title'=>substr($title, 5),         //chop off 'File:'
-                    'thumbnail' => $OUTPUT->image_url(file_extension_icon(substr($title, 5)))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_extension_icon(substr($title, 5), WIKIMEDIA_THUMB_SIZE))->out(false),
                     'thumbnail_width' => WIKIMEDIA_THUMB_SIZE,
                     'thumbnail_height' => WIKIMEDIA_THUMB_SIZE,
                     'license' => 'cc-sa',

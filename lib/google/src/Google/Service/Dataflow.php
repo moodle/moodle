@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Dataflow extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -256,7 +255,6 @@ class Google_Service_Dataflow extends Google_Service
  *   $projects = $dataflowService->projects;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Projects_Resource extends Google_Service_Resource
 {
 }
@@ -269,7 +267,6 @@ class Google_Service_Dataflow_Projects_Resource extends Google_Service_Resource
  *   $jobs = $dataflowService->jobs;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ProjectsJobs_Resource extends Google_Service_Resource
 {
 
@@ -375,7 +372,6 @@ class Google_Service_Dataflow_ProjectsJobs_Resource extends Google_Service_Resou
  *   $messages = $dataflowService->messages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ProjectsJobsMessages_Resource extends Google_Service_Resource
 {
 
@@ -416,7 +412,6 @@ class Google_Service_Dataflow_ProjectsJobsMessages_Resource extends Google_Servi
  *   $workItems = $dataflowService->workItems;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ProjectsJobsWorkItems_Resource extends Google_Service_Resource
 {
 
@@ -457,7 +452,6 @@ class Google_Service_Dataflow_ProjectsJobsWorkItems_Resource extends Google_Serv
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ApproximateProgress extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -494,7 +488,6 @@ class Google_Service_Dataflow_ApproximateProgress extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_AutoscalingSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -521,7 +514,6 @@ class Google_Service_Dataflow_AutoscalingSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ComputationTopology extends Google_Collection
 {
   protected $collection_key = 'stateFamilies';
@@ -598,7 +590,6 @@ class Google_Service_Dataflow_ComputationTopology extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ConcatPosition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -626,7 +617,6 @@ class Google_Service_Dataflow_ConcatPosition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_CustomSourceLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -644,7 +634,6 @@ class Google_Service_Dataflow_CustomSourceLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_DataDiskAssignment extends Google_Collection
 {
   protected $collection_key = 'dataDisks';
@@ -672,7 +661,6 @@ class Google_Service_Dataflow_DataDiskAssignment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_DerivedSource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -700,7 +688,6 @@ class Google_Service_Dataflow_DerivedSource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Disk extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -736,7 +723,6 @@ class Google_Service_Dataflow_Disk extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_DynamicSourceSplit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -765,7 +751,6 @@ class Google_Service_Dataflow_DynamicSourceSplit extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Environment extends Google_Collection
 {
   protected $collection_key = 'workerPools';
@@ -857,27 +842,22 @@ class Google_Service_Dataflow_Environment extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_EnvironmentInternalExperiments extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_EnvironmentSdkPipelineOptions extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_EnvironmentUserAgent extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_EnvironmentVersion extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_FlattenInstruction extends Google_Collection
 {
   protected $collection_key = 'inputs';
@@ -897,7 +877,6 @@ class Google_Service_Dataflow_FlattenInstruction extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_InstructionInput extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -924,7 +903,6 @@ class Google_Service_Dataflow_InstructionInput extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_InstructionOutput extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -960,12 +938,10 @@ class Google_Service_Dataflow_InstructionOutput extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_InstructionOutputCodec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Job extends Google_Collection
 {
   protected $collection_key = 'steps';
@@ -1113,7 +1089,6 @@ class Google_Service_Dataflow_Job extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobExecutionInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1132,12 +1107,10 @@ class Google_Service_Dataflow_JobExecutionInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobExecutionInfoStages extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobExecutionStageInfo extends Google_Collection
 {
   protected $collection_key = 'stepName';
@@ -1156,7 +1129,6 @@ class Google_Service_Dataflow_JobExecutionStageInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobMessage extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1201,7 +1173,6 @@ class Google_Service_Dataflow_JobMessage extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobMetrics extends Google_Collection
 {
   protected $collection_key = 'metrics';
@@ -1230,12 +1201,10 @@ class Google_Service_Dataflow_JobMetrics extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_JobTransformNameMapping extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_KeyRangeDataDiskAssignment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1271,7 +1240,6 @@ class Google_Service_Dataflow_KeyRangeDataDiskAssignment extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_KeyRangeLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1325,7 +1293,6 @@ class Google_Service_Dataflow_KeyRangeLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_LeaseWorkItemRequest extends Google_Collection
 {
   protected $collection_key = 'workerCapabilities';
@@ -1380,7 +1347,6 @@ class Google_Service_Dataflow_LeaseWorkItemRequest extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_LeaseWorkItemResponse extends Google_Collection
 {
   protected $collection_key = 'workItems';
@@ -1400,7 +1366,6 @@ class Google_Service_Dataflow_LeaseWorkItemResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ListJobMessagesResponse extends Google_Collection
 {
   protected $collection_key = 'jobMessages';
@@ -1429,7 +1394,6 @@ class Google_Service_Dataflow_ListJobMessagesResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ListJobsResponse extends Google_Collection
 {
   protected $collection_key = 'jobs';
@@ -1458,7 +1422,6 @@ class Google_Service_Dataflow_ListJobsResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MapTask extends Google_Collection
 {
   protected $collection_key = 'instructions';
@@ -1496,7 +1459,6 @@ class Google_Service_Dataflow_MapTask extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MetricStructuredName extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1532,12 +1494,10 @@ class Google_Service_Dataflow_MetricStructuredName extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MetricStructuredNameContext extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MetricUpdate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1628,7 +1588,6 @@ class Google_Service_Dataflow_MetricUpdate extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MountedDataDisk extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1646,7 +1605,6 @@ class Google_Service_Dataflow_MountedDataDisk extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_MultiOutputInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1664,7 +1622,6 @@ class Google_Service_Dataflow_MultiOutputInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Package extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1691,7 +1648,6 @@ class Google_Service_Dataflow_Package extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ParDoInstruction extends Google_Collection
 {
   protected $collection_key = 'sideInputs';
@@ -1749,12 +1705,10 @@ class Google_Service_Dataflow_ParDoInstruction extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ParDoInstructionUserFn extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ParallelInstruction extends Google_Collection
 {
   protected $collection_key = 'outputs';
@@ -1842,7 +1796,6 @@ class Google_Service_Dataflow_ParallelInstruction extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_PartialGroupByKeyInstruction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1879,17 +1832,14 @@ class Google_Service_Dataflow_PartialGroupByKeyInstruction extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_PartialGroupByKeyInstructionInputElementCodec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_PartialGroupByKeyInstructionValueCombiningFn extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Position extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1953,7 +1903,6 @@ class Google_Service_Dataflow_Position extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_PubsubLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2016,7 +1965,6 @@ class Google_Service_Dataflow_PubsubLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ReadInstruction extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2035,7 +1983,6 @@ class Google_Service_Dataflow_ReadInstruction extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ReportWorkItemStatusRequest extends Google_Collection
 {
   protected $collection_key = 'workItemStatuses';
@@ -2073,7 +2020,6 @@ class Google_Service_Dataflow_ReportWorkItemStatusRequest extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ReportWorkItemStatusResponse extends Google_Collection
 {
   protected $collection_key = 'workItemServiceStates';
@@ -2093,7 +2039,6 @@ class Google_Service_Dataflow_ReportWorkItemStatusResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SeqMapTask extends Google_Collection
 {
   protected $collection_key = 'outputInfos';
@@ -2159,7 +2104,6 @@ class Google_Service_Dataflow_SeqMapTask extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SeqMapTaskOutputInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2187,12 +2131,10 @@ class Google_Service_Dataflow_SeqMapTaskOutputInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SeqMapTaskUserFn extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_ShellTask extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2219,7 +2161,6 @@ class Google_Service_Dataflow_ShellTask extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SideInputInfo extends Google_Collection
 {
   protected $collection_key = 'sources';
@@ -2257,12 +2198,10 @@ class Google_Service_Dataflow_SideInputInfo extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SideInputInfoKind extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Sink extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2289,17 +2228,14 @@ class Google_Service_Dataflow_Sink extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SinkCodec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SinkSpec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Source extends Google_Collection
 {
   protected $collection_key = 'baseSpecs';
@@ -2355,17 +2291,14 @@ class Google_Service_Dataflow_Source extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceBaseSpecs extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceCodec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceFork extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2414,7 +2347,6 @@ class Google_Service_Dataflow_SourceFork extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceGetMetadataRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2433,7 +2365,6 @@ class Google_Service_Dataflow_SourceGetMetadataRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceGetMetadataResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2452,7 +2383,6 @@ class Google_Service_Dataflow_SourceGetMetadataResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2488,7 +2418,6 @@ class Google_Service_Dataflow_SourceMetadata extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceOperationRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2517,7 +2446,6 @@ class Google_Service_Dataflow_SourceOperationRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceOperationResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2546,12 +2474,10 @@ class Google_Service_Dataflow_SourceOperationResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceSpec extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceSplitOptions extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2578,7 +2504,6 @@ class Google_Service_Dataflow_SourceSplitOptions extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceSplitRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2607,7 +2532,6 @@ class Google_Service_Dataflow_SourceSplitRequest extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceSplitResponse extends Google_Collection
 {
   protected $collection_key = 'shards';
@@ -2646,7 +2570,6 @@ class Google_Service_Dataflow_SourceSplitResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_SourceSplitShard extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2674,7 +2597,6 @@ class Google_Service_Dataflow_SourceSplitShard extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StateFamilyConfig extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2701,7 +2623,6 @@ class Google_Service_Dataflow_StateFamilyConfig extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Status extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -2738,12 +2659,10 @@ class Google_Service_Dataflow_Status extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StatusDetails extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_Step extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2779,12 +2698,10 @@ class Google_Service_Dataflow_Step extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StepProperties extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2833,7 +2750,6 @@ class Google_Service_Dataflow_StreamLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamingComputationRanges extends Google_Collection
 {
   protected $collection_key = 'rangeAssignments';
@@ -2862,7 +2778,6 @@ class Google_Service_Dataflow_StreamingComputationRanges extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamingComputationTask extends Google_Collection
 {
   protected $collection_key = 'dataDisks';
@@ -2901,7 +2816,6 @@ class Google_Service_Dataflow_StreamingComputationTask extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamingSetupTask extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2938,7 +2852,6 @@ class Google_Service_Dataflow_StreamingSetupTask extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamingSideInputLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2965,7 +2878,6 @@ class Google_Service_Dataflow_StreamingSideInputLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_StreamingStageLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2983,7 +2895,6 @@ class Google_Service_Dataflow_StreamingStageLocation extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_TaskRunnerSettings extends Google_Collection
 {
   protected $collection_key = 'oauthScopes';
@@ -3165,7 +3076,6 @@ class Google_Service_Dataflow_TaskRunnerSettings extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_TopologyConfig extends Google_Collection
 {
   protected $collection_key = 'dataDiskAssignments';
@@ -3204,12 +3114,10 @@ class Google_Service_Dataflow_TopologyConfig extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_TopologyConfigUserStageToComputationNameMap extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkItem extends Google_Collection
 {
   protected $collection_key = 'packages';
@@ -3352,7 +3260,6 @@ class Google_Service_Dataflow_WorkItem extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkItemServiceState extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3417,12 +3324,10 @@ class Google_Service_Dataflow_WorkItemServiceState extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkItemServiceStateHarnessData extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkItemStatus extends Google_Collection
 {
   protected $collection_key = 'metricUpdates';
@@ -3538,7 +3443,6 @@ class Google_Service_Dataflow_WorkItemStatus extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkerPool extends Google_Collection
 {
   protected $collection_key = 'packages';
@@ -3705,17 +3609,14 @@ class Google_Service_Dataflow_WorkerPool extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkerPoolMetadata extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkerPoolPoolArgs extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WorkerSettings extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3778,7 +3679,6 @@ class Google_Service_Dataflow_WorkerSettings extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Dataflow_WriteInstruction extends Google_Model
 {
   protected $internal_gapi_mappings = array(

@@ -14,70 +14,104 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Allow the user to search for learners within the singleview report.
+ * A small modal to search users within the gradebook.
  *
  * @module    gradereport_singleview/user
- * @copyright 2023 Mathew May <mathew.solutions>
+ * @copyright 2022 Mathew May <mathew.solutions>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-import UserSearch from 'core_user/comboboxsearch/user';
-import Url from 'core/url';
-import {renderForPromise, replaceNodeContents} from 'core/templates';
+
+import Pending from 'core/pending';
+import * as Templates from 'core/templates';
 import * as Repository from 'core_grades/searchwidget/repository';
+import * as WidgetBase from 'core_grades/searchwidget/basewidget';
+import Url from 'core/url';
+import $ from 'jquery';
+import * as Selectors from 'core_grades/searchwidget/selectors';
 
-export default class User extends UserSearch {
+/**
+ * Our entry point into starting to build the search widget.
+ * It'll eventually, based upon the listeners, open the search widget and allow filtering.
+ *
+ * @method init
+ */
+export const init = () => {
+    const pendingPromise = new Pending();
+    registerListenerEvents();
+    pendingPromise.resolve();
+};
 
-    constructor() {
-        super();
-    }
+/**
+ * Register user search widget related event listeners.
+ *
+ * @method registerListenerEvents
+ */
+const registerListenerEvents = () => {
+    let {bodyPromiseResolver, bodyPromise} = WidgetBase.promisesAndResolvers();
+    const dropdownMenuContainer = document.querySelector(Selectors.elements.getSearchWidgetDropdownSelector('user'));
 
-    static init() {
-        return new User();
-    }
+    // Handle the 'shown.bs.dropdown' event (Fired when the dropdown menu is fully displayed).
+    $(Selectors.elements.getSearchWidgetSelector('user')).on('show.bs.dropdown', async(e) => {
+        const courseID = e.relatedTarget.dataset.courseid;
+        const groupId = e.relatedTarget.dataset.groupid;
+        const actionBaseUrl = Url.relativeUrl('/grade/report/singleview/index.php', {item: 'user'}, false);
+        // Display a loading icon in the dropdown menu container until the body promise is resolved.
+        await WidgetBase.showLoader(dropdownMenuContainer);
 
-    /**
-     * Build the content then replace the node.
-     */
-    async renderDropdown() {
-        const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
-            users: this.getMatchedResults().slice(0, 5),
-            hasresults: this.getMatchedResults().length > 0,
-            searchterm: this.getSearchTerm(),
+        // If an error occurs while fetching the data, display the error within the dropdown menu.
+        const data = await Repository.userFetch(courseID, actionBaseUrl, groupId).catch(async(e) => {
+            const errorTemplateData = {
+                'errormessage': e.message
+            };
+            bodyPromiseResolver(
+                await Templates.render('core_grades/searchwidget/error', errorTemplateData)
+            );
         });
-        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
-    }
 
-    /**
-     * Stub out default required function unused here.
-     * @returns {null}
-     */
-    selectAllResultsLink() {
-        return null;
-    }
+        // Early return if there is no module data.
+        if (data === []) {
+            return;
+        }
 
-    /**
-     * Build up the view all link that is dedicated to a particular result.
-     *
-     * @param {Number} userID The ID of the user selected.
-     * @returns {string|*}
-     */
-    selectOneLink(userID) {
-        return Url.relativeUrl('/grade/report/singleview/index.php', {
-            id: this.courseID,
-            searchvalue: this.getSearchTerm(),
-            item: 'user',
-            userid: userID,
-        }, false);
-    }
+        await WidgetBase.init(
+            dropdownMenuContainer,
+            bodyPromise,
+            data.users,
+            searchUsers()
+        );
 
-    /**
-     * Get the data we will be searching against in this component.
-     *
-     * @returns {Promise<*>}
-     */
-    fetchDataset() {
-        // Small typing checks as sometimes groups don't exist therefore the element returns a empty string.
-        const gts = typeof (this.groupID) === "string" && this.groupID === '' ? 0 : this.groupID;
-        return Repository.userFetch(this.courseID, gts).then((r) => r.users);
-    }
-}
+        // Resolvers for passed functions in the dropdown menu creation.
+        bodyPromiseResolver(Templates.render('core_grades/searchwidget/user/usersearch_body', []));
+    });
+
+    // Handle the 'hide.bs.dropdown' event (Fired when the dropdown menu is being closed).
+    $(Selectors.elements.getSearchWidgetSelector('user')).on('hide.bs.dropdown', () => {
+        // Reset the state once the user menu dropdown is closed.
+        dropdownMenuContainer.innerHTML = '';
+    });
+};
+
+/**
+ * Define how we want to search and filter users when the user decides to input a search value.
+ *
+ * @method registerListenerEvents
+ * @returns {function(): function(*, *): (*)}
+ */
+const searchUsers = () => {
+    return () => {
+        return (users, searchTerm) => {
+            if (searchTerm === '') {
+                return users;
+            }
+            searchTerm = searchTerm.toLowerCase();
+            const searchResults = [];
+            users.forEach((user) => {
+                const userName = user.fullname.toLowerCase();
+                if (userName.includes(searchTerm)) {
+                    searchResults.push(user);
+                }
+            });
+            return searchResults;
+        };
+    };
+};

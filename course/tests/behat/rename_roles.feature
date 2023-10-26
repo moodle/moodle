@@ -19,11 +19,13 @@ Feature: Rename roles within a course
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | teacher |
       | student1 | C1 | student |
-    And I am on the "Course 1" "renameroles" page logged in as "teacher1"
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    When I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | Tutor |
       | Your word for 'Student' | Learner |
-    And I press "Save"
+    And I press "Save and display"
     And I follow "Switch role to..." in the user menu
     Then "Tutor" "button" should exist
     And "Learner" "button" should exist
@@ -40,11 +42,12 @@ Feature: Rename roles within a course
     And I press "Enrol users"
     And the "Assign role" select box should contain "Learner (Student)"
     And I click on "Cancel" "button" in the "Enrol users" "dialogue"
-    And I am on the "Course 1" "renameroles" page
+    And I am on "Course 1" course homepage
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Your word for 'Non-editing teacher' | |
       | Your word for 'Student' | |
-    And I press "Save"
+    And I press "Save and display"
     And I follow "Switch role to..." in the user menu
     And I should see "Teacher"
     And "Student" "button" should exist

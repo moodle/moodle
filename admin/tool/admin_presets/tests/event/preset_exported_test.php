@@ -55,5 +55,7 @@ class preset_exported_test extends \advanced_testcase {
         $this->assertInstanceOf('\tool_admin_presets\event\preset_exported', $event);
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($presetid, $event->objectid);
+        $expected = [0, 'tool_admin_presets', 'export', '', $presetid, 0];
+        $this->assertEventLegacyLogData($expected, $event);
     }
 }

@@ -39,7 +39,7 @@ class Lookup
             $lookupColumns = self::columnCount($lookupVector);
         }
 
-        $resultVector = self::verifyResultVector($resultVector ?? $lookupVector);
+        $resultVector = self::verifyResultVector($lookupVector, $resultVector);
 
         if ($lookupRows === 2 && !$hasResultVector) {
             $resultVector = array_pop($lookupVector);
@@ -78,8 +78,12 @@ class Lookup
         return $lookupVector;
     }
 
-    private static function verifyResultVector(array $resultVector): array
+    private static function verifyResultVector(array $lookupVector, $resultVector)
     {
+        if ($resultVector === null) {
+            $resultVector = $lookupVector;
+        }
+
         $resultRows = self::rowCount($resultVector);
         $resultColumns = self::columnCount($resultVector);
 

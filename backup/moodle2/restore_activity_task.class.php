@@ -200,11 +200,6 @@ abstract class restore_activity_task extends restore_task {
             }
         }
 
-        // The xAPI state (conditionally).
-        if ($this->get_setting_value('xapistate')) {
-            $this->add_step(new restore_xapistate_structure_step('activity_xapistate', 'xapistate.xml'));
-        }
-
         // At the end, mark it as built
         $this->built = true;
     }

@@ -16,12 +16,12 @@
 
 namespace mod_bigbluebuttonbn\local\proxy;
 
-use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\exceptions\bigbluebutton_exception;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
 use mod_bigbluebuttonbn\plugin;
 use moodle_url;
+use SimpleXMLElement;
 
 /**
  * The abstract proxy base class.
@@ -52,27 +52,16 @@ abstract class proxy_base {
      * @param string $action
      * @param array $data
      * @param array $metadata
-     * @param int|null $instanceid
      * @return string
      */
-    protected static function action_url(
-        string $action = '',
-        array $data = [],
-        array $metadata = [],
-        ?int $instanceid = null
-    ): string {
+    protected static function action_url(string $action = '', array $data = [], array $metadata = []): string {
         $baseurl = self::sanitized_url() . $action . '?';
-        ['data' => $additionaldata, 'metadata' => $additionalmetadata] =
-            extension::action_url_addons($action, $data, $metadata, $instanceid);
-        $data = array_merge($data, $additionaldata ?? []);
-        $metadata = array_merge($metadata, $additionalmetadata ?? []);
-
         $metadata = array_combine(array_map(function($k) {
             return 'meta_' . $k;
         }, array_keys($metadata)), $metadata);
+
         $params = http_build_query($data + $metadata, '', '&');
-        $checksum = self::get_checksum($action, $params);
-        return $baseurl . $params . '&checksum=' . $checksum;
+        return $baseurl . $params . '&checksum=' . sha1($action . $params . self::sanitized_secret());
     }
 
     /**
@@ -80,7 +69,7 @@ abstract class proxy_base {
      *
      * @return string
      */
-    protected static function sanitized_url(): string {
+    protected static function sanitized_url() {
         $serverurl = trim(config::get('server_url'));
         if (PHPUNIT_TEST) {
             $serverurl = (new moodle_url(TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER))->out(false);
@@ -106,7 +95,7 @@ abstract class proxy_base {
     /**
      * Throw an exception if there is a problem in the returned XML value
      *
-     * @param \SimpleXMLElement|bool $xml
+     * @param SimpleXMLElement|bool $xml
      * @param array|null $additionaldetails
      * @throws bigbluebutton_exception
      * @throws server_not_available_exception
@@ -175,14 +164,12 @@ abstract class proxy_base {
      * @param string $action
      * @param array $data
      * @param array $metadata
-     * @param int|null $instanceid
-     * @return null|bool|\SimpleXMLElement
+     * @return null|bool|SimpleXMLElement
      */
     protected static function fetch_endpoint_xml(
         string $action,
         array $data = [],
-        array $metadata = [],
-        ?int $instanceid = null
+        array $metadata = []
     ) {
         if (PHPUNIT_TEST && !defined('TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER')) {
             return true; // In case we still use fetch and mock server is not defined, this prevents
@@ -190,17 +177,6 @@ abstract class proxy_base {
             // for example.
         }
         $curl = new curl();
-        return $curl->get(self::action_url($action, $data, $metadata, $instanceid));
-    }
-
-    /**
-     * Get checksum
-     *
-     * @param string $action
-     * @param string $params
-     * @return string
-     */
-    public static function get_checksum(string $action, string $params): string {
-        return hash(config::get('checksum_algorithm'), $action . $params . self::sanitized_secret());
+        return $curl->get(self::action_url($action, $data, $metadata));
     }
 }

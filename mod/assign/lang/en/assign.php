@@ -134,7 +134,7 @@ $string['collapsegradepanel'] = 'Collapse grade panel';
 $string['collapsereviewpanel'] = 'Collapse review panel';
 $string['comment'] = 'Comment';
 $string['completiondetail:submit'] = 'Make a submission';
-$string['completionsubmit'] = 'Make a submission';
+$string['completionsubmit'] = 'Student must make a submission';
 $string['conversionexception'] = 'Could not convert assignment. Exception was: {$a}.';
 $string['configshowrecentsubmissions'] = 'Everyone can see notifications of submissions in recent activity reports.';
 $string['confirmsubmission'] = 'Are you sure you want to submit your work for grading? You will not be able to make any more changes.';
@@ -662,3 +662,9 @@ $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
+
+// Deprecated since Moodle 3.11.
+$string['allowsubmissionsfromdatesummary'] = 'This assignment will accept submissions from <strong>{$a}</strong>';
+$string['allowsubmissionsanddescriptionfromdatesummary'] = 'The assignment details and submission form will be available from <strong>{$a}</strong>';
+$string['relativedatessubmissionduedateafter'] = '{$a->datediffstr} after course start';
+$string['relativedatessubmissionduedatebefore'] = '{$a->datediffstr} before course start';

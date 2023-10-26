@@ -14,8 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use mod_quiz\local\reports\attempts_report;
-use mod_quiz\local\reports\attempts_report_options_form;
+/**
+ * This file defines the setting form for the quiz overview report.
+ *
+ * @package   quiz_overview
+ * @copyright 2008 Jamie Pratt
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->dirroot . '/mod/quiz/report/attemptsreport_form.php');
+
 
 /**
  * Quiz overview report settings form.
@@ -23,13 +34,13 @@ use mod_quiz\local\reports\attempts_report_options_form;
  * @copyright 2008 Jamie Pratt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_overview_settings_form extends attempts_report_options_form {
+class quiz_overview_settings_form extends mod_quiz_attempts_report_form {
 
     protected function other_attempt_fields(MoodleQuickForm $mform) {
         if (has_capability('mod/quiz:regrade', $this->_customdata['context'])) {
             $mform->addElement('advcheckbox', 'onlyregraded', get_string('reportshowonly', 'quiz'),
                     get_string('optonlyregradedattempts', 'quiz_overview'));
-            $mform->disabledIf('onlyregraded', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
+            $mform->disabledIf('onlyregraded', 'attempts', 'eq', quiz_attempts_report::ENROLLED_WITHOUT);
         }
     }
 

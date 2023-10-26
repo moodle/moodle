@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_Translate extends Google_Service
 {
 
@@ -142,7 +141,6 @@ class Google_Service_Translate extends Google_Service
  *   $detections = $translateService->detections;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Translate_Detections_Resource extends Google_Service_Resource
 {
 
@@ -169,7 +167,6 @@ class Google_Service_Translate_Detections_Resource extends Google_Service_Resour
  *   $languages = $translateService->languages;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Translate_Languages_Resource extends Google_Service_Resource
 {
 
@@ -199,7 +196,6 @@ class Google_Service_Translate_Languages_Resource extends Google_Service_Resourc
  *   $translations = $translateService->translations;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_Translate_Translations_Resource extends Google_Service_Resource
 {
 
@@ -228,7 +224,6 @@ class Google_Service_Translate_Translations_Resource extends Google_Service_Reso
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_DetectionsListResponse extends Google_Collection
 {
   protected $collection_key = 'detections';
@@ -248,7 +243,6 @@ class Google_Service_Translate_DetectionsListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_DetectionsResourceItems extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -284,7 +278,6 @@ class Google_Service_Translate_DetectionsResourceItems extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_LanguagesListResponse extends Google_Collection
 {
   protected $collection_key = 'languages';
@@ -304,7 +297,6 @@ class Google_Service_Translate_LanguagesListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_LanguagesResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -331,7 +323,6 @@ class Google_Service_Translate_LanguagesResource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_TranslationsListResponse extends Google_Collection
 {
   protected $collection_key = 'translations';
@@ -351,7 +342,6 @@ class Google_Service_Translate_TranslationsListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_Translate_TranslationsResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(

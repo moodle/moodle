@@ -107,6 +107,20 @@ class marker_updated extends base {
     }
 
     /**
+     * Return legacy data for add_to_log().
+     *
+     * @return array
+     */
+    protected function get_legacy_logdata() {
+        $user = $this->get_record_snapshot('user', $this->relateduserid);
+        $marker = $this->get_record_snapshot('user', $this->other['markerid']);
+        $a = array('id' => $user->id, 'fullname' => fullname($user), 'marker' => fullname($marker));
+        $logmessage = get_string('setmarkerallocationforlog', 'assign', $a);
+        $this->set_legacy_logdata('set marking allocation', $logmessage);
+        return parent::get_legacy_logdata();
+    }
+
+    /**
      * Custom validation.
      *
      * @throws \coding_exception

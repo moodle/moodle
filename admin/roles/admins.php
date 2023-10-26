@@ -25,10 +25,8 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-$addusersaction = optional_param('add', false, PARAM_BOOL);
-$addusers = optional_param('addusers', '', PARAM_SEQUENCE);
-$removeusersaction = optional_param('remove', false, PARAM_BOOL);
-$removeusers = optional_param('removeusers', '', PARAM_SEQUENCE);
+$confirmadd = optional_param('confirmadd', 0, PARAM_INT);
+$confirmdel = optional_param('confirmdel', 0, PARAM_INT);
 
 $PAGE->set_url('/admin/roles/admins.php');
 
@@ -40,47 +38,33 @@ if (!is_siteadmin()) {
 $admisselector = new core_role_admins_existing_selector();
 $potentialadmisselector = new core_role_admins_potential_selector();
 
-if ($addusersaction) {
+if (optional_param('add', false, PARAM_BOOL) and confirm_sesskey()) {
     if ($userstoadd = $potentialadmisselector->get_selected_users()) {
-        $usernames = array_map(static function(stdClass $user) use ($potentialadmisselector): string {
-            return $potentialadmisselector->output_user($user);
-        }, $userstoadd);
-
-        $userids = implode(',', array_keys($usernames));
-
+        $user = reset($userstoadd);
+        $username = $potentialadmisselector->output_user($user);
         echo $OUTPUT->header();
-        echo $OUTPUT->confirm(get_string('confirmaddadmins', 'core_role') . html_writer::alist($usernames),
-            new moodle_url('/admin/roles/admins.php', ['addusers' => $userids, 'sesskey' => sesskey()]), $PAGE->url);
+        $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmadd'=>$user->id, 'sesskey'=>sesskey()));
+        echo $OUTPUT->confirm(get_string('confirmaddadmin', 'core_role', $username), $yesurl, $PAGE->url);
         echo $OUTPUT->footer();
         die;
     }
 
-} else if ($removeusersaction) {
+} else if (optional_param('remove', false, PARAM_BOOL) and confirm_sesskey()) {
     if ($userstoremove = $admisselector->get_selected_users()) {
-
-        // Can not remove self.
-        $userstoremove = array_filter($userstoremove, static function(int $userid): bool {
-            global $USER;
-            return $userid != $USER->id;
-        }, ARRAY_FILTER_USE_KEY);
-
-        if ($userstoremove) {
-            $usernames = array_map(static function(stdClass $user) use ($admisselector): string {
-                return $admisselector->output_user($user);
-            }, $userstoremove);
-
-            $userids = implode(',', array_keys($usernames));
-
+        $user = reset($userstoremove);
+        if ($USER->id == $user->id) {
+            // Can not remove self.
+        } else {
+            $username = $admisselector->output_user($user);
             echo $OUTPUT->header();
-            echo $OUTPUT->confirm(get_string('confirmremoveadmins', 'core_role') . html_writer::alist($usernames),
-                new moodle_url('/admin/roles/admins.php', ['removeusers' => $userids, 'sesskey' => sesskey()]), $PAGE->url);
+            $yesurl = new moodle_url('/admin/roles/admins.php', array('confirmdel'=>$user->id, 'sesskey'=>sesskey()));
+            echo $OUTPUT->confirm(get_string('confirmdeladmin', 'core_role', $username), $yesurl, $PAGE->url);
             echo $OUTPUT->footer();
             die;
         }
     }
 
-} else if (optional_param('main', false, PARAM_BOOL) && confirm_sesskey()) {
-    // Setting main administrator will choose the first selected user in the case of multiple selections.
+} else if (optional_param('main', false, PARAM_BOOL) and confirm_sesskey()) {
     if ($newmain = $admisselector->get_selected_users()) {
         $newmain = reset($newmain);
         $newmain = $newmain->id;
@@ -107,7 +91,7 @@ if ($addusersaction) {
         }
     }
 
-} else if ($addusers && confirm_sesskey()) {
+} else if ($confirmadd and confirm_sesskey()) {
     $admins = array();
     foreach (explode(',', $CFG->siteadmins) as $admin) {
         $admin = (int)$admin;
@@ -118,9 +102,7 @@ if ($addusersaction) {
 
     $logstringold = implode(', ', $admins);
 
-    foreach (explode(',', $addusers) as $userid) {
-        $admins[$userid] = $userid;
-    }
+    $admins[$confirmadd] = $confirmadd;
 
     $logstringnew = implode(', ', $admins);
 
@@ -129,7 +111,7 @@ if ($addusersaction) {
 
     redirect($PAGE->url);
 
-} else if ($removeusers && confirm_sesskey()) {
+} else if ($confirmdel and confirm_sesskey() and $confirmdel != $USER->id) {
     $admins = array();
     foreach (explode(',', $CFG->siteadmins) as $admin) {
         $admin = (int)$admin;
@@ -140,12 +122,7 @@ if ($addusersaction) {
 
     $logstringold = implode(', ', $admins);
 
-    // Can not remove self.
-    foreach (explode(',', $removeusers) as $userid) {
-        if ($userid != $USER->id) {
-            unset($admins[$userid]);
-        }
-    }
+    unset($admins[$confirmdel]);
 
     $logstringnew = implode(', ', $admins);
 

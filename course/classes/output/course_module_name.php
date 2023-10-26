@@ -24,10 +24,9 @@
 
 namespace core_course\output;
 
-use cm_info;
 use context_module;
-use core_external\external_api;
 use lang_string;
+use cm_info;
 
 /**
  * Class to prepare a course module name for display and in-place editing
@@ -71,7 +70,7 @@ class course_module_name extends \core\output\inplace_editable {
     /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @param renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
@@ -94,7 +93,7 @@ class course_module_name extends \core\output\inplace_editable {
     public static function update($itemid, $newvalue) {
         $context = context_module::instance($itemid);
         // Check access.
-        external_api::validate_context($context);
+        \external_api::validate_context($context);
         require_capability('moodle/course:manageactivities', $context);
 
         // Trim module name and Update value.

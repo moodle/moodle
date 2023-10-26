@@ -129,7 +129,7 @@ function xmldb_main_install() {
         'sessiontimeout'        => 8 * 60 * 60, // Must be present during roles installation.
         'stringfilters'         => '', // These two are managed in a strange way by the filters.
         'filterall'             => 0, // setting page, so have to be initialised here.
-        'texteditors'           => 'tiny,atto,tinymce,textarea',
+        'texteditors'           => 'atto,tinymce,textarea',
         'antiviruses'           => '',
         'media_plugins_sortorder' => 'videojs,youtube',
         'upgrade_extracreditweightsstepignored' => 1, // New installs should not run this upgrade step.

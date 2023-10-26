@@ -35,15 +35,6 @@ defined('MOODLE_INTERNAL') || die;
  */
 class bulk_insert extends element {
 
-    /** @var string $applyname To store the "apply" suffix. */
-    protected $applyname;
-
-    /** @var string $selectname To store the "type" suffix. */
-    protected $selectname;
-
-    /** @var string $insertname To store the "value" suffix. */
-    protected $insertname;
-
     /**
      * Constructor
      *

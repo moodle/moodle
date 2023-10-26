@@ -35,8 +35,7 @@ class mod_folder_renderer extends plugin_renderer_base {
      * @return string
      */
     public function display_folder(stdClass $folder) {
-        static $treecounter = 0;
-
+        $output = '';
         $folderinstances = get_fast_modinfo($folder->course)->get_instances_of('folder');
         if (!isset($folderinstances[$folder->id]) ||
                 !($cm = $folderinstances[$folder->id]) ||
@@ -44,37 +43,43 @@ class mod_folder_renderer extends plugin_renderer_base {
             // Some error in parameters.
             // Don't throw any errors in renderer, just return empty string.
             // Capability to view module must be checked before calling renderer.
-            return '';
+            return $output;
         }
 
-        $data = [];
         if (trim($folder->intro)) {
             if ($folder->display == FOLDER_DISPLAY_INLINE && $cm->showdescription) {
                 // for "display inline" do not filter, filters run at display time.
-                $data['intro'] = format_module_intro('folder', $folder, $cm->id, false);
+                $output .= format_module_intro('folder', $folder, $cm->id, false);
             }
         }
-        $buttons = [];
+        $buttons = '';
         // Display the "Edit" button if current user can edit folder contents.
         // Do not display it on the course page for the teachers because there
-        // is an "Edit settings" option in the action menu with the same functionality.
+        // is an "Edit settings" button right next to it with the same functionality.
         $canmanagefolderfiles = has_capability('mod/folder:managefiles', $context);
         $canmanagecourseactivities = has_capability('moodle/course:manageactivities', $context);
         if ($canmanagefolderfiles && ($folder->display != FOLDER_DISPLAY_INLINE || !$canmanagecourseactivities)) {
             $editbutton = new single_button(new moodle_url('/mod/folder/edit.php', ['id' => $cm->id]),
-                get_string('edit'), 'post', single_button::BUTTON_PRIMARY);
+                get_string('edit'), 'post', true);
             $editbutton->class = 'navitem';
-            $data['edit_button'] = $editbutton->export_for_template($this->output);
-            $data['hasbuttons'] = true;
+            $buttons .= $this->render($editbutton);
         }
 
+        // Do not append the edit button on the course page.
         $downloadable = folder_archive_available($folder, $cm);
         if ($downloadable) {
             $downloadbutton = new single_button(new moodle_url('/mod/folder/download_folder.php', ['id' => $cm->id]),
                 get_string('downloadfolder', 'folder'), 'get');
             $downloadbutton->class = 'navitem ml-auto';
-            $data['download_button'] = $downloadbutton->export_for_template($this->output);
-            $data['hasbuttons'] = true;
+            $buttons .= $this->render($downloadbutton);
+        }
+
+        if ($buttons) {
+            $output .= $this->output->container_start("container-fluid tertiary-navigation");
+            $output .= $this->output->container_start("row");
+            $output .= $buttons;
+            $output .= $this->output->container_end();
+            $output .= $this->output->container_end();
         }
 
         $foldertree = new folder_tree($folder, $cm);
@@ -82,51 +87,59 @@ class mod_folder_renderer extends plugin_renderer_base {
             // Display module name as the name of the root directory.
             $foldertree->dir['dirname'] = $cm->get_formatted_name(array('escape' => false));
         }
+        $output .= $this->output->container_start("box generalbox pt-0 pb-3 foldertree");
+        $output .= $this->render($foldertree);
+        $output .= $this->output->container_end();
 
-        $data['id'] = 'folder_tree'. ($treecounter++);
-        $data['showexpanded'] = !empty($foldertree->folder->showexpanded);
-        $data['dir'] = $this->renderable_tree_elements($foldertree, ['files' => [], 'subdirs' => [$foldertree->dir]]);
+        return $output;
+    }
 
-        return $this->render_from_template('mod_folder/folder', $data);
+    public function render_folder_tree(folder_tree $tree) {
+        static $treecounter = 0;
+
+        $content = '';
+        $id = 'folder_tree'. ($treecounter++);
+        $content .= '<div id="'.$id.'" class="filemanager">';
+        $content .= $this->htmllize_tree($tree, array('files' => array(), 'subdirs' => array($tree->dir)));
+        $content .= '</div>';
+        $showexpanded = true;
+        if (empty($tree->folder->showexpanded)) {
+            $showexpanded = false;
+        }
+        $this->page->requires->js_init_call('M.mod_folder.init_tree', array($id, $showexpanded));
+        return $content;
     }
 
     /**
      * Internal function - creates htmls structure suitable for YUI tree.
-     *
-     * @deprecated since Moodle 4.3
      */
     protected function htmllize_tree($tree, $dir) {
         global $CFG;
-
-        debugging(
-            'Method htmllize_tree() is deprecated. Please use renderable_tree_elements instead',
-            DEBUG_DEVELOPER
-        );
 
         if (empty($dir['subdirs']) and empty($dir['files'])) {
             return '';
         }
         $result = '<ul>';
         foreach ($dir['subdirs'] as $subdir) {
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
+            $image = $this->output->pix_icon(file_folder_icon(24), $subdir['dirname'], 'moodle');
             $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
+                    html_writer::tag('span', s($subdir['dirname']), array('class' => 'fp-filename'));
             $filename = html_writer::tag('div', $filename, array('class' => 'fp-filename-icon'));
             $result .= html_writer::tag('li', $filename. $this->htmllize_tree($tree, $subdir));
         }
         foreach ($dir['files'] as $file) {
             $filename = $file->get_filename();
             $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
-                $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
+                    $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
             $filenamedisplay = clean_filename($filename);
             if (file_extension_in_typegroup($filename, 'web_image')) {
                 $image = $url->out(false, array('preview' => 'tinyicon', 'oid' => $file->get_timemodified()));
                 $image = html_writer::empty_tag('img', array('src' => $image));
             } else {
-                $image = $this->output->pix_icon(file_file_icon($file), $filenamedisplay, 'moodle');
+                $image = $this->output->pix_icon(file_file_icon($file, 24), $filenamedisplay, 'moodle');
             }
             $filename = html_writer::tag('span', $image, array('class' => 'fp-icon')).
-                html_writer::tag('span', $filenamedisplay, array('class' => 'fp-filename'));
+                    html_writer::tag('span', $filenamedisplay, array('class' => 'fp-filename'));
             $urlparams = null;
             if ($tree->folder->forcedownload) {
                 $urlparams = ['forcedownload' => 1];
@@ -140,57 +153,6 @@ class mod_folder_renderer extends plugin_renderer_base {
         $result .= '</ul>';
 
         return $result;
-    }
-
-    /**
-     * Internal function - Creates elements structure suitable for mod_folder/folder template.
-     *
-     * @param folder_tree $tree The folder tree to work with.
-     * @param array $dir The subdir and files structure to convert into a tree.
-     * @return array The structure to be rendered by mod_folder/folder template.
-     */
-    protected function renderable_tree_elements(folder_tree $tree, array $dir): array {
-        if (empty($dir['subdirs']) && empty($dir['files'])) {
-            return [];
-        }
-        $elements = [];
-        foreach ($dir['subdirs'] as $subdir) {
-            $htmllize = $this->renderable_tree_elements($tree, $subdir);
-            $image = $this->output->pix_icon(file_folder_icon(), $subdir['dirname'], 'moodle');
-            $elements[] = [
-                'name' => $subdir['dirname'],
-                'icon' => $image,
-                'subdirs' => $htmllize,
-                'hassubdirs' => !empty($htmllize),
-            ];
-        }
-        foreach ($dir['files'] as $file) {
-            $filename = $file->get_filename();
-            $filenamedisplay = clean_filename($filename);
-
-            $url = moodle_url::make_pluginfile_url($file->get_contextid(), $file->get_component(),
-                $file->get_filearea(), $file->get_itemid(), $file->get_filepath(), $filename, false);
-            if (file_extension_in_typegroup($filename, 'web_image')) {
-                $image = $url->out(false, ['preview' => 'tinyicon', 'oid' => $file->get_timemodified()]);
-                $image = html_writer::empty_tag('img', ['src' => $image]);
-            } else {
-                $image = $this->output->pix_icon(file_file_icon($file), $filenamedisplay, 'moodle');
-            }
-
-            if ($tree->folder->forcedownload) {
-                $url->param('forcedownload', 1);
-            }
-
-            $elements[] = [
-                'name' => $filenamedisplay,
-                'icon' => $image,
-                'url' => $url,
-                'subdirs' => null,
-                'hassubdirs' => false,
-            ];
-        }
-
-        return $elements;
     }
 }
 

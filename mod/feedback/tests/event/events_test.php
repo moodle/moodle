@@ -126,6 +126,12 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($this->eventcourse, $event->get_record_snapshot('course', $event->courseid));
         $this->assertEquals($this->eventfeedback, $event->get_record_snapshot('feedback', $event->other['instanceid']));
 
+        // Test legacy data.
+        $arr = array($this->eventcourse->id, 'feedback', 'delete', 'view.php?id=' . $this->eventcm->id, $this->eventfeedback->id,
+                $this->eventfeedback->id);
+        $this->assertEventLegacyLogData($arr, $event);
+        $this->assertEventContextNotUsed($event);
+
         // Test can_view() .
         $this->setUser($this->eventuser);
         $this->assertFalse($event->can_view());
@@ -232,6 +238,9 @@ class events_test extends \advanced_testcase {
         $this->assertTrue($event->can_view());
         $this->assertDebuggingCalled();
 
+        // Test legacy data.
+        $this->assertEventLegacyLogData(null, $event);
+
         // Create a temporary response, with anonymous set to no.
         $response = new \stdClass();
         $response->feedback = $this->eventcm->instance;
@@ -252,6 +261,11 @@ class events_test extends \advanced_testcase {
         $events = $sink->get_events();
         $event = array_pop($events); // Response submitted feedback event.
         $sink->close();
+
+        // Test legacy data.
+        $arr = array($this->eventcourse->id, 'feedback', 'submit', 'view.php?id=' . $this->eventcm->id, $this->eventfeedback->id,
+                     $this->eventcm->id, $this->eventuser->id);
+        $this->assertEventLegacyLogData($arr, $event);
 
         // Test can_view().
         $this->assertTrue($event->can_view());

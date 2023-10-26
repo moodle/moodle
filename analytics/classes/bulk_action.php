@@ -60,9 +60,6 @@ class bulk_action extends action {
         $this->url = new \moodle_url('/report/insights/action.php', $params);
 
         $label = $OUTPUT->render($icon) . $this->text;
-        $this->actionlink = new \single_button($this->url, $label,
-            'get',
-            $primary ? \single_button::BUTTON_PRIMARY : \single_button::BUTTON_SECONDARY,
-            $attributes);
+        $this->actionlink = new \single_button($this->url, $label, 'get', $primary, $attributes);
     }
 }

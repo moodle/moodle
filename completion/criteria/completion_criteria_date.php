@@ -54,7 +54,7 @@ class completion_criteria_date extends completion_criteria {
     /**
      * Add appropriate form elements to the critieria form
      *
-     * @param MoodleQuickForm $mform Moodle forms object
+     * @param moodleform $mform Moodle forms object
      * @param stdClass $data not used
      */
     public function config_form_display(&$mform, $data = null) {

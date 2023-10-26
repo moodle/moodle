@@ -14,11 +14,21 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Generator for the core_h5p subsystem.
+ *
+ * @package    core_h5p
+ * @category   test
+ * @copyright  2019 Victor Deniz <victor@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 use core_h5p\local\library\autoloader;
 use core_h5p\core;
 use core_h5p\player;
 use core_h5p\factory;
-use core_xapi\local\statement\item_activity;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Generator for the core_h5p subsystem.
@@ -159,10 +169,9 @@ class core_h5p_generator extends \component_generator_base {
      * Populate H5P database tables with relevant data to simulate the process of adding H5P content.
      *
      * @param bool $createlibraryfiles Whether to create and store library files on the filesystem
-     * @param array|null $filerecord The file associated to the H5P entry.
      * @return stdClass An object representing the added H5P records
      */
-    public function generate_h5p_data(bool $createlibraryfiles = false, ?array $filerecord = null): stdClass {
+    public function generate_h5p_data(bool $createlibraryfiles = false): stdClass {
         // Create libraries.
         $mainlib = $libraries[] = $this->create_library_record('MainLibrary', 'Main Lib', 1, 0, 1, '', null,
             'http://tutorial.org', 'http://example.org');
@@ -180,7 +189,7 @@ class core_h5p_generator extends \component_generator_base {
         }
 
         // Create h5p content.
-        $h5p = $this->create_h5p_record($mainlib->id, null, null, $filerecord);
+        $h5p = $this->create_h5p_record($mainlib->id);
         // Create h5p content library dependencies.
         $this->create_contents_libraries_record($h5p, $mainlib->id);
         $this->create_contents_libraries_record($h5p, $lib1->id);
@@ -280,11 +289,9 @@ class core_h5p_generator extends \component_generator_base {
      * @param int $mainlibid The ID of the content's main library
      * @param string $jsoncontent The content in json format
      * @param string $filtered The filtered content parameters
-     * @param array|null $filerecord The file associated to the H5P entry.
      * @return int The ID of the added record
      */
-    public function create_h5p_record(int $mainlibid, string $jsoncontent = null, string $filtered = null,
-            ?array $filerecord = null): int {
+    public function create_h5p_record(int $mainlibid, string $jsoncontent = null, string $filtered = null): int {
         global $DB;
 
         if (!$jsoncontent) {
@@ -305,46 +312,18 @@ class core_h5p_generator extends \component_generator_base {
             );
         }
 
-        // Load the H5P file into DB.
-        $pathnamehash = sha1('pathname');
-        $contenthash = sha1('content');
-        if ($filerecord) {
-            $fs = get_file_storage();
-            if (!$fs->get_file(
-                    $filerecord['contextid'],
-                    $filerecord['component'],
-                    $filerecord['filearea'],
-                    $filerecord['itemid'],
-                    $filerecord['filepath'],
-                    $filerecord['filename'])) {
-                $file = $fs->create_file_from_string($filerecord, $jsoncontent);
-                $pathnamehash = $file->get_pathnamehash();
-                $contenthash = $file->get_contenthash();
-                if (array_key_exists('addxapistate', $filerecord) && $filerecord['addxapistate']) {
-                    // Save some xAPI state associated to this H5P content.
-                    $params = [
-                        'component' => $filerecord['component'],
-                        'activity' => item_activity::create_from_id($filerecord['contextid']),
-                    ];
-                    global $CFG;
-                    require_once($CFG->dirroot.'/lib/xapi/tests/helper.php');
-                    \core_xapi\test_helper::create_state($params, true);
-                }
-            }
-        }
-
         return $DB->insert_record(
             'h5p',
-            [
+            array(
                 'jsoncontent' => $jsoncontent,
                 'displayoptions' => 8,
                 'mainlibraryid' => $mainlibid,
                 'timecreated' => time(),
                 'timemodified' => time(),
                 'filtered' => $filtered,
-                'pathnamehash' => $pathnamehash,
-                'contenthash' => $contenthash,
-            ]
+                'pathnamehash' => sha1('pathname'),
+                'contenthash' => sha1('content')
+            )
         );
     }
 

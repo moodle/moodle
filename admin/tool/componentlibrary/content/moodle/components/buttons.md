@@ -62,15 +62,13 @@ Outline buttons are used for buttons that controll part of the user interface, l
 
 ### Using the single_select renderer
 
-The ```single_button()``` renderer allows you to quickly add a button with an action to a page without having to write a template for the page. Single select buttons are added as miniature forms that can pass custom form data.
+The ```single_select()``` renderer allows you to quickly add a button with an action to a page without having to write a template for the page. Single select buttons are added as miniature forms that can pass custom form data.
 
 {{< php >}}
     $url = new moodle_url("$CFG->wwwroot/my/index.php", $params);
     $button = $OUTPUT->single_button($url, $editstring);
     $PAGE->set_button($resetbutton . $button);
 {{< / php >}}
-
-<iframe src="../../../../examples/singlebuttons.php" style="overflow:hidden;height:50px;width:100%;border:0" title="Single button examples"></iframe>
 
 ### Button links
 

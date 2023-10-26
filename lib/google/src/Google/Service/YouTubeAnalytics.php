@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics extends Google_Service
 {
   /** Manage your YouTube account. */
@@ -289,7 +288,6 @@ class Google_Service_YouTubeAnalytics extends Google_Service
  *   $batchReportDefinitions = $youtubeAnalyticsService->batchReportDefinitions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportDefinitions_Resource extends Google_Service_Resource
 {
 
@@ -318,7 +316,6 @@ class Google_Service_YouTubeAnalytics_BatchReportDefinitions_Resource extends Go
  *   $batchReports = $youtubeAnalyticsService->batchReports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReports_Resource extends Google_Service_Resource
 {
 
@@ -349,7 +346,6 @@ class Google_Service_YouTubeAnalytics_BatchReports_Resource extends Google_Servi
  *   $groupItems = $youtubeAnalyticsService->groupItems;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupItems_Resource extends Google_Service_Resource
 {
 
@@ -445,7 +441,6 @@ class Google_Service_YouTubeAnalytics_GroupItems_Resource extends Google_Service
  *   $groups = $youtubeAnalyticsService->groups;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_Groups_Resource extends Google_Service_Resource
 {
 
@@ -573,7 +568,6 @@ class Google_Service_YouTubeAnalytics_Groups_Resource extends Google_Service_Res
  *   $reports = $youtubeAnalyticsService->reports;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_Reports_Resource extends Google_Service_Resource
 {
 
@@ -634,7 +628,6 @@ class Google_Service_YouTubeAnalytics_Reports_Resource extends Google_Service_Re
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReport extends Google_Collection
 {
   protected $collection_key = 'outputs';
@@ -700,7 +693,6 @@ class Google_Service_YouTubeAnalytics_BatchReport extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportDefinition extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -754,7 +746,6 @@ class Google_Service_YouTubeAnalytics_BatchReportDefinition extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportDefinitionList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -783,7 +774,6 @@ class Google_Service_YouTubeAnalytics_BatchReportDefinitionList extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -812,7 +802,6 @@ class Google_Service_YouTubeAnalytics_BatchReportList extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportOutputs extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -848,7 +837,6 @@ class Google_Service_YouTubeAnalytics_BatchReportOutputs extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_BatchReportTimeSpan extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -875,7 +863,6 @@ class Google_Service_YouTubeAnalytics_BatchReportTimeSpan extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_Group extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -931,7 +918,6 @@ class Google_Service_YouTubeAnalytics_Group extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupContentDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -958,7 +944,6 @@ class Google_Service_YouTubeAnalytics_GroupContentDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupItem extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1013,7 +998,6 @@ class Google_Service_YouTubeAnalytics_GroupItem extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupItemListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1051,7 +1035,6 @@ class Google_Service_YouTubeAnalytics_GroupItemListResponse extends Google_Colle
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupItemResource extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1078,7 +1061,6 @@ class Google_Service_YouTubeAnalytics_GroupItemResource extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1116,7 +1098,6 @@ class Google_Service_YouTubeAnalytics_GroupListResponse extends Google_Collectio
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_GroupSnippet extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1143,7 +1124,6 @@ class Google_Service_YouTubeAnalytics_GroupSnippet extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_ResultTable extends Google_Collection
 {
   protected $collection_key = 'rows';
@@ -1181,7 +1161,6 @@ class Google_Service_YouTubeAnalytics_ResultTable extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_YouTubeAnalytics_ResultTableColumnHeaders extends Google_Model
 {
   protected $internal_gapi_mappings = array(

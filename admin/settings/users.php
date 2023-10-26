@@ -101,15 +101,7 @@ if ($hassiteconfig
 
     $ADMIN->add('accounts', new admin_externalpage('profilefields', new lang_string('profilefields','admin'), "$CFG->wwwroot/user/profile/index.php", 'moodle/site:config'));
     $ADMIN->add('accounts', new admin_externalpage('cohorts', new lang_string('cohorts', 'cohort'), $CFG->wwwroot . '/cohort/index.php', array('moodle/cohort:manage', 'moodle/cohort:view')));
-    $ADMIN->add(
-        'accounts',
-        new admin_externalpage(
-            'cohort_customfield',
-            new lang_string('cohort_customfield', 'admin'),
-            $CFG->wwwroot . '/cohort/customfield.php',
-            ['moodle/cohort:configurecustomfields']
-        )
-    );
+
 
     // Stuff under the "roles" subcategory.
 

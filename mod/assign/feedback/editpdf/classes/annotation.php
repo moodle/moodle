@@ -63,12 +63,9 @@ class annotation {
     /** @var string type - One of line, oval, rect, etc */
     public $type = 'line';
 
-    /** @var int draft status, default 1 = true */
-    public $draft = 1;
-
     /**
      * Convert a compatible stdClass into an instance of this class.
-     * @param \stdClass $record
+     * @param stdClass $record
      */
     public function __construct(\stdClass $record = null) {
         if ($record) {

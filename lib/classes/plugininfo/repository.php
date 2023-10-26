@@ -23,9 +23,7 @@
  */
 namespace core\plugininfo;
 
-use admin_externalpage;
-use moodle_url;
-use part_of_admin_tree;
+use moodle_url, part_of_admin_tree, admin_externalpage;
 
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/repository/lib.php');
@@ -43,10 +41,6 @@ class repository extends base {
 
     /** @var int Repository state, when it's disabled. */
     public const REPOSITORY_DISABLED = -1;
-
-    public static function plugintype_supports_disabling(): bool {
-        return true;
-    }
 
     /**
      * Finds all enabled plugins, the result may include missing plugins.

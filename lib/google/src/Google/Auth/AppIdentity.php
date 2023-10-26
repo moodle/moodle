@@ -29,7 +29,6 @@ if (!class_exists('Google_Client')) {
 /**
  * Authentication via the Google App Engine App Identity service.
  */
-#[AllowDynamicProperties]
 class Google_Auth_AppIdentity extends Google_Auth_Abstract
 {
   const CACHE_PREFIX = "Google_Auth_AppIdentity::";

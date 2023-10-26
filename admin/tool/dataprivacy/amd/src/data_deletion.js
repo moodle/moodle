@@ -25,9 +25,9 @@ define([
     'core/ajax',
     'core/notification',
     'core/str',
-    'core/modal_save_cancel',
+    'core/modal_factory',
     'core/modal_events'],
-function($, Ajax, Notification, Str, ModalSaveCancel, ModalEvents) {
+function($, Ajax, Notification, Str, ModalFactory, ModalEvents) {
 
     /**
      * List of action selectors.
@@ -107,9 +107,10 @@ function($, Ajax, Notification, Str, ModalSaveCancel, ModalEvents) {
         Str.get_strings(keys).then(function(langStrings) {
             modalTitle = langStrings[0];
             var confirmMessage = langStrings[1];
-            return ModalSaveCancel.create({
+            return ModalFactory.create({
                 title: modalTitle,
                 body: confirmMessage,
+                type: ModalFactory.types.SAVE_CANCEL
             });
         }).then(function(modal) {
             modal.setSaveButtonText(modalTitle);

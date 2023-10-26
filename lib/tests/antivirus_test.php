@@ -64,7 +64,7 @@ class antivirus_test extends advanced_testcase {
      */
     protected function get_check_api_antivirus_status_result() {
         $av = new \core\check\environment\antivirus();
-        return $av->get_result()->get_status();
+        return $av->get_result()->status;
     }
 
     protected function tearDown(): void {

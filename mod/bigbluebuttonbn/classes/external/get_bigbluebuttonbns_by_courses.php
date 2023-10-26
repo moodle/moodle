@@ -16,14 +16,22 @@
 
 namespace mod_bigbluebuttonbn\external;
 
+use context_module;
 use core_course\external\helper_for_get_mods_by_courses;
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
-use core_external\util as external_util;
+use external_api;
+use external_files;
+use external_format_value;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_util;
+use external_value;
+use external_warnings;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to get activity per course

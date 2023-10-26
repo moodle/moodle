@@ -82,6 +82,44 @@ class course_module_updated extends base {
     }
 
     /**
+     * Legacy event name.
+     *
+     * @return string legacy event name
+     */
+    public static function get_legacy_eventname() {
+        return 'mod_updated';
+    }
+
+    /**
+     * Legacy event data.
+     *
+     * @return \stdClass
+     */
+    protected function get_legacy_eventdata() {
+        $eventdata = new \stdClass();
+        $eventdata->modulename = $this->other['modulename'];
+        $eventdata->name       = $this->other['name'];
+        $eventdata->cmid       = $this->objectid;
+        $eventdata->courseid   = $this->courseid;
+        $eventdata->userid     = $this->userid;
+        return $eventdata;
+    }
+
+    /**
+     * replace add_to_log() statement.
+     *
+     * @return array of parameters to be passed to legacy add_to_log() function.
+     */
+    protected function get_legacy_logdata() {
+        $log1 = array($this->courseid, "course", "update mod", "../mod/" . $this->other['modulename'] . "/view.php?id=" .
+                $this->objectid, $this->other['modulename'] . " " . $this->other['instanceid']);
+        $log2 = array($this->courseid, $this->other['modulename'], "update",
+               "view.php?id={$this->objectid}",
+               "{$this->other['instanceid']}", $this->objectid);
+        return array($log1, $log2);
+    }
+
+    /**
      * custom validations
      *
      * Throw \coding_exception notice in case of any problems.

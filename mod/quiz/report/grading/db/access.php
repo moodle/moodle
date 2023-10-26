@@ -24,28 +24,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = [
+$capabilities = array(
     // Is the user allowed to see the student's real names while grading?
-    'quiz/grading:viewstudentnames' => [
+    'quiz/grading:viewstudentnames' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => [
+        'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        ],
+        ),
         'clonepermissionsfrom' => 'mod/quiz:viewreports'
-    ],
+    ),
 
     // Is the user allowed to see the student's identity fields while grading?
     // Note that the name of this capability is now out-of-date, but to preserve
     // backwards compatibility, the name was not changed when the functionality was updated.
-    'quiz/grading:viewidnumber' => [
+    'quiz/grading:viewidnumber' => array(
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'legacy' => [
+        'legacy' => array(
             'teacher' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        ],
+        ),
         'clonepermissionsfrom' => 'mod/quiz:viewreports'
-    ]
-];
+    )
+);

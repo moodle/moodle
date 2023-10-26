@@ -163,7 +163,7 @@ abstract class sql_generator {
     /** @var string The prefix to be used for all the DB objects.*/
     public $prefix;
 
-    /** @var array List of reserved words (in order to quote them properly).*/
+    /** @var string List of reserved words (in order to quote them properly).*/
     public $reserved_words;
 
     /** @var moodle_database The moodle_database instance.*/
@@ -749,7 +749,7 @@ abstract class sql_generator {
      * @param string $skip_type_clause The type clause on alter columns, NULL by default.
      * @param string $skip_default_clause The default clause on alter columns, NULL by default.
      * @param string $skip_notnull_clause The null/notnull clause on alter columns, NULL by default.
-     * @return array The field altering SQL statement.
+     * @return string The field altering SQL statement.
      */
     public function getAlterFieldSQL($xmldb_table, $xmldb_field, $skip_type_clause = NULL, $skip_default_clause = NULL, $skip_notnull_clause = NULL) {
 
@@ -1163,7 +1163,7 @@ abstract class sql_generator {
     /**
      * Given one XMLDB Statement, build the needed SQL insert sentences to execute it.
      *
-     * @param mixed $statement SQL statement.
+     * @param string $statement SQL statement.
      * @return array Array of sentences in the SQL statement.
      */
     function getExecuteInsertSQL($statement) {

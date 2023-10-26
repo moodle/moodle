@@ -72,11 +72,12 @@ class core_renderer extends \core_renderer {
      * @return string A rendered context header.
      */
     public function context_header($headerinfo = null, $headinglevel = 1): string {
-        global $DB, $USER, $CFG;
+        global $DB, $USER, $CFG, $SITE;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
         $imagedata = null;
+        $subheader = null;
         $userbuttons = null;
 
         // Make sure to use the heading if it has been set.
@@ -168,7 +169,7 @@ class core_renderer extends \core_renderer {
                 ];
                 $imagedata = html_writer::img($iconurl->out(false), '', $iconattrs);
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
-                $purposeclass .= ' activityiconcontainer icon-size-6';
+                $purposeclass .= ' activityiconcontainer';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
                 if (!empty($USER->editing)) {
@@ -176,6 +177,7 @@ class core_renderer extends \core_renderer {
                 }
             }
         }
+
 
         $contextheader = new \context_header($heading, $headinglevel, $imagedata, $userbuttons, $prefix);
         return $this->render_context_header($contextheader);

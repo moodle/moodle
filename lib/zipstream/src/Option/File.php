@@ -1,5 +1,4 @@
 <?php
-
 declare(strict_types=1);
 
 namespace ZipStream\Option;
@@ -13,22 +12,18 @@ final class File
      * @var string
      */
     private $comment = '';
-
     /**
      * @var Method
      */
     private $method;
-
     /**
      * @var int
      */
     private $deflateLevel;
-
     /**
      * @var DateTimeInterface
      */
     private $time;
-
     /**
      * @var int
      */

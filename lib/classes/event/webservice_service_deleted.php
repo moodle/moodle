@@ -45,6 +45,18 @@ class webservice_service_deleted extends base {
     }
 
     /**
+     * Return the legacy event log data.
+     *
+     * @return array|null
+     */
+    protected function get_legacy_logdata() {
+        global $CFG;
+        $service = $this->get_record_snapshot('external_services', $this->objectid);
+        return array(SITEID, 'webservice', 'delete', $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices",
+            get_string('deleteservice', 'webservice', $service));
+    }
+
+    /**
      * Return localised event name.
      *
      * @return string

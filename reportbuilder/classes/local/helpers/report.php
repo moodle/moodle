@@ -110,7 +110,6 @@ class report {
     public static function add_report_column(int $reportid, string $uniqueidentifier): column {
         $report = manager::get_report_from_id($reportid);
 
-        // Ensure column is available.
         if (!array_key_exists($uniqueidentifier, $report->get_columns())) {
             throw new invalid_parameter_exception('Invalid column');
         }
@@ -238,14 +237,8 @@ class report {
     public static function add_report_condition(int $reportid, string $uniqueidentifier): filter {
         $report = manager::get_report_from_id($reportid);
 
-        // Ensure condition is available.
         if (!array_key_exists($uniqueidentifier, $report->get_conditions())) {
             throw new invalid_parameter_exception('Invalid condition');
-        }
-
-        // Ensure condition wasn't already added.
-        if (array_key_exists($uniqueidentifier, $report->get_active_conditions())) {
-            throw new invalid_parameter_exception('Duplicate condition');
         }
 
         $condition = new filter(0, (object) [
@@ -324,14 +317,9 @@ class report {
     public static function add_report_filter(int $reportid, string $uniqueidentifier): filter {
         $report = manager::get_report_from_id($reportid);
 
-        // Ensure filter is available.
-        if (!array_key_exists($uniqueidentifier, $report->get_filters())) {
+        $reportfilters = $report->get_filters();
+        if (!array_key_exists($uniqueidentifier, $reportfilters)) {
             throw new invalid_parameter_exception('Invalid filter');
-        }
-
-        // Ensure filter wasn't already added.
-        if (array_key_exists($uniqueidentifier, $report->get_active_filters())) {
-            throw new invalid_parameter_exception('Duplicate filter');
         }
 
         $filter = new filter(0, (object) [

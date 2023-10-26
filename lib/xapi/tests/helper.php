@@ -25,9 +25,7 @@
  */
 namespace core_xapi;
 
-use core_xapi\local\state;
-use core_xapi\local\statement\item_activity;
-use core_xapi\local\statement\item_agent;
+use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -77,42 +75,5 @@ class test_helper {
             return null;
         }
         return array_pop($records);
-    }
-
-
-    /**
-     * Return a valid state object with the params passed.
-     *
-     * All tests are based on craft different types of states. This function
-     * is made to prevent redundant code on the test.
-     *
-     * @param array $info array of overriden state data (default []).
-     * @param bool $createindatabase Whether the state object should be created in database too or not.
-     * @return state the resulting state
-     */
-    public static function create_state(array $info = [], bool $createindatabase = false): state {
-        global $USER;
-
-        $component = $info['component'] ?? 'fake_component';
-        $agent = $info['agent'] ?? item_agent::create_from_user($USER);
-        $activity = $info['activity'] ?? item_activity::create_from_id('12345');
-        $stateid = $info['stateid'] ?? 'state';
-        $data = $info['data'] ?? json_decode('{"progress":0,"answers":[[["AA"],[""]],[{"answers":[]}]],"answered":[true,false]}');
-        $registration = $info['registration'] ?? null;
-
-        $state = new state($agent, $activity, $stateid, (object)$data, $registration);
-
-        if ($createindatabase) {
-            try {
-                $handler = handler::create($component);
-                $statestore = $handler->get_state_store();
-            } catch (\Exception $exception) {
-                // If the component is not available, use the standard one to force it's creation.
-                $statestore = new state_store($component);
-            }
-            $statestore->put($state);
-        }
-
-        return $state;
     }
 }

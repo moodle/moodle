@@ -86,15 +86,6 @@ abstract class area_base {
      */
     const TYPE_FILE = 1;
 
-    /**  @var string To store the filter. */
-    protected string $filter = '';
-
-    /** @var array To store the filter parameters. */
-    protected array $filterparams = [];
-
-    /** @var string To store the filter field name. */
-    protected $filterfieldname;
-
     /**
      * Return the name for the specified checkgroup value, or 'unknown' if no valid name for the value. Preferably, use this rather
      * than direct access to CHECKGROUP_NAMES, since it checks value boundaries.

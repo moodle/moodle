@@ -81,10 +81,10 @@ function workshopform_comments_pluginfile($course, $cm, $context, $filearea, arr
  */
 class workshop_comments_strategy implements workshop_strategy {
 
-    /** @var default number of dimensions to show */
+    /** @const default number of dimensions to show */
     const MINDIMS = 3;
 
-    /** @var number of dimensions to add */
+    /** @const number of dimensions to add */
     const ADDDIMS = 2;
 
     /** @var workshop the parent workshop instance */

@@ -59,26 +59,6 @@ define('GROUPS_JOIN_ANY', 1);
 define('GROUPS_JOIN_ALL', 2);
 
 /**
- * All users can see this group and its members.
- */
-define('GROUPS_VISIBILITY_ALL', 0);
-
-/**
- * Members of this group can see this group and other members.
- */
-define('GROUPS_VISIBILITY_MEMBERS', 1);
-
-/**
- * Members of this group can see the group and their own membership, but not each other's membership
- */
-define('GROUPS_VISIBILITY_OWN', 2);
-
-/**
- * No-one can see this group or its members. Members of the group will not know they are in the group.
- */
-define('GROUPS_VISIBILITY_NONE', 3);
-
-/**
  * Determines if a group with a given groupid exists.
  *
  * @category group
@@ -211,14 +191,9 @@ function groups_get_grouping_by_idnumber($courseid, $idnumber) {
  * @return bool|stdClass group object or false if not found
  * @throws dml_exception
  */
-function groups_get_group($groupid, $fields = '*', $strictness = IGNORE_MISSING, $withcustomfields = false) {
+function groups_get_group($groupid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
-    $group = $DB->get_record('groups', ['id' => $groupid], $fields, $strictness);
-    if ($withcustomfields) {
-        $customfieldsdata = get_group_custom_fields_data([$groupid]);
-        $group->customfields = $customfieldsdata[$groupid] ?? [];
-    }
-    return $group;
+    return $DB->get_record('groups', array('id'=>$groupid), $fields, $strictness);
 }
 
 /**
@@ -230,21 +205,13 @@ function groups_get_group($groupid, $fields = '*', $strictness = IGNORE_MISSING,
  * @param int $strictness (IGNORE_MISSING - default)
  * @return stdClass group object
  */
-function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING, $withcustomfields = false) {
+function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSING) {
     global $DB;
-    $grouping = $DB->get_record('groupings', ['id' => $groupingid], $fields, $strictness);
-    if ($withcustomfields) {
-        $customfieldsdata = get_grouping_custom_fields_data([$groupingid]);
-        $grouping->customfields = $customfieldsdata[$groupingid] ?? [];
-    }
-    return $grouping;
+    return $DB->get_record('groupings', array('id'=>$groupingid), $fields, $strictness);
 }
 
 /**
  * Gets array of all groups in a specified course (subject to the conditions imposed by the other arguments).
- *
- * If a user does not have moodle/course:viewhiddengroups, the list of groups and members will be restricted based on the
- * visibility setting of each group.
  *
  * @category group
  * @param int $courseid The id of the course.
@@ -256,12 +223,11 @@ function groups_get_grouping($groupingid, $fields='*', $strictness=IGNORE_MISSIN
  * @param bool $withmembers if true return an extra field members (int[]) which is the list of userids that
  *      are members of each group. For this to work, g.id (or g.*) must be included in $fields.
  *      In this case, the final results will always be an array indexed by group id.
- * @param bool $participationonly Only return groups where the participation field is true.
  * @return array returns an array of the group objects (unless you have done something very weird
  *      with the $fields option).
  */
-function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*', $withmembers=false, $participationonly = false) {
-    global $DB, $USER;
+function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*', $withmembers=false) {
+    global $DB;
 
     // We need to check that we each field in the fields list belongs to the group table and that it has not being
     // aliased. If its something else we need to avoid the cache and run the query as who knows whats going on.
@@ -283,7 +249,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
         }
     }
 
-    if (empty($userid) && $knownfields && !$withmembers && \core_group\visibility::can_view_all_groups($courseid)) {
+    if (empty($userid) && $knownfields && !$withmembers) {
         // We can use the cache.
         $data = groups_get_course_data($courseid);
         if (empty($groupingid)) {
@@ -299,9 +265,6 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
                     $groups[$mapping->groupid] = $data->groups[$mapping->groupid];
                 }
             }
-        }
-        if ($participationonly) {
-            $groups = array_filter($groups, fn($group) => $group->participation);
         }
         // Yay! We could use the cache. One more query saved.
         return $groups;
@@ -326,44 +289,14 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
 
     array_unshift($params, $courseid);
 
-    $visibilityfrom = '';
-    $visibilitywhere = '';
-    $viewhidden = has_capability('moodle/course:viewhiddengroups', context_course::instance($courseid));
-    if (!$viewhidden) {
-        // Apply group visibility restrictions. Only return groups where visibility is ALL, or the current user is a member and the
-        // visibility is MEMBERS or OWN.
-        $userids = [];
-        if (empty($userid)) {
-            $userids = [$USER->id];
-            $visibilityfrom = "LEFT JOIN {groups_members} gm ON gm.groupid = g.id AND gm.userid = ?";
-        }
-        [$insql, $inparams] = $DB->get_in_or_equal([GROUPS_VISIBILITY_MEMBERS, GROUPS_VISIBILITY_OWN]);
-        $visibilitywhere = " AND (g.visibility = ? OR (g.visibility $insql AND gm.id IS NOT NULL))";
-        $params = array_merge(
-            $userids,
-            $params,
-            [GROUPS_VISIBILITY_ALL],
-            $inparams
-        );
-    }
-
-    $participationwhere = '';
-    if ($participationonly) {
-        $participationwhere = "AND g.participation = ?";
-        $params = array_merge($params, [1]);
-    }
-
     $results = $DB->get_records_sql("
             SELECT $fields
               FROM {groups} g
               $userfrom
               $groupingfrom
-              $visibilityfrom
              WHERE g.courseid = ?
                $userwhere
                $groupingwhere
-               $visibilitywhere
-               $participationwhere
           ORDER BY g.name ASC", $params);
 
     if (!$withmembers) {
@@ -379,44 +312,7 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
         $groups[$row->id] = $row;
         $groups[$row->id]->members = [];
     }
-
-    $gmvisibilityfrom = '';
-    $gmvisibilitywhere = '';
-    $gmvisibilityparams = [];
-    if (!$viewhidden) {
-        // Only return membership records where visibility is ALL, visibility is MEMBERS and the current user is a member,
-        // or visibility is OWN and the record is for the current user.
-        $gmvisibilityfrom = "
-            JOIN {groups} g ON gm.groupid = g.id
-        ";
-        $gmvisibilitywhere = "
-                AND (g.visibility = ?
-                    OR (g.visibility = ?
-                        AND g.id IN (SELECT gm2.groupid FROM {groups_members} gm2 WHERE gm2.groupid = g.id AND gm2.userid = ?))
-                    OR (g.visibility = ?
-                        AND gm.userid = ?))";
-        $gmvisibilityparams = [
-            GROUPS_VISIBILITY_ALL,
-            GROUPS_VISIBILITY_MEMBERS,
-            $USER->id,
-            GROUPS_VISIBILITY_OWN,
-            $USER->id
-        ];
-    }
-
-    $groupmembers = [];
-    if (!empty($groups)) {
-        [$gmin, $gmparams] = $DB->get_in_or_equal(array_keys($groups));
-        $params = array_merge($gmparams, $gmvisibilityparams);
-        $gmsql = "
-        SELECT gm.*
-          FROM {groups_members} gm
-               $gmvisibilityfrom
-         WHERE gm.groupid $gmin
-               $gmvisibilitywhere";
-        $groupmembers = $DB->get_records_sql($gmsql, $params);
-    }
-
+    $groupmembers = $DB->get_records_list('groups_members', 'groupid', array_keys($groups));
     foreach ($groupmembers as $gm) {
         $groups[$gm->groupid]->members[$gm->userid] = $gm->userid;
     }
@@ -432,23 +328,12 @@ function groups_get_all_groups($courseid, $userid=0, $groupingid=0, $fields='g.*
  */
 function groups_get_my_groups() {
     global $DB, $USER;
-
-    $params = ['userid' => $USER->id];
-
-    $viewhidden = has_capability('moodle/course:viewhiddengroups', context_system::instance());
-    $visibilitywhere = '';
-    if (!$viewhidden) {
-        $params['novisibility'] = GROUPS_VISIBILITY_NONE;
-        $visibilitywhere = ' AND g.visibility != :novisibility';
-    }
-
     return $DB->get_records_sql("SELECT *
                                    FROM {groups_members} gm
                                    JOIN {groups} g
                                     ON g.id = gm.groupid
-                                  WHERE gm.userid = :userid
-                                    $visibilitywhere
-                                   ORDER BY name ASC", $params);
+                                  WHERE gm.userid = ?
+                                   ORDER BY name ASC", array($USER->id));
 }
 
 /**
@@ -462,46 +347,23 @@ function groups_get_my_groups() {
 function groups_get_user_groups($courseid, $userid=0) {
     global $USER, $DB;
 
-    if (empty($courseid)) {
-        return ['0' => []];
-    }
-
     if (empty($userid)) {
         $userid = $USER->id;
     }
 
-    $usergroups = false;
-    $viewhidden = has_capability('moodle/course:viewhiddengroups', context_course::instance($courseid));
-    $viewall = \core_group\visibility::can_view_all_groups($courseid);
-
     $cache = cache::make('core', 'user_group_groupings');
 
-    if ($viewall) {
-        // Try to retrieve group ids from the cache.
-        $usergroups = $cache->get($userid);
-    }
+    // Try to retrieve group ids from the cache.
+    $usergroups = $cache->get($userid);
 
     if ($usergroups === false) {
-
         $sql = "SELECT g.id, g.courseid, gg.groupingid
                   FROM {groups} g
                   JOIN {groups_members} gm ON gm.groupid = g.id
              LEFT JOIN {groupings_groups} gg ON gg.groupid = g.id
-                 WHERE gm.userid = :userid";
+                 WHERE gm.userid = ?";
 
-        $params = ['userid' => $userid];
-
-        if (!$viewhidden) {
-            // Apply visibility restrictions.
-            // Everyone can see who is in groups with ALL visibility.
-            list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_group_visibility_where($userid);
-            $sql .= " AND " . $visibilitywhere;
-            $params = array_merge($params, $visibilityparams);
-        }
-
-        $sql .= ' ORDER BY g.id'; // To make results deterministic.
-
-        $rs = $DB->get_recordset_sql($sql, $params);
+        $rs = $DB->get_recordset_sql($sql, array($userid));
 
         $usergroups = array();
         $allgroups  = array();
@@ -528,10 +390,8 @@ function groups_get_user_groups($courseid, $userid=0) {
             $usergroups[$cid]['0'] = array_keys($allgroups[$cid]); // All user groups in the course.
         }
 
-        if ($viewall) {
-            // Cache the data, if we got the full list of groups.
-            $cache->set($userid, $usergroups);
-        }
+        // Cache the data.
+        $cache->set($userid, $usergroups);
     }
 
     if (array_key_exists($courseid, $usergroups)) {
@@ -572,28 +432,7 @@ function groups_is_member($groupid, $userid=null) {
         $userid = $USER->id;
     }
 
-    $courseid = $DB->get_field('groups', 'courseid', ['id' => $groupid]);
-    if (!$courseid) {
-        return false;
-    }
-
-    if (\core_group\visibility::can_view_all_groups($courseid)) {
-        return $DB->record_exists('groups_members', ['groupid' => $groupid, 'userid' => $userid]);
-    }
-
-    $sql = "SELECT *
-              FROM {groups_members} gm
-                   JOIN {groups} g ON gm.groupid = g.id
-             WHERE g.id = :groupid
-                   AND gm.userid = :userid";
-    $params = ['groupid' => $groupid, 'userid' => $userid];
-
-    list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_group_visibility_where($userid);
-
-    $sql .= " AND " . $visibilitywhere;
-    $params = array_merge($params, $visibilityparams);
-
-    return $DB->record_exists_sql($sql, $params);
+    return $DB->record_exists('groups_members', array('groupid'=>$groupid, 'userid'=>$userid));
 }
 
 /**
@@ -646,40 +485,16 @@ function groups_has_membership($cm, $userid=null) {
  * @param int $groupid The groupid to get the users for
  * @param int $fields The fields to return
  * @param int $sort optional sorting of returned users
- * @return array Returns an array of the users for the specified group
+ * @return array|bool Returns an array of the users for the specified
+ * group or false if no users or an error returned.
  */
 function groups_get_members($groupid, $fields='u.*', $sort='lastname ASC') {
     global $DB;
 
-    if (empty($groupid)) {
-        return [];
-    }
-
-    $courseid = $DB->get_field('groups', 'courseid', ['id' => $groupid]);
-    if ($courseid === false) {
-        return [];
-    }
-
-    $select = "SELECT $fields";
-    $from = "FROM {user} u
-                  JOIN {groups_members} gm ON gm.userid = u.id";
-    $where = "WHERE gm.groupid = :groupid";
-    $order = "ORDER BY $sort";
-
-    $params = ['groupid' => $groupid];
-
-    if (!\core_group\visibility::can_view_all_groups($courseid)) {
-        $from .= " JOIN {groups} g ON g.id = gm.groupid";
-        // Can view memberships of visibility is ALL, visibility is MEMBERS and current user is a member,
-        // or visibility is OWN and this is their membership.
-        list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_member_visibility_where();
-        $params = array_merge($params, $visibilityparams);
-        $where .= ' AND ' . $visibilitywhere;
-    }
-
-    $sql = implode(PHP_EOL, [$select, $from, $where, $order]);
-
-    return $DB->get_records_sql($sql, $params);
+    return $DB->get_records_sql("SELECT $fields
+                                   FROM {user} u, {groups_members} gm
+                                  WHERE u.id = gm.userid AND gm.groupid = ?
+                               ORDER BY $sort", array($groupid));
 }
 
 
@@ -963,12 +778,11 @@ function groups_print_activity_menu($cm, $urlroot, $return=false, $hideallpartic
 
     $usergroups = array();
     if ($groupmode == VISIBLEGROUPS or $aag) {
-        $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, true); // Any group in grouping.
+        $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid); // any group in grouping
         // Get user's own groups and put to the top.
-        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+        $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
     } else {
-        // Only assigned groups.
-        $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+        $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid); // only assigned groups
     }
 
     $activegroup = groups_get_activity_group($cm, true, $allowedgroups);
@@ -1086,9 +900,9 @@ function groups_get_activity_group($cm, $update=false, $allowedgroups=null) {
 
     if (!is_array($allowedgroups)) {
         if ($groupmode == VISIBLEGROUPS or $groupmode === 'aag') {
-            $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, true);
+            $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid);
         } else {
-            $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+            $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid);
         }
     }
 
@@ -1137,10 +951,10 @@ function groups_get_activity_allowed_groups($cm,$userid=0) {
     // then they can access all groups for the activity...
     $context = context_module::instance($cm->id);
     if ($groupmode == VISIBLEGROUPS or has_capability('moodle/site:accessallgroups', $context, $userid)) {
-        return groups_get_all_groups($cm->course, 0, $cm->groupingid, 'g.*', false, true);
+        return groups_get_all_groups($cm->course, 0, $cm->groupingid);
     } else {
         // ...otherwise they can only access groups they belong to
-        return groups_get_all_groups($cm->course, $userid, $cm->groupingid, 'g.*', false, true);
+        return groups_get_all_groups($cm->course, $userid, $cm->groupingid);
     }
 }
 
@@ -1263,7 +1077,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
         $groupids = $groupids ? [$groupids] : [];
     }
 
-    $joins = [];
+    $join = '';
     $where = '';
     $param = [];
 
@@ -1272,31 +1086,14 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
         // Throw an exception if $context is empty or invalid because it's needed to get the users without any group.
         throw new coding_exception('Missing or wrong $context parameter in an attempt to get members without any group');
     }
-    // Can we view hidden groups within a course?
-    [$ualias] = explode('.', $useridcolumn);
-    $viewhidden = false;
-    if (!empty($coursecontext)) {
-        $viewhidden = \core_group\visibility::can_view_all_groups($coursecontext->instanceid);
-    }
 
     // Handle cases where we need to include/exclude users not in any groups.
     if (($nogroupskey = array_search(USERSWITHOUTGROUP, $groupids)) !== false) {
-        $visibilityjoin = '';
-        $visibilitywhere = '';
-
-        if (!$viewhidden) {
-            $visibilityjoin = 'JOIN {user} u ON u.id = m.userid';
-            [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where('g', 'm');
-            $param = array_merge($param, $visibilityparams);
-            $visibilitywhere = 'WHERE ' . $visibilitywhere;
-        }
-        // Get members without any group, or only in groups we cannot see membership of.
-        $joins[] = "LEFT JOIN (
+        // Get members without any group.
+        $join .= "LEFT JOIN (
                      SELECT g.courseid, m.groupid, m.userid
                        FROM {groups_members} m
                        JOIN {groups} g ON g.id = m.groupid
-                       {$visibilityjoin}
-                       {$visibilitywhere}
                   ) {$prefix}gm ON ({$prefix}gm.userid = {$useridcolumn} AND {$prefix}gm.courseid = :{$prefix}gcourseid)";
 
         // Join type 'None' when filtering by 'no groups' means match users in at least one group.
@@ -1307,7 +1104,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
             $where = "{$prefix}gm.userid IS NULL";
         }
 
-        $param["{$prefix}gcourseid"] = $coursecontext->instanceid;
+        $param = ["{$prefix}gcourseid" => $coursecontext->instanceid];
         unset($groupids[$nogroupskey]);
     }
 
@@ -1321,22 +1118,10 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                 foreach ($groupids as $groupid) {
                     $gmalias = "{$prefix}gm{$aliaskey}";
                     $aliaskey++;
-                    $joins[] = "LEFT JOIN {groups_members} {$gmalias}
+                    $join .= "LEFT JOIN {groups_members} {$gmalias}
                                      ON ({$gmalias}.userid = {$useridcolumn} AND {$gmalias}.groupid = :{$gmalias}param)";
                     $joinallwheres[] = "{$gmalias}.userid IS NOT NULL";
                     $param["{$gmalias}param"] = $groupid;
-                    if (!$viewhidden) {
-                        $galias = "{$prefix}g{$aliaskey}";
-                        $joins[] = "LEFT JOIN {groups} {$galias} ON {$gmalias}.groupid = {$galias}.id";
-                        [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
-                            $galias,
-                            $gmalias,
-                            $ualias,
-                            $prefix . $aliaskey . '_'
-                        );
-                        $joinallwheres[] = $visibilitywhere;
-                        $param = array_merge($param, $visibilityparams);
-                    }
                 }
 
                 // Members of all of the specified groups only.
@@ -1354,7 +1139,7 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                 // Handle matching any of the provided groups (logical OR).
                 list($groupssql, $groupsparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, $prefix);
 
-                $joins[] = "LEFT JOIN {groups_members} {$prefix}gm2
+                $join .= "LEFT JOIN {groups_members} {$prefix}gm2
                                  ON ({$prefix}gm2.userid = {$useridcolumn} AND {$prefix}gm2.groupid {$groupssql})";
                 $param = array_merge($param, $groupsparams);
 
@@ -1366,24 +1151,13 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                     $where = "({$where} OR {$prefix}gm2.userid IS NOT NULL)";
                 }
 
-                if (!$viewhidden) {
-                    $joins[] = "LEFT JOIN {groups} {$prefix}g2 ON {$prefix}gm2.groupid = {$prefix}g2.id";
-                    [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
-                        $prefix . 'g2',
-                        $prefix . 'gm2',
-                        $ualias
-                    );
-                    $where .= ' AND ' . $visibilitywhere;
-                    $param = array_merge($param, $visibilityparams);
-                }
-
                 break;
 
             case GROUPS_JOIN_NONE:
                 // Handle matching none of the provided groups (logical NOT).
                 list($groupssql, $groupsparams) = $DB->get_in_or_equal($groupids, SQL_PARAMS_NAMED, $prefix);
 
-                $joins[] = "LEFT JOIN {groups_members} {$prefix}gm2
+                $join .= "LEFT JOIN {groups_members} {$prefix}gm2
                                  ON ({$prefix}gm2.userid = {$useridcolumn} AND {$prefix}gm2.groupid {$groupssql})";
                 $param = array_merge($param, $groupsparams);
 
@@ -1395,22 +1169,11 @@ function groups_get_members_join($groupids, $useridcolumn, context $context = nu
                     $where = "({$where} AND {$prefix}gm2.userid IS NULL)";
                 }
 
-                if (!$viewhidden) {
-                    $joins[] = "LEFT JOIN {groups} {$prefix}g2 ON {$prefix}gm2.groupid = {$prefix}g2.id";
-                    [$visibilitywhere, $visibilityparams] = \core_group\visibility::sql_member_visibility_where(
-                        $prefix . 'g2',
-                        $prefix . 'gm2',
-                        $ualias
-                    );
-                    $where .= ' OR NOT ' . $visibilitywhere;
-                    $param = array_merge($param, $visibilityparams);
-                }
-
                 break;
         }
     }
 
-    return new \core\dml\sql_join(implode("\n", $joins), $where, $param);
+    return new \core\dml\sql_join($join, $where, $param);
 }
 
 /**
@@ -1447,8 +1210,7 @@ function _group_verify_activegroup($courseid, $groupmode, $groupingid, array $al
             $SESSION->activegroup[$courseid][$groupmode][$groupingid] = 0; // all groups by default if user has accessallgroups
 
         } else if ($allowedgroups) {
-            if ($groupmode != SEPARATEGROUPS
-                    && $mygroups = groups_get_all_groups($courseid, $USER->id, $groupingid, 'g.*', false, true)) {
+            if ($groupmode != SEPARATEGROUPS and $mygroups = groups_get_all_groups($courseid, $USER->id, $groupingid)) {
                 $firstgroup = reset($mygroups);
             } else {
                 $firstgroup = reset($allowedgroups);
@@ -1595,34 +1357,13 @@ function groups_user_groups_visible($course, $userid, $cm = null) {
 function groups_get_groups_members($groupsids, $extrafields=null, $sort='lastname ASC') {
     global $DB;
 
-    $wheres = [];
     $userfieldsapi = \core_user\fields::for_userpic()->including(...($extrafields ?? []));
     $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-    list($insql, $params) = $DB->get_in_or_equal($groupsids, SQL_PARAMS_NAMED);
-    $wheres[] = "gm.groupid $insql";
+    list($insql, $params) = $DB->get_in_or_equal($groupsids);
 
-    $courseids = $DB->get_fieldset_sql("SELECT DISTINCT courseid FROM {groups} WHERE id $insql", $params);
-
-    if (count($courseids) > 1) {
-        // Groups from multiple courses. Have to check permission in system context.
-        $context = context_system::instance();
-    } else {
-        $courseid = reset($courseids);
-        $context = context_course::instance($courseid);
-    }
-
-    if (!has_capability('moodle/course:viewhiddengroups', $context)) {
-        list($visibilitywhere, $visibilityparams) = \core_group\visibility::sql_member_visibility_where();
-        $params = array_merge($params, $visibilityparams);
-        $wheres[] = $visibilitywhere;
-    }
-
-    $where = implode(' AND ', $wheres);
     return $DB->get_records_sql("SELECT $userfields
-                                   FROM {user} u
-                                        JOIN {groups_members} gm ON u.id = gm.userid
-                                        JOIN {groups} g ON g.id = gm.groupid
-                                  WHERE {$where}
+                                   FROM {user} u, {groups_members} gm
+                                  WHERE u.id = gm.userid AND gm.groupid $insql
                                GROUP BY $userfields
                                ORDER BY $sort", $params);
 }
@@ -1639,7 +1380,7 @@ function groups_get_activity_shared_group_members($cm, $userid = null) {
     global $USER;
 
     if (empty($userid)) {
-        $userid = $USER->id;
+        $userid = $USER;
     }
 
     $groupsids = array_keys(groups_get_activity_allowed_groups($cm, $userid));

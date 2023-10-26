@@ -41,7 +41,7 @@ class restore_date_test extends \restore_date_testcase {
         scorm_insert_track($USER->id, $scorm->id, $sco->id, 4, 'cmi.core.score.raw', 10);
 
         // We do not want second differences to fail our test because of execution delays.
-        $DB->set_field('scorm_scoes_value', 'timemodified', $time);
+        $DB->set_field('scorm_scoes_track', 'timemodified', $time);
 
         // Do backup and restore.
         $newcourseid = $this->backup_and_restore($course);
@@ -51,11 +51,7 @@ class restore_date_test extends \restore_date_testcase {
         $props = ['timeopen', 'timeclose'];
         $this->assertFieldsRolledForward($scorm, $newscorm, $props);
 
-        $sql = "SELECT *
-                  FROM {scorm_scoes_value} v
-                  JOIN {scorm_attempt} a ON a.id = v.attemptid
-                 WHERE a.scormid = ?";
-        $tracks = $DB->get_records_sql($sql, [$newscorm->id]);
+        $tracks = $DB->get_records('scorm_scoes_track', ['scormid' => $newscorm->id]);
         foreach ($tracks as $track) {
             $this->assertEquals($time, $track->timemodified);
         }

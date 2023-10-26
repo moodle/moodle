@@ -28,7 +28,6 @@
  *
  * @author Google, Inc.
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher extends Google_Service
 {
   /** View and manage your Google Play Developer account. */
@@ -1209,7 +1208,6 @@ class Google_Service_AndroidPublisher extends Google_Service
  *   $edits = $androidpublisherService->edits;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Edits_Resource extends Google_Service_Resource
 {
 
@@ -1306,7 +1304,6 @@ class Google_Service_AndroidPublisher_Edits_Resource extends Google_Service_Reso
  *   $apklistings = $androidpublisherService->apklistings;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsApklistings_Resource extends Google_Service_Resource
 {
 
@@ -1444,7 +1441,6 @@ class Google_Service_AndroidPublisher_EditsApklistings_Resource extends Google_S
  *   $apks = $androidpublisherService->apks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsApks_Resource extends Google_Service_Resource
 {
 
@@ -1508,7 +1504,6 @@ class Google_Service_AndroidPublisher_EditsApks_Resource extends Google_Service_
  *   $details = $androidpublisherService->details;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsDetails_Resource extends Google_Service_Resource
 {
 
@@ -1572,7 +1567,6 @@ class Google_Service_AndroidPublisher_EditsDetails_Resource extends Google_Servi
  *   $expansionfiles = $androidpublisherService->expansionfiles;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsExpansionfiles_Resource extends Google_Service_Resource
 {
 
@@ -1668,7 +1662,6 @@ class Google_Service_AndroidPublisher_EditsExpansionfiles_Resource extends Googl
  *   $images = $androidpublisherService->images;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsImages_Resource extends Google_Service_Resource
 {
 
@@ -1764,7 +1757,6 @@ class Google_Service_AndroidPublisher_EditsImages_Resource extends Google_Servic
  *   $listings = $androidpublisherService->listings;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsListings_Resource extends Google_Service_Resource
 {
 
@@ -1886,7 +1878,6 @@ class Google_Service_AndroidPublisher_EditsListings_Resource extends Google_Serv
  *   $testers = $androidpublisherService->testers;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsTesters_Resource extends Google_Service_Resource
 {
 
@@ -1951,7 +1942,6 @@ class Google_Service_AndroidPublisher_EditsTesters_Resource extends Google_Servi
  *   $tracks = $androidpublisherService->tracks;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EditsTracks_Resource extends Google_Service_Resource
 {
 
@@ -2039,7 +2029,6 @@ class Google_Service_AndroidPublisher_EditsTracks_Resource extends Google_Servic
  *   $entitlements = $androidpublisherService->entitlements;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Entitlements_Resource extends Google_Service_Resource
 {
 
@@ -2074,7 +2063,6 @@ class Google_Service_AndroidPublisher_Entitlements_Resource extends Google_Servi
  *   $inappproducts = $androidpublisherService->inappproducts;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Inappproducts_Resource extends Google_Service_Resource
 {
 
@@ -2217,7 +2205,6 @@ class Google_Service_AndroidPublisher_Inappproducts_Resource extends Google_Serv
  *   $purchases = $androidpublisherService->purchases;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Purchases_Resource extends Google_Service_Resource
 {
 }
@@ -2230,7 +2217,6 @@ class Google_Service_AndroidPublisher_Purchases_Resource extends Google_Service_
  *   $products = $androidpublisherService->products;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_PurchasesProducts_Resource extends Google_Service_Resource
 {
 
@@ -2261,7 +2247,6 @@ class Google_Service_AndroidPublisher_PurchasesProducts_Resource extends Google_
  *   $subscriptions = $androidpublisherService->subscriptions;
  *  </code>
  */
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_PurchasesSubscriptions_Resource extends Google_Service_Resource
 {
 
@@ -2369,7 +2354,6 @@ class Google_Service_AndroidPublisher_PurchasesSubscriptions_Resource extends Go
 
 
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Apk extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2397,7 +2381,6 @@ class Google_Service_AndroidPublisher_Apk extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApkBinary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2415,7 +2398,6 @@ class Google_Service_AndroidPublisher_ApkBinary extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApkListing extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2442,7 +2424,6 @@ class Google_Service_AndroidPublisher_ApkListing extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApkListingsListResponse extends Google_Collection
 {
   protected $collection_key = 'listings';
@@ -2471,7 +2452,6 @@ class Google_Service_AndroidPublisher_ApkListingsListResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApksAddExternallyHostedRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2490,7 +2470,6 @@ class Google_Service_AndroidPublisher_ApksAddExternallyHostedRequest extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApksAddExternallyHostedResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2509,7 +2488,6 @@ class Google_Service_AndroidPublisher_ApksAddExternallyHostedResponse extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ApksListResponse extends Google_Collection
 {
   protected $collection_key = 'apks';
@@ -2538,7 +2516,6 @@ class Google_Service_AndroidPublisher_ApksListResponse extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_AppDetails extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2583,7 +2560,6 @@ class Google_Service_AndroidPublisher_AppDetails extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_AppEdit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2610,7 +2586,6 @@ class Google_Service_AndroidPublisher_AppEdit extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Entitlement extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2655,7 +2630,6 @@ class Google_Service_AndroidPublisher_Entitlement extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_EntitlementsListResponse extends Google_Collection
 {
   protected $collection_key = 'resources';
@@ -2695,7 +2669,6 @@ class Google_Service_AndroidPublisher_EntitlementsListResponse extends Google_Co
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ExpansionFile extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2722,7 +2695,6 @@ class Google_Service_AndroidPublisher_ExpansionFile extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ExpansionFilesUploadResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2741,7 +2713,6 @@ class Google_Service_AndroidPublisher_ExpansionFilesUploadResponse extends Googl
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ExternallyHostedApk extends Google_Collection
 {
   protected $collection_key = 'usesPermissions';
@@ -2887,7 +2858,6 @@ class Google_Service_AndroidPublisher_ExternallyHostedApk extends Google_Collect
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ExternallyHostedApkUsesPermission extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2914,7 +2884,6 @@ class Google_Service_AndroidPublisher_ExternallyHostedApkUsesPermission extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Image extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2950,7 +2919,6 @@ class Google_Service_AndroidPublisher_Image extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ImagesDeleteAllResponse extends Google_Collection
 {
   protected $collection_key = 'deleted';
@@ -2970,7 +2938,6 @@ class Google_Service_AndroidPublisher_ImagesDeleteAllResponse extends Google_Col
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ImagesListResponse extends Google_Collection
 {
   protected $collection_key = 'images';
@@ -2990,7 +2957,6 @@ class Google_Service_AndroidPublisher_ImagesListResponse extends Google_Collecti
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ImagesUploadResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3009,7 +2975,6 @@ class Google_Service_AndroidPublisher_ImagesUploadResponse extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InAppProduct extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3121,7 +3086,6 @@ class Google_Service_AndroidPublisher_InAppProduct extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InAppProductListing extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3148,17 +3112,14 @@ class Google_Service_AndroidPublisher_InAppProductListing extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InAppProductListings extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InAppProductPrices extends Google_Model
 {
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsBatchRequest extends Google_Collection
 {
   protected $collection_key = 'entrys';
@@ -3178,7 +3139,6 @@ class Google_Service_AndroidPublisher_InappproductsBatchRequest extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsBatchRequestEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3225,7 +3185,6 @@ class Google_Service_AndroidPublisher_InappproductsBatchRequestEntry extends Goo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsBatchResponse extends Google_Collection
 {
   protected $collection_key = 'entrys';
@@ -3254,7 +3213,6 @@ class Google_Service_AndroidPublisher_InappproductsBatchResponse extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsBatchResponseEntry extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3292,7 +3250,6 @@ class Google_Service_AndroidPublisher_InappproductsBatchResponseEntry extends Go
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsInsertRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3311,7 +3268,6 @@ class Google_Service_AndroidPublisher_InappproductsInsertRequest extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsInsertResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3330,7 +3286,6 @@ class Google_Service_AndroidPublisher_InappproductsInsertResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsListResponse extends Google_Collection
 {
   protected $collection_key = 'inappproduct';
@@ -3379,7 +3334,6 @@ class Google_Service_AndroidPublisher_InappproductsListResponse extends Google_C
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsUpdateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3398,7 +3352,6 @@ class Google_Service_AndroidPublisher_InappproductsUpdateRequest extends Google_
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_InappproductsUpdateResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3417,7 +3370,6 @@ class Google_Service_AndroidPublisher_InappproductsUpdateResponse extends Google
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Listing extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3471,7 +3423,6 @@ class Google_Service_AndroidPublisher_Listing extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ListingsListResponse extends Google_Collection
 {
   protected $collection_key = 'listings';
@@ -3500,7 +3451,6 @@ class Google_Service_AndroidPublisher_ListingsListResponse extends Google_Collec
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_MonthDay extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3527,7 +3477,6 @@ class Google_Service_AndroidPublisher_MonthDay extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_PageInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3563,7 +3512,6 @@ class Google_Service_AndroidPublisher_PageInfo extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Price extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3590,7 +3538,6 @@ class Google_Service_AndroidPublisher_Price extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_ProductPurchase extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3644,7 +3591,6 @@ class Google_Service_AndroidPublisher_ProductPurchase extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Season extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3673,7 +3619,6 @@ class Google_Service_AndroidPublisher_Season extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_SubscriptionDeferralInfo extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3700,7 +3645,6 @@ class Google_Service_AndroidPublisher_SubscriptionDeferralInfo extends Google_Mo
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_SubscriptionPurchase extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3745,7 +3689,6 @@ class Google_Service_AndroidPublisher_SubscriptionPurchase extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_SubscriptionPurchasesDeferRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3764,7 +3707,6 @@ class Google_Service_AndroidPublisher_SubscriptionPurchasesDeferRequest extends 
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_SubscriptionPurchasesDeferResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3782,7 +3724,6 @@ class Google_Service_AndroidPublisher_SubscriptionPurchasesDeferResponse extends
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Testers extends Google_Collection
 {
   protected $collection_key = 'googlePlusCommunities';
@@ -3810,7 +3751,6 @@ class Google_Service_AndroidPublisher_Testers extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_TokenPagination extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3837,7 +3777,6 @@ class Google_Service_AndroidPublisher_TokenPagination extends Google_Model
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_Track extends Google_Collection
 {
   protected $collection_key = 'versionCodes';
@@ -3874,7 +3813,6 @@ class Google_Service_AndroidPublisher_Track extends Google_Collection
   }
 }
 
-#[AllowDynamicProperties]
 class Google_Service_AndroidPublisher_TracksListResponse extends Google_Collection
 {
   protected $collection_key = 'tracks';

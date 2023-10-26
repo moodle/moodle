@@ -93,7 +93,7 @@ interface sql_reader extends reader {
     /**
      * Returns an event from the log data.
      *
-     * @param \stdClass $data Log data
+     * @param stdClass $data Log data
      * @return \core\event\base
      */
     public function get_log_event($data);

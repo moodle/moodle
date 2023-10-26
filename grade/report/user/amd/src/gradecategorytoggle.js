@@ -40,7 +40,6 @@ const registerListenerEvents = (userReportId) => {
         const toggle = e.target.closest(SELECTORS.CATEGORY_TOGGLE);
 
         if (toggle) {
-            e.preventDefault();
             toggleCategory(toggle);
         }
     });

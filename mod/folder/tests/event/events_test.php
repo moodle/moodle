@@ -64,6 +64,9 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_folder\event\folder_updated', $event);
         $this->assertEquals(\context_module::instance($folder->cmid), $event->get_context());
         $this->assertEquals($folder->id, $event->objectid);
+        $expected = array($course->id, 'folder', 'edit', 'edit.php?id=' . $folder->cmid, $folder->id, $folder->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
     /**

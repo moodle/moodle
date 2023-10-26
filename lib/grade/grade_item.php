@@ -263,22 +263,6 @@ class grade_item extends grade_object {
     public $markasoverriddenwhengraded = true;
 
     /**
-     * @var int course module ID
-     */
-    public $cmid;
-
-    /**
-     * @var string average information.
-     */
-    public $avg;
-
-    /**
-     * Category name.
-     * @var string
-     */
-    public $category;
-
-    /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from the database
      *
      * @param array $params An array with required parameters for this grade object.
@@ -649,16 +633,12 @@ class grade_item extends grade_object {
      */
     public function set_locked($lockedstate, $cascade=false, $refresh=true) {
         if ($lockedstate) {
-            // Setting lock.
-            if (empty($this->id)) {
-                return false;
-            } else if ($this->needsupdate) {
-                // Can not lock grade without first having final grade,
-                // so we schedule it to be locked as soon as regrading is finished.
-                $this->locktime = time() - 1;
-            } else {
-                $this->locked = time();
+        /// setting lock
+            if ($this->needsupdate) {
+                return false; // can not lock grade without first having final grade
             }
+
+            $this->locked = time();
             $this->update();
 
             if ($cascade) {

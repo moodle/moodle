@@ -14,9 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Flock based file locking factory.
+ *
+ * The file lock factory returns file locks locked with the flock function. Works OK, except on some
+ * NFS, exotic shared storage and exotic server OSes (like windows). On windows, a second attempt to get a
+ * lock will block indefinitely instead of timing out.
+ *
+ * @package    core
+ * @category   lock
+ * @copyright  Damyon Wiese 2013
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace core\lock;
 
-use coding_exception;
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * Flock based file locking factory.
@@ -97,10 +110,15 @@ class file_lock_factory implements lock_factory {
     }
 
     /**
+     * Multiple locks for the same resource cannot be held from a single process.
+     *
      * @deprecated since Moodle 3.10.
+     * @return boolean - False
      */
     public function supports_recursion() {
-        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
+        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
+        return false;
     }
 
     /**
@@ -176,10 +194,18 @@ class file_lock_factory implements lock_factory {
     }
 
     /**
+     * Extend a lock that was previously obtained with @lock.
+     *
      * @deprecated since Moodle 3.10.
+     * @param lock $lock - not used
+     * @param int $maxlifetime - not used
+     * @return boolean - true if the lock was extended.
      */
-    public function extend_lock() {
-        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
+    public function extend_lock(lock $lock, $maxlifetime = 86400) {
+        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
+            DEBUG_DEVELOPER);
+        // Not supported by this factory.
+        return false;
     }
 
 }

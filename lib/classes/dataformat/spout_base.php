@@ -25,9 +25,6 @@
 
 namespace core\dataformat;
 
-use OpenSpout\Common\Entity\Row;
-use OpenSpout\Writer\Common\Creator\WriterFactory;
-
 /**
  * Common Spout class for dataformat.
  *
@@ -37,6 +34,9 @@ use OpenSpout\Writer\Common\Creator\WriterFactory;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class spout_base extends \core\dataformat\base {
+
+    /** @var $spouttype */
+    protected $spouttype = '';
 
     /** @var $writer */
     protected $writer;
@@ -51,13 +51,11 @@ abstract class spout_base extends \core\dataformat\base {
      * Output file headers to initialise the download of the file.
      */
     public function send_http_headers() {
-        $filename = $this->filename . $this->get_extension();
-
-        $this->writer = WriterFactory::createFromFile($filename);
-        if (method_exists($this->writer->getOptions(), 'setTempFolder')) {
-            $this->writer->getOptions()->setTempFolder(make_request_directory());
+        $this->writer = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
+        if (method_exists($this->writer, 'setTempFolder')) {
+            $this->writer->setTempFolder(make_request_directory());
         }
-
+        $filename = $this->filename . $this->get_extension();
         if (PHPUNIT_TEST) {
             $this->writer->openToFile('php://output');
         } else {
@@ -72,9 +70,9 @@ abstract class spout_base extends \core\dataformat\base {
      * Set the dataformat to be output to current file
      */
     public function start_output_to_file(): void {
-        $this->writer = WriterFactory::createFromFile($this->filepath);
-        if (method_exists($this->writer->getOptions(), 'setTempFolder')) {
-            $this->writer->getOptions()->setTempFolder(make_request_directory());
+        $this->writer = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createWriter($this->spouttype);
+        if (method_exists($this->writer, 'setTempFolder')) {
+            $this->writer->setTempFolder(make_request_directory());
         }
 
         $this->writer->openToFile($this->filepath);
@@ -102,7 +100,7 @@ abstract class spout_base extends \core\dataformat\base {
      * @param array $columns
      */
     public function start_sheet($columns) {
-        if ($this->sheettitle && $this->writer instanceof \OpenSpout\Writer\AbstractWriterMultiSheets) {
+        if ($this->sheettitle && $this->writer instanceof \Box\Spout\Writer\WriterMultiSheetsAbstract) {
             if ($this->renamecurrentsheet) {
                 $sheet = $this->writer->getCurrentSheet();
                 $this->renamecurrentsheet = false;
@@ -111,8 +109,7 @@ abstract class spout_base extends \core\dataformat\base {
             }
             $sheet->setName($this->sheettitle);
         }
-        // Create a row with cells and apply the style to all cells.
-        $row = Row::fromValues((array)$columns);
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray((array)$columns);
         $this->writer->addRow($row);
     }
 
@@ -123,7 +120,7 @@ abstract class spout_base extends \core\dataformat\base {
      * @param int $rownum
      */
     public function write_record($record, $rownum) {
-        $row = Row::fromValues($this->format_record($record));
+        $row = \Box\Spout\Writer\Common\Creator\WriterEntityFactory::createRowFromArray($this->format_record($record));
         $this->writer->addRow($row);
     }
 

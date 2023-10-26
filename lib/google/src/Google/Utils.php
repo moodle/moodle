@@ -19,7 +19,6 @@
  * Collection of static utility methods used for convenience across
  * the client library.
  */
-#[AllowDynamicProperties]
 class Google_Utils
 {
   public static function urlSafeB64Encode($data)

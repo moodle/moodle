@@ -695,7 +695,7 @@ abstract class gradingform_controller {
      * to the nearest int. Positive $gradingtype means that range 0..$gradingtype
      * is used for the grades and in this case grade does not have to be rounded.
      *
-     * Sometimes modules always expect grade to be rounded (like mod_assign does).
+     * Sometimes modules always expect grade to be rounded (like mod_assignment does).
      *
      * @param array $graderange array where first _key_ is the minimum grade and the
      *     last key is the maximum grade.

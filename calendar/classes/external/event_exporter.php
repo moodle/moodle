@@ -28,7 +28,9 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . "/calendar/lib.php");
 
+use \core_calendar\local\event\entities\action_event_interface;
 use \core_calendar\local\event\container;
+use \core_course\external\course_summary_exporter;
 use \renderer_base;
 
 /**

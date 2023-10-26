@@ -22,17 +22,24 @@ Feature: Site settings can be used to hide parts of the gradebook UI
 
   @javascript
   Scenario: Hide minimum grade
-    Given I click on grade item menu "Assignment1" of type "gradeitem" on "grader" page
-    When I choose "Edit grade item" in the open action menu
+    When I click on "Edit  assign Assignment1" "link"
     And I should see "Minimum grade"
-    And I click on "Cancel" "button" in the "Edit grade item" "dialogue"
     Then I navigate to "Grades > General settings" in site administration
     And I set the field "Show minimum grade" to "0"
     And I press "Save changes"
     And I am on the "Course 1" "grades > Grader report > View" page
-    And I click on grade item menu "Assignment1" of type "gradeitem" on "grader" page
-    And I choose "Edit grade item" in the open action menu
+    And I click on "Edit  assign Assignment1" "link"
     And I should not see "Minimum grade"
+
+  @javascript
+  Scenario: Hide calculation icons
+    And "Edit calculation for   Course total" "link" should exist
+    When I navigate to "Grades > Report settings > Grader report" in site administration
+    And I set the field "Show calculations" to "0"
+    And I press "Save changes"
+    And I am on "Course 1" course homepage
+    And I navigate to "View > Grader report" in the course gradebook
+    Then "Edit calculation for   Course total" "link" should not exist
 
   @javascript
   Scenario: Disable category overriding

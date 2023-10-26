@@ -111,7 +111,7 @@ class settings_provider_test extends \advanced_testcase {
      * Test that settings types to be added to quiz settings, are part of quiz_settings persistent class.
      */
     public function test_setting_elements_are_part_of_quiz_settings_table() {
-        $dbsettings = (array) (new seb_quiz_settings())->to_record();
+        $dbsettings = (array) (new quiz_settings())->to_record();
         $settingelements = settings_provider::get_seb_config_elements();
         $settingelements = (array) $this->strip_all_prefixes((object) $settingelements);
 
@@ -704,7 +704,7 @@ class settings_provider_test extends \advanced_testcase {
 
         $template = $this->create_template();
 
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('templateid', $template->get('id'));
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
         $settings->save();
@@ -731,7 +731,7 @@ class settings_provider_test extends \advanced_testcase {
 
         // Setup conflicting permissions.
         $template = $this->create_template();
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('templateid', $template->get('id'));
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
         $settings->save();
@@ -794,7 +794,7 @@ class settings_provider_test extends \advanced_testcase {
 
         $template = $this->create_template();
 
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('templateid', $template->get('id'));
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
         $settings->save();
@@ -989,7 +989,7 @@ class settings_provider_test extends \advanced_testcase {
 
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
 
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
         $settings->save();
 
@@ -1167,7 +1167,7 @@ class settings_provider_test extends \advanced_testcase {
 
         // Create a template.
         $template = $this->create_template();
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('templateid', $template->get('id'));
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_TEMPLATE);
         $settings->save();
@@ -1197,7 +1197,7 @@ class settings_provider_test extends \advanced_testcase {
         $xml = file_get_contents(__DIR__ . '/fixtures/unencrypted.seb');
         $draftitemid = $this->create_test_draftarea_file($xml);
         settings_provider::save_filemanager_sebconfigfile_draftarea($draftitemid, $this->quiz->cmid);
-        $settings = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
+        $settings = quiz_settings::get_record(['quizid' => $this->quiz->id]);
         $settings->set('requiresafeexambrowser', settings_provider::USE_SEB_UPLOAD_CONFIG);
         $settings->save();
 

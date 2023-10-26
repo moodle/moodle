@@ -171,4 +171,16 @@ class mustache_helper_collection_test extends \advanced_testcase {
         $this->assertTrue($goodcalled);
         $this->assertFalse($badcalled);
     }
+
+    /**
+     * Test that calling deprecated method strip_blacklisted_helpers() still works and shows developer debugging.
+     */
+    public function test_deprecated_strip_blacklisted_helpers() {
+
+        $collection = new mustache_helper_collection(null, ['js']);
+        $stripped = $collection->strip_blacklisted_helpers(['js'], '{{#js}} JS {{/js}}');
+        $this->assertEquals('{{}}', $stripped);
+        $this->assertDebuggingCalled('mustache_helper_collection::strip_blacklisted_helpers() is deprecated. ' .
+            'Please use mustache_helper_collection::strip_disallowed_helpers() instead.', DEBUG_DEVELOPER);
+    }
 }

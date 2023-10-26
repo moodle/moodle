@@ -1,0 +1,277 @@
+# PLEASE NOTE: Travis is not currently utilised by the Moodle core integration
+# process (which uses our internal CI system) this file is here for the benefit
+# of community developers git clones - see MDL-51458.
+
+notifications:
+  email:
+    if: env(MOODLE_EMAIL) != no
+
+language: php
+
+os: linux
+
+dist: focal
+
+services:
+    - mysql
+    - docker
+
+addons:
+  postgresql: "12"
+  apt:
+    packages:
+      - postgresql-12
+      - postgresql-client-12
+
+branches:
+  except:
+    - master
+    - /MOODLE_[0-9]+_STABLE/
+    - /^v[0-9]+\.[0-9]+\.[0-9]+.*/
+
+jobs:
+    # Enable fast finish.
+    # This will fail the build if a single job fails (except those in allow_failures).
+    # It will not stop the jobs from running.
+    fast_finish: true
+
+    include:
+        # First all the lowest php ones (7.4)
+        - php: 7.4
+          env: DB=none     TASK=CITEST
+        - php: 7.4
+          env: DB=none     TASK=GRUNT
+
+        - if: env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present
+          php: 7.4
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all"
+          php: 7.4
+          env: DB=mysqli   TASK=PHPUNIT
+
+        # Then, conditionally, all the highest php ones (8.1)
+        - if: env(MOODLE_PHP) = "all"
+          php: 8.1
+          env: DB=none     TASK=CITEST
+        - if: env(MOODLE_PHP) = "all"
+          php: 8.1
+          env: DB=none     TASK=GRUNT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "pgsql" OR env(MOODLE_DATABASE) = "all" OR env(MOODLE_DATABASE) IS NOT present)
+          php: 8.1
+          env: DB=pgsql    TASK=PHPUNIT
+
+        - if: env(MOODLE_PHP) = "all" AND (env(MOODLE_DATABASE) = "mysqli" OR env(MOODLE_DATABASE) = "all")
+          php: 8.1
+          env: DB=mysqli   TASK=PHPUNIT
+
+cache:
+    directories:
+      - $HOME/.composer/cache
+      - $HOME/.npm
+
+before_install:
+    - docker run -d -p 127.0.0.1:8080:80 --name exttests moodlehq/moodle-exttests
+    # Avoid IPv6 default binding as service (causes redis not to start).
+    - sudo service redis-server start --bind 127.0.0.1
+
+env:
+  global:
+    - PGVER=12
+    - PGPORT=5433
+
+install:
+    - >
+        if [ "$DB" = 'mysqli' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo service mysql stop
+            sudo mv /var/lib/mysql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/mysql /var/lib/mysql
+            echo -e "[mysqld]\nskip-log-bin" | sudo tee -a /etc/mysql/my.cnf
+            sudo service mysql start
+        fi
+    - >
+        if [ "$DB" = 'pgsql' ];
+        then
+            sudo mkdir /mnt/ramdisk
+            sudo mount -t tmpfs -o size=1024m tmpfs /mnt/ramdisk
+            sudo service postgresql stop
+            sudo mv /var/lib/postgresql /mnt/ramdisk
+            sudo ln -s /mnt/ramdisk/postgresql /var/lib/postgresql
+            sudo service postgresql start
+            sh -c 'until pg_isready -p $PGPORT; do echo "Waiting for the DB to be up..."; sleep 2; done'
+        fi
+    - >
+        if [ "$TASK" = 'PHPUNIT' ];
+        then
+            if [ -n "$GITHUB_APITOKEN" ]; then
+                composer config github-oauth.github.com $GITHUB_APITOKEN;
+                echo 'auth.json' >> .git/info/exclude
+            fi
+
+            echo 'extension="redis.so"' > /tmp/redis.ini
+            phpenv config-add /tmp/redis.ini
+
+            # Install composer dependencies.
+            # We need --no-interaction in case we hit API limits for composer. This causes it to fall back to a standard clone.
+            # Typically it should be able to use the Composer cache if any other job has already completed before we started here.
+            travis_retry composer install --prefer-dist --no-interaction;
+        fi
+
+    - >
+        if [ "$TASK" = 'GRUNT' ];
+        then
+            nvm install
+            nvm use
+        fi
+
+before_script:
+    - echo 'max_input_vars=5000' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini
+    - phpenv config-rm xdebug.ini
+    - >
+      if [ "$TASK" = 'PHPUNIT' ];
+      then
+        # Copy generic configuration in place.
+        cp config-dist.php config.php ;
+
+        # Create the moodledata directory.
+        mkdir -p "$HOME"/roots/base
+
+        # The database name and password.
+        sed -i \
+          -e "s%= 'moodle'%= 'travis_ci_test'%" \
+          -e "s%= 'password'%= ''%" \
+          config.php ;
+
+        # The wwwroot and dataroot.
+        sed -i \
+          -e "s%http://example.com/moodle%https://localhost%" \
+          -e "s%/home/example/moodledata%/home/travis/roots/base%" \
+          config.php ;
+
+        if [ "$DB" = 'pgsql' ];
+        then
+          # Postgres-specific setup.
+          sed -i \
+            -e "s%= 'username'%= 'travis'%" \
+            -e "s%'dbsocket'  => false%'dbsocket'  => true%" \
+            config.php ;
+
+          psql -c 'CREATE DATABASE travis_ci_test;' -U travis;
+        fi
+
+        if [ "$DB" = 'mysqli' ];
+        then
+          # MySQL-specific setup.
+          sed -i \
+            -e "s%= 'pgsql'%= 'mysqli'%" \
+            -e "s%= 'username'%= 'travis'%" \
+            -e "s%=> 'utf8mb4_unicode_ci'%=> 'utf8mb4_bin'%" \
+            config.php;
+
+          mysql -u root -e 'SET GLOBAL innodb_file_format=barracuda;' ;
+          mysql -u root -e 'SET GLOBAL innodb_file_per_table=ON;' ;
+          mysql -u root -e 'SET GLOBAL innodb_large_prefix=ON;' ;
+          mysql -e 'CREATE DATABASE travis_ci_test DEFAULT CHARACTER SET utf8mb4 DEFAULT COLLATE utf8mb4_bin;' ;
+        fi
+      fi
+
+    - >
+      if [ "$TASK" = 'PHPUNIT' ];
+      then
+        # Create a directory for the phpunit dataroot.
+        mkdir -p "$HOME"/roots/phpunit
+
+        # The phpunit dataroot and prefix..
+        sed -i \
+          -e "/require_once/i \\\$CFG->phpunit_dataroot = '\/home\/travis\/roots\/phpunit';" \
+          -e "/require_once/i \\\$CFG->phpunit_prefix = 'p_';" \
+          config.php ;
+        # Enable test external resources
+        sed -i \
+          -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTP_URL', 'http://127.0.0.1:8080');" \
+          -e "/require_once/i \\define('TEST_EXTERNAL_FILES_HTTPS_URL', 'http://127.0.0.1:8080');" \
+          config.php ;
+
+        # Redis cache store tests
+        sed -i \
+          -e "/require_once/i \\define('TEST_CACHESTORE_REDIS_TESTSERVERS', '127.0.0.1');" \
+          config.php ;
+        # Redis session tests
+        sed -i \
+          -e "/require_once/i \\define('TEST_SESSION_REDIS_HOST', '127.0.0.1');" \
+          config.php ;
+
+        # Initialise PHPUnit for Moodle.
+        php admin/tool/phpunit/cli/init.php
+      fi
+
+    - >
+      if [ "$TASK" = 'GRUNT' ];
+      then
+        npm install --no-spin;
+        npm install --no-spin -g grunt ;
+      fi
+
+    ########################################################################
+    # CI Tests
+    ########################################################################
+    - >
+      if [ "$TASK" = 'CITEST' ];
+      then
+        # Note - this is deliberately placed in the script section as we
+        # should not add any code until after phpunit has run.
+
+        # The following repositories are required.
+        # The local_ci repository does the actual checking.
+        git clone https://github.com/moodlehq/moodle-local_ci.git local/ci
+
+        # We need the official upstream for comparison
+        git remote add upstream https://github.com/moodle/moodle.git;
+
+        git fetch upstream MOODLE_401_STABLE;
+        export GIT_PREVIOUS_COMMIT="`git merge-base FETCH_HEAD $TRAVIS_COMMIT`";
+        export GIT_COMMIT="$TRAVIS_COMMIT";
+        export UPSTREAM_FETCH_HEAD=`git rev-parse FETCH_HEAD`
+
+        # Variables required by our linter.
+        export gitcmd=`which git`;
+        export gitdir="$TRAVIS_BUILD_DIR";
+        export phpcmd=`which php`;
+      fi
+
+script:
+    - >
+      if [ "$TASK" = 'PHPUNIT' ];
+      then
+        vendor/bin/phpunit --fail-on-risky --disallow-test-output --verbose;
+      fi
+
+    - >
+      if [ "$TASK" = 'CITEST' ];
+      then
+        bash local/ci/php_lint/php_lint.sh;
+      fi
+
+    - >
+      if [ "$TASK" = 'GRUNT' ];
+      then
+        grunt ;
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        git add . ;
+        git reset -- npm-shrinkwrap.json ;
+        git diff --cached --exit-code ;
+      fi
+
+after_script:
+    - >
+      if [ "$TASK" = 'PHPUNIT' ];
+      then
+        EXTTESTS_HITS=$(docker logs exttests 2>&1 | grep -Fv -e 'AH00558' -e '[pid 1]' | wc -l)
+        echo -e "\nTest local resources number of hits: ${EXTTESTS_HITS}.\n"
+      fi

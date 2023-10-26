@@ -16,8 +16,8 @@
 
 namespace mod_quiz;
 
-use mod_quiz\question\display_options;
-use mod_quiz\quiz_settings;
+use mod_quiz_display_options;
+use quiz;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -41,22 +41,22 @@ class quizobj_test extends \basic_testcase {
         $cm = new \stdClass();
         $cm->id = 123;
 
-        $quizobj = new quiz_settings($quiz, $cm, new \stdClass(), false);
+        $quizobj = new quiz($quiz, $cm, new \stdClass(), false);
 
         $this->assertEquals('',
-            $quizobj->cannot_review_message(display_options::DURING));
+            $quizobj->cannot_review_message(mod_quiz_display_options::DURING));
         $this->assertEquals('',
-            $quizobj->cannot_review_message(display_options::IMMEDIATELY_AFTER));
+            $quizobj->cannot_review_message(mod_quiz_display_options::IMMEDIATELY_AFTER));
         $this->assertEquals(get_string('noreview', 'quiz'),
-            $quizobj->cannot_review_message(display_options::LATER_WHILE_OPEN));
+            $quizobj->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
         $this->assertEquals(get_string('noreview', 'quiz'),
-            $quizobj->cannot_review_message(display_options::AFTER_CLOSE));
+            $quizobj->cannot_review_message(mod_quiz_display_options::AFTER_CLOSE));
 
         $closetime = time() + 10000;
         $quiz->timeclose = $closetime;
-        $quizobj = new quiz_settings($quiz, $cm, new \stdClass(), false);
+        $quizobj = new quiz($quiz, $cm, new \stdClass(), false);
 
         $this->assertEquals(get_string('noreviewuntil', 'quiz', userdate($closetime)),
-            $quizobj->cannot_review_message(display_options::LATER_WHILE_OPEN));
+            $quizobj->cannot_review_message(mod_quiz_display_options::LATER_WHILE_OPEN));
     }
 }

@@ -4,7 +4,7 @@
     <location>yui/src/rangy/js/*.*</location>
     <name>Rangy</name>
     <description>A cross-browser JavaScript range and selection library.</description>
-    <version>1.3.1</version>
+    <version>1.3.0</version>
     <license>MIT</license>
     <repository>https://github.com/timdown/rangy</repository>
     <copyrights>

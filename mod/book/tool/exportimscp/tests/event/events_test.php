@@ -60,6 +60,10 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\booktool_exportimscp\event\book_exported', $event);
         $this->assertEquals(\context_module::instance($book->cmid), $event->get_context());
         $this->assertEquals($book->id, $event->objectid);
+        $expected = array($course->id, 'book', 'exportimscp', 'tool/exportimscp/index.php?id=' . $book->cmid,
+            $book->id, $book->cmid);
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 
 }

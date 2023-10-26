@@ -36,9 +36,6 @@ class api_test extends \advanced_testcase {
     /** @var \stdClass $role */
     protected $role = null;
 
-    /** @var int $roleid */
-    protected $roleid;
-
     /**
      * Setup function- we will create a course and add an assign instance to it.
      */

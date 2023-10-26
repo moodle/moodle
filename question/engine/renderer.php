@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_question\output\question_version_info;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -146,9 +145,6 @@ class core_question_renderer extends plugin_renderer_base {
         $output .= $this->mark_summary($qa, $behaviouroutput, $options);
         $output .= $this->question_flag($qa, $options->flags);
         $output .= $this->edit_question_link($qa, $options);
-        if ($options->versioninfo) {
-            $output .= $this->render(new question_version_info($qa->get_question(), true));
-        }
         return $output;
     }
 

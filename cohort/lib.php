@@ -73,9 +73,6 @@ function cohort_add_cohort($cohort) {
 
     $cohort->id = $DB->insert_record('cohort', $cohort);
 
-    $handler = core_cohort\customfield\cohort_handler::create();
-    $handler->instance_form_save($cohort, true);
-
     $event = \core\event\cohort_created::create(array(
         'context' => context::instance_by_id($cohort->contextid),
         'objectid' => $cohort->id,
@@ -102,11 +99,6 @@ function cohort_update_cohort($cohort) {
         unset($cohort->theme);
     }
     $cohort->timemodified = time();
-
-    // Update custom fields if there are any of them in the form.
-    $handler = core_cohort\customfield\cohort_handler::create();
-    $handler->instance_form_save($cohort);
-
     $DB->update_record('cohort', $cohort);
 
     $event = \core\event\cohort_updated::create(array(
@@ -127,9 +119,6 @@ function cohort_delete_cohort($cohort) {
     if ($cohort->component) {
         // TODO: add component delete callback
     }
-
-    $handler = core_cohort\customfield\cohort_handler::create();
-    $handler->delete_instance($cohort->id);
 
     $DB->delete_records('cohort_members', array('cohortid'=>$cohort->id));
     $DB->delete_records('cohort', array('id'=>$cohort->id));
@@ -245,11 +234,9 @@ function cohort_is_member($cohortid, $userid) {
  * @param int $offset
  * @param int $limit
  * @param string $search
- * @param bool $withcustomfields if set to yes, then cohort custom fields will be included in the results.
  * @return array
  */
-function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset = 0, $limit = 25,
-        $search = '', $withcustomfields = false) {
+function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset = 0, $limit = 25, $search = '') {
     global $DB;
 
     $params = array();
@@ -325,18 +312,7 @@ function cohort_get_available_cohorts($currentcontext, $withmembers = 0, $offset
               ORDER BY c.name, c.idnumber";
     }
 
-    $cohorts = $DB->get_records_sql($sql, $params, $offset, $limit);
-
-    if ($withcustomfields) {
-        $cohortids = array_keys($cohorts);
-        $customfieldsdata = cohort_get_custom_fields_data($cohortids);
-
-        foreach ($cohorts as $cohort) {
-            $cohort->customfields = !empty($customfieldsdata[$cohort->id]) ? $customfieldsdata[$cohort->id] : [];
-        }
-    }
-
-    return $cohorts;
+    return $DB->get_records_sql($sql, $params, $offset, $limit);
 }
 
 /**
@@ -371,10 +347,9 @@ function cohort_can_view_cohort($cohortorid, $currentcontext) {
  *
  * @param stdClass|int $cohortorid cohort object or id
  * @param context $currentcontext current context (course) where visibility is checked
- * @param bool $withcustomfields if set to yes, then cohort custom fields will be included in the results.
  * @return stdClass|boolean
  */
-function cohort_get_cohort($cohortorid, $currentcontext, $withcustomfields = false) {
+function cohort_get_cohort($cohortorid, $currentcontext) {
     global $DB;
     if (is_numeric($cohortorid)) {
         $cohort = $DB->get_record('cohort', array('id' => $cohortorid), 'id, contextid, visible');
@@ -383,22 +358,15 @@ function cohort_get_cohort($cohortorid, $currentcontext, $withcustomfields = fal
     }
 
     if ($cohort && in_array($cohort->contextid, $currentcontext->get_parent_context_ids())) {
-        if (!$cohort->visible) {
-            $cohortcontext = context::instance_by_id($cohort->contextid);
-            if (!has_capability('moodle/cohort:view', $cohortcontext)) {
-                return false;
-            }
+        if ($cohort->visible) {
+            return $cohort;
         }
-    } else {
-        return false;
+        $cohortcontext = context::instance_by_id($cohort->contextid);
+        if (has_capability('moodle/cohort:view', $cohortcontext)) {
+            return $cohort;
+        }
     }
-
-    if ($cohort && $withcustomfields) {
-        $customfieldsdata = cohort_get_custom_fields_data([$cohort->id]);
-        $cohort->customfields = !empty($customfieldsdata[$cohort->id]) ? $customfieldsdata[$cohort->id] : [];
-    }
-
-    return $cohort;
+    return false;
 }
 
 /**
@@ -445,10 +413,9 @@ function cohort_get_search_query($search, $tablealias = '') {
  * @param int $page number of the current page
  * @param int $perpage items per page
  * @param string $search search string
- * @param bool $withcustomfields if set to yes, then cohort custom fields will be included in the results.
  * @return array    Array(totalcohorts => int, cohorts => array, allcohorts => int)
  */
-function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '', $withcustomfields = false) {
+function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '') {
     global $DB;
 
     $fields = "SELECT *";
@@ -470,15 +437,6 @@ function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '', 
     }
     $cohorts = $DB->get_records_sql($fields . $sql . $order, $params, $page*$perpage, $perpage);
 
-    if ($withcustomfields) {
-        $cohortids = array_keys($cohorts);
-        $customfieldsdata = cohort_get_custom_fields_data($cohortids);
-
-        foreach ($cohorts as $cohort) {
-            $cohort->customfields = !empty($customfieldsdata[$cohort->id]) ? $customfieldsdata[$cohort->id] : [];
-        }
-    }
-
     return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts' => $allcohorts);
 }
 
@@ -492,10 +450,9 @@ function cohort_get_cohorts($contextid, $page = 0, $perpage = 25, $search = '', 
  * @param int $page number of the current page
  * @param int $perpage items per page
  * @param string $search search string
- * @param bool $withcustomfields if set to yes, then cohort custom fields will be included in the results.
  * @return array    Array(totalcohorts => int, cohorts => array, allcohorts => int)
  */
-function cohort_get_all_cohorts($page = 0, $perpage = 25, $search = '', $withcustomfields = false) {
+function cohort_get_all_cohorts($page = 0, $perpage = 25, $search = '') {
     global $DB;
 
     $fields = "SELECT c.*, ".context_helper::get_preload_record_columns_sql('ctx');
@@ -523,17 +480,9 @@ function cohort_get_all_cohorts($page = 0, $perpage = 25, $search = '', $withcus
     $order = " ORDER BY c.name ASC, c.idnumber ASC";
     $cohorts = $DB->get_records_sql($fields . $sql . $wheresql . $order, $params, $page*$perpage, $perpage);
 
-    if ($withcustomfields) {
-        $cohortids = array_keys($cohorts);
-        $customfieldsdata = cohort_get_custom_fields_data($cohortids);
-    }
-
-    foreach ($cohorts as $cohort) {
-        // Preload used contexts, they will be used to check view/manage/assign capabilities and display categories names.
-        context_helper::preload_from_record($cohort);
-        if ($withcustomfields) {
-            $cohort->customfields = !empty($customfieldsdata[$cohort->id]) ? $customfieldsdata[$cohort->id] : [];
-        }
+    // Preload used contexts, they will be used to check view/manage/assign capabilities and display categories names.
+    foreach (array_keys($cohorts) as $key) {
+        context_helper::preload_from_record($cohorts[$key]);
     }
 
     return array('totalcohorts' => $totalcohorts, 'cohorts' => $cohorts, 'allcohorts' => $allcohorts);
@@ -543,28 +492,16 @@ function cohort_get_all_cohorts($page = 0, $perpage = 25, $search = '', $withcus
  * Get all the cohorts where the given user is member of.
  *
  * @param int $userid
- * @param bool $withcustomfields if set to yes, then cohort custom fields will be included in the results.
  * @return array Array
  */
-function cohort_get_user_cohorts($userid, $withcustomfields = false) {
+function cohort_get_user_cohorts($userid) {
     global $DB;
 
     $sql = 'SELECT c.*
               FROM {cohort} c
               JOIN {cohort_members} cm ON c.id = cm.cohortid
              WHERE cm.userid = ? AND c.visible = 1';
-    $cohorts = $DB->get_records_sql($sql, array($userid));
-
-    if ($withcustomfields) {
-        $cohortids = array_keys($cohorts);
-        $customfieldsdata = cohort_get_custom_fields_data($cohortids);
-
-        foreach ($cohorts as $cohort) {
-            $cohort->customfields = !empty($customfieldsdata[$cohort->id]) ? $customfieldsdata[$cohort->id] : [];
-        }
-    }
-
-    return $cohorts;
+    return $DB->get_records_sql($sql, array($userid));
 }
 
 /**
@@ -697,21 +634,4 @@ function cohort_get_list_of_themes() {
         }
     }
     return $themes;
-}
-
-/**
- * Returns custom fields data for provided cohorts.
- *
- * @param array $cohortids a list of cohort IDs to provide data for.
- * @return \core_customfield\data_controller[]
- */
-function cohort_get_custom_fields_data(array $cohortids): array {
-    $result = [];
-
-    if (!empty($cohortids)) {
-        $handler = core_cohort\customfield\cohort_handler::create();
-        $result = $handler->get_instances_data($cohortids, true);
-    }
-
-    return $result;
 }

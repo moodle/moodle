@@ -61,7 +61,7 @@ class user_competency_summary implements renderable, templatable {
      * Export the data.
      *
      * @param renderer_base $output
-     * @return \stdClass
+     * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
         if (!isset($related['user'])) {

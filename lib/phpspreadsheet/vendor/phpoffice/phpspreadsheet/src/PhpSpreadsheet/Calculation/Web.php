@@ -4,8 +4,6 @@ namespace PhpOffice\PhpSpreadsheet\Calculation;
 
 /**
  * @deprecated 1.18.0
- *
- * @codeCoverageIgnore
  */
 class Web
 {
@@ -17,9 +15,8 @@ class Web
      * Excel Function:
      *        Webservice(url)
      *
-     * @deprecated 1.18.0
-     *      Use the webService() method in the Web\Service class instead
      * @see Web\Service::webService()
+     *      Use the webService() method in the Web\Service class instead
      *
      * @return string the output resulting from a call to the webservice
      */

@@ -24,11 +24,15 @@
 
 namespace core_search;
 
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
 use core_user\external\user_summary_exporter;
+use \external_value;
+use \external_single_structure;
+use \external_multiple_structure;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * Handles external (web service) function calls related to search.
@@ -37,35 +41,32 @@ use core_user\external\user_summary_exporter;
  * @copyright 2017 The Open University
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class external extends \core_external\external_api {
+class external extends \external_api {
     /**
      * Returns parameter types for get_relevant_users function.
      *
-     * @return external_function_parameters Parameters
+     * @return \external_function_parameters Parameters
      */
     public static function get_relevant_users_parameters() {
-        return new external_function_parameters([
-            'query' => new external_value(
-                PARAM_RAW,
-                'Query string (full or partial user full name or other details)'
-            ),
-            'courseid' => new external_value(PARAM_INT, 'Course id (0 if none)'),
-        ]);
+        return new \external_function_parameters([
+                'query' => new external_value(PARAM_RAW,
+                    'Query string (full or partial user full name or other details)'),
+                'courseid' => new external_value(PARAM_INT, 'Course id (0 if none)'),
+                ]);
     }
 
     /**
      * Returns result type for get_relevant_users function.
      *
-     * @return external_description Result type
+     * @return \external_description Result type
      */
     public static function get_relevant_users_returns() {
         return new external_multiple_structure(
-            new external_single_structure([
-                'id' => new external_value(PARAM_INT, 'User id'),
-                'fullname' => new external_value(PARAM_RAW, 'Full name as text'),
-                'profileimageurlsmall' => new external_value(PARAM_URL, 'URL to small profile image')
-            ])
-        );
+                new external_single_structure([
+                    'id' => new external_value(PARAM_INT, 'User id'),
+                    'fullname' => new external_value(PARAM_RAW, 'Full name as text'),
+                    'profileimageurlsmall' => new external_value(PARAM_URL, 'URL to small profile image')
+                ]));
     }
 
     /**

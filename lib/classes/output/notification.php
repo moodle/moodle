@@ -156,8 +156,8 @@ class notification implements \renderable, \templatable {
     /**
      * Export this data so it can be used as the context for a mustache template.
      *
-     * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return array data context for a mustache template
+     * @param renderer_base $output typically, the renderer that's calling this function
+     * @return stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
         return array(

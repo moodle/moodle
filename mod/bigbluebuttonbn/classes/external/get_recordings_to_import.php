@@ -16,15 +16,20 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-use core_external\external_warnings;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
+use external_warnings;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton\recordings\recording_data;
 use mod_bigbluebuttonbn\recording;
+
+defined('MOODLE_INTERNAL') || die();
+
+global $CFG;
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * External service to fetch a list of recordings from the BBB service.

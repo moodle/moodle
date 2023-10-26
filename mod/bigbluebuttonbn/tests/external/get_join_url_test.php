@@ -16,8 +16,9 @@
 
 namespace mod_bigbluebuttonbn\external;
 
-use core_external\external_api;
+use external_api;
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
 use moodle_exception;
 

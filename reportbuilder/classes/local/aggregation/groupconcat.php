@@ -62,6 +62,16 @@ class groupconcat extends base {
     }
 
     /**
+     * We cannot sort this aggregation type
+     *
+     * @param bool $columnsortable
+     * @return bool
+     */
+    public static function sortable(bool $columnsortable): bool {
+        return false;
+    }
+
+    /**
      * Override base method to ensure all SQL fields are concatenated together if there are multiple
      *
      * @param array $sqlfields

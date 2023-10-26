@@ -14,9 +14,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_value;
+/**
+ * Web services
+ *
+ * @package     tool_xmldb
+ * @copyright   2018 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * tool_xmldb external function

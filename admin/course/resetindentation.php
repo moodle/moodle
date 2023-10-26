@@ -65,8 +65,7 @@ $displayoptions = ['confirmtitle' => get_string('resetindentation_title', 'admin
 $confirmbutton = new single_button(
     new moodle_url('/admin/course/resetindentation.php', ['confirm' => 1, 'format' => $format, 'sesskey' => sesskey()]),
     get_string('resetindentation', 'admin'),
-    'post',
-    single_button::BUTTON_DANGER
+    'post'
 );
 $cancelbutton = new single_button($backurl, get_string('cancel'));
 echo $OUTPUT->confirm(

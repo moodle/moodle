@@ -56,11 +56,11 @@ class restore_quiz_activity_task extends restore_activity_task {
      * processed by the link decoder
      */
     public static function define_decode_contents() {
-        $contents = [];
+        $contents = array();
 
-        $contents[] = new restore_decode_content('quiz', ['intro'], 'quiz');
+        $contents[] = new restore_decode_content('quiz', array('intro'), 'quiz');
         $contents[] = new restore_decode_content('quiz_feedback',
-                ['feedbacktext'], 'quiz_feedback');
+                array('feedbacktext'), 'quiz_feedback');
 
         return $contents;
     }
@@ -70,7 +70,7 @@ class restore_quiz_activity_task extends restore_activity_task {
      * to the activity to be executed by the link decoder
      */
     public static function define_decode_rules() {
-        $rules = [];
+        $rules = array();
 
         $rules[] = new restore_decode_rule('QUIZVIEWBYID',
                 '/mod/quiz/view.php?id=$1', 'course_module');
@@ -90,7 +90,7 @@ class restore_quiz_activity_task extends restore_activity_task {
      * of {@link restore_log_rule} objects
      */
     public static function define_restore_log_rules() {
-        $rules = [];
+        $rules = array();
 
         $rules[] = new restore_log_rule('quiz', 'add',
                 'view.php?id={course_module}', '{quiz}');
@@ -181,7 +181,7 @@ class restore_quiz_activity_task extends restore_activity_task {
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
     public static function define_restore_log_rules_for_course() {
-        $rules = [];
+        $rules = array();
 
         $rules[] = new restore_log_rule('quiz', 'view all', 'index.php?id={course}', null);
 

@@ -4,28 +4,20 @@ namespace PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 use PhpOffice\PhpSpreadsheet\Worksheet\AutoFilter\Column;
 use PhpOffice\PhpSpreadsheet\Worksheet\AutoFilter\Column\Rule;
-use PhpOffice\PhpSpreadsheet\Worksheet\Table;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use SimpleXMLElement;
 
 class AutoFilter
 {
-    /**
-     * @var Table|Worksheet
-     */
-    private $parent;
+    /** @var Worksheet */
+    private $worksheet;
 
-    /**
-     * @var SimpleXMLElement
-     */
+    /** @var SimpleXMLElement */
     private $worksheetXml;
 
-    /**
-     * @param Table|Worksheet $parent
-     */
-    public function __construct($parent, SimpleXMLElement $worksheetXml)
+    public function __construct(Worksheet $workSheet, SimpleXMLElement $worksheetXml)
     {
-        $this->parent = $parent;
+        $this->worksheet = $workSheet;
         $this->worksheetXml = $worksheetXml;
     }
 
@@ -40,7 +32,7 @@ class AutoFilter
 
     private function readAutoFilter(string $autoFilterRange, SimpleXMLElement $xmlSheet): void
     {
-        $autoFilter = $this->parent->getAutoFilter();
+        $autoFilter = $this->worksheet->getAutoFilter();
         $autoFilter->setRange($autoFilterRange);
 
         foreach ($xmlSheet->autoFilter->filterColumn as $filterColumn) {

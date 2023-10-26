@@ -154,8 +154,8 @@ class helper_test extends \advanced_testcase {
         $errors = $factory->get_framework()->getMessages('error');
         $this->assertCount(1, $errors);
         $error = reset($errors);
-        $this->assertEquals('missing-main-library', $error->code);
-        $this->assertEquals('Missing main library H5P.GreetingCard 1.0', $error->message);
+        $this->assertEquals('missing-required-library', $error->code);
+        $this->assertEquals('Missing required library H5P.GreetingCard 1.0', $error->message);
     }
 
     /**

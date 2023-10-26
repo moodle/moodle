@@ -2,24 +2,14 @@
 
 namespace PhpXmlRpc;
 
-use PhpXmlRpc\Exception\StateErrorException;
-use PhpXmlRpc\Exception\TypeErrorException;
-use PhpXmlRpc\Exception\ValueErrorException;
-use PhpXmlRpc\Traits\CharsetEncoderAware;
-use PhpXmlRpc\Traits\DeprecationLogger;
+use PhpXmlRpc\Helper\Charset;
+use PhpXmlRpc\Helper\Logger;
 
 /**
  * This class enables the creation of values for XML-RPC, by encapsulating plain php values.
- *
- * @property Value[]|mixed $me deprecated - public access left in purely for BC. Access via scalarVal()/__construct()
- * @property int $params $mytype - public access left in purely for BC. Access via kindOf()/__construct()
- * @property string|null $_php_class deprecated - public access left in purely for BC.
  */
 class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 {
-    use CharsetEncoderAware;
-    use DeprecationLogger;
-
     public static $xmlrpcI4 = "i4";
     public static $xmlrpcI8 = "i8";
     public static $xmlrpcInt = "int";
@@ -47,25 +37,56 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         "null" => 1,
     );
 
+    protected static $logger;
+    protected static $charsetEncoder;
+
+    /// @todo: do these need to be public?
     /** @var Value[]|mixed */
-    protected $me = array();
+    public $me = array();
     /**
-     * @var int 0 for undef, 1 for scalar, 2 for array, 3 for struct
+     * @var int $mytype
+     * @internal
      */
-    protected $mytype = 0;
-    /** @var string|null */
-    protected $_php_class = null;
+    public $mytype = 0;
+    /** @var string|null $_php_class */
+    public $_php_class = null;
+
+    public function getLogger()
+    {
+        if (self::$logger === null) {
+            self::$logger = Logger::instance();
+        }
+        return self::$logger;
+    }
+
+    public static function setLogger($logger)
+    {
+        self::$logger = $logger;
+    }
+
+    public function getCharsetEncoder()
+    {
+        if (self::$charsetEncoder === null) {
+            self::$charsetEncoder = Charset::instance();
+        }
+        return self::$charsetEncoder;
+    }
+
+    public function setCharsetEncoder($charsetEncoder)
+    {
+        self::$charsetEncoder = $charsetEncoder;
+    }
 
     /**
-     * Build an xml-rpc value.
+     * Build an xmlrpc value.
      *
      * When no value or type is passed in, the value is left uninitialized, and the value can be added later.
      *
      * @param Value[]|mixed $val if passing in an array, all array elements should be PhpXmlRpc\Value themselves
-     * @param string $type any valid xml-rpc type name (lowercase): i4, int, boolean, string, double, dateTime.iso8601,
+     * @param string $type any valid xmlrpc type name (lowercase): i4, int, boolean, string, double, dateTime.iso8601,
      *                     base64, array, struct, null.
      *                     If null, 'string' is assumed.
-     *                     You should refer to http://xmlrpc.com/spec.md for more information on what each of these mean.
+     *                     You should refer to http://www.xmlrpc.com/spec for more information on what each of these mean.
      */
     public function __construct($val = -1, $type = '')
     {
@@ -98,27 +119,22 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                     $this->me['struct'] = $val;
                     break;
                 default:
-                    $this->getLogger()->error("XML-RPC: " . __METHOD__ . ": not a known type ($type)");
+                    $this->getLogger()->errorLog("XML-RPC: " . __METHOD__ . ": not a known type ($type)");
             }
         }
     }
 
     /**
-     * Add a single php value to an xml-rpc value.
+     * Add a single php value to an xmlrpc value.
      *
-     * If the xml-rpc value is an array, the php value is added as its last element.
-     * If the xml-rpc value is empty (uninitialized), this method makes it a scalar value, and sets that value.
-     * Fails if the xml-rpc value is not an array (i.e. a struct or a scalar) and already initialized.
+     * If the xmlrpc value is an array, the php value is added as its last element.
+     * If the xmlrpc value is empty (uninitialized), this method makes it a scalar value, and sets that value.
+     * Fails if the xmlrpc value is not an array and already initialized.
      *
      * @param mixed $val
      * @param string $type allowed values: i4, i8, int, boolean, string, double, dateTime.iso8601, base64, null.
-     * @return int 1 or 0 on failure
      *
-     * @todo arguably, as we have addArray to add elements to an Array value, and addStruct to add elements to a Struct
-     *       value, we should not allow this method to add values to an Array. The 'scalar' in the method name refers to
-     *       the expected state of the target object, not to the type of $val. Also, this works differently from
-     *       addScalar/addStruct in that, when adding an element to an array, it wraps it into a new Value
-     * @todo rename?
+     * @return int 1 or 0 on failure
      */
     public function addScalar($val, $type = 'string')
     {
@@ -128,13 +144,13 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         }
 
         if ($typeOf !== 1) {
-            $this->getLogger()->error("XML-RPC: " . __METHOD__ . ": not a scalar type ($type)");
+            $this->getLogger()->errorLog("XML-RPC: " . __METHOD__ . ": not a scalar type ($type)");
             return 0;
         }
 
         // coerce booleans into correct values
-        /// @todo we should either do it for datetimes, integers, i8 and doubles, too, or just plain remove this check,
-        ///       implemented on booleans only...
+        // NB: we should either do it for datetimes, integers, i8 and doubles, too,
+        // or just plain remove this check, implemented on booleans only...
         if ($type == static::$xmlrpcBoolean) {
             if (strcasecmp($val, 'true') == 0 || $val == 1 || ($val == true && strcasecmp($val, 'false'))) {
                 $val = true;
@@ -145,16 +161,14 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
         switch ($this->mytype) {
             case 1:
-                $this->getLogger()->error('XML-RPC: ' . __METHOD__ . ': scalar xmlrpc value can have only one value');
+                $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': scalar xmlrpc value can have only one value');
                 return 0;
             case 3:
-                $this->getLogger()->error('XML-RPC: ' . __METHOD__ . ': cannot add anonymous scalar to struct xmlrpc value');
+                $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': cannot add anonymous scalar to struct xmlrpc value');
                 return 0;
             case 2:
                 // we're adding a scalar value to an array here
-                /// @todo should we try avoiding re-wrapping Value objects?
-                $class = get_class($this);
-                $this->me['array'][] = new $class($val, $type);
+                $this->me['array'][] = new Value($val, $type);
 
                 return 1;
             default:
@@ -167,17 +181,17 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * Add an array of xml-rpc value objects to an xml-rpc value.
+     * Add an array of xmlrpc value objects to an xmlrpc value.
      *
-     * If the xml-rpc value is an array, the elements are appended to the existing ones.
-     * If the xml-rpc value is empty (uninitialized), this method makes it an array value, and sets that value.
+     * If the xmlrpc value is an array, the elements are appended to the existing ones.
+     * If the xmlrpc value is empty (uninitialized), this method makes it an array value, and sets that value.
      * Fails otherwise.
      *
      * @param Value[] $values
+     *
      * @return int 1 or 0 on failure
      *
-     * @todo add some checking for $values to be an array of xml-rpc values?
-     * @todo rename to addToArray?
+     * @todo add some checking for $values to be an array of xmlrpc values?
      */
     public function addArray($values)
     {
@@ -192,23 +206,23 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
             return 1;
         } else {
-            $this->getLogger()->error('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
+            $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
             return 0;
         }
     }
 
     /**
-     * Merges an array of named xml-rpc value objects into an xml-rpc value.
+     * Merges an array of named xmlrpc value objects into an xmlrpc value.
      *
-     * If the xml-rpc value is a struct, the elements are merged with the existing ones (overwriting existing ones).
-     * If the xml-rpc value is empty (uninitialized), this method makes it a struct value, and sets that value.
+     * If the xmlrpc value is a struct, the elements are merged with the existing ones (overwriting existing ones).
+     * If the xmlrpc value is empty (uninitialized), this method makes it a struct value, and sets that value.
      * Fails otherwise.
      *
      * @param Value[] $values
+     *
      * @return int 1 or 0 on failure
      *
-     * @todo add some checking for $values to be an array of xml-rpc values?
-     * @todo rename to addToStruct?
+     * @todo add some checking for $values to be an array?
      */
     public function addStruct($values)
     {
@@ -223,15 +237,15 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
             return 1;
         } else {
-            $this->getLogger()->error('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
+            $this->getLogger()->errorLog('XML-RPC: ' . __METHOD__ . ': already initialized as a [' . $this->kindOf() . ']');
             return 0;
         }
     }
 
     /**
-     * Returns a string describing the base type of the value.
+     * Returns a string containing either "struct", "array", "scalar" or "undef", describing the base type of the value.
      *
-     * @return string either "struct", "array", "scalar" or "undef"
+     * @return string
      */
     public function kindOf()
     {
@@ -247,13 +261,187 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
         }
     }
 
+    /**
+     * @param string $typ
+     * @param Value[]|mixed $val
+     * @param string $charsetEncoding
+     * @return string
+     */
+    protected function serializedata($typ, $val, $charsetEncoding = '')
+    {
+        $rs = '';
+
+        if (!isset(static::$xmlrpcTypes[$typ])) {
+            return $rs;
+        }
+
+        switch (static::$xmlrpcTypes[$typ]) {
+            case 1:
+                switch ($typ) {
+                    case static::$xmlrpcBase64:
+                        $rs .= "<${typ}>" . base64_encode($val) . "</${typ}>";
+                        break;
+                    case static::$xmlrpcBoolean:
+                        $rs .= "<${typ}>" . ($val ? '1' : '0') . "</${typ}>";
+                        break;
+                    case static::$xmlrpcString:
+                        // Do NOT use htmlentities, since it will produce named html entities, which are invalid xml
+                        $rs .= "<${typ}>" . $this->getCharsetEncoder()->encodeEntities($val, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</${typ}>";
+                        break;
+                    case static::$xmlrpcInt:
+                    case static::$xmlrpcI4:
+                    case static::$xmlrpcI8:
+                        $rs .= "<${typ}>" . (int)$val . "</${typ}>";
+                        break;
+                    case static::$xmlrpcDouble:
+                        // avoid using standard conversion of float to string because it is locale-dependent,
+                        // and also because the xmlrpc spec forbids exponential notation.
+                        // sprintf('%F') could be most likely ok but it fails eg. on 2e-14.
+                        // The code below tries its best at keeping max precision while avoiding exp notation,
+                        // but there is of course no limit in the number of decimal places to be used...
+                        $rs .= "<${typ}>" . preg_replace('/\\.?0+$/', '', number_format((double)$val, PhpXmlRpc::$xmlpc_double_precision, '.', '')) . "</${typ}>";
+                        break;
+                    case static::$xmlrpcDateTime:
+                        if (is_string($val)) {
+                            $rs .= "<${typ}>${val}</${typ}>";
+                        } elseif (is_a($val, 'DateTime') || is_a($val, 'DateTimeInterface')) {
+                            $rs .= "<${typ}>" . $val->format('Ymd\TH:i:s') . "</${typ}>";
+                        } elseif (is_int($val)) {
+                            $rs .= "<${typ}>" . date('Ymd\TH:i:s', $val) . "</${typ}>";
+                        } else {
+                            // not really a good idea here: but what should we output anyway? left for backward compat...
+                            $rs .= "<${typ}>${val}</${typ}>";
+                        }
+                        break;
+                    case static::$xmlrpcNull:
+                        if (PhpXmlRpc::$xmlrpc_null_apache_encoding) {
+                            $rs .= "<ex:nil/>";
+                        } else {
+                            $rs .= "<nil/>";
+                        }
+                        break;
+                    default:
+                        // no standard type value should arrive here, but provide a possibility
+                        // for xmlrpc values of unknown type...
+                        $rs .= "<${typ}>${val}</${typ}>";
+                }
+                break;
+            case 3:
+                // struct
+                if ($this->_php_class) {
+                    $rs .= '<struct php_class="' . $this->_php_class . "\">\n";
+                } else {
+                    $rs .= "<struct>\n";
+                }
+                $charsetEncoder = $this->getCharsetEncoder();
+                /** @var Value $val2 */
+                foreach ($val as $key2 => $val2) {
+                    $rs .= '<member><name>' . $charsetEncoder->encodeEntities($key2, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</name>\n";
+                    //$rs.=$this->serializeval($val2);
+                    $rs .= $val2->serialize($charsetEncoding);
+                    $rs .= "</member>\n";
+                }
+                $rs .= '</struct>';
+                break;
+            case 2:
+                // array
+                $rs .= "<array>\n<data>\n";
+                /** @var Value $element */
+                foreach ($val as $element) {
+                    //$rs.=$this->serializeval($val[$i]);
+                    $rs .= $element->serialize($charsetEncoding);
+                }
+                $rs .= "</data>\n</array>";
+                break;
+            default:
+                break;
+        }
+
+        return $rs;
+    }
 
     /**
-     * Returns the value of a scalar xml-rpc value (base 64 decoding is automatically handled here)
+     * Returns the xml representation of the value. XML prologue not included.
+     *
+     * @param string $charsetEncoding the charset to be used for serialization. if null, US-ASCII is assumed
+     *
+     * @return string
+     */
+    public function serialize($charsetEncoding = '')
+    {
+        $val = reset($this->me);
+        $typ = key($this->me);
+
+        return '<value>' . $this->serializedata($typ, $val, $charsetEncoding) . "</value>\n";
+    }
+
+    /**
+     * Checks whether a struct member with a given name is present.
+     *
+     * Works only on xmlrpc values of type struct.
+     *
+     * @param string $key the name of the struct member to be looked up
+     *
+     * @return boolean
+     *
+     * @deprecated use array access, e.g. isset($val[$key])
+     */
+    public function structmemexists($key)
+    {
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        return array_key_exists($key, $this->me['struct']);
+    }
+
+    /**
+     * Returns the value of a given struct member (an xmlrpc value object in itself).
+     * Will raise a php warning if struct member of given name does not exist.
+     *
+     * @param string $key the name of the struct member to be looked up
+     *
+     * @return Value
+     *
+     * @deprecated use array access, e.g. $val[$key]
+     */
+    public function structmem($key)
+    {
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        return $this->me['struct'][$key];
+    }
+
+    /**
+     * Reset internal pointer for xmlrpc values of type struct.
+     * @deprecated iterate directly over the object using foreach instead
+     */
+    public function structreset()
+    {
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        reset($this->me['struct']);
+    }
+
+    /**
+     * Return next member element for xmlrpc values of type struct.
+     *
+     * @return Value
+     * @throws \Error starting with php 8.0, this function should not be used, as it will always throw
+     *
+     * @deprecated iterate directly over the object using foreach instead
+     */
+    public function structeach()
+    {
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        return @each($this->me['struct']);
+    }
+
+    /**
+     * Returns the value of a scalar xmlrpc value (base 64 decoding is automatically handled here)
      *
      * @return mixed
      */
-    public function scalarVal()
+    public function scalarval()
     {
         $b = reset($this->me);
 
@@ -261,12 +449,13 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * Returns the type of the xml-rpc value.
+     * Returns the type of the xmlrpc value.
      *
-     * @return string For integers, 'int' is always returned in place of 'i4'. 'i8' is considered a separate type and
-     *                returned as such
+     * For integers, 'int' is always returned in place of 'i4'. 'i8' is considered a separate type and returned as such
+     *
+     * @return string
      */
-    public function scalarTyp()
+    public function scalartyp()
     {
         reset($this->me);
         $a = key($this->me);
@@ -278,123 +467,51 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
     }
 
     /**
-     * Returns the xml representation of the value. XML prologue not included.
+     * Returns the m-th member of an xmlrpc value of array type.
      *
-     * @param string $charsetEncoding the charset to be used for serialization. If null, US-ASCII is assumed
-     * @return string
+     * @param integer $key the index of the value to be retrieved (zero based)
+     *
+     * @return Value
+     *
+     * @deprecated use array access, e.g. $val[$key]
      */
-    public function serialize($charsetEncoding = '')
+    public function arraymem($key)
     {
-        $val = reset($this->me);
-        $typ = key($this->me);
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
 
-        return '<value>' . $this->serializeData($typ, $val, $charsetEncoding) . "</value>\n";
+        return $this->me['array'][$key];
     }
 
     /**
-     * @param string $typ
-     * @param Value[]|mixed $val
-     * @param string $charsetEncoding
-     * @return string
+     * Returns the number of members in an xmlrpc value of array type.
      *
-     * @deprecated this should be folded back into serialize()
+     * @return integer
+     *
+     * @deprecated use count() instead
      */
-    protected function serializeData($typ, $val, $charsetEncoding = '')
+    public function arraysize()
     {
-        $this->logDeprecationUnlessCalledBy('serialize');
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
 
-        if (!isset(static::$xmlrpcTypes[$typ])) {
-            return '';
-        }
-
-        switch (static::$xmlrpcTypes[$typ]) {
-            case 1:
-                switch ($typ) {
-                    case static::$xmlrpcBase64:
-                        $rs = "<{$typ}>" . base64_encode($val) . "</{$typ}>";
-                        break;
-                    case static::$xmlrpcBoolean:
-                        $rs = "<{$typ}>" . ($val ? '1' : '0') . "</{$typ}>";
-                        break;
-                    case static::$xmlrpcString:
-                        // Do NOT use htmlentities, since it will produce named html entities, which are invalid xml
-                        $rs = "<{$typ}>" . $this->getCharsetEncoder()->encodeEntities($val, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</{$typ}>";
-                        break;
-                    case static::$xmlrpcInt:
-                    case static::$xmlrpcI4:
-                    case static::$xmlrpcI8:
-                        $rs = "<{$typ}>" . (int)$val . "</{$typ}>";
-                        break;
-                    case static::$xmlrpcDouble:
-                        // avoid using standard conversion of float to string because it is locale-dependent,
-                        // and also because the xml-rpc spec forbids exponential notation.
-                        // sprintf('%F') could be most likely ok, but it fails e.g. on 2e-14.
-                        // The code below tries its best at keeping max precision while avoiding exp notation,
-                        // but there is of course no limit in the number of decimal places to be used...
-                        $rs = "<{$typ}>" . preg_replace('/\\.?0+$/', '', number_format((double)$val, PhpXmlRpc::$xmlpc_double_precision, '.', '')) . "</{$typ}>";
-                        break;
-                    case static::$xmlrpcDateTime:
-                        if (is_string($val)) {
-                            $rs = "<{$typ}>{$val}</{$typ}>";
-                        // DateTimeInterface is not present in php 5.4...
-                        } elseif (is_a($val, 'DateTimeInterface') || is_a($val, 'DateTime')) {
-                            $rs = "<{$typ}>" . $val->format('Ymd\TH:i:s') . "</{$typ}>";
-                        } elseif (is_int($val)) {
-                            $rs = "<{$typ}>" . date('Ymd\TH:i:s', $val) . "</{$typ}>";
-                        } else {
-                            // not really a good idea here: but what should we output anyway? left for backward compat...
-                            $rs = "<{$typ}>{$val}</{$typ}>";
-                        }
-                        break;
-                    case static::$xmlrpcNull:
-                        if (PhpXmlRpc::$xmlrpc_null_apache_encoding) {
-                            $rs = "<ex:nil/>";
-                        } else {
-                            $rs = "<nil/>";
-                        }
-                        break;
-                    default:
-                        // no standard type value should arrive here, but provide a possibility
-                        // for xml-rpc values of unknown type...
-                        $rs = "<{$typ}>{$val}</{$typ}>";
-                }
-                break;
-            case 3:
-                // struct
-                if ($this->_php_class) {
-                    $rs = '<struct php_class="' . $this->_php_class . "\">\n";
-                } else {
-                    $rs = "<struct>\n";
-                }
-                $charsetEncoder = $this->getCharsetEncoder();
-                /** @var Value $val2 */
-                foreach ($val as $key2 => $val2) {
-                    $rs .= '<member><name>' . $charsetEncoder->encodeEntities($key2, PhpXmlRpc::$xmlrpc_internalencoding, $charsetEncoding) . "</name>\n";
-                    $rs .= $val2->serialize($charsetEncoding);
-                    $rs .= "</member>\n";
-                }
-                $rs .= '</struct>';
-                break;
-            case 2:
-                // array
-                $rs = "<array>\n<data>\n";
-                /** @var Value $element */
-                foreach ($val as $element) {
-                    $rs .= $element->serialize($charsetEncoding);
-                }
-                $rs .= "</data>\n</array>";
-                break;
-            default:
-                /// @todo log a warning?
-                $rs = '';
-                break;
-        }
-
-        return $rs;
+        return count($this->me['array']);
     }
 
     /**
-     * Returns the number of members in an xml-rpc value:
+     * Returns the number of members in an xmlrpc value of struct type.
+     *
+     * @return integer
+     *
+     * @deprecated use count() instead
+     */
+    public function structsize()
+    {
+        //trigger_error('Method ' . __METHOD__ . ' is deprecated', E_USER_DEPRECATED);
+
+        return count($this->me['struct']);
+    }
+
+    /**
+     * Returns the number of members in an xmlrpc value:
      * - 0 for uninitialized values
      * - 1 for scalar values
      * - the number of elements for struct and array values
@@ -418,9 +535,9 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * Implements the IteratorAggregate interface
-     * @internal required to be public to implement an Interface
      *
      * @return \ArrayIterator
+     * @internal required to be public to implement an Interface
      */
     #[\ReturnTypeWillChange]
     public function getIterator()
@@ -439,31 +556,28 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @internal required to be public to implement an Interface
-     *
      * @param mixed $offset
      * @param mixed $value
-     * @return void
-     *
-     * @throws ValueErrorException|TypeErrorException
+     * @throws \Exception
      */
     #[\ReturnTypeWillChange]
     public function offsetSet($offset, $value)
     {
         switch ($this->mytype) {
             case 3:
-                if (!($value instanceof Value)) {
-                    throw new TypeErrorException('It is only possible to add Value objects to an XML-RPC Struct');
+                if (!($value instanceof \PhpXmlRpc\Value)) {
+                    throw new \Exception('It is only possible to add Value objects to an XML-RPC Struct');
                 }
                 if (is_null($offset)) {
                     // disallow struct members with empty names
-                    throw new ValueErrorException('It is not possible to add anonymous members to an XML-RPC Struct');
+                    throw new \Exception('It is not possible to add anonymous members to an XML-RPC Struct');
                 } else {
                     $this->me['struct'][$offset] = $value;
                 }
                 return;
             case 2:
-                if (!($value instanceof Value)) {
-                    throw new TypeErrorException('It is only possible to add Value objects to an XML-RPC Array');
+                if (!($value instanceof \PhpXmlRpc\Value)) {
+                    throw new \Exception('It is only possible to add Value objects to an XML-RPC Array');
                 }
                 if (is_null($offset)) {
                     $this->me['array'][] = $value;
@@ -473,24 +587,22 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                 }
                 return;
             case 1:
-                /// @todo: should we handle usage of i4 to retrieve int (in both set/unset/isset)? After all we consider
-                ///        'int' to be the preferred form, as evidenced in scalarTyp()
+// todo: handle i4 vs int
                 reset($this->me);
                 $type = key($this->me);
-                if ($type != $offset && ($type != 'i4' || $offset != 'int')) {
-                    throw new ValueErrorException('...');
+                if ($type != $offset) {
+                    throw new \Exception('');
                 }
                 $this->me[$type] = $value;
                 return;
             default:
-                // it would be nice to allow empty values to be turned into non-empty ones this way, but we miss info to do so
-                throw new ValueErrorException("XML-RPC Value is of type 'undef' and its value can not be set using array index");
+                // it would be nice to allow empty values to be be turned into non-empty ones this way, but we miss info to do so
+                throw new \Exception("XML-RPC Value is of type 'undef' and its value can not be set using array index");
         }
     }
 
     /**
      * @internal required to be public to implement an Interface
-     *
      * @param mixed $offset
      * @return bool
      */
@@ -503,14 +615,8 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
             case 2:
                 return isset($this->me['array'][$offset]);
             case 1:
-                // handle i4 vs int
-                if ($offset == 'i4') {
-                    // to be consistent with set and unset, we disallow usage of i4 to check for int
-                    reset($this->me);
-                    return $offset == key($this->me);
-                } else {
-                    return $offset == $this->scalarTyp();
-                }
+// todo: handle i4 vs int
+                return $offset == $this->scalartyp();
             default:
                 return false;
         }
@@ -518,11 +624,8 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
 
     /**
      * @internal required to be public to implement an Interface
-     *
      * @param mixed $offset
-     * @return void
-     *
-     * @throws ValueErrorException|StateErrorException
+     * @throws \Exception
      */
     #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
@@ -536,19 +639,17 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
                 return;
             case 1:
                 // can not remove value from a scalar
-                /// @todo feature creep - allow this to move back the value to 'undef' state?
-                throw new StateErrorException("XML-RPC Value is of type 'scalar' and its value can not be unset using array index");
+                throw new \Exception("XML-RPC Value is of type 'scalar' and its value can not be unset using array index");
             default:
-                throw new StateErrorException("XML-RPC Value is of type 'undef' and its value can not be unset using array index");
+                throw new \Exception("XML-RPC Value is of type 'undef' and its value can not be unset using array index");
         }
     }
 
     /**
      * @internal required to be public to implement an Interface
-     *
      * @param mixed $offset
      * @return mixed|Value|null
-     * @throws StateErrorException
+     * @throws \Exception
      */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
@@ -559,185 +660,13 @@ class Value implements \Countable, \IteratorAggregate, \ArrayAccess
             case 2:
                 return isset($this->me['array'][$offset]) ? $this->me['array'][$offset] : null;
             case 1:
-                /// @todo what to return on bad type: null or exception?
+// on bad type: null or exception?
                 $value = reset($this->me);
                 $type = key($this->me);
-                return $type == $offset ? $value : (($type == 'i4' && $offset == 'int') ? $value : null);
+                return $type == $offset ? $value : null;
             default:
-                // return null or exception?
-                throw new StateErrorException("XML-RPC Value is of type 'undef' and can not be accessed using array index");
-        }
-    }
-
-    // *** BC layer ***
-
-    /**
-     * Checks whether a struct member with a given name is present.
-     *
-     * Works only on xml-rpc values of type struct.
-     *
-     * @param string $key the name of the struct member to be looked up
-     * @return boolean
-     *
-     * @deprecated use array access, e.g. isset($val[$key])
-     */
-    public function structMemExists($key)
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        return array_key_exists($key, $this->me['struct']);
-    }
-
-    /**
-     * Returns the value of a given struct member (an xml-rpc value object in itself).
-     * Will raise a php warning if struct member of given name does not exist.
-     *
-     * @param string $key the name of the struct member to be looked up
-     * @return Value
-     *
-     * @deprecated use array access, e.g. $val[$key]
-     */
-    public function structMem($key)
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        return $this->me['struct'][$key];
-    }
-
-    /**
-     * Reset internal pointer for xml-rpc values of type struct.
-     * @return void
-     *
-     * @deprecated iterate directly over the object using foreach instead
-     */
-    public function structReset()
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        reset($this->me['struct']);
-    }
-
-    /**
-     * Return next member element for xml-rpc values of type struct.
-     *
-     * @return array having the same format as PHP's `each` method
-     *
-     * @deprecated iterate directly over the object using foreach instead
-     */
-    public function structEach()
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        $key = key($this->me['struct']);
-        $value = current($this->me['struct']);
-        next($this->me['struct']);
-        return array(1 => $value, 'value' => $value, 0 => $key, 'key' => $key);
-    }
-
-    /**
-     * Returns the n-th member of an xml-rpc value of array type.
-     *
-     * @param integer $key the index of the value to be retrieved (zero based)
-     *
-     * @return Value
-     *
-     * @deprecated use array access, e.g. $val[$key]
-     */
-    public function arrayMem($key)
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        return $this->me['array'][$key];
-    }
-
-    /**
-     * Returns the number of members in an xml-rpc value of array type.
-     *
-     * @return integer
-     *
-     * @deprecated use count() instead
-     */
-    public function arraySize()
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        return count($this->me['array']);
-    }
-
-    /**
-     * Returns the number of members in an xml-rpc value of struct type.
-     *
-     * @return integer
-     *
-     * @deprecated use count() instead
-     */
-    public function structSize()
-    {
-        $this->logDeprecation('Method ' . __METHOD__ . ' is deprecated');
-
-        return count($this->me['struct']);
-    }
-
-    // we have to make this return by ref in order to allow calls such as `$resp->_cookies['name'] = ['value' => 'something'];`
-    public function &__get($name)
-    {
-        switch ($name) {
-            case 'me':
-            case 'mytype':
-            case '_php_class':
-                $this->logDeprecation('Getting property Value::' . $name . ' is deprecated');
-                return $this->$name;
-            default:
-                /// @todo throw instead? There are very few other places where the lib trigger errors which can potentially reach stdout...
-                $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-                trigger_error('Undefined property via __get(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_WARNING);
-                $result = null;
-                return $result;
-        }
-    }
-
-    public function __set($name, $value)
-    {
-        switch ($name) {
-            case 'me':
-            case 'mytype':
-            case '_php_class':
-                $this->logDeprecation('Setting property Value::' . $name . ' is deprecated');
-                $this->$name = $value;
-                break;
-            default:
-                /// @todo throw instead? There are very few other places where the lib trigger errors which can potentially reach stdout...
-                $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-                trigger_error('Undefined property via __set(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_WARNING);
-        }
-    }
-
-    public function __isset($name)
-    {
-        switch ($name) {
-            case 'me':
-            case 'mytype':
-            case '_php_class':
-                $this->logDeprecation('Checking property Value::' . $name . ' is deprecated');
-                return isset($this->$name);
-            default:
-                return false;
-        }
-    }
-
-    public function __unset($name)
-    {
-        switch ($name) {
-            case 'me':
-            case 'mytype':
-            case '_php_class':
-                $this->logDeprecation('Unsetting property Value::' . $name . ' is deprecated');
-                unset($this->$name);
-                break;
-            default:
-                /// @todo throw instead? There are very few other places where the lib trigger errors which can potentially reach stdout...
-                $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-                trigger_error('Undefined property via __unset(): ' . $name . ' in ' . $trace[0]['file'] . ' on line ' . $trace[0]['line'], E_USER_WARNING);
+// return null or exception?
+                throw new \Exception("XML-RPC Value is of type 'undef' and can not be accessed using array index");
         }
     }
 }

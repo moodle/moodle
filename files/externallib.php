@@ -24,15 +24,10 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
-
 defined('MOODLE_INTERNAL') || die();
 
-require_once("{$CFG->libdir}/filelib.php");
+require_once("$CFG->libdir/externallib.php");
+require_once("$CFG->libdir/filelib.php");
 
 /**
  * Files external functions
@@ -52,22 +47,20 @@ class core_files_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_files_parameters() {
-        return new external_function_parameters([
-            'contextid'    => new external_value(PARAM_INT, 'context id Set to -1 to use contextlevel and instanceid.'),
-            'component'    => new external_value(PARAM_TEXT, 'component'),
-            'filearea'     => new external_value(PARAM_TEXT, 'file area'),
-            'itemid'       => new external_value(PARAM_INT, 'associated id'),
-            'filepath'     => new external_value(PARAM_PATH, 'file path'),
-            'filename'     => new external_value(PARAM_TEXT, 'file name'),
-            'modified'     => new external_value(
-                PARAM_INT,
-                'timestamp to return files changed after this time.',
-                VALUE_DEFAULT,
-                null
-            ),
-            'contextlevel' => new external_value(PARAM_ALPHA, 'The context level for the file location.', VALUE_DEFAULT, null),
-            'instanceid'   => new external_value(PARAM_INT, 'The instance id for where the file is located.', VALUE_DEFAULT, null),
-        ]);
+        return new external_function_parameters(
+            array(
+                'contextid'    => new external_value(PARAM_INT, 'context id Set to -1 to use contextlevel and instanceid.'),
+                'component'    => new external_value(PARAM_TEXT, 'component'),
+                'filearea'     => new external_value(PARAM_TEXT, 'file area'),
+                'itemid'       => new external_value(PARAM_INT, 'associated id'),
+                'filepath'     => new external_value(PARAM_PATH, 'file path'),
+                'filename'     => new external_value(PARAM_TEXT, 'file name'),
+                'modified'     => new external_value(PARAM_INT, 'timestamp to return files changed after this time.', VALUE_DEFAULT, null),
+                'contextlevel' => new external_value(PARAM_ALPHA, 'The context level for the file location.', VALUE_DEFAULT, null),
+                'instanceid'   => new external_value(PARAM_INT, 'The instance id for where the file is located.', VALUE_DEFAULT, null)
+
+            )
+        );
     }
 
     /**
@@ -89,7 +82,7 @@ class core_files_external extends external_api {
     public static function get_files($contextid, $component, $filearea, $itemid, $filepath, $filename, $modified = null,
                                      $contextlevel = null, $instanceid = null) {
 
-        $parameters = [
+        $parameters = array(
             'contextid'    => $contextid,
             'component'    => $component,
             'filearea'     => $filearea,
@@ -98,8 +91,7 @@ class core_files_external extends external_api {
             'filename'     => $filename,
             'modified'     => $modified,
             'contextlevel' => $contextlevel,
-            'instanceid'   => $instanceid,
-        ];
+            'instanceid'   => $instanceid);
         $fileinfo = self::validate_parameters(self::get_files_parameters(), $parameters);
 
         $browser = get_file_browser();
@@ -154,7 +146,7 @@ class core_files_external extends external_api {
 
                 if ($child->is_directory()) {
                     if ((is_null($modified)) or ($modified < $timemodified)) {
-                        $node = [
+                        $node = array(
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
                             'filearea'  => $params['filearea'],
@@ -167,13 +159,13 @@ class core_files_external extends external_api {
                             'timecreated' => $timecreated,
                             'filesize' => 0,
                             'author' => null,
-                            'license' => null,
-                        ];
-                        $list[] = $node;
+                            'license' => null
+                           );
+                           $list[] = $node;
                     }
                 } else {
                     if ((is_null($modified)) or ($modified < $timemodified)) {
-                        $node = [
+                        $node = array(
                             'contextid' => $params['contextid'],
                             'component' => $params['component'],
                             'filearea'  => $params['filearea'],
@@ -186,9 +178,9 @@ class core_files_external extends external_api {
                             'timecreated' => $timecreated,
                             'filesize' => $child->get_filesize(),
                             'author' => $child->get_author(),
-                            'license' => $child->get_license(),
-                        ];
-                        $list[] = $node;
+                            'license' => $child->get_license()
+                        );
+                           $list[] = $node;
                     }
                 }
             }
@@ -205,35 +197,41 @@ class core_files_external extends external_api {
      * @since Moodle 2.2
      */
     public static function get_files_returns() {
-        return new external_single_structure([
-            'parents' => new external_multiple_structure(
-                new external_single_structure([
-                    'contextid' => new external_value(PARAM_INT, ''),
-                    'component' => new external_value(PARAM_COMPONENT, ''),
-                    'filearea'  => new external_value(PARAM_AREA, ''),
-                    'itemid'    => new external_value(PARAM_INT, ''),
-                    'filepath'  => new external_value(PARAM_TEXT, ''),
-                    'filename'  => new external_value(PARAM_TEXT, ''),
-                ])
-            ),
-            'files' => new external_multiple_structure(
-                new external_single_structure([
-                    'contextid' => new external_value(PARAM_INT, ''),
-                    'component' => new external_value(PARAM_COMPONENT, ''),
-                    'filearea'  => new external_value(PARAM_AREA, ''),
-                    'itemid'   => new external_value(PARAM_INT, ''),
-                    'filepath' => new external_value(PARAM_TEXT, ''),
-                    'filename' => new external_value(PARAM_TEXT, ''),
-                    'isdir'    => new external_value(PARAM_BOOL, ''),
-                    'url'      => new external_value(PARAM_TEXT, ''),
-                    'timemodified' => new external_value(PARAM_INT, ''),
-                    'timecreated' => new external_value(PARAM_INT, 'Time created', VALUE_OPTIONAL),
-                    'filesize' => new external_value(PARAM_INT, 'File size', VALUE_OPTIONAL),
-                    'author' => new external_value(PARAM_TEXT, 'File owner', VALUE_OPTIONAL),
-                    'license' => new external_value(PARAM_TEXT, 'File license', VALUE_OPTIONAL),
-                ])
-            ),
-        ]);
+        return new external_single_structure(
+            array(
+                'parents' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'contextid' => new external_value(PARAM_INT, ''),
+                            'component' => new external_value(PARAM_COMPONENT, ''),
+                            'filearea'  => new external_value(PARAM_AREA, ''),
+                            'itemid'    => new external_value(PARAM_INT, ''),
+                            'filepath'  => new external_value(PARAM_TEXT, ''),
+                            'filename'  => new external_value(PARAM_TEXT, ''),
+                        )
+                    )
+                ),
+                'files' => new external_multiple_structure(
+                    new external_single_structure(
+                        array(
+                            'contextid' => new external_value(PARAM_INT, ''),
+                            'component' => new external_value(PARAM_COMPONENT, ''),
+                            'filearea'  => new external_value(PARAM_AREA, ''),
+                            'itemid'   => new external_value(PARAM_INT, ''),
+                            'filepath' => new external_value(PARAM_TEXT, ''),
+                            'filename' => new external_value(PARAM_TEXT, ''),
+                            'isdir'    => new external_value(PARAM_BOOL, ''),
+                            'url'      => new external_value(PARAM_TEXT, ''),
+                            'timemodified' => new external_value(PARAM_INT, ''),
+                            'timecreated' => new external_value(PARAM_INT, 'Time created', VALUE_OPTIONAL),
+                            'filesize' => new external_value(PARAM_INT, 'File size', VALUE_OPTIONAL),
+                            'author' => new external_value(PARAM_TEXT, 'File owner', VALUE_OPTIONAL),
+                            'license' => new external_value(PARAM_TEXT, 'File license', VALUE_OPTIONAL),
+                        )
+                    )
+                )
+            )
+        );
     }
 
     /**
@@ -243,24 +241,21 @@ class core_files_external extends external_api {
      * @since Moodle 2.2
      */
     public static function upload_parameters() {
-        return new external_function_parameters([
-            'contextid' => new external_value(PARAM_INT, 'context id', VALUE_DEFAULT, null),
-            'component' => new external_value(PARAM_COMPONENT, 'component'),
-            'filearea'  => new external_value(PARAM_AREA, 'file area'),
-            'itemid'    => new external_value(PARAM_INT, 'associated id'),
-            'filepath'  => new external_value(PARAM_PATH, 'file path'),
-            'filename'  => new external_value(PARAM_FILE, 'file name'),
-            'filecontent' => new external_value(PARAM_TEXT, 'file content'),
-            'contextlevel' => new external_value(
-                PARAM_ALPHA,
-                'The context level to put the file in,
-                        (block, course, coursecat, system, user, module)',
-                VALUE_DEFAULT,
-                null
-            ),
-            'instanceid' => new external_value(PARAM_INT, 'The Instance id of item associated
-                         with the context level', VALUE_DEFAULT, null),
-        ]);
+        return new external_function_parameters(
+            array(
+                'contextid' => new external_value(PARAM_INT, 'context id', VALUE_DEFAULT, null),
+                'component' => new external_value(PARAM_COMPONENT, 'component'),
+                'filearea'  => new external_value(PARAM_AREA, 'file area'),
+                'itemid'    => new external_value(PARAM_INT, 'associated id'),
+                'filepath'  => new external_value(PARAM_PATH, 'file path'),
+                'filename'  => new external_value(PARAM_FILE, 'file name'),
+                'filecontent' => new external_value(PARAM_TEXT, 'file content'),
+                'contextlevel' => new external_value(PARAM_ALPHA, 'The context level to put the file in,
+                        (block, course, coursecat, system, user, module)', VALUE_DEFAULT, null),
+                'instanceid' => new external_value(PARAM_INT, 'The Instance id of item associated
+                         with the context level', VALUE_DEFAULT, null)
+            )
+        );
     }
 
     /**
@@ -278,24 +273,13 @@ class core_files_external extends external_api {
      * @return array
      * @since Moodle 2.2
      */
-    public static function upload(
-        $contextid,
-        $component,
-        $filearea,
-        $itemid,
-        $filepath,
-        $filename,
-        $filecontent,
-        $contextlevel,
-        $instanceid
-    ) {
+    public static function upload($contextid, $component, $filearea, $itemid, $filepath, $filename, $filecontent, $contextlevel, $instanceid) {
         global $USER, $CFG;
 
-        $fileinfo = self::validate_parameters(self::upload_parameters(), [
-            'contextid' => $contextid, 'component' => $component, 'filearea' => $filearea, 'itemid' => $itemid,
-            'filepath' => $filepath, 'filename' => $filename, 'filecontent' => $filecontent, 'contextlevel' => $contextlevel,
-            'instanceid' => $instanceid,
-        ]);
+        $fileinfo = self::validate_parameters(self::upload_parameters(), array(
+                'contextid' => $contextid, 'component' => $component, 'filearea' => $filearea, 'itemid' => $itemid,
+                'filepath' => $filepath, 'filename' => $filename, 'filecontent' => $filecontent, 'contextlevel' => $contextlevel,
+                'instanceid' => $instanceid));
 
         if (!isset($fileinfo['filecontent'])) {
             throw new moodle_exception('nofile');
@@ -325,7 +309,7 @@ class core_files_external extends external_api {
             $filepath = '/';
         }
 
-        // Only allow uploads to draft area.
+        // Only allow uploads to draft area
         if (!($fileinfo['component'] == 'user' and $fileinfo['filearea'] == 'draft')) {
             throw new coding_exception('File can be uploaded to user draft area only');
         } else {
@@ -369,15 +353,15 @@ class core_files_external extends external_api {
             $info = $dir->create_file_from_pathname($filename, $savedfilepath);
             $params = $info->get_params();
             unlink($savedfilepath);
-            return [
-                'contextid' => $params['contextid'],
-                'component' => $params['component'],
-                'filearea' => $params['filearea'],
-                'itemid' => $params['itemid'],
-                'filepath' => $params['filepath'],
-                'filename' => $params['filename'],
-                'url' => $info->get_url(),
-            ];
+            return array(
+                'contextid'=>$params['contextid'],
+                'component'=>$params['component'],
+                'filearea'=>$params['filearea'],
+                'itemid'=>$params['itemid'],
+                'filepath'=>$params['filepath'],
+                'filename'=>$params['filename'],
+                'url'=>$info->get_url()
+                );
         } else {
             throw new moodle_exception('nofile');
         }
@@ -390,14 +374,16 @@ class core_files_external extends external_api {
      * @since Moodle 2.2
      */
     public static function upload_returns() {
-        return new external_single_structure([
-            'contextid' => new external_value(PARAM_INT, ''),
-            'component' => new external_value(PARAM_COMPONENT, ''),
-            'filearea'  => new external_value(PARAM_AREA, ''),
-            'itemid'   => new external_value(PARAM_INT, ''),
-            'filepath' => new external_value(PARAM_TEXT, ''),
-            'filename' => new external_value(PARAM_FILE, ''),
-            'url'      => new external_value(PARAM_TEXT, ''),
-        ]);
+        return new external_single_structure(
+             array(
+                 'contextid' => new external_value(PARAM_INT, ''),
+                 'component' => new external_value(PARAM_COMPONENT, ''),
+                 'filearea'  => new external_value(PARAM_AREA, ''),
+                 'itemid'   => new external_value(PARAM_INT, ''),
+                 'filepath' => new external_value(PARAM_TEXT, ''),
+                 'filename' => new external_value(PARAM_FILE, ''),
+                 'url'      => new external_value(PARAM_TEXT, ''),
+             )
+        );
     }
 }

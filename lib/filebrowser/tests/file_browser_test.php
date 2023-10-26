@@ -20,7 +20,6 @@ use file_info_context_course;
 use file_info_context_coursecat;
 use file_info_context_module;
 use file_info_stored;
-use stdClass;
 
 /**
  * Unit tests for file browser
@@ -47,7 +46,7 @@ class file_browser_test extends \advanced_testcase {
     protected $module1;
     /** @var stdClass */
     protected $module2;
-    /** @var array */
+    /** @var stdClass */
     protected $course1filerecord;
     /** @var stdClass */
     protected $teacher;

@@ -50,7 +50,7 @@ class recipients_action_bar extends manage_badge_action_bar {
         if ($this->badge->has_manual_award_criteria()
                 && has_capability('moodle/badges:awardbadge', $this->page->context) && $this->badge->is_active()) {
             $url = new moodle_url('/badges/award.php', ['id' => $this->badge->id]);
-            $button = new single_button($url, get_string('award', 'badges'), 'post', single_button::BUTTON_PRIMARY);
+            $button = new single_button($url, get_string('award', 'badges'), 'post', true);
             $elements['awardbutton'] = $button->export_for_template($output);
         }
         $thirdpartynav = $this->get_third_party_nav_action($output);

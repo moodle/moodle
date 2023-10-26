@@ -38,10 +38,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class tour_list extends \flexible_table {
-
-    /** @var int The count of all tours. */
-    protected int $tourcount = 0;
-
     /**
      * Construct the tour table.
      */

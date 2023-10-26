@@ -28,8 +28,9 @@ Feature: In a course administration page, navigate through report page, test for
     And I am on "Course 1" course homepage
     When I navigate to "Reports" in current page administration
     And I click on "Activity completion" "link"
-    Then "Report" "field" should exist in the "tertiary-navigation" "region"
-    And I should see "Activity completion" in the "tertiary-navigation" "region"
+    Then "Report" "field" should exist
+    And the "Report" select box should contain "Activity completion"
+    And the field "Report" matches value "Activity completion"
 
   Scenario: Custom profile fields selected for identity should display on the activity completion report
     Given the following "custom profile fields" exist:

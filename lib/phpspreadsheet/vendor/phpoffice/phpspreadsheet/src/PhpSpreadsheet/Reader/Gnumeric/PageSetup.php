@@ -24,30 +24,19 @@ class PageSetup
     {
         if (isset($sheet->PrintInformation, $sheet->PrintInformation[0])) {
             $printInformation = $sheet->PrintInformation[0];
-            $setup = $this->spreadsheet->getActiveSheet()->getPageSetup();
 
-            $attributes = $printInformation->Scale->attributes();
-            if (isset($attributes['percentage'])) {
-                $setup->setScale((int) $attributes['percentage']);
-            }
+            $scale = (string) $printInformation->Scale->attributes()['percentage'];
             $pageOrder = (string) $printInformation->order;
-            if ($pageOrder === 'r_then_d') {
-                $setup->setPageOrder(WorksheetPageSetup::PAGEORDER_OVER_THEN_DOWN);
-            } elseif ($pageOrder === 'd_then_r') {
-                $setup->setPageOrder(WorksheetPageSetup::PAGEORDER_DOWN_THEN_OVER);
-            }
             $orientation = (string) $printInformation->orientation;
-            if ($orientation !== '') {
-                $setup->setOrientation($orientation);
-            }
-            $attributes = $printInformation->hcenter->attributes();
-            if (isset($attributes['value'])) {
-                $setup->setHorizontalCentered((bool) (string) $attributes['value']);
-            }
-            $attributes = $printInformation->vcenter->attributes();
-            if (isset($attributes['value'])) {
-                $setup->setVerticalCentered((bool) (string) $attributes['value']);
-            }
+            $horizontalCentered = (string) $printInformation->hcenter->attributes()['value'];
+            $verticalCentered = (string) $printInformation->vcenter->attributes()['value'];
+
+            $this->spreadsheet->getActiveSheet()->getPageSetup()
+                ->setPageOrder($pageOrder === 'r_then_d' ? WorksheetPageSetup::PAGEORDER_OVER_THEN_DOWN : WorksheetPageSetup::PAGEORDER_DOWN_THEN_OVER)
+                ->setScale((int) $scale)
+                ->setOrientation($orientation ?? WorksheetPageSetup::ORIENTATION_DEFAULT)
+                ->setHorizontalCentered((bool) $horizontalCentered)
+                ->setVerticalCentered((bool) $verticalCentered);
         }
 
         return $this;

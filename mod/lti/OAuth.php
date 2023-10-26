@@ -81,9 +81,6 @@ class OAuthConsumer {
     public $key;
     public $secret;
 
-    /** @var string|null callback URL. */
-    public ?string $callback_url;
-
     function __construct($key, $secret, $callback_url = null) {
         $this->key = $key;
         $this->secret = $secret;

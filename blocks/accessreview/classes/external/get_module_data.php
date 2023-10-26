@@ -14,14 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * Web service to fetch module data.
+ *
+ * @package    block_accessreview
+ * @copyright  2020 onward Brickfield Education Labs Ltd, https://www.brickfield.ie
+ * @author     2020 Max Larkin <max@brickfieldlabs.ie>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 namespace block_accessreview\external;
 
-use core_external\external_api;
-use core_external\external_function_parameters;
-use core_external\external_multiple_structure;
-use core_external\external_single_structure;
-use core_external\external_value;
+use external_api;
+use external_function_parameters;
+use external_multiple_structure;
+use external_single_structure;
+use external_value;
 use tool_brickfield\manager;
+
+defined('MOODLE_INTERNAL') || die();
+require_once($CFG->libdir . '/externallib.php');
 
 /**
  * Web service to fetch module data.

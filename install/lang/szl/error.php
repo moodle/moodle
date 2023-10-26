@@ -43,7 +43,7 @@ $string['dmlexceptiononinstall'] = '<p> Wystōmpiōł błōnd bazy danych [{$a->
 $string['downloadedfilecheckfailed'] = 'Wybadanie pobranego zbioru zakōńczyło sie #niypowodzynie';
 $string['invalidmd5'] = 'Niynŏleżny md5';
 $string['missingrequiredfield'] = 'Brak wymŏganego pola';
-$string['remotedownloaderror'] = 'Pobiyranie skłŏdniku na serwer niy podarziło sie. Wybadej sztalōnki proxy. Rozszyrzynie PHP cURL je barzo zalycane. <br /><br />Musisz pobrać następująćy zbiōr <a href="{$a->url}">{$a->url}</a> ryncznie, skopiyrować go do lokalizacyje "{$a->dest}" i ôzpakować nakŏzaniym unzip.';
+$string['remotedownloaderror'] = 'Pobiyranie skłŏdniku na serwer niy podarziło sie. Wybadej ustawiyniŏ proxy. Rozszyrzynie PHP cURL je barzo zalycane. <br /><br />Musisz pobrać następująćy zbiōr <a href="{$a->url}">{$a->url}</a> ryncznie, skopiyrować go do lokalizacyje "{$a->dest}" i ôzpakować nakŏzaniym unzip.';
 $string['wrongdestpath'] = 'Błyndny chodnik docelowa';
 $string['wrongsourcebase'] = 'Błyndne zdrzōdło bazy URL';
 $string['wrongzipfilename'] = 'Błyndne miano zbioru ZIP';

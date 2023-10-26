@@ -299,6 +299,10 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_choice\event\report_viewed', $event[0]);
         $this->assertEquals($USER->id, $event[0]->userid);
         $this->assertEquals(\context_module::instance($this->choice->cmid), $event[0]->get_context());
+        $expected = array($this->course->id, "choice", "report", 'report.php?id=' . $this->context->instanceid,
+            $this->choice->id, $this->context->instanceid);
+        $this->assertEventLegacyLogData($expected, $event[0]);
+        $this->assertEventContextNotUsed($event[0]);
         $sink->close();
     }
 
@@ -367,6 +371,10 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_choice\event\course_module_viewed', $event[0]);
         $this->assertEquals($USER->id, $event[0]->userid);
         $this->assertEquals(\context_module::instance($this->choice->cmid), $event[0]->get_context());
+        $expected = array($this->course->id, "choice", "view", 'view.php?id=' . $this->context->instanceid,
+            $this->choice->id, $this->context->instanceid);
+        $this->assertEventLegacyLogData($expected, $event[0]);
+        $this->assertEventContextNotUsed($event[0]);
         $sink->close();
     }
 
@@ -389,5 +397,8 @@ class events_test extends \advanced_testcase {
         $this->assertInstanceOf('\mod_choice\event\course_module_instance_list_viewed', $event);
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals(\context_course::instance($this->course->id), $event->get_context());
+        $expected = array($this->course->id, 'choice', 'view all', 'index.php?id=' . $this->course->id, '');
+        $this->assertEventLegacyLogData($expected, $event);
+        $this->assertEventContextNotUsed($event);
     }
 }

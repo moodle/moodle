@@ -64,9 +64,6 @@ abstract class data_object {
     /* @var int The primary key */
     public $id;
 
-    /** @var int completed status. */
-    public $completedself;
-
 
     /**
      * Constructor. Optionally (and by default) attempts to fetch corresponding row from DB.

@@ -94,11 +94,6 @@ class send_user_notifications extends \core\task\adhoc_task {
     protected $inboundmanager;
 
     /**
-     * @var array List of users.
-     */
-    protected $users = [];
-
-    /**
      * Send out messages.
      * @throws \moodle_exception
      */

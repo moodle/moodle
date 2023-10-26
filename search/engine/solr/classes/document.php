@@ -118,7 +118,7 @@ class document extends \core_search\document {
     }
 
     /**
-     * Overwritten to use HTML (highlighting).
+     * Overwritten to use markdown format as we use markdown for solr highlighting.
      *
      * @return int
      */
@@ -128,11 +128,6 @@ class document extends \core_search\document {
 
     /**
      * Formats a text string coming from the search engine.
-     *
-     * Even if this is called through an external function it is fine to return HTML as
-     * HTML is considered solr's search engine text format. An external function can ask
-     * for raw text, but this just means that it will not pass through format_text, no that
-     * we can not add HTML.
      *
      * @param  string $text Text to format
      * @return string HTML text to be renderer

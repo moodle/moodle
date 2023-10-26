@@ -205,6 +205,12 @@ class mod_assign_mod_form extends moodleform_mod {
         $mform->addElement('selectyesno', 'sendstudentnotifications', $name);
         $mform->addHelpButton('sendstudentnotifications', 'sendstudentnotificationsdefault', 'assign');
 
+        // Plagiarism enabling form. To be removed (deprecated) with MDL-67526.
+        if (!empty($CFG->enableplagiarism)) {
+            require_once($CFG->libdir . '/plagiarismlib.php');
+            plagiarism_get_form_elements_module($mform, $ctx->get_course_context(), 'mod_assign');
+        }
+
         $this->standard_grading_coursemodule_elements();
         $name = get_string('blindmarking', 'assign');
         $mform->addElement('selectyesno', 'blindmarking', $name);
@@ -319,13 +325,10 @@ class mod_assign_mod_form extends moodleform_mod {
     public function add_completion_rules() {
         $mform =& $this->_form;
 
-        $suffix = $this->get_suffix();
-        $completionsubmitel = 'completionsubmit' . $suffix;
-        $mform->addElement('advcheckbox', $completionsubmitel, '', get_string('completionsubmit', 'assign'));
+        $mform->addElement('advcheckbox', 'completionsubmit', '', get_string('completionsubmit', 'assign'));
         // Enable this completion rule by default.
-        $mform->setDefault($completionsubmitel, 1);
-
-        return [$completionsubmitel];
+        $mform->setDefault('completionsubmit', 1);
+        return array('completionsubmit');
     }
 
     /**
@@ -335,8 +338,7 @@ class mod_assign_mod_form extends moodleform_mod {
      * @return bool
      */
     public function completion_rule_enabled($data) {
-        $suffix = $this->get_suffix();
-        return !empty($data['completionsubmit' . $suffix]);
+        return !empty($data['completionsubmit']);
     }
 
 }

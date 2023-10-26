@@ -23,19 +23,16 @@
  */
 
 import {BaseComponent} from 'core/reactive';
-import {debounce} from 'core/utils';
 import {getCurrentCourseEditor} from 'core_courseformat/courseeditor';
-import Config from 'core/config';
 import inplaceeditable from 'core/inplace_editable';
 import Section from 'core_courseformat/local/content/section';
 import CmItem from 'core_courseformat/local/content/section/cmitem';
-import Fragment from 'core/fragment';
-import Templates from 'core/templates';
+// Course actions is needed for actions that are not migrated to components.
+import courseActions from 'core_course/actions';
 import DispatchActions from 'core_courseformat/local/content/actions';
 import * as CourseEvents from 'core_course/events';
 // The jQuery module is only used for interacting with Boostrap 4. It can we removed when MDL-71979 is integrated.
 import jQuery from 'jquery';
-import Pending from 'core/pending';
 
 export default class Component extends BaseComponent {
 
@@ -54,6 +51,7 @@ export default class Component extends BaseComponent {
             SECTION_CMLIST: `[data-for='cmlist']`,
             COURSE_SECTIONLIST: `[data-for='course_sectionlist']`,
             CM: `[data-for='cmitem']`,
+            PAGE: `#page`,
             TOGGLER: `[data-action="togglecoursecontentsection"]`,
             COLLAPSE: `[data-toggle="collapse"]`,
             TOGGLEALL: `[data-toggle="toggleall"]`,
@@ -77,7 +75,6 @@ export default class Component extends BaseComponent {
         this.cms = {};
         // The page section return.
         this.sectionReturn = descriptor.sectionReturn ?? 0;
-        this.debouncedReloads = new Map();
     }
 
     /**
@@ -145,13 +142,10 @@ export default class Component extends BaseComponent {
 
         // Capture page scroll to update page item.
         this.addEventListener(
-            document,
+            document.querySelector(this.selectors.PAGE),
             "scroll",
             this._scrollHandler
         );
-        setTimeout(() => {
-            this._scrollHandler();
-        }, 500);
     }
 
     /**
@@ -227,9 +221,7 @@ export default class Component extends BaseComponent {
             // State changes that require to reload some course modules.
             {watch: `cm.visible:updated`, handler: this._reloadCm},
             {watch: `cm.stealth:updated`, handler: this._reloadCm},
-            {watch: `cm.sectionid:updated`, handler: this._reloadCm},
             {watch: `cm.indent:updated`, handler: this._reloadCm},
-            {watch: `cm.groupmode:updated`, handler: this._reloadCm},
             // Update section number and title.
             {watch: `section.number:updated`, handler: this._refreshSectionNumber},
             // Collapse and expand sections.
@@ -240,6 +232,9 @@ export default class Component extends BaseComponent {
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
             // Reindex sections and cms.
             {watch: `state:updated`, handler: this._indexContents},
+            // State changes thaty require to reload course modules.
+            {watch: `cm.visible:updated`, handler: this._reloadCm},
+            {watch: `cm.sectionid:updated`, handler: this._reloadCm},
         ];
     }
 
@@ -341,7 +336,7 @@ export default class Component extends BaseComponent {
      * Check the current page scroll and update the active element if necessary.
      */
     _scrollHandler() {
-        const pageOffset = window.scrollY;
+        const pageOffset = document.querySelector(this.selectors.PAGE).scrollTop;
         const items = this.reactive.getExporter().allItemsArray(this.reactive.state);
         // Check what is the active element now.
         let pageItem = null;
@@ -352,6 +347,10 @@ export default class Component extends BaseComponent {
             }
 
             const element = index[item.id].element;
+            // Activities without url can only be page items in edit mode.
+            if (item.type === 'cm' && !item.url && !this.reactive.isEditing) {
+                return pageOffset >= element.offsetTop;
+            }
             pageItem = item;
             return pageOffset >= element.offsetTop;
         });
@@ -507,51 +506,14 @@ export default class Component extends BaseComponent {
      * @param {object} param0.element the state object
      */
     _reloadCm({element}) {
-        if (!this.getElement(this.selectors.CM, element.id)) {
-            return;
-        }
-        const debouncedReload = this._getDebouncedReloadCm(element.id);
-        debouncedReload();
-    }
-
-    /**
-     * Generate or get a reload CM debounced function.
-     * @param {Number} cmId
-     * @returns {Function} the debounced reload function
-     */
-    _getDebouncedReloadCm(cmId) {
-        const pendingKey = `courseformat/content:reloadCm_${cmId}`;
-        let debouncedReload = this.debouncedReloads.get(pendingKey);
-        if (debouncedReload) {
-            return debouncedReload;
-        }
-        const pendingReload = new Pending(pendingKey);
-        const reload = () => {
-            this.debouncedReloads.delete(pendingKey);
-            const cmitem = this.getElement(this.selectors.CM, cmId);
-            if (!cmitem) {
-                return;
-            }
-            const promise = Fragment.loadFragment(
-                'core_courseformat',
-                'cmitem',
-                Config.courseContextId,
-                {
-                    id: cmId,
-                    courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? 0,
-                }
-            );
-            promise.then((html, js) => {
-                Templates.replaceNode(cmitem, html, js);
+        const cmitem = this.getElement(this.selectors.CM, element.id);
+        if (cmitem) {
+            const promise = courseActions.refreshModule(cmitem, element.id);
+            promise.then(() => {
                 this._indexContents();
-                pendingReload.resolve();
                 return;
             }).catch();
-        };
-        debouncedReload = debounce(reload, 200);
-        this.debouncedReloads.set(pendingKey, debouncedReload);
-        return debouncedReload;
+        }
     }
 
     /**
@@ -564,23 +526,11 @@ export default class Component extends BaseComponent {
      * @param {object} param0.element the state object
      */
     _reloadSection({element}) {
-        const pendingReload = new Pending(`courseformat/content:reloadSection_${element.id}`);
         const sectionitem = this.getElement(this.selectors.SECTION, element.id);
         if (sectionitem) {
-            const promise = Fragment.loadFragment(
-                'core_courseformat',
-                'section',
-                Config.courseContextId,
-                {
-                    id: element.id,
-                    courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? 0,
-                }
-            );
-            promise.then((html, js) => {
-                Templates.replaceNode(sectionitem, html, js);
+            const promise = courseActions.refreshSection(sectionitem, element.id);
+            promise.then(() => {
                 this._indexContents();
-                pendingReload.resolve();
                 return;
             }).catch();
         }
