@@ -791,6 +791,7 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
  */
 function get_gradable_users(int $courseid, ?int $groupid = null, bool $onlyactiveenrol = false): array {
     $course = get_course($courseid);
+    // Create a graded_users_iterator because it will properly check the groups etc.
     $gui = new graded_users_iterator($course, null, $groupid);
     $gui->require_active_enrolment($onlyactiveenrol);
     $gui->init();
