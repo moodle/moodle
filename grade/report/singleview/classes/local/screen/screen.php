@@ -25,6 +25,7 @@
 namespace gradereport_singleview\local\screen;
 
 use context_course;
+use grade_report;
 use moodle_url;
 use html_writer;
 use grade_structure;
@@ -33,6 +34,7 @@ use grade_item;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot . '/grade/report/lib.php');
 
 /**
  * Abstract class used as a base for the 3 screens.
@@ -415,10 +417,10 @@ abstract class screen {
      * @return array A list of enroled users.
      */
     protected function load_users(): array {
-        debugging('The function ' . __FUNCTION__ . '() is deprecated. Please use get_gradable_users() instead.',
+        debugging('The function ' . __FUNCTION__ . '() is deprecated. Please use grade_report::get_gradable_users() instead.',
             DEBUG_DEVELOPER);
 
-        return get_gradable_users($this->courseid, $this->groupid);
+        return grade_report::get_gradable_users($this->courseid, $this->groupid);
     }
 
     /**

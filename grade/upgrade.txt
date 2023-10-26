@@ -6,6 +6,7 @@ Information provided here is intended especially for developers.
 * The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
 * The grade_structure::get_element_header() function has been deprecated. Please use grade_helper::get_element_header() instead.
 * The grade_structure::get_activity_link() functions has been deprecated. Please use grade_helper::get_activity_link() instead.
+* The function get_gradable_users() in grade/lib.php has extra param now to retrieve only active enrolments.
 
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.

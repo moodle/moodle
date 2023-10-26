@@ -786,17 +786,10 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
  *
  * @param int $courseid The course ID.
  * @param int|null $groupid The group ID (optional).
+ * @param bool $onlyactiveenrol Include only active enrolments.
  * @return array $users A list of enrolled gradable users.
  */
-function get_gradable_users(int $courseid, ?int $groupid = null): array {
-    global $CFG;
-
-    $context = context_course::instance($courseid);
-    // Create a graded_users_iterator because it will properly check the groups etc.
-    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
-    $onlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol) ||
-        !has_capability('moodle/course:viewsuspendedusers', $context);
-
+function get_gradable_users(int $courseid, ?int $groupid = null, bool $onlyactiveenrol = false): array {
     $course = get_course($courseid);
     $gui = new graded_users_iterator($course, null, $groupid);
     $gui->require_active_enrolment($onlyactiveenrol);
