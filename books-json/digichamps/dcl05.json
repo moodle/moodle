@@ -344,8 +344,8 @@
               "type": "page"
             },
             {
-              "uid": "DCL05-TP4-CHDRN5",
-              "fname": "DCL05-TP4-CHDRN5.json",
+              "uid": "DCL05-TP4-CHDRN13",
+              "fname": "DCL05-TP4-CHDRN13.json",
               "type": "assignment"
             },
             {
@@ -376,16 +376,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL05-TP4-CHDRN10",
-              "fname": "DCL05-TP4-CHDRN10.json",
-              "type": "assignment"
-            },
-            {
               "title": "4.3 - SlideShow",
               "uid": "DCL05-TP4-CHDRN4",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S03",
               "type": "page"
+            },
+            {
+              "uid": "DCL05-TP4-CHDRN10",
+              "fname": "DCL05-TP4-CHDRN10.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL05-TP4-CHDRN11",
@@ -395,11 +395,6 @@
             {
               "uid": "DCL05-TP4-CHDRN12",
               "fname": "DCL05-TP4-CHDRN12.json",
-              "type": "assignment"
-            },
-            {
-              "uid": "DCL05-TP4-CHDRN13",
-              "fname": "DCL05-TP4-CHDRN13.json",
               "type": "assignment"
             },
             {

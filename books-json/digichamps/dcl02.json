@@ -262,11 +262,6 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL02-U03-CHDRN1",
-              "fname": "DCL02-U03-CHDRN1.json",
-              "type": "quiz"
-            },
-            {
               "uid": "DCL02-TP3-CHDRN6",
               "fname": "DCL02-TP3-CHDRN6.json",
               "type": "assignment"
@@ -319,6 +314,11 @@
               "uid": "DCL02-TP3-CHDRN13",
               "fname": "DCL02-TP3-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U03-CHDRN1",
+              "fname": "DCL02-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -347,11 +347,6 @@
               "uid": "DCL02-TP4-CHDRN600",
               "fname": "DCL02-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL02-U04-CHDRN1",
-              "fname": "DCL02-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL02-TP4-CHDRN7",
@@ -433,6 +428,11 @@
               "uid": "DCL02-TP4-CHDRN18",
               "fname": "DCL02-TP4-CHDRN18.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U04-CHDRN1",
+              "fname": "DCL02-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -461,11 +461,6 @@
               "uid": "DCL02-TP5-CHDRN500",
               "fname": "DCL02-TP5-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL02-U05-CHDRN1",
-              "fname": "DCL02-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL02-TP5-CHDRN6",
@@ -515,6 +510,11 @@
               "uid": "DCL02-TP5-CHDRN12",
               "fname": "DCL02-TP5-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U05-CHDRN1",
+              "fname": "DCL02-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -543,11 +543,6 @@
               "uid": "DCL02-TP6-CHDRN6",
               "fname": "DCL02-TP6-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL02-U06-CHDRN1",
-              "fname": "DCL02-U06-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL02-TP6-CHDRN7",
@@ -624,6 +619,11 @@
               "uid": "DCL02-TP6-CHDRN17",
               "fname": "DCL02-TP6-CHDRN17.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL02-U06-CHDRN1",
+              "fname": "DCL02-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -652,11 +652,6 @@
               "uid": "DCL02-TP7-CHDRN5",
               "fname": "DCL02-TP7-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL02-U07-CHDRN1",
-              "fname": "DCL02-U07-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL02-TP7-CHDRN6",
@@ -696,6 +691,11 @@
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S03",
               "type": "page"
+            },
+            {
+              "uid": "DCL02-U07-CHDRN1",
+              "fname": "DCL02-U07-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

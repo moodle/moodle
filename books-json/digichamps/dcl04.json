@@ -559,6 +559,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.2 - Prediction From Data",
+              "uid": "DCL04-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP6-CHDRN7",
               "fname": "DCL04-TP6-CHDRN7.json",
               "type": "assignment"

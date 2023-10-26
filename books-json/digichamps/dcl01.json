@@ -370,16 +370,16 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL01-TP4-CHDRN12",
-              "fname": "DCL01-TP4-CHDRN12.json",
-              "type": "assignment"
-            },
-            {
               "title": "4.3 - Stamps",
               "uid": "DCL01-TP4-CHDRN4",
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S03",
               "type": "page"
+            },
+            {
+              "uid": "DCL01-TP4-CHDRN12",
+              "fname": "DCL01-TP4-CHDRN12.json",
+              "type": "assignment"
             },
             {
               "uid": "DCL01-TP4-CHDRN13",
@@ -502,11 +502,6 @@
               "type": "assignment"
             },
             {
-              "uid": "DCL01-U06-CHDRN1",
-              "fname": "DCL01-U06-CHDRN1.json",
-              "type": "quiz"
-            },
-            {
               "uid": "DCL01-TP6-CHDRN5",
               "fname": "DCL01-TP6-CHDRN5.json",
               "type": "assignment"
@@ -537,6 +532,11 @@
               "uid": "DCL01-TP6-CHDRN9",
               "fname": "DCL01-TP6-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL01-U06-CHDRN1",
+              "fname": "DCL01-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
