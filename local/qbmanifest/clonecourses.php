@@ -36,6 +36,12 @@ $farr = array(
     "DJL01" => "/books-json/djl01.json"
 );
 
+$carr = array(
+    "efalcon" => array(
+        "name" => "Emirates Falcon",
+        "idnumber" => "efalcon"
+    )
+);
 
 $ref_csname = required_param('cshortname', PARAM_ALPHANUMEXT);
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
@@ -64,6 +70,11 @@ if(is_array($isvalidjson) or is_object($isvalidjson)) {
             $datacourse[0]['shortname'] = $course->code;
             $datacourse[0]['category'] = $course->category;
             $datacourse[0]['categoryid'] = $course->categorycode;
+            if(isset($carr[$cohort_idnumber])){
+                $datacourse[0]['category'] = $carr[$cohort_idnumber]["name"];
+                $datacourse[0]['categoryid'] = $carr[$cohort_idnumber]["idnumber"];
+            }
+
             $datacourse[0]['numsections'] = count($course->chapters);
             $datacourse[0]['summary'] = $course->summary;
 
@@ -88,15 +99,18 @@ if(is_array($isvalidjson) or is_object($isvalidjson)) {
                 $DB->set_field('course', 'summary', $course->summary, array('id' => $cexists->id));
                 $msg='Record has been updated successfully.';
                 $type = 2;
-                $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
+                if($cohort_idnumber=="dnsbarsha")
+                  $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
             }
             else{
                 $course_details = $newcourse->create_course($datacourse);
                 $courseid = $course_details[0]['id'];
                 $type = 1;
-                $courseinstance = $DB->get_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster'));
-                if(empty($courseinstance)){
-                    $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
+                if($cohort_idnumber=="dnsbarsha"){
+                    $courseinstance = $DB->get_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster'));
+                    if(empty($courseinstance)){
+                        $courseinstance = $DB->insert_record('enrol', array('courseid'=>$courseid, 'enrol'=>'oneroster', 'status'=> ENROL_INSTANCE_ENABLED));
+                    }
                 }
             }
 

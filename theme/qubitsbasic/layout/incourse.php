@@ -122,13 +122,14 @@ if($path_params == "/mod/qbassign/view.php"){
     $course_user_roles = enrol_get_course_users_roles($COURSE->id);
     $student_id = 5;
     $teacher_id = 3;
+    $qbteacher_id = 9;
     $module_id = required_param('id', PARAM_INT);
     $cuserroles = array();
     foreach($course_user_roles as $k => $cu_role){
         $cur_role_obj = current($cu_role);
         if($cur_role_obj->roleid == $student_id)
             $cuserroles['stu-'.$cur_role_obj->userid] = $cur_role_obj->userid;
-        if($cur_role_obj->roleid == $teacher_id)
+        if($cur_role_obj->roleid == $teacher_id || $cur_role_obj->roleid == $qbteacher_id)
             $cuserroles['tea-'.$cur_role_obj->userid] = $cur_role_obj->userid;
     }
 

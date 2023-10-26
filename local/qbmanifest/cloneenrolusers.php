@@ -29,15 +29,14 @@ $current_course = $DB->get_record("course",[
 $qry = "SELECT * FROM {groups} WHERE ";
 $gparams["courseid"] = $parent_course->id;
 
-if($cohort_idnumber=="dnsbarsha")
-  $gparams["name"] = $cohort_idnumber.'%'.$ref_csname;
-else
-  $gparams["name"] = $cohort_idnumber.$ref_csname.'%';
+$gparams["name1"] = $cohort_idnumber.$ref_csname.'%';
+$gparams["name2"] = $cohort_idnumber.'%'.$ref_csname;
+$gparams["name3"] = $ref_csname.'%'.$cohort_idnumber;
 
 $where = "courseid = :courseid ";
-$where .= " AND ".$DB->sql_like('name', ':name', false);
-
+$where .= " AND ( ".$DB->sql_like('name', ':name1', false)." OR ".$DB->sql_like('name', ':name2', false)." OR ".$DB->sql_like('name', ':name3', false)." )";
 $course_groups = $DB->get_records_sql("$qry $where", $gparams);
+
 if($cohort_idnumber=="dnsbarsha"){
     $manplugin = enrol_get_plugin('oneroster');
     $cur_course_instance = $DB->get_record('enrol', array('courseid'=>$current_course->id, 'enrol'=>'oneroster'), '*');
@@ -46,6 +45,7 @@ if($cohort_idnumber=="dnsbarsha"){
     $cur_course_instance = $DB->get_record('enrol', array('courseid'=>$current_course->id, 'enrol'=>'manual'), '*');
     $par_course_instance = $DB->get_record('enrol', array('courseid'=>$parent_course->id, 'enrol'=>'manual'), '*');    
 }
+echo "<pre>"; print_r($course_groups);
 
 foreach($course_groups as $course_group){
    $old_group_id = $course_group->id;
@@ -68,8 +68,13 @@ foreach($course_groups as $course_group){
 	   $roleid = $egroup_member->id;
 	   $egusers = $egroup_member->users;
 	   foreach($egusers as $eguser){
+           if($cohort_idnumber=="efalcon" && $roleid=="3"){
+               $roleid = "9";
+           }
+           echo 'Group '.$gid.' User '.$eguser->id.' Role '.$roleid."<br/>";
 		   $manplugin->enrol_user($cur_course_instance, $eguser->id, $roleid);
 		   groups_add_member($gid, $eguser->id);
+
            //groups_remove_member($old_group_id, $eguser->id);
            //$manplugin->unenrol_user($par_course_instance, $eguser->id); // unenroll user from parent course
 	   }
