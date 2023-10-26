@@ -509,7 +509,7 @@ class main implements renderable, templatable {
                 );
                 return $this->generate_zero_state_data(
                     $nocoursesimg,
-                    [$button],
+                    [$button->export_for_template($output)],
                     ['title' => 'zero_request_title', 'intro' => 'zero_request_intro']
                 );
             }
@@ -580,7 +580,7 @@ class main implements renderable, templatable {
      * Generate the state zero data.
      *
      * @param \moodle_url $imageurl The URL to the image to show
-     * @param \single_button[] $buttons
+     * @param string[] $buttons Exported {@see \single_button} instances
      * @param array $strings Title and intro strings for the zero state if needed.
      * @return array Context variables for the template
      */
