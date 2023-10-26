@@ -36,7 +36,7 @@ Feature: Students can view upcoming data activities in the timeline block
     And the activity date in "DB Future" should contain "<futureto>%A, %d %B %Y, %I:%M##"
 
     Examples:
-      | pastfrom         | pastto                | futurefrom           | futureto             |
-      | ##1 month ago##  | ##yesterday##         | ##tomorrow##         | ##tomorrow +1day##   |
-      | ##yesterday##    | ##yesterday +3hours## | ##tomorrow +3hours## | ##tomorrow +8hours## |
-      | ##6 months ago## | ##1 week ago##        | ##now +6hours##      | ##tomorrow +6days##  |
+      | pastfrom         | pastto                | futurefrom           | futureto                  |
+      | ##1 month ago##  | ##yesterday##         | ##tomorrow##         | ##tomorrow +1day##        |
+      | ##yesterday##    | ##yesterday +3hours## | ##tomorrow noon##    | ##tomorrow noon +3hours## |
+      | ##6 months ago## | ##1 week ago##        | ##tomorrow +5days##  | ##tomorrow +6days##       |
