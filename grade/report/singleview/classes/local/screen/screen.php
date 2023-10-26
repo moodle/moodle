@@ -25,6 +25,7 @@
 namespace gradereport_singleview\local\screen;
 
 use context_course;
+use grade_report;
 use moodle_url;
 use html_writer;
 use grade_structure;
@@ -33,6 +34,7 @@ use grade_item;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die;
+require_once($CFG->dirroot . '/grade/report/lib.php');
 
 /**
  * Abstract class used as a base for the 3 screens.
