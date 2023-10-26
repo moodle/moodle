@@ -173,34 +173,6 @@
               "type": "page"
             },
             {
-              "title": "1.2 - Collaboration",
-              "uid": "DCL10-TP1-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.2 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "1.3 - Cloud Computing",
-              "uid": "DCL10-TP1-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.3 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "1.4 - Data Privacy",
-              "uid": "DCL10-TP1-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.4 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP1-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit1-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-TP1-CHDRN7",
               "fname": "DCL10-TP1-CHDRN7.json",
               "type": "assignment"
@@ -214,6 +186,13 @@
               "uid": "DCL10-TP1-CHDRN9",
               "fname": "DCL10-TP1-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.2 - Collaboration",
+              "uid": "DCL10-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP1-CHDRN10",
@@ -231,6 +210,13 @@
               "type": "assignment"
             },
             {
+              "title": "1.3 - Cloud Computing",
+              "uid": "DCL10-TP1-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.3 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP1-CHDRN13",
               "fname": "DCL10-TP1-CHDRN13.json",
               "type": "assignment"
@@ -244,6 +230,13 @@
               "uid": "DCL10-TP1-CHDRN15",
               "fname": "DCL10-TP1-CHDRN15.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.4 - Data Privacy",
+              "uid": "DCL10-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.4 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP1-CHDRN16",
@@ -261,6 +254,13 @@
               "type": "assignment"
             },
             {
+              "title": "1.5 - Network And Security",
+              "uid": "DCL10-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.5 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP1-CHDRN19",
               "fname": "DCL10-TP1-CHDRN19.json",
               "type": "assignment"
@@ -276,16 +276,16 @@
               "type": "assignment"
             },
             {
+              "title": "Exercise",
+              "uid": "DCL10-TP1-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit1-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-U01-CHDRN1",
               "fname": "DCL10-U01-CHDRN1.json",
               "type": "quiz"
-            },
-            {
-              "title": "1.5 - Network And Security",
-              "uid": "DCL10-TP1-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit1-Sprint1.5 - Google Docs",
-              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -310,27 +310,6 @@
               "type": "page"
             },
             {
-              "title": "2.2 - Advanced Photo Editing",
-              "uid": "DCL10-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.2 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "2.3 - Advanced Video Editing",
-              "uid": "DCL10-TP2-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.3 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP2-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit2-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-TP2-CHDRN6",
               "fname": "DCL10-TP2-CHDRN6.json",
               "type": "assignment"
@@ -344,6 +323,13 @@
               "uid": "DCL10-TP2-CHDRN8",
               "fname": "DCL10-TP2-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.2 - Advanced Photo Editing",
+              "uid": "DCL10-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP2-CHDRN9",
@@ -361,6 +347,13 @@
               "type": "assignment"
             },
             {
+              "title": "2.3 - Advanced Video Editing",
+              "uid": "DCL10-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit2-Sprint2.3 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP2-CHDRN12",
               "fname": "DCL10-TP2-CHDRN12.json",
               "type": "assignment"
@@ -374,6 +367,13 @@
               "uid": "DCL10-TP2-CHDRN14",
               "fname": "DCL10-TP2-CHDRN14.json",
               "type": "assignment"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL10-TP2-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit2-Exercise - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-U02-CHDRN1",
@@ -404,28 +404,9 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Styling The Game Page",
-              "uid": "DCL10-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC_L10_Unit3_Sprint3.2 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-TP3-CHDRN500",
               "fname": "DCL10-TP3-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL10-U03-CHDRN1",
-              "fname": "DCL10-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL10-TP3-CHDRN6",
@@ -436,6 +417,13 @@
               "uid": "DCL10-TP3-CHDRN7",
               "fname": "DCL10-TP3-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.2 - Styling The Game Page",
+              "uid": "DCL10-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC_L10_Unit3_Sprint3.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP3-CHDRN8",
@@ -451,6 +439,18 @@
               "uid": "DCL10-TP3-CHDRN10",
               "fname": "DCL10-TP3-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL10-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit3-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL10-U03-CHDRN1",
+              "fname": "DCL10-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -476,42 +476,9 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Core Logic Of The Game",
-              "uid": "DCL10-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.2 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - Game Enhancements",
-              "uid": "DCL10-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.3 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "4.4 - Animations",
-              "uid": "DCL10-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.4 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP4-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit4-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-TP4-CHDRN700",
               "fname": "DCL10-TP4-CHDRN7.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL10-U04-CHDRN1",
-              "fname": "DCL10-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL10-TP4-CHDRN8",
@@ -522,6 +489,13 @@
               "uid": "DCL10-TP4-CHDRN9",
               "fname": "DCL10-TP4-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.2 - Core Logic Of The Game",
+              "uid": "DCL10-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP4-CHDRN10",
@@ -539,6 +513,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - Game Enhancements",
+              "uid": "DCL10-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.3 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP4-CHDRN13",
               "fname": "DCL10-TP4-CHDRN13.json",
               "type": "assignment"
@@ -554,6 +535,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.4 - Animations",
+              "uid": "DCL10-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit4-Sprint4.4 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP4-CHDRN16",
               "fname": "DCL10-TP4-CHDRN16.json",
               "type": "assignment"
@@ -567,6 +555,18 @@
               "uid": "DCL10-TP4-CHDRN18",
               "fname": "DCL10-TP4-CHDRN18.json",
               "type": "assignment"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL10-TP4-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DCL10-Unit4-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL10-U04-CHDRN1",
+              "fname": "DCL10-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -592,42 +592,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Creating Dashboards",
-              "uid": "DCL10-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.2 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Data Visualization: Using Sparklines",
-              "uid": "DCL10-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.3 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "5.4 - Computational Model",
-              "uid": "DCL10-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit5-Sprint5.4 - Google Docs",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL10-TP5-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Exercise - Google Docs",
-              "type": "page"
-            },
-            {
               "uid": "DCL10-TP5-CHDRN700",
               "fname": "DCL10-TP5-CHDRN7.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL10-U05-CHDRN1",
-              "fname": "DCL10-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL10-TP5-CHDRN8",
@@ -638,6 +605,13 @@
               "uid": "DCL10-TP5-CHDRN9",
               "fname": "DCL10-TP5-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Creating Dashboards",
+              "uid": "DCL10-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.2 - Google Docs",
+              "type": "page"
             },
             {
               "uid": "DCL10-TP5-CHDRN10",
@@ -655,6 +629,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 - Data Visualization: Using Sparklines",
+              "uid": "DCL10-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Sprint5.3 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP5-CHDRN13",
               "fname": "DCL10-TP5-CHDRN13.json",
               "type": "assignment"
@@ -670,6 +651,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.4 - Computational Model",
+              "uid": "DCL10-TP5-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-unit5-Sprint5.4 - Google Docs",
+              "type": "page"
+            },
+            {
               "uid": "DCL10-TP5-CHDRN16",
               "fname": "DCL10-TP5-CHDRN16.json",
               "type": "assignment"
@@ -683,6 +671,18 @@
               "uid": "DCL10-TP5-CHDRN18",
               "fname": "DCL10-TP5-CHDRN18.json",
               "type": "assignment"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL10-TP5-CHDRN6",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level10&pdf=DC-L10-Unit5-Exercise - Google Docs",
+              "type": "page"
+            },
+            {
+              "uid": "DCL10-U05-CHDRN1",
+              "fname": "DCL10-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

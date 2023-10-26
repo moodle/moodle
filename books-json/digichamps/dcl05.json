@@ -257,28 +257,9 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Scribble Tool",
-              "uid": "DCL05-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S02",
-              "type": "page"
-            },
-            {
-              "title": "3.3 - Remix Designs",
-              "uid": "DCL05-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL05-TP3-CHDRN500",
               "fname": "DCL05-TP3-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL05-U03-CHDRN1",
-              "fname": "DCL05-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL05-TP3-CHDRN6",
@@ -289,6 +270,13 @@
               "uid": "DCL05-TP3-CHDRN7",
               "fname": "DCL05-TP3-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.2 - Scribble Tool",
+              "uid": "DCL05-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S02",
+              "type": "page"
             },
             {
               "uid": "DCL05-TP3-CHDRN8",
@@ -306,6 +294,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.3 - Remix Designs",
+              "uid": "DCL05-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U03_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL05-TP3-CHDRN11",
               "fname": "DCL05-TP3-CHDRN11.json",
               "type": "assignment"
@@ -319,6 +314,11 @@
               "uid": "DCL05-TP3-CHDRN13",
               "fname": "DCL05-TP3-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL05-U03-CHDRN1",
+              "fname": "DCL05-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -344,33 +344,21 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Transitions And Sound Effects",
-              "uid": "DCL05-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - SlideShow",
-              "uid": "DCL05-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL05-TP4-CHDRN5",
               "fname": "DCL05-TP4-CHDRN5.json",
               "type": "assignment"
             },
             {
-              "uid": "DCL05-U04-CHDRN1",
-              "fname": "DCL05-U04-CHDRN1.json",
-              "type": "quiz"
-            },
-            {
               "uid": "DCL05-TP4-CHDRN6",
               "fname": "DCL05-TP4-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.2 - Transitions And Sound Effects",
+              "uid": "DCL05-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S02",
+              "type": "page"
             },
             {
               "uid": "DCL05-TP4-CHDRN7",
@@ -393,6 +381,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - SlideShow",
+              "uid": "DCL05-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U04_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL05-TP4-CHDRN11",
               "fname": "DCL05-TP4-CHDRN11.json",
               "type": "assignment"
@@ -406,6 +401,11 @@
               "uid": "DCL05-TP4-CHDRN13",
               "fname": "DCL05-TP4-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL05-U04-CHDRN1",
+              "fname": "DCL05-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -431,28 +431,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Dictate And Read Aloud Tool",
-              "uid": "DCL05-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Ruler, Margins, And Tabs",
-              "uid": "DCL05-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL05-TP5-CHDRN500",
               "fname": "DCL05-TP5-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL05-U05-CHDRN1",
-              "fname": "DCL05-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL05-TP5-CHDRN6",
@@ -468,6 +449,13 @@
               "uid": "DCL05-TP5-CHDRN8",
               "fname": "DCL05-TP5-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Dictate And Read Aloud Tool",
+              "uid": "DCL05-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DCL05-TP5-CHDRN9",
@@ -490,6 +478,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 - Ruler, Margins, And Tabs",
+              "uid": "DCL05-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U05_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL05-TP5-CHDRN13",
               "fname": "DCL05-TP5-CHDRN13.json",
               "type": "assignment"
@@ -498,6 +493,11 @@
               "uid": "DCL05-TP5-CHDRN14",
               "fname": "DCL05-TP5-CHDRN14.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL05-U05-CHDRN1",
+              "fname": "DCL05-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -523,33 +523,21 @@
               "type": "page"
             },
             {
-              "title": " 6.2 - Data And Relationships",
-              "uid": "DCL05-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S02",
-              "type": "page"
-            },
-            {
-              "title": " 6.3 - Data For Creative Solutions",
-              "uid": "DCL05-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL05-TP6-CHDRN500",
               "fname": "DCL05-TP6-CHDRN5.json",
               "type": "assignment"
             },
             {
-              "uid": "DCL05-U06-CHDRN1",
-              "fname": "DCL05-U06-CHDRN1.json",
-              "type": "quiz"
-            },
-            {
               "uid": "DCL05-TP6-CHDRN6",
               "fname": "DCL05-TP6-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": " 6.2 - Data And Relationships",
+              "uid": "DCL05-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S02",
+              "type": "page"
             },
             {
               "uid": "DCL05-TP6-CHDRN7",
@@ -562,6 +550,13 @@
               "type": "assignment"
             },
             {
+              "title": " 6.3 - Data For Creative Solutions",
+              "uid": "DCL05-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level5&pdf=DCL05_U06_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL05-TP6-CHDRN9",
               "fname": "DCL05-TP6-CHDRN9.json",
               "type": "assignment"
@@ -570,6 +565,11 @@
               "uid": "DCL05-TP6-CHDRN10",
               "fname": "DCL05-TP6-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL05-U06-CHDRN1",
+              "fname": "DCL05-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

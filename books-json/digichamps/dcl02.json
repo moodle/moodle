@@ -257,20 +257,6 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Shapes",
-              "uid": "DCL02-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S02",
-              "type": "page"
-            },
-            {
-              "title": "3.3 -  Text And Labels",
-              "uid": "DCL02-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-TP3-CHDRN500",
               "fname": "DCL02-TP3-CHDRN5.json",
               "type": "assignment"
@@ -291,6 +277,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.2 - Shapes",
+              "uid": "DCL02-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP3-CHDRN8",
               "fname": "DCL02-TP3-CHDRN8.json",
               "type": "assignment"
@@ -304,6 +297,13 @@
               "uid": "DCL02-TP3-CHDRN10",
               "fname": "DCL02-TP3-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.3 -  Text And Labels",
+              "uid": "DCL02-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U03_S03",
+              "type": "page"
             },
             {
               "uid": "DCL02-TP3-CHDRN11",
@@ -344,27 +344,6 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Magic Tool",
-              "uid": "DCL02-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - Pattern Painting",
-              "uid": "DCL02-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S03",
-              "type": "page"
-            },
-            {
-              "title": "4.4 - Picture Decorations",
-              "uid": "DCL02-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S04",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-TP4-CHDRN600",
               "fname": "DCL02-TP4-CHDRN6.json",
               "type": "assignment"
@@ -390,6 +369,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.2 - Magic Tool",
+              "uid": "DCL02-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP4-CHDRN10",
               "fname": "DCL02-TP4-CHDRN10.json",
               "type": "assignment"
@@ -405,6 +391,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - Pattern Painting",
+              "uid": "DCL02-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP4-CHDRN13",
               "fname": "DCL02-TP4-CHDRN13.json",
               "type": "assignment"
@@ -418,6 +411,13 @@
               "uid": "DCL02-TP4-CHDRN15",
               "fname": "DCL02-TP4-CHDRN15.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.4 - Picture Decorations",
+              "uid": "DCL02-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U04_S04",
+              "type": "page"
             },
             {
               "uid": "DCL02-TP4-CHDRN16",
@@ -458,20 +458,6 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Themes And Color",
-              "uid": "DCL02-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Size Of Shapes",
-              "uid": "DCL02-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-TP5-CHDRN500",
               "fname": "DCL02-TP5-CHDRN5.json",
               "type": "assignment"
@@ -492,6 +478,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.2 - Themes And Color",
+              "uid": "DCL02-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP5-CHDRN8",
               "fname": "DCL02-TP5-CHDRN8.json",
               "type": "assignment"
@@ -505,6 +498,13 @@
               "uid": "DCL02-TP5-CHDRN10",
               "fname": "DCL02-TP5-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.3 - Size Of Shapes",
+              "uid": "DCL02-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U05_S03",
+              "type": "page"
             },
             {
               "uid": "DCL02-TP5-CHDRN11",
@@ -540,27 +540,6 @@
               "type": "page"
             },
             {
-              "title": "6.2 - Picture And Picture Frame",
-              "uid": "DCL02-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S02",
-              "type": "page"
-            },
-            {
-              "title": "6.3 - Formatting Text",
-              "uid": "DCL02-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S03",
-              "type": "page"
-            },
-            {
-              "title": "6.4 - Formatting Images",
-              "uid": "DCL02-TP6-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S04",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-TP6-CHDRN6",
               "fname": "DCL02-TP6-CHDRN6.json",
               "type": "assignment"
@@ -581,6 +560,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.2 - Picture And Picture Frame",
+              "uid": "DCL02-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP6-CHDRN9",
               "fname": "DCL02-TP6-CHDRN9.json",
               "type": "assignment"
@@ -596,6 +582,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.3 - Formatting Text",
+              "uid": "DCL02-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP6-CHDRN12",
               "fname": "DCL02-TP6-CHDRN12.json",
               "type": "assignment"
@@ -609,6 +602,13 @@
               "uid": "DCL02-TP6-CHDRN14",
               "fname": "DCL02-TP6-CHDRN14.json",
               "type": "assignment"
+            },
+            {
+              "title": "6.4 - Formatting Images",
+              "uid": "DCL02-TP6-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U06_S04",
+              "type": "page"
             },
             {
               "uid": "DCL02-TP6-CHDRN15",
@@ -649,20 +649,6 @@
               "type": "page"
             },
             {
-              "title": "7.2 - Pie Charts",
-              "uid": "DCL02-TP7-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S02",
-              "type": "page"
-            },
-            {
-              "title": "Exercise",
-              "uid": "DCL02-TP7-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL02-TP7-CHDRN5",
               "fname": "DCL02-TP7-CHDRN5.json",
               "type": "assignment"
@@ -683,6 +669,13 @@
               "type": "assignment"
             },
             {
+              "title": "7.2 - Pie Charts",
+              "uid": "DCL02-TP7-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL02-TP7-CHDRN8",
               "fname": "DCL02-TP7-CHDRN8.json",
               "type": "assignment"
@@ -696,6 +689,13 @@
               "uid": "DCL02-TP7-CHDRN10",
               "fname": "DCL02-TP7-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "Exercise",
+              "uid": "DCL02-TP7-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level2&pdf=DCL02_U07_S03",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

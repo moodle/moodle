@@ -208,13 +208,6 @@
               "type": "page"
             },
             {
-              "title": "2.2 - Using The Computer And Its Applications",
-              "uid": "DCL01-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U02_S02",
-              "type": "page"
-            },
-            {
               "uid": "DCL01-TP2-CHDRN400",
               "fname": "DCL01-TP2-CHDRN4.json",
               "type": "assignment"
@@ -228,6 +221,13 @@
               "uid": "DCL01-TP2-CHDRN6",
               "fname": "DCL01-TP2-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.2 - Using The Computer And Its Applications",
+              "uid": "DCL01-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U02_S02",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP2-CHDRN7",
@@ -268,21 +268,9 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Online Safety",
-              "uid": "DCL01-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U03_S02",
-              "type": "page"
-            },
-            {
               "uid": "DCL01-TP3-CHDRN400",
               "fname": "DCL01-TP3-CHDRN4.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL01-U03-CHDRN1",
-              "fname": "DCL01-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL01-TP3-CHDRN5",
@@ -293,6 +281,13 @@
               "uid": "DCL01-TP3-CHDRN6",
               "fname": "DCL01-TP3-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.2 - Online Safety",
+              "uid": "DCL01-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U03_S02",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP3-CHDRN7",
@@ -308,6 +303,11 @@
               "uid": "DCL01-TP3-CHDRN9",
               "fname": "DCL01-TP3-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL01-U03-CHDRN1",
+              "fname": "DCL01-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -333,35 +333,9 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Color A Canvas",
-              "uid": "DCL01-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - Stamps",
-              "uid": "DCL01-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S03",
-              "type": "page"
-            },
-            {
-              "title": "4.4 - Manage And Present Projects",
-              "uid": "DCL01-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S04",
-              "type": "page"
-            },
-            {
               "uid": "DCL01-TP4-CHDRN600",
               "fname": "DCL01-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL01-U04-CHDRN1",
-              "fname": "DCL01-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL01-TP4-CHDRN7",
@@ -372,6 +346,13 @@
               "uid": "DCL01-TP4-CHDRN8",
               "fname": "DCL01-TP4-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.2 - Color A Canvas",
+              "uid": "DCL01-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S02",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP4-CHDRN9",
@@ -394,9 +375,23 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - Stamps",
+              "uid": "DCL01-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL01-TP4-CHDRN13",
               "fname": "DCL01-TP4-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.4 - Manage And Present Projects",
+              "uid": "DCL01-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U04_S04",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP4-CHDRN14",
@@ -407,6 +402,11 @@
               "uid": "DCL01-TP4-CHDRN15",
               "fname": "DCL01-TP4-CHDRN15.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL01-U04-CHDRN1",
+              "fname": "DCL01-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -432,21 +432,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Text Formatting",
-              "uid": "DCL01-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U05_S02",
-              "type": "page"
-            },
-            {
               "uid": "DCL01-TP5-CHDRN400",
               "fname": "DCL01-TP5-CHDRN4.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL01-U05-CHDRN1",
-              "fname": "DCL01-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL01-TP5-CHDRN5",
@@ -457,6 +445,13 @@
               "uid": "DCL01-TP5-CHDRN6",
               "fname": "DCL01-TP5-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Text Formatting",
+              "uid": "DCL01-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP5-CHDRN7",
@@ -472,6 +467,11 @@
               "uid": "DCL01-TP5-CHDRN9",
               "fname": "DCL01-TP5-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL01-U05-CHDRN1",
+              "fname": "DCL01-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -497,13 +497,6 @@
               "type": "page"
             },
             {
-              "title": "6.2 - Collecting And Storing Data",
-              "uid": "DCL01-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U06_S02",
-              "type": "page"
-            },
-            {
               "uid": "DCL01-TP6-CHDRN400",
               "fname": "DCL01-TP6-CHDRN4.json",
               "type": "assignment"
@@ -522,6 +515,13 @@
               "uid": "DCL01-TP6-CHDRN6",
               "fname": "DCL01-TP6-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "6.2 - Collecting And Storing Data",
+              "uid": "DCL01-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level1&pdf=DCL01_U06_S02",
+              "type": "page"
             },
             {
               "uid": "DCL01-TP6-CHDRN7",
