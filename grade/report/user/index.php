@@ -113,7 +113,7 @@ if (has_capability('moodle/grade:viewall', $context)) {
         $userid = $lastvieweduserid;
     }
 
-    $gradableusers = get_gradable_users($courseid, $currentgroup);
+    $gradableusers = grade_report::get_gradable_users($courseid, $currentgroup);
     // Validate whether the requested user is a valid gradable user in this course. If, not display the user select
     // zero state.
     if (empty($gradableusers) || ($userid && !array_key_exists($userid, $gradableusers))) {
