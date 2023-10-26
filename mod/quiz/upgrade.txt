@@ -1,5 +1,10 @@
 This files describes API changes in the quiz code.
 
+=== 4.1.7 ===
+* A quiz_structure_modified callback has been added for quiz_ plugins, called from
+  quiz_update_sumgrades(). Plugins can implement this by creating a `quiz_structure_modified`
+  class in their namespace with a static `callback` method, see quiz_statistics as an example.
+
 === 4.1.1 ===
 * 'firstslotid' value is not used in section_shuffle_updated event anymore.
 

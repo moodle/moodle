@@ -663,6 +663,11 @@ function quiz_update_sumgrades($quiz) {
         // we will get a divide by zero error.
         quiz_set_grade(0, $quiz);
     }
+
+    $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
+    foreach ($callbackclasses as $callbackclass) {
+        component_class_callback($callbackclass, 'callback', [$quiz->id]);
+    }
 }
 
 /**
