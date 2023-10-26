@@ -32,9 +32,11 @@
             </label>
             <div class="input-group input-append w-100">
                 <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{.}}"/>
+                {{#showfilepicker}}
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
+                {{/showfilepicker}}
             </div>
         </div>
         <div class="addcomponent-wrapper">
@@ -60,9 +62,11 @@
             </label>
             <div class="input-group input-append w-100">
                 <input id="audio-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                {{#showfilepicker}}
                 <span class="input-group-append">
                     <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
                 </span>
+                {{/showfilepicker}}
             </div>
         </div>
         <div class="addcomponent-wrapper">
@@ -248,9 +252,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -298,9 +304,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="subtitle-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -356,9 +364,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -406,9 +416,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="caption-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -464,9 +476,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -514,9 +528,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="description-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -572,9 +588,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -622,9 +640,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="chapter-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -681,9 +701,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32" value="{{src}}"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                    <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-                </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
@@ -731,9 +753,11 @@
                                 </label>
                                 <div class="input-group input-append w-100">
                                     <input id="metadata-audio-url-input" class="form-control tiny_media_url_entry" type="url" size="32"/>
+                                    {{#showfilepickertrack}}
                                     <span class="input-group-append">
-                <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
-            </span>
+                                        <button class="btn btn-secondary openmediabrowser" type="button">{{#str}} browserepositories, tiny_media {{/str}}</button>
+                                    </span>
+                                    {{/showfilepickertrack}}
                                 </div>
                             </div>
                         </div>
