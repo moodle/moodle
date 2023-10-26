@@ -19,13 +19,13 @@
 # Temporary files including undo
 *~
 #
-/config.php
 /lib/editor/tinymce/extra/tools/temp/
 /tags
 /TAGS
 /cscope.*
 /.patches/
 /.idea/
+/.vs
 .phpstorm.*
 /nbproject/
 CVS
